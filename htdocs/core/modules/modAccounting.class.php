@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,6 @@ class modAccounting extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = 'accounting';
 
 		// Data directories to create when module is enabled
@@ -234,21 +234,59 @@ class modAccounting extends DolibarrModules
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 		// Exports
-        //--------
-        $r=0;
+		//--------
+		$r=0;
 
-        $r++;
-        $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='Chartofaccounts';
-        $this->export_icon[$r]='accounting';
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='Chartofaccounts';
+		$this->export_icon[$r]='Accounting';
 		$this->export_permission[$r]=array(array("accounting","chartofaccount"));
-        $this->export_fields_array[$r]=array('ac.rowid'=>'ChartofaccountsId','ac.pcg_version'=>'Chartofaccounts','aa.rowid'=>'Id','aa.account_number'=>"AccountAccounting",'aa.label'=>"Label",'aa.account_parent'=>"Accountparent",'aa.pcg_type'=>"Pcgtype",'aa.pcg_subtype'=>'Pcgsubtype','aa.active'=>'Status');
-        $this->export_TypeFields_array[$r]=array('ac.rowid'=>'List:accounting_system:pcg_version','aa.account_number'=>"Text",'aa.label'=>"Text",'aa.pcg_type'=>'Text','aa.pcg_subtype'=>'Text','aa.active'=>'Status');
-        $this->export_entities_array[$r]=array('ac.rowid'=>"accounting",'ac.pcg_version'=>"accounting",'aa.rowid'=>'accounting','aa.account_number'=>"accounting",'aa.label'=>"accounting",'aa.accountparent'=>"accounting",'aa.pcg_type'=>"accounting",'aa.pcgsubtype'=>"accounting",'aa_active'=>"accounting");
+		$this->export_fields_array[$r]=array('ac.rowid'=>'ChartofaccountsId','ac.pcg_version'=>'Chartofaccounts','aa.rowid'=>'Id','aa.account_number'=>"AccountAccounting",'aa.label'=>"Label",'aa.account_parent'=>"Accountparent",'aa.pcg_type'=>"Pcgtype",'aa.pcg_subtype'=>'Pcgsubtype','aa.active'=>'Status');
+		$this->export_TypeFields_array[$r]=array('ac.rowid'=>'List:accounting_system:pcg_version','aa.account_number'=>"Text",'aa.label'=>"Text",'aa.pcg_type'=>'Text','aa.pcg_subtype'=>'Text','aa.active'=>'Status');
+		$this->export_entities_array[$r]=array('ac.rowid'=>"Accounting",'ac.pcg_version'=>"Accounting",'aa.rowid'=>'Accounting','aa.account_number'=>"Accounting",'aa.label'=>"Accounting",'aa.accountparent'=>"Accounting",'aa.pcg_type'=>"Accounting",'aa.pcgsubtype'=>"Accounting",'aa_active'=>"Accounting");
 
-        $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
-        $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
+		$this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
+
+
+		// Imports
+		//--------
+		$r=0;
+
+		// General ledger
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]='ImportAccountingEntries';
+		$this->import_icon[$r]=$this->picto;
+		$this->import_entities_array[$r]=array();	// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('b'=>MAIN_DB_PREFIX.'accounting_bookkeeping');	// List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r]=array('b.doc_date'=>"Docdate",'b.code_journal'=>'Codejournal','b.numero_compte'=>'AccountAccountingShort','b.label_operation'=>'LabelOperation','b.debit'=>"Debit",'b.credit'=>"Credit",'b.date_creation'=>"DateCreation");
+		$this->import_fieldshidden_array[$r]=array('b.fk_user'=>'user->id');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_convertvalue_array[$r]=array(
+				't.fk_projet'=>array('rule'=>'fetchidfromref','classfile'=>'/projet/class/project.class.php','class'=>'Project','method'=>'fetch','element'=>'Project'),
+				't.ref'=>array('rule'=>'getrefifauto')
+		);
+		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+		$this->import_regex_array[$r]=array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+		//$this->import_examplevalues_array[$r]=array('t.fk_projet'=>'MyProjectRef','t.ref'=>"auto or TK2010-1234",'t.label'=>"My task",'t.progress'=>"0 (not started) to 100 (finished)",'t.datec'=>'1972-10-10','t.note_private'=>"My private note",'t.note_public'=>"My public note");
+
+		// Chart of accounts
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]="Chartofaccounts"; // Translation key
+		$this->import_icon[$r]=$this->picto;
+		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('aa'=>MAIN_DB_PREFIX.'accounting_account');
+		$this->import_tables_creator_array[$r]=array('aa'=>'fk_user_author');    // Fields to store import user id
+		$this->import_fields_array[$r]=array('aa.fk_pcg_version'=>"Chartofaccounts*",'aa.account_number'=>"AccountAccounting*",'aa.label'=>"Label*",'aa.account_parent'=>"Accountparent","aa.fk_accounting_category"=>"AccountingCategory","aa.pcg_type"=>"Pcgtype*",'aa.pcg_subtype'=>'Pcgsubtype*','aa.active'=>'Status*','aa.datec'=>"DateCreation");
+		$this->import_regex_array[$r]=array('aa.fk_pcg_version'=>'pcg_version@'.MAIN_DB_PREFIX.'accounting_system','aa.account_number'=>'^\d{1,32}$','aa.label'=>'^.{1,255}$','aa.account_parent'=>'^\d{0,32}$','aa.fk_accounting_category'=>'rowid@'.MAIN_DB_PREFIX.'c_accounting_category','aa.pcg_type'=>'^.{1,20}$','aa.pcg_subtype'=>'^.{1,20}$','aa.active'=>'^0|1$','aa.datec'=>'^\d{4}-\d{2}-\d{2}$');
+		$this->import_convertvalue_array[$r]=array(
+			'aa.fk_accounting_category'=>array('rule'=>'fetchidfromcodeorlabel','classfile'=>'/accountancy/class/accountancycategory.class.php','class'=>'AccountancyCategory','method'=>'fetch','dict'=>'DictionaryAccountancyCategory'),
+			'aa.account_parent'=>array('rule'=>'zeroifnull'),
+		);
+		$this->import_examplevalues_array[$r]=array('aa.fk_pcg_version'=>"PCG99-ABREGE",'aa.account_number'=>"707",'aa.label'=>"Product sales",'aa.account_parent'=>"1407","aa.fk_accounting_category"=>"","aa.pcg_type"=>"PROD",'aa.pcg_subtype'=>'PRODUCT','aa.active'=>'1','aa.datec'=>"2017-04-28");
 
 	}
 }

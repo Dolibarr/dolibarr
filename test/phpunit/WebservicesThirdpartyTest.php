@@ -161,11 +161,11 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     			'entity'=>'');
 
     	$body = array (
-    			"id" => NULL,
+    			"id" => null,
     			"ref" => "name",
     			"ref_ext" => "12",
-    			"fk_user_author" => NULL,
-    			"status" => NULL,
+    			"fk_user_author" => null,
+    			"status" => null,
     			"client" => 1,
     			"supplier" => 0,
     			"customer_code" => "CU0901-5678",
@@ -203,7 +203,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	$parameters = array('authentication'=>$authentication, 'thirdparty'=>$body);
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$thid->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
     	} catch(SoapFault $exception) {
     		echo $exception;
     		$result=0;

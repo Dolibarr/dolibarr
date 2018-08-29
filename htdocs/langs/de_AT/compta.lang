@@ -7,7 +7,6 @@ VATCollected=Eingehobene MwSt.
 MenuSpecialExpenses=Steuern, Sozialbeiträge und Dividenden
 AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
 AnnualSummaryInputOutputMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.
-VATReport=Sale tax report
 VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuerbeleg)
 ProposalStats=Statistik über die Vorschläge
 OrderStats=Statistiken über Bestellungen

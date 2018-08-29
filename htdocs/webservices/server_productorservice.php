@@ -425,7 +425,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
             	//Get extrafield values
-            	$product->fetch_optionals($product->id,$extralabels);
+            	$product->fetch_optionals();
 
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
@@ -1048,11 +1048,11 @@ function getProductsForCategory($authentication,$id,$lang='')
 				$res  = $db->query($sql);
 				if ($res)
 				{
+					$iProduct = 0;
 					while ($rec = $db->fetch_array($res))
 					{
 						$obj = new Product($db);
 						$obj->fetch($rec['fk_'.$field]);
-						$iProduct = 0;
 						if($obj->status > 0 )
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
@@ -1096,7 +1096,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 							$extrafields=new ExtraFields($db);
 							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 							//Get extrafield values
-							$obj->fetch_optionals($obj->id,$extralabels);
+							$obj->fetch_optionals();
 
 							foreach($extrafields->attribute_label as $key=>$label)
 							{

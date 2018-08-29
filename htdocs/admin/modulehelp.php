@@ -17,29 +17,19 @@
  */
 
 /**
- *  \file       htdocs/admin/modules.php
+ *  \file       htdocs/admin/modulehelp.php
  *  \brief      Page to activate/disable all modules
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("errors");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('errors', 'admin'));
 
 $mode=GETPOST('mode', 'alpha');
 $action=GETPOST('action','alpha');
@@ -163,8 +153,6 @@ foreach ($modulesdir as $dir)
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	if (!is_array($familyinfo)) $familyinfo=array();
@@ -180,13 +168,11 @@ foreach ($modulesdir as $dir)
 		    			                $moduleposition = 800;
 		    			            }
 
-		    			            if ($special == 1) $familykey='interface';
-
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -240,7 +226,6 @@ foreach($orders as $tmpkey => $tmpvalue)
     $i++;
 }
 $value = $orders[$key];
-$special = $objMod->special;
 $tab=explode('_',$value);
 $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
@@ -328,7 +313,9 @@ if ($mode == 'desc')
     {
         $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
         if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
-        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$objMod->editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+        $editor_url = $objMod->editor_url;
+        if (! preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;
+        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
         $text.=$textexternal;
         $text.='<br>';
     }

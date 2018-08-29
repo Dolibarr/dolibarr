@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2016 Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013-2018 Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014	   Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
 
 // Security check
 if ($user->societe_id) {
@@ -55,6 +53,7 @@ $idline = GETPOST('idline');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
     $sortfield = 'p.ref';
@@ -63,7 +62,7 @@ if (!$sortfield) {
 if (!$sortorder) {
     $sortorder = 'ASC';
 }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();
@@ -286,7 +285,7 @@ if ($action == 'createmovements')
 			}
 			else
 			{
-				dol_print_error('',"Bad value saved into sessions");
+				// dol_print_error('',"Bad value saved into sessions");
 				$error++;
 			}
 		}
@@ -332,7 +331,7 @@ $titletoadd=$langs->trans("Select");
 $buttonrecord=$langs->trans("RecordMovement");
 $titletoaddnoent=$langs->transnoentitiesnoconv("Select");
 $buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
-print $langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'<br>';
+print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'</span><br>';
 print '<br>'."\n";
 
 $var=true;
@@ -376,25 +375,25 @@ else
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
 
-print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth300imp maxwidth400', 1);
+print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1);
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled)
 {
 	print '<td>';
-	print '<input type="text" name="batch" class="flat maxwidth50onsmartphone" value="'.$batch.'">';
+	print '<input type="text" name="batch" class="flat maxwidth50" value="'.$batch.'">';
 	print '</td>';
 }
 // In warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Out warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Qty
-print '<td align="center"><input type="text" size="3" class="flat" name="qty" value="'.$qty.'"></td>';
+print '<td align="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
 // Button to add line
 print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
@@ -445,14 +444,14 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
-$codemove=(isset($_POST["codemove"])?GETPOST("codemove",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S'));
+$codemove=(isset($_POST["codemove"])?GETPOST("codemove",'alpha'):dol_print_date(dol_now(),'%Y%m%d%H%M%S'));
 $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
 
-print '<table class="border" width="100%">';
+print '<table class="noborder" width="100%">';
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("InventoryCode").'</td>';
+	print '<td class="titlefield fieldrequired">'.$langs->trans("InventoryCode").'</td>';
 	print '<td>';
-	print '<input type="text" name="codemove" size="10" value="'.dol_escape_htmltag($codemove).'">';
+	print '<input type="text" name="codemove" size="15" value="'.dol_escape_htmltag($codemove).'">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';

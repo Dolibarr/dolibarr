@@ -29,13 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("errors");
-$langs->load("mails");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
 
 // Security check
 if (!$user->admin)
@@ -128,8 +123,6 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-$var=true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -168,7 +161,6 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 print '<tr class="oddeven">';
 print '<td>';
 
-$var=true;
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
@@ -212,7 +204,6 @@ print "</tr>\n";
 $notificationtrigger=new InterfaceNotification($db);
 $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-$var=true;
 foreach($listofnotifiedevents as $notifiedevent)
 {
 

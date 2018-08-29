@@ -267,7 +267,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	            if (! in_array($code,array_keys($arrayoffieldsfound)))
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
-	                $type=$extrafields->attribute_type[$code]; $length=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
+	                $type=$extrafields->attributes[$elementtype]['type'][$code]; $length=$extrafields->attributes[$elementtype]['size'][$code]; $attribute=''; $default=''; $extra=''; $null='null';
 
            			if ($type=='boolean') {
         				$typedb='int';
@@ -1079,21 +1079,42 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 
     if ($db->type == "mysql" || $db->type == "mysqli")
     {
-        $listoftables = $db->DDLListTables($db->database_name);
+    	$force_utf8_on_tables = GETPOST('force_utf8_on_tables','alpha');
+
+    	$listoftables = $db->DDLListTables($db->database_name);
+
+        // Disable foreign key checking for avoid errors
+    	if ($force_utf8_on_tables == 'confirmed')
+    	{
+    		$sql='SET FOREIGN_KEY_CHECKS=0';
+    		print '<!-- '.$sql.' -->';
+    		$resql = $db->query($sql);
+    	}
 
         foreach($listoftables as $table)
         {
+        	// do not convert llx_const if mysql encrypt/decrypt is used
+        	if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) continue;
+
             print '<tr><td colspan="2">';
             print $table;
             $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
             print '<!-- '.$sql.' -->';
-            if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
+            if ($force_utf8_on_tables == 'confirmed')
             {
             	$resql = $db->query($sql);
             	print ' - Done ('.($resql?'OK':'KO').')';
             }
             else print ' - Disabled';
             print '</td></tr>';
+        }
+
+        // Enable foreign key checking
+        if ($force_utf8_on_tables == 'confirmed')
+        {
+        	$sql='SET FOREIGN_KEY_CHECKS=1';
+        	print '<!-- '.$sql.' -->';
+        	$resql = $db->query($sql);
         }
     }
     else

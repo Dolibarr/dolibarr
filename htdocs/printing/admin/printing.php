@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/printing/lib/printing.lib.php';
 use OAuth\Common\Storage\DoliStorage;
 
-$langs->load("admin");
-$langs->load("printing");
-$langs->load("oauth");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (! $user->admin) accessforbidden();
 

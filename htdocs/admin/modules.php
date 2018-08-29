@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","modulebuilder"));
 
 $mode=GETPOST('mode', 'alpha');
@@ -54,7 +55,7 @@ $options['categorie'] = ((GETPOST('categorie', 'int')?GETPOST('categorie', 'int'
 $options['start']     = ((GETPOST('start', 'int')?GETPOST('start', 'int'):0) + 0);
 $options['end']       = ((GETPOST('end', 'int')?GETPOST('end', 'int'):0) + 0);
 $options['search']    = GETPOST('search_keyword', 'alpha');
-$dolistore            = new Dolistore();
+$dolistore            = new Dolistore(false);
 
 
 if (! $user->admin)
@@ -78,10 +79,13 @@ $familyinfo=array(
 );
 
 $param='';
-if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
-if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+if (! GETPOST('buttonreset','alpha'))
+{
+	if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
+	if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
+	if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
+	if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+}
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
@@ -358,8 +362,6 @@ foreach ($modulesdir as $dir)
 		    			            $filename[$i]= $modName;
 		    					    $modules[$modName] = $objMod;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
@@ -373,8 +375,6 @@ foreach ($modulesdir as $dir)
 		    			            {
 		    			                $moduleposition = 800;
 		    			            }
-
-		    			            if ($special == 1) $familykey='interface';
 
 		    			            // Add list of warnings to show into arrayofwarnings and arrayofwarningsext
 		    			            if (! empty($objMod->warnings_activation))
@@ -390,7 +390,7 @@ foreach ($modulesdir as $dir)
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -531,12 +531,9 @@ if ($mode == 'common')
     	$objMod  = $modules[$modName];
     	$dirofmodule = $dirmod[$key];
 
-    	$special = $objMod->special;
-
-    	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
+    	//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
     	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
-    	if (($special >= 4 && $mode != 'expdev')
-    		|| ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental')) continue;    // Discard if not for current tab
+    	if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
         {

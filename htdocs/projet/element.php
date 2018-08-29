@@ -53,10 +53,8 @@ if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/s
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
-$langs->load("projects");
-$langs->load("companies");
-$langs->load("suppliers");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
 if (! empty($conf->facture->enabled))  	    $langs->load("bills");
 if (! empty($conf->commande->enabled)) 	    $langs->load("orders");
 if (! empty($conf->propal->enabled))   	    $langs->load("propal");

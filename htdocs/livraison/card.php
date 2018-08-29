@@ -45,11 +45,9 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
+$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
 
-$langs->load("sendings");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
@@ -77,9 +75,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard','globalcard'));
 
+
 /*
  * Actions
  */
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -193,27 +193,22 @@ elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 // Update extrafields
 if ($action == 'update_extras')
 {
+	$object->oldcopy = dol_clone($object);
+
 	// Fill array 'array_options' with data from update form
 	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 	if ($ret < 0) $error++;
 
 	if (! $error)
 	{
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('livraisondao'));
-		$parameters = array('id' => $object->id);
-		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook)) {
-			$result = $object->insertExtraFields();
-			if ($result < 0)
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
-			}
-		} else if ($reshook < 0)
+		// Actions on extra fields
+		$result = $object->insertExtraFields('DELIVERY_MODIFY');
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
+		}
 	}
 
 	if ($error)
@@ -250,9 +245,16 @@ if ($action == 'update_extras_line')
 }
 
 
+// Actions to build doc
+$upload_dir = $conf->expedition->dir_output.'/receipt';
+$permissioncreate = $user->rights->expedition->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+
 /*
  * Build document
  */
+/*
 if ($action == 'builddoc')	// En get ou en post
 {
 	// Save last template used to generate document
@@ -288,6 +290,7 @@ elseif ($action == 'remove_file')
 	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
+*/
 
 
 /*
@@ -571,7 +574,7 @@ else
 				// copy from expedition
 				$expeditionExtrafields = new Extrafields($db);
 				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id, $expeditionExtrafieldLabels) > 0) {
+				if ($expedition->fetch_optionals($object->origin_id) > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
@@ -674,12 +677,12 @@ else
 					$colspan=2;
 					$mode = ($object->statut == 0) ? 'edit' : 'view';
 					$line = new LivraisonLigne($db);
-					$line->fetch_optionals($object->lines[$i]->id,$extralabelslines);
+					$line->fetch_optionals($object->lines[$i]->id);
 					if ($action = 'create_delivery') {
 						$srcLine = new ExpeditionLigne($db);
 						$expeditionLineExtrafields = new Extrafields($db);
 						$expeditionLineExtrafieldLabels = $expeditionLineExtrafields->fetch_name_optionals_label($srcLine->table_element);
-						$srcLine->fetch_optionals($expedition->lines[$i]->id,$expeditionLineExtrafieldLabels);
+						$srcLine->fetch_optionals($expedition->lines[$i]->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					}
 					print '<tr class="oddeven">';

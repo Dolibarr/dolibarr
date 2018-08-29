@@ -38,23 +38,78 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_aurore extends ModelePDFSupplierProposal
 {
-	var $db;
-	var $name;
-	var $description;
-	var $type;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+	
+	/**
+     * @var string model name
+     */
+    public $name;
+	
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+	
+	/**
+     * @var string document type
+     */
+    public $type;
 
-	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+     */
+	public $phpmin = array(5, 2); 
+	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
-	var $page_largeur;
-	var $page_hauteur;
-	var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+	
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+	
+	/**
+     * @var array format
+     */
+    public $format;
+	
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+	
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+	
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+	
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
 
-	var $emetteur;	// Objet societe qui emet
+	/**
+	* Issuer
+	* @var Societe
+	*/
+	public $emetteur;
 
 
 	/**
@@ -62,12 +117,12 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
+		global $conf, $langs, $mysoc;
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "aurore";
@@ -103,11 +158,21 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=102;
-		$this->posxup=126;
-		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
+		
+		if ($conf->global->PRODUCT_USE_UNITS)
+		{
+		    $this->posxtva=101;
+		    $this->posxup=118;
+		    $this->posxqty=135;
+		    $this->posxunit=151;
+		} else {
+		    $this->posxtva=102;
+		    $this->posxup=126;
+		    $this->posxqty=145;
+		}
+		
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxup=$this->posxtva;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -146,13 +211,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("supplier_proposal");
-		$outputlangs->load("products");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "supplier_proposal"));
 
 		$nblignes = count($object->lines);
 
@@ -248,7 +309,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -275,7 +336,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount))
+				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
 					$this->posxtva+=($this->postotalht - $this->posxdiscount);
@@ -289,15 +350,13 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
-				$tab_top = 90;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+				$tab_top = 90+$top_shift;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42+$top_shift:10);
 
 				// Affiche notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
@@ -314,14 +373,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				}
 				if ($notetoshow)
 				{
-					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					$tab_top -= 2;
+
+          $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 
-					$tab_top = 88;
-
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -329,12 +388,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$pdf->SetDrawColor(192,192,192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
-					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY+6;
-				}
-				else
-				{
-					$height_note=0;
 				}
 
 				$iniY = $tab_top + 7;
@@ -461,7 +515,23 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
+					// Enough for 6 chars
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+					    $pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 3, $qty, 0, 'R');
+					}
+					else
+					{
+					    $pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');
+					}
+					
+					// Unit
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+					    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+					    $pdf->SetXY($this->posxunit, $curY);
+					    $pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+					}
 
 					// Discount on line
 					/*
@@ -1152,8 +1222,24 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		    $pdf->SetXY($this->posxqty-1, $tab_top+1);
+		    if($conf->global->PRODUCT_USE_UNITS)
+		    {
+		        $pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		    }
+		    else
+		    {
+		        $pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		    }
+		}
+		
+		if($conf->global->PRODUCT_USE_UNITS) {
+		    $pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
+		    if (empty($hidetop)) {
+		        $pdf->SetXY($this->posxunit - 1, $tab_top + 1);
+		        $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+		            'C');
+		    }
 		}
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
@@ -1188,11 +1274,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
-
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("supplier_proposal");
-		$outputlangs->load("companies");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "supplier_proposal", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1290,8 +1374,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		$posy+=2;
 
+		$top_shift = 0;
 		// Show list of linked objects
+		$current_y = $pdf->getY();
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
+		if ($current_y < $pdf->getY())
+		{
+			$top_shift = $pdf->getY() - $current_y;
+		}
 
 		if ($showaddress)
 		{
@@ -1306,10 +1396,10 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy=42;
+			$posy=42+$top_shift;
 		 	$posx=$this->marge_gauche;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
@@ -1363,7 +1453,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			// Show recipient
 			$widthrecbox=100;
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
-			$posy=42;
+			$posy=42+$top_shift;
 			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
@@ -1386,6 +1476,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		}
 
 		$pdf->SetTextColor(0,0,0);
+		return $top_shift;
 	}
 
 	/**

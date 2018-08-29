@@ -20,9 +20,10 @@ CREATE TABLE llx_expensereport_det
 (
    rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
    fk_expensereport integer NOT NULL,
-   fk_c_type_fees integer NOT NULL,
+   docnumber varchar(128),										-- To store a ref of a accounting doc (piece)
+   fk_c_type_fees integer NOT NULL,								-- Type of expense
    fk_c_exp_tax_cat integer,
-   fk_projet integer,
+   fk_projet integer,											-- Id of project
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,

@@ -69,9 +69,6 @@ class modResource extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-		// Where to store the module in setup page
-		// (0=common,1=interface,2=others,3=very specific)
-		$this->special = 2;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png
 		// use this->picto='pictovalue'
@@ -82,26 +79,7 @@ class modResource extends DolibarrModules
 		// for default path (eg: /resource/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /resource/core/modules/barcode)
 		// for specific css file (eg: /resource/css/resource.css.php)
-		$this->module_parts = array(
-			// Set this to 1 if module has its own trigger directory
-			//'triggers' => 1,
-			// Set this to 1 if module has its own login method directory
-			//'login' => 0,
-			// Set this to 1 if module has its own substitution function file
-			//'substitutions' => 0,
-			// Set this to 1 if module has its own menus handler directory
-			//'menus' => 0,
-			// Set this to 1 if module has its own barcode directory
-			//'barcode' => 0,
-			// Set this to 1 if module has its own models directory
-			//'models' => 0,
-			// Set this to relative path of css if module has its own css file
-			//'css' => '/resource/css/resource.css.php',
-			// Set here all hooks context managed by module
-			// 'hooks' => array('actioncard','actioncommdao','resource_card','element_resource')
-			// Set here all workflow context managed by module
-			//'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
-		);
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/resource/temp");

@@ -51,9 +51,8 @@ if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'interventions'));
 
 $id			= GETPOST('id','int');
 $ref		= GETPOST('ref','alpha');
@@ -741,27 +740,21 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('interventiondao'));
-			$parameters=array('id'=>$object->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			$result=$object->insertExtraFields('INTERVENTION_MODIFY');
+			if ($result < 0)
 			{
-				$result=$object->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
-			else if ($reshook < 0) $error++;
 		}
 
 		if ($error) $action = 'edit_extras';
@@ -1008,7 +1001,7 @@ if ($action == 'create')
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1410,7 +1403,6 @@ else if ($id > 0 || ! empty($ref))
 				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
@@ -1476,7 +1468,7 @@ else if ($id > 0 || ! empty($ref))
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
 
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
 
@@ -1521,7 +1513,7 @@ else if ($id > 0 || ! empty($ref))
 
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
 
@@ -1646,9 +1638,9 @@ else if ($id > 0 || ! empty($ref))
 				{
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendMail').'</a></div>';
 				}
 
 				// Proposal

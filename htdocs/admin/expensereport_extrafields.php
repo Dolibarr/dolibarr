@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (!$user->admin)
 	accessforbidden();
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("trips");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -67,7 +65,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("expensereports");
 
-llxHeader('',$langs->trans("expensereportsSetup"));
+llxHeader('',$langs->trans("ExpenseReportsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_setup');

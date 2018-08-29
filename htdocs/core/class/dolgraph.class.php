@@ -594,7 +594,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	integer|null
 	 */
-	function draw($file,$fileurl='')
+	function draw($file, $fileurl='')
 	{
 		if (empty($file))
 		{
@@ -602,11 +602,16 @@ class DolGraph
 			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (! is_array($this->data) || count($this->data) < 1)
+		if (! is_array($this->data))
 		{
 			$this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
 			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
 			return -1;
+		}
+		if (count($this->data) < 1)
+		{
+			$this->error="Call to draw method was made but SetData was is an empty dataset";
+			dol_syslog(get_class($this)."::draw ".$this->error, LOG_WARNING);
 		}
 		$call = "draw_".$this->_library;
 		call_user_func_array(array($this,$call), array($file,$fileurl));
@@ -669,7 +674,7 @@ class DolGraph
 		$group->setPadding($paddleft, $paddright);		// Width on left and right for Y axis values
 		$group->legend->setSpace(0);
 		$group->legend->setPadding(2,2,2,2);
-		$group->legend->setPosition(NULL,0.1);
+		$group->legend->setPosition(null, 0.1);
 		$group->legend->setBackgroundColor($colorsemitrans);
 
 		if (is_array($this->bgcolorgrid)) $group->grid->setBackgroundColor($bgcolorgrid);
@@ -729,7 +734,7 @@ class DolGraph
 				$plot->barShadow->setSize($this->SetShading);
 				$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
 				$plot->barShadow->setColor(new Color(160, 160, 160, 50));
-				$plot->barShadow->smooth(TRUE);
+				$plot->barShadow->smooth(true);
 				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
 
@@ -822,7 +827,7 @@ class DolGraph
 
 		$legends=array();
 		$nblot=count($this->data[0])-1;    // -1 to remove legend
-		if ($nblot < 0) dol_print_error('', 'Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw');
+		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
 		$firstlot=0;
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
@@ -875,10 +880,17 @@ class DolGraph
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;
-		while ($i < $nblot)
+		if ($nblot < 0)
 		{
-			$this->stringtoshow.=$serie[$i];
-			$i++;
+			$this->stringtoshow.='<!-- No series of data -->';
+		}
+		else
+		{
+			while ($i < $nblot)
+			{
+				$this->stringtoshow.=$serie[$i];
+				$i++;
+			}
 		}
 		$this->stringtoshow.="\n";
 

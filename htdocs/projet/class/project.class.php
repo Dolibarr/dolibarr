@@ -64,6 +64,7 @@ class Project extends CommonObject
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
     var $budget_amount;
+    var $bill_time;			// Is the time spent on project must be invoiced or not
 
     var $statuts_short;
     var $statuts_long;
@@ -178,6 +179,7 @@ class Project extends CommonObject
         $sql.= ", datee";
         $sql.= ", opp_amount";
         $sql.= ", budget_amount";
+        $sql.= ", bill_time";
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
@@ -194,6 +196,7 @@ class Project extends CommonObject
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
         $sql.= ", " . (strcmp($this->opp_amount,'') ? price2num($this->opp_amount) : 'null');
         $sql.= ", " . (strcmp($this->budget_amount,'') ? price2num($this->budget_amount) : 'null');
+        $sql.= ", " . ($this->bill_time ? 1 : 0);
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -220,7 +223,7 @@ class Project extends CommonObject
         }
 
         // Update extrafield
-        if (!$error) {
+        if (! $error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -231,13 +234,13 @@ class Project extends CommonObject
         	}
         }
 
-        if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+        if (! $error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
             $res = $this->setValid($user);
             if ($res < 0) $error++;
         }
 
-        if (!$error)
+        if (! $error)
         {
             $this->db->commit();
             return $ret;
@@ -297,6 +300,7 @@ class Project extends CommonObject
             $sql.= ", opp_amount = " . (strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
             $sql.= ", budget_amount = " . (strcmp($this->budget_amount, '')  ? price2num($this->budget_amount) : "null");
             $sql.= ", fk_user_modif = " . $user->id;
+            $sql.= ", bill_time = " . ($this->bill_time ? 1 : 0);
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -316,7 +320,7 @@ class Project extends CommonObject
                 	}
                 }
 
-                if (! $error && !$notrigger)
+                if (! $error && ! $notrigger)
                 {
                 	// Call trigger
                 	$result=$this->call_trigger('PROJECT_MODIFY',$user);
@@ -394,7 +398,8 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
-        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent, note_private, note_public, model_pdf";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
+        $sql.= " note_private, note_public, model_pdf, bill_time";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -441,10 +446,12 @@ class Project extends CommonObject
                 $this->opp_percent	= $obj->opp_percent;
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
+                $this->bill_time = (int) $obj->bill_time;
 
                 $this->db->free($resql);
 
-                // Retreive all extrafield for thirdparty
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
                 $this->fetch_optionals();
 
                 return 1;
@@ -960,7 +967,7 @@ class Project extends CommonObject
      */
     function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
-        global $conf, $langs, $user;
+        global $conf, $langs, $user, $hookmanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1009,17 +1016,15 @@ class Project extends CommonObject
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
 
-		if (! is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
+			/*
+			$hookmanager->initHooks(array('projectdao'));
+			$parameters=array('id'=>$this->id);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
+			if ($reshook > 0)
+				$linkclose = $hookmanager->resPrint;
+			*/
 		}
-		$hookmanager->initHooks(array('projectdao'));
-		$parameters=array('id'=>$this->id);
-		// Note that $action and $object may have been modified by some hooks
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
-		if ($reshook > 0)
-			$linkclose = $hookmanager->resPrint;
-        }
 
         $picto = 'projectpub';
         if (! $this->public) $picto = 'project';
@@ -1033,6 +1038,13 @@ class Project extends CommonObject
         if ($withpicto != 2) $result.= $this->ref;
         $result .= $linkend;
         if ($withpicto != 2) $result.=(($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+        global $action;
+        $hookmanager->initHooks(array('projectdao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
         return $result;
     }
@@ -1135,10 +1147,10 @@ class Project extends CommonObject
      *
      * @param 	User	$user			User object
      * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
-     * @param 	int		$list			0=Return array,1=Return string list
+     * @param 	int		$list			0=Return array, 1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
-     * @param	string		$filter			additionnal filter on project (statut, ref, ...)
-     * @return 	array or string			Array of projects id, or string with projects id separated with ","
+     * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+     * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0, $filter='')
     {
@@ -1734,7 +1746,7 @@ class Project extends CommonObject
         //$socid=$user->societe_id;
 
         if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user,0,1,$socid);
-        
+
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
         $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
         $sql.= ")";
@@ -1748,7 +1760,7 @@ class Project extends CommonObject
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
         //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-        
+
         //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)

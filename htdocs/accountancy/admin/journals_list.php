@@ -21,6 +21,7 @@
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure journals
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -30,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","compta","accountancy"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
@@ -133,6 +135,7 @@ $elementList = array();
 			'3' => $langs->trans('AccountingJournalType3'),
 			'4' => $langs->trans('AccountingJournalType4'),
 			'5' => $langs->trans('AccountingJournalType5'),
+			'8' => $langs->trans('AccountingJournalType8'),
 			'9' => $langs->trans('AccountingJournalType9')
 	);
 
@@ -416,7 +419,6 @@ if ($id)
 	if ($tabname[$id])
 	{
 		$alabelisused=0;
-		$var=false;
 
 		$fieldlist=explode(',',$tabfield[$id]);
 
@@ -496,7 +498,6 @@ if ($id)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var=true;
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
@@ -601,6 +602,7 @@ if ($id)
 
 					if (empty($reshook))
 					{
+                        $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
 
@@ -611,10 +613,12 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
-								$langs->load("accountancy");
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
-								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($obj->nature)?$key:$obj->{$fieldlist[$field]});
+								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature))?$key:$obj->{$fieldlist[$field]});
 							}
+							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+								$valuetoshow=$langs->trans($obj->label);
+                            }
 
 							$class='tddict';
 							// Show value for field
@@ -640,13 +644,7 @@ if ($id)
 					// Active
 					print '<td align="center" class="nowrap">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-					else
-				 	{
-				 		if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
-				 		else if (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
-				  		else if (isset($obj->type) && in_array($obj->type, array('system')) && ! empty($obj->active) && $obj->code != 'AC_OTH') print $langs->trans("UsedOnlyWithTypeOption");
-						else print $langs->trans("AlwaysActive");
-					}
+					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link

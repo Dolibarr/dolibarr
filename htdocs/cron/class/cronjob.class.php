@@ -64,6 +64,11 @@ class Cronjob extends CommonObject
 	public $libname;
 	public $test;					// A test condition to know if job is visible/qualified
 
+	const STATUS_DISABLED = 0;
+	const STATUS_ENABLED = 1;
+	const STATUS_ARCHIVED = 2;
+
+
     /**
      *  Constructor
      *
@@ -1002,7 +1007,8 @@ class Cronjob extends CommonObject
 				$ret=dol_include_once($this->classesname);
 				if ($ret===false || (! class_exists($this->objectname)))
 				{
-					$this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					if ($ret===false) $this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					else $this->error=$langs->trans('CronCannotLoadObject',$this->classesname,$this->objectname);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
 					$this->lastresult = -1;
@@ -1062,9 +1068,16 @@ class Cronjob extends CommonObject
 				if ($result === false || (! is_bool($result) && $result != 0))
 				{
 				    $langs->load("errors");
-					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$object->error, LOG_ERR);
-				    $this->error = $object->error?$object->error:$langs->trans('ErrorUnknown');
-					$this->lastoutput = ($object->output?$object->output."\n":"").$this->error;
+
+				    $errmsg='';
+				    if (! is_array($object->errors) || ! in_array($object->error, $object->errors)) $errmsg.=$object->error;
+				    if (is_array($object->errors) && count($object->errors)) $errmsg.=($errmsg?', '.$errmsg:'').join(', ',$object->errors);
+				    if (empty($errmsg)) $errmsg=$langs->trans('ErrorUnknown');
+
+				    dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
+
+				    $this->error = $errmsg;
+				    $this->lastoutput = ($object->output?$object->output."\n":"").$errmsg;
 					$this->lastresult = is_numeric($result)?$result:-1;
 		            $retval = $this->lastresult;
 		            $error++;

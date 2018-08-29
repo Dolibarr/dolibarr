@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","companies","resource","holiday","accountancy","hrm"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
@@ -178,7 +179,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
     if (! is_numeric(GETPOST('position','alpha')))
     {
-    	$langs->load("errors");
+    	$langs->loadLangs(array("errors"));
    		$ok=0;
    		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
     }
@@ -456,7 +457,6 @@ if ($id)
     if ($tabname[$id])
     {
         $alabelisused=0;
-        $var=false;
 
         $fieldlist=explode(',',$tabfield[$id]);
 
@@ -550,7 +550,6 @@ if ($id)
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
         $param = '&id='.$id;
         if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
@@ -720,7 +719,7 @@ if ($id)
                                 $valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
                             else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
-                                $langs->load("propal");
+                                $langs->loadLangs(array("propal"));
                                 $key=$langs->trans("AvailabilityType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }

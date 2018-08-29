@@ -162,7 +162,7 @@ class Users extends DolibarrApi
 	 * @param array $request_data New user data
 	 * @return int
 	 */
-	function post($request_data = NULL) {
+	function post($request_data = null) {
 	    // check user authorization
 	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
 	    //   throw new RestException(401, "User creation not allowed");
@@ -194,7 +194,7 @@ class Users extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+	function put($id, $request_data = null) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 			//throw new RestException(401);
 		//}
@@ -227,7 +227,7 @@ class Users extends DolibarrApi
     }
 
     /**
-	 * add user to group
+	 * Add a user into a group
 	 *
 	 * @param   int     $id        User ID
 	 * @param   int     $group     Group ID
@@ -236,6 +236,9 @@ class Users extends DolibarrApi
 	 * @url	GET {id}/setGroup/{group}
 	 */
 	function setGroup($id, $group) {
+
+		global $conf;
+
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
@@ -250,7 +253,9 @@ class Users extends DolibarrApi
           throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->useraccount->SetInGroup($group,1);
+        // When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
+        // hack the security by giving himself permissions on another entity.
+        $result = $this->useraccount->SetInGroup($group, DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
         if (! ($result > 0))
         {
             throw new RestException(500, $this->useraccount->error);

@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$langs->load("orders");
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -145,7 +144,7 @@ if ($id > 0 || ! empty($ref))
 			if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 			$sql.= $db->order($sortfield, $sortorder);
-			
+
 	        //Calcul total qty and amount for global if full scan list
 	        $total_ht=0;
 	        $total_qty=0;
@@ -157,9 +156,9 @@ if ($id > 0 || ! empty($ref))
 	        	$result = $db->query($sql);
 	        	$totalofrecords = $db->num_rows($result);
 	        }
-	        
+
 	        $sql .= $db->plimit($limit + 1, $offset);
-	        
+
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -172,7 +171,7 @@ if ($id > 0 || ! empty($ref))
 	            if (! empty($search_year))
 	            	$option .= '&amp;search_year='.$search_year;
 	            if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
-	            	
+
 	            print '<form method="post" action="' . $_SERVER ['PHP_SELF'] . '?id='.$product->id.'" name="search_form">' . "\n";
 	            if (! empty($sortfield))
 	            	print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
@@ -217,12 +216,12 @@ if ($id > 0 || ! empty($ref))
 
 						$total_ht+=$objp->total_ht;
 						$total_qty+=$objp->qty;
-						
+
 						$orderstatic->id=$objp->commandeid;
 						$orderstatic->ref=$objp->ref;
 						$orderstatic->ref_client=$objp->ref_client;
 						$societestatic->fetch($objp->socid);
-						
+
 						print '<tr class="oddeven">';
 	 					print '<td>';
 	                    print $orderstatic->getNomUrl(1);

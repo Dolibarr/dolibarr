@@ -33,6 +33,7 @@ PropalStatusSigned=Podpisano (do rachunku)
 PropalStatusNotSigned=Nie podpisały (zamknięte)
 PropalStatusBilled=zapowiadane
 PropalStatusDraftShort=Szkic
+PropalStatusValidatedShort=Zatwierdzony
 PropalStatusClosedShort=Zamknięte
 PropalStatusSignedShort=Podpisany
 PropalStatusNotSignedShort=Niepodpisany
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 miesiąc
 TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
 TypeContact_propal_external_BILLING=Kontakt do klienta w sprawie faktury
 TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Kompletny wniosek modelu (logo. ..)
 DefaultModelPropalCreate=Domyślny model kreacji.

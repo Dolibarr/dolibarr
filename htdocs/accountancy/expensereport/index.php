@@ -29,12 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("main");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","other","main","accountancy"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {
@@ -153,7 +149,8 @@ $y = $year_current;
 $buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
 
 
-print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
+print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
+//print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
@@ -222,7 +219,9 @@ print '</div>';
 
 print '<br>';
 
-print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
+
+print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+//print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
 
 print '<div class="div-table-responsive-no-min">';
@@ -297,7 +296,8 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     print '<br>';
     print '<br>';
 
-    print_fiche_titre($langs->trans("OtherInfo"), '', '');
+    print_barre_liste($langs->trans("OtherInfo"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+    //print_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';

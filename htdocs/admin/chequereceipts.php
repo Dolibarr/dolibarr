@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009       Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
- * Copyright (C) 2013-2014  Philippe Grand             <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018  Philippe Grand             <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("banks");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","companies","bills","other","banks"));
 
 if (!$user->admin)
   accessforbidden();
@@ -133,8 +130,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
@@ -166,7 +161,6 @@ foreach ($dirmodels as $reldir)
 
 						if ($module->isEnabled())
 						{
-							$var = !$var;
 							print '<tr class="oddeven"><td width="100">';
 							print (empty($module->name)?$name:$module->name);
 							print "</td><td>\n";
@@ -254,9 +248,6 @@ print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td align="center" width="60">&nbsp;</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-$var=true;
-
-$var=! $var;
 
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");

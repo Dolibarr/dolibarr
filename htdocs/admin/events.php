@@ -31,16 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
 $action=GETPOST('action','aZ09');
 
 
 $securityevent=new Events($db);
 $eventstolog=$securityevent->eventstolog;
-
 
 
 /*
@@ -88,8 +86,6 @@ $head=security_prepare_head();
 
 dol_fiche_head($head, 'audit', $langs->trans("Security"), -1);
 
-
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
@@ -98,8 +94,7 @@ print "</tr>\n";
 foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
-	{
-		
+	{		
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';

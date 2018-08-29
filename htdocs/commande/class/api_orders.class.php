@@ -76,9 +76,11 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $this->commande->fetchObjectLinked();
+		// Add external contacts ids
+		$this->commande->contacts_ids = $this->commande->liste_contact(-1,'external',1);
+		$this->commande->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->commande);
-    }
+	}
 
 
 
@@ -159,6 +161,8 @@ class Orders extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
                 if($commande_static->fetch($obj->rowid)) {
+                    // Add external contacts ids
+                    $commande_static->contacts_ids = $commande_static->liste_contact(-1,'external',1);
                     $obj_ret[] = $this->_cleanObjectDatas($commande_static);
                 }
                 $i++;
@@ -179,7 +183,7 @@ class Orders extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of order
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -245,7 +249,7 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
@@ -308,7 +312,7 @@ class Orders extends DolibarrApi
      *
      * @return object
      */
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
@@ -402,7 +406,7 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = NULL) {
+    function put($id, $request_data = null) {
       if (! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }

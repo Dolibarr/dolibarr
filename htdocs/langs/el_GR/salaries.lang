@@ -15,3 +15,4 @@ THMDescription=This value may be used to calculate cost of time consumed on a pr
 TJMDescription=Αυτή η τιμή εμφανίζεται μόνο σαν πληροφορία και δεν χρησιμοποιείται για κανένα υπολογισμό
 LastSalaries=Latest %s salary payments
 AllSalaries=All salary payments
+SalariesStatistics=Statistiques salaires

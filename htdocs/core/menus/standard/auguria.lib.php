@@ -169,7 +169,8 @@ function print_start_menu_entry_auguria($idsel,$classname,$showmode)
 	if ($showmode)
 	{
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-		print '<div class="tmenuleft tmenusep"></div><div class="tmenucenter">';
+		//print '<div class="tmenuleft tmenusep"></div>';
+		print '<div class="tmenucenter">';
 	}
 }
 
@@ -379,12 +380,13 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					if ($objp->nature == 4 && ! empty($conf->banque->enabled)) $nature="bank";
 					if ($objp->nature == 5 && ! empty($conf->expensereport->enabled)) $nature="expensereports";
 					if ($objp->nature == 1) $nature="various";
+					if ($objp->nature == 8) $nature="inventory";
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if ($conf->global->MAIN_FEATURES_LEVEL < 2)
+					if (! empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
 					{
-						if ($nature == 'various' || $nature == 'hasnew') $nature='';
+						if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') $nature='';
 					}
 
 					if ($nature)
@@ -463,6 +465,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	if (! is_array($menu_array)) return 0;
 
 	// Show menu
+	$invert=empty($conf->global->MAIN_MENU_INVERT)?"":"invert";
 	if (empty($noout))
 	{
 		$altok=0; $blockvmenuopened=false; $lastlevel0='';
@@ -484,11 +487,11 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				}
 				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenuimpair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 			}
 
@@ -508,24 +511,43 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
 			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
-			// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
-			$url=dol_buildpath($menu_array[$i]['url'],1);
-
-			if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
+			$url = $shorturl = $shorturlwithoutparam = $menu_array[$i]['url'];
+			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$menu_array[$i]['url']))
 			{
-				if (! preg_match('/\?/',$url)) $url.='?';
-				else $url.='&';
-				$url.='mainmenu='.$mainmenu;
+				$tmp=explode('?',$menu_array[$i]['url'],2);
+				$url = $shorturl = $tmp[0];
+				$param = (isset($tmp[1])?$tmp[1]:'');    // params in url of the menu link
+				
+				// Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
+				if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($menu_array[$i]['mainmenu']))
+				{
+					$param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
+				}
+				if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($menu_array[$i]['mainmenu']))
+				{
+					$param.=($param?'&':'').'leftmenu=';
+				}
+				//$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
+				$url = dol_buildpath($url,1).($param?'?'.$param:'');
+				$shorturlwithoutparam = $shorturl;
+				$shorturl = $shorturl.($param?'?'.$param:'');
 			}
 
-			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].' -->'."\n";
+
+			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
 			// Menu level 0
 			if ($menu_array[$i]['level'] == 0)
 			{
 				if ($menu_array[$i]['enabled'])     // Enabled so visible
 				{
-					print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
+					print '<div class="menu_titre">'.$tabstring;
+					if ($shorturlwithoutparam) print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					else print '<span class="vmenu">';
+					print ($menu_array[$i]['prefix']?$menu_array[$i]['prefix']:'').$menu_array[$i]['titre'];
+					if ($shorturlwithoutparam) print '</a>';
+					else print '</span>';
+					print '</div>'."\n";
 					$lastlevel0='enabled';
 				}
 				else if ($showmenu)                 // Not enabled but visible (so greyed)
@@ -542,6 +564,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					print '<div class="menu_top"></div>'."\n";
 				}
 			}
+
 			// Menu level > 0
 			if ($menu_array[$i]['level'] > 0)
 			{
@@ -551,10 +574,10 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled')     // Enabled so visible, except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
-					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					if ($shorturlwithoutparam) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
 					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
-					if ($menu_array[$i]['url']) print '</a>';
+					if ($shorturlwithoutparam) print '</a>';
 					else print '</span>';
 					// If title is not pure text and contains a table, no carriage return added
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';

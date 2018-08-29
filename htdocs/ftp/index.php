@@ -27,10 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
-// Load traductions files
-$langs->load("ftp");
-$langs->load("companies");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('ftp', 'companies', 'other'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -511,7 +509,6 @@ else
     		}
 
 			$nboflines=count($contents);
-			$var=true;
 			$rawlisthasfailed=false;
 			$i=0;
 			while ($i < $nboflines && $i < 1000)
@@ -555,7 +552,7 @@ else
 				}
 
 				
-				print '<tr '.$bc[$var].' height="18">';
+				print '<tr class="oddeven" height="18">';
 				// Name
 				print '<td>';
 				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;

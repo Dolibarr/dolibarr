@@ -33,6 +33,7 @@ PropalStatusSigned=Signat (a facturar)
 PropalStatusNotSigned=No signat (tancat)
 PropalStatusBilled=Facturat
 PropalStatusDraftShort=Esborrany
+PropalStatusValidatedShort=Validat
 PropalStatusClosedShort=Tancat
 PropalStatusSignedShort=Signat
 PropalStatusNotSignedShort=No signat
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 mes
 TypeContact_propal_internal_SALESREPFOLL=Agent comercial del seguiment del pressupost
 TypeContact_propal_external_BILLING=Contacte client de facturació pressupost
 TypeContact_propal_external_CUSTOMER=Contacte client seguiment pressupost
+TypeContact_propal_external_SHIPPING=Contacte del client pel lliurament
 # Document models
 DocModelAzurDescription=Model de pressupost complet (logo...)
 DefaultModelPropalCreate=Model per defecte

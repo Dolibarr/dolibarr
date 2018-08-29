@@ -33,6 +33,7 @@ PropalStatusSigned=Akseptert(kan faktureres)
 PropalStatusNotSigned=Ikke akseptert(lukket)
 PropalStatusBilled=Fakturert
 PropalStatusDraftShort=Kladd
+PropalStatusValidatedShort=Validert
 PropalStatusClosedShort=Lukket
 PropalStatusSignedShort=Signert
 PropalStatusNotSignedShort=Ikke signert
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=En måned
 TypeContact_propal_internal_SALESREPFOLL=Representant for oppfølging av tilbud
 TypeContact_propal_external_BILLING=Kundens fakturakontakt
 TypeContact_propal_external_CUSTOMER=Kundens tilbudsoppfølger
+TypeContact_propal_external_SHIPPING=Kundekontakt for levering
 # Document models
 DocModelAzurDescription=En fullstendig tilbudsmodell (logo...)
 DefaultModelPropalCreate=Standard modellbygging

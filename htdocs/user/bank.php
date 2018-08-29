@@ -36,13 +36,8 @@ if (! empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/c
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("trips");
-$langs->load("holiday");
-$langs->load("salaries");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 $id = GETPOST('id','int');
 $bankid = GETPOST('bankid','int');
@@ -200,7 +195,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
@@ -486,7 +481,7 @@ if ($id && ($action == 'edit' || $action == 'create' ) && $user->rights->user->u
 	$title = $langs->trans("User");
 	dol_fiche_head($head, 'bank', $title, 0, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 

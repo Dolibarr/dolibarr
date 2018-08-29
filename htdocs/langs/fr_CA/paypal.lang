@@ -10,7 +10,6 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offre de paiement "intégral" (carte de crédi
 PaypalModeOnlyPaypal=PayPal uniquement
 ThisIsTransactionId=Ceci est un identifiant de transaction: <b> %s</b>
 PAYPAL_ADD_PAYMENT_URL=Ajoutez l'URL du paiement Paypal lorsque vous envoyez un document par mail
-PredefinedMailContentLink=Vous pouvez cliquer sur le lien sécurisé ci-dessous pour effectuer votre paiement (PayPal) si ce n'est pas déjà fait.\n\n%s\n\n
 NewOnlinePaymentFailed=Nouveau paiement en ligne essayé mais échoué
 ONLINE_PAYMENT_SENDEMAIL=EMail à avertir après un paiement (succès ou non)
 ReturnURLAfterPayment=Retourner l'URL après le paiement

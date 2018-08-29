@@ -213,7 +213,7 @@ class ActionComm extends CommonObject
         $now=dol_now();
 
         // Check parameters
-        if (empty($this->userownerid))
+        if (! isset($this->userownerid) || $this->userownerid === '')	// $this->userownerid may be 0 (anonymous event) of > 0
         {
             dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
         	$this->errors[]='ErrorPropertyUserowneridNotDefined';
@@ -281,6 +281,7 @@ class ActionComm extends CommonObject
                 return -1;
             }
         }
+        $code = empty($this->code)?$this->type_code:$this->code;
 
         // Check parameters
         if (! $this->type_id)
@@ -309,14 +310,15 @@ class ActionComm extends CommonObject
         $sql.= "transparency,";
         $sql.= "fk_element,";
         $sql.= "elementtype,";
-        $sql.= "entity";
+        $sql.= "entity,";
+        $sql.= "extraparams";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").", ";
         $sql.= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '')?"'".$this->db->escape($this->durationp)."'":"null").", ";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
-        $sql.= (isset($this->type_code)?" '".$this->db->escape($this->type_code)."'":"null").", ";
+        $sql.= ($code?("'".$code."'"):"null").", ";
         $sql.= ((isset($this->socid) && $this->socid > 0) ? $this->socid:"null").", ";
         $sql.= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project:"null").", ";
         $sql.= " '".$this->db->escape($this->note)."', ";
@@ -328,7 +330,8 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->escape($this->transparency)."', ";
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
-        $sql.= $conf->entity;
+        $sql.= $conf->entity.",";
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -384,23 +387,15 @@ class ActionComm extends CommonObject
             {
             	$action='create';
 
-	            // Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-            	$hookmanager->initHooks(array('actioncommdao'));
-	            $parameters=array('actcomm'=>$this->id);
-	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-	            if (empty($reshook))
-	            {
-	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-	            	{
-	            		$result=$this->insertExtraFields();
-	            		if ($result < 0)
-	            		{
-	            			$error++;
-	            		}
-	            	}
+	            // Actions on extra fields
+            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            	{
+            		$result=$this->insertExtraFields();
+            		if ($result < 0)
+            		{
+            			$error++;
+            		}
 	            }
-	            else if ($reshook < 0) $error++;
             }
 
             if (! $error && ! $notrigger)
@@ -466,7 +461,10 @@ class ActionComm extends CommonObject
 		// Load source object
 		$objFrom = clone $this;
 
+		// Retreive all extrafield
+		// fetch optionals attributes and labels
 		$this->fetch_optionals();
+
 //		$this->fetch_userassigned();
 		$this->fetchResources();
 
@@ -589,7 +587,6 @@ class ActionComm extends CommonObject
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
                 $this->datef				= $this->db->jdate($obj->datep2);
-//				$this->durationp			= $this->durationp;					// deprecated
 
                 $this->datec   				= $this->db->jdate($obj->datec);
                 $this->datem   				= $this->db->jdate($obj->datem);
@@ -623,7 +620,7 @@ class ActionComm extends CommonObject
                 $this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->elementid;
-		$this->elementid			= $obj->elementid;
+                $this->elementid			= $obj->elementid;
                 $this->elementtype			= $obj->elementtype;
 
                 $this->fetchResources();
@@ -863,23 +860,15 @@ class ActionComm extends CommonObject
         {
 			$action='update';
 
-        	// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-        	$hookmanager->initHooks(array('actioncommdao'));
-        	$parameters=array('actcomm'=>$this->id);
-        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-        	if (empty($reshook))
-        	{
-        		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        		{
-        			$result=$this->insertExtraFields();
-        			if ($result < 0)
-        			{
-        				$error++;
-        			}
-        		}
+        	// Actions on extra fields
+       		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+       		{
+       			$result=$this->insertExtraFields();
+       			if ($result < 0)
+       			{
+       				$error++;
+       			}
         	}
-        	else if ($reshook < 0) $error++;
 
             // Now insert assignedusers
 			if (! $error)
@@ -1216,15 +1205,16 @@ class ActionComm extends CommonObject
      *    	Return URL of event
      *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
-     * 		@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only picto
-     *		@param	int		$maxlength			Max number of charaters into label. If negative, use the ref as label.
-     *		@param	string	$classname			Force style class on a link
-     * 		@param	string	$option				''=Link to action, 'birthday'=Link to contact
-     * 		@param	int		$overwritepicto		1=Overwrite picto
-     *      @param	int   	$notooltip		    1=Disable tooltip
-     *		@return	string						Chaine avec URL
+     * 		@param	int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+     *		@param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
+     *		@param	string	$classname				Force style class on a link
+     * 		@param	string	$option					''=Link to action, 'birthday'=Link to contact
+     * 		@param	int		$overwritepicto			1=Overwrite picto
+     *      @param	int   	$notooltip		    	1=Disable tooltip
+     *  	@param  int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *		@return	string							Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0, $notooltip=0)
+    function getNomUrl($withpicto=0, $maxlength=0, $classname='', $option='', $overwritepicto=0, $notooltip=0, $save_lastsearch_value=-1)
     {
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1235,8 +1225,12 @@ class ActionComm extends CommonObject
 
 		$result='';
 
-		// Set label of typ
-		$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		// Set label of type
+		$labeltype = '';
+		if ($this->type_code)
+		{
+			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
@@ -1266,15 +1260,12 @@ class ActionComm extends CommonObject
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
 		    $linkclose.=' class="'.$classname.' classfortooltip"';
 
-		    if (! is_object($hookmanager))
-		    {
-		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		        $hookmanager=new HookManager($this->db);
-		    }
+		    /*
 		    $hookmanager->initHooks(array('actiondao'));
 		    $parameters=array('id'=>$this->id);
 		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		    $linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
+		    */
 		}
 		else $linkclose.=' class="'.$classname.'"';
 
@@ -1283,12 +1274,19 @@ class ActionComm extends CommonObject
 			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
 		else
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		//print 'rrr'.$this->libelle.'-'.$withpicto;
+		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
         {
@@ -1308,7 +1306,10 @@ class ActionComm extends CommonObject
         {
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
             {
-                $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
+            	if ($labeltype)
+            	{
+                	$libelle.=(preg_match('/'.preg_quote($labeltype,'/').'/', $libelle)?'':' ('.$langs->transnoentities("Action".$this->type_code).')');
+            	}
             }
         }
 
@@ -1316,6 +1317,13 @@ class ActionComm extends CommonObject
         if ($withpicto)	$result.=img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"':'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
         $result.=$libelleshort;
         $result.=$linkend;
+
+        global $action;
+        $hookmanager->initHooks(array('actiondao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
         return $result;
     }
@@ -1328,7 +1336,7 @@ class ActionComm extends CommonObject
      *		@param	string		$type			'event' or 'journal'
      *		@param	int			$cachedelay		Do not rebuild file if date older than cachedelay seconds
      *		@param	string		$filename		Force filename
-     *		@param	array		$filters		Array of filters
+     *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
      *		@return int     					<0 if error, nb of events in new file if ok
      */
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)
@@ -1409,7 +1417,9 @@ class ActionComm extends CommonObject
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
                 if ($key == 'project')      $sql.=" AND a.fk_project=".(is_numeric($value)?$value:0);
-    	        // We must filter on assignement table
+                if ($key == 'actiontype')    $sql.=" AND c.type = '".$this->db->escape($value)."'";
+                if ($key == 'notactiontype') $sql.=" AND c.type <> '".$this->db->escape($value)."'";
+                // We must filter on assignement table
 				if ($key == 'logint')       $sql.= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
                 if ($key == 'logina')
                 {
@@ -1630,7 +1640,8 @@ class ActionComm extends CommonObject
     {
     	global $conf, $langs;
 
-		$this->output = '';
+    	$error = 0;
+    	$this->output = '';
 		$this->error='';
 
     	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
@@ -1644,6 +1655,8 @@ class ActionComm extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
+    	$this->db->begin();
+
 		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
 
@@ -1652,7 +1665,9 @@ class ActionComm extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
 		$this->db->query($sql);
 
-    	return 0;
+		$this->db->commit();
+
+    	return $error;
     }
 
 }

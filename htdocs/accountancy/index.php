@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2016     Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2016     Alexandre Spangaro       <aspangaro@zendsi.com>
+/* Copyright (C) 2016       Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2018  Alexandre Spangaro       <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,25 +26,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("main");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","admin","dict"));
 
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-
-$langs->load("admin");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("accountancy");
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("loans");
-
 
 /*
  * Actions
@@ -89,7 +76,7 @@ if ($conf->accounting->enabled)
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	print "<br>\n";
 
 	$step++;

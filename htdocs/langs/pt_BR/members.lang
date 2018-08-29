@@ -55,7 +55,6 @@ FollowingLinksArePublic=os vínculos seguintes são páginas acessiveis a todos 
 PublicMemberList=Lista público de Membros
 ExportDataset_member_1=Membros e Filiações
 LastMembersModified=Últimos %s membros modificados
-LastSubscriptionsModified=Últimas %s subscrições modificadas
 PublicMemberCard=Ficha pública membro
 SubscriptionNotRecorded=Subscrição não registrada
 AddSubscription=Criar subscripção

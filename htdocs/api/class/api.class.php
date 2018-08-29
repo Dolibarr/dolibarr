@@ -98,6 +98,7 @@ class DolibarrApi
 
         // Remove $db object property for object
         unset($object->db);
+        unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 
@@ -142,7 +143,6 @@ class DolibarrApi
         unset($object->class_element_line);
         unset($object->picto);
 
-        unset($object->facturee);		// Replace with billed
         unset($object->fieldsforcombobox);
 		unset($object->comments);
 

@@ -246,7 +246,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 
-		if ($conf->propal->dir_output)
+		if ($conf->propal->multidir_output[$conf->entity])
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -261,7 +261,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				}
 			}
 
-			$dir = $conf->propal->dir_output;
+			$dir = $conf->propal->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -303,7 +303,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print "file=".$file;
 				//print "conf->propal->dir_temp=".$conf->propal->dir_temp;
 
-				dol_mkdir($conf->propal->dir_temp);
+				dol_mkdir($conf->propal->multidir_temp[$object->entity]);
 
 
 				// If CUSTOMER contact defined on proposal, we use it
@@ -316,6 +316,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
@@ -357,7 +358,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->propal->dir_temp,
+						'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'
@@ -375,6 +376,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print html_entity_decode($odfHandler->__toString());
 				//print exit;
 
+				$object->fetch_optionals();
 
 				// Make substitutions into odt of freetext
 				try {
@@ -384,23 +386,25 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				{
 				}
 
-				// Make substitutions into odt
+				// Define substitution array
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$array_object_from_properties=$this->get_substitutionarray_each_var_object($object, $outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-		                // retrieve contact information for use in proposal as contact_xxx tags
-                		$array_thirdparty_contact = array();
-                		if ($usecontact)
-                    			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in proposal as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
+				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
-				$object->fetch_optionals();
+
 				// Call the ODTSubstitution hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				foreach($tmparray as $key=>$value)
 				{
 					try {

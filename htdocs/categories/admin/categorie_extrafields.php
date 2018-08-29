@@ -28,8 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("categories");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('categories', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);

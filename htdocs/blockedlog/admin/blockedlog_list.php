@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if ((! $user->admin && ! $user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
@@ -116,10 +117,10 @@ else if (GETPOST('downloadcsv','alpha'))
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql.= " WHERE entity = ".$conf->entity;
-		if (GETPOST('yeartoexport','int') > 0)
+		if (GETPOST('monthtoexport','int') > 0 || GETPOST('yeartoexport','int') > 0)
 		{
-			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), 1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), 12);
+			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):12);
 			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql.= " ORDER BY rowid ASC";					// Required so we get the first one
@@ -130,9 +131,16 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			// Make the first fetch to get first line
 			$obj = $db->fetch_object($res);
-
-			$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
-			$firstid = $obj->rowid;
+			if ($obj) 
+			{
+				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
+				$firstid = $obj->rowid;
+			}
+			else
+			{	// If not data found for filter, we do not need previoushash neither firstid
+				$previoushash = 'nodata';
+				$firstid = '';
+			}
 		}
 		else
 		{
@@ -143,14 +151,14 @@ else if (GETPOST('downloadcsv','alpha'))
 
 	if (! $error)
 	{
-		// Now restart request with all data
+		// Now restart request with all data = no limit(1) in sql request
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql.= " WHERE entity = ".$conf->entity;
-		if (GETPOST('yeartoexport','int') > 0)
+		if (GETPOST('monthtoexport','int') > 0 || GETPOST('yeartoexport','int') > 0)
 		{
-			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), 1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), 12);
+			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):12);
 			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql.= " ORDER BY rowid ASC";					// Required so later we can use the parameter $previoushash of checkSignature()
@@ -160,7 +168,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport','int')>0?GETPOST('yeartoexport','int').'-':'').$previoushash. ".csv\"");
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport','int')>0 ? GETPOST('yeartoexport','int').(GETPOST('monthtoexport','int')>0?sprintf("%02d",GETPOST('monthtoexport','int')):'').'-':'').$previoushash. ".csv\"");
 
 			print $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
@@ -320,7 +328,20 @@ print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'"
 
 print '<div align="right">';
 print $langs->trans("RestrictYearToExport").': ';
-print '<input type="text" name="yeartoexport" class="maxwidth75" value="'.GETPOST('yeartoexport','int').'">';
+$smonth=GETPOST('monthtoexport','int');
+// Month
+$retstring='';
+$retstring.='<select class="flat valignmiddle maxwidth75imp marginrightonly" id="monthtoexport" name="monthtoexport">';
+$retstring.='<option value="0" selected>&nbsp;</option>';
+for ($month = 1 ; $month <= 12 ; $month++)
+{
+	$retstring.='<option value="'.$month.'"'.($month == $smonth?' selected':'').'>';
+	$retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
+	$retstring.="</option>";
+}
+$retstring.="</select>";
+print $retstring;
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75" value="'.GETPOST('yeartoexport','int').'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
@@ -359,7 +380,7 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 
 print '</td>';
 
@@ -372,6 +393,7 @@ print '</td>';
 // Ref
 print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 
+// Link to ref
 print '<td class="liste_titre"></td>';
 
 // Amount
@@ -462,7 +484,6 @@ if (is_array($blocks))
 
 			// User
 		   	print '<td>';
-
 		   	//print $block->getUser()
 		   	print $block->user_fullname;
 		   	print '</td>';
@@ -474,7 +495,7 @@ if (is_array($blocks))
 		   	print '<td class="nowrap">'.$block->ref_object.'</td>';
 
 		   	// Link to source object
-		   	print '<td><!-- object_link -->'.$object_link.'</td>';
+		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
 		   	print '<td align="right">'.price($block->amounts).'</td>';
@@ -483,8 +504,8 @@ if (is_array($blocks))
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
 		   	// Fingerprint
-		   	print '<td>';
-		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint');
+		   	print '<td class="nowrap">';
+		   	print $form->textwithpicto(dol_trunc($block->signature, '8'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
 		   	print '</td>';
 
 		   	// Status

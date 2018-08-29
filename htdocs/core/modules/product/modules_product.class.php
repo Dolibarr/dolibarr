@@ -21,18 +21,13 @@
 
 
 /**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
- */
- 
-/**
- *  \file       htdocs/core/modules/contract/modules_contract.php
+ *  \file       htdocs/core/modules/product/modules_product.class.php
  *  \ingroup    contract
- *  \brief      File with parent class for generating contracts to PDF and File of class to manage contract numbering
+ *  \brief      File with parent class for generating products to PDF and File of class to manage product numbering
  */
 
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
- 
+
 /**
  *	Parent class to manage intervention document templates
  */

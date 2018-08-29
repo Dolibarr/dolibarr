@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,25 +23,15 @@
  *					Initialy built by build_class_from_table on 2016-05-17 12:22
  */
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
-if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
-if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
-if (! $res) die("Include of main fails");
-// Change this following line to use the correct relative path from htdocs
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-dol_include_once('/product/stock/class/productlot.class.php');
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
-// Load traductions files requiredby by page
-$langs->load("stocks");
-$langs->load("productbatch");
-$langs->load("other");
-$langs->load("users");
+// Load translation files required by the page
+$langs->loadLangs(array('stocks', 'productbatch', 'other', 'users'));
 
 // Get parameters
 $id			= GETPOST('id','int');
@@ -81,6 +72,7 @@ if ($user->societe_id > 0)
 }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$object = new Productlot($db);
 $hookmanager->initHooks(array('product_lotlist'));
 $extrafields = new ExtraFields($db);
 
@@ -119,7 +111,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 
 // Load object if id or ref is provided as parameter
-$object=new Productlot($db);
 if (($id > 0 || ! empty($ref)) && $action != 'add')
 {
 	$result=$object->fetch($id,$ref);
@@ -227,7 +218,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product_lot as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.rowid = t.fk_product";
-//$sql.= " WHERE u.entity IN (".getEntity('productlot').")";
+$sql.= " AND p.entity IN (".getEntity('product').")";
 
 if ($search_entity) $sql.= natural_search("entity",$search_entity);
 if ($search_product) $sql.= natural_search("p.ref",$search_product);
@@ -252,6 +243,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -295,7 +291,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
 
 	$topicmail="Information";
 	$modelmail="productlot";
@@ -306,7 +302,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	/*$moreforfilter = '';
@@ -388,7 +384,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($arrayfields['t.datec']['label'],$_SERVER["PHP_SELF"],"t.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -537,22 +533,18 @@ if ($resql)
 	print '</form>'."\n";
 
 	/*
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-	    // Show list of available documents
-	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	    $urlsource.=str_replace('&amp;','&',$param);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-	    $filedir=$diroutputmassaction;
-	    $genallowed=$user->rights->facture->lire;
-	    $delallowed=$user->rights->facture->creer;
+    // Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->facture->lire;
+	$delallowed=$user->rights->facture->creer;
+
+	print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 	*/
 }
 else

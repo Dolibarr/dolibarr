@@ -33,6 +33,7 @@ PropalStatusSigned=Potpisana (za naplatu)
 PropalStatusNotSigned=Nije potpisana (zatvorena)
 PropalStatusBilled=Naplaćena
 PropalStatusDraftShort=Skica
+PropalStatusValidatedShort=Ovjereno
 PropalStatusClosedShort=Zatvorena
 PropalStatusSignedShort=Potpisana
 PropalStatusNotSignedShort=Nije potpisana
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=Mjesec dana
 TypeContact_propal_internal_SALESREPFOLL=Suradnik koji prati ponudu
 TypeContact_propal_external_BILLING=Kontakt osoba pri kupcu za račun
 TypeContact_propal_external_CUSTOMER=Kontakt osoba pri kupcu za ponudu
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Cjeloviti model ponude (logo...)
 DefaultModelPropalCreate=Izrada osnovnog modela

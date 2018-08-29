@@ -385,14 +385,15 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Return clicable name (with picto eventually)
 	 *
-	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 * @param	int		$withlabel		0=No label, 1=Include label of account
-	 * @param	int  	$nourl			1=Disable url
-	 * @param	string  $moretitle		Add more text to title tooltip
-	 * @param	int  	$notooltip		1=Disable tooltip
+	 * @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 * @param	int		$withlabel					0=No label, 1=Include label of account
+	 * @param	int  	$nourl						1=Disable url
+	 * @param	string  $moretitle					Add more text to title tooltip
+	 * @param	int  	$notooltip					1=Disable tooltip
+     * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @return	string	String with URL
 	 */
-	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0)
+	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0, $save_lastsearch_value=-1)
 	{
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -402,6 +403,11 @@ class AccountingAccount extends CommonObject
 		$result = '';
 
 		$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id;
+
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+		if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 
 		$picto = 'billr';
 		$label='';
@@ -561,7 +567,7 @@ class AccountingAccount extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
-		$langs->load('users');
+		$langs->loadLangs(array("users"));
 
 		if ($mode == 0)
 		{

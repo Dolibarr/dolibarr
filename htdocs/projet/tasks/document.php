@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-
-$langs->load('projects');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'other'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');

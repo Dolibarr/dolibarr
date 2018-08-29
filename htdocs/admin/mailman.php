@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("admin");
-$langs->load("members");
-$langs->load("mailmanspip");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "members", "mailmanspip"));
 
 if (! $user->admin) accessforbidden();
 
@@ -49,7 +48,7 @@ $testunsubscribeemail = GETPOST("testunsubscribeemail");
  * Actions
  */
 
-// Action mise a jour ou ajout d'une constante
+// Action updated or added a constant
 if ($action == 'update' || $action == 'add')
 {
 	foreach($_POST['constname'] as $key => $val)
@@ -155,9 +154,6 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values
 print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup');
 
 $head = mailmanspip_admin_prepare_head();
-
-
-$var=true;
 
 if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {

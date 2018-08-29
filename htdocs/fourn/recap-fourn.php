@@ -26,8 +26,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies'));
 
 // Security check
 $socid = GETPOST("socid",'int');
@@ -82,7 +82,6 @@ if ($socid > 0)
         $resql=$db->query($sql);
         if ($resql)
         {
-            $var=true;
             $num = $db->num_rows($resql);
 
             print '<tr class="liste_titre">';
@@ -115,7 +114,6 @@ if ($socid > 0)
                     continue;
                 }
                 $totalpaye = $fac->getSommePaiement();
-
 
                 print '<tr class="oddeven">';
 

@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Účetnictví
 ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro export souboru
 ACCOUNTING_EXPORT_DATE=Formát data pro export souboru
 ACCOUNTING_EXPORT_PIECE=Exportovat počet kusů
@@ -39,11 +40,11 @@ AccountWithNonZeroValues=Accounts with non zero values
 ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
-AccountancyArea=Oblast účetnictví
+AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Využití evidence modulu se provádí v několika kroku:
 AccountancyAreaDescActionOnce=Tyto akce jsou obvykle prováděny pouze jednou, nebo jednou za rok ...
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=STEP %s: Vytvořte model účtové osnovy z menu %
 AccountancyAreaDescChart=STEP %s: Vytvořte nebo zkontrolovat obsah grafu účtu z menu %s
 
 AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.
@@ -89,7 +91,7 @@ MenuProductsAccounts=produktové účty
 ProductsBinding=Produkty účty
 Ventilation=Vazba na účetní závěrky
 CustomersVentilation=Zákazník faktura závazná
-SuppliersVentilation=Dodavatelská faktura je závazná
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Náklady zpráva vázání
 CreateMvts=Vytvořit novou transakci
 UpdateMvts=Modifikace transakce
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Délka znaků obecných účetních účtů (Nastaví
 ACCOUNTING_LENGTH_AACCOUNT=Délka účtů třetích stran (Nastavíte-li zde hodnotu 6, bude účet ‚401‘ zobrazovat jako ‚401000‘)
 ACCOUNTING_MANAGE_ZERO=Umožňují řídit jiný počet nulu na konci účetního účtu. Zapotřebí v některých zemích (jako Švýcarsko). -Li se držet off (výchozí), můžete nastavit 2 následující parametry požádat aplikace přidat virtuální nula.
 BANK_DISABLE_DIRECT_INPUT=Zakázat přímé nahrávání transakce v bankovním účtu
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Prodejní deník
 ACCOUNTING_PURCHASE_JOURNAL=Nákupní deník
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Ostatní deník
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Rozšířený výpis deníku
 ACCOUNTING_SOCIAL_JOURNAL=Sociální deník
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Účtování v převodním účtu
 ACCOUNTING_ACCOUNT_SUSPENSE=Čekající účet
@@ -185,11 +189,12 @@ ListeMvts=Seznam pohybů
 ErrorDebitCredit=Debetní a kreditní nemůže mít hodnotu ve stejnou dobu
 AddCompteFromBK=Přidat účetní účty do skupiny
 ReportThirdParty=Seznam účtů třetí strany
-DescThirdPartyReport=Konzultujte zde seznam třetích stran, zákazníky a dodavateli a jejich účetní účty
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=Seznam účetních účtů
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
@@ -204,8 +209,8 @@ DescVentilDoneCustomer=Seznamte se zde se seznamem řádků faktur zákazníků 
 DescVentilTodoCustomer=Prověřit fakturační řádky, které již nejsou vázány účtem účetnictví produktu
 ChangeAccount=Změnit výrobek/službu na účetnm účtu ve vybraných řádcích s následujícím účetním účtem:
 Vide=-
-DescVentilSupplier=Konzultujte zde seznam řádků dodavatelské faktury vázaných nebo nevázaných na účetní produkt účtu
-DescVentilDoneSupplier=Konzultujte zde seznam řádků faktur dodavatele a jejich účetnho účtu
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=Bind zpráva náklad linky již nejsou vázány s účetním poplatek účtu
 DescVentilExpenseReport=Zde si přečtěte seznam výkazů výdajů vázaných (nebo ne) na účty účtování poplatků
 DescVentilExpenseReportMore=Máte-li nastavit účtování účtu na typ zprávy náklady linek, bude aplikace moci provádět všechny vazby mezi vaše náklady sestavy linek a účetní evidence grafu účtů jen jedním kliknutím pomocí tlačítka <strong> „%s“ </ strong>. Je-li účet nebyl nastaven na poplatcích slovníku nebo pokud má stále některé řádky není vázán na jiný účet, budete muset provést ruční vazby z menu „<strong> %s </ strong>“.
@@ -215,7 +220,7 @@ ValidateHistory=Ověřit automaticky
 AutomaticBindingDone=Automatická vazba provádí
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Ověřovací karta
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -293,4 +298,9 @@ Binded=linky vázané
 ToBind=Linky k vazbě
 UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
+## Import
+ImportAccountingEntries=Accounting entries
+
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

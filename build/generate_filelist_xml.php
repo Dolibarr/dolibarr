@@ -47,7 +47,7 @@ $includeconstants=array();
 
 if (empty($argv[1]))
 {
-    print "Usage:   ".$script_file." release=auto|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+    print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
     print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
     exit -1;
 }
@@ -70,30 +70,52 @@ while ($i < $argc)
     $i++;
 }
 
+if (empty($release))
+{
+	print "Error: Missing release paramater\n";
+	print "Usage: ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+	exit -1;
+}
+
+$savrelease = $release;
+
 // If release is auto, we take current version
 $tmpver=explode('-', $release, 2);
-if ($tmpver[0] == 'auto')
+if ($tmpver[0] == 'auto' || $tmpver[0] == 'autostable')
 {
 	$release=DOL_VERSION;
-	if ($tmpver[1]) $release.='-'.$tmpver[1];
+	if ($tmpver[1] && $tmpver[0] == 'auto') $release.='-'.$tmpver[1];
 }
 
 if (empty($includecustom))
 {
-	$tmpver=explode('-', $release, 2);
-	if (DOL_VERSION != $tmpver[0])
-    {
-    	print 'Error: When parameter "includecustom" is not set and there is no suffix in release parameter, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$tmpver[0].')'."\n";
-        print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
-        exit -1;
-    }
+	$tmpverbis=explode('-', $release, 2);
+	if (empty($tmpverbis[1]) || $tmpver[0] == 'autostable')
+	{
+		if (DOL_VERSION != $tmpverbis[0] && $savrelease != 'auto')
+	    {
+	    	print 'Error: When parameter "includecustom" is not set and there is no suffix in release parameter, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
+	    	print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+	        exit -1;
+	    }
+	}
+	else
+	{
+		$tmpverter=explode('-', DOL_VERSION, 2);
+		if ($tmpverter[0] != $tmpverbis[0])
+		{
+			print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must have value without prefix ('.$tmpverter[0].') that is exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
+			print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+			exit -1;
+		}
+	}
 }
 else
 {
     if (! preg_match('/'.preg_quote(DOL_VERSION,'/').'-/',$release))
     {
-        print 'Error: When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parmater (ex: '.DOL_VERSION.'-mydistrib).'."\n";
-        print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
+        print 'Error: When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parameter (ex: '.DOL_VERSION.'-mydistrib).'."\n";
+        print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
         exit -1;
     }
 }
