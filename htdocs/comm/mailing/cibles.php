@@ -326,6 +326,8 @@ if ($object->fetch($id) >= 0)
 				}
 
 				// Si le module mailing est qualifie
+				if ($qualified)
+				{
 					if ($allowaddtarget)
 					{
 						print '<form class="oddeven tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
