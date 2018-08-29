@@ -35,30 +35,30 @@ class PaymentSocialContribution extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='paiementcharge';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='paiementcharge';	
-	
+	public $table_element='paiementcharge';
+
 	public $picto = 'payment';
 
-	var $fk_charge;
-	var $datec='';
-	var $tms='';
-	var $datep='';
+	public $fk_charge;
+	public $datec='';
+	public $tms='';
+	public $datep='';
 	/**
 	 * @deprecated
 	 * @see amount
 	 */
-	var $total;
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $fk_typepaiement;
-	var $num_paiement;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $total;
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+	public $fk_typepaiement;
+	public $num_paiement;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
 
 	/**
 	 *	Constructor
