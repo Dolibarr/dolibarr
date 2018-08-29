@@ -386,6 +386,7 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
 				    dol_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 				    $error++;
 				}
+				return 0;
             }
 
             if (! $silent) print '</tr>'."\n";
