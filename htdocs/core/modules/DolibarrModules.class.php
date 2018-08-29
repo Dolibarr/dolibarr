@@ -1323,8 +1323,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				$status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
 				$priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
 				$test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';                              // Line must be visible
+				$datestart = isset($this->cronjobs[$key]['datestart'])?$this->cronjobs[$key]['datestart']:'';
+				$dateend = isset($this->cronjobs[$key]['dateend'])?$this->cronjobs[$key]['dateend']:'';
 
-				// Search if boxes def already present
+				// Search if cron entry already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
 				$sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
 				if ($class) $sql.= " AND classesname = '".$this->db->escape($class)."'";
@@ -1345,7 +1347,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 						if (! $err)
 						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note,";
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
 							if(is_int($frequency)){ $sql.= ' frequency,'; }
 							if(is_int($unitfrequency)){ $sql.= ' unitfrequency,'; }
 							if(is_int($priority)){ $sql.= ' priority,'; }
@@ -1354,7 +1356,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							$sql.= " VALUES (";
 							$sql.= "'".$this->db->escape($this->rights_class)."', ";
 							$sql.= "'".$this->db->idate($now)."', ";
-							$sql.= "'".$this->db->idate($now)."', ";
+							$sql.= ($datestart ? "'".$this->db->idate($datestart)."'" : "NULL").", ";
+							$sql.= ($dateend   ? "'".$this->db->idate($dateend)."'"   : "NULL").", ";
 							$sql.= "'".$this->db->escape($label)."', ";
 							$sql.= "'".$this->db->escape($jobtype)."', ";
 							$sql.= ($class?"'".$this->db->escape($class)."'":"null").",";
@@ -1389,7 +1392,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					// else box already registered into database
 				}
 				else
-			  {
+				{
 					$this->error=$this->db->lasterror();
 					$err++;
 				}
