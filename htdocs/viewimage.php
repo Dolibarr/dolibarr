@@ -136,7 +136,7 @@ if (preg_match('/\.\./',$fullpath_original_file) || preg_match('/[<>|]/',$fullpa
 if ($modulepart == 'barcode')
 {
     $generator=GETPOST("generator","alpha");
-    $code=GETPOST("code",'none');
+    $code=GETPOST("code",'none');							// This can be rich content (qrcode, datamatrix, ...)
     $encoding=GETPOST("encoding","alpha");
     $readable=GETPOST("readable",'alpha')?GETPOST("readable","alpha"):"Y";
 
