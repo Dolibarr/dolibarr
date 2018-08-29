@@ -30,7 +30,7 @@
 
 
 /**
- *	Events class
+ *  Events class
  */
 class Events // extends CommonObject
 {
@@ -49,7 +49,7 @@ class Events // extends CommonObject
 	 */
 	public $id;
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;

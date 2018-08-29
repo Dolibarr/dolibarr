@@ -76,7 +76,7 @@ class PaymentDonation extends CommonObject
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user			User making payment
-	 *	@param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
 	function create($user, $notrigger=false)

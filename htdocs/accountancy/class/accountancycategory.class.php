@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
  */
 class AccountancyCategory 	// extends CommonObject
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;

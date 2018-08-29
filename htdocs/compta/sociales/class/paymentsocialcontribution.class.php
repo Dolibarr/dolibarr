@@ -716,5 +716,3 @@ class PaymentSocialContribution extends CommonObject
 		return $result;
 	}
 }
-
-
