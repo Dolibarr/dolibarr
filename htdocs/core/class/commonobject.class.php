@@ -46,47 +46,58 @@ abstract class CommonObject
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
 	public $db;
+
 	/**
 	 * @var int The object identifier
 	 */
 	public $id;
+
 	/**
 	 * @var string 		Error string
 	 * @see             errors
 	 */
 	public $error;
+
 	/**
 	 * @var string[]	Array of error strings
 	 */
 	public $errors=array();
+
 	/**
 	 * @var string
 	 */
 	public $element;
+
 	/**
 	 * @var string
 	 */
 	public $table_element;
+
 	/**
 	 * @var
 	 */
 	public $table_element_line;
+
 	/**
 	 * @var string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
+
 	/**
 	 * @var mixed		Contains data to manage extrafields
 	 */
 	public $array_options=array();
+
 	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
+
 	/**
 	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjects;
+
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
 	 */
@@ -116,11 +127,13 @@ abstract class CommonObject
 	 * @see fetch_projet()
 	 */
 	public $project;
+
 	/**
 	 * @var int The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
+
 	/**
 	 * @deprecated
 	 * @see project
@@ -132,6 +145,7 @@ abstract class CommonObject
 	 * @see fetch_contact()
 	 */
 	public $contact;
+
 	/**
 	 * @var int The related contact ID
 	 * @see fetch_contact()
@@ -165,14 +179,17 @@ abstract class CommonObject
 	 * @var string The object's reference
 	 */
 	public $ref;
+
 	/**
 	 * @var string The object's previous reference
 	 */
 	public $ref_previous;
+
 	/**
 	 * @var string The object's next reference
 	 */
 	public $ref_next;
+
 	/**
 	 * @var string An external reference for the object
 	 */
@@ -189,36 +206,43 @@ abstract class CommonObject
 	 * @see getFullAddress()
 	 */
 	public $country;
+
 	/**
 	 * @var int
 	 * @see getFullAddress(), country
 	 */
 	public $country_id;
+
 	/**
 	 * @var string
 	 * @see getFullAddress(), isInEEC(), country
 	 */
     public $country_code;
+
     /**
 	 * @var string
 	 * @see getFullAddress()
 	 */
 	public $state;
+
 	/**
 	 * @var int
 	 * @see getFullAddress(), state
 	 */
 	public $state_id;
+
 	/**
 	 * @var string
 	 * @see getFullAddress(), state
 	 */
     public $state_code;
+
     /**
 	 * @var string
 	 * @see getFullAddress(), region
 	 */
 	public $region;
+
 	/**
 	 * @var string
 	 * @see getFullAddress(), region
@@ -230,16 +254,19 @@ abstract class CommonObject
 	 * @see fetch_barcode()
 	 */
 	public $barcode_type;
+
 	/**
 	 * @var string
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_code;
+
 	/**
 	 * @var string
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_label;
+
 	/**
 	 * @var string
 	 * @see fetch_barcode(), barcode_type
@@ -257,6 +284,7 @@ abstract class CommonObject
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
+
 	/**
 	 * @var int Payment terms ID
 	 * @deprecated Kept for compatibility
@@ -294,11 +322,13 @@ abstract class CommonObject
 	 * @see update_note()
 	 */
 	public $note_public;
+
 	/**
 	 * @var string Private note
 	 * @see update_note()
 	 */
 	public $note_private;
+
 	/**
 	 * @deprecated
 	 * @see note_public
@@ -310,21 +340,25 @@ abstract class CommonObject
 	 * @see update_price()
 	 */
 	public $total_ht;
+
 	/**
 	 * @var float Total VAT amount
 	 * @see update_price()
 	 */
 	public $total_tva;
+
 	/**
 	 * @var float Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
+
 	/**
 	 * @var float Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
+
 	/**
 	 * @var float Total amount with taxes
 	 * @see update_price()
@@ -347,11 +381,13 @@ abstract class CommonObject
 	 * @see setIncoterms()
 	 */
 	public $fk_incoterms;
+
 	/**
 	 * @var string
 	 * @see SetIncoterms()
 	 */
 	public $libelle_incoterms;
+
 	/**
 	 * @var string
 	 * @see display_incoterms()
@@ -3721,7 +3757,7 @@ abstract class CommonObject
 
 		$num = count($this->lines);
 
-		//Line extrafield
+		// Line extrafield
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline = new ExtraFields($this->db);
 		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
@@ -3730,6 +3766,7 @@ abstract class CommonObject
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
+			// Title line
 		    print "<thead>\n";
 
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -3820,7 +3857,6 @@ abstract class CommonObject
 		{
 			//Line extrafield
 			$line->fetch_optionals();
-
 
 			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
 			if (is_object($hookmanager))   // Old code is commented on preceding line.
