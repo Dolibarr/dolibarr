@@ -620,7 +620,7 @@ if ($id > 0 || ! empty($ref)) {
 
 							print '</td>';
 
-							print '<td >';
+							print '<td>';
 							print '<input type="text" class="inputlotnumber" id="lot_number' . $suffix . '" name="lot_number' . $suffix . '" size="40" value="' . GETPOST('lot_number' . $suffix) . '">';
 							print '</td>';
 							print '<td>';
