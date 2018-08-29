@@ -55,9 +55,9 @@ class Contracts extends DolibarrApi
     }
 
     /**
-     * Get properties of a contrat object
+     * Get properties of a contract object
      *
-     * Return an array with contrat informations
+     * Return an array with contract informations
      *
      * @param       int         $id         ID of contract
      * @return 	array|mixed data without useless information
