@@ -215,7 +215,6 @@ function checkSwiftForAccount($account)
     } else {
         return false;
     }
-
 }
 
 /**

@@ -488,7 +488,6 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
-
 	 }
 
 	 /**

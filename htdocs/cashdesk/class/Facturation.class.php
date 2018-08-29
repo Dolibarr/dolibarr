@@ -167,7 +167,6 @@ class Facturation
         $_SESSION['poscart']=$newcartarray;
 
         $this->raz();
-
     }
 
     /**
@@ -269,7 +268,6 @@ class Facturation
         $this->prixTotalHt('RESET');
         $this->montantTva('RESET');
         $this->prixTotalTtc('RESET');
-
     }
 
 
@@ -324,7 +322,6 @@ class Facturation
         {
             $this->ref = $aRef;
         }
-
     }
 
     /**
@@ -348,7 +345,6 @@ class Facturation
         {
             $this->qte = $aQte;
         }
-
     }
 
     /**
@@ -372,7 +368,6 @@ class Facturation
         {
             $this->stock = $aStock;
         }
-
     }
 
     /**
@@ -396,7 +391,6 @@ class Facturation
         {
             $this->remise_percent = $aRemisePercent;
         }
-
     }
 
     /**
@@ -421,7 +415,6 @@ class Facturation
             $this->montant_remise = $aMontantRemise;
 
         }
-
     }
 
     /**
@@ -446,7 +439,6 @@ class Facturation
             $this->prix = $aPrix;
 
         }
-
     }
 
     /**
@@ -470,7 +462,6 @@ class Facturation
             $this->tva = $aTva;
 
         }
-
     }
 
     /**
@@ -518,7 +509,6 @@ class Facturation
             $this->mode_reglement = $aModeReglement;
 
         }
-
     }
 
     /**
@@ -543,7 +533,6 @@ class Facturation
             $this->montant_encaisse = $aMontantEncaisse;
 
         }
-
     }
 
     /**
@@ -567,7 +556,6 @@ class Facturation
             $this->montant_rendu = $aMontantRendu;
 
         }
-
     }
 
     /**
@@ -637,7 +625,6 @@ class Facturation
             $this->montant_tva = $aMontantTva;
 
         }
-
     }
 
     /**

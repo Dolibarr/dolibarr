@@ -632,8 +632,6 @@ class Propalmergepdfproduct extends CommonObject
 		$this->datec='';
 		$this->tms='';
 		$this->import_key='';
-
-
 	}
 
 }

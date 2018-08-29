@@ -93,7 +93,6 @@ class Mailing extends CommonObject
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
 		$this->statut_dest[3] = 'MailingStatusReadAndUnsubscribe';    // Read but ask to not be contacted anymore
-
 	}
 
 	/**

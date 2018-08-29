@@ -832,7 +832,6 @@ class pdf_rouget extends ModelePdfExpedition
 			}
 
 		}
-
 	}
 
 	/**

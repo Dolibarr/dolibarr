@@ -164,7 +164,6 @@ class BonPrelevement extends CommonObject
 		}
 
 		return $result;
-
 	}
 
 	/**
@@ -1457,7 +1456,6 @@ class BonPrelevement extends CommonObject
 		if (! empty($conf->global->MAIN_UMASK))
 		@chmod($this->file, octdec($conf->global->MAIN_UMASK));
 		return $result;
-
 	}
 
 
@@ -1687,7 +1685,6 @@ class BonPrelevement extends CommonObject
 		fputs($this->file, substr("                                        ",0,5));
 
 		fputs($this->file, "\n");
-
 	}
 
 	/**

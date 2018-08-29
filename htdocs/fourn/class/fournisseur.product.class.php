@@ -181,7 +181,6 @@ class ProductFournisseur extends Product
             $this->db->rollback();
             return -1;
         }
-
     }
 
 

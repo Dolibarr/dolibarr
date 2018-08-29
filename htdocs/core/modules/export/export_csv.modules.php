@@ -76,7 +76,6 @@ class ExportCsv extends ModeleExports
 		// If driver use an external library, put its name here
 		$this->label_lib='Dolibarr';
 		$this->version_lib=DOL_VERSION;
-
 	}
 
 	/**

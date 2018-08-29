@@ -253,7 +253,6 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		{
 			return -2;
 		}
-
 	}
 
 	/**

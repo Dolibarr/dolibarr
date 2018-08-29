@@ -900,7 +900,6 @@ class pdf_stdmovement extends ModelePDFMovement
 		$pdf->SetLineStyle(array('dash'=>'0','color'=>array(220,26,26)));
 		$pdf->line($this->marge_gauche, $tab_top+11, $this->page_largeur-$this->marge_droite, $tab_top+11);
 		$pdf->SetLineStyle(array('dash'=>0));
-
 	}
 
 	/**

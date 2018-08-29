@@ -762,8 +762,6 @@ class Website extends CommonObject
 		$this->fk_user_modif = $user->id;
 		$this->date_creation = dol_now();
 		$this->tms = dol_now();
-
-
 	}
 
 

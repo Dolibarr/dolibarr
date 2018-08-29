@@ -423,7 +423,6 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
-
 	}
 
 	
@@ -592,7 +591,6 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	    	}
 	    }
         */
-
 	}
 
 	/**

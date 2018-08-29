@@ -715,7 +715,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
 
 

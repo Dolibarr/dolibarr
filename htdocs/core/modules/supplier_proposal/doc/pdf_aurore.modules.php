@@ -707,7 +707,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
 
 

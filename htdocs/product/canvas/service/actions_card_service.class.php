@@ -217,7 +217,6 @@ class ActionsCardService
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 

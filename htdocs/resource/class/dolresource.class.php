@@ -570,7 +570,6 @@ class Dolresource extends CommonObject
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
-
     }
 
      /**
@@ -648,7 +647,6 @@ class Dolresource extends CommonObject
    			$this->error = $this->db->lasterror();
    			return -1;
    		}
-
     }
 
     /**
@@ -726,7 +724,6 @@ class Dolresource extends CommonObject
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
-
     }
 
     /**
@@ -874,7 +871,6 @@ class Dolresource extends CommonObject
             $i++;
         }
         return $i;
-
     }
 
 

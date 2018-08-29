@@ -119,8 +119,6 @@ class modReceiptPrinter extends DolibarrModules
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
         $r++;
-
-
     }
 
 

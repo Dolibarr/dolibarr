@@ -582,7 +582,6 @@ class pdf_timespent extends ModelePDFProjects
 	    	}
 	    }
         */
-
 	}
 
 	/**

@@ -776,7 +776,6 @@ class pdf_standard extends ModeleExpenseReport
 				}
 			}
 		}
-
    	}
 
 	/**

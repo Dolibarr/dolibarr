@@ -141,7 +141,6 @@ class Fournisseur extends Societe
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 	/**

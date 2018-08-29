@@ -572,8 +572,6 @@ class ProductStockEntrepot extends CommonObject
 		$this->seuil_stock_alerte = '';
 		$this->desiredstock = '';
 		$this->import_key = '';
-
-
 	}
 
 }

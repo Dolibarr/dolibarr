@@ -174,7 +174,6 @@ class box_comptes extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
 	}
 
 	/**

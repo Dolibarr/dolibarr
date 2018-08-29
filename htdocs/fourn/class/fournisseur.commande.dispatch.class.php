@@ -547,8 +547,6 @@ class CommandeFournisseurDispatch extends CommonObject
 		$this->batch='';
 		$this->eatby='';
 		$this->sellby='';
-
-
 	}
 
 	/**

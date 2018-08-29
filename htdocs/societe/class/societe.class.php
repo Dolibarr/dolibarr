@@ -2428,7 +2428,6 @@ class Societe extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
-
 	}
 
 
@@ -3825,7 +3824,6 @@ class Societe extends CommonObject
 		if ($statut==1) return $langs->trans("Customer");
 		if ($statut==2) return $langs->trans("Prospect");
 		if ($statut==3) return $langs->trans("ProspectCustomer");
-
 	}
 
 

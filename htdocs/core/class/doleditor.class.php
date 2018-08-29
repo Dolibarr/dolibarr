@@ -135,7 +135,6 @@ class DolEditor
             $this->height				= $height;
             $this->width				= $width;
     	}
-
     }
 
     /**

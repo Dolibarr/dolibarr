@@ -1607,7 +1607,6 @@ class Project extends CommonObject
 		}else {
 			return 1;
 		}
-
 	}
 
 	/**
@@ -1640,7 +1639,6 @@ class Project extends CommonObject
 		}else {
 			return 1;
 		}
-
 	}
 
 	/**

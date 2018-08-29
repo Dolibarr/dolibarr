@@ -277,7 +277,6 @@ class mailing_advthirdparties extends MailingTargets
 
 		$s.='</select>';
 		return $s;
-
 	}
 
 

@@ -369,8 +369,6 @@ class Cpaiement
 		$this->active = '';
 		$this->accountancy_code = '';
 		$this->module = '';
-
-
 	}
 
 }

@@ -317,7 +317,6 @@ class Interventions extends DolibarrApi
 		    	'message' => 'Intervention deleted'
 	    	)
     	);
-
     }
 
     /**

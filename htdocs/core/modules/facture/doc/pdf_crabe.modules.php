@@ -910,7 +910,6 @@ class pdf_crabe extends ModelePDFFactures
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 

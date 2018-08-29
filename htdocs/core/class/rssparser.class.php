@@ -786,6 +786,5 @@ function xml2php($xml)
     }
 
     return $array;
-
 }
 

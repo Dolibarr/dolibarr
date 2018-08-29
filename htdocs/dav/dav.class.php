@@ -106,7 +106,6 @@ class CdavLib
 		}
 
 		return $sql;
-
 	}
 
 	/**

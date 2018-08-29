@@ -654,7 +654,6 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
 
 

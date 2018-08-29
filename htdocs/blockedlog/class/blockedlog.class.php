@@ -283,7 +283,6 @@ class BlockedLog
 		}
 
 		return '<i class="opacitymedium">'.$langs->trans('ImpossibleToReloadObject', $this->element, $this->fk_object).'</i>';
-
 	}
 
 	/**
@@ -676,7 +675,6 @@ class BlockedLog
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 
@@ -716,8 +714,6 @@ class BlockedLog
 		if($res===false) return false;
 
 		return true;
-
-
 	}
 
 	/**

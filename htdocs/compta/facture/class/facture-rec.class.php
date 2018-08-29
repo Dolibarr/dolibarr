@@ -1858,7 +1858,6 @@ class FactureLigneRec extends CommonInvoiceLine
     		$this->db->rollback();
     		return -2;
     	}
-
     }
 
 }

@@ -150,7 +150,6 @@ class box_fournisseurs extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
     }
 
 	/**

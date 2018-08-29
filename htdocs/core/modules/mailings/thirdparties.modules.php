@@ -309,7 +309,6 @@ class mailing_thirdparties extends MailingTargets
                 $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s.='</select>';
 		return $s;
-
 	}
 
 

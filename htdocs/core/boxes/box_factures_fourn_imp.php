@@ -191,7 +191,6 @@ class box_factures_fourn_imp extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
     }
 
 	/**

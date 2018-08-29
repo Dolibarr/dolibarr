@@ -274,7 +274,6 @@ class Fichinter extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**

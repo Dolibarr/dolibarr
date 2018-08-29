@@ -228,7 +228,6 @@ class Address
 				return $result;
 			}
 		}
-
 	}
 
 	/**

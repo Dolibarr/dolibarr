@@ -923,7 +923,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->SetXY($this->postotalht-1, $tab_top+1);
 			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 		}
-
 	}
 
 	/**
@@ -1015,7 +1014,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 	/**

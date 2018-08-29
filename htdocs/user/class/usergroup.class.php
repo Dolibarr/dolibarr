@@ -385,7 +385,6 @@ class UserGroup extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-
 	}
 
 
@@ -511,7 +510,6 @@ class UserGroup extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-
 	}
 
 

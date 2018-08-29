@@ -1170,7 +1170,6 @@ class Account extends CommonObject
 		}
 
 		return $solde;
-
 	}
 
 	/**
@@ -1513,7 +1512,6 @@ class Account extends CommonObject
 	 */
 	function info($id)
 	{
-
 	}
 
 	/**
@@ -1558,7 +1556,6 @@ class Account extends CommonObject
 
 		//Get the order the properties are shown
 		return $fieldarray;
-
 	}
 
 	/**

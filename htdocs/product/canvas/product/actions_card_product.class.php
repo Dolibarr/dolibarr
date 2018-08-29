@@ -238,7 +238,6 @@ class ActionsCardProduct
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 

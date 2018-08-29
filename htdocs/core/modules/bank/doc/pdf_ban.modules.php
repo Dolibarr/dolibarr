@@ -280,8 +280,6 @@ class pdf_ban extends ModeleBankAccountDoc
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
-
-
 	}
 
 	/**
@@ -368,7 +366,6 @@ class pdf_ban extends ModeleBankAccountDoc
 	    	}
 	    }
         */
-
 	}
 
 	/**

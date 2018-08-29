@@ -168,7 +168,6 @@ class box_members extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
     }
 
 	/**
