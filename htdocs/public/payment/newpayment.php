@@ -642,7 +642,7 @@ print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
-print '<input type="hidden" name="e" value="'.$entity.'" />';
+print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 print "\n";
 print '<!-- Form to send a payment -->'."\n";
