@@ -17,8 +17,8 @@
 
 /**
  *      \file       htdocs/loan/class/loanschedule.class.php
- *		\ingroup    loan
- *		\brief      File of class to manage schedule of loans
+ *      \ingroup    loan
+ *      \brief      File of class to manage schedule of loans
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -547,4 +547,3 @@ class LoanSchedule extends CommonObject
 		return $result;
 	}
 }
-

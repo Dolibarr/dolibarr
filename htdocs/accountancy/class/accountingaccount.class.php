@@ -80,14 +80,22 @@ class AccountingAccount extends CommonObject
 	var $account_parent;
 	var $account_category;
 
-	/**
-         * @var string proper name for given parameter
-         */
-        public $label;
+    /**
+     * @var string Label of account
+     */
+    public $label;
 
-	var $fk_user_author;
-	var $fk_user_modif;
-	var $active;       // duplicate with status
+    /**
+     * @var int ID
+     */
+    public $fk_user_author;
+
+    /**
+     * @var int ID
+     */
+    public $fk_user_modif;
+
+    var $active;       // duplicate with status
 	var $status;
 
 
@@ -422,7 +430,7 @@ class AccountingAccount extends CommonObject
 	 * @param	string  $moretitle					Add more text to title tooltip
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return	string	String with URL
+	 * @return  string	String with URL
 	 */
 	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0, $save_lastsearch_value=-1)
 	{
