@@ -517,16 +517,18 @@ if ($id > 0 || ! empty($ref)) {
 					print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
 				}
+				else
+				{
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';					
+				}
 				print '<td align="right">' . $langs->trans("QtyOrdered") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyDispatchedShort") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyToDispatchShort") . '</td>';
 				print '<td width="32"></td>';
 				print '<td align="right">' . $langs->trans("Warehouse") . '</td>';
 				print "</tr>\n";
-
-			
-				
-				
 			}
 
 			$nbfreeproduct = 0;		// Nb of lins of free products/services
