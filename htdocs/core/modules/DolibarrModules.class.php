@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1330,7 +1331,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 				// Search if boxes def already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
-				$sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
+				$sql.= " WHERE module_name = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 				if ($class) $sql.= " AND classesname = '".$this->db->escape($class)."'";
 				if ($objectname) $sql.= " AND objectname = '".$this->db->escape($objectname)."'";
 				if ($method) $sql.= " AND methodename = '".$this->db->escape($method)."'";
@@ -1357,7 +1358,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							if(is_int($status)){ $sql.= ' status,'; }
 							$sql.= " entity, test)";
 							$sql.= " VALUES (";
-							$sql.= "'".$this->db->escape($this->rights_class)."', ";
+							$sql.= "'".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."', ";
 							$sql.= "'".$this->db->idate($now)."', ";
 							$sql.= "'".$this->db->idate($now)."', ";
 							$sql.= "'".$this->db->escape($label)."', ";
@@ -1420,7 +1421,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		if (is_array($this->cronjobs))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
-			$sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
+			$sql.= " WHERE module_name = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog(get_class($this)."::delete_cronjobs", LOG_DEBUG);
@@ -1783,7 +1784,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
-		$sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
+		$sql.= " WHERE module = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 		$sql.= " AND entity = ".$conf->entity;
 		dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
 		if (! $this->db->query($sql))
@@ -1819,7 +1820,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			$menu->menu_handler='all';
 
 			//$menu->module=strtolower($this->name);	TODO When right_class will be same than module name
-			$menu->module=$this->rights_class;
+			$menu->module=empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
 			if (! $this->menu[$key]['fk_menu'])
 			{
@@ -1915,7 +1916,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$err=0;
 
 		//$module=strtolower($this->name);		TODO When right_class will be same than module name
-		$module=$this->rights_class;
+		$module=empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql.= " WHERE module = '".$this->db->escape($module)."'";
