@@ -2257,7 +2257,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->user->multidir_output[$entity].'/'.$original_file;
+		$original_file=$conf->user->dir_output.'/'.$original_file;
 	}
 
 	// Wrapping for third parties
