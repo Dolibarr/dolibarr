@@ -67,7 +67,7 @@ DeStockOnValidateOrder=کاهش سهام واقعی در اعتبار سنجی �
 DeStockOnShipment=Decrease real stocks on shipping validation
 DeStockOnShipmentOnClosing=Decrease real stocks on shipping classification closed
 ReStockOnBill=افزایش سهام واقعی در تامین کنندگان فاکتورها / یادداشت های اعتباری اعتبار
-ReStockOnValidateOrder=افزایش سهام واقعی در سفارشات تامین کنندگان موافقت
+ReStockOnValidateOrder=Increase real stocks on purchase orders approbation
 ReStockOnDispatchOrder=Increase real stocks on manual dispatching into warehouses, after supplier order receipt of goods
 OrderStatusNotReadyToDispatch=منظور هنوز رتبهدهی نشده است و یا بیشتر یک وضعیت است که اجازه می دهد تا اعزام از محصولات در انبارها سهام.
 StockDiffPhysicTeoric=Explanation for difference between physical and virtual stock
@@ -203,3 +203,4 @@ RegulateStock=Regulate Stock
 ListInventory=فهرست
 StockSupportServices=Stock management support services
 StockSupportServicesDesc=By default, you can stock only product with type "product". If on, and if module service is on, you can also stock a product with type "service"
+ReceiveProducts=Receive items

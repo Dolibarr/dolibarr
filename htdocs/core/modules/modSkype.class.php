@@ -25,7 +25,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a Cron module
+ *	Class to describe a Skype module
  */
 class modSkype extends DolibarrModules
 {
@@ -44,7 +44,7 @@ class modSkype extends DolibarrModules
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
-        $this->family = "crm";
+        $this->family = "interface";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable Skype links into contacts";
@@ -52,8 +52,6 @@ class modSkype extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 1;
         // Name of image file used for this module.
         $this->picto='skype';
 
@@ -61,31 +59,26 @@ class modSkype extends DolibarrModules
         $this->dirs = array();
 
         // Config pages
-        //-------------
         $this->config_page_url = array();
 
-        // Dependancies
-        //-------------
-	    $this->hidden = ! empty($conf->global->MODULE_SKYPE_DISABLED);	// A condition to disable module
-	    $this->depends = array('modSociete');		// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of modules id to disable if this one is disabled
-	    $this->conflictwith = array();	// List of modules id this module is in conflict with
+        // Dependencies
+        $this->hidden = ! empty($conf->global->MODULE_SKYPE_DISABLED);	// A condition to hide module
+		$this->depends = array('modSociete');	// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array();
 
         // Constants
-        //-----------
 
 
         // New pages on tabs
-        // -----------------
         $this->tabs = array();
 
         // Boxes
-        //------
         $this->boxes = array();
 
         // Main menu entries
-        //------------------
         $this->menu = array();
     }
 }

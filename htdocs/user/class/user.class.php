@@ -10,6 +10,8 @@
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018      charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +40,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class User extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='user';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='user';
+	
 	public $fk_element='fk_user';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -115,7 +125,7 @@ class User extends CommonObject
 	public $lastsearch_values_tmp;  // To store current search criterias for user
 	public $lastsearch_values;      // To store last saved search criterias for user
 
-	public $users;					// To store all tree of users hierarchy
+	public $users = array();		// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
 	private $cache_childids;
 
@@ -131,10 +141,11 @@ class User extends CommonObject
 	public $color;						// Define background color for user in agenda
 
 	public $dateemployment;			// Define date of employment by company
+	public $dateemploymentend;		// Define date of employment end by company
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
-	
+
 	public $fields=array(
         	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
         	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -207,7 +218,7 @@ class User extends CommonObject
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
-		$sql.= " u.dateemployment,";
+		$sql.= " u.dateemployment, u.dateemploymentend,";
 		$sql.= " u.ref_int, u.ref_ext,";
 		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
@@ -310,6 +321,7 @@ class User extends CommonObject
 				$this->weeklyhours	= $obj->weeklyhours;
 				$this->color		= $obj->color;
 				$this->dateemployment	= $this->db->jdate($obj->dateemployment);
+				$this->dateemploymentend = $this->db->jdate($obj->dateemploymentend);
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -330,12 +342,9 @@ class User extends CommonObject
 				// in such case, this admin user must be admin for ALL entities.
 				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) $this->entity = 0;
 
-				// Retreive all extrafield for thirdparty
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				$this->db->free($result);
 			}
@@ -433,7 +442,7 @@ class User extends CommonObject
 	/**
 	 *  Add a right to the user
 	 *
-	 * 	@param	int		$rid			id of permission to add
+	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
 	 *  @param  string	$allmodule		Add all permissions of module $allmodule
 	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
 	 *  @param	int		$entity			Entity to use
@@ -486,8 +495,15 @@ class User extends CommonObject
 			// Where pour la liste des droits a ajouter
 			if (! empty($allmodule))
 			{
-				$whereforadd="module='".$this->db->escape($allmodule)."'";
-				if (! empty($allperms)) $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				if ($allmodule == 'allmodules')
+				{
+					$whereforadd='allmodules';
+				}
+				else
+				{
+					$whereforadd="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
 			}
 		}
 
@@ -497,8 +513,10 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE ".$whereforadd;
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($whereforadd) && $whereforadd != 'allmodules') {
+				$sql.= " AND ".$whereforadd;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -599,8 +617,18 @@ class User extends CommonObject
 		else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
-			if (! empty($allmodule)) $wherefordel="module='".$this->db->escape($allmodule)."'";
-			if (! empty($allperms))  $wherefordel=" AND perms='".$this->db->escape($allperms)."'";
+			if (! empty($allmodule))
+			{
+				if ($allmodule == 'allmodules')
+				{
+					$wherefordel='allmodules';
+				}
+				else
+				{
+					$wherefordel="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
+			}
 		}
 
 		// Suppression des droits selon critere defini dans wherefordel
@@ -609,8 +637,10 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($wherefordel) && $wherefordel != 'allmodules') {
+				$sql.= " AND ".$wherefordel;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -678,24 +708,28 @@ class User extends CommonObject
 	/**
 	 *	Load permissions granted to user into object user
 	 *
-	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
+	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
+	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
 	 *  @see	clearrights, delrights, addrights
 	 */
-	function getrights($moduletag='')
+	function getrights($moduletag='', $forcereload=0)
 	{
 		global $conf;
 
-		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+		if (empty($forcereload))
 		{
-			// Le fichier de ce module est deja charge
-			return;
-		}
+			if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+			{
+				// Rights for this module are already loaded, so we leave
+				return;
+			}
 
-		if ($this->all_permissions_are_loaded)
-		{
-			// Si les permissions ont deja ete charge pour ce user, on quitte
-			return;
+			if ($this->all_permissions_are_loaded)
+			{
+				// We already loaded all rights for this user, so we leave
+				return;
+			}
 		}
 
 		// Recuperation des droits utilisateurs + recuperation des droits groupes
@@ -884,6 +918,7 @@ class User extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{
@@ -1386,6 +1421,7 @@ class User extends CommonObject
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
+		$this->dateemploymentend = empty($this->dateemploymentend)?'':$this->dateemploymentend;
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1428,6 +1464,7 @@ class User extends CommonObject
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
 		$sql.= ", color = '".$this->db->escape($this->color)."'";
 		$sql.= ", dateemployment=".(strval($this->dateemployment)!='' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
+		$sql.= ", dateemploymentend=".(strval($this->dateemploymentend)!='' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
@@ -1499,6 +1536,12 @@ class User extends CommonObject
 
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
+						$adh->address=$this->address;
+						$adh->town=$this->town;
+						$adh->zip=$this->zip;
+						$adh->state_id=$this->state_id;
+						$adh->country_id=$this->country_id;
+						
 						$adh->email=$this->email;
 						$adh->skype=$this->skype;
 						$adh->phone=$this->office_phone;
@@ -1582,8 +1625,8 @@ class User extends CommonObject
 
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			// Actions on extra fields
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -2119,7 +2162,7 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
-	 *  @param  integer $infologin      			Add complete info tooltip
+	 *  @param  integer $infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
 	 *  @param	int		$hidethirdpartylogo			Hide logo of thirdparty if user is external user
@@ -2130,9 +2173,11 @@ class User extends CommonObject
 	 */
 	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='', $save_lastsearch_value=-1)
 	{
-		global $langs, $conf, $db, $hookmanager;
+		global $langs, $conf, $db, $hookmanager, $user;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
+
+                if(!$user->rights->user->user->lire && $user->id !=$this->id) $option='nolink';
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
@@ -2146,6 +2191,7 @@ class User extends CommonObject
 			$label.= '</div><div style="clear: both;"></div>';
 		}
 
+		// Info Login
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'');
@@ -2154,20 +2200,18 @@ class User extends CommonObject
 		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
 		if (! empty($this->admin))
 			$label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
-		if (! empty($this->societe_id) )	// Add thirdparty for external users
+		if (! empty($this->socid) )	// Add thirdparty for external users
 		{
 			$thirdpartystatic = new Societe($db);
-			$thirdpartystatic->fetch($this->societe_id);
+			$thirdpartystatic->fetch($this->socid);
 			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink')?'nolink':''));	// picto only of company
 			$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 		}
-		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
+		$type=($this->socid?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
 		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
-
-		// Info Login
-		if ($infologin)
+		if ($infologin > 0)
 		{
 			$label.= '<br>';
 			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
@@ -2186,6 +2230,7 @@ class User extends CommonObject
 			if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
+		if ($infologin < 0) $label='';
 
 		$url = DOL_URL_ROOT.'/user/card.php?id='.$this->id;
 		if ($option == 'leave') $url = DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
@@ -2210,16 +2255,14 @@ class User extends CommonObject
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+			/*
+			 $hookmanager->initHooks(array('userdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
 		}
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
-		$hookmanager->initHooks(array('userdao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
@@ -2248,6 +2291,13 @@ class User extends CommonObject
 
 		$result.=$companylink;
 
+		global $action;
+		$hookmanager->initHooks(array('userdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
+
 		return $result;
 	}
 
@@ -2260,17 +2310,26 @@ class User extends CommonObject
 	 */
 	function getLoginUrl($withpicto=0,$option='')
 	{
-		global $langs;
+		global $langs, $user;
 
 		$result='';
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$linkend='</a>';
 
+                //Check user's rights to see an other user
+                if((!$user->rights->user->user->lire && $this->id !=$user->id)) $option='nolink';
+
 		if ($option == 'xxx')
 		{
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$linkend='</a>';
+		}
+
+                if ($option == 'nolink')
+		{
+			$linkstart = '';
+			$linkend='';
 		}
 
 		$result.=$linkstart;
@@ -2404,8 +2463,8 @@ class User extends CommonObject
 		}
 		if ($this->address && ! empty($conf->global->LDAP_FIELD_ADDRESS))			$info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_FIELD_ZIP))					$info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
-		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))				$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
-		if ($this->note_public && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note_public;
+		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))					$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
+		if ($this->note_public && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_public, 2);
 		if ($this->socid > 0)
 		{
 			$soc = new Societe($this->db);
@@ -2565,7 +2624,8 @@ class User extends CommonObject
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2741,7 +2801,11 @@ class User extends CommonObject
 	 */
 	function get_full_tree($deleteafterid=0, $filter='')
 	{
-		global $conf,$user;
+		global $conf, $user;
+		global $hookmanager;
+
+		// Actions hooked (by external module)
+		$hookmanager->initHooks(array('userdao'));
 
 		$this->users = array();
 
@@ -2751,23 +2815,11 @@ class User extends CommonObject
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		// TODO add hook
-		if (! empty($conf->multicompany->enabled)) {
-			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				if (! empty($user->admin) && empty($user->entity)) {
-					if ($conf->entity == 1) {
-						$sql.= " WHERE u.entity IS NOT NULL";
-					} else {
-						$sql.= " WHERE u.entity IN (".getEntity('user').")";
-					}
-				} else {
-					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-					$sql.= " WHERE ug.fk_user = u.rowid";
-					$sql.= " AND ug.entity IN (".getEntity('user').")";
-				}
-			} else {
-				$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			}
+		// Add fields from hooks
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql.=$hookmanager->resPrint;
 		} else {
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";
 		}
@@ -2982,9 +3034,10 @@ class User extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$user,$langs;
 
@@ -3005,8 +3058,107 @@ class User extends CommonObject
 
 		$modelpath = "core/modules/user/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
+	 *  Return property of user from its id
+	 *
+	 *  @param	int		$rowid      id of contact
+	 *  @param  string	$mode       'email' or 'mobile'
+	 *  @return string  			Email of user with format: "Full name <email>"
+	 */
+	function user_get_property($rowid,$mode)
+	{
+		$user_property='';
+
+		if (empty($rowid)) return '';
+
+		$sql = "SELECT rowid, email, user_mobile, civility, lastname, firstname";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE rowid = '".$rowid."'";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				if ($mode == 'email') $user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
+				else if ($mode == 'mobile') $user_property = $obj->user_mobile;
+			}
+			return $user_property;
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
+	 *	Load all objects into $this->users
+	 *
+	 *  @param	string		$sortorder    sort order
+	 *  @param	string		$sortfield    sort field
+	 *  @param	int			$limit		  limit page
+	 *  @param	int			$offset    	  page
+	 *  @param	array		$filter    	  filter output
+	 *  @return int          	<0 if KO, >0 if OK
+	 */
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
+	{
+		global $conf;
+
+		$sql="SELECT t.rowid";
+		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
+		$sql.= " WHERE 1";
+
+		//Manage filter
+		if (!empty($filter)){
+			foreach($filter as $key => $value) {
+				if (strpos($key,'date')) {
+					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key=='customsql') {
+					$sql.= ' AND '.$value;
+				} else {
+					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+				}
+			}
+		}
+		$sql.= $this->db->order($sortfield,$sortorder);
+		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->users=array();
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$line = new self($this->db);
+					$result = $line->fetch($obj->rowid);
+					if ($result>0 && !empty($line->id)) {
+						$this->users[$obj->rowid] = clone $line;
+					}
+				}
+				$this->db->free($resql);
+			}
+			return $num;
+		}
+		else
+		{
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+
 	}
 
 }
-

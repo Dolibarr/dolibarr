@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro     <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2016 Philippe Grand	 	 <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2018 Philippe Grand	 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,23 +38,78 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
+	/**
+     * @var string model name
+     */
+    public $name;
 
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
 
-    var $emetteur;	// Objet societe qui emet
+	/**
+     * @var string document type
+     */
+    public $type;
+
+    /**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -64,11 +119,10 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("trips");
-		$langs->load("projects");
+		// Translations
+		$langs->loadLangs(array("main", "trips", "projects"));
 
 		$this->db = $db;
 		$this->name = "";
@@ -155,10 +209,8 @@ class pdf_standard extends ModeleExpenseReport
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("trips");
-		$outputlangs->load("projects");
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
 		$nblignes = count($object->lines);
 
@@ -214,7 +266,7 @@ class pdf_standard extends ModeleExpenseReport
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
 			    // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -516,9 +568,9 @@ class pdf_standard extends ModeleExpenseReport
 	{
 		global $conf,$langs,$hookmanager;
 
-		$outputlangs->load("main");
-		$outputlangs->load("trips");
-		$outputlangs->load("companies");
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "companies"));
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
@@ -867,4 +919,3 @@ class pdf_standard extends ModeleExpenseReport
 	}
 
 }
-

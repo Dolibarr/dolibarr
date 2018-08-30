@@ -95,7 +95,7 @@ if ($disablenofollow) echo '</a>';
 <td valign="bottom" class="nowrap center">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
+<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
 </td>
 </tr>
@@ -132,7 +132,7 @@ if (! empty($morelogincontent)) {
 	<td>
 	<!-- <span class="span-icon-security"> -->
 	<span class="nofa">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
 	</span>
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
@@ -155,7 +155,7 @@ if (! empty($morelogincontent)) {
 <br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
-<div align="center" style="margin-top: 8px;">
+<div align="center" style="margin-top: 15px;">
 	<?php
 	$moreparam='';
 	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
@@ -163,7 +163,7 @@ if (! empty($morelogincontent)) {
 	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
 	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
-	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
+	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
 	?>
 </div>
 

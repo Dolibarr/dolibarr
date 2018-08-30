@@ -87,7 +87,8 @@ function resource_prepare_head($object)
 	return $head;
 }
 
-function resource_admin_prepare_head() {
+function resource_admin_prepare_head()
+{
 
 	global $langs, $conf, $user;
 

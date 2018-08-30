@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("resource");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'resource', 'companies'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');
@@ -92,7 +91,7 @@ if ($object->id)
 	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), -1, 'resource');
 
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -125,7 +124,7 @@ if ($object->id)
 	print '</tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
     print '</table>';
 
     print '</div>';
@@ -143,7 +142,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

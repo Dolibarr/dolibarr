@@ -31,9 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class Interfaces
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $dir;				// Directory with all core and external triggers files
-    var $errors	= array();	// Array for errors
+	
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
     /**
      *	Constructor
@@ -169,12 +177,12 @@ class Interfaces
 
 				if (method_exists($objMod, 'runTrigger'))	// New method to implement
 				{
-	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_INFO);
+	                //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_DEBUG);
 	                $result=$objMod->runTrigger($action,$object,$user,$langs,$conf);
 				}
 				elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
 				{
-	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_trigger for file '".$files[$key]."'", LOG_INFO);
+	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
 					$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
 				}
 				else

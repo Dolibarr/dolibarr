@@ -28,8 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("admin");
-$langs->load("salaries");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'salaries'));
 
 // Security check
 if (!$user->admin)
@@ -127,5 +127,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
-$db->close();
+$db->close();;

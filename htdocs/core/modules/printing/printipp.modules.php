@@ -40,9 +40,21 @@ class printing_printipp extends PrintingDriver
     var $userid;    /* user login */
     var $user;
     var $password;
-    var $error;
-    var $errors = array();
-    var $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
     /**
@@ -144,7 +156,6 @@ class printing_printipp extends PrintingDriver
     {
         global $bc, $conf, $langs;
         $error = 0;
-        $var=true;
 
         $html = '<tr class="liste_titre">';
         $html.= '<td>'.$langs->trans('IPP_Uri').'</td>';
@@ -160,12 +171,11 @@ class printing_printipp extends PrintingDriver
         $html.= '<td align="center">'.$langs->trans("Select").'</td>';
         $html.= "</tr>\n";
         $list = $this->getlist_available_printers();
-        $var = true;
         foreach ($list as $value)
         {
 
             $printer_det = $this->get_printer_detail($value);
-            $html.= "<tr ".$bc[$var].">";
+            $html.= '<tr class="oddeven">';
             $html.= '<td>'.$value.'</td>';
             //$html.= '<td><pre>'.print_r($printer_det,true).'</pre></td>';
             $html.= '<td>'.$printer_det->printer_name->_value0.'</td>';
@@ -287,12 +297,11 @@ class printing_printipp extends PrintingDriver
         $html .= '<td>Cancel</td>';
         $html .= '</tr>'."\n";
         $jobs = $ipp->jobs_attributes;
-        $var = True;
+
         //$html .= '<pre>'.print_r($jobs,true).'</pre>';
         foreach ($jobs as $value )
         {
-            $var = !$var;
-            $html .= '<tr '.$bc[$var].'>';
+            $html .= '<tr class="oddeven">';
             $html .= '<td>'.$value->job_id->_value0.'</td>';
             $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';
             $html .= '<td>'.$value->printer_uri->_value0.'</td>';

@@ -26,8 +26,16 @@
  */
 class AccountingJournal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='accounting_journal';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='accounting_journal';
+	
 	public $fk_element = '';
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'generic';
@@ -36,7 +44,7 @@ class AccountingJournal extends CommonObject
 
 	public $code;
 	public $label;
-	public $nature;		// 0:various operations, 1:sale, 2:purchase, 3:bank, 4:expense-report, 9: has-new
+	public $nature;		// 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
 	public $active;
 
 	public $lines;
@@ -46,7 +54,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 		$this->db = $db;
 	}
 
@@ -117,7 +126,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+    function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    {
 		$sql = "SELECT rowid, code, label, nature, active";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
@@ -256,7 +266,7 @@ class AccountingJournal extends CommonObject
 	{
 		global $langs;
 
-		$langs->load("accountancy");
+		$langs->loadLangs(array("accountancy"));
 
 		if ($mode == 0)
 		{

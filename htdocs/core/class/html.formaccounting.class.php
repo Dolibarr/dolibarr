@@ -35,10 +35,17 @@ class FormAccounting extends Form
 
 	private $options_cache = array();
 
-	var $db;
-	var $error;
-
 	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+   /**
 	* Constructor
 	*
 	* @param		DoliDB		$db      Database handler
@@ -64,7 +71,7 @@ class FormAccounting extends Form
 	 */
 	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='', $disabledajaxcombo=0)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$out = '';
 
@@ -93,9 +100,10 @@ class FormAccounting extends Form
 			}
 
     		$selected = 0;
+			$langs->load('accountancy');
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$label = $obj->code . ' - ' . $obj->label;
+				$label = $obj->code . ' - ' . $langs->trans($obj->label);
 
     			$select_value_in = $obj->rowid;
 				$select_value_out = $obj->rowid;
@@ -215,7 +223,8 @@ class FormAccounting extends Form
 	 * @param string $selectedkey Value
 	 * @return string HTML edit field
 	 */
-	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '') {
+    function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
+    {
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
@@ -338,7 +347,8 @@ class FormAccounting extends Form
 	 * @param string   $morecss        More css
 	 * @return string                  String with HTML select
 	 */
-	function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200') {
+    function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200')
+    {
 
 		$aux_account = array();
 
@@ -427,4 +437,3 @@ class FormAccounting extends Form
 		}
 	}
 }
-

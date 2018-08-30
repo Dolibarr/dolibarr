@@ -21,9 +21,9 @@
  *	\brief      Home page of opensurvey area
  */
 
-require_once('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 // Security check
 if (!$user->rights->opensurvey->read) accessforbidden();
@@ -32,6 +32,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
  * View
  */
 
+ // Load translation files required by the page
 $langs->load("opensurvey");
 
 llxHeader();
@@ -77,8 +78,6 @@ print '</table>';
 
 print '</div></div></div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

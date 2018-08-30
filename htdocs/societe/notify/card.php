@@ -432,6 +432,11 @@ if ($result > 0)
     {
         $result = $db->query($sql);
         $nbtotalofrecords = $db->num_rows($result);
+        if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+        {
+        	$page = 0;
+        	$offset = 0;
+        }
     }
 
     $sql.= $db->plimit($limit+1, $offset);
@@ -527,7 +532,6 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-
+// End of page
 llxFooter();
-
 $db->close();

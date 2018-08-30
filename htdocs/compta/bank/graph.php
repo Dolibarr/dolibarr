@@ -23,13 +23,13 @@
  *	\brief      Page graph des transactions bancaires
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
@@ -864,7 +864,6 @@ if ($mode == 'showalltime')
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

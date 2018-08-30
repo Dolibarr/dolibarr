@@ -1116,7 +1116,7 @@ window['_pr_isIE6'] = function () {
       for (var i = 0; i < 10; ++i) {
         lineBreaks[i] = lineBreakHtml + '</li><li class="L' + i + '">';
       }
-      var lineNum = numberLines[1] && numberLines[1].length 
+      var lineNum = numberLines[1] && numberLines[1].length
           ? numberLines[1] - 1 : 0;  // Lines are 1-indexed
       html.push('<ol class="linenums"><li class="L', (lineNum) % 10, '"');
       if (lineNum) {

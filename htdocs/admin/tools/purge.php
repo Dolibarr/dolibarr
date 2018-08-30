@@ -119,7 +119,6 @@ if (preg_match('/^confirm/i',$choice))
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

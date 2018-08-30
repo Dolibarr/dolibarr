@@ -21,8 +21,8 @@
  *       \ingroup    core
  *       \brief      Class file to manage forms into resource module
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
+require_once DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php";
+require_once DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php";
 
 
 /**
@@ -33,12 +33,18 @@ require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
  */
 class FormResource
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     var $substit=array();
     var $param=array();
 
-    var $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -153,7 +159,7 @@ class FormResource
      *
      *      @param	string	$selected       Id du type pre-selectionne
      *      @param  string	$htmlname       Nom de la zone select
-     *      @param  string	$filtertype     To filter on field type in llx_c_ticketsup_type (array('code'=>xx,'label'=>zz))
+     *      @param  string	$filtertype     To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
      *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int		$empty			1=peut etre vide, 0 sinon
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info

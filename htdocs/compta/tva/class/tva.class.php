@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Tva extends CommonObject
 {
-	//public $element='tva';			//!< Id that identify managed objects
-	//public $table_element='tva';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='tva';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='tva';
+	
 	public $picto='payment';
 
 	var $tms;
@@ -42,12 +51,15 @@ class Tva extends CommonObject
 	var $amount;
 	var $type_payment;
 	var $num_payment;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
-
-
 
     /**
 	 *	Constructor
@@ -57,8 +69,6 @@ class Tva extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        $this->element = 'tva';
-        $this->table_element = 'tva';
     }
 
 
@@ -694,6 +704,38 @@ class Tva extends CommonObject
 
 		return $result;
 	}
+
+	/**
+     * 	Return amount of payments already done
+     *
+     *	@return		int		Amount of payment already done, <0 if KO
+     */
+    function getSommePaiement()
+    {
+        $table='paiementcharge';
+        $field='fk_charge';
+
+        $sql = 'SELECT sum(amount) as amount';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+        $sql.= ' WHERE '.$field.' = '.$this->id;
+
+        dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $amount=0;
+
+            $obj = $this->db->fetch_object($resql);
+            if ($obj) $amount=$obj->amount?$obj->amount:0;
+
+            $this->db->free($resql);
+            return $amount;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 	/**
 	 *	Informations of vat payment object

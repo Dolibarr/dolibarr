@@ -160,24 +160,25 @@ class ProjectStats extends Stats
 
 		if (! empty($this->userid))
 			$sqlwhere[] = ' t.fk_user_resp=' . $this->userid;
-			// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
-			if (! empty($this->socid))
-				$sqlwhere[] = ' t.fk_soc=' . $this->socid;
-			if (! empty($this->year) && empty($this->yearmonth))
-				$sqlwhere[] = " date_format(t.datec,'%Y')='" . $this->db->escape($this->year) . "'";
-			if (! empty($this->yearmonth))
-				$sqlwhere[] = " t.datec BETWEEN '" . $this->db->idate(dol_get_first_day($this->yearmonth)) . "' AND '" . $this->db->idate(dol_get_last_day($this->yearmonth)) . "'";
 
-			if (! empty($this->status))
-				$sqlwhere[] = " t.fk_opp_status IN (" . $this->status . ")";
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
+		if (! empty($this->socid))
+			$sqlwhere[] = ' t.fk_soc=' . $this->socid;
+		if (! empty($this->year) && empty($this->yearmonth))
+			$sqlwhere[] = " date_format(t.datec,'%Y')='" . $this->db->escape($this->year) . "'";
+		if (! empty($this->yearmonth))
+			$sqlwhere[] = " t.datec BETWEEN '" . $this->db->idate(dol_get_first_day($this->yearmonth)) . "' AND '" . $this->db->idate(dol_get_last_day($this->yearmonth)) . "'";
 
-			if (! $user->rights->projet->all->lire) $sqlwhere[] = " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
+		if (! empty($this->status))
+			$sqlwhere[] = " t.fk_opp_status IN (" . $this->status . ")";
 
-			if (count($sqlwhere) > 0) {
-				$sqlwhere_str = ' WHERE ' . implode(' AND ', $sqlwhere);
-			}
+		if (! $user->rights->projet->all->lire) $sqlwhere[] = " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 
-			return $sqlwhere_str;
+		if (count($sqlwhere) > 0) {
+			$sqlwhere_str = ' WHERE ' . implode(' AND ', $sqlwhere);
+		}
+
+		return $sqlwhere_str;
 	}
 
 	/**

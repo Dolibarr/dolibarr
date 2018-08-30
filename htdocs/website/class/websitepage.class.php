@@ -39,20 +39,20 @@ class WebsitePage extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'websitepage';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
+	
 	/**
 	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'label';
 
-	/**
-	 */
-
 	public $fk_website;
 	public $pageurl;
+	public $aliasalt;
 	public $type_container;
 	public $title;
 	public $description;
@@ -71,8 +71,9 @@ class WebsitePage extends CommonObject
      */
 	public $fields=array(
 	    'rowid'          =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
-		'pageurl'        =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Alias of page'),
-		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>11, 'comment'=>'Type of container'),
+		'pageurl'        =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Ref/alias of page'),
+		'aliasalt'       =>array('type'=>'varchar(255)', 'label'=>'AliasAlt',         'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>11, 'searchall'=>0, 'comment'=>'Alias alternative of page'),
+		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
 		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
@@ -113,19 +114,26 @@ class WebsitePage extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
+		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
+		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';	// content in database must be ',xxx,...,yyy,'
+
 		return $this->createCommon($user, $notrigger);
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one found.
-	 * @param string $website_id   Web site id (page name must also be filled if this parameter is used)
-	 * @param string $page         Page name (website id must also be filled if this parameter is used)
+	 * @param int		$id				Id object.
+	 * 									- If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
+	 * 									- If value is < 0, we must exclude this ID.
+	 * @param string	$website_id 	Web site id (page name must also be filled if this parameter is used)
+	 * @param string	$page       	Page name (website id must also be filled if this parameter is used)
+	 * @param string	$aliasalt		Alternative alias to search page (slow)
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $website_id = null, $page = null)
+	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -134,6 +142,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_website,";
 		$sql .= ' t.type_container,';
 		$sql .= " t.pageurl,";
+		$sql .= " t.aliasalt,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
@@ -154,9 +163,11 @@ class WebsitePage extends CommonObject
 		}
 		else
 		{
+			if ($id < 0) $sql .= ' AND t.rowid <> ' . abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
-			    if ($page) $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
+			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
+			    if ($aliasalt)	$sql .= " AND t.aliasalt LIKE '%," . $this->db->escape($aliasalt) . ",%'";
 			}
 		}
         $sql .= $this->db->plimit(1);
@@ -172,6 +183,7 @@ class WebsitePage extends CommonObject
 				$this->fk_website = $obj->fk_website;
 				$this->type_container = $obj->type_container;
 				$this->pageurl = $obj->pageurl;
+				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 				$this->title = $obj->title;
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;
@@ -222,6 +234,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_website,";
 		$sql .= " t.type_container,";
 		$sql .= " t.pageurl,";
+		$sql .= " t.aliasalt,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
 		$sql .= " t.keywords,";
@@ -269,6 +282,7 @@ class WebsitePage extends CommonObject
 				$record->fk_website = $obj->fk_website;
 				$record->type_container = $obj->type_container;
 				$record->pageurl = $obj->pageurl;
+				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 				$record->title = $obj->title;
 				$record->description = $obj->description;
 				$record->keywords = $obj->keywords;
@@ -303,6 +317,10 @@ class WebsitePage extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
+		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
+		if ($this->aliasalt) $this->aliasalt = ','.preg_replace('/,+$/', '', preg_replace('/^,+/', '', $this->aliasalt)).',';	// content in database must be ',xxx,...,yyy,'
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -346,10 +364,11 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newref				New ref/alias of page
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
-	 * @param	int		$newwebsite			0=Same web site, 1=New web site
+	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
+	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
 	 * @return 	mixed 						New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
+	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0, $keeptitleunchanged=0)
 	{
 		global $hookmanager, $langs;
 		$error = 0;
@@ -368,7 +387,8 @@ class WebsitePage extends CommonObject
 		// Clear fields
 		$object->ref = $newref;
 		$object->pageurl = $newref;
-		$object->title = $langs->trans("CopyOf").' '.$object->title;
+		$object->aliasalt = '';
+		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;
@@ -507,6 +527,7 @@ class WebsitePage extends CommonObject
 		$this->fk_website = '';
 		$this->type_container = 'page';
 		$this->pageurl = 'specimen';
+		$this->aliasalt = 'specimenalt';
 		$this->title = 'My Page';
 		$this->description = 'This is my page';
 		$this->keywords = 'keyword1, keyword2';

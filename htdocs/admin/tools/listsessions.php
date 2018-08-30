@@ -137,12 +137,8 @@ if ($savehandler == 'files')
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	$var=True;
-
 	foreach ($listofsessions as $key => $sessionentry)
 	{
-
-
 		print '<tr class="oddeven">';
 
 		// Login
@@ -212,5 +208,6 @@ print '</div>';
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

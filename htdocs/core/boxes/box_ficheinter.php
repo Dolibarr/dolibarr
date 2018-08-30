@@ -36,7 +36,11 @@ class box_ficheinter extends ModeleBoxes
 	var $boxlabel="BoxFicheInter";
 	var $depends = array("ficheinter");	// conf->contrat->enabled
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();

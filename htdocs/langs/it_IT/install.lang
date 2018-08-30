@@ -6,6 +6,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Il file di configurazione <b>%s</b> no
 ConfFileCouldBeCreated=Il file <b>%s</b> può essere creato.
 ConfFileIsNotWritable=Il file di configurazione <b>%s</b> non è scrivibile. Controllare le autorizzazioni. Durante la prima installazione, il server web deve essere in grado di scrivere in questo file durante il processo di configurazione (usa, per esempio il comando "chmod 666" per renderlo scrivibile da tutti gli utenti su sistemi operativi Unix e simili).
 ConfFileIsWritable=Il file di configurazione <b>%s</b> è scrivibile.
+ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
 ConfFileReload=Ricarica tutte le informazioni dal file di configurazione
 PHPSupportSessions=PHP supporta le sessioni.
 PHPSupportPOSTGETOk=PHP supporta le variabili GET e POST.
@@ -91,8 +92,8 @@ FailedToCreateAdminLogin=Impossibile creare l'account amministratore di Dolibarr
 WarningRemoveInstallDir=Attenzione, per motivi di sicurezza, una volta completata l'installazione o l'aggiornamento, rimuovere la directory <b>install</b> o rinominarla <b>install.lock</b>, al fine di evitarne un uso malevolo.
 FunctionNotAvailableInThisPHP=Non disponibile su questa installazione di PHP
 ChoosedMigrateScript=Scegli script di migrazione
-DataMigration=Migrazione dei dati
-DatabaseMigration=Migrazione della struttura del database
+DataMigration=Database migration (data)
+DatabaseMigration=Database migration (structure + some data)
 ProcessMigrateScript=Elaborazione dello script
 ChooseYourSetupMode=Scegli la modalità di impostazione e clicca "start"
 FreshInstall=Nuova installazione
@@ -139,14 +140,14 @@ KeepDefaultValuesDeb=Si sta utilizzando la configurazione guidata di un pacchett
 KeepDefaultValuesMamp=Si sta utilizzando la configurazione guidata DoliMamp, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
 KeepDefaultValuesProxmox=Si sta utilizzando la configurazione guidata di una virtual appliance Proxmox, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
-NothingToDelete=Nothing to clean/delete
-NothingToDo=Nothing to do
+SetAtLeastOneOptionAsUrlParameter=Inserisci almeno una opzione come parametro nell'indirizzo URL. Per esempio: '...repair.php?standard=confirmed'
+NothingToDelete=Nulla da ripulire/eliminare
+NothingToDo=Nessuna azione da fare
 #########
 # upgrade
 MigrationFixData=Fix per i dati denormalizzati
 MigrationOrder=Migrazione dei dati per gli ordini dei clienti
-MigrationSupplierOrder=Migrazione dei dati degli ordini fornitori
+MigrationSupplierOrder=Data migration for vendor's orders
 MigrationProposal=Migrazione dei dati delle proposte commerciali
 MigrationInvoice=Migrazione dei dati della fatturazione attiva
 MigrationContract=Migrazione dei dati per i contratti
@@ -193,11 +194,17 @@ MigrationActioncommElement=Aggiornare i dati sulle azioni
 MigrationPaymentMode=Migrazione dei dati delle modalità di pagamento
 MigrationCategorieAssociation=Migrazione delle categorie
 MigrationEvents=Migrazione degli eventi per aggiungere i proprietari nella tabella degli utilizzatori assegnati
-MigrationEventsContact=Migration of events to add event contact into assignement table
+MigrationEventsContact=Migrazione di eventi per aggiungere un contatto evento nella tabella assegnazioni
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
+MigrationUserRightsEntity=Aggiorna il valore del campo entità di llx_user_rights
+MigrationUserGroupRightsEntity=Aggiorna il valore del campo entità di llx_usergroup_rights
 MigrationReloadModule=Ricarica modulo %s
-MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
+MigrationResetBlockedLog=Reset del modulo BlockedLog per l'algoritmo v7
 ShowNotAvailableOptions=Mostra opzioni non disponibili
 HideNotAvailableOptions=Nascondi opzioni non disponibili
 ErrorFoundDuringMigration=L'errore si è verificato durante il processo di migrazione quindi il prossimo step non sarà disponibile. Per ignorare gli errori puoi <a href="%s">cliccare qui</a>, ma l'applicazione o qualche funzionalità potrebbe non funzionare correttamente fino alla correzione dell'errore.
+YouTryInstallDisabledByDirLock=The application try to sefl upgrade, but install/upgrade pages have been disabled for security reason (directory renamed with .lock suffix).<br>
+YouTryInstallDisabledByFileLock=The application try to sefl upgrade, but install/upgrade pages pages have been disabled for security reason (by lock file <strong>install.lock</strong> into dolibarr documents directory).<br>
+ClickHereToGoToApp=Click here to go to your application
+ClickOnLinkOrRemoveManualy=Click on following link and if you always reach this page, you must remove the file install.lock into documents directory manually

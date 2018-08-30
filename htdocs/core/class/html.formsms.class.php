@@ -32,7 +32,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormSms
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     var $fromname;
     var $fromsms;
@@ -56,7 +59,10 @@ class FormSms
     var $substit=array();
     var $param=array();
 
-    var $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -205,8 +211,16 @@ function limitChars(textarea, limit, infodiv)
                     try
                     {
                         $classname=ucfirst($classfile);
-                        $sms = new $classname($this->db);
-                        $resultsender = $sms->SmsSenderList();
+                        if (class_exists($classname))
+                        {
+                        	$sms = new $classname($this->db);
+                        	$resultsender = $sms->SmsSenderList();
+                        }
+                        else
+                        {
+                        	$sms = new stdClass();
+                        	$sms->error='The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                        }
                     }
                     catch(Exception $e)
                     {

@@ -30,13 +30,19 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
  *
  * @return	void
  */
-function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>'; }
+function llxHeaderVierge()
+{
+    print '<html><title>Export agenda cal</title><body>';
+}
 /**
  * Header function
  *
  * @return	void
  */
-function llxFooterVierge() { print '</body></html>'; }
+function llxFooterVierge()
+{
+    print '</body></html>';
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT .'/don/class/don.class.php';
@@ -73,14 +79,10 @@ if ($resql)
 		print "<td align=\"right\">".$langs->trans("Amount")."</TD>";
 		print "</TR>\n";
 
-		$var=True;
-		$bc[1]='bgcolor="#f5f5f5"';
-		$bc[0]='bgcolor="#f0f0f0"';
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 
-			
 			print '<tr class="oddeven">';
 			if ($objp->public)
 			{

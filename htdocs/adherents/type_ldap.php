@@ -63,7 +63,7 @@ if (empty($reshook))
 
 		if ($result > 0)
 		{
-			$object->listMembersForMemberType();
+			$object->listMembersForMemberType('', 1);
 
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
@@ -187,5 +187,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

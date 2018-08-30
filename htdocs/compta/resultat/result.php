@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries','accountancy'));
 
 $error = 0;
@@ -536,5 +537,6 @@ else if ($modecompta=="BOOKKEEPING")
 print "</table>";
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -514,5 +514,6 @@ elseif ($action == 'edit')
     print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

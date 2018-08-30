@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Contabilidade
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de coluna para o ficheiro exportadocc
 ACCOUNTING_EXPORT_DATE=Formato da data para o ficheiro exportado
 ACCOUNTING_EXPORT_PIECE=Exportar a referência da peça
@@ -39,11 +40,11 @@ AccountWithNonZeroValues=Accounts with non zero values
 ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
-AccountancyArea=Área de contabilidade
+AccountancyArea=Accounting area
 AccountancyAreaDescIntro=O uso do módulo de contabilidade é feito em várias etapas:
 AccountancyAreaDescActionOnce=As seguintes ações são geralmente executadas apenas uma vez, ou uma vez por ano ...
 AccountancyAreaDescActionOnceBis=Os próximos passos devem ser efetuados para economizar tempo no futuro, sugerindo-lhe a conta contabilística padrão correta quando estiver a ser feito um registo no Livro Razão e nos Diários.
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=PASSO %s: Crie um modelo de gráfico de conta no m
 AccountancyAreaDescChart=PASSO %s: Criar or verificar conteúdo do seu gráfico de conta no menu %s
 
 AccountancyAreaDescVat=PASSO %s: Defina a conta contabilística para cada taxa de IVA. Para tal pode usar a entrada %s do menu.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=PASSO %s: Defina a conta contabilística para o relatório de despesa. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescSal=PASSO %s: Defina a conta contabilística para o pagamento de salários. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescContrib=PASSO %s: Defina a conta contabilística para despesas especiais (outros impostos). Para tal pode usar a entrada do menu %s.
@@ -89,7 +91,7 @@ MenuProductsAccounts=Contas de produtos
 ProductsBinding=Contas de produtos
 Ventilation=Vinculação a contas
 CustomersVentilation=Associação à fatura do cliente
-SuppliersVentilation=Associação à fatura do fornecedor
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Vinculação do relatório de despesas
 CreateMvts=Criar nova transação
 UpdateMvts=Modificação de uma transação
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Tamanho das contas contabilísticas gerais (se defini
 ACCOUNTING_LENGTH_AACCOUNT=Tamanho das contas contabilísticas de terceiros (se definir o valor deste campo a 6, então a conta '401' irá ser mostrada como '401000')
 ACCOUNTING_MANAGE_ZERO=Permitir a gestão do número de zeros no fim da designação da conta contabilística. Isto é necessário em alguns países (como a Suíça). Se desativada (por defeito), você poderá definir os 2 seguintes parâmetros de forma a que a aplicação adicione zeros virtualmente.
 BANK_DISABLE_DIRECT_INPUT=Desactivar a gravação direta de transação na conta bancária
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Diário de vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diário de compras
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diário de diversos
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diário de relatório de despesas
 ACCOUNTING_SOCIAL_JOURNAL=Diário social
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Conta contabilística de transferência
 ACCOUNTING_ACCOUNT_SUSPENSE=Conta contabilística de espera
@@ -177,7 +181,7 @@ ThirdpartyAccountNotDefined=Conta para terceiros não definido
 ProductAccountNotDefined=Conta para o produto não definido
 FeeAccountNotDefined=Conta para o honorário não definida
 BankAccountNotDefined=Conta de banco não definida
-CustomerInvoicePayment=Pagamento de fatura de cliente
+CustomerInvoicePayment=Pagamento de fatura a cliente
 ThirdPartyAccount=Third party account
 NewAccountingMvt=Nova transação
 NumMvts=Número da transação
@@ -185,11 +189,12 @@ ListeMvts=Lista de movimentos
 ErrorDebitCredit=Débito e crédito não pode ter um valor, ao mesmo tempo
 AddCompteFromBK=Adicionar contas contabilisticas ao grupo
 ReportThirdParty=Lista de contas de terceiros
-DescThirdPartyReport=Consulte aqui a lista de clientes e fornecedores e as suas contas contabilísticas
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=Lista de contas contabilísticas
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
@@ -198,14 +203,14 @@ PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'g
 TotalVente=Total de volume de negócios sem impostos
 TotalMarge=Margem total de vendas
 
-DescVentilCustomer=Consulte aqui a lista de linhas de faturas de clientes associados (ou não) a uma conta contabilística de produto
+DescVentilCustomer=Consulte aqui a lista de linhas de faturas a clientes associados (ou não) a uma conta contabilística de produto
 DescVentilMore=Na maioria dos casos, se você usar produtos ou serviços predefinidos e configurar o número de conta no cartão do produto/serviço, a aplicação será capaz de efetuar toda a vinculação entre a linhas das faturas e a conta contabilística do seu gráfico de contas através de um clique no botão <strong>"%s"</strong>. Se a conta não for configurada no cartão do produto/serviço or se você tiver algumas linhas não vinculadas a uma conta, então terá de efetuar a vinculação manual a partir do menu "<strong>%s</strong>".
-DescVentilDoneCustomer=Consulte aqui a lista das linhas de faturas de clientes e as suas contas de contabilísticas de produto
+DescVentilDoneCustomer=Consulte aqui a lista das linhas de faturas a clientes e as suas contas de contabilísticas de produto
 DescVentilTodoCustomer=Vincular linhas da fatura que não estejam vinculadas a uma conta contabilística de produto
 ChangeAccount=Alterar a conta contabilística de produto/serviço para as linhas selecionadas com a seguinte conta contabilística:
 Vide=-
-DescVentilSupplier=Consulte aqui a lista de linhas de faturas de fornecedor associadas ou não, a uma conta contabilística de produto
-DescVentilDoneSupplier=Consulte aqui a lista das linhas das faturas e a conta contabilística do fornecedor
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=Vincule as linhas do relatórios de despesas de não vinculados a um honorário de uma conta de contabilística
 DescVentilExpenseReport=Consulte aqui a lista de linhas do relatório de despesas vinculadas (ou não) a um honorário da conta contabilística
 DescVentilExpenseReportMore=Se configurar a conta contabilística de acordo com o tipo de linha de relatório de despesa, a aplicação será capaz de efetuar toda a vinculação entre as linhas do seu relatório de despesas e a conta contabilística do seu gráfico de contas através de um único clique no botão <strong>"%s"</strong>. Se a conta não foi configurada no dicionário de honorários ou se você tem algumas linhas não vinculadas, então terá de efetuar a vinculação manuel no menu "<strong>%s</strong>".
@@ -215,7 +220,7 @@ ValidateHistory=Vincular automaticamente
 AutomaticBindingDone=Vinculação automática efetuada
 
 ErrorAccountancyCodeIsAlreadyUse=Erro, não pode apagar esta conta contabilística porque está a ser utilizada
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Cartão de vinculação
 GeneralLedgerIsWritten=As transações são escritas no Livro Razão
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -293,4 +298,9 @@ Binded=Linhas vinculadas
 ToBind=Linhas a vincular
 UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
+## Import
+ImportAccountingEntries=Accounting entries
+
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

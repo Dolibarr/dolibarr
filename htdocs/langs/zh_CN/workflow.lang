@@ -14,7 +14,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当客户账单被确认时，
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户账单设定为支付时，将关联源客户订单分类为账单（如果账单金额与关联订单总额相同）
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=将关联源客户订单分类为发货时进行验证 (如果所有装运的货物数量与更新的订单相同)
 # Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=对供应商发票进行验证时关联的源供应商方案进行分类 (如果发票金额与关联的方案总金额相同)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=在验证供应商发票时对关联的源供应商订单进行分类（如果发票金额与关联的订单总金额相同）
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
 AutomaticCreation=自动创建
 AutomaticClassification=自动分类

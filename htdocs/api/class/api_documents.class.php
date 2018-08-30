@@ -306,7 +306,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Proposal not found');
 			}
 
-			$upload_dir = $conf->propal->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
+			$upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
 		}
 		else if ($modulepart == 'commande' || $modulepart == 'order')
 		{
@@ -355,6 +355,22 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->facture->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'invoice');
+		}
+		else if ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->agenda->myactions->read && !DolibarrApiAccess::$user->rights->agenda->allactions->read) {
+				throw new RestException(401);
+			}
+
+			$object = new ActionComm($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Event not found');
+			}
+
+			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		}
 		else
 		{

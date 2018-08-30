@@ -51,15 +51,17 @@ class modLabel extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
 		$this->picto='label';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/label/temp");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Config pages
 		// $this->config_page_url = array("label.php");

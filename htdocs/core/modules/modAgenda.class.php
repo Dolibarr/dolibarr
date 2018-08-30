@@ -59,21 +59,21 @@ class modAgenda extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='action';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/agenda/temp");
 
 		// Config pages
-		//-------------
 		$this->config_page_url = array("agenda_other.php");
 
-		// Dependancies
-		//-------------
-		$this->depends = array();
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies");
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Module parts
         $this->module_parts = array();
@@ -246,7 +246,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'Agenda',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
+													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda',
 													'langs'=>'agenda',
 													'position'=>140,
 													'perms'=>'$user->rights->agenda->myactions->read',
@@ -258,7 +258,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuToDoMyActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
+													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 													'langs'=>'agenda',
 													'position'=>141,
 													'perms'=>'$user->rights->agenda->myactions->read',
@@ -270,7 +270,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuDoneMyActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
+													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 													'langs'=>'agenda',
 													'position'=>142,
 													'perms'=>'$user->rights->agenda->myactions->read',
@@ -282,7 +282,7 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuToDoActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
+													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 													'langs'=>'agenda',
 													'position'=>143,
 													'perms'=>'$user->rights->agenda->allactions->read',
@@ -294,15 +294,16 @@ class modAgenda extends DolibarrModules
 													'type'=>'left',
 													'titre'=>'MenuDoneActions',
 													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
+													'url'=>'/comm/action/index.php?action=default&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 													'langs'=>'agenda',
 													'position'=>144,
 													'perms'=>'$user->rights->agenda->allactions->read',
 													'enabled'=>'$user->rights->agenda->allactions->read',
 													'target'=>'',
 													'user'=>2);
-		$r++;
+
 		// List
+		$r++;
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 													'type'=>'left',
 													'titre'=>'List',

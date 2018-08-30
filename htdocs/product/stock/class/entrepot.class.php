@@ -33,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Entrepot extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='stock';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='entrepot';
+	
 	public $picto='stock';
 
 	/**
@@ -690,7 +698,8 @@ class Entrepot extends CommonObject
 	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
 	 * @return	array()	$TChildWarehouses	array which will contain all children
 	 */
-	function get_children_warehouses($id, &$TChildWarehouses) {
+    function get_children_warehouses($id, &$TChildWarehouses)
+    {
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot
@@ -706,6 +715,38 @@ class Entrepot extends CommonObject
 
 		return $TChildWarehouses;
 
+	}
+
+	/**
+	 *	Create object on disk
+	 *
+	 *	@param     string		$modele			force le modele a utiliser ('' to not force)
+	 * 	@param     Translate	$outputlangs	Object langs to use for output
+	 *  @param     int			$hidedetails    Hide details of lines
+	 *  @param     int			$hidedesc       Hide description
+	 *  @param     int			$hideref        Hide ref
+	 *  @return    int             				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("stocks");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'standard';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->STOCK_ADDON_PDF)) {
+				$modele = $conf->global->STOCK_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/stock/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 }

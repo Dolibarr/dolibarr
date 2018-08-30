@@ -253,7 +253,7 @@ switch ($action)
 			}
 			else
 			{
-				setEventMessage($invoice->error, $invoice->errors, 'errors');
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
 			    $error++;
 			}
 
@@ -324,7 +324,7 @@ switch ($action)
                     	{
                     		// We set status to payed
                     		$result=$invoice->set_paid($user);
-                  			//print 'eeeee';exit;
+                  			//print 'set paid';exit;
                     	}
 
                     }

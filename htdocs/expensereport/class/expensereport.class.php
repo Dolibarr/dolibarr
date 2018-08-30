@@ -3,6 +3,7 @@
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro  <aspangaro@zendsi.com>
  * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2018 Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport_rule.class.p
  */
 class ExpenseReport extends CommonObject
 {
-    var $element='expensereport';
-    var $table_element='expensereport';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expensereport';
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='expensereport';
+
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
@@ -344,11 +353,6 @@ class ExpenseReport extends CommonObject
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-            // Call trigger
-            $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
         }
 
         unset($this->context['createfromclone']);
@@ -459,7 +463,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_statut as status, d.fk_c_paiement,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity IN (".getEntity('c_paiement').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
         //$sql.= $restrict;
@@ -1301,6 +1305,7 @@ class ExpenseReport extends CommonObject
      * @param User      $fuser      User
      * @param Details   $details    Details
 	 * @param int       $notrigger  Disable triggers
+     * @return int
      */
     function setDeny($fuser,$details,$notrigger=0)
     {
@@ -2151,9 +2156,10 @@ class ExpenseReport extends CommonObject
      *  @param      int         $hidedetails    Hide details of lines
      *  @param      int         $hidedesc       Hide description
      *  @param      int         $hideref        Hide ref
+     *  @param   null|array  $moreparams     Array to provide more information
      *  @return     int                         0 if KO, 1 if OK
      */
-    public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+    public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
     {
         global $conf,$langs;
 
@@ -2172,7 +2178,7 @@ class ExpenseReport extends CommonObject
 
         $modelpath = "core/modules/expensereport/doc/";
 
-        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
     }
 
     /**
@@ -2380,8 +2386,15 @@ class ExpenseReport extends CommonObject
  */
 class ExpenseReportLine
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     var $rowid;
     var $comments;

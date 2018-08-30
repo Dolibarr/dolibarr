@@ -33,6 +33,7 @@ PropalStatusSigned=Υπογραφή (ανάγκες χρέωσης)
 PropalStatusNotSigned=Δεν έχει υπογραφεί (κλειστό)
 PropalStatusBilled=Χρεώνεται
 PropalStatusDraftShort=Προσχέδιο
+PropalStatusValidatedShort=Επικυρώθηκε
 PropalStatusClosedShort=Κλειστό
 PropalStatusSignedShort=Υπογραφή
 PropalStatusNotSignedShort=Δεν έχει υπογραφεί
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 μήνα
 TypeContact_propal_internal_SALESREPFOLL=Εκπρόσωπος που παρακολουθεί την Προσφορά
 TypeContact_propal_external_BILLING=Πελάτης επαφή τιμολόγιο
 TypeContact_propal_external_CUSTOMER=Πελάτης επαφή που παρακολουθεί την Προσφορά
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Ένα πλήρες μοντέλο Προσφοράς (logo. ..)
 DefaultModelPropalCreate=Δημιουργία προεπιλεγμένων μοντέλων

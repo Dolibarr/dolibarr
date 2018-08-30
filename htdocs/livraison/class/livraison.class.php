@@ -3,8 +3,8 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2012 Philippe Grand	     <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2011-2018 Philippe Grand	 <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013      Florian Henry	 <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,9 +39,18 @@ if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande
  */
 class Livraison extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element="delivery";
+	
 	public $fk_element="fk_livraison";
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element="livraison";
+	
 	public $table_element_line="livraisondet";
 
 	var $brouillon;
@@ -301,13 +310,9 @@ class Livraison extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-
-				// Retrieve all extrafields for delivery
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				/*
 				 * Lignes
@@ -544,7 +549,7 @@ class Livraison extends CommonObject
 		global $conf;
 		$error = 0;
 
-		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+		if ($id > 0 && ! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 		{
 			$livraisonline = new LivraisonLigne($this->db);
 			$livraisonline->array_options=$array_options;
@@ -1061,7 +1066,10 @@ class Livraison extends CommonObject
  */
 class LivraisonLigne extends CommonObjectLine
 {
-	var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	// From llx_expeditiondet
 	var $qty;
@@ -1070,7 +1078,12 @@ class LivraisonLigne extends CommonObjectLine
 	var $price;
 	var $fk_product;
 	var $origin_id;
-	var $label;       // Label produit
+	
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $description;  // Description produit
 	/**
 	 * @deprecated
@@ -1086,7 +1099,14 @@ class LivraisonLigne extends CommonObjectLine
 	public $product_ref;
 	public $product_label;
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='livraisondet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='livraisondet';
 
 	/**

@@ -33,6 +33,7 @@ PropalStatusSigned=Firmado (a facturar)
 PropalStatusNotSigned=No firmado (cerrado)
 PropalStatusBilled=Facturado
 PropalStatusDraftShort=Borrador
+PropalStatusValidatedShort=Validado
 PropalStatusClosedShort=Cerrado
 PropalStatusSignedShort=Firmado
 PropalStatusNotSignedShort=No firmado
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 mes
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguimiento presupuesto
 TypeContact_propal_external_BILLING=Contacto cliente de facturación presupuesto
 TypeContact_propal_external_CUSTOMER=Contacto cliente seguimiento presupuesto
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Modelo de presupuesto completo (logo...)
 DefaultModelPropalCreate=Modelo por defecto

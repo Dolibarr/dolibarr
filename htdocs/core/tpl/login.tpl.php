@@ -121,7 +121,7 @@ if ($disablenofollow) echo '</a>';
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
 </td>
 </tr>
@@ -131,7 +131,7 @@ if ($disablenofollow) echo '</a>';
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key">
-<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
+<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
 </span>
 </td></tr>
 <?php
@@ -165,7 +165,7 @@ if ($captcha) {
 	<table class="login_table_securitycode centpercent"><tr>
 	<td>
 	<span class="span-icon-security">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
 	</span>
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
@@ -196,11 +196,10 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div class="center" style="margin-top: 8px;">';
+	echo '<div class="center" style="margin-top: 15px;">';
 	if ($forgetpasslink) {
-		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
+		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">';
 		echo $langs->trans('PasswordForgotten');
-		if (! $helpcenterlink) echo ')';
 		echo '</a>';
 	}
 
@@ -210,9 +209,8 @@ if ($forgetpasslink || $helpcenterlink)
 		$url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
 		if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
-		if (! $forgetpasslink) echo '(';
 		echo $langs->trans('NeedHelpCenter');
-		echo ')</a>';
+		echo '</a>';
 	}
 	echo '</div>';
 }

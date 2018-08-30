@@ -52,6 +52,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("sendings","companies","bills",'deliveries','orders','stocks','other','propal'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
@@ -123,6 +124,11 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
+	// Actions to build doc
+	$upload_dir = $conf->expedition->dir_output.'/sending';
+	$permissioncreate = $user->rights->expedition->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 	// Reopen
 	if ($action == 'reopen' && $user->rights->expedition->creer)
 	{
@@ -155,27 +161,22 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
-	    // Fill array 'array_options' with data from update form
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
 	    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 	    if ($ret < 0) $error++;
 
 	    if (! $error)
 	    {
-	        // Actions on extra fields (by external module or standard code)
-	        // TODO le hook fait double emploi avec le trigger !!
-	        $hookmanager->initHooks(array('expeditiondao'));
-	        $parameters = array('id' => $object->id);
-	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	        if (empty($reshook)) {
-	            $result = $object->insertExtraFields();
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-	        } else if ($reshook < 0)
-	            $error++;
+	        // Actions on extra fields
+            $result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 	    }
 
 	    if ($error)
@@ -275,7 +276,7 @@ if (empty($reshook))
 			            // We try to set an amount
     			        // Case we dont use the list of available qty for each warehouse/lot
     			        // GUI does not allow this yet
-    			        setEventMessage('StockIsRequiredToChooseWhichLotToUse', 'errors');
+    			        setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse"), null, 'errors');
 			        }
 			    }
 			}
@@ -502,12 +503,16 @@ if (empty($reshook))
 	}
 
 	// Action update
-	else if ($action == 'settracking_number' || $action == 'settracking_url'
-	|| $action == 'settrueWeight'
-	|| $action == 'settrueWidth'
-	|| $action == 'settrueHeight'
-	|| $action == 'settrueDepth'
-	|| $action == 'setshipping_method_id')
+	else if (
+		($action == 'settracking_number'
+		|| $action == 'settracking_url'
+		|| $action == 'settrueWeight'
+		|| $action == 'settrueWidth'
+		|| $action == 'settrueHeight'
+		|| $action == 'settrueDepth'
+		|| $action == 'setshipping_method_id')
+		&& $user->rights->expedition->creer
+		)
 	{
 	    $error=0;
 
@@ -536,42 +541,6 @@ if (empty($reshook))
 	    }
 
 	    $action="";
-	}
-
-	// Build document
-	else if ($action == 'builddoc')	// En get ou en post
-	{
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	    // Define output language
-	    $outputlangs = $langs;
-	    $newlang='';
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->thirdparty->default_lang;
-	    if (! empty($newlang))
-	    {
-	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang($newlang);
-	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    if ($result <= 0)
-	    {
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-	    }
-	}
-
-	// Delete file in doc form
-	elseif ($action == 'remove_file')
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		$upload_dir =	$conf->expedition->dir_output . "/sending";
-		$file =	$upload_dir	. '/' .	GETPOST('file');
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	elseif ($action == 'classifybilled')
@@ -1065,11 +1034,11 @@ if ($action == 'create')
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
-			if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+			if (empty($reshook)) {
 				// copy from order
 				$orderExtrafields = new Extrafields($db);
 				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
-				if ($object->fetch_optionals($object->id, $orderExtrafieldLabels) > 0) {
+				if ($object->fetch_optionals() > 0) {
 					$expe->array_options = array_merge($expe->array_options, $object->array_options);
 				}
 				print $object->showOptionals($extrafields, 'edit');
@@ -1164,7 +1133,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $var=true;
             $indiceAsked = 0;
             while ($indiceAsked < $numAsked)
             {
@@ -1271,7 +1239,7 @@ if ($action == 'create')
 						print '<td align="center">';
 						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-                            if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
+                            if (GETPOST('qtyl'.$indiceAsked, 'int')) $deliverableQty=GETPOST('qtyl'.$indiceAsked, 'int');
                             print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 						}
@@ -1606,9 +1574,9 @@ if ($action == 'create')
 					$orderLineExtrafields = new Extrafields($db);
 					$orderLineExtrafieldLabels = $orderLineExtrafields->fetch_name_optionals_label($object->table_element_line);
 					$srcLine = new OrderLine($db);
-					$srcLine->fetch_optionals($line->id,$orderLineExtrafieldLabels); // fetch extrafields also available in orderline
+					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
 					$line = new ExpeditionLigne($db);
-					$line->fetch_optionals($object->id,$extralabelslines);
+					$line->fetch_optionals($line->id);
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
@@ -1662,7 +1630,7 @@ else if ($id || $ref)
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals();
 
 		$head=shipping_prepare_head($object);
 		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
@@ -2452,7 +2420,7 @@ else if ($id || $ref)
 			if (is_array($extralabelslines) && count($extralabelslines)>0) {
 				$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
 				$line = new ExpeditionLigne($db);
-				$line->fetch_optionals($lines[$i]->id,$extralabelslines);
+				$line->fetch_optionals($lines[$i]->id);
 				print '<tr class="oddeven">';
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
@@ -2525,9 +2493,9 @@ else if ($id || $ref)
 			{
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 				}
-				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendMail').'</a>';
 			}
 
 			// Create bill
@@ -2627,7 +2595,6 @@ else if ($id || $ref)
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

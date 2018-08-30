@@ -16,19 +16,19 @@ a:hover {
 	border: 1px solid #bbb;
 	border-radius: 8px;
 	-moz-border-radius: 8px;
-	box-shadow: 2px 2px 8px #BBB; 
+	box-shadow: 2px 2px 8px #BBB;
 }
 .CTable {
 	padding: 6px;
 	font-weight: normal;
 	color: #444444 !important;
-	
+
 	margin: 8px 0px 8px 2px;
-	
+
 	/*border: 1px solid #bbb;
 	border-radius: 8px;
 	-moz-border-radius: 8px;*/
-	
+
 	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 }
 .csscolumns {

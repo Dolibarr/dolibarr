@@ -33,6 +33,7 @@ PropalStatusSigned=Signed (needs billing)
 PropalStatusNotSigned=Not signed (closed)
 PropalStatusBilled=Fakturisano
 PropalStatusDraftShort=Nacrt
+PropalStatusValidatedShort=Potvrđeno
 PropalStatusClosedShort=Zatvoreno
 PropalStatusSignedShort=Signed
 PropalStatusNotSignedShort=Not signed
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 month
 TypeContact_propal_internal_SALESREPFOLL=Representative following-up proposal
 TypeContact_propal_external_BILLING=Kontakt za fakturu kupca
 TypeContact_propal_external_CUSTOMER=Customer contact following-up proposal
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=A complete proposal model (logo...)
 DefaultModelPropalCreate=Default model creation

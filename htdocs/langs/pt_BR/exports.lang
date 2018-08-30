@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - exports
 ExportsArea=Área de exportações
 ImportArea=Área de importação
-NewExport=Nova exportação
 NewImport=Nova importação
 ExportableDatas=Conjunto de dados que podem ser exportados
 ImportableDatas=Conjunto de dados que podem ser importados

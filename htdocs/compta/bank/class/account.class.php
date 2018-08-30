@@ -36,8 +36,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Account extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element = 'bank_account';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = 'bank_account';
+	
 	public $picto = 'account';
 
 	/**
@@ -395,9 +403,10 @@ class Account extends CommonObject
 	 *  @param	string		$emetteur		Name of cheque writer
 	 *  @param	string		$banque			Bank of cheque writer
 	 *  @param	string		$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
+	 *  @param	int			$datev			Date value
 	 *  @return	int							Rowid of added entry, <0 if KO
 	 */
-	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='')
+	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='', $datev=null)
 	{
 		// Deprecatîon warning
 		if (is_numeric($oper)) {
@@ -447,7 +456,7 @@ class Account extends CommonObject
 
 		$this->db->begin();
 
-		$datev = $date;
+		if (is_null($datev) || empty($datev)) $datev = $date;
 
 		$accline = new AccountLine($this->db);
 		$accline->datec = $now;
@@ -505,9 +514,11 @@ class Account extends CommonObject
 	 *  @param  int     $notrigger  1=Disable triggers
 	 *  @return int        			< 0 if KO, > 0 if OK
 	 */
-	function create(User $user = null, $notrigger=0)
+	function create(User $user, $notrigger=0)
 	{
 		global $langs,$conf, $hookmanager;
+
+		$error=0;
 
 		// Clean parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
@@ -668,7 +679,7 @@ class Account extends CommonObject
 	 *      @param  int     $notrigger  1=Disable triggers
 	 *		@return	int					<0 if KO, >0 if OK
 	 */
-	function update(User $user = null, $notrigger = 0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $langs,$conf, $hookmanager;
 
@@ -913,12 +924,9 @@ class Account extends CommonObject
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
 				$this->date_update    = $this->db->jdate($obj->date_update);
 
-				// Retreive all extrafield for thirdparty
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				return 1;
 			}
@@ -943,8 +951,10 @@ class Account extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
-	public function setCategories($categories) {
+    public function setCategories($categories)
+    {
 		// Handle single category
 		if (! is_array($categories)) {
 			$categories = array($categories);
@@ -1138,6 +1148,8 @@ class Account extends CommonObject
 	 */
 	function solde($option=0)
 	{
+		$solde=0;
+
 		$sql = "SELECT sum(amount) as amount";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql.= " WHERE fk_account = ".$this->id;
@@ -1152,8 +1164,13 @@ class Account extends CommonObject
 				$solde = $obj->amount;
 			}
 			$this->db->free($resql);
-			return $solde;
+		} else {
+			$this->errors[]=$this->db->lasterror;
+			return -1;
 		}
+
+		return $solde;
+
 	}
 
 	/**
@@ -1294,13 +1311,19 @@ class Account extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $mode='', $option='', $save_lastsearch_value=-1, $notooltip=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$result='';
 		$label = '<u>' . $langs->trans("ShowAccount") . '</u>';
 		$label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
 		$label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
 		$label .= '<br><b>' . $langs->trans("AccountCurrency") . ':</b> ' . $this->currency_code;
+
+		if (empty($user->rights->banque->lire) || !empty($user->socid))
+		{
+			$option = 'nolink';
+		}
+
 		if (! empty($conf->accounting->enabled))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -1330,6 +1353,11 @@ class Account extends CommonObject
 
 		$linkstart = '<a href="'.$url.$linkclose;
 		$linkend = '</a>';
+
+                if ($option == 'nolink') {
+                    $linkstart = '';
+                    $linkend = '';
+                }
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -1596,7 +1624,7 @@ class Account extends CommonObject
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'ABC12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'AA12';
 		$this->iban            = 'FR999999999';
 		$this->domiciliation   = 'My bank address';
@@ -1613,13 +1641,33 @@ class Account extends CommonObject
  */
 class AccountLine extends CommonObject
 {
-	var $error;
-	var $db;
-	var $element='bank';
-	var $table_element='bank';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='bank';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='bank';
+	
 	var $picto = 'generic';
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $ref;
 	var $datec;
 	var $dateo;
@@ -1629,7 +1677,12 @@ class AccountLine extends CommonObject
 	 */
 	var $datev;
 	var $amount;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $note;
 	var $fk_user_author;
 	var $fk_user_rappro;
@@ -1907,7 +1960,7 @@ class AccountLine extends CommonObject
 	 */
 	function update_conciliation(User $user, $cat)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$this->db->begin();
 
@@ -2135,9 +2188,10 @@ class AccountLine extends CommonObject
 	 *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *		@param	int		$maxlen			Longueur max libelle
 	 *		@param	string	$option			Option ('showall')
+	 * 		@param	int     $notooltip		1=Disable tooltip
 	 *		@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0,$option='')
+	function getNomUrl($withpicto=0,$maxlen=0,$option='',$notooltip=0)
 	{
 		global $langs;
 
@@ -2263,4 +2317,3 @@ class AccountLine extends CommonObject
 	}
 
 }
-

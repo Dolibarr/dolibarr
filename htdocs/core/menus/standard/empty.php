@@ -25,7 +25,11 @@
  */
 class MenuManager
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $type_user=0;					// Put 0 for internal users, 1 for external users
 	var $atarget="";               		// To store default target to use onto links
 
@@ -536,7 +540,8 @@ function print_start_menu_entry_empty($idsel,$classname,$showmode)
 	if ($showmode)
 	{
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-		print '<div class="tmenuleft tmenusep"></div><div class="tmenucenter">';
+		//print '<div class="tmenuleft tmenusep"></div>';
+		print '<div class="tmenucenter">';
 	}
 }
 

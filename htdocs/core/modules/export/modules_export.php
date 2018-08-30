@@ -30,7 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $driverlabel=array();
 	var $driverversion=array();
@@ -54,7 +57,6 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$handle=opendir($dir);
 
 		// Recherche des fichiers drivers exports disponibles
-		$var=True;
 		$i=0;
         if (is_resource($handle))
         {
@@ -72,7 +74,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
     				if (class_exists($classname))
     				{
         				$module = new $classname($db);
-    
+
         				// Picto
         				$this->picto[$module->id]=$module->picto;
         				// Driver properties

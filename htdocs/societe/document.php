@@ -69,6 +69,10 @@ if ($id > 0 || ! empty($ref))
 	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id,0,0,0,$object,'thirdparty');
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('thirdpartydocument','globalcard'));
+
+
 
 /*
  * Actions
@@ -101,7 +105,7 @@ if ($object->id)
 	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -146,7 +150,7 @@ if ($object->id)
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 	// Total size
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 	print '</table>';
 
@@ -165,6 +169,6 @@ else
 	accessforbidden('',0,0);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

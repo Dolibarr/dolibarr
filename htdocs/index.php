@@ -110,10 +110,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $boxstat='';
 
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("contracts");
+// Load translation files required by page
+$langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 if (empty($user->societe_id))
 {
@@ -262,7 +260,7 @@ if (empty($user->societe_id))
 	    );
 	    // Dashboard Link lines
 	    $links=array(
-	        DOL_URL_ROOT.'/user/index.php',
+	        DOL_URL_ROOT.'/user/list.php',
     	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
@@ -339,14 +337,14 @@ if (empty($user->societe_id))
 	    }
     }
 
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
 
     $boxstat.='</td></tr>';
     $boxstat.='</table>';
@@ -541,7 +539,8 @@ if ($showweather)
     $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
-    $text.='. '.$langs->trans("LateDesc");
+    else $text=$langs->transnoentitiesnoconv("NoItemLate");
+    $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
     //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
     $options='height="64px"';
     $boxwork.=showWeather($totallate,$text,$options);
@@ -566,6 +565,10 @@ if (! empty($valid_dashboardlines))
         $sep=($conf->dol_use_jmobile?'<br>':' ');
         $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
+        if ($board->total > 0 && ! empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX))
+	{
+		$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.price($board->total)	.'</span></a>';
+	}
         $boxwork .= '</div>';
         if ($board->nbtodolate > 0)
         {
@@ -583,12 +586,12 @@ if (! empty($valid_dashboardlines))
         $boxwork .="\n";
     }
 
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='</td></tr>';
 }
 else
@@ -616,20 +619,18 @@ print '<div class="fichecenter fichecenterbis">';
 
 $boxlist.='<div class="twocolumns">';
 
-$boxlist.='<div class="fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 $boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
 
-$boxlist.= '<div class="fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist.= '<div class="ficheaddleft">';
+$boxlist.= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlistb'];
 
-$boxlist.= '</div>';
 $boxlist.= '</div>';
 $boxlist.= "\n";
 
@@ -678,8 +679,8 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 
 //print 'mem='.memory_get_usage().' - '.memory_get_peak_usage();
 
+// End of page
 llxFooter();
-
 $db->close();
 
 

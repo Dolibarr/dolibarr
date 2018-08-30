@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 // Filename to print must be provided into 'file' parameter
 
 // Print file
-if ($action == 'print_file' and $user->rights->printing->read)
+if ($action == 'print_file' && $user->rights->printing->read)
 {
     $langs->load("printing");
     require_once DOL_DOCUMENT_ROOT . '/core/modules/printing/modules_printing.php';

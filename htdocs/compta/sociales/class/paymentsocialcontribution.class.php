@@ -31,8 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
  */
 class PaymentSocialContribution extends CommonObject
 {
-	public $element='paiementcharge';			//!< Id that identify managed objects
-	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='paiementcharge';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='paiementcharge';
+
 	public $picto = 'payment';
 
 	var $fk_charge;
@@ -164,6 +172,9 @@ class PaymentSocialContribution extends CommonObject
 
 		}
 
+		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE',$user);
+		if($result < 0) $error++;
+
 		if ($totalamount != 0 && ! $error)
 		{
 		    $this->amount=$totalamount;
@@ -203,7 +214,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id AND pt.entity IN (" . getEntity('c_paiement') . ")";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id;
 		// TODO link on entity of tax;
@@ -515,7 +526,7 @@ class PaymentSocialContribution extends CommonObject
 
         if (! empty($conf->banque->enabled))
         {
-            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);
@@ -705,5 +716,3 @@ class PaymentSocialContribution extends CommonObject
 		return $result;
 	}
 }
-
-

@@ -32,26 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("admin");
-$langs->load("languages");
-$langs->load("other");
-
-$langs->load("companies");
-$langs->load("products");
-$langs->load("members");
-$langs->load("projects");
-$langs->load("hrm");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
 
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'adminihm';   // To manage different context of search
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('adminihm','globaladmin');
-$hookmanager->initHooks($contextpage);
 
 
 /*
@@ -89,10 +79,10 @@ if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACK
 
 if ($action == 'update')
 {
-	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["MAIN_LANG_DEFAULT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["MAIN_MULTILANGS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", $_POST["MAIN_LANG_DEFAULT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_THEME", $_POST["main_theme"],'chaine',0,'',$conf->entity);
 
 	$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
 	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
@@ -110,9 +100,17 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_VERMENU_BACK1', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_VERMENU_BACK1', $val,'chaine',0,'',$conf->entity);
 
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val,'chaine',0,'',$conf->entity);
+
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', $val,'chaine',0,'',$conf->entity);
+
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLE'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val,'chaine',0,'',$conf->entity);
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
@@ -128,32 +126,28 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR2', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR2', $val,'chaine',0,'',$conf->entity);
 
-	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
-	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
-	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val,'chaine',0,'',$conf->entity);
-
-	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
-	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
-
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', $val,'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
+	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
+	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK",		$_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
-	dolibarr_set_const($db, "MAIN_MOTD",						dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME",						dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
-	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", $_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", $_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", $_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_START_WEEK", $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", $_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", $_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SHOW_LOGO", $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", $_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
+
+	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", $_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
+	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", $_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
+	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
 	$varforimage='imagebackground'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
 	if ($_FILES[$varforimage]["tmp_name"])
@@ -545,6 +539,8 @@ else	// Show
 	print '<br>';
 
 	// Login page
+	print '<div class="div-table-responsive">';
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("LoginPage").'</td><td></td></tr>';
 
@@ -575,12 +571,13 @@ else	// Show
 	print '</td></tr>';
 
 	print '</table>'."\n";
+	print '</div>';
 
 	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -357,7 +357,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				$extrafields=new ExtraFields($db);
 				$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
 				//Get extrafield values
-				$thirdparty->fetch_optionals($thirdparty->id,$extralabels);
+				$thirdparty->fetch_optionals();
 
 				foreach($extrafields->attribute_label as $key=>$label)
 				{

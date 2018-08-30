@@ -21,24 +21,22 @@
 
 
 /**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
- */
- 
-/**
- *  \file       htdocs/core/modules/contract/modules_contract.php
+ *  \file       htdocs/core/modules/product/modules_product.class.php
  *  \ingroup    contract
- *  \brief      File with parent class for generating contracts to PDF and File of class to manage contract numbering
+ *  \brief      File with parent class for generating products to PDF and File of class to manage product numbering
  */
 
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
- 
+
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFProduct extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -63,7 +61,10 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 
 abstract class ModeleProductCode
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**     Renvoi la description par defaut du modele de numerotation
      *

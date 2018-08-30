@@ -31,9 +31,15 @@
  */
 class FormCompany
 {
-	var $db;
-	var $error;
-
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -203,7 +209,7 @@ class FormCompany
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
-	 *    @param    string	$htmlname			Id of department
+	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country
 	 */
@@ -217,16 +223,15 @@ class FormCompany
 
 		$out='';
 
-		// On recherche les departements/cantons/province active d'une region et pays actif
+		// Serch departements/cantons/province active d'une region et pays actif
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
-		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$country_codeid."'";
-		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$country_codeid."'";
+		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$this->db->escape($country_codeid)."'";
+		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$this->db->escape($country_codeid)."'";
 		$sql .= " ORDER BY c.code, d.code_departement";
 
-		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -265,16 +270,26 @@ class FormCompany
 						{
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
+
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 2) {
-							$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
-						}
-						else if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1) {
-							$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						if(!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
+						($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')) {
+							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+							else {
+								$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
 						}
 						else {
-							$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+							else {
+								$out.= ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
 						}
+
 						$out.= '</option>';
 					}
 					$i++;
@@ -288,9 +303,12 @@ class FormCompany
 			dol_print_error($this->db);
 		}
 
-        // Make select dynamic
-        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-        $out .= ajax_combobox($htmlname);
+		// Make select dynamic
+		if (! empty($htmlname))
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}

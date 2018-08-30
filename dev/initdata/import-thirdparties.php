@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere root dolibarr
 $path=preg_replace('/import-thirdparties.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../../htdocs/master.inc.php");
+require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 

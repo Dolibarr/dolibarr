@@ -3,6 +3,7 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,8 @@ $error=0;
 /*
  * View
  */
+
+@set_time_limit(300);
 
 llxHeader();
 
@@ -140,7 +143,7 @@ if (GETPOST('target') == 'remote')
     if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     {
         $xmlfile = $xmlarray['content'];
-        //print "eee".$xmlfile."eee";
+        //print "xmlfilestart".$xmlfile."xmlfileend";
         $xml = simplexml_load_string($xmlfile);
     }
     else
@@ -363,11 +366,11 @@ if (! $error && $xml)
         // Show warning
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
-            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+            setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
         }
         else
         {
-            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+            setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
         }
     }
     else
@@ -430,11 +433,8 @@ if (! $error && $xml)
     print $out;
 }
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 exit($error);

@@ -29,6 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Load translation files required by the page
 //Required to translate NbOfProposals
 $langs->load('propal');
 
@@ -206,6 +207,6 @@ print "</table>";
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
 $db->close();

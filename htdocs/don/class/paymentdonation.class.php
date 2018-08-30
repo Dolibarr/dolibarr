@@ -29,8 +29,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentDonation extends CommonObject
 {
-	public $element='payment_donation';			//!< Id that identify managed objects
-	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_donation';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_donation';
+
     public $picto = 'payment';
 
 	public $rowid;
@@ -68,7 +76,7 @@ class PaymentDonation extends CommonObject
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user			User making payment
-	 *	@param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
 	function create($user, $notrigger=false)
@@ -182,7 +190,7 @@ class PaymentDonation extends CommonObject
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as t";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id AND pt.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id;
 

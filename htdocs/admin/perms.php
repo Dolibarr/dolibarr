@@ -28,9 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("users");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'users', 'other'));
 
 $action=GETPOST('action','aZ09');
 
@@ -219,5 +218,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

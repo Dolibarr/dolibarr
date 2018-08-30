@@ -37,7 +37,11 @@ class box_propales extends ModeleBoxes
     var $boxlabel="BoxLastProposals";
     var $depends = array("propal");	// conf->propal->enabled
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $param;
 
     var $info_box_head = array();
