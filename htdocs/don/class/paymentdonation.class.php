@@ -32,13 +32,13 @@ class PaymentDonation extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='payment_donation';	
-	
+	public $element='payment_donation';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='payment_donation';
-	
+
     public $picto = 'payment';
 
 	public $rowid;
@@ -76,7 +76,7 @@ class PaymentDonation extends CommonObject
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user			User making payment
-	 *	@param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
 	function create($user, $notrigger=false)
