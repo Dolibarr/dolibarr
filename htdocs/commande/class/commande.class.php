@@ -872,7 +872,7 @@ class Commande extends CommonOrder
 						$line->fk_unit,
 						$this->element,
 						$line->id
-					);
+						);
 					if ($result < 0)
 					{
 						if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
@@ -931,7 +931,7 @@ class Commande extends CommonOrder
 										$this->error=$this->db->lasterror();
 										$error++;
 									}
-								  }
+								}
 							}
 						}
 
@@ -975,8 +975,8 @@ class Commande extends CommonOrder
 
 					if (! $error)
 					{
-						   $result=$this->insertExtraFields();
-						   if ($result < 0) $error++;
+						$result=$this->insertExtraFields();
+						if ($result < 0) $error++;
 					}
 
 					if (! $error && ! $notrigger)
@@ -1035,68 +1035,68 @@ class Commande extends CommonOrder
 		foreach($this->lines as $line)
 			$line->fetch_optionals();
 
-		// Load source object
-		$objFrom = clone $this;
+			// Load source object
+			$objFrom = clone $this;
 
-		// Change socid if needed
-		if (! empty($socid) && $socid != $this->socid)
-		{
-			$objsoc = new Societe($this->db);
-
-			if ($objsoc->fetch($socid)>0)
+			// Change socid if needed
+			if (! empty($socid) && $socid != $this->socid)
 			{
-				$this->socid 				= $objsoc->id;
-				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project			= 0;
-				$this->fk_delivery_address	= 0;
+				$objsoc = new Societe($this->db);
+
+				if ($objsoc->fetch($socid)>0)
+				{
+					$this->socid 				= $objsoc->id;
+					$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+					$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+					$this->fk_project			= 0;
+					$this->fk_delivery_address	= 0;
+				}
+
+				// TODO Change product price if multi-prices
 			}
 
-			// TODO Change product price if multi-prices
-		}
+			$this->id=0;
+			$this->ref = '';
+			$this->statut=self::STATUS_DRAFT;
 
-		$this->id=0;
-		$this->ref = '';
-		$this->statut=self::STATUS_DRAFT;
+			// Clear fields
+			$this->user_author_id     = $user->id;
+			$this->user_valid         = '';
+			$this->date				  = dol_now();
+			$this->date_commande	  = dol_now();
+			$this->date_creation      = '';
+			$this->date_validation    = '';
+			$this->ref_client         = '';
 
-		// Clear fields
-		$this->user_author_id     = $user->id;
-		$this->user_valid         = '';
-		$this->date				  = dol_now();
-		$this->date_commande	  = dol_now();
-		$this->date_creation      = '';
-		$this->date_validation    = '';
-		$this->ref_client         = '';
+			// Create clone
+			$result=$this->create($user);
+			if ($result < 0) $error++;
 
-		// Create clone
-		$result=$this->create($user);
-		if ($result < 0) $error++;
-
-		if (! $error)
-		{
-			// Hook of thirdparty module
-			if (is_object($hookmanager))
+			if (! $error)
 			{
-				$parameters=array('objFrom'=>$objFrom);
-				$action='';
-				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0) $error++;
+				// Hook of thirdparty module
+				if (is_object($hookmanager))
+				{
+					$parameters=array('objFrom'=>$objFrom);
+					$action='';
+					$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					if ($reshook < 0) $error++;
+				}
 			}
-		}
 
-		unset($this->context['createfromclone']);
+			unset($this->context['createfromclone']);
 
-		// End
-		if (! $error)
-		{
-			$this->db->commit();
-			return $this->id;
-		}
-		else
-		{
-			$this->db->rollback();
-			return -1;
-		}
+			// End
+			if (! $error)
+			{
+				$this->db->commit();
+				return $this->id;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
 	}
 
 
@@ -1158,7 +1158,7 @@ class Commande extends CommonOrder
 			foreach($object->lines[$i]->array_options as $options_key => $value)
 				$line->array_options[$options_key] = $value;
 
-			$this->lines[$i] = $line;
+				$this->lines[$i] = $line;
 		}
 
 		$this->socid                = $object->socid;
@@ -1195,7 +1195,7 @@ class Commande extends CommonOrder
 		$this->linked_objects[$this->origin] = $this->origin_id;
 		if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
 		{
-			   $this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+			$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
 		}
 
 		$ret = $this->create($user);
@@ -1336,7 +1336,7 @@ class Commande extends CommonOrder
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
 
-			   // Clean vat code
+			// Clean vat code
 			$vat_src_code='';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -1347,12 +1347,12 @@ class Commande extends CommonOrder
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
 			/*var_dump($txlocaltax1);
-			var_dump($txlocaltax2);
-			var_dump($localtaxes_type);
-			var_dump($tabprice);
-			var_dump($tabprice[9]);
-			var_dump($tabprice[10]);
-			exit;*/
+			 var_dump($txlocaltax2);
+			 var_dump($localtaxes_type);
+			 var_dump($tabprice);
+			 var_dump($tabprice[9]);
+			 var_dump($tabprice[10]);
+			 exit;*/
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1512,55 +1512,55 @@ class Commande extends CommonOrder
 
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
-			$price = $prod->multiprices[$this->thirdparty->price_level];
-			else
-			$price = $prod->price;
+				$price = $prod->multiprices[$this->thirdparty->price_level];
+				else
+					$price = $prod->price;
 
-			$line=new OrderLine($this->db);
+					$line=new OrderLine($this->db);
 
-			$line->context = $this->context;
+					$line->context = $this->context;
 
-			$line->fk_product=$idproduct;
-			$line->desc=$prod->description;
-			$line->qty=$qty;
-			$line->subprice=$price;
-			$line->remise_percent=$remise_percent;
-			$line->vat_src_code=$vat_src_code;
-			$line->tva_tx=$tva_tx;
-			$line->localtax1_tx=$localtax1_tx;
-			$line->localtax2_tx=$localtax2_tx;
-			$line->ref=$prod->ref;
-			$line->libelle=$prod->label;
-			$line->product_desc=$prod->description;
-			$line->fk_unit=$prod->fk_unit;
+					$line->fk_product=$idproduct;
+					$line->desc=$prod->description;
+					$line->qty=$qty;
+					$line->subprice=$price;
+					$line->remise_percent=$remise_percent;
+					$line->vat_src_code=$vat_src_code;
+					$line->tva_tx=$tva_tx;
+					$line->localtax1_tx=$localtax1_tx;
+					$line->localtax2_tx=$localtax2_tx;
+					$line->ref=$prod->ref;
+					$line->libelle=$prod->label;
+					$line->product_desc=$prod->description;
+					$line->fk_unit=$prod->fk_unit;
 
-			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-			// Save the start and end date of the line in the object
-			if ($date_start) { $line->date_start = $date_start; }
-			if ($date_end)   { $line->date_end = $date_end; }
+					// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+					// Save the start and end date of the line in the object
+					if ($date_start) { $line->date_start = $date_start; }
+					if ($date_end)   { $line->date_end = $date_end; }
 
-			$this->lines[] = $line;
+					$this->lines[] = $line;
 
-			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-			 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
-			 {
-			 $prod = new Product($this->db);
-			 $prod->fetch($idproduct);
-			 $prod -> get_sousproduits_arbo();
-			 $prods_arbo = $prod->get_arbo_each_prod();
-			 if(count($prods_arbo) > 0)
-			 {
-			 foreach($prods_arbo as $key => $value)
-			 {
-			 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-			 if(! in_array($value[1],$this->products))
-			 $this->add_product($value[1], $value[0]);
+					/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
+					 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
+					 {
+					 $prod = new Product($this->db);
+					 $prod->fetch($idproduct);
+					 $prod -> get_sousproduits_arbo();
+					 $prods_arbo = $prod->get_arbo_each_prod();
+					 if(count($prods_arbo) > 0)
+					 {
+					 foreach($prods_arbo as $key => $value)
+					 {
+					 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+					 if(! in_array($value[1],$this->products))
+					 $this->add_product($value[1], $value[0]);
 
-			 }
-			 }
+					 }
+					 }
 
-			 }
-			 **/
+					 }
+					 **/
 		}
 	}
 
@@ -1856,10 +1856,10 @@ class Commande extends CommonOrder
 				$line->price            = $objp->price;
 				$line->fk_product       = $objp->fk_product;
 				$line->fk_fournprice 	= $objp->fk_fournprice;
-				  $marginInfos			= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
-				   $line->pa_ht 			= $marginInfos[0];
+				$marginInfos			= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
+				$line->pa_ht 			= $marginInfos[0];
 				$line->marge_tx			= $marginInfos[1];
-				 $line->marque_tx		= $marginInfos[2];
+				$line->marque_tx		= $marginInfos[2];
 				$line->rang             = $objp->rang;
 				$line->info_bits        = $objp->info_bits;
 				$line->special_code		= $objp->special_code;
@@ -1958,10 +1958,10 @@ class Commande extends CommonOrder
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			   $obj = $this->db->fetch_object($resql);
-			   if ($obj) $nb = $obj->nb;
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) $nb = $obj->nb;
 
-			   $this->db->free($resql);
+			$this->db->free($resql);
 			return $nb;
 		}
 		else
@@ -2366,7 +2366,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user        		Objet utilisateur qui modifie
 	 *	@param      int		$date_livraison     Date de livraison
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *  @return     int         				<0 si ko, >0 si ok
+	 *	@return     int         				<0 si ko, >0 si ok
 	 */
 	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison, $notrigger=0)
@@ -2869,7 +2869,7 @@ class Commande extends CommonOrder
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			$pu = price2num($pu);
-			  $pa_ht=price2num($pa_ht);
+			$pa_ht=price2num($pa_ht);
 			$pu_ht_devise=price2num($pu_ht_devise);
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
@@ -2882,7 +2882,7 @@ class Commande extends CommonOrder
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
-			   // Clean vat code
+			// Clean vat code
 			$vat_src_code='';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
@@ -3293,7 +3293,7 @@ class Commande extends CommonOrder
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
-		$response->total+= $obj->total_ht;
+				$response->total+= $obj->total_ht;
 
 				$generic_commande->statut = $obj->fk_statut;
 				$generic_commande->date_commande = $this->db->jdate($obj->date_commande);
@@ -3456,60 +3456,60 @@ class Commande extends CommonOrder
 		if (!$user->rights->commande->lire)
 			$option = 'nolink';
 
-		if ($option !== 'nolink')
-		{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
-		}
-
-		if ($short) return $url;
-
-		$label = '';
-
-		if ($user->rights->commande->lire) {
-			$label = '<u>'.$langs->trans("ShowOrder").'</u>';
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
-			if (!empty($this->total_ht)) {
-				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (!empty($this->total_tva)) {
-				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,	$conf->currency);
-			}
-			if (!empty($this->total_ttc)) {
-				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-		}
-
-		$linkclose='';
-		if (empty($notooltip) && $user->rights->commande->lire)
-		{
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			if ($option !== 'nolink')
 			{
-				$label=$langs->trans("ShowOrder");
-				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+				// Add param to save lastsearch_values or not
+				$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+				if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+				if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 			}
-			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose.=' class="classfortooltip"';
-		}
 
-		$linkstart = '<a href="'.$url.'"';
-		$linkstart.=$linkclose.'>';
-		$linkend='</a>';
+			if ($short) return $url;
 
-		if ($option === 'nolink') {
-			$linkstart = '';
-			$linkend = '';
-		}
+			$label = '';
 
-		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
-		$result .= $linkend;
+			if ($user->rights->commande->lire) {
+				$label = '<u>'.$langs->trans("ShowOrder").'</u>';
+				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+				$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+				if (!empty($this->total_ht)) {
+					$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+				}
+				if (!empty($this->total_tva)) {
+					$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,	$conf->currency);
+				}
+				if (!empty($this->total_ttc)) {
+					$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+				}
+			}
 
-		return $result;
+			$linkclose='';
+			if (empty($notooltip) && $user->rights->commande->lire)
+			{
+				if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+				{
+					$label=$langs->trans("ShowOrder");
+					$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+				}
+				$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose.=' class="classfortooltip"';
+			}
+
+			$linkstart = '<a href="'.$url.'"';
+			$linkstart.=$linkclose.'>';
+			$linkend='</a>';
+
+			if ($option === 'nolink') {
+				$linkstart = '';
+				$linkend = '';
+			}
+
+			$result .= $linkstart;
+			if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+			if ($withpicto != 2) $result.= $this->ref;
+			$result .= $linkend;
+
+			return $result;
 	}
 
 
@@ -3720,7 +3720,7 @@ class Commande extends CommonOrder
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-		 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
@@ -3757,7 +3757,7 @@ class Commande extends CommonOrder
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'commande'
+		'commande'
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
