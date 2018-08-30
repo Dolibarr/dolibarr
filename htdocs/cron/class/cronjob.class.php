@@ -34,12 +34,12 @@ class Cronjob extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='cronjob';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='cronjob';	
-	
+	public $table_element='cronjob';
+
     public $picto = 'cron';
 
     public $entity;

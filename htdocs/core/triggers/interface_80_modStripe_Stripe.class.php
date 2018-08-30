@@ -176,6 +176,10 @@ class InterfaceStripe
 			if ($customer) {
 				$customer->delete();
 			}
+
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
+			$sql.= " WHERE site='stripe' AND fk_soc = " . $object->id;
+			$this->db->query($sql);
 		}
 
 		// If payment mode is linked to Strip, we update/delete Stripe too

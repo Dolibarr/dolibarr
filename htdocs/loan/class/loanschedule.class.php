@@ -17,8 +17,8 @@
 
 /**
  *      \file       htdocs/loan/class/loanschedule.class.php
- *		\ingroup    facture
- *		\brief      File of class to manage schedule of loans
+ *      \ingroup    loan
+ *      \brief      File of class to manage schedule of loans
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -33,11 +33,11 @@ class LoanSchedule extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='loan_schedule';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='loan_schedule';	
+	public $table_element='loan_schedule';
 
 	var $fk_loan;
 	var $datec='';
@@ -547,4 +547,3 @@ class LoanSchedule extends CommonObject
 		return $result;
 	}
 }
-
