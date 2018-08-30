@@ -872,7 +872,7 @@ class Commande extends CommonOrder
 						$line->fk_unit,
 						$this->element,
 						$line->id
-						);
+					);
 					if ($result < 0)
 					{
 						if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
@@ -1511,56 +1511,57 @@ class Commande extends CommonOrder
 			$localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
 
 			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
+			if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level) {
 				$price = $prod->multiprices[$this->thirdparty->price_level];
-				else
-					$price = $prod->price;
+			} else {
+				$price = $prod->price;
+			}
 
-					$line=new OrderLine($this->db);
+			$line=new OrderLine($this->db);
 
-					$line->context = $this->context;
+			$line->context = $this->context;
 
-					$line->fk_product=$idproduct;
-					$line->desc=$prod->description;
-					$line->qty=$qty;
-					$line->subprice=$price;
-					$line->remise_percent=$remise_percent;
-					$line->vat_src_code=$vat_src_code;
-					$line->tva_tx=$tva_tx;
-					$line->localtax1_tx=$localtax1_tx;
-					$line->localtax2_tx=$localtax2_tx;
-					$line->ref=$prod->ref;
-					$line->libelle=$prod->label;
-					$line->product_desc=$prod->description;
-					$line->fk_unit=$prod->fk_unit;
+			$line->fk_product=$idproduct;
+			$line->desc=$prod->description;
+			$line->qty=$qty;
+			$line->subprice=$price;
+			$line->remise_percent=$remise_percent;
+			$line->vat_src_code=$vat_src_code;
+			$line->tva_tx=$tva_tx;
+			$line->localtax1_tx=$localtax1_tx;
+			$line->localtax2_tx=$localtax2_tx;
+			$line->ref=$prod->ref;
+			$line->libelle=$prod->label;
+			$line->product_desc=$prod->description;
+			$line->fk_unit=$prod->fk_unit;
 
-					// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-					// Save the start and end date of the line in the object
-					if ($date_start) { $line->date_start = $date_start; }
-					if ($date_end)   { $line->date_end = $date_end; }
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Save the start and end date of the line in the object
+			if ($date_start) { $line->date_start = $date_start; }
+			if ($date_end)   { $line->date_end = $date_end; }
 
-					$this->lines[] = $line;
+			$this->lines[] = $line;
 
-					/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-					 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
-					 {
-					 $prod = new Product($this->db);
-					 $prod->fetch($idproduct);
-					 $prod -> get_sousproduits_arbo();
-					 $prods_arbo = $prod->get_arbo_each_prod();
-					 if(count($prods_arbo) > 0)
-					 {
-					 foreach($prods_arbo as $key => $value)
-					 {
-					 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-					 if(! in_array($value[1],$this->products))
-					 $this->add_product($value[1], $value[0]);
+			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
+			 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
+			 {
+			 $prod = new Product($this->db);
+			 $prod->fetch($idproduct);
+			 $prod -> get_sousproduits_arbo();
+			 $prods_arbo = $prod->get_arbo_each_prod();
+			 if(count($prods_arbo) > 0)
+			 {
+			 foreach($prods_arbo as $key => $value)
+			 {
+			 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+			 if(! in_array($value[1],$this->products))
+			 $this->add_product($value[1], $value[0]);
 
-					 }
-					 }
+			 }
+			 }
 
-					 }
-					 **/
+			 }
+			 **/
 		}
 	}
 
