@@ -40,7 +40,11 @@ class box_produits_alerte_stock extends ModeleBoxes
 	var $boxlabel="BoxProductsAlertStock";
 	var $depends = array("produit");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();

@@ -24,9 +24,9 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+//require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+//require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 
 /**
@@ -34,8 +34,16 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Opensurveysondage extends CommonObject
 {
-	public $element='opensurvey_sondage';			//!< Id that identify managed objects
-	public $table_element='opensurvey_sondage';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='opensurvey_sondage';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='opensurvey_sondage';
+
     public $picto = 'opensurvey';
 
 	public $id_sondage;

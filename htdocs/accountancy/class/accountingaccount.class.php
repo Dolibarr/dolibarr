@@ -31,7 +31,12 @@
 class AccountingAccount extends CommonObject
 {
 	public $element='accounting_account';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='accounting_account';
+
 	public $picto = 'billr';
 
 	/**
@@ -39,16 +44,33 @@ class AccountingAccount extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
 	public $restrictiononfksoc = 1;
 
-	var $db;
-	var $error;
-	var $errors;
-	var $id;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
 	var $rowid;
 	var $datec; // Creation date
 	var $fk_pcg_version;
@@ -57,10 +79,23 @@ class AccountingAccount extends CommonObject
 	var $account_number;
 	var $account_parent;
 	var $account_category;
-	var $label;
-	var $fk_user_author;
-	var $fk_user_modif;
-	var $active;       // duplicate with status
+
+    /**
+     * @var string Label of account
+     */
+    public $label;
+
+    /**
+     * @var int ID
+     */
+    public $fk_user_author;
+
+    /**
+     * @var int ID
+     */
+    public $fk_user_modif;
+
+    var $active;       // duplicate with status
 	var $status;
 
 
@@ -69,7 +104,8 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 		global $conf;
 
 		$this->db = $db;
@@ -146,7 +182,8 @@ class AccountingAccount extends CommonObject
 	 * @param int $notrigger Disable triggers
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger = 0) {
+    function create($user, $notrigger = 0)
+    {
 		global $conf;
 		$error = 0;
 		$now = dol_now();
@@ -297,7 +334,8 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function checkUsage() {
+    function checkUsage()
+    {
 		global $langs;
 
 		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
@@ -330,7 +368,8 @@ class AccountingAccount extends CommonObject
 	 * @param int $notrigger 0=triggers after, 1=disable triggers
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0) {
+    function delete($user, $notrigger = 0)
+    {
 		$error = 0;
 
 		$result = $this->checkUsage();
@@ -391,7 +430,7 @@ class AccountingAccount extends CommonObject
 	 * @param	string  $moretitle					Add more text to title tooltip
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return	string	String with URL
+	 * @return  string	String with URL
 	 */
 	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0, $save_lastsearch_value=-1)
 	{
@@ -457,7 +496,8 @@ class AccountingAccount extends CommonObject
 	 * @param int $id of record
 	 * @return void
 	 */
-	function info($id) {
+    function info($id)
+    {
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
 		$sql .= ' WHERE a.rowid = ' . $id;
@@ -494,7 +534,8 @@ class AccountingAccount extends CommonObject
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
-	function account_desactivate($id) {
+    function account_desactivate($id)
+    {
 		$result = $this->checkUsage();
 
 		if ($result > 0) {
@@ -526,7 +567,8 @@ class AccountingAccount extends CommonObject
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
-	function account_activate($id) {
+    function account_activate($id)
+    {
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";

@@ -27,7 +27,7 @@
  *		\brief      Page to create/view a bank account
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
@@ -1034,5 +1034,6 @@ else
 
 }
 
+// End of page
 llxFooter();
 $db->close();

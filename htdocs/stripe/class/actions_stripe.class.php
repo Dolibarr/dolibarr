@@ -36,8 +36,10 @@ $langs->load("stripe@stripe");
  */
 class ActionsStripeconnect
 {
-	/** @var DoliDB */
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	private $config=array();
 
@@ -63,6 +65,7 @@ class ActionsStripeconnect
 	 * @param	array	$parameters		Parameters
 	 * @param	Object	$object			Object
 	 * @param	string	$action			Action
+     * @return bool
 	 */
 	function formObjectOptions($parameters, &$object, &$action)
 	{

@@ -337,7 +337,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
 	 */
 	public $phpmin;
 
@@ -377,8 +377,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @param   array  		$array_sql  SQL requests to be executed when enabling module
 	 * @param   string      $options    String with options when disabling module:
-	 *                                    'noboxes' = Do not insert boxes
-	 *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+	 *                                  - 'noboxes' = Do not insert boxes
+	 *                                  - 'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
 	 *
 	 * @return  int                         1 if OK, 0 if KO
 	 */
@@ -464,11 +464,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 	/**
-	 * Disable function. Deletes the module constant and boxes from the database.
+	 * Disable function. Deletes the module constants and boxes from the database.
 	 *
 	 * @param   string[]    $array_sql  SQL requests to be executed when module is disabled
 	 * @param   string      $options	Options when disabling module:
-	 *                                    'newboxdefonly|noboxes' = We don't remove boxes.
+	 *                                  - 'newboxdefonly|noboxes' = We don't remove boxes.
 	 *
 	 * @return  int                     1 if OK, 0 if KO
 	 */
@@ -553,7 +553,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		}
 		else
 		{
-			// If module name translation using it's unique id does not exists, we try to use its name to find translation
+			// If module name translation using it's unique id does not exist, we try to use its name to find translation
 			if (is_array($this->langfiles))
 			{
 				foreach($this->langfiles as $val)
@@ -613,9 +613,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * Gives the long description of a module. First check README-la_LA.md then README.md
-	 * If not markdown files found, it return translated value of the key ->descriptionlong.
+	 * If no markdown files found, it returns translated value of the key ->descriptionlong.
 	 *
-	 * @return  string                  Long description of a module from README.md of from property.
+	 * @return  string     Long description of a module from README.md of from property.
 	 */
 	function getDescLong()
 	{
@@ -1323,8 +1323,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				$status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
 				$priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
 				$test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';                              // Line must be visible
+				$datestart = isset($this->cronjobs[$key]['datestart'])?$this->cronjobs[$key]['datestart']:'';
+				$dateend = isset($this->cronjobs[$key]['dateend'])?$this->cronjobs[$key]['dateend']:'';
 
-				// Search if boxes def already present
+				// Search if cron entry already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
 				$sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
 				if ($class) $sql.= " AND classesname = '".$this->db->escape($class)."'";
@@ -1345,7 +1347,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 						if (! $err)
 						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note,";
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
 							if(is_int($frequency)){ $sql.= ' frequency,'; }
 							if(is_int($unitfrequency)){ $sql.= ' unitfrequency,'; }
 							if(is_int($priority)){ $sql.= ' priority,'; }
@@ -1354,7 +1356,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							$sql.= " VALUES (";
 							$sql.= "'".$this->db->escape($this->rights_class)."', ";
 							$sql.= "'".$this->db->idate($now)."', ";
-							$sql.= "'".$this->db->idate($now)."', ";
+							$sql.= ($datestart ? "'".$this->db->idate($datestart)."'" : "NULL").", ";
+							$sql.= ($dateend   ? "'".$this->db->idate($dateend)."'"   : "NULL").", ";
 							$sql.= "'".$this->db->escape($label)."', ";
 							$sql.= "'".$this->db->escape($jobtype)."', ";
 							$sql.= ($class?"'".$this->db->escape($class)."'":"null").",";
@@ -1389,7 +1392,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					// else box already registered into database
 				}
 				else
-			  {
+				{
 					$this->error=$this->db->lasterror();
 					$err++;
 				}

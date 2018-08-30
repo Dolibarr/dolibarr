@@ -204,6 +204,8 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $db->query($sql, 1);
         $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemployment date';
         $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemploymentend date';
+        $db->query($sql, 1);
         $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_range integer';
         $db->query($sql, 1);
         $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_c_exp_tax_cat integer';
@@ -215,6 +217,8 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fielddefault varchar(255)';
         $db->query($sql, 1);
         $sql = 'ALTER TABLE '.MAIN_DB_PREFIX."extrafields ADD COLUMN enabled varchar(255) DEFAULT '1'";
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN help text';
         $db->query($sql, 1);
         $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL';
         $db->query($sql, 1);
@@ -440,6 +444,13 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
         }
 
+        // Scripts for 9.0
+        $afterversionarray=explode('.','8.0.9');
+        $beforeversionarray=explode('.','9.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	//migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
+        }
     }
 
 	// Code executed only if migration is LAST ONE. Must always be done.

@@ -21,8 +21,8 @@
  *       \ingroup    core
  *       \brief      Class file to manage forms into resource module
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
+require_once DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php";
+require_once DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php";
 
 
 /**
@@ -33,12 +33,18 @@ require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
  */
 class FormResource
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     var $substit=array();
     var $param=array();
 
-    var $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**

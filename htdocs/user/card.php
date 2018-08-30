@@ -11,7 +11,7 @@
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -219,6 +219,9 @@ if (empty($reshook)) {
 			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 			$object->dateemployment = $dateemployment;
 
+			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
+			$object->dateemploymentend = $dateemploymentend;
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 			if ($ret < 0) {
@@ -361,6 +364,8 @@ if (empty($reshook)) {
 				$object->color = GETPOST("color",'alpha') != '' ? GETPOST("color",'alpha') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth','int'), GETPOST('dateemploymentday','int'), GETPOST('dateemploymentyear','int'));
 				$object->dateemployment = $dateemployment;
+				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth','int'), GETPOST('dateemploymentendday','int'), GETPOST('dateemploymentendyear','int'));
+				$object->dateemploymentend = $dateemploymentend;
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -1157,6 +1162,13 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td>';
 	print "</tr>\n";
 
+	// Date employment END
+	print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+	print '<td>';
+	echo $form->select_date(GETPOST('dateemploymentend'),'dateemploymentend',0,0,1,'form'.'dateemploymentend',1,0,1);
+	print '</td>';
+	print "</tr>\n";
+
 	// Date birth
 	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 	print '<td>';
@@ -1191,8 +1203,11 @@ else
 		$res=$object->fetch_optionals();
 
 		// Check if user has rights
-		$object->getrights();
-		if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+		{
+			$object->getrights();
+			if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		}
 
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
@@ -1500,6 +1515,13 @@ else
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
 			print dol_print_date($object->dateemployment, 'day');
+			print '</td>';
+			print "</tr>\n";
+
+			// Date employment
+			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			print '<td>';
+			print dol_print_date($object->dateemploymentend);
 			print '</td>';
 			print "</tr>\n";
 
@@ -2436,6 +2458,14 @@ else
 			print '</td>';
 			print "</tr>\n";
 
+			// Date employmentEnd
+			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			print '<td>';
+			echo $form->select_date(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend,'dateemploymentend',0,0,1,'form'.'dateemploymentend',1,0,1);
+			print '</td>';
+			print "</tr>\n";
+
+
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
@@ -2508,5 +2538,6 @@ if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
+// End of page
 llxFooter();
 $db->close();

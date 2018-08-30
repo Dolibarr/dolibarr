@@ -450,530 +450,521 @@ if ($resql)
 		print "</div><br>";
 	}
 
-	if (! empty($canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/actions_card_'.$canvas.'.class.php'))
+	if ($sall)
 	{
-		$fieldlist = $object->field_list;
-		$datas = $object->list_datas;
-		$picto='title.png';
-		$title_picto = img_picto('',$picto);
-		$title_text = $title;
-
-		// Default templates directory
-		$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$canvas.'/tpl/';
-		// Check if a custom template is present
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$canvas.'/list.tpl.php'))
-		{
-			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$canvas.'/';
-		}
-
-		include $template_dir.'list.tpl.php';	// Include native PHP templates
+		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
-	else
+
+	// Filter on categories
+	$moreforfilter='';
+	if (! empty($conf->categorie->enabled))
 	{
-		if ($sall)
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('Categories'). ': ';
+		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
+		$moreforfilter.='</div>';
+	}
+
+	//Show/hide child products. Hidden by default
+	if (!empty($conf->variants->enabled) && $search_type === 0) {
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.= '<input type="checkbox" id="search_hidechildproducts" name="search_hidechildproducts" value="on"'.($search_hidechildproducts ? 'checked="checked"' : '').'>';
+		$moreforfilter.= ' <label for="search_hidechildproducts">'.$langs->trans('HideChildProducts').'</label>';
+		$moreforfilter.='</div>';
+	}
+
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
+	else $moreforfilter=$hookmanager->resPrint;
+
+	if ($moreforfilter)
+	{
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+		print $moreforfilter;
+		print '</div>';
+	}
+
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+	// Lines with input filters
+	print '<tr class="liste_titre_filter">';
+	if (! empty($arrayfields['p.ref']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'">';
+		print '</td>';
+	}
+	if (! empty($arrayfields['pfp.ref_fourn']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_ref_supplier" size="8" value="'.dol_escape_htmltag($search_ref_supplier).'">';
+		print '</td>';
+	}
+	if (! empty($arrayfields['p.label']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_label" size="12" value="'.dol_escape_htmltag($search_label).'">';
+		print '</td>';
+	}
+	// Type
+	if (! empty($arrayfields['p.fk_product_type']['checked']))
+	{
+		print '<td class="liste_titre" align="left">';
+		$array=array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
+		print $form->selectarray('search_type', $array, $search_type);
+		print '</td>';
+	}
+	// Barcode
+	if (! empty($arrayfields['p.barcode']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '<input class="flat" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
+		print '</td>';
+	}
+	// Duration
+	if (! empty($arrayfields['p.duration']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	// Sell price
+	if (! empty($arrayfields['p.sellprice']['checked']))
+	{
+		print '<td class="liste_titre" align="right">';
+		print '</td>';
+	}
+	// Minimum buying Price
+	if (! empty($arrayfields['p.minbuyprice']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	// Number buying Price
+	if (! empty($arrayfields['p.numbuyprice']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	// WAP
+	if (! empty($arrayfields['p.pmp']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	// Limit for alert
+	if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	// Desired stock
+	if (! empty($arrayfields['p.desiredstock']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	// Stock
+	if (! empty($arrayfields['p.stock']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
+	// Stock
+	if (! empty($arrayfields['stock_virtual']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
+	// To batch
+	if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
+	// Accountancy code sell
+	if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_sell" size="6" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
+	// Accountancy code sell
+	if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_buy" size="6" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+	// Fields from hook
+	$parameters=array('arrayfields'=>$arrayfields);
+	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	// Date creation
+	if (! empty($arrayfields['p.datec']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	// Date modification
+	if (! empty($arrayfields['p.tms']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	if (! empty($arrayfields['p.tosell']['checked']))
+	{
+		print '<td class="liste_titre" align="right">';
+		print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$search_tosell,1);
+		print '</td >';
+	}
+	if (! empty($arrayfields['p.tobuy']['checked']))
+	{
+		print '<td class="liste_titre" align="right">';
+		print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$search_tobuy,1);
+		print '</td>';
+	}
+	print '<td class="liste_titre" align="middle">';
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+
+	print '</tr>';
+
+	print '<tr class="liste_titre">';
+	if (! empty($arrayfields['p.ref']['checked']))  print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['pfp.ref_fourn']['checked']))  print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"],"pfp.ref_fourn","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['p.label']['checked']))  print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"],"p.label","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['p.fk_product_type']['checked']))  print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"],"p.fk_product_type","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['p.barcode']['checked']))  print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"],"p.barcode","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.numbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.numbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.pmp']['checked']))  print_liste_field_titre($arrayfields['p.pmp']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))  print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"],"p.seuil_stock_alerte","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desiredstock","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.stock']['checked']))  print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"],"p.stock","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['stock_virtual']['checked']))  print_liste_field_titre($arrayfields['stock_virtual']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.tobatch']['checked']))  print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"],"p.tobatch","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.accountancy_code_sell']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_sell","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.accountancy_code_buy']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_buy","",$param,'',$sortfield,$sortorder);
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+	// Hook fields
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.tosell']['checked'])) print_liste_field_titre($arrayfields['p.tosell']['label'],$_SERVER["PHP_SELF"],"p.tosell","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.tobuy']['checked']))  print_liste_field_titre($arrayfields['p.tobuy']['label'],$_SERVER["PHP_SELF"],"p.tobuy","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
+
+
+	$product_static=new Product($db);
+	$product_fourn =new ProductFournisseur($db);
+
+	$i = 0;
+	$totalarray=array();
+	while ($i < min($num,$limit))
+	{
+		$obj = $db->fetch_object($resql);
+
+		// Multilangs
+		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 		{
-			foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-			print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+			$sql = "SELECT label";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql.= " WHERE fk_product=".$obj->rowid;
+			$sql.= " AND lang='". $db->escape($langs->getDefaultLang()) ."'";
+			$sql.= " LIMIT 1";
+
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$objtp = $db->fetch_object($result);
+				if (! empty($objtp->label)) $obj->label = $objtp->label;
+			}
 		}
 
-		// Filter on categories
-		$moreforfilter='';
-		if (! empty($conf->categorie->enabled))
+		$product_static->id = $obj->rowid;
+		$product_static->ref = $obj->ref;
+		$product_static->ref_fourn = $obj->ref_supplier;
+		$product_static->label = $obj->label;
+		$product_static->type = $obj->fk_product_type;
+		$product_static->status_buy = $obj->tobuy;
+		$product_static->status     = $obj->tosell;
+		$product_static->status_batch = $obj->tobatch;
+		$product_static->entity = $obj->entity;
+		$product_static->pmp = $obj->pmp;
+		$product_static->accountancy_code_sell = $obj->accountancy_code_sell;
+		$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
+		$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
+		$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
+
+		if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 		{
-			$moreforfilter.='<div class="divsearchfield">';
-			$moreforfilter.=$langs->trans('Categories'). ': ';
-			$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
-			$moreforfilter.='</div>';
+			if ($obj->fk_product_type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))    // Not a service
+			{
+				$product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse. This also call load_virtual_stock()
+			}
 		}
 
-		//Show/hide child products. Hidden by default
-		if (!empty($conf->variants->enabled) && $search_type === 0) {
-			$moreforfilter.='<div class="divsearchfield">';
-			$moreforfilter.= '<input type="checkbox" id="search_hidechildproducts" name="search_hidechildproducts" value="on"'.($search_hidechildproducts ? 'checked="checked"' : '').'>';
-			$moreforfilter.= ' <label for="search_hidechildproducts">'.$langs->trans('HideChildProducts').'</label>';
-			$moreforfilter.='</div>';
-		}
 
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
-		else $moreforfilter=$hookmanager->resPrint;
+		print '<tr class="oddeven">';
 
-		if ($moreforfilter)
-		{
-			print '<div class="liste_titre liste_titre_bydiv centpercent">';
-			print $moreforfilter;
-			print '</div>';
-		}
-
-		$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-		$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-		if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-
-		print '<div class="div-table-responsive">';
-		print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
-		// Lines with input filters
-		print '<tr class="liste_titre_filter">';
+		// Ref
 		if (! empty($arrayfields['p.ref']['checked']))
 		{
-			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'">';
-			print '</td>';
+			print '<td class="tdoverflowmax200">';
+			print $product_static->getNomUrl(1);
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 		}
+		// Ref supplier
 		if (! empty($arrayfields['pfp.ref_fourn']['checked']))
 		{
-			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_ref_supplier" size="8" value="'.dol_escape_htmltag($search_ref_supplier).'">';
-			print '</td>';
+			print '<td class="tdoverflowmax200">';
+			print $product_static->getNomUrl(1);
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
 		}
+		// Label
 		if (! empty($arrayfields['p.label']['checked']))
 		{
-			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_label" size="12" value="'.dol_escape_htmltag($search_label).'">';
-			print '</td>';
+			print '<td class="tdoverflowmax200">'.dol_trunc($obj->label,40).'</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
+
 		// Type
 		if (! empty($arrayfields['p.fk_product_type']['checked']))
 		{
-			print '<td class="liste_titre" align="left">';
-			$array=array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
-			print $form->selectarray('search_type', $array, $search_type);
-			print '</td>';
+			print '<td>'.$obj->fk_product_type.'</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
+
 		// Barcode
 		if (! empty($arrayfields['p.barcode']['checked']))
 		{
-			print '<td class="liste_titre">';
-			print '<input class="flat" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
-			print '</td>';
+			print '<td>'.$obj->barcode.'</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
-		// Duration
-		if (! empty($arrayfields['p.duration']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '&nbsp;';
-			print '</td>';
-		}
-		// Sell price
-		if (! empty($arrayfields['p.sellprice']['checked']))
-		{
-			print '<td class="liste_titre" align="right">';
-			print '</td>';
-		}
-		// Minimum buying Price
-		if (! empty($arrayfields['p.minbuyprice']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '&nbsp;';
-			print '</td>';
-		}
-		// Number buying Price
-		if (! empty($arrayfields['p.numbuyprice']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '&nbsp;';
-			print '</td>';
-		}
-		// WAP
-		if (! empty($arrayfields['p.pmp']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '&nbsp;';
-			print '</td>';
-		}
-		// Limit for alert
-		if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '&nbsp;';
-			print '</td>';
-		}
-		// Desired stock
-		if (! empty($arrayfields['p.desiredstock']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '&nbsp;';
-			print '</td>';
-		}
-		// Stock
-		if (! empty($arrayfields['p.stock']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
-		// Stock
-		if (! empty($arrayfields['stock_virtual']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
-		// To batch
-		if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
-		// Accountancy code sell
-		if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_sell" size="6" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
-		// Accountancy code sell
-		if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_buy" size="6" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields);
-		$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		// Date creation
-		if (! empty($arrayfields['p.datec']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '</td>';
-		}
-		// Date modification
-		if (! empty($arrayfields['p.tms']['checked']))
-		{
-			print '<td class="liste_titre">';
-			print '</td>';
-		}
-		if (! empty($arrayfields['p.tosell']['checked']))
-		{
-			print '<td class="liste_titre" align="right">';
-			print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$search_tosell,1);
-			print '</td >';
-		}
-		if (! empty($arrayfields['p.tobuy']['checked']))
-		{
-			print '<td class="liste_titre" align="right">';
-			print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$search_tobuy,1);
-			print '</td>';
-		}
-		print '<td class="liste_titre" align="middle">';
-		$searchpicto=$form->showFilterButtons();
-		print $searchpicto;
-		print '</td>';
-
-		print '</tr>';
-
-		print '<tr class="liste_titre">';
-		if (! empty($arrayfields['p.ref']['checked']))  print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
-		if (! empty($arrayfields['pfp.ref_fourn']['checked']))  print_liste_field_titre($arrayfields['pfp.ref_fourn']['label'], $_SERVER["PHP_SELF"],"pfp.ref_fourn","",$param,"",$sortfield,$sortorder);
-		if (! empty($arrayfields['p.label']['checked']))  print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"],"p.label","",$param,"",$sortfield,$sortorder);
-		if (! empty($arrayfields['p.fk_product_type']['checked']))  print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"],"p.fk_product_type","",$param,"",$sortfield,$sortorder);
-		if (! empty($arrayfields['p.barcode']['checked']))  print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"],"p.barcode","",$param,"",$sortfield,$sortorder);
-		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,'align="center"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.numbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.numbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.pmp']['checked']))  print_liste_field_titre($arrayfields['p.pmp']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))  print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"],"p.seuil_stock_alerte","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desiredstock","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.stock']['checked']))  print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"],"p.stock","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['stock_virtual']['checked']))  print_liste_field_titre($arrayfields['stock_virtual']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.tobatch']['checked']))  print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"],"p.tobatch","",$param,'align="center"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.accountancy_code_sell']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_sell","",$param,'',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.accountancy_code_buy']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_buy","",$param,'',$sortfield,$sortorder);
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-		// Hook fields
-		$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-		$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.tosell']['checked'])) print_liste_field_titre($arrayfields['p.tosell']['label'],$_SERVER["PHP_SELF"],"p.tosell","",$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['p.tobuy']['checked']))  print_liste_field_titre($arrayfields['p.tobuy']['label'],$_SERVER["PHP_SELF"],"p.tobuy","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
-		print "</tr>\n";
-
-
-		$product_static=new Product($db);
-		$product_fourn =new ProductFournisseur($db);
-
-		$i = 0;
-		$totalarray=array();
-		while ($i < min($num,$limit))
-		{
-			$obj = $db->fetch_object($resql);
-
-			// Multilangs
-			if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-			{
-				$sql = "SELECT label";
-				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-				$sql.= " WHERE fk_product=".$obj->rowid;
-				$sql.= " AND lang='". $db->escape($langs->getDefaultLang()) ."'";
-				$sql.= " LIMIT 1";
-
-				$result = $db->query($sql);
-				if ($result)
-				{
-					$objtp = $db->fetch_object($result);
-					if (! empty($objtp->label)) $obj->label = $objtp->label;
-				}
-			}
-
-			$product_static->id = $obj->rowid;
-			$product_static->ref = $obj->ref;
-			$product_static->ref_fourn = $obj->ref_supplier;
-			$product_static->label = $obj->label;
-			$product_static->type = $obj->fk_product_type;
-			$product_static->status_buy = $obj->tobuy;
-			$product_static->status     = $obj->tosell;
-			$product_static->status_batch = $obj->tobatch;
-			$product_static->entity = $obj->entity;
-			$product_static->pmp = $obj->pmp;
-			$product_static->accountancy_code_sell = $obj->accountancy_code_sell;
-			$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
-			$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
-			$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
-
-			if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
-			{
-				if ($obj->fk_product_type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))    // Not a service
-				{
-					$product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse. This also call load_virtual_stock()
-				}
-			}
-
-
-			print '<tr class="oddeven">';
-
-			// Ref
-			if (! empty($arrayfields['p.ref']['checked']))
-			{
-				print '<td class="tdoverflowmax200">';
-				print $product_static->getNomUrl(1);
-				print "</td>\n";
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Ref supplier
-			if (! empty($arrayfields['pfp.ref_fourn']['checked']))
-			{
-				print '<td class="tdoverflowmax200">';
-				print $product_static->getNomUrl(1);
-				print "</td>\n";
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Label
-			if (! empty($arrayfields['p.label']['checked']))
-			{
-				print '<td class="tdoverflowmax200">'.dol_trunc($obj->label,40).'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-
-			// Type
-			if (! empty($arrayfields['p.fk_product_type']['checked']))
-			{
-				print '<td>'.$obj->fk_product_type.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-
-			// Barcode
-			if (! empty($arrayfields['p.barcode']['checked']))
-			{
-				print '<td>'.$obj->barcode.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
 
 			// Duration
 			if (! empty($arrayfields['p.duration']['checked']))
 			{
 				print '<td align="center">';
-				if (preg_match('/([^a-z]+)[a-z]/i',$obj->duration))
-				{
-					if (preg_match('/([^a-z]+)y/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-					elseif (preg_match('/([^a-z]+)m/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-					elseif (preg_match('/([^a-z]+)w/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-					elseif (preg_match('/([^a-z]+)d/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-					//elseif (preg_match('/([^a-z]+)h/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
-					else print $obj->duration;
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
 
-			// Sell price
-			if (! empty($arrayfields['p.sellprice']['checked']))
-			{
-				print '<td align="right">';
-				if ($obj->tosell)
+				if (preg_match('/([^a-z]+)[a-z]$/i',$obj->duration))
 				{
-					if ($obj->price_base_type == 'TTC') print price($obj->price_ttc).' '.$langs->trans("TTC");
-					else print price($obj->price).' '.$langs->trans("HT");
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
+					$duration_value	= substr($obj->duration,0,dol_strlen($obj->duration)-1);
+					$duration_unit	= substr($obj->duration,-1);
 
-			// Better buy price
-			if (! empty($arrayfields['p.minbuyprice']['checked']))
-			{
-				print  '<td align="right">';
-				if ($obj->tobuy && $obj->minsellprice != '')
-				{
-					//print price($obj->minsellprice).' '.$langs->trans("HT");
-					if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0)
+					if ((float) $duration_value > 1)
 					{
-						if ($product_fourn->product_fourn_price_id > 0)
-						{
-							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
-							{
-								$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-								print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"),$htmltext);
-							}
-							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
-						}
+					    $dur=array("i"=>$langs->trans("Minutes"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 					}
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-
-			// Number of buy prices
-			if (! empty($arrayfields['p.numbuyprice']['checked']))
-			{
-				print  '<td align="right">';
-				if ($obj->tobuy)
-				{
-					if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0)
+					else if ((float) $duration_value > 0)
 					{
-						$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
-						print $form->textwithpicto(count($productFournList),$htmltext);
+					    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 					}
+					print $duration_value;
+					print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
 				}
-				print '</td>';
-			}
-
-			// WAP
-			if (! empty($arrayfields['p.pmp']['checked']))
-			{
-				print '<td class="nowrap" align="right">';
-				print price($product_static->pmp, 1, $langs);
-				print '</td>';
-			}
-
-			// Limit alert
-			if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
-			{
-				print '<td align="right">';
-				if ($obj->fk_product_type != 1)
+				else
 				{
-					print $obj->seuil_stock_alerte;
+					print $obj->duration;
 				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Desired stock
-			if (! empty($arrayfields['p.desiredstock']['checked']))
-			{
-				print '<td align="right">';
-				if ($obj->fk_product_type != 1)
-				{
-					print $obj->desiredstock;
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Stock real
-			if (! empty($arrayfields['p.stock']['checked']))
-			{
-				print '<td align="right">';
-				if ($obj->fk_product_type != 1)
-				{
-					if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
-					print $product_static->stock_reel;
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Stock virtual
-			if (! empty($arrayfields['stock_virtual']['checked']))
-			{
-				print '<td align="right">';
-				if ($obj->fk_product_type != 1)
-				{
-					if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
-					print $product_static->stock_theorique;
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Lot/Serial
-			if (! empty($arrayfields['p.tobatch']['checked']))
-			{
-				print '<td align="center">';
-				print yn($obj->tobatch);
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Accountancy code sell
-			if (! empty($arrayfields['p.accountancy_code_sell']['checked']))
-			{
-				print '<td>'.$obj->accountancy_code_sell.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Accountancy code sell
-			if (! empty($arrayfields['p.accountancy_code_buy']['checked']))
-			{
-				print '<td>'.$obj->accountancy_code_buy.'</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Extra fields
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			// Fields from hook
-			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-			$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			// Date creation
-			if (! empty($arrayfields['p.datec']['checked']))
-			{
-				print '<td align="center">';
-				print dol_print_date($obj->date_creation, 'dayhour', 'tzuser');
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Date modification
-			if (! empty($arrayfields['p.tms']['checked']))
-			{
-				print '<td align="center">';
-				print dol_print_date($obj->date_update, 'dayhour', 'tzuser');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}
 
-			// Status (to sell)
-			if (! empty($arrayfields['p.tosell']['checked']))
+		// Sell price
+		if (! empty($arrayfields['p.sellprice']['checked']))
+		{
+			print '<td class="right nowraponall">';
+			if ($obj->tosell)
 			{
-				print '<td align="right" nowrap="nowrap">';
-				if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-					print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
-				} else {
-					print $product_static->LibStatut($obj->tosell,5,0);
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Status (to buy)
-			if (! empty($arrayfields['p.tobuy']['checked']))
-			{
-				print '<td align="right" nowrap="nowrap">';
-				if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-					print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
-				} else {
-					print $product_static->LibStatut($obj->tobuy,5,1);
-				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-			// Action
-			print '<td class="nowrap" align="center">';
-			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			{
-				$selected=0;
-				if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+				if ($obj->price_base_type == 'TTC') print price($obj->price_ttc).' '.$langs->trans("TTC");
+				else print price($obj->price).' '.$langs->trans("HT");
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-
-			print "</tr>\n";
-			$i++;
 		}
 
-		$db->free($resql);
+		// Better buy price
+		if (! empty($arrayfields['p.minbuyprice']['checked']))
+		{
+			print  '<td class="right nowraponall">';
+			if ($obj->tobuy && $obj->minsellprice != '')
+			{
+				//print price($obj->minsellprice).' '.$langs->trans("HT");
+				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0)
+				{
+					if ($product_fourn->product_fourn_price_id > 0)
+					{
+						if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+						{
+							$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
+							print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"),$htmltext);
+						}
+						else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+					}
+				}
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
 
-		print "</table>";
-		print "</div>";
+		// Number of buy prices
+		if (! empty($arrayfields['p.numbuyprice']['checked']))
+		{
+			print  '<td align="right">';
+			if ($obj->tobuy)
+			{
+				if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0)
+				{
+					$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
+					print $form->textwithpicto(count($productFournList),$htmltext);
+				}
+			}
+			print '</td>';
+		}
+
+		// WAP
+		if (! empty($arrayfields['p.pmp']['checked']))
+		{
+			print '<td class="nowrap" align="right">';
+			print price($product_static->pmp, 1, $langs);
+			print '</td>';
+		}
+
+		// Limit alert
+		if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
+		{
+			print '<td align="right">';
+			if ($obj->fk_product_type != 1)
+			{
+				print $obj->seuil_stock_alerte;
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Desired stock
+		if (! empty($arrayfields['p.desiredstock']['checked']))
+		{
+			print '<td align="right">';
+			if ($obj->fk_product_type != 1)
+			{
+				print $obj->desiredstock;
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Stock real
+		if (! empty($arrayfields['p.stock']['checked']))
+		{
+			print '<td align="right">';
+			if ($obj->fk_product_type != 1)
+			{
+				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
+				print $product_static->stock_reel;
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Stock virtual
+		if (! empty($arrayfields['stock_virtual']['checked']))
+		{
+			print '<td align="right">';
+			if ($obj->fk_product_type != 1)
+			{
+				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
+				print $product_static->stock_theorique;
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Lot/Serial
+		if (! empty($arrayfields['p.tobatch']['checked']))
+		{
+			print '<td align="center">';
+			print yn($obj->tobatch);
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Accountancy code sell
+		if (! empty($arrayfields['p.accountancy_code_sell']['checked']))
+		{
+			print '<td>'.$obj->accountancy_code_sell.'</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Accountancy code sell
+		if (! empty($arrayfields['p.accountancy_code_buy']['checked']))
+		{
+			print '<td>'.$obj->accountancy_code_buy.'</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Date creation
+		if (! empty($arrayfields['p.datec']['checked']))
+		{
+			print '<td align="center">';
+			print dol_print_date($obj->date_creation, 'dayhour', 'tzuser');
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Date modification
+		if (! empty($arrayfields['p.tms']['checked']))
+		{
+			print '<td align="center">';
+			print dol_print_date($obj->date_update, 'dayhour', 'tzuser');
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Status (to sell)
+		if (! empty($arrayfields['p.tosell']['checked']))
+		{
+			print '<td align="right" nowrap="nowrap">';
+			if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+				print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
+			} else {
+				print $product_static->LibStatut($obj->tosell,5,0);
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Status (to buy)
+		if (! empty($arrayfields['p.tobuy']['checked']))
+		{
+			print '<td align="right" nowrap="nowrap">';
+			if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
+			} else {
+				print $product_static->LibStatut($obj->tobuy,5,1);
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+		// Action
+		print '<td class="nowrap" align="center">';
+		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		{
+			$selected=0;
+			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+		}
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+
+		print "</tr>\n";
+		$i++;
 	}
+
+	$db->free($resql);
+
+	print "</table>";
+	print "</div>";
 	print '</form>';
 }
 else
@@ -981,6 +972,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

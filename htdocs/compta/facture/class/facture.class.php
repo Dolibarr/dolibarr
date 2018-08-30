@@ -53,8 +53,16 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accoun
  */
 class Facture extends CommonInvoice
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facture';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='facture';
+	
 	public $table_element_line = 'facturedet';
 	public $fk_element = 'fk_facture';
 	public $picto='bill';
@@ -1159,7 +1167,8 @@ class Facture extends CommonInvoice
 		if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
 		else $url = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$this->id;
 
-		if ($short) return $url;
+        if (!$user->rights->facture->lire)
+            $option = 'nolink';
 
 		if ($option !== 'nolink')
 		{
@@ -1213,6 +1222,11 @@ class Facture extends CommonInvoice
         $linkstart='<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
 		$linkend='</a>';
+
+        if ($option == 'nolink') {
+            $linkstart = '';
+            $linkend = '';
+        }
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -3029,7 +3043,7 @@ class Facture extends CommonInvoice
 	{
 	    global $mysoc,$user;
 
-		include_once(DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php');
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
 
 		// Cap percentages to 100
 		if ($percent > 100) $percent = 100;
@@ -3720,7 +3734,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3753,6 +3767,7 @@ class Facture extends CommonInvoice
 				$generic_facture->statut = $obj->fk_statut;
 
 				$response->nbtodo++;
+				$response->total += $obj->total;
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
@@ -4224,8 +4239,15 @@ class Facture extends CommonInvoice
  */
 class FactureLigne extends CommonInvoiceLine
 {
-    public $element='facturedet';
-    public $table_element='facturedet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='facturedet';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='facturedet';
 
 	var $oldline;
 
@@ -4333,6 +4355,7 @@ class FactureLigne extends CommonInvoiceLine
 			$objp = $this->db->fetch_object($result);
 
 			$this->rowid				= $objp->rowid;
+			$this->id					= $objp->rowid;
 			$this->fk_facture			= $objp->fk_facture;
 			$this->fk_parent_line		= $objp->fk_parent_line;
 			$this->label				= $objp->custom_label;

@@ -306,8 +306,8 @@ if ($object->fetch($id) >= 0)
 			$var = true;
 
 			// Loop on each submodule
-            foreach($modulenames as $modulename)
-            {
+			foreach($modulenames as $modulename)
+			{
 				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
@@ -649,7 +649,6 @@ if ($object->fetch($id) >= 0)
 
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

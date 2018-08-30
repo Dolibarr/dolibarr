@@ -91,6 +91,7 @@ ListFichinterAssociatedProject=List of interventions associated with the project
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
 ListDonationsAssociatedProject=List of donations associated with the project
 ListVariousPaymentsAssociatedProject=List of miscellaneous payments associated with the project
+ListSalariesAssociatedProject=List of salaries associated with the project
 ListActionsAssociatedProject=List of events associated with the project
 ListTaskTimeUserProject=List of time consumed on tasks of project
 ListTaskTimeForTask=List of time consumed on task

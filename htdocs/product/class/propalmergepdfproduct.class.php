@@ -22,7 +22,7 @@
  *  \brief      This file is an CRUD class file (Create/Read/Update/Delete)
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 
@@ -31,8 +31,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Propalmergepdfproduct extends CommonObject
 {
-	var $element='propal_merge_pdf_product';			//!< Id that identify managed objects
-	var $table_element='propal_merge_pdf_product';		//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='propal_merge_pdf_product';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='propal_merge_pdf_product';
 
 	var $fk_product;
 	var $file_name;
@@ -636,7 +643,10 @@ class Propalmergepdfproduct extends CommonObject
  */
 class PropalmergepdfproductLine
 {
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
 	var $fk_product;
 	var $file_name;
@@ -647,7 +657,8 @@ class PropalmergepdfproductLine
 	var $tms='';
 	var $import_key;
 
-	function __construct() {
-		return 1;
-	}
+    function __construct()
+    {
+        return 1;
+    }
 }

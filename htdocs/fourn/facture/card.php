@@ -1097,6 +1097,7 @@ if (empty($reshook))
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
@@ -1161,7 +1162,7 @@ if (empty($reshook))
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
 				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -1207,7 +1208,11 @@ if (empty($reshook))
 			{
 				$label = $productsupplier->label;
 
-				$desc = $productsupplier->description;
+				// if we use supplier description of the products
+				if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				    $desc = $productsupplier->desc_supplier;
+				} else $desc = $productsupplier->description;
+
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 				$type = $productsupplier->type;
@@ -3195,7 +3200,6 @@ else
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
-
 
 // End of page
 llxFooter();

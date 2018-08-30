@@ -827,6 +827,6 @@ print '</form>';
 
 if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit, 1);
 
-
+// End of page
 llxFooter();
 $db->close();

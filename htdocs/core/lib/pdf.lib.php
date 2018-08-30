@@ -263,6 +263,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  *
  * @param TCPDF     $pdf            PDF initialized object
  * @param string    $htmlcontent    HTML Contect
+ * @return number
  * @see getStringHeight
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
@@ -1231,7 +1232,17 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice.=$desc;
+				if (empty($hidedesc))
+				{
+					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST))
+					{
+						$libelleproduitservice=$desc."\n".$libelleproduitservice;
+					}
+					else
+					{
+						$libelleproduitservice.=$desc;
+					}
+				}
 			}
 			else
 			{
@@ -2110,4 +2121,3 @@ function pdf_getSizeForImage($realpath)
 	}
 	return array('width'=>$width,'height'=>$height);
 }
-

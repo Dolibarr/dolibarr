@@ -551,7 +551,6 @@ if ($id > 0 || ! empty($ref))
 			{
 				$num = $db->num_rows($resql);
 				$i=0;
-				$var=true;
 
 				if($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
 
@@ -655,11 +654,9 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 		}
-
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

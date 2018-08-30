@@ -94,6 +94,6 @@ $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
 $arrayselected=array(1,3);
 print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, '', 0, 250);
 
-
+// End of page
 llxFooter();
 $db->close();

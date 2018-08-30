@@ -412,7 +412,6 @@ dol_fiche_end();
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -94,7 +94,8 @@ class Supplierproposals extends DolibarrApi
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @return  array                       Array of order objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -190,24 +191,25 @@ class Supplierproposals extends DolibarrApi
 	}
 
 
-	/**
-	 * Clean sensible object datas
-	 *
-	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
-	 */
-	function _cleanObjectDatas($object) {
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object)
+    {
 
-		$object = parent::_cleanObjectDatas($object);
+        $object = parent::_cleanObjectDatas($object);
 
-		unset($object->name);
-		unset($object->lastname);
-		unset($object->firstname);
-		unset($object->civility_id);
-		unset($object->address);
-		unset($object->datec);
-		unset($object->datev);
+        unset($object->name);
+        unset($object->lastname);
+        unset($object->firstname);
+        unset($object->civility_id);
+        unset($object->address);
+        unset($object->datec);
+        unset($object->datev);
 
-		return $object;
-	}
+        return $object;
+    }
 }

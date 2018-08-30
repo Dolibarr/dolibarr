@@ -42,9 +42,21 @@ class printing_printgcp extends PrintingDriver
     var $conf = array();
     var $google_id = '';
     var $google_secret = '';
-    var $error;
-    var $errors = array();
-    var $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     private $OAUTH_SERVICENAME_GOOGLE = 'Google';
 

@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Page to set how to autocalculate price for each level when option
  * PRODUCT_MULTIPRICE is on.
  */
@@ -145,7 +145,7 @@ for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 	$price_options[$i] = $langs->trans('SellingPrice').' '.$i;
 }
 
-$genPriceOptions = function($level) use ($price_options) {
+$genPriceOptions = function ($level) use ($price_options) {
 
 	$return = array();
 
@@ -190,16 +190,16 @@ $genPriceOptions = function($level) use ($price_options) {
 		<?php endfor ?>
 	</table>
 
-<?php 
+<?php
 
 dol_fiche_end();
 
 print '<div style="text-align: center">
 		<input type="submit" value="'.$langs->trans('Save').'" class="button">
 	</div>';
-	
+
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

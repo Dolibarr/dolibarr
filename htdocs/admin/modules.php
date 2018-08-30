@@ -7,6 +7,7 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -637,6 +638,7 @@ if ($mode == 'common')
         }
 
         print '<tr class="oddeven">'."\n";
+        if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) print '<td width="20px">'.++$linenum.'</td>';
 
         // Picto + Name of module
         print '  <td width="200px">';
@@ -669,6 +671,17 @@ if ($mode == 'common')
         // Version
         print '<td class="center nowrap" width="120px">';
         print $versiontrans;
+        if(!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)){
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+            if (!empty($objMod->url_last_version)) {
+                $newversion = getURLContent($objMod->url_last_version);
+                if(isset($newversion['content'])){
+                    if (version_compare($newversion['content'], $versiontrans) > 0) {
+                        print "&nbsp;<span class='butAction' title='" . $langs->trans('LastStableVersion') . "'>".$newversion['content']."</span>";
+                    }
+                }
+            }
+        }
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
@@ -1067,8 +1080,6 @@ if ($mode == 'develop')
 	dol_fiche_end();
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

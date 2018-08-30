@@ -480,7 +480,6 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -30,8 +30,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentExpenseReport extends CommonObject
 {
-	public $element='payment_expensereport';			//!< Id that identify managed objects
-	public $table_element='payment_expensereport';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_expensereport';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_expensereport';
+
     public $picto = 'payment';
 
 	var $rowid;
@@ -505,7 +513,7 @@ class PaymentExpenseReport extends CommonObject
 
         if (! empty($conf->banque->enabled))
         {
-            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);

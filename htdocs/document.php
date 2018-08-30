@@ -64,13 +64,17 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

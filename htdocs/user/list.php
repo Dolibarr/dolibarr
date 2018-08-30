@@ -629,5 +629,6 @@ print "</form>\n";
 
 $db->free($result);
 
+// End of page
 llxFooter();
 $db->close();

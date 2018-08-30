@@ -41,8 +41,16 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class Societe extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='societe';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = 'societe';
+	
 	public $fk_element='fk_soc';
 	public $fieldsforcombobox='nom,name_alias';
 	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
@@ -1912,6 +1920,11 @@ class Societe extends CommonObject
 	 */
 	function add_commercial(User $user, $commid)
 	{
+		$error=0;
+		
+		
+		
+		
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
@@ -1927,6 +1940,12 @@ class Societe extends CommonObject
 			{
 				dol_syslog(get_class($this)."::add_commercial Erreur");
 			}
+			else {
+				$this->context=array('commercial_modified'=>$commid);
+				
+				$result=$this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE',$user);
+                if ($result < 0) $error++;
+			}
 		}
 	}
 
@@ -1939,6 +1958,12 @@ class Societe extends CommonObject
 	 */
 	function del_commercial(User $user, $commid)
 	{
+		$error=0;
+		$this->context=array('commercial_modified'=>$commid);
+				
+		$result=$this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE',$user);
+        if ($result < 0) $error++;
+		
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";

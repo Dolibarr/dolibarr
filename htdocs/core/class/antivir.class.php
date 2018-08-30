@@ -26,15 +26,26 @@
  */
 
 /**
- *      \class      AntiVir
- *      \brief      Class to scan for virus
+ *      Class to scan for virus
  */
 class AntiVir
 {
-	var $error;
-	var $errors;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 	var $output;
-	var $db;
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
 	 *  Constructor

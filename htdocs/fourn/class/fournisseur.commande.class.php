@@ -40,16 +40,26 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class CommandeFournisseur extends CommonOrder
 {
-    public $element='order_supplier';
-    public $table_element='commande_fournisseur';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='order_supplier';
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='commande_fournisseur';
+
     public $table_element_line = 'commande_fournisseurdet';
     public $fk_element = 'fk_commande';
     public $picto='order';
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -68,6 +78,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string
 	 */
     public $ref;
+
     public $ref_supplier;
     public $brouillon;
     public $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
@@ -3084,7 +3095,14 @@ class CommandeFournisseur extends CommonOrder
  */
 class CommandeFournisseurLigne extends CommonOrderLine
 {
-    public $element='commande_fournisseurdet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commande_fournisseurdet';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='commande_fournisseurdet';
 
     public $oldline;

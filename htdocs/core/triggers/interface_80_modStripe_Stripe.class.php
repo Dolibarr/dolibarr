@@ -35,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceStripe
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     /**

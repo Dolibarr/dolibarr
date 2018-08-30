@@ -39,6 +39,7 @@ class Productlot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'productlot';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -166,7 +167,7 @@ class Productlot extends CommonObject
 					$error++;
 				}
 			}
-			
+
 			if (! $error && ! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
@@ -234,7 +235,7 @@ class Productlot extends CommonObject
 				//$this->ref = $obj->fk_product.'_'.$obj->batch;
 
 				$this->batch = $obj->batch;
-				$this->entity = (!empty($obj->entity)?$obj->entity:$conf->entity); // Prevent "null" entity 
+				$this->entity = (!empty($obj->entity)?$obj->entity:$conf->entity); // Prevent "null" entity
 				$this->fk_product = $obj->fk_product;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
@@ -300,7 +301,7 @@ class Productlot extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		
+
 		if (empty($this->oldcopy))
 		{
 			$org=new self($this->db);
@@ -340,7 +341,7 @@ class Productlot extends CommonObject
 				$error++;
 			}
 		}
-		
+
 		if (!$error && !$notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
@@ -582,4 +583,3 @@ class Productlot extends CommonObject
 	}
 
 }
-

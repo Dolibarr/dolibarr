@@ -45,16 +45,26 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Propal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propal';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='propal';
+	
 	public $table_element_line='propaldet';
 	public $fk_element='fk_propal';
 	public $picto='propal';
+	
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+	
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -3146,7 +3156,7 @@ class Propal extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
+		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3190,6 +3200,8 @@ class Propal extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
+				$response->total+=$obj->total_ht;
+				
 				if ($mode == 'opened')
 				{
 					$datelimit = $this->db->jdate($obj->datefin);
@@ -3649,7 +3661,14 @@ class Propal extends CommonObject
  */
 class PropaleLigne extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propaldet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='propaldet';
 
 	var $oldline;

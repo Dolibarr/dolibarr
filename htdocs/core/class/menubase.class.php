@@ -28,9 +28,20 @@
  */
 class Menubase
 {
-    public $db;							// To store db handler
-    public $error;							// To return error code (or message)
-    public $errors=array();				// To return several error codes (or messages)
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
     public $id;
 
@@ -685,4 +696,3 @@ class Menubase
    }
 
 }
-

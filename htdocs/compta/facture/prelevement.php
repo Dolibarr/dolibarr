@@ -696,6 +696,6 @@ if ($object->id > 0)
 	print '</div>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

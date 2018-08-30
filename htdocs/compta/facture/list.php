@@ -270,7 +270,6 @@ if ($massaction == 'withdrawrequest')
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
-				$listofbills[] = $objecttmp;
 				if($objecttmp->paye || $objecttmp->resteapayer==0){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
@@ -302,18 +301,21 @@ if ($massaction == 'withdrawrequest')
 
 				if ($numprlv>0){
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
+					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 				}
-				if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
+				else if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+				}
+				else {
+					$listofbills[] = $objecttmp;    // $listofbills will only contains invoices with good payment method and no request already done
 				}
 
 			}
 		}
 
-		//Massive withdraw request
-		if(!empty($listofbills) && empty($error))
+		//Massive withdraw request for request with no errors
+		if(!empty($listofbills))
 		{
 			$nbwithdrawrequestok=0;
 			foreach($listofbills as $aBill)
@@ -921,6 +923,9 @@ if ($resql)
 			$facturestatic->id=$obj->id;
 			$facturestatic->ref=$obj->ref;
 			$facturestatic->type=$obj->type;
+            $facturestatic->total_ht=$obj->total_ht;
+            $facturestatic->total_tva=$obj->total_vat;
+            $facturestatic->total_ttc=$obj->total_ttc;
 			$facturestatic->statut=$obj->fk_statut;
 			$facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
 			$facturestatic->note_public=$obj->note_public;
@@ -1247,5 +1252,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

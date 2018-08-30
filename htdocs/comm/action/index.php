@@ -1250,8 +1250,8 @@ else    // View by day
 
 print "\n".'</form>';
 
+// End of page
 llxFooter();
-
 $db->close();
 
 

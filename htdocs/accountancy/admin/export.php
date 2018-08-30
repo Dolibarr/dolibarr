@@ -278,5 +278,6 @@ print '<div class="center"><input type="submit" class="button" value="' . dol_es
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -427,7 +427,7 @@ if (empty($reshook))
 		if (! $error)
 		{
 			$db->commit();
-			setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 		}
 		else
 		{
@@ -1197,6 +1197,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

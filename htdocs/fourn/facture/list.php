@@ -819,7 +819,6 @@ if ($resql)
 	if ($num > 0)
 	{
 		$i=0;
-
 		$totalarray=array();
 		while ($i < min($num,$limit))
 		{
@@ -1167,7 +1166,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

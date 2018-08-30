@@ -1289,6 +1289,6 @@ else
 	print $langs->trans("RecordNotFound");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

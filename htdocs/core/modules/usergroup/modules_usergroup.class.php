@@ -38,7 +38,10 @@
  */
 abstract class ModelePDFUserGroup extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**

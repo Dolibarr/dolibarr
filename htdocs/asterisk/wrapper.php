@@ -190,5 +190,6 @@ else {
     print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 
+// End of page
 llxFooter();
 $db->close();

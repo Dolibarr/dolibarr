@@ -34,7 +34,12 @@ class box_last_ticket extends ModeleBoxes
     public $boximg = "ticket";
     public $boxlabel;
     public $depends = array("ticket");
+    
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
+    
     public $param;
     public $info_box_head = array();
     public $info_box_contents = array();

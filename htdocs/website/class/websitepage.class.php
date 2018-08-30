@@ -39,17 +39,16 @@ class WebsitePage extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'websitepage';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
+	
 	/**
 	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'label';
-
-	/**
-	 */
 
 	public $fk_website;
 	public $pageurl;
@@ -125,7 +124,9 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int		$id         	Id object. If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
+	 * @param int		$id				Id object.
+	 * 									- If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
+	 * 									- If value is < 0, we must exclude this ID.
 	 * @param string	$website_id 	Web site id (page name must also be filled if this parameter is used)
 	 * @param string	$page       	Page name (website id must also be filled if this parameter is used)
 	 * @param string	$aliasalt		Alternative alias to search page (slow)
@@ -162,6 +163,7 @@ class WebsitePage extends CommonObject
 		}
 		else
 		{
+			if ($id < 0) $sql .= ' AND t.rowid <> ' . abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
 			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
@@ -362,10 +364,11 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newref				New ref/alias of page
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
-	 * @param	int		$newwebsite			0=Same web site, 1=New web site
+	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
+	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
 	 * @return 	mixed 						New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
+	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0, $keeptitleunchanged=0)
 	{
 		global $hookmanager, $langs;
 		$error = 0;
@@ -385,7 +388,7 @@ class WebsitePage extends CommonObject
 		$object->ref = $newref;
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
-		$object->title = $langs->trans("CopyOf").' '.$object->title;
+		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;

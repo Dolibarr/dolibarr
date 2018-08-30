@@ -131,7 +131,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			// Make the first fetch to get first line
 			$obj = $db->fetch_object($res);
-			if ($obj) 
+			if ($obj)
 			{
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
@@ -145,7 +145,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		else
 		{
 			$error++;
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 
@@ -250,7 +250,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		}
 		else
 		{
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 }
@@ -607,5 +607,6 @@ if (GETPOST('withtab','alpha'))
 
 print '<br><br>';
 
+// End of page
 llxFooter();
 $db->close();

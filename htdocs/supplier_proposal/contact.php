@@ -202,6 +202,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

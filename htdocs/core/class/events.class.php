@@ -30,17 +30,34 @@
 
 
 /**
- *	Events class
+ *  Events class
  */
 class Events // extends CommonObject
 {
-	public $element='events';				//!< Id that identify managed objects
-	public $table_element='events';		//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='events';
 
-	var $id;
-	var $db;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='events';
 
-	var $error;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $tms;
 	var $type;

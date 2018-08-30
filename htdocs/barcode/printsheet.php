@@ -441,6 +441,6 @@ print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GET
 print '</form>';
 print '<br>';
 
+// End of page
 llxFooter();
-
 $db->close();

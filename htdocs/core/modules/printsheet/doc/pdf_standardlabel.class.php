@@ -41,10 +41,11 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-	function addSticker(&$pdf,$outputlangs,$param) {
+    function addSticker(&$pdf,$outputlangs,$param)
+    {
 		// use this method in future refactoring
 	}
-	
+
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
@@ -255,10 +256,8 @@ class pdf_standardlabel extends CommonStickerGenerator
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("admin");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "admin"));
 
 		$title=$outputlangs->transnoentities('Labels');
 		$keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);

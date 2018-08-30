@@ -29,8 +29,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Localtax extends CommonObject
 {
-	public $element='localtax';			//!< Id that identify managed objects
-	public $table_element='localtax';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='localtax';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='localtax';
+
 	public $picto='payment';
 
 	var $ltt;
@@ -38,7 +46,12 @@ class Localtax extends CommonObject
 	var $datep;
 	var $datev;
 	var $amount;
-	var $label;
+
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

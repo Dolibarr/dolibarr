@@ -461,5 +461,6 @@ if ($modecompta == 'CREANCES-DETTES')
 	print '<br>'.$langs->trans("TurnoverPerProductInCommitmentAccountingNotRelevant") . '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();
