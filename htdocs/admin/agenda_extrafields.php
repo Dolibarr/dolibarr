@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (!$user->admin)
 	accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'agenda'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);

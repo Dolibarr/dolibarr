@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 if (!$user->admin)
 accessforbidden();
 
+// Load translation files required by the page
 $langs->load("categories");
 
 $action=GETPOST('action','aZ09');
@@ -93,7 +94,6 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
-$var=true;
 $form = new Form($db);
 
 // Mail required for members

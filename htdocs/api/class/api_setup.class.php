@@ -66,7 +66,8 @@ class Setup extends DolibarrApi
 
         $sql = "SELECT id, code, type, libelle as label, module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.entity IN (".getEntity('c_paiement').")";
+        $sql.= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
@@ -169,7 +170,7 @@ class Setup extends DolibarrApi
                     // and then apply the filter if there is one.
                     $this->translateLabel($country, $lang);
 
-                    if (empty($filter) || stripos($country->label, $filter) !== FALSE) {
+                    if (empty($filter) || stripos($country->label, $filter) !== false) {
                         $list[] = $this->_cleanObjectDatas($country);
                     }
                 }
@@ -384,7 +385,7 @@ class Setup extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param string    $type       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
-     * @return List of events types
+     * @return List of extra fields
      *
      * @url     GET extrafields
      *
@@ -538,7 +539,8 @@ class Setup extends DolibarrApi
 
         $sql = "SELECT rowid as id, code, sortorder, libelle as label, libelle_facture as descr, type_cdr, nbjour, decalage, module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.entity IN (".getEntity('c_payment_term').")";
+        $sql.= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
@@ -582,7 +584,7 @@ class Setup extends DolibarrApi
      * Do a test of integrity for files and setup.
      *
      * @param string	$target			Can be 'local' or 'default' or Url of the signatures file to use for the test. Must be reachable by the tested Dolibarr.
-     * @return Result of file and setup integrity check
+     * @return 							Result of file and setup integrity check
      *
      * @url     GET checkintegrity
      *
@@ -638,7 +640,7 @@ class Setup extends DolibarrApi
     		if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     		{
     			$xmlfile = $xmlarray['content'];
-    			//print "eee".$xmlfile."eee";
+    			//print "xmlfilestart".$xmlfile."endxmlfile";
     			$xml = simplexml_load_string($xmlfile);
     		}
     		else

@@ -44,6 +44,7 @@ $modellabel=GETPOST("modellabel",'aZ09');	// Doc template to use for address she
 $mesg='';
 
 $adherentstatic=new Adherent($db);
+$object=new Adherent($db);
 
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
@@ -69,11 +70,11 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     $sql.= " t.libelle as type,";
     $sql.= " c.code as country_code, c.label as country";
     // Add fields from extrafields
-    foreach ($extrafields->attribute_label as $key => $val)
-        $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+    if (! empty($extrafields->attributes[$object->table_element]['label']))
+    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
     $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
-    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
+    if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
     $sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
     $sql.= " AND d.entity IN (".getEntity('adherent').")";
     if (is_numeric($foruserid)) $sql.=" AND d.rowid=".$foruserid;
@@ -97,10 +98,10 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     		$adherentstatic->firstname=$objp->firstname;
 
             // format extrafiled so they can be parsed in function complete_substitutions_array
-            if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+    		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
             {
                 $adherentstatic->array_options = array();
-                foreach($extrafields->attribute_label as $key => $val)
+                foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
                 {
                     $tmpkey='options_'.$key;
                     if (!empty($objp->$tmpkey))

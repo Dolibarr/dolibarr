@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013-2017 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "stocks"));
 
 // Securit check
 if (!$user->admin) accessforbidden();
@@ -160,12 +160,10 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
-print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print "  <td align=\"right\">&nbsp;</td>\n";
 print '</tr>'."\n";
-$var=true;
 
 $found=0;
-
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
@@ -264,12 +262,10 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
-print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print "  <td align=\"right\">&nbsp;</td>\n";
 print '</tr>'."\n";
-$var=true;
 
 $found=0;
-
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
@@ -345,7 +341,7 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockAvailability")."</td>\n";
-print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print "  <td align=\"right\">&nbsp;</td>\n";
 print '</tr>'."\n";
 
 
@@ -362,8 +358,8 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if($conf->invoice->enabled) {
-	$var = !$var;
+if($conf->invoice->enabled)
+{
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td align="right">';
@@ -377,8 +373,8 @@ if($conf->invoice->enabled) {
 	print "</tr>\n";
 }
 
-if($conf->order->enabled) {
-	$var = !$var;
+if($conf->order->enabled)
+{
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td align="right">';
@@ -392,8 +388,8 @@ if($conf->order->enabled) {
 	print "</tr>\n";
 }
 
-if($conf->expedition->enabled) {
-	$var = !$var;
+if($conf->expedition->enabled)
+{
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
 	print '<td align="right">';
@@ -408,7 +404,6 @@ if($conf->expedition->enabled) {
 }
 print '</table>';
 
-
 print '<br>';
 
 $virtualdiffersfromphysical=0;
@@ -421,9 +416,9 @@ if ($virtualdiffersfromphysical)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print "  <td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help',$langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
-	print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+	print "  <td align=\"right\">&nbsp;</td>\n";
 	print '</tr>'."\n";
-	$var = !$var;
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
 	print '<td align="right">';
@@ -444,12 +439,12 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("Other")."</td>\n";
-print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print "  <td align=\"right\">&nbsp;</td>\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-print '<td class="width100" align="right">';
+print '<td align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
@@ -461,7 +456,8 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>';
-print $form->textwithpicto($langs->trans("StockSupportServices"), $langs->trans("StockSupportServicesDesc")).'</td>';
+print $form->textwithpicto($langs->trans("StockSupportServices"), $langs->trans("StockSupportServicesDesc"));
+print '</td>';
 print '<td align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -507,7 +503,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
 	print '<td align="center" width="20">&nbsp;</td>';
-	print '<td align="center" width="100">&nbsp;</td>'."\n";
+	print '<td align="center">&nbsp;</td>'."\n";
 
 	// Example with a yes / no select
 	print '<tr class="oddeven">';

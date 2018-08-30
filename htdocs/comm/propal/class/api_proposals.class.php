@@ -77,6 +77,9 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Add external contacts ids
+		$this->propal->contacts_ids = $this->propal->liste_contact(-1,'external',1);
+
 		$this->propal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->propal);
 	}
@@ -156,6 +159,8 @@ class Proposals extends DolibarrApi
 				$obj = $db->fetch_object($result);
 				$proposal_static = new Propal($db);
 				if($proposal_static->fetch($obj->rowid)) {
+					// Add external contacts ids
+					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1,'external',1);
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
@@ -176,7 +181,7 @@ class Proposals extends DolibarrApi
 	 * @param   array   $request_data   Request data
 	 * @return  int     ID of proposal
 	 */
-	function post($request_data = NULL)
+	function post($request_data = null)
 	{
 	  if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -241,7 +246,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	function postLine($id, $request_data = NULL)
+	function postLine($id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
@@ -307,7 +312,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return object
 	 */
-	function putLine($id, $lineid, $request_data = NULL)
+	function putLine($id, $lineid, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
@@ -410,7 +415,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+	function put($id, $request_data = null) {
 	  if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }
@@ -708,7 +713,7 @@ class Proposals extends DolibarrApi
 
 		$object = parent::_cleanObjectDatas($object);
 
-        unset($object->note);
+        	unset($object->note);
 		unset($object->name);
 		unset($object->lastname);
 		unset($object->firstname);

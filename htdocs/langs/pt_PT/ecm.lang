@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Nº de documentos na pasta
-ECMSection=Pasta
-ECMSectionManual=Pasta manual
+ECMNbOfDocs=N.º de documentos na diretoria
+ECMSection=Diretoria
+ECMSectionManual=Diretoria manual
 ECMSectionAuto=Pasta automática
 ECMSectionsManual=Pastas manuais
 ECMSectionsAuto=Pastas automáticas
@@ -39,9 +39,10 @@ ShowECMSection=Mostrar Pasta
 DeleteSection=Remover diretório
 ConfirmDeleteSection=Pode confirmar que deseja eliminar a pasta <b>%s</b>?
 ECMDirectoryForFiles=Pasta relativa para ficheiros
-CannotRemoveDirectoryContainsFiles=Não se pode eliminar porque contem ficheiros
+CannotRemoveDirectoryContainsFilesOrDirs=A remoção do diretório não foi possível porque contém ficheiros ou sub-diretórios
+CannotRemoveDirectoryContainsFiles=A remoção do diretório não foi possível porque contém ficheiros
 ECMFileManager=Explorador de Ficheiros
-ECMSelectASection=Seleccione uma pasta na árvore da esquerda
+ECMSelectASection=Selecione uma pasta na árvore...
 DirNotSynchronizedSyncFirst=Este diretório parece ter sido ser criado ou modificado fora do módulo GCE. Você deve clicar no botão "Voltar a sincronizar" primeiro para sincronizar o disco e a base de dados para obter o conteúdo desse diretório.
 ReSyncListOfDir=Voltar a sincronizar a lista de diretórios
 HashOfFileContent=Hash do conteúdo do ficheiro

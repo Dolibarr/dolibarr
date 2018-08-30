@@ -33,6 +33,7 @@ PropalStatusSigned=Podpis (potřeba fakturace)
 PropalStatusNotSigned=Nejste přihlášen (uzavřený)
 PropalStatusBilled=Účtováno
 PropalStatusDraftShort=Návrh
+PropalStatusValidatedShort=Ověřeno
 PropalStatusClosedShort=Zavřeno
 PropalStatusSignedShort=Podepsaný
 PropalStatusNotSignedShort=Nepodepsaný
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 měsíc
 TypeContact_propal_internal_SALESREPFOLL=Zástupce následující vypracované nabídky
 TypeContact_propal_external_BILLING=Fakturační kontakt zákazníka
 TypeContact_propal_external_CUSTOMER=Kontakt se zákazníkem pro následující vypracované nabídky
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Kompletní šablona nabídky (logo. ..)
 DefaultModelPropalCreate=Tvorba z výchozí šablony

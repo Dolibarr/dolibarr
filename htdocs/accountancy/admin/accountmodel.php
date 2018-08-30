@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","companies","resource","holiday","compta","accountancy","hrm"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
@@ -617,25 +618,13 @@ if ($id)
 		$reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 		$error=$hookmanager->error; $errors=$hookmanager->errors;
 
-		if ($id == 3) unset($fieldlist[2]);
-
 		if (empty($reshook))
 		{
-			if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates' && $action == 'edit')
-			{
-				fieldListAccountModel($fieldlist,$obj,$tabname[$id],'hide');
-			}
-			else
-			{
-				fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
-			}
+			fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
 		}
 
 		print '<td colspan="3" align="right">';
-		if ($tabname[$id] != MAIN_DB_PREFIX.'c_email_templates' || $action != 'edit')
-		{
-			print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
-		}
+		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
@@ -657,7 +646,6 @@ if ($id)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var=true;
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
@@ -854,7 +842,7 @@ if ($id)
 								$valuetoshow=price($valuetoshow);
 							}
 							else if ($fieldlist[$field]=='libelle_facture') {
-								$langs->load("bills");
+								$langs->loadLangs(array("bills"));
 								$key=$langs->trans("PaymentCondition".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "PaymentCondition".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 								$valuetoshow=nl2br($valuetoshow);
@@ -864,7 +852,7 @@ if ($id)
 								$valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
-								$langs->load("propal");
+								$langs->loadLangs(array("propal"));
 								$key=$langs->trans("AvailabilityType".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
@@ -889,17 +877,17 @@ if ($id)
 								$valuetoshow=($obj->code && $key != "Civility".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_type_contact') {
-								$langs->load('agenda');
+								$langs->loadLangs(array("agenda"));
 								$key=$langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_payment_term') {
-								$langs->load("bills");
+								$langs->loadLangs(array("bills"));
 								$key=$langs->trans("PaymentConditionShort".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_paiement') {
-								$langs->load("bills");
+								$langs->loadLangs(array("bills"));
 								$key=$langs->trans("PaymentType".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "PaymentType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
@@ -908,12 +896,12 @@ if ($id)
 								$valuetoshow=($obj->code && $key != "DemandReasonType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_input_method') {
-								$langs->load("orders");
+								$langs->loadLangs(array("orders"));
 								$key=$langs->trans($obj->code);
 								$valuetoshow=($obj->code && $key != $obj->code)?$key:$obj->{$fieldlist[$field]};
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_shipment_mode') {
-								$langs->load("sendings");
+								$langs->loadLangs(array("sendings"));
 								$key=$langs->trans("SendingMethod".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "SendingMethod".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
@@ -924,7 +912,7 @@ if ($id)
 							}
 							else if ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_type_fees')
 							{
-								$langs->load('trips');
+								$langs->loadLangs(array("trips"));
 								$key = $langs->trans(strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
 							}
@@ -935,11 +923,11 @@ if ($id)
 								$valuetoshow = $langs->getCurrencySymbol($obj->code,1);
 							}
 							else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
-								$langs->load("products");
+								$langs->loadLangs(array("products"));
 								$valuetoshow=$langs->trans($obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='short_label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
-								$langs->load("products");
+								$langs->loadLangs(array("products"));
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
 							}
 							else if (($fieldlist[$field] == 'unit') && ($tabname[$id] == MAIN_DB_PREFIX.'c_paper_format'))
@@ -987,13 +975,7 @@ if ($id)
 					// Active
 					print '<td align="center" class="nowrap">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-					else
-				 	{
-				 		if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
-				 		else if (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
-				  		else if (isset($obj->type) && in_array($obj->type, array('system')) && ! empty($obj->active) && $obj->code != 'AC_OTH') print $langs->trans("UsedOnlyWithTypeOption");
-						else print $langs->trans("AlwaysActive");
-					}
+					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
@@ -1042,7 +1024,6 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList;
-	global $bc;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
@@ -1142,16 +1123,11 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 		}
 		elseif (in_array($fieldlist[$field], array('content')))
 		{
-			if ($tabname == MAIN_DB_PREFIX.'c_email_templates')
-			{
-				print '<td colspan="4"></td></tr><tr class="pair nohover"><td colspan="5">';		// To create an artificial CR for the current tr we are on
-			}
-			else print '<td>';
+			print '<td>';
 			if ($context != 'hide')
 			{
 				//print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
 				$okforextended=true;
-				if ($tabname == MAIN_DB_PREFIX.'c_email_templates' && empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $okforextended=false;
 				$doleditor = new DolEditor($fieldlist[$field], (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_5, '90%');
 				print $doleditor->Create(1);
 			}

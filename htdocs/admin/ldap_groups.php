@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("admin");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","errors"));
 
 if (!$user->admin)
   accessforbidden();
@@ -109,14 +109,12 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $form=new Form($db);
 
 print '<table class="noborder" width="100%">';
-$var=true;
 
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeGroups").'</td>';
 print "</tr>\n";
 
 // DN pour les groupes
-
 print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupDn").'</span></td><td>';
 print '<input size="48" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
 print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td>';
@@ -124,7 +122,6 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-
 print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_GROUP_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPGroupObjectClassListExample").'</td>';
@@ -134,7 +131,6 @@ print '</tr>';
 print '</table>';
 print '<br>';
 print '<table class="noborder" width="100%">';
-$var=true;
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
@@ -145,7 +141,6 @@ print "</tr>\n";
 // Filtre
 
 // Common name
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
@@ -162,7 +157,6 @@ print '</tr>';
 */
 
 // Description
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_GROUP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
@@ -170,7 +164,6 @@ print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_
 print '</tr>';
 
 // User group
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
 print '<input size="25" type="text" name="fieldgroupmembers" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';

@@ -311,7 +311,7 @@ function getContact($authentication,$id,$ref_ext)
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
             	//Get extrafield values
-            	$contact->fetch_optionals($contact->id,$extralabels);
+            	$contact->fetch_optionals();
 
             	foreach($extrafields->attribute_label as $key=>$label)
             	{

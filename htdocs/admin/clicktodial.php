@@ -26,6 +26,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
@@ -71,8 +72,6 @@ print '<br>';
 print '<form method="post" action="clicktodial.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
-
-$var=true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

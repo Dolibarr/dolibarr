@@ -77,13 +77,13 @@ AgendaUrlOptions3=<b>logina=%s</b> para restringir a saída para ações criada 
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir a saída das ações não pertencentes ao usuário<b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir a saída às ações atribuídas ao usuário <b>%s</b> (proprietário e outros).
 AgendaUrlOptionsProject=<b>projeto=__PROJECT_ID__</b> para restringir a saída para ações ligadas ao  <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> para exclusão automática do evento
 AgendaShowBirthdayEvents=Mostrar datas de nascimento dos contatos
 AgendaHideBirthdayEvents=Ocultar datas de nascimento dos contatos
 ExportDataset_event1=Lista dos eventos da agenda
 DefaultWorkingDays=Padrão dias úteis por semana (Exemplo: 1-5, 1-6)
 DefaultWorkingHours=Padrão horas de trabalho em dia (Exemplo: 9-18)
 ExtSitesEnableThisTool=Mostrar calendários externos na agenda
-AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL para acessar arquivos .ical
 ExtSiteNoLabel=Sem descrição
 VisibleDaysRange=Intervalo de dias visíveis

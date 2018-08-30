@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuBankCash=Banco/Caja
 MenuVariousPayment=Pagos diversos
 MenuNewVariousPayment=Nuevo pago misceláneo
 BankAccount=cuenta bancaria
 BankAccounts=Cuentas bancarias
+BankAccountsAndGateways=Cuentas bancarias | Puertas de enlace
 AccountRef=Ref de cuenta financiera
 AccountLabel=Etiqueta de cuenta financiera
 CashAccount=Cuenta de efectivo
@@ -97,7 +97,6 @@ PaymentDateUpdateSucceeded=Fecha de pago actualizada con éxito
 PaymentDateUpdateFailed=La fecha de pago no se pudo actualizar
 Transactions=Actas
 BankTransactionLine=Entrada bancaria
-AllAccounts=Todas las cuentas bancarias / de efectivo
 FutureTransaction=Transacción en futur. No hay manera de conciliar.
 SelectChequeTransactionAndGenerate=Seleccione / filtro de cheques para incluir en el recibo de depósito de cheque y haga clic en "Crear".
 InputReceiptNumber=Elija el extracto bancario relacionado con la conciliación. Use un valor numérico ordenable: AAAAMM o AAAAMMDD

@@ -155,11 +155,23 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	// pu calculation from pu_devise if pu empty
-	if(empty($pu) && !empty($pu_devise)) {
-		$pu = $pu_devise / $multicurrency_tx;
+	if (empty($pu) && !empty($pu_devise)) {
+		if (! empty($multicurrency_tx)) $pu = $pu_devise / $multicurrency_tx;
+		else
+		{
+			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (multicurrency_tx empty when pu_devise not) ', LOG_ERR);
+			return array();
+		}
 	}
-	if(empty($pu_devise) && !empty($multicurrency_tx)) {
-		$pu_devise = $pu * $multicurrency_tx;
+	if ($pu === '') $pu=0;
+	// pu_devise calculation from pu
+	if (empty($pu_devise) && !empty($multicurrency_tx)) {
+		if (is_numeric($pu) && is_numeric($multicurrency_tx)) $pu_devise = $pu * $multicurrency_tx;
+		else
+		{
+			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (pu or multicurrency_tx are not numeric)', LOG_ERR);
+			return array();
+		}
 	}
 
 	// initialize total (may be HT or TTC depending on price_base_type)

@@ -24,6 +24,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userhome';   // To manage different context of search
+
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
 	// Redirection vers la page de l'utilisateur
@@ -31,6 +33,7 @@ if (! $user->rights->user->user->lire && ! $user->admin)
 	exit;
 }
 
+// Load translation files required by page
 $langs->load("users");
 
 $canreadperms=true;
@@ -45,6 +48,9 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('userhome'));
 
 
 /*
@@ -101,23 +107,11 @@ $sql.= ", s.code_client";
 $sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
-// TODO add hook
-if (! empty($conf->multicompany->enabled)) {
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		if (! empty($user->admin) && empty($user->entity)) {
-			if ($conf->entity == 1) {
-				$sql.= " WHERE u.entity IS NOT NULL";
-			} else {
-				$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			}
-		} else {
-			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql.= " WHERE ug.fk_user = u.rowid";
-			$sql.= " AND ug.entity IN (".getEntity('user').")";
-		}
-	} else {
-		$sql.= " WHERE u.entity IN (".getEntity('user').")";
-	}
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+if ($reshook > 0) {
+	$sql.=$hookmanager->resPrint;
 } else {
 	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
@@ -130,7 +124,9 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td>';
+	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	print '</tr>';
 	$i = 0;
 
 	while ($i < $num && $i < $max)
@@ -225,7 +221,7 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+	if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 	{
 		$sql.= " WHERE g.entity IS NOT NULL";
 	}
@@ -239,11 +235,13 @@ if ($canreadperms)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$colspan=2;
+		$colspan=1;
 		if (! empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td>';
+		print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '</tr>';
 		$i = 0;
 
 		$grouptemp = new UserGroup($db);

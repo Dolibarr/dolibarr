@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("widthdrawals");
-$langs->load("companies");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'widthdrawals', 'companies', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -68,7 +66,9 @@ if ($action == 'create')
 {
 	// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
 	$bprev = new BonPrelevement($db);
-	$result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format);
+        $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+
+        $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format,$executiondate);
 	if ($result < 0)
 	{
 		setEventMessages($bprev->error, $bprev->errors, 'errors');
@@ -93,6 +93,7 @@ if ($action == 'create')
 /*
  * View
  */
+$form = new Form($db);
 
 $thirdpartystatic=new Societe($db);
 $invoicestatic=new Facture($db);
@@ -147,23 +148,22 @@ print '</div>';
 if ($mesg) print $mesg;
 
 print "<div class=\"tabsAction\">\n";
+print '<form action="' . $_SERVER['PHP_SELF'] . '?action=create" method="POST">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+if ($nb) {
+    if ($pricetowithdraw) {
+        print $langs->trans('ExecutionDate').' ';
+        print $form->select_date();
+        if ($mysoc->isInEEC()) {
+            print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
+            print '<input class="butAction" type="submit" value="' . $langs->trans("CreateForSepa") . '"/>';
+        } else {
+            print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">' . $langs->trans("CreateAll") . "</a>\n";
+		}
 
-if ($nb)
-{
-	if ($pricetowithdraw)
-	{
-		if ($mysoc->isInEEC())
-		{
-			print '<a class="butAction" href="create.php?action=create&format=FRST">'.$langs->trans("CreateForSepaFRST")."</a>\n";
-			print '<a class="butAction" href="create.php?action=create&format=RCUR">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
 		}
 		else
 		{
-			print '<a class="butAction" href="create.php?action=create&format=ALL">'.$langs->trans("CreateAll")."</a>\n";
-		}
-	}
-	else
-	{
 		if ($mysoc->isInEEC())
 		{
 			print '<a class="butActionRefused" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
@@ -318,8 +318,6 @@ if ($result)
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
     print '<td align="center">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
-
-    $var=True;
 
     while ($i < min($num,$limit))
     {

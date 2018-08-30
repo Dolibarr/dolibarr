@@ -43,7 +43,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
-$langs->loadLangs(array('bills','compta','admin','other','products'));
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'products'));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -63,24 +64,10 @@ if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'facture', $id, $objecttype);
 $projectid = GETPOST('projectid','int');
 
-$search_ref=GETPOST('search_ref');
-$search_societe=GETPOST('search_societe');
-$search_montant_ht=GETPOST('search_montant_ht');
-$search_montant_vat=GETPOST('search_montant_vat');
-$search_montant_ttc=GETPOST('search_montant_ttc');
-$search_payment_mode=GETPOST('search_payment_mode');
-$search_payment_term=GETPOST('search_payment_term');
-$day=GETPOST('day');
-$year=GETPOST('year');
-$month=GETPOST('month');
-$day_date_when=GETPOST('day_date_when');
 $year_date_when=GETPOST('year_date_when');
 $month_date_when=GETPOST('month_date_when');
-$search_recurring=GETPOST('search_recurring','int');
-$search_frequency=GETPOST('search_frequency','alpha');
-$search_unit_frequency=GETPOST('search_unit_frequency','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -140,28 +127,6 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
-
-	// Do we click on purge search criteria ?
-	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
-	{
-		$search_ref='';
-		$search_societe='';
-		$search_montant_ht='';
-		$search_montant_vat='';
-		$search_montant_ttc='';
-		$search_montant_mode='';
-		$search_montant_term='';
-		$day='';
-		$year='';
-		$month='';
-		$day_date_when='';
-		$year_date_when='';
-		$month_date_when='';
-		$search_recurring='';
-		$search_frequency='';
-		$search_unit_frequency='';
-		$search_array_options=array();
-	}
 
 	// Mass actions
 	/*$objectclass='MyObject';
@@ -443,13 +408,16 @@ if (empty($reshook))
 	}
 	else if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
-		if (! $error) {
-			$result = $object->insertExtraFields();
+		if (! $error)
+		{
+			$result = $object->insertExtraFields('BILLREC_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -681,6 +649,9 @@ if (empty($reshook))
 			$fk_unit= GETPOST('units', 'alpha');
 		}
 
+		$date_start_fill = GETPOST('date_start_fill','int');
+		$date_end_fill = GETPOST('date_end_fill','int');
+
 		// Margin
 		$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
 		$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
@@ -701,7 +672,7 @@ if (empty($reshook))
 		else
 		{
 			// Insert line
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx,$localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
+			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx,$localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill);
 
 			if ($result > 0)
 			{
@@ -756,6 +727,9 @@ if (empty($reshook))
 				unset($_POST['date_endday']);
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
+
+				unset($_POST['date_start_fill']);
+				unset($_POST['date_end_fill']);
 
 				unset($_POST['situations']);
 				unset($_POST['progress']);
@@ -878,6 +852,9 @@ if (empty($reshook))
 			$error ++;
 		}
 
+		$date_start_fill = GETPOST('date_start_fill','int');
+		$date_end_fill = GETPOST('date_end_fill','int');
+
 		// Update line
 		if (! $error)
 		{
@@ -900,7 +877,10 @@ if (empty($reshook))
 				$special_code,
 				$label,
 				GETPOST('units'),
-				$pu_ht_devise
+				$pu_ht_devise,
+				0,
+				$date_start_fill,
+				$date_end_fill
 			);
 
 			if ($result >= 0)
@@ -1184,7 +1164,7 @@ if ($action == 'create')
 			$disableedit=1;
 			$disablemove=1;
 			$disableremove=1;
-			$ret = $object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
+			$object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1533,7 +1513,7 @@ else
 		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
 		if (! $object->isMaxNbGenReached())
 		{
-			if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
+			if (! $object->suspended && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
 		}
 		else
 		{

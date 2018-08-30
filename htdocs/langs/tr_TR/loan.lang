@@ -10,6 +10,7 @@ LoanCapital=Sermaye
 Insurance=Sigorta
 Interest=Faiz
 Nbterms=Koşul sayısı
+Term=Term
 LoanAccountancyCapitalCode=Muhasebe hesabı sermayesi
 LoanAccountancyInsuranceCode=Muhasebe hesabı sigortası
 LoanAccountancyInterestCode=Muhasebe hesabı faiz oranı
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Bu kredinin silinmesini onayla
 LoanDeleted=Kredi Başarıyla Silindi
 ConfirmPayLoan=Bu krediyi ödendi olarak sınıflandırmayı onayla
 LoanPaid=Kredi Ödendi
-# Calc
-LoanCalc=Banka Kredisi Hesaplayıcısı
-PurchaseFinanceInfo=Alış & Finansman Bilgisi
-SalePriceOfAsset=Varlığın Satış Fiyatı
-PercentageDown=Peşinat Yüzdesi
-LengthOfMortgage=Kredinin süresi
-AnnualInterestRate=Yıllık Faiz Oranı
-ExplainCalculations=Hesaplama Açıklaması
-ShowMeCalculationsAndAmortization=Hesaplamaları ve amortismanı göster bana
-MortgagePaymentInformation=İpotek Kredisi Ödeme Bilgisi
-DownPayment=Peşinat
-DownPaymentDesc=<b>Peşinat ödemesi</b> = Evin fiyatı, peşinat yüzdesinin 100 e bölünmüş değeri ile çarpılır (%5 için peşinat 5/100 ya da 0.05)
-InterestRateDesc=<b>Faiz oranı</b> = Yıllık faiz yüzdesinin 100 e bölünmesi
-MonthlyFactorDesc=<b>Aylık katsayı</b> = Aşağıdaki formülün sonucu
-MonthlyInterestRateDesc=<bAylık faiz oranı</b> = Yıllık faiz oranı 12 ye bölünür (yılda 12 ay olduğuna göre)
-MonthTermDesc=Kredinin ay olarak <b>ay sayısı</b>  = Krediyi aldığınız yıl sayısı çarpı 12
-MonthlyPaymentDesc=Aylık ödeme aşağıdaki formül kullanılarak bulunur
-AmortizationPaymentDesc=<a href="#amortization">amortisman</a> aylık ödemelerinizin ne kadarının banka faizine gittiğini ve ne kadarının ana para ödemesine gittiğini ayrıştırır.
-AmountFinanced=Finanse edilen tutar
-AmortizationMonthlyPaymentOverYears=Aylık Ödeme Amortismanı:  <b>%s</b>  %s yılın üzerinde
-Totalsforyear=Toplamı alınan yıl
-MonthlyPayment=Aylık Ödeme
-LoanCalcDesc=Bu <b>ipotekli borç hesaplayıcısı</b> alınan krediye, ödeme şartı ve faize dayalı olarak kredinin aylık ödemelerinin hesaplanmasında kullanılır.<br> Bu hesaplayıcısı, %20% az peşin ödemeli krediler için PMI (Özel İpotek Sigortası) da içerir. Aynı zamanda yerel gayrımenkul vergilerini de ve aylık ödemeler yansımasını da dikkate alır.<br>
-GoToInterest=%s FAİZE gidecek
-GoToPrincipal=%s ANA PARAYA gidecek
-YouWillSpend=%s tutarını %s yılda harcayaksınız
 ListLoanAssociatedProject=Proje ile ilişkili kredi listesi
 AddLoan=Kredi oluştur
+FinancialCommitment=Finansal taahhüt
+InterestAmount=Faiz
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Kredi modülünün yapılandırılması
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Varsayılan muhasebe hesabı sermayesi
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Varsayılan muhasebe hesabı faiz oranı
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Varsayılan muhasebe hesabı sigortası
-CreateCalcSchedule=Kredi programı Oluştur/Düzenle
+CreateCalcSchedule=Edit financial commitment

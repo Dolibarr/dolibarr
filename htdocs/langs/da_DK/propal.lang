@@ -33,6 +33,7 @@ PropalStatusSigned=Underskrevet (til bill)
 PropalStatusNotSigned=Ikke underskrevet (lukket)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=Udkast
+PropalStatusValidatedShort=valideret
 PropalStatusClosedShort=Lukket
 PropalStatusSignedShort=Underskrevet
 PropalStatusNotSignedShort=Ikke underskrevet
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 måned
 TypeContact_propal_internal_SALESREPFOLL=Repræsentant for opfølgning af tilbud
 TypeContact_propal_external_BILLING=Kundefaktura kontakt
 TypeContact_propal_external_CUSTOMER=Kundekontakt for opfølgning af tilbud
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=En komplet tilbudskabelon (logo. ..)
 DefaultModelPropalCreate=Oprettelse af skabelon

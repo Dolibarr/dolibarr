@@ -30,8 +30,8 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 $action=GETPOST('action','aZ09');
 
@@ -101,11 +101,10 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0; $total = 0;
 
-	$var=True;
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		
+
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
 		if (GETPOST('action','aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
@@ -136,7 +135,7 @@ if ($result)
  */
 if ($action != 'edit')
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
 	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';

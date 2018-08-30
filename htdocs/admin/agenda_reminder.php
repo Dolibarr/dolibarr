@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 if (!$user->admin)
     accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other","agenda"));
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
@@ -173,8 +172,6 @@ llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
-print "<br>\n";
-
 
 
 

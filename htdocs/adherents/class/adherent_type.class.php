@@ -46,12 +46,6 @@ class AdherentType extends CommonObject
 	/** @var string Label */
 	public $label;
 	/**
-	 * @var bool
-	 * @deprecated Use subscription
-	 * @see subscription
-	 */
-	public $cotisation;
-	/**
 	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
 	 */
@@ -148,7 +142,7 @@ class AdherentType extends CommonObject
 	/**
 	 *  Met a jour en base donnees du type
 	 *
-	 *  	@param	User		$user			Object user making change
+	 *  @param	User	$user			Object user making change
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
@@ -177,22 +171,15 @@ class AdherentType extends CommonObject
 		{
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('membertypedao'));
-			$parameters=array('membertype'=>$this->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -338,7 +325,9 @@ class AdherentType extends CommonObject
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
-	 *  @param	int		$mode				0=Return array of member instance, 1=Return array of members id only
+	 *  @param	int		$mode				0=Return array of member instance
+	 *  									1=Return array of member instance without extra data
+	 *  									2=Return array of members id only
 	 * 	@return	mixed						Array of members or -1 on error
 	 */
 	function listMembersForMemberType($excludefilter='', $mode=0)
@@ -361,10 +350,14 @@ class AdherentType extends CommonObject
 			{
 				if (! array_key_exists($obj->rowid, $ret))
 				{
-					if ($mode != 1)
+					if ($mode < 2)
 					{
 						$memberstatic=new Adherent($this->db);
-						$memberstatic->fetch($obj->rowid);
+						if ($mode == 1) {
+							$memberstatic->fetch($obj->rowid,'','','',false, false);
+						} else {
+							$memberstatic->fetch($obj->rowid);
+						}
 						$ret[$obj->rowid]=$memberstatic;
 					}
 					else $ret[$obj->rowid]=$obj->rowid;
@@ -456,14 +449,14 @@ class AdherentType extends CommonObject
 
 		// Champs
 		if ($this->label && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME] = $this->label;
-		if ($this->note && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = $this->note;
+		if ($this->note && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 0, 'UTF-8', 1);
 		if (! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS))
 		{
 			$valueofldapfield=array();
 			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
 			{
 				$member=new Adherent($this->db);
-				$member->fetch($val->id);
+				$member->fetch($val->id,'','','',false,false);
 				$info2 = $member->_load_ldap_info();
 				$valueofldapfield[] = $member->_load_ldap_dn($info2);
 			}
@@ -505,7 +498,7 @@ class AdherentType extends CommonObject
 	/**
 	 *     getMailOnValid
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail content of type or empty
 	 */
 	function getMailOnValid()
 	{
@@ -515,16 +508,14 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_valid;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_VALID;
-		}
+
+		return '';
 	}
 
 	/**
 	 *     getMailOnSubscription
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail content of type or empty
 	 */
 	function getMailOnSubscription()
 	{
@@ -535,16 +526,14 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_subscription;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_COTIS;
-		}
+
+		return '';
 	}
 
 	/**
 	 *     getMailOnResiliate
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail model content of type or empty
 	 */
 	function getMailOnResiliate()
 	{
@@ -555,10 +544,8 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_resiliate;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_RESIL;
-		}
+
+		return '';
 	}
 
 }

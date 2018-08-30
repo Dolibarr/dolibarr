@@ -33,6 +33,7 @@ PropalStatusSigned=Đã ký (cần ra hóa đơn)
 PropalStatusNotSigned=Không ký (đã đóng)
 PropalStatusBilled=Đã ra hóa đơn
 PropalStatusDraftShort=Dự thảo
+PropalStatusValidatedShort=Đã xác nhận
 PropalStatusClosedShort=Đã đóng
 PropalStatusSignedShort=Đã ký
 PropalStatusNotSignedShort=Không ký
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 tháng
 TypeContact_propal_internal_SALESREPFOLL=Đại diện kinh doanh theo dõi đơn hàng đề xuất
 TypeContact_propal_external_BILLING=Liên lạc khách hàng về hóa đơn
 TypeContact_propal_external_CUSTOMER=Liên hệ với khách hàng sau-up đề nghị
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Một mô hình đề xuất đầy đủ (logo ...)
 DefaultModelPropalCreate=Tạo mô hình mặc định

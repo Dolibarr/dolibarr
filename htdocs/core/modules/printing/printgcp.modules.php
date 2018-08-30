@@ -70,7 +70,11 @@ class printing_printgcp extends PrintingDriver
         $this->db = $db;
 
         if (!$conf->oauth->enabled) {
-            $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"), 'type'=>'info');
+            $this->conf[] = array(
+                'varname'=>'PRINTGCP_INFO',
+                'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"),
+                'type'=>'info'
+            );
         } else {
 
         	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
@@ -116,7 +120,13 @@ class printing_printgcp extends PrintingDriver
         	}
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
-                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
+                $this->conf[] = array(
+                    'varname'=>'PRINTGCP_TOKEN_ACCESS',
+                    'info'=>$access,
+                    'type'=>'info',
+                    'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
+                    'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):'')
+                );
                 if ($token_ok) {
                     $expiredat='';
 
@@ -166,7 +176,6 @@ class printing_printgcp extends PrintingDriver
         global $bc, $conf, $langs;
         $error = 0;
         $langs->load('printing');
-        $var=true;
 
         $html = '<tr class="liste_titre">';
         $html.= '<td>'.$langs->trans('GCP_Name').'</td>';
@@ -180,11 +189,9 @@ class printing_printgcp extends PrintingDriver
         $html.= '</tr>'."\n";
         $list = $this->getlist_available_printers();
         //$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
-        $var = true;
         foreach ($list['available'] as $printer_det)
         {
-            $var = !$var;
-            $html.= "<tr ".$bc[$var].">";
+            $html.= '<tr class="oddeven">';
             $html.= '<td>'.$printer_det['name'].'</td>';
             $html.= '<td>'.$printer_det['displayName'].'</td>';
             $html.= '<td>'.$printer_det['id'].'</td>';  // id to identify printer to use
@@ -461,15 +468,14 @@ class printing_printgcp extends PrintingDriver
         $html .= '<td>'.$langs->trans("Status").'</td>';
         $html .= '<td>'.$langs->trans("Cancel").'</td>';
         $html .= '</tr>'."\n";
-        $var = True;
+
         $jobs = $responsedata['jobs'];
         //$html .= '<pre>'.print_r($jobs['0'],true).'</pre>';
         if (is_array($jobs))
         {
             foreach ($jobs as $value)
             {
-                $var = !$var;
-                $html .= '<tr '.$bc[$var].'>';
+                $html .= '<tr class="oddeven">';
                 $html .= '<td>'.$value['id'].'</td>';
                 $dates=dol_print_date((int) substr($value['createTime'], 0, 10), 'dayhour');
                 $html .= '<td>'.$dates.'</td>';
@@ -483,7 +489,7 @@ class printing_printgcp extends PrintingDriver
         }
         else
         {
-                $html .= '<tr '.$bc[$var].'>';
+                $html .= '<tr class="oddeven">';
                 $html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
                 $html .= '</tr>';
         }

@@ -24,7 +24,7 @@
 
 /**
  * GetFolders
- * 
+ *
  * @param	string	$resourceType		Resource type
  * @param 	string 	$currentFolder		Current folder
  * @return 	void
@@ -145,7 +145,7 @@ function CreateFolder( $resourceType, $currentFolder )
 		$sNewFolderName = $_GET['NewFolderName'] ;
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
-		if (strpos($sNewFolderName, '..') !== FALSE)
+		if (strpos($sNewFolderName, '..') !== false)
 			$sErrorNumber = '102' ;		// Invalid folder name.
 		else
 		{
@@ -187,7 +187,7 @@ function CreateFolder( $resourceType, $currentFolder )
 //function FileUpload( $resourceType, $currentFolder, $sCommand )
 /**
  * FileUpload
- * 
+ *
  * @param	string	$resourceType	Resource type
  * @param 	string 	$currentFolder	Current folder
  * @param	string	$sCommand		Command

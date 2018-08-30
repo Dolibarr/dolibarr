@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
@@ -55,14 +54,22 @@ $hookmanager->initHooks(array('taxvatcard','globalcard'));
 
 if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 {
-	header("Location: reglement.php");
+	header("Location: list.php");
 	exit;
+}
+
+if ($action == 'setlib' && $user->rights->tax->charges->creer)
+{
+	$object->fetch($id);
+	$result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	if ($result < 0)
+		setEventMessages($object->error, $object->errors, 'errors');
 }
 
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $object->datev=dol_mktime(12,0,0,$_POST['datevmonth'],$_POST['datevday'],$_POST['datevyear']);
+    $object->datev=dol_mktime(12,0,0,GETPOST('datevmonth','int'),GETPOST('datevday','int'),GETPOST('datevyear','int'));
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 
@@ -119,7 +126,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: reglement.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -154,7 +161,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
 			}
 			else
@@ -172,7 +179,8 @@ if ($action == 'delete')
 	}
 	else
 	{
-        setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
+		$mesg='Error try do delete a line linked to a conciliated bank transaction';
+		setEventMessages($mesg, null, 'errors');
 	}
 }
 
@@ -180,11 +188,13 @@ if ($action == 'delete')
 /*
  *	View
  */
+
+$form = new Form($db);
+
 $title=$langs->trans("VAT") . " - " . $langs->trans("Card");
 $help_url='';
 llxHeader("",$title,$helpurl);
 
-$form = new Form($db);
 
 if ($id)
 {
@@ -248,7 +258,7 @@ if ($action == 'create')
     print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
+    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
     print $form->select_date($datev,"datev",'','','','add',1,1);
     print '</td></tr>';
 
@@ -261,7 +271,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label",'',2):$label).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount","alpha").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {
@@ -306,7 +316,14 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
+	$morehtmlref='<div class="refidno">';
+	// Label of social contribution
+	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	// Project
+	$morehtmlref.='</div>';
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -316,18 +333,17 @@ if ($id)
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	//print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td>';
+	print '<td class="titlefield">'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
-
 	print '<tr><td>';
-	print $form->editfieldkey("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	print '</td><td>';
-	print $form->editfieldval("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	//print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 

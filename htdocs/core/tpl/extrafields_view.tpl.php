@@ -31,6 +31,7 @@ if (empty($object) || ! is_object($object))
 	print "Error, template page can't be called as URL";
 	exit;
 }
+if (! is_object($form)) $form=new Form($db);
 
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
@@ -45,14 +46,31 @@ $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object,
 print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-//var_dump($extrafields->attributes);
-if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label']))
+//var_dump($extrafields->attributes[$object->table_element]);
+if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
 		// Discard if extrafield is a hidden field on form
-		if (empty($extrafields->attributes[$object->table_element]['list'][$key])) continue;	// 0 = Never visible field
-		if (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 1 && abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+		$enabled = 1;
+		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key]))
+		{
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1);
+		}
+		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key]))
+		{
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+		}
+		$perms = 1;
+		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
+		{
+			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+		}
+		//print $key.'-'.$enabled.'-'.$perms.'-'.$label.$_POST["options_" . $key].'<br>'."\n";
+
+		if (empty($enabled)) continue;	// 0 = Never visible field
+		if (abs($enabled) != 1 && abs($enabled) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+		if (empty($perms)) continue;    // 0 = Not visible
 
 		// Load language if required
 		if (! empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
@@ -67,17 +85,22 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
-			print $extrafields->showSeparator($key);
+			print $extrafields->showSeparator($key, $object);
 		}
 		else
 		{
-			print '<tr><td>';
+			print '<tr>';
+			print '<td class="titlefield">';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
 			print '<td';
+			print ' class="';
 			//var_dump($action);exit;
-			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' class="fieldrequired"';
-			print '>' . $langs->trans($label) . '</td>';
+			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
+			print '">';
+			if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) print $form->textwithpicto($langs->trans($label), $extrafields->attributes[$object->table_element]['help'][$key]);
+			else print $langs->trans($label);
+			print '</td>';
 
 			//TODO Improve element and rights detection
 			//var_dump($user->rights);
@@ -100,11 +123,13 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
-				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+				print '<td align="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
+			print '</td>';
+
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$key.'_'.$object->id : '';
-			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'" colspan="'.$cols.'">';
+			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'"'.($cols?' colspan="'.$cols.'"':'').'>';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('date','datetime')))
@@ -120,7 +145,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			}
 
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute') == $key)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute','none') == $key)
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
@@ -133,20 +158,27 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 
 				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
 
-				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+				print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
 
 				print '</form>';
 			}
 			else
 			{
-				print $extrafields->showOutputField($key, $value, '', (empty($extrafieldsobjectkey)?'':$extrafieldsobjectkey));
+				//print $key.'-'.$value.'-'.$object->table_element;
+				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}
-			print '</td></tr>' . "\n";
+			print '</td>';
+			print '</tr>' . "\n";
+		}
+	}
 
-			print "\n";
-			// Add code to manage list depending on others
-			if (! empty($conf->use_javascript_ajax))
-			    print '
+
+	// Add code to manage list depending on others
+	// TODO Test/enhance this with a more generic solution
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print "\n";
+		print '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
@@ -175,7 +207,6 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 						setListDependencies();
 				    });
 				</script>'."\n";
-		}
 	}
 }
 ?>

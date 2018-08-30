@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("bills");
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'products', 'stocks'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -343,6 +342,7 @@ if ($id > 0 || ! empty($ref))
 
 			$class='pair';
 
+			$totalsell=0;
 			if (count($prods_arbo))
 			{
 				foreach($prods_arbo as $value)
@@ -370,11 +370,16 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '</td>';
 
-					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise), 'MT');
+						// For avoid a non-numeric value
+						$fourn_unitprice = (!empty($product_fourn->fourn_unitprice)?$product_fourn->fourn_unitprice:0);
+						$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent)?$product_fourn->fourn_remise_percent:0);
+						$fourn_remise = (!empty($product_fourn->fourn_remise)?$product_fourn->fourn_remise:0);
+
+						$totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
 						$total+=$totalline;
 
 						print '<td align="right">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice,'','',0,0,-1,$conf->currency));
 						print '</td>';
 
 						// Best selling price
@@ -383,10 +388,15 @@ if ($id > 0 || ! empty($ref))
 						{
 							$pricesell='Variable';
 						}
-						$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
-						$totalsell+=$totallinesell;
+						else
+						{
+							$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
+							$totalsell+=$totallinesell;
+						}
 						print '<td align="right" colspan="2">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($pricesell,'','',0,0,-1,$conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : ''));
+						if (is_numeric($pricesell)) print price($pricesell,'','',0,0,-1,$conf->currency);
+						else print $langs->trans($pricesell);
 						print '</td>';
 
 						// Stock
@@ -511,7 +521,8 @@ if ($id > 0 || ! empty($ref))
 			{
 				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
-				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent).' &nbsp; </div>';
+				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
+				print ajax_combobox('parent');
 			}
 			print '<div class="inline-block">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';
