@@ -3004,57 +3004,56 @@ abstract class CommonObject
 						$subelement = $regs[2];
 					}
 
+					// Set default values
 					$classpath = $element.'/class';
-					// To work with non standard classpath or module name
-					if ($objecttype == 'facture')			{
-						$classpath = 'compta/facture/class';
-					}
-					else if ($objecttype == 'facturerec')			{
-						$classpath = 'compta/facture/class'; $module = 'facture';
-					}
-					else if ($objecttype == 'propal')			{
-						$classpath = 'comm/propal/class';
-					}
-					else if ($objecttype == 'supplier_proposal')			{
-						$classpath = 'supplier_proposal/class';
-					}
-					else if ($objecttype == 'shipping')			{
-						$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
-					}
-					else if ($objecttype == 'delivery')			{
-						$classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
-					}
-					else if ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier')	{
-						$classpath = 'fourn/class'; $module = 'fournisseur';
-					}
-					else if ($objecttype == 'fichinter')			{
-						$classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
-					}
-					else if ($objecttype == 'subscription')			{
-						$classpath = 'adherents/class'; $module = 'adherent';
-					}
+					$classfile = strtolower($subelement);
+					$classname = ucfirst($subelement);
 
-					// Set classfile
-					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
-
-					if ($objecttype == 'order') {
-						$classfile = 'commande'; $classname = 'Commande';
-					}
-					else if ($objecttype == 'invoice_supplier') {
-						$classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
-					}
-					else if ($objecttype == 'order_supplier')   {
-						$classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
-					}
-					else if ($objecttype == 'supplier_proposal')   {
-						$classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
-					}
-					else if ($objecttype == 'facturerec')   {
-						$classfile = 'facture-rec'; $classname = 'FactureRec';
-					}
-					else if ($objecttype == 'subscription')   {
-						$classfile = 'subscription'; $classname = 'Subscription';
-					}
+					// To work with non standard classpath, classfile or module name
+                    if ($objecttype == 'order') {
+                        $classfile = 'commande';
+                        $classname = 'Commande';
+                    } elseif ($objecttype == 'facture') {
+                        $classpath = 'compta/facture/class';
+                    } elseif ($objecttype == 'facturerec') {
+                        $classpath = 'compta/facture/class';
+                        $module = 'facture';
+                        $classfile = 'facture-rec';
+                        $classname = 'FactureRec';
+                    } elseif ($objecttype == 'propal') {
+                        $classpath = 'comm/propal/class';
+                    } elseif ($objecttype == 'supplier_proposal') {
+                        $classpath = 'supplier_proposal/class';
+                        $classfile = 'supplier_proposal';
+                        $classname = 'SupplierProposal';
+                    } elseif ($objecttype == 'shipping') {
+                        $classpath = 'expedition/class';
+                        $subelement = 'expedition';
+                        $module = 'expedition_bon';
+                    } elseif ($objecttype == 'delivery') {
+                        $classpath = 'livraison/class';
+                        $subelement = 'livraison';
+                        $module = 'livraison_bon';
+                    } elseif ($objecttype == 'invoice_supplier') {
+                        $classpath = 'fourn/class';
+                        $module = 'fournisseur';
+                        $classfile = 'fournisseur.facture';
+                        $classname = 'FactureFournisseur';
+                    } elseif ($objecttype == 'order_supplier') {
+                        $classpath = 'fourn/class';
+                        $module = 'fournisseur';
+                        $classfile = 'fournisseur.commande';
+                        $classname = 'CommandeFournisseur';
+                    } elseif ($objecttype == 'fichinter') {
+                        $classpath = 'fichinter/class';
+                        $subelement = 'fichinter';
+                        $module = 'ficheinter';
+                    } elseif ($objecttype == 'subscription') {
+                        $classpath = 'adherents/class';
+                        $module = 'adherent';
+                        $classfile = 'subscription';
+                        $classname = 'Subscription';
+                    }
 
 					// Here $module, $classfile and $classname are set
 					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
