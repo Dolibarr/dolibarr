@@ -35,9 +35,15 @@ class Ldap
 	public $error='';
 
 	/**
+	 * @var string[]	Array of error strings
+	 */
+	public $errors = array();
+	
+	/**
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
 	var $server=array();
+
 	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
 	 */
