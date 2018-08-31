@@ -370,7 +370,8 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
 					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
+					$paymentstatic->id = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- ' .$paymentstatic ->getNomUrl(2);
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
 					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
 					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);
@@ -970,8 +971,8 @@ if (empty($action) || $action == 'view') {
 				print $reflabel;
 				print "</td>";
 				print "<td>" . $val["type_payment"] . "</td>";
-				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print "<td align='right' nowrap>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print "<td align='right' nowrap>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
@@ -1049,8 +1050,8 @@ if (empty($action) || $action == 'view') {
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
 					print "<td>" . $val["type_payment"] . "</td>";
-					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "<td align='right' nowrap>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print "<td align='right' nowrap>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
@@ -1086,8 +1087,8 @@ if (empty($action) || $action == 'view') {
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
 					print "<td>" . $val["type_payment"] . "</td>";
-					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "<td align='right' nowrap>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print "<td align='right' nowrap>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
