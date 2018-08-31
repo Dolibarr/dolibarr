@@ -32,21 +32,25 @@ class Link extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'link';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'links';
 
-    public $entity;
+    /**
+	 * @var int Entity
+	 */
+	public $entity;
+
     public $datea;
     public $url;
-    
+
     /**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
     public $objecttype;
     public $objectid;
 

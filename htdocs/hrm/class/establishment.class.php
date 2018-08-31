@@ -32,12 +32,12 @@ class Establishment extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='establishment';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='establishment';
-	
+
 	public $table_element_line = '';
 	public $fk_element = 'fk_establishment';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -52,6 +52,10 @@ class Establishment extends CommonObject
 	public $zip;
 	public $town;
 	public $status;		// 0=open, 1=closed
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	public $country_id;

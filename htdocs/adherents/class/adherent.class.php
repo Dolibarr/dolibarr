@@ -114,6 +114,9 @@ class Adherent extends CommonObject
 
 	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	/**

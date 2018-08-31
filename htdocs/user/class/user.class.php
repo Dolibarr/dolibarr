@@ -76,6 +76,10 @@ class User extends CommonObject
 	public $admin;
 	public $login;
 	public $api_key;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	//! Clear password in memory

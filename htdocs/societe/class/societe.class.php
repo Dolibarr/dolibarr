@@ -90,6 +90,9 @@ class Societe extends CommonObject
 	);
 
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	/**

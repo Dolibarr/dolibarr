@@ -42,6 +42,9 @@ class Comment extends CommonObject
 
 	public $fk_user_author;
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	public $import_key;

@@ -42,7 +42,11 @@ class Cronjob extends CommonObject
 
     public $picto = 'cron';
 
-    public $entity;
+    /**
+	 * @var int Entity
+	 */
+	public $entity;
+
     public $jobtype;
 	public $tms='';
 	public $datec='';

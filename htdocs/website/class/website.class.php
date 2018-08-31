@@ -39,57 +39,57 @@ class Website extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'website';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website';
-	
+
 	/**
 	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
-	
+
 	/**
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'globe';
 
 	/**
-	 * @var int
+	 * @var int Entity
 	 */
 	public $entity;
-	
+
 	/**
-	 * @var string
+	 * @var string Ref
 	 */
 	public $ref;
-	
+
 	/**
-	 * @var string
+	 * @var string description
 	 */
 	public $description;
-	
+
 	/**
-	 * @var int
+	 * @var int Status
 	 */
 	public $status;
-	
+
 	/**
 	 * @var mixed
 	 */
 	public $date_creation;
-	
+
 	/**
 	 * @var mixed
 	 */
 	public $tms = '';
-	
+
 	/**
 	 * @var integer
 	 */
 	public $fk_default_home;
-	
+
 	/**
 	 * @var string
 	 */
