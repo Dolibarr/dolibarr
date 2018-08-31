@@ -118,18 +118,18 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 }
 
 
-/**
- * Show Dolibarr default login page.
- * Part of this code is also duplicated into main.inc.php::top_htmlhead
- *
- * @param		Translate	$langs		Lang object (must be initialized by a new).
- * @param		Conf		$conf		Conf object
- * @param		Societe		$mysoc		Company object
- * @return		void
- */
 if (! function_exists('dol_loginfunction'))
 {
-	function dol_loginfunction($langs,$conf,$mysoc)
+    /**
+     * Show Dolibarr default login page.
+     * Part of this code is also duplicated into main.inc.php::top_htmlhead
+     *
+     * @param       Translate   $langs      Lang object (must be initialized by a new).
+     * @param       Conf        $conf       Conf object
+     * @param       Societe     $mysoc      Company object
+     * @return      void
+     */
+    function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		global $dolibarr_main_demo,$db;
 		global $smartphone,$hookmanager;
@@ -510,4 +510,3 @@ function getRandomPassword($generic=false)
 
 	return $generated_password;
 }
-
