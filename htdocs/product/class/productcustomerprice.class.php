@@ -54,7 +54,12 @@ class Productcustomerprice extends CommonObject
 	var $localtax1_tx;
 	var $localtax2_type;
 	var $localtax2_tx;
-	var $fk_user;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
 	var $lines = array ();
 
 	/**
@@ -978,7 +983,12 @@ class PriceByCustomerLine
 	var $recuperableonly;
 	var $localtax1_tx;
 	var $localtax2_tx;
-	var $fk_user;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
 	var $import_key;
 	var $socname;
 	var $prodref;

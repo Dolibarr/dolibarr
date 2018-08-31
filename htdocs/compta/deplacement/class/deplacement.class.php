@@ -35,12 +35,12 @@ class Deplacement extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='deplacement';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='deplacement';
-	
+
 	public $table_element_line = '';
 	public $fk_element = '';
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -48,7 +48,12 @@ class Deplacement extends CommonObject
 	var $datec;         // Creation date
 	var $dated;
 	var $fk_user_author;
-	var $fk_user;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
 	var $km;
 	var $socid;
 	var $statut;		// 0=draft, 1=validated
