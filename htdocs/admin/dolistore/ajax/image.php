@@ -20,9 +20,9 @@ if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
 
 
 /**
- *      \file       htdocs/admin/dolistore/ajax.php
+ *      \file       htdocs/admin/dolistore/ajax/image.php
  *      \ingroup    admin
- * 		\brief      Page des informations dolistore
+ *      \brief      Page des informations dolistore
  */
 require "../../../main.inc.php";
 
@@ -56,4 +56,3 @@ try {
     else if ($trace[0]['args'][0] == 401) die('Bad auth key');
     else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
 }
-
