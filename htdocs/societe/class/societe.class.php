@@ -1351,7 +1351,7 @@ class Societe extends CommonObject
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE entity IN (".getEntity('category').")";
+		$sql.= " WHERE entity IN (".getEntity('societe').")";
 		if (! empty($type))
 		{
 			if ($type == 1 || $type == 2)
