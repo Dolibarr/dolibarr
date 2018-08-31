@@ -377,7 +377,11 @@ class Societe extends CommonObject
 	 */
 	public $default_lang;
 
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
 	public $ref_int;
 	/**
 	 * External user reference.

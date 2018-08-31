@@ -31,12 +31,12 @@ class EcmDirectory // extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='ecm_directories';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	//public $table_element='ecm_directories';
-	
+
 	var $picto = 'dir';
 
 	/**
@@ -48,7 +48,7 @@ class EcmDirectory // extends CommonObject
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	var $fk_parent;
 	var $description;
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
@@ -56,6 +56,10 @@ class EcmDirectory // extends CommonObject
 	var $date_m;
 	public $fk_user_m;
 	public $fk_user_c;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
 
 	var $cats=array();
@@ -70,7 +74,7 @@ class EcmDirectory // extends CommonObject
 	 * @var string Error code (or message)
 	 */
 	public $error;
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */

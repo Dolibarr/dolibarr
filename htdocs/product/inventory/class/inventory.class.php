@@ -100,6 +100,10 @@ class Inventory extends CommonObject
 	);
 
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
 
 	/**

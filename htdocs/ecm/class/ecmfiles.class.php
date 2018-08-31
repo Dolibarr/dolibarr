@@ -48,7 +48,11 @@ class EcmFiles extends CommonObject
 
 	public $picto = 'generic';
 
-	public $ref;					// hash of file path
+	/**
+	 * @var string Ref hash of file path
+	 */
+	public $ref;
+
 	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
 	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 

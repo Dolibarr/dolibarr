@@ -1334,6 +1334,10 @@ class Cronjobline
 {
 
 	public $id;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
 
 	public $tms='';

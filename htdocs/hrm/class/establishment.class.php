@@ -44,7 +44,12 @@ class Establishment extends CommonObject
     public $picto='building';
 
     public $id;
-    public $ref;
+
+    /**
+	 * @var string Ref
+	 */
+	public $ref;
+
 	public $rowid;
 
 	public $name;
