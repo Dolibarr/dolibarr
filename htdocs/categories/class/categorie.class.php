@@ -152,20 +152,24 @@ class Categorie extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='category';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='categorie';
 
 	public $fk_parent;
-	
+
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
+     * @var string proper name for given parameter
+     */
+   	public $label;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	/**
 	 * @var string     Color
 	 */

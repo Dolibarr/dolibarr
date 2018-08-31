@@ -63,7 +63,11 @@ class Events // extends CommonObject
 	var $type;
 	var $entity;
 	var $dateevent;
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
 
 	// List of all Audit/Security events supported by triggers
 	var $eventstolog=array(

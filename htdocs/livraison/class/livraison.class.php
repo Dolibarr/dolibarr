@@ -43,14 +43,14 @@ class Livraison extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element="delivery";
-	
+
 	public $fk_element="fk_livraison";
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element="livraison";
-	
+
 	public $table_element_line="livraisondet";
 
 	var $brouillon;
@@ -1078,13 +1078,17 @@ class LivraisonLigne extends CommonObjectLine
 	var $price;
 	var $fk_product;
 	var $origin_id;
-	
+
     /**
      * @var string proper name for given parameter
      */
     public $label;
-    
-	var $description;  // Description produit
+
+	/**
+	 * @var string description produit
+	 */
+	public $description;
+
 	/**
 	 * @deprecated
 	 * @see product_ref
@@ -1103,7 +1107,7 @@ class LivraisonLigne extends CommonObjectLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='livraisondet';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */

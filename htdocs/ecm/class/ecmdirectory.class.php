@@ -50,7 +50,12 @@ class EcmDirectory // extends CommonObject
     public $label;
 
 	var $fk_parent;
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	var $date_c;
 	var $date_m;

@@ -34,6 +34,9 @@ class Comment extends CommonObject
 	public $fk_element;
 	public $element_type;
 
+	/**
+	 * @var string description
+	 */
 	public $description;
 
 	public $tms;

@@ -64,7 +64,12 @@ class EcmFiles extends CommonObject
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $cover;
 	public $position;
@@ -848,7 +853,12 @@ class EcmfilesLine
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $cover;
 	public $position;

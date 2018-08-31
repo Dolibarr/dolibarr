@@ -2498,7 +2498,10 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $libelle;
 
-	var $description;
+	/**
+	 * @var string description
+	 */
+	public $description;
 
 	var $product_ref;
 	var $product_label;

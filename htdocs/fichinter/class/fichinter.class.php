@@ -39,12 +39,12 @@ class Fichinter extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='fichinter';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='fichinter';
-	
+
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 	public $picto = 'intervention';
@@ -65,7 +65,12 @@ class Fichinter extends CommonObject
 	var $datem;
 	var $duration;
 	var $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $fk_contrat = 0;
 	var $fk_project = 0;
 	var $extraparams=array();
@@ -1321,7 +1326,7 @@ class FichinterLigne extends CommonObjectLine
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -1338,12 +1343,12 @@ class FichinterLigne extends CommonObjectLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='fichinterdet';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='fichinterdet';
-	
+
 	public $fk_element='fk_fichinter';
 
 	/**

@@ -52,7 +52,11 @@ class Task extends CommonObject
      */
     public $label;
 
-	var $description;
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $duration_effective;		// total of time spent on this task
 	var $planned_workload;
 	var $date_c;

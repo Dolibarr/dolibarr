@@ -53,7 +53,11 @@ class Project extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $description;
+    /**
+	 * @var string description
+	 */
+	public $description;
+
 	/**
 	 * @var string
 	 * @deprecated

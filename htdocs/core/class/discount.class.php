@@ -51,7 +51,11 @@ class DiscountAbsolute
 	 */
 	public $fk_user;
 
-    public $description;			// Description libre
+    /**
+	 * @var string description
+	 */
+	public $description;
+
     public $datec;					// Date creation
     public $fk_facture_line;  		// Id invoice line when a discount is used into an invoice line (for absolute discounts)
     public $fk_facture;			    // Id invoice when a discount line is used into an invoice (for credit note)

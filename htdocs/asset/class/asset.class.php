@@ -111,7 +111,12 @@ class Asset extends CommonObject
 
 	public $amount;
 	public $fk_soc;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $note_public;
 	public $note_private;
 	public $date_creation;
