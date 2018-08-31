@@ -45,12 +45,12 @@ class Societe extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='societe';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe';
-	
+
 	public $fk_element='fk_soc';
 	public $fieldsforcombobox='nom,name_alias';
 	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
@@ -1349,114 +1349,6 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 * 	Search and fetch thirparties by name
-	 *
-	 * 	@param		string		$name		Name
-	 * 	@param		int			$type		Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
-	 * 	@param		array		$filters	Array of couple field name/value to filter the companies with the same name
-	 * 	@param		boolean		$exact		Exact string search (true/false)
-	 * 	@param		boolean		$case		Case sensitive (true/false)
-	 * 	@param		boolean		$similar	Add test if string inside name into database, or name into database inside string. Do not use this: Not compatible with other database.
-	 * 	@param		string		$clause		Clause for filters
-	 * 	@return		array|int				<0 if KO, array of thirdparties object if OK
-	 */
-	function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $similar = false, $clause = 'AND')
-	{
-		$thirdparties = array();
-
-		dol_syslog("searchByName name=".$name." type=".$type." exact=".$exact);
-
-		// Check parameter
-		if (empty($name))
-		{
-			$this->errors[]='ErrorBadValueForParameter';
-			return -1;
-		}
-
-		// Generation requete recherche
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE entity IN (".getEntity('category').")";
-		if (! empty($type))
-		{
-			if ($type == 1 || $type == 2)
-				$sql.= " AND client = ".$type;
-			elseif ($type == 3)
-				$sql.= " AND fournisseur = 1";
-		}
-		if (! empty($name))
-		{
-			if (! $exact)
-			{
-				if (preg_match('/^([\*])?[^*]+([\*])?$/', $name, $regs) && count($regs) > 1)
-				{
-					$name = str_replace('*', '%', $name);
-				}
-				else
-				{
-					$name = '%'.$name.'%';
-				}
-			}
-			$sql.= " AND ";
-			if (is_array($filters) && ! empty($filters))
-				$sql.= "(";
-			if ($similar)
-			{
-				// For test similitude (string inside name into database, or name into database inside string)
-				// Do not use this. Not compatible with other database.
-				$sql.= "(LOCATE('".$this->db->escape($name)."', nom) > 0 OR LOCATE(nom, '".$this->db->escape($name)."') > 0)";
-			}
-			else
-			{
-				if (! $case)
-					$sql.= "nom LIKE '".$this->db->escape($name)."'";
-				else
-					$sql.= "nom LIKE BINARY '".$this->db->escape($name)."'";
-			}
-		}
-		if (is_array($filters) && ! empty($filters))
-		{
-			foreach($filters as $field => $value)
-			{
-				if (! $exact)
-				{
-					if (preg_match('/^([\*])?[^*]+([\*])?$/', $value, $regs) && count($regs) > 1)
-					{
-						$value = str_replace('*', '%', $value);
-					}
-					else
-					{
-						$value = '%'.$value.'%';
-					}
-				}
-				if (! $case)
-					$sql.= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
-				else
-					$sql.= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
-			}
-			if (! empty($name))
-				$sql.= ")";
-		}
-
-		$res  = $this->db->query($sql);
-		if ($res)
-		{
-			while ($rec = $this->db->fetch_array($res))
-			{
-				$soc = new Societe($this->db);
-				$soc->fetch($rec['rowid']);
-				$thirdparties[] = $soc;
-			}
-
-			return $thirdparties;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
-	}
-
-	/**
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
 	 *    @param	int		$id             Id of third party to delete
@@ -1921,10 +1813,10 @@ class Societe extends CommonObject
 	function add_commercial(User $user, $commid)
 	{
 		$error=0;
-		
-		
-		
-		
+
+
+
+
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
@@ -1942,7 +1834,7 @@ class Societe extends CommonObject
 			}
 			else {
 				$this->context=array('commercial_modified'=>$commid);
-				
+
 				$result=$this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE',$user);
                 if ($result < 0) $error++;
 			}
@@ -1960,10 +1852,10 @@ class Societe extends CommonObject
 	{
 		$error=0;
 		$this->context=array('commercial_modified'=>$commid);
-				
+
 		$result=$this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE',$user);
         if ($result < 0) $error++;
-		
+
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
