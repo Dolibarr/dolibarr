@@ -173,6 +173,11 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertEquals(1, $object['statut']);
     }
 
+    /**
+     * testRestCreateUser
+     *
+     * @return void
+     */
     public function testRestCreateUser()
     {
 
