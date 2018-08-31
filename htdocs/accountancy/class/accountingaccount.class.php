@@ -79,35 +79,24 @@ class AccountingAccount extends CommonObject
 	var $account_number;
 	var $account_parent;
 	var $account_category;
-<<<<<<< HEAD
-	
-	/**
-     	 * @var string proper name for given parameter
+
+    	/**
+     	 * @var string Label of account
      	 */
     	public $label;
-    
-	var $fk_user_author;
-	var $fk_user_modif;
-	var $active;       // duplicate with status
-=======
 
-    /**
-     * @var string Label of account
-     */
-    public $label;
+    	/**
+    	 * @var int ID
+     	 */
+    	public $fk_user_author;
 
-    /**
-     * @var int ID
-     */
-    public $fk_user_author;
+    	/**
+     	 * @var int ID
+     	 */
+    	public $fk_user_modif;
 
-    /**
-     * @var int ID
-     */
-    public $fk_user_modif;
-
-    var $active;       // duplicate with status
->>>>>>> upstream/develop
+    	var $active;       // duplicate with status
+	
 	var $status;
 
 
