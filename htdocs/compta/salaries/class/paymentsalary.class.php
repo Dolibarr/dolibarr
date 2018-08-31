@@ -44,19 +44,24 @@ class PaymentSalary extends CommonObject
 	public $picto='payment';
 
 	public $tms;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $datep;
 	public $datev;
 	public $amount;
 	public $fk_project;
 	public $type_payment;
 	public $num_payment;
-	
+
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
+     * @var string proper name for given parameter
+     */
+    public $label;
+
 	public $datesp;
 	public $dateep;
 	public $fk_bank;

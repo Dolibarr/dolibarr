@@ -67,7 +67,12 @@ class CommandeFournisseurDispatch extends CommonObject
 	public $fk_commandefourndet;
 	public $qty;
 	public $fk_entrepot;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $datec='';
 	public $comment;
 	public $status;

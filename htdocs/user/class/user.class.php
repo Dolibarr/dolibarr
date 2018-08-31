@@ -44,12 +44,12 @@ class User extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='user';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='user';
-	
+
 	public $fk_element='fk_user';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -103,6 +103,10 @@ class User extends CommonObject
 	public $contactid;
 
 	public $fk_member;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
 
 	public $clicktodial_url;
@@ -1541,7 +1545,7 @@ class User extends CommonObject
 						$adh->zip=$this->zip;
 						$adh->state_id=$this->state_id;
 						$adh->country_id=$this->country_id;
-						
+
 						$adh->email=$this->email;
 						$adh->skype=$this->skype;
 						$adh->phone=$this->office_phone;
