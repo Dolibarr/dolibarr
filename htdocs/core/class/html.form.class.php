@@ -1103,7 +1103,8 @@ class Form
 			if (! empty($conf->barcode->enabled))
 			{
 				$sql .= " OR s.barcode LIKE '".$this->db->escape($filterkey)."%'";
-			}
+            }
+            $sql.= " OR s.code_client LIKE '".$this->db->escape($prefix.$filterkey)."%' OR s.code_fournisseur LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			$sql.=")";
 		}
 		$sql.=$this->db->order("nom","ASC");
