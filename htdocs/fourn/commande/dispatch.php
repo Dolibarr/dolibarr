@@ -511,9 +511,18 @@ if ($id > 0 || ! empty($ref)) {
 				print '<tr class="liste_titre">';
 
 				print '<td>' . $langs->trans("Description") . '</td>';
-				print '<td></td>';
-				print '<td></td>';
-				print '<td></td>';
+				if (! empty($conf->productbatch->enabled))
+				{
+					print '<td>' . $langs->trans("batch_number") . '</td>';
+					print '<td>' . $langs->trans("EatByDate") . '</td>';
+					print '<td>' . $langs->trans("SellByDate") . '</td>';
+				}
+				else
+				{
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
+				}
 				print '<td align="right">' . $langs->trans("SupplierRef") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyOrdered") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyDispatchedShort") . '</td>';
@@ -521,16 +530,6 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td width="32"></td>';
 				print '<td align="right">' . $langs->trans("Warehouse") . '</td>';
 				print "</tr>\n";
-
-				if (! empty($conf->productbatch->enabled)) {
-					print '<tr class="liste_titre">';
-					print '<td></td>';
-					print '<td>' . $langs->trans("batch_number") . '</td>';
-					print '<td>' . $langs->trans("EatByDate") . '</td>';
-					print '<td>' . $langs->trans("SellByDate") . '</td>';
-					print '<td colspan="5">&nbsp;</td>';
-					print "</tr>\n";
-				}
 			}
 
 			$nbfreeproduct = 0;		// Nb of lins of free products/services
@@ -593,7 +592,7 @@ if ($id > 0 || ! empty($ref)) {
 
 						// Supplier ref
 						print '<td align="right">'.$objp->sref.'</td>';
-						
+
 						// Qty ordered
 						print '<td align="right">' . $objp->qty . '</td>';
 
@@ -638,7 +637,7 @@ if ($id > 0 || ! empty($ref)) {
 							$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo' . $suffix . 'month'), GETPOST('dluo' . $suffix . 'day'), GETPOST('dluo' . $suffix . 'year'));
 							$form->select_date($dluodatesuffix, 'dluo' . $suffix, '', '', 1, "");
 							print '</td>';
-							print '<td colspan="2">&nbsp</td>'; // Qty ordered + qty already dispatached
+							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {
 							$type = 'dispatch';
 							print '<td align="right">';
@@ -650,7 +649,7 @@ if ($id > 0 || ! empty($ref)) {
 							print '</tr>';
 
 							print '<tr class="oddeven" name="' . $type . $suffix . '">';
-							print '<td colspan="6">';
+							print '<td colspan="7">';
 							print '<input name="fk_commandefourndet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
 							print '<input name="product' . $suffix . '" type="hidden" value="' . $objp->fk_product . '">';
 
@@ -672,7 +671,7 @@ if ($id > 0 || ! empty($ref)) {
 						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" class="width50 right" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
 						print '</td>';
 
-                        print '<td>';
+						print '<td>';
 						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
 						    $type = 'batch';
 						    //print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
