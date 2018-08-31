@@ -30,10 +30,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
  */
 class AccountancyCategory 	// extends CommonObject
 {
-    	/**
-     	 * @var DoliDB Database handler.
-     	 */
-    	public $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
 	 * @var string 		Error string
@@ -57,21 +57,21 @@ class AccountancyCategory 	// extends CommonObject
 	public $table_element='c_accounting_category';
 
 	/**
-     	 * @var int ID
-     	 */
-    	public $id;
+     * @var int ID
+     */
+    public $id;
 
 	/**
 	 * @var mixed Sample property 1
 	 */
 	public $code;
 
-       /**
-     	* @var string proper name for given parameter
-     	*/
-    	public $label;
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
 
-    	/**
+    /**
 	 * @var mixed Sample property 1
 	 */
 	public $range_account;
