@@ -40,12 +40,12 @@ class Account extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'bank_account';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'bank_account';
-	
+
 	public $picto = 'account';
 
 	/**
@@ -1645,30 +1645,34 @@ class AccountLine extends CommonObject
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element='bank';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='bank';
-	
+
 	var $picto = 'generic';
 
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $ref;
+
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
 	var $datec;
 	var $dateo;
 
@@ -1677,12 +1681,12 @@ class AccountLine extends CommonObject
 	 */
 	var $datev;
 	var $amount;
-	
+
 	/**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	var $note;
 	var $fk_user_author;
 	var $fk_user_rappro;

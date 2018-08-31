@@ -34,20 +34,24 @@ class PaymentVarious extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='variouspayment';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='payment_various';
-	
+
 	public $picto = 'bill';
 
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $ref;
+
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
 	var $tms;
 	var $datep;
 	var $datev;
@@ -55,12 +59,12 @@ class PaymentVarious extends CommonObject
 	var $amount;
 	var $type_payment;
 	var $num_payment;
-	
+
 	/**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	var $accountancy_code;
 	var $fk_project;
 	var $fk_bank;
