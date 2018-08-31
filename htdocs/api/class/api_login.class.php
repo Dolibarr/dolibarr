@@ -28,8 +28,6 @@ class Login
 
     /**
      * Constructor of the class
-     *
-     * @param   DoliDb  $db     Database handler
      */
     function __construct()
     {
