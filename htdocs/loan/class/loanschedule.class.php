@@ -372,6 +372,10 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
+<<<<<<< HEAD
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	function calc_mens($capital,$rate,$nbterm)
+=======
     /**
      * Calculate mensuality
      *
@@ -381,6 +385,7 @@ class LoanSchedule extends CommonObject
      * @return  double                  mensuality
      */
     function calc_mens($capital, $rate, $nbterm)
+>>>>>>> upstream/develop
 	{
 		$result='';
 
@@ -464,6 +469,7 @@ class LoanSchedule extends CommonObject
 	 *
 	 *  @return void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function trans_paiment()
 	{
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';

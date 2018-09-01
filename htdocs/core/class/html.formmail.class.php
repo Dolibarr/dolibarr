@@ -141,6 +141,7 @@ class FormMail extends Form
 	 *
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function clear_attached_files()
 	{
 		global $conf,$user;
@@ -165,6 +166,7 @@ class FormMail extends Form
 	 * @param 	string   $type   Mime type (can be dol_mimetype($file))
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_attached_files($path, $file='', $type='')
 	{
 		$listofpaths=array();
@@ -195,6 +197,7 @@ class FormMail extends Form
 	 * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function remove_attached_files($keytodelete)
 	{
 		$listofpaths=array();
@@ -222,6 +225,7 @@ class FormMail extends Form
 	 *
 	 * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_attached_files()
 	{
 		$listofpaths=array();
@@ -244,6 +248,7 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function show_form($addfileaction='addfile',$removefileaction='removefile')
 	{
 		print $this->get_form($addfileaction,$removefileaction);
@@ -259,6 +264,7 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return string						Form to show
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_form($addfileaction='addfile', $removefileaction='removefile')
 	{
 		global $conf, $langs, $user, $hookmanager, $form;

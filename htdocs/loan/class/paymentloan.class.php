@@ -216,8 +216,8 @@ class PaymentLoan extends CommonObject
 				$this->type_code = $obj->type_code;
 				$this->type_libelle = $obj->type_libelle;
 
-				$this->bank_account   = $obj->fk_account;
-				$this->bank_line      = $obj->fk_bank;
+				$this->bank_account = $obj->fk_account;
+				$this->bank_line = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -257,7 +257,6 @@ class PaymentLoan extends CommonObject
 		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 
 		// Check parameters
-		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
@@ -485,6 +484,7 @@ class PaymentLoan extends CommonObject
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;

@@ -185,6 +185,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
      *  @param		int			$hideref			Do not show ref
      *  @return     int             			1=OK, 0=KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -638,6 +639,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf,$mysoc;

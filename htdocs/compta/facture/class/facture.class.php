@@ -1411,6 +1411,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@return     int         1 if OK, < 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
 		$this->lines=array();
@@ -1671,6 +1672,7 @@ class Facture extends CommonInvoice
 	 *    @param     int	$idremise	Id of absolute discount
 	 *    @return    int          		>0 if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_discount($idremise)
 	{
 		global $langs;
@@ -1772,6 +1774,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_ref_client($ref_client, $notrigger=0)
 	{
 	    global $user;
@@ -2007,6 +2010,7 @@ class Facture extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_paid($user, $close_code='', $close_note='')
 	{
 		$error=0;
@@ -2064,6 +2068,7 @@ class Facture extends CommonInvoice
 	 *  @param	User	$user       Object user that change status
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_unpaid($user)
 	{
 		$error=0;
@@ -2113,6 +2118,7 @@ class Facture extends CommonInvoice
 	 *	@param	string	$close_note		Comment
 	 *	@return int         			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_canceled($user, $close_code='', $close_note='')
 	{
 
@@ -2473,6 +2479,7 @@ class Facture extends CommonInvoice
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_draft($user,$idwarehouse=-1)
 	{
 		global $conf,$langs;
@@ -3038,6 +3045,7 @@ class Facture extends CommonInvoice
 	 * @param  int          $percent    Percentage
 	 * @return void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_percent($line, $percent)
 	{
 	    global $mysoc,$user;
@@ -3135,6 +3143,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 		<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise($user, $remise, $notrigger=0)
 	{
 		// Clean parameters
@@ -3199,6 +3208,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise_absolue($user, $remise, $notrigger=0)
 	{
 		if (empty($remise)) $remise=0;
@@ -3404,6 +3414,7 @@ class Facture extends CommonInvoice
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     int             		-1 if KO, array with result if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='f.datef,f.rowid', $sortorder='DESC')
 	{
 		global $conf,$user;
@@ -3473,6 +3484,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$socid		Id thirdparty
 	 *	@return    	array				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_replacable_invoices($socid=0)
 	{
 		global $conf;
@@ -3521,6 +3533,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$socid		Id thirdparty
 	 *	@return    	array				Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_qualified_avoir_invoices($socid=0)
 	{
 		global $conf;
@@ -3594,6 +3607,7 @@ class Facture extends CommonInvoice
 	 *  @param		float	$amount		Amount we request direct debit for
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function demande_prelevement($fuser, $amount=0)
 	{
 
@@ -3703,6 +3717,7 @@ class Facture extends CommonInvoice
 	 *  @param  int		$did        id de la demande a supprimer
 	 *  @return	int					<0 if OK, >0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function demande_prelevement_delete($fuser, $did)
 	{
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
@@ -3727,6 +3742,7 @@ class Facture extends CommonInvoice
 	 *	@param  User		$user    	Object user
 	 *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
 		global $conf, $langs;
@@ -3971,6 +3987,7 @@ class Facture extends CommonInvoice
 	 *
 	 *      @return         int     <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf, $user;
@@ -4084,6 +4101,7 @@ class Facture extends CommonInvoice
 	 *
 	 * @return boolean
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function is_first()
 	{
 		return ($this->situation_counter == 1);
@@ -4094,6 +4112,7 @@ class Facture extends CommonInvoice
 	 *
 	 * @return mixed -1 if error, array of previous situations
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_prev_sits()
 	{
 		global $conf;
@@ -4174,6 +4193,7 @@ class Facture extends CommonInvoice
 	 * @return bool Last of the cycle status
 	 *
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function is_last_in_cycle()
 	{
 		global $conf;
@@ -4811,6 +4831,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
 		$this->db->begin();
@@ -4852,6 +4873,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * @param  int     $invoiceid      Invoice id
 	 * @return int                     >= 0
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_prev_progress($invoiceid)
 	{
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {

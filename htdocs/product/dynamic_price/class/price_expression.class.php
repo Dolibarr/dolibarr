@@ -147,7 +147,7 @@ class PriceExpression
             $this->error='ErrorWrongParameters';
             return -1;
         }
-        
+
         $sql = "SELECT title, expression";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
@@ -181,6 +181,7 @@ class PriceExpression
      *
      *    @return	array				Array of price expressions
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function list_price_expression()
     {
         $sql = "SELECT rowid, title, expression";
@@ -219,6 +220,7 @@ class PriceExpression
      *  @param		String	$title  Title of expression
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function find_title($title)
     {
         $sql = "SELECT rowid";
@@ -319,7 +321,7 @@ class PriceExpression
 		$error=0;
 
 		$rowid = $this->id;
-		
+
 		$this->db->begin();
 
 		if (! $error)

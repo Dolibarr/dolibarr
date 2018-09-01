@@ -145,6 +145,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function chequereceipt_get_num($objsoc,$objforref)
 	{
 		return $this->getNextValue($objsoc,$objforref);

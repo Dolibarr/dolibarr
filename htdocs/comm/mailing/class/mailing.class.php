@@ -444,6 +444,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @return int       1 if OK, 0 if error
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_targets()
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
@@ -469,6 +470,7 @@ class Mailing extends CommonObject
 	 *	@param	User	$user      	Objet user qui valide
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function reset_targets_status($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
@@ -541,6 +543,7 @@ class Mailing extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string        			Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
@@ -644,4 +647,3 @@ class Mailing extends CommonObject
 		}
 	}
 }
-

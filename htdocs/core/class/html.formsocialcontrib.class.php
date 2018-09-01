@@ -60,6 +60,7 @@ class FormSocialContrib
      *  @param	string	$morecss		Add more CSS on select
      * 	@return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1, $morecss='minwidth300')
     {
         global $conf,$db,$langs,$user,$mysoc;
@@ -121,4 +122,3 @@ class FormSocialContrib
         }
     }
 }
-
