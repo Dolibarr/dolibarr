@@ -96,7 +96,8 @@ class AccountingAccount extends CommonObject
     public $fk_user_modif;
 
     var $active;       // duplicate with status
-	var $status;
+
+	  var $status;
 
 
 	/**

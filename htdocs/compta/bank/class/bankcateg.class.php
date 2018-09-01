@@ -33,7 +33,11 @@ class BankCateg // extends CommonObject
     public $picto='generic';
 
 	public $id;
-	public $label;
+
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
 
 
 	/**
