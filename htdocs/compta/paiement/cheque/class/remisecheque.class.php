@@ -494,6 +494,7 @@ class RemiseCheque extends CommonObject
 	 *      @param      User	$user       Objet user
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
 		global $conf, $langs;
@@ -546,6 +547,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $user;
@@ -858,8 +860,9 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Charge les proprietes ref_previous et ref_next
 	 *
-	 *	@return     int   <0 if KO, 0 if OK
+	 *  @return     int   <0 if KO, 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_previous_next_id()
 	{
 		global $conf;
@@ -903,6 +906,7 @@ class RemiseCheque extends CommonObject
      *      @param  int   $date           Date creation
      *      @return int                 		<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date($user, $date)
     {
         if ($user->rights->banque->cheque)
@@ -937,6 +941,7 @@ class RemiseCheque extends CommonObject
 	 *      @param  int   $ref         ref of bordereau
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_number($user, $ref)
 	{
 		if ($user->rights->banque->cheque)
@@ -1059,6 +1064,7 @@ class RemiseCheque extends CommonObject
 	 *  @param  int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return string      		Libelle du statut
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage

@@ -73,7 +73,7 @@ class ExportExcel extends ModeleExports
 		$this->version='1.30';             // Driver version
 
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
-		
+
 		if (empty($this->disabled))
 		{
     		// If driver use an external library, put its name here
@@ -175,6 +175,7 @@ class ExportExcel extends ModeleExports
 	 *  @param		Translate	$outputlangs	Output language object
 	 *	@return		int							<0 if KO, >=0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function open_file($file,$outputlangs)
 	{
 		global $user,$conf,$langs;
@@ -243,6 +244,7 @@ class ExportExcel extends ModeleExports
      *	@param      Translate	$outputlangs        Object lang to translate values
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_header($outputlangs)
 	{
 		//$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
@@ -260,6 +262,7 @@ class ExportExcel extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
 		global $conf;
@@ -315,6 +318,7 @@ class ExportExcel extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
 		global $conf;
@@ -337,14 +341,14 @@ class ExportExcel extends ModeleExports
 
 			$newvalue=$this->excel_clean($newvalue);
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
-			
+
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
 				$array = unserialize($typefield);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
-			
+
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
@@ -430,6 +434,7 @@ class ExportExcel extends ModeleExports
 	 * 	@param		Translate	$outputlangs	Output language object
 	 * 	@return		int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_footer($outputlangs)
 	{
 		return 0;
@@ -441,6 +446,7 @@ class ExportExcel extends ModeleExports
      *
 	 * 	@return		int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_file()
 	{
 		global $conf;
@@ -467,6 +473,7 @@ class ExportExcel extends ModeleExports
      * @param 	string	$newvalue	String to clean
      * @return 	string				Value cleaned
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function excel_clean($newvalue)
     {
 		// Rule Dolibarr: No HTML
@@ -498,4 +505,3 @@ class ExportExcel extends ModeleExports
     	return $letter;
     }
 }
-

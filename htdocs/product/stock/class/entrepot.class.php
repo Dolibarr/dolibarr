@@ -421,6 +421,7 @@ class Entrepot extends CommonObject
 	 *	@param	int		$status		Status
 	 * 	@return array				Array list of warehouses
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_array($status=1)
 	{
 		$liste = array();
@@ -451,6 +452,7 @@ class Entrepot extends CommonObject
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function nb_different_products()
 	{
 		$ret=array();
@@ -483,6 +485,7 @@ class Entrepot extends CommonObject
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function nb_products()
 	{
 		$ret=array();
@@ -529,6 +532,7 @@ class Entrepot extends CommonObject
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
@@ -653,6 +657,7 @@ class Entrepot extends CommonObject
 	 *
 	 *	@return		string	String full path to current warehouse separated by " >> "
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_full_arbo()
 	{
         global $user,$langs,$conf;
@@ -692,9 +697,10 @@ class Entrepot extends CommonObject
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
 	 * @param	int		$id					id parent warehouse
-	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
-	 * @return	array()	$TChildWarehouses	array which will contain all children
+	 * @param	array	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return	array	$TChildWarehouses	array which will contain all children
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_children_warehouses($id, &$TChildWarehouses)
     {
 

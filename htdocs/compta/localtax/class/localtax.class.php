@@ -350,6 +350,7 @@ class Localtax extends CommonObject
      *	@param	int		$year		Year
      *	@return	int					???
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function localtax_sum_collectee($year = 0)
     {
         $sql = "SELECT sum(f.localtax) as amount";
@@ -388,6 +389,7 @@ class Localtax extends CommonObject
      *	@param	int		$year		Year
      *	@return	int					???
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function localtax_sum_payee($year = 0)
     {
 
@@ -429,6 +431,7 @@ class Localtax extends CommonObject
      *	@param	int		$year		Year
      *	@return	int					???
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function localtax_sum_reglee($year = 0)
     {
 
@@ -582,6 +585,7 @@ class Localtax extends CommonObject
      *	@param		int		$id		Id bank account
 	 *	@return		int				<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'localtax SET fk_bank = '.$id;
@@ -640,12 +644,13 @@ class Localtax extends CommonObject
 	 *
 	 * @param   int		$status     Statut
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 * @return	string              Libelle du statut
 	 */
-	function LibStatut($status,$mode=0)
-	{
-		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    function LibStatut($status, $mode=0)
+    {
+        global $langs;  // TODO Renvoyer le libelle anglais et faire traduction a affichage
 
-		return '';
-	}
+        return '';
+    }
 }

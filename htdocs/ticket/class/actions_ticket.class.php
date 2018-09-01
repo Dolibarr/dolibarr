@@ -1316,6 +1316,7 @@ class ActionsTicket
      * @param int			$fieldid		Id
      * @return int			0
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_previous_next_ref($filter, $fieldid)
     {
         $this->getInstanceDao();

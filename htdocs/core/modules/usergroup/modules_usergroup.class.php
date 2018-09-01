@@ -24,7 +24,7 @@
  *	    \class      ModeleProductCode
  *		\brief  	Parent class for product code generators
  */
- 
+
 /**
  *  \file       htdocs/core/modules/contract/modules_contract.php
  *  \ingroup    contract
@@ -32,7 +32,7 @@
  */
 
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
- 
+
 /**
  *	Parent class to manage intervention document templates
  */
@@ -51,15 +51,16 @@ abstract class ModelePDFUserGroup extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
-		$type='group';
-		$liste=array();
+		$type = 'group';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
-		return $liste;
+		$list = getListOfModels($db, $type, $maxfilenamelength);
+		return $list;
 	}
 }
