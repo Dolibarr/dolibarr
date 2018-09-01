@@ -287,8 +287,11 @@ class html_cerfafr extends ModeleDon
  * @param   mixed   $devise2    devise 2 ex: centimes
  * @return string               amount in letters
  */
-function amountToLetters($montant, $devise1='', $devise2='')
+private function amountToLetters($montant, $devise1='', $devise2='')
 {
+	$unite = array();
+	$dix = array();
+	$cent = array();
 	if(empty($devise1)) $dev1='euros';
 	else $dev1=$devise1;
 	if(empty($devise2)) $dev2='centimes';
