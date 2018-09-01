@@ -6121,7 +6121,7 @@ abstract class CommonObject
 	 *
 	 * @param 	Extrafields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output (view) or input (edit) for extrafield
-	 * @param 	array       $params         Optional parameters
+	 * @param 	array       $params         Optional parameters. Example: array('style'=>'class="oddeven"', 'colspan'=>$colspan)
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param	string		$onetrtd		All fields in same tr td
