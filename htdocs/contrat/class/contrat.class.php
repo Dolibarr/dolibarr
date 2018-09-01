@@ -793,7 +793,7 @@ class Contrat extends CommonObject
 
 				$line->ref				= $objp->product_ref;	// deprecated
 				$line->product_ref		= $objp->product_ref;   // Product Ref
-				$line->product_desc		= $objp->product_desc;  // Product Description 
+				$line->product_desc		= $objp->product_desc;  // Product Description
 				$line->product_label	= $objp->product_label; // Product Label
 
 				$line->description		= $objp->description;
