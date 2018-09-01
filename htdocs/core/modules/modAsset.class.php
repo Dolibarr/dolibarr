@@ -335,5 +335,4 @@ class modAsset extends DolibarrModules
 
 		return $this->_init($sql,$options);
 	}
-
 }

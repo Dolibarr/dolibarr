@@ -113,7 +113,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
 		//$this->All = $this->Maj. $this->Min. $this->Nb. $this->Spe;
 		//$this->All =  $this->Spe;
-
 	}
 
 	/**

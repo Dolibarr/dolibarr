@@ -277,7 +277,6 @@ class mailing_advthirdparties extends MailingTargets
 
 		$s.='</select>';
 		return $s;
-
 	}
 
 
@@ -300,5 +299,4 @@ class mailing_advthirdparties extends MailingTargets
 			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
 	}
-
 }

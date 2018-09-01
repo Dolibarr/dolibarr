@@ -927,5 +927,4 @@ class InterfaceActionsAuto extends DolibarrTriggers
             return -1;
 		}
     }
-
 }

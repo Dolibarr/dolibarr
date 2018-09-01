@@ -523,8 +523,5 @@ class Cchargesociales
 		$this->fk_pays = '';
 		$this->module = '';
 		$this->accountancy_code = '';
-
-		
 	}
-
 }

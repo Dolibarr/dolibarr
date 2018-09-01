@@ -335,6 +335,5 @@ class MenuManager
         //print 'xx'.$mode;
         return 0;
     }
-
 }
 

@@ -13,6 +13,10 @@ NEW: Dolibarr can provide information in page title when multicompany is enabled
  Android application like DoliDroid able to provide native features for multicompany module
 
 
+For developers:
+Code changes to be more compatible with PSR2
+
+
 
 ***** ChangeLog for 8.0.0 compared to 7.0.0 *****
 

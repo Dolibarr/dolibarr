@@ -253,7 +253,6 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		{
 			return -2;
 		}
-
 	}
 
 	/**
@@ -300,6 +299,5 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $result;
 	}
-
 }
 

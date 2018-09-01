@@ -570,7 +570,6 @@ class User extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-
 	}
 
 
@@ -694,7 +693,6 @@ class User extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-
 	}
 
 
@@ -1261,7 +1259,6 @@ class User extends CommonObject
 			$this->db->rollback();
 			return $result;
 		}
-
 	}
 
 	/**
@@ -1669,7 +1666,6 @@ class User extends CommonObject
 			$this->db->rollback();
 			return -2;
 		}
-
 	}
 
 	/**
@@ -3166,7 +3162,5 @@ class User extends CommonObject
 			$this->errors[] = $this->db->lasterror();
 			return -1;
 		}
-
 	}
-
 }

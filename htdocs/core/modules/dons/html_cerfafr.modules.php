@@ -424,5 +424,4 @@ $chif2=array('', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 
 		return $somme. ' et z&eacute;ro '. $dev2;
 	else
 		return $somme. $trio_c. ' ' .$secon_c. ' ' . $dev2;
-
 }

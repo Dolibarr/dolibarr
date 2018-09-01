@@ -693,7 +693,6 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -2110,7 +2109,6 @@ class Adherent extends CommonObject
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -2674,5 +2672,4 @@ class Adherent extends CommonObject
 
 		return 0;
 	}
-
 }

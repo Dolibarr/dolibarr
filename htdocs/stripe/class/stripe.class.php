@@ -52,7 +52,6 @@ class Stripe extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-
 	}
 
 
@@ -506,5 +505,4 @@ class Stripe extends CommonObject
 		}
 		return $return;
 	}
-
 }

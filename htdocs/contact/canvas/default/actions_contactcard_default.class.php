@@ -116,7 +116,6 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 

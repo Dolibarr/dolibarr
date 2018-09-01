@@ -222,7 +222,6 @@ class box_services_contracts extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
-
 	}
 
 	/**
@@ -237,6 +236,5 @@ class box_services_contracts extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

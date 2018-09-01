@@ -187,5 +187,4 @@ class FormContract
         print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
         print '</form>';
 	}
-
 }

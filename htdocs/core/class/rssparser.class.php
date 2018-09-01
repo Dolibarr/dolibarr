@@ -729,7 +729,6 @@ class RssParser
 
         }
     }
-
 }
 
 
@@ -786,6 +785,5 @@ function xml2php($xml)
     }
 
     return $array;
-
 }
 

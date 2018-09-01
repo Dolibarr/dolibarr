@@ -1527,7 +1527,6 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		}
-
 	}
 
 	/**

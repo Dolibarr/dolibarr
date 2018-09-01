@@ -232,6 +232,5 @@ class ActionCommReminder extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }
 

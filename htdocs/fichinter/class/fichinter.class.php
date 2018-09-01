@@ -279,7 +279,6 @@ class Fichinter extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -1667,6 +1666,5 @@ class FichinterLigne extends CommonObjectLine
 			return -2;
 		}
 	}
-
 }
 

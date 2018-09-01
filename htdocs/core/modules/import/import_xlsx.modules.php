@@ -782,5 +782,4 @@ class ImportXlsx extends ModeleImports
 
 		return 1;
 	}
-
 }

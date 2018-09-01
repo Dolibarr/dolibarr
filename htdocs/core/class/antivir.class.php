@@ -179,6 +179,5 @@ class AntiVir
 
 		return $ret;
 	}
-
 }
 

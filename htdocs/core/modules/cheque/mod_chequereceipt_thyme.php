@@ -135,6 +135,5 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
 

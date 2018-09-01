@@ -734,6 +734,5 @@ class Notify
 		if (! $error) return $num;
 		else return -1 * $error;
 	}
-
 }
 

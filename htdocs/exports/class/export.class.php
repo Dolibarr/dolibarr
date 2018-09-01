@@ -874,6 +874,5 @@ class Export
 			dol_print_error($this->db);
 		}
 	}
-
 }
 

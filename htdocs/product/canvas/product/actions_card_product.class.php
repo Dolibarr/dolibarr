@@ -238,7 +238,6 @@ class ActionsCardProduct
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 
@@ -431,6 +430,5 @@ class ActionsCardProduct
 			dol_print_error($this->db);
 		}
 	}
-
 }
 

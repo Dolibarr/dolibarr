@@ -648,5 +648,4 @@ class Localtax extends CommonObject
 
 		return '';
 	}
-
 }

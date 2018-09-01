@@ -135,6 +135,5 @@ class mod_payment_ant extends ModeleNumRefPayments
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
 

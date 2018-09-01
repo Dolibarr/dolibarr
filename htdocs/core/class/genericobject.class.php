@@ -38,6 +38,5 @@ class GenericObject extends CommonObject
 	{
 	    $this->db=$db;
 	}
-
 }
 

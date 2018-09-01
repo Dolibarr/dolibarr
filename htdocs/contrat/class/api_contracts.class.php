@@ -55,13 +55,13 @@ class Contracts extends DolibarrApi
     }
 
     /**
-     * Get properties of a contrat object
+     * Get properties of a contract object
      *
-     * Return an array with contrat informations
+     * Return an array with contract informations
      *
      * @param       int         $id         ID of contract
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @throws 	RestException
      */
     function get($id)
@@ -457,7 +457,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        // TODO Check the lineid $lineid is a line of ojbect
+        // TODO Check the lineid $lineid is a line of object
 
         $updateRes = $this->contract->deleteline($lineid, DolibarrApiAccess::$user);
         if ($updateRes > 0) {
@@ -472,7 +472,7 @@ class Contracts extends DolibarrApi
     /**
      * Update contract general fields (won't touch lines of contract)
      *
-     * @param int   $id             Id of contrat to update
+     * @param int   $id             Id of contract to update
      * @param array $request_data   Datas
      *
      * @return int
@@ -537,11 +537,10 @@ class Contracts extends DolibarrApi
                 'message' => 'Contract deleted'
             )
         );
-
     }
 
     /**
-     * Validate an contract
+     * Validate a contract
      *
      * @param   int $id             Contract ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers

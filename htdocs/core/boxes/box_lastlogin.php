@@ -98,7 +98,6 @@ class box_lastlogin extends ModeleBoxes
             'td' => '',
             'text' => $tmp,
         );
-        
     }
 
 

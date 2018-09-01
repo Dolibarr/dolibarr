@@ -246,6 +246,5 @@ abstract class ModeleProductCode
     {
         return 0;
     }
-
 }
 

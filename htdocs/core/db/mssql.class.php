@@ -1176,5 +1176,4 @@ class DoliDBMssql extends DoliDB
 
 	    return $result;
 	}
-
 }

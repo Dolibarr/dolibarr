@@ -241,6 +241,5 @@ class mailing_thirdparties_services_expired extends MailingTargets
     {
         return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
     }
-
 }
 

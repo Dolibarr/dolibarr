@@ -89,6 +89,5 @@ abstract class ModeleGenPassword
     {
         return 1;
     }
-
 }
 
