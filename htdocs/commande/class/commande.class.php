@@ -54,7 +54,12 @@ class Commande extends CommonOrder
 
 	public $table_element_line = 'commandedet';
 	public $class_element_line = 'OrderLine';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_commande';
+
 	public $picto = 'order';
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe

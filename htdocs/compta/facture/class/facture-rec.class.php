@@ -43,14 +43,19 @@ class FactureRec extends CommonInvoice
 	 * @var string ID to identify managed object
 	 */
 	public $element='facturerec';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='facture_rec';
-	
+
 	public $table_element_line='facturedet_rec';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_facture';
+
 	public $picto='bill';
 
 	var $entity;
@@ -1651,7 +1656,7 @@ class FactureLigneRec extends CommonInvoiceLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='facturedetrec';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */

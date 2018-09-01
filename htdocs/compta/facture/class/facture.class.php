@@ -57,14 +57,19 @@ class Facture extends CommonInvoice
 	 * @var string ID to identify managed object
 	 */
 	public $element='facture';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='facture';
-	
+
 	public $table_element_line = 'facturedet';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_facture';
+
 	public $picto='bill';
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -4242,7 +4247,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='facturedet';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */

@@ -56,7 +56,12 @@ class Propal extends CommonObject
 	public $table_element='propal';
 
 	public $table_element_line='propaldet';
-	public $fk_element='fk_propal';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element ='fk_propal';
+
 	public $picto='propal';
 
 	/**

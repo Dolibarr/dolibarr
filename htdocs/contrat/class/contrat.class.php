@@ -52,7 +52,12 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 
 	public $table_element_line='contratdet';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_contrat';
+
     public $picto='contract';
 
     /**

@@ -38,38 +38,42 @@ class Don extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='don';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='don';
-	
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_donation';
+
 	public $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    var $picto = 'generic';
+    public $picto = 'generic';
 
-    var $date;
-    var $amount;
-    var $societe;
-    var $address;
-    var $zip;
-    var $town;
-    var $email;
-    var $public;
-    var $fk_project;
-    var $fk_typepayment;
-	var $num_payment;
-	var $date_valid;
-	var $modepaymentid = 0;
+    public $date;
+    public $amount;
+    public $societe;
+    public $address;
+    public $zip;
+    public $town;
+    public $email;
+    public $public;
+    public $fk_project;
+    public $fk_typepayment;
+	public $num_payment;
+	public $date_valid;
+	public $modepaymentid = 0;
 
-	var $labelstatut;
-	var $labelstatutshort;
+	public $labelstatut;
+	public $labelstatutshort;
 
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
 	 */
-	var $commentaire;
+	public $commentaire;
 
 
     /**

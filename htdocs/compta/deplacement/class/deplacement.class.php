@@ -42,7 +42,12 @@ class Deplacement extends CommonObject
 	public $table_element='deplacement';
 
 	public $table_element_line = '';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = '';
+
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $datec;         // Creation date
