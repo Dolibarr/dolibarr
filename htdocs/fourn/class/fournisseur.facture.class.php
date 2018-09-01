@@ -77,7 +77,10 @@ class FactureFournisseur extends CommonInvoice
      */
     protected $table_ref_field = 'ref';
 
-    public $rowid;
+    /**
+	 * @var int ID
+	 */
+	public $rowid;
 
     /**
 	 * @var string Ref

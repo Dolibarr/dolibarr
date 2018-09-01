@@ -36,22 +36,22 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'companypaymentmode';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_rib';
-	
+
 	/**
 	 * @var int  Does companypaymentmode support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 2;
-	
+
 	/**
 	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
-	
+
 	/**
 	 * @var string String with name of icon for companypaymentmode. Must be the part after the 'object_' into object_companypaymentmode.png
 	 */
@@ -118,7 +118,12 @@ class CompanyPaymentMode extends CommonObject
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
 	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
 	public $fk_soc;
 	public $label;
 	public $bank;

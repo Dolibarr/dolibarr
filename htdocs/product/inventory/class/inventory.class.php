@@ -99,6 +99,9 @@ class Inventory extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'Todo', 1=>'Done', -1=>'Cancel')),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
 	/**

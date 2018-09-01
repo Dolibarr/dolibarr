@@ -71,7 +71,11 @@ class AccountingAccount extends CommonObject
 	 */
 	public $id;
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
 	public $datec; // Creation date
 	public $fk_pcg_version;
 	public $pcg_type;

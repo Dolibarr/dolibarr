@@ -101,6 +101,9 @@ class MyObject extends CommonObject
 	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
 	/**

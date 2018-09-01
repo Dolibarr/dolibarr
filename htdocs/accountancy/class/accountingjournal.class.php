@@ -44,6 +44,9 @@ class AccountingJournal extends CommonObject
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'generic';
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
 	public $code;

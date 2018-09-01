@@ -88,6 +88,10 @@ class EmailSenderProfile extends CommonObject
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
 	/**

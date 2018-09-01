@@ -43,7 +43,11 @@ class Loan extends CommonObject
 
 	public $picto = 'bill';
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
 	public $datestart;
 	public $dateend;
 	public $label;
