@@ -1069,7 +1069,6 @@ abstract class CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
-
 	}
 
 	/**
@@ -2041,7 +2040,6 @@ abstract class CommonObject
             $this->db->commit();
             return 1;
         }
-
 	}
 
 
@@ -4650,7 +4648,6 @@ abstract class CommonObject
 		if (isset($conf->global->$keyforfieldname)) return $conf->global->$keyforfieldname;
 
 		// TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
-
 	}
 
 
@@ -7274,5 +7271,4 @@ abstract class CommonObject
 	{
 		return count($this->comments);
 	}
-
 }

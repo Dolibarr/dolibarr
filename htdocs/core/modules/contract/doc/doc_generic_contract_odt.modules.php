@@ -478,5 +478,4 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 		return -1;
 	}
-
 }

@@ -93,7 +93,6 @@ class Entrepot extends CommonObject
 		{
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
 		}
-
 	}
 
 	/**
@@ -167,7 +166,6 @@ class Entrepot extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -301,7 +299,6 @@ class Entrepot extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 
@@ -720,7 +717,6 @@ class Entrepot extends CommonObject
 		}
 
 		return $TChildWarehouses;
-
 	}
 
 	/**
@@ -754,5 +750,4 @@ class Entrepot extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
-
 }

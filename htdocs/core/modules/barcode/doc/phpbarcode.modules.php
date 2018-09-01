@@ -171,5 +171,4 @@ class modPhpbarcode extends ModeleBarCode
 
 		return $result;
 	}
-
 }

@@ -317,7 +317,6 @@ class Interventions extends DolibarrApi
 		    	'message' => 'Intervention deleted'
 	    	)
     	);
-
     }
 
     /**
@@ -456,6 +455,4 @@ class Interventions extends DolibarrApi
         }
         return $fichinter;
     }
-
-
 }

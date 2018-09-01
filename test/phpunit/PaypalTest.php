@@ -135,13 +135,12 @@ class PaypalTest extends PHPUnit_Framework_TestCase
 
 		$urltotest=getPaypalPaymentUrl(1,'free');
 		print "urltotest=".$urltotest."\n";
-		
+
 		$result=getURLContent($urltotest, 'GET');
-		
+
         print __METHOD__." result=".$result."\n";
     	$this->assertLessThanOrEqual($result, 0);
 
     	return $result;
     }
-
 }

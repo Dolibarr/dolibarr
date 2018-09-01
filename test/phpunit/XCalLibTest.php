@@ -137,5 +137,4 @@ class XCalLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$resultback."\n";
         $this->assertEquals($stringtoencode,$resultback);
     }
-
 }

@@ -460,7 +460,6 @@ class Inventory extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }
 
 /**

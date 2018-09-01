@@ -271,8 +271,6 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project
 
     $s.= "g.AddTaskItem(new JSGantt.TaskItem('".$taskid."', '".dol_escape_js(trim($name))."', '".$start_date."', '".$end_date."', '".$css."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".$line_is_auto_group.", '".$parent."', 1, '".$dependency."', '".(empty($task["task_is_group"]) ? (($percent >= 0 && $percent != '') ? $percent.'%' : '') : '')."', '".dol_escape_js($note)."', g));";
     echo $s;
-
-
 }
 
 /**

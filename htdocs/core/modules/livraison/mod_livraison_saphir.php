@@ -151,5 +151,4 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     {
         return $this->getNextValue($objsoc,$object);
     }
-
 }

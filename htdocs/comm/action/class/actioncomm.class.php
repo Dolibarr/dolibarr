@@ -437,7 +437,6 @@ class ActionComm extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -648,7 +647,6 @@ class ActionComm extends CommonObject
         }
 
         return $num;
-
     }
 
 	/**
@@ -1692,5 +1690,4 @@ class ActionComm extends CommonObject
 
     	return $error;
     }
-
 }

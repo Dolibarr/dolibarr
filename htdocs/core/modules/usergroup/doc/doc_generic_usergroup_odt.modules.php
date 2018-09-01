@@ -511,5 +511,4 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 		return -1;
 	}
-
 }

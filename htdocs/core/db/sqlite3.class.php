@@ -1411,5 +1411,4 @@ class DoliDBSqlite3 extends DoliDB
       }
       return floor($days/7+1);
     }
-
 }

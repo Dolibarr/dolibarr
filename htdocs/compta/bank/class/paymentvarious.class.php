@@ -601,5 +601,4 @@ class PaymentVarious extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
 }

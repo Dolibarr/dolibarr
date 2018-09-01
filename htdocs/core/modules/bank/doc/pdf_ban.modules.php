@@ -281,8 +281,6 @@ class pdf_ban extends ModeleBankAccountDoc
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
-
-
 	}
 
 	/**
@@ -369,7 +367,6 @@ class pdf_ban extends ModeleBankAccountDoc
 	    	}
 	    }
         */
-
 	}
 
 	/**
@@ -387,5 +384,4 @@ class pdf_ban extends ModeleBankAccountDoc
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		//return pdf_pagefoot($pdf,$outputlangs,'BANK_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

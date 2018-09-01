@@ -48,7 +48,6 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 
 		return $liste;
 	}
-
 }
 
 /**

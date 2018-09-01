@@ -974,5 +974,4 @@ class AdvanceTargetingMailing extends CommonObject
 
 		return $return_sql_criteria;
 	}
-
 }

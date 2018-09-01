@@ -768,7 +768,6 @@ class ImportCsv extends ModeleImports
 
 		return 1;
 	}
-
 }
 
 /**

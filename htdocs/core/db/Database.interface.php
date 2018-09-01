@@ -482,5 +482,4 @@ interface Database
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_db($database);
-
 }

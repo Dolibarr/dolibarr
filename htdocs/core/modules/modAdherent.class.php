@@ -362,7 +362,6 @@ class modAdherent extends DolibarrModules
 				'test'=>true,
 			),
         );
-
     }
 
 

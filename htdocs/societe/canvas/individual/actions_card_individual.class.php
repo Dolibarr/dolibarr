@@ -135,5 +135,4 @@ class ActionsCardIndividual extends ActionsCardCommon
 	{
 		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
-
 }

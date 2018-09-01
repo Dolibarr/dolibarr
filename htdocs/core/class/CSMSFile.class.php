@@ -246,5 +246,4 @@ class CSMSFile
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
     }
-
 }

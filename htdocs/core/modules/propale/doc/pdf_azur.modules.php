@@ -841,7 +841,6 @@ class pdf_azur extends ModelePDFPropales
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
 
 

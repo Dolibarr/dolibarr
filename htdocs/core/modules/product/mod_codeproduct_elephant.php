@@ -305,7 +305,5 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			return -2;
 		}
-
 	}
-
 }

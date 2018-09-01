@@ -1269,5 +1269,4 @@ class FormOther
             dol_print_error($this->db);
         }
     }
-
 }

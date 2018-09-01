@@ -164,5 +164,4 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
 		$moduledescriptor->init();
 		$conf->setValues($db);
     }
-
 }

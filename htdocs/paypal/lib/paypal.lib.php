@@ -287,7 +287,6 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
 
         return $mesg;
     }
-
 }
 
 /**

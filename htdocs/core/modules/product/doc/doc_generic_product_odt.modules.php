@@ -500,5 +500,4 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 		return -1;
 	}
-
 }

@@ -434,5 +434,4 @@ class doc_generic_user_odt extends ModelePDFUser
 		}
 		return $array_other;
 	}
-
 }

@@ -361,5 +361,4 @@ function limitChars(textarea, limit, infodiv)
 
         print "<!-- End form SMS -->\n";
     }
-
 }

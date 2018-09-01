@@ -515,5 +515,4 @@ class printing_printgcp extends PrintingDriver
 
         return $error;
     }
-
 }

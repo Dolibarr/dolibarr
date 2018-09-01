@@ -131,5 +131,4 @@ class InterfaceNotification extends DolibarrTriggers
 
 		return $ret;
 	}
-
 }

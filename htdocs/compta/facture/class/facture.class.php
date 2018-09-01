@@ -1552,7 +1552,6 @@ class Facture extends CommonInvoice
 				}
 			}
 		}
-
 	}
 
 	/**

@@ -515,5 +515,4 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 		return -1;
 	}
-
 }

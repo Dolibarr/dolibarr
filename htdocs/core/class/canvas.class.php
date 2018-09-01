@@ -210,5 +210,4 @@ class Canvas
 			return $ret;
 		}
 	}
-
 }

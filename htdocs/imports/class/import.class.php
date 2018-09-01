@@ -358,5 +358,4 @@ class Import
 			return 1;
 		}
 	}
-
 }

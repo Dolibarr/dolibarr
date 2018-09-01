@@ -89,7 +89,6 @@ class Client extends Societe
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -115,5 +114,4 @@ class Client extends Societe
 		}
 		return 1;
     }
-
 }

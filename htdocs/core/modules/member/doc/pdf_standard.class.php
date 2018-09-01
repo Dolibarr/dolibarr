@@ -443,5 +443,4 @@ class pdf_standard extends CommonStickerGenerator
 
 		return 1;
 	}
-
 }

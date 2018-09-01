@@ -145,5 +145,4 @@ class mod_pacific extends ModeleNumRefFicheinter
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

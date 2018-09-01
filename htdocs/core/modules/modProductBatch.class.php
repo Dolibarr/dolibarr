@@ -104,7 +104,6 @@ class modProductBatch extends DolibarrModules
 
 		// Exports
 		$r=0;
-
 	}
 
 	/**

@@ -150,5 +150,4 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

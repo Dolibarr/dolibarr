@@ -158,7 +158,5 @@ class mailing_xinputuser extends MailingTargets
 		   	$this->error = $langs->trans("ErrorBadEmail",$email);
 			return -1;
 		}
-
 	}
-
 }

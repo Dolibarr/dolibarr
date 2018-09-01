@@ -260,6 +260,5 @@ class box_actions extends ModeleBoxes
 
 		return '';
 	}
-
 }
 

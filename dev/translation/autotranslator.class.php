@@ -65,7 +65,6 @@ class autoTranslator
 		//ini_set('default_charset','UTF-8');
 		ini_set('default_charset',$this->_outputpagecode);
 		$this->parse_refLangTranslationFiles();
-
 	}
 
 	/**
@@ -347,5 +346,4 @@ class autoTranslator
 
 		return $rep;
 	}
-
 }

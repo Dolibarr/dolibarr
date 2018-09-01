@@ -33,7 +33,7 @@ class FormProduct
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -189,7 +189,6 @@ class FormProduct
 		}
 
 		return $final_label;
-
 	}
 
 	/**

@@ -461,7 +461,6 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
 	/**
@@ -502,7 +501,6 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
 	/**
@@ -612,7 +610,6 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
 	/**

@@ -179,7 +179,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$resarray = $this->fill_substitutionarray_with_extrafields($task,$resarray,$extrafields,'task',$outputlangs);
 
 		return $resarray;
-
 	}
 
 	/**
@@ -1191,5 +1190,4 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		return -1;
 	}
-
 }

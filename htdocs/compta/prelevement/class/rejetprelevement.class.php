@@ -69,7 +69,6 @@ class RejetPrelevement
 
     	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
 		$this->facturer[1]=$langs->trans("InvoiceRefused");
-
 	}
 
 	/**
@@ -198,7 +197,6 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
 		}
-
 	}
 
 	/**
@@ -328,7 +326,6 @@ class RejetPrelevement
 		}
 
 		return $arr;
-
 	}
 
 	/**
@@ -372,5 +369,4 @@ class RejetPrelevement
 			return -2;
 		}
 	}
-
 }

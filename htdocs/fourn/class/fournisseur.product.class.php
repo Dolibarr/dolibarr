@@ -183,7 +183,6 @@ class ProductFournisseur extends Product
             $this->db->rollback();
             return -1;
         }
-
     }
 
 
@@ -872,5 +871,4 @@ class ProductFournisseur extends Product
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }

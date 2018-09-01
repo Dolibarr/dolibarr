@@ -4859,7 +4859,6 @@ function get_localtax_by_third($local)
 	}
 
 	return 0;
-
 }
 
 

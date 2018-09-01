@@ -536,5 +536,4 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 		return -1;
 	}
-
 }

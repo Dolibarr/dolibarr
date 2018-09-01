@@ -204,7 +204,6 @@ class dolReceiptPrinter extends Escpos
             'dol_print_if_customer_tax_number',
             'dol_print_if_customer_account_balance_positive',
         );
-
     }
 
     /**

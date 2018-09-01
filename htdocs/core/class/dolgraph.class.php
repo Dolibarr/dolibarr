@@ -1129,5 +1129,4 @@ class DolGraph
 		}
 		return 0;
 	}
-
 }

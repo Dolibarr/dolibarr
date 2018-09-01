@@ -450,5 +450,4 @@ class mailing_contacts1 extends MailingTargets
 
 		return parent::add_to_target($mailing_id, $cibles);
 	}
-
 }

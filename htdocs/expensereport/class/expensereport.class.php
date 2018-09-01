@@ -898,7 +898,6 @@ class ExpenseReport extends CommonObject
                 return -1;
             }
         }
-
     }
 
     /**
@@ -1765,8 +1764,6 @@ class ExpenseReport extends CommonObject
 			$this->error = 'ErrorExpenseNotDraft';
             return -3;
         }
-
-
 	}
 
 	/**
@@ -2390,7 +2387,6 @@ class ExpenseReport extends CommonObject
     	}
     	return 0;
     }
-
 }
 
 

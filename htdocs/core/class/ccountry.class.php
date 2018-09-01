@@ -333,5 +333,4 @@ class Ccountry // extends CommonObject
 			return 1;
 		}
 	}
-
 }

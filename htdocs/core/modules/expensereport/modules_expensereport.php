@@ -49,7 +49,6 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 
 		return $liste;
 	}
-
 }
 
 /**

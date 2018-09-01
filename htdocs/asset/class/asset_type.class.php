@@ -438,5 +438,4 @@ class AssetType extends CommonObject
 	{
 		return '';
 	}
-
 }

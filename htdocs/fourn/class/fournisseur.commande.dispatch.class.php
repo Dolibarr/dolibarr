@@ -548,8 +548,6 @@ class CommandeFournisseurDispatch extends CommonObject
 		$this->batch='';
 		$this->eatby='';
 		$this->sellby='';
-
-
 	}
 
 	/**
@@ -647,5 +645,4 @@ class CommandeFournisseurDispatch extends CommonObject
 			return - 1;
 		}
 	}
-
 }

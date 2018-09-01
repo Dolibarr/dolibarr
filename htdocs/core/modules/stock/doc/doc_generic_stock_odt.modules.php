@@ -500,5 +500,4 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 		return -1;
 	}
-
 }

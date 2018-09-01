@@ -45,22 +45,22 @@ class Contrat extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='contrat';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='contrat';
-	
+
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
     public $picto='contract';
-    
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
-    
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -241,8 +241,8 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User who activate contract
 	 *  @param  int			$line_id    Id of line to activate
-	 *  @param  int			$date       Date d'ouverture
-	 *  @param  int|string	$date_end   Date fin prevue
+	 *  @param  int			$date       Opening date
+	 *  @param  int|string	$date_end   Expected end date
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
@@ -264,7 +264,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user       Objet User who close contract
 	 *  @param  int			$line_id    Id of line to close
-	 *  @param  int			$date_end	Date end
+	 *  @param  int			$date_end	End date
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
@@ -522,13 +522,12 @@ class Contrat extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
 	 * Unvalidate a contract
 	 *
-	 * @param	User	$user      		Objet User
+	 * @param	User	$user      		Object User
      * @param	int		$notrigger		1=Does not execute triggers, 0=execute triggers
 	 * @return	int						<0 if KO, >0 if OK
 	 */
@@ -570,7 +569,7 @@ class Contrat extends CommonObject
 			// End call triggers
 		}
 
-		// Set new ref and define current statut
+		// Set new ref and define current status
 		if (! $error)
 		{
 			$this->statut=0;
@@ -668,7 +667,7 @@ class Contrat extends CommonObject
 				$this->db->free($resql);
 
 
-				// Retreive all extrafield
+				// Retreive all extrafields
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -701,7 +700,6 @@ class Contrat extends CommonObject
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -732,7 +730,7 @@ class Contrat extends CommonObject
 		$this->lines=array();
         $pos = 0;
 
-		// Selectionne les lignes contrats liees a un produit
+		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref,";
 		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql.= " d.total_ht,";
@@ -766,7 +764,7 @@ class Contrat extends CommonObject
 				$line->id				= $objp->rowid;
 				$line->ref				= $objp->rowid;
 				$line->fk_contrat		= $objp->fk_contrat;
-				$line->desc				= $objp->description;  // Description ligne
+				$line->desc				= $objp->description;  // Description line
 				$line->qty				= $objp->qty;
 				$line->vat_src_code 	= $objp->vat_src_code ;
 				$line->tva_tx			= $objp->tva_tx;
@@ -797,9 +795,9 @@ class Contrat extends CommonObject
 				$line->fk_unit           = $objp->fk_unit;
 
 				$line->ref				= $objp->product_ref;	// deprecated
-				$line->product_ref		= $objp->product_ref;   // Ref product
-				$line->product_desc		= $objp->product_desc;  // Description product
-				$line->product_label	= $objp->product_label; // Label product
+				$line->product_ref		= $objp->product_ref;   // Product Ref
+				$line->product_desc		= $objp->product_desc;  // Product Description
+				$line->product_label	= $objp->product_label; // Product Label
 
 				$line->description		= $objp->description;
 
@@ -817,7 +815,7 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				// Retreive all extrafield for contract
+				// Retreive all extrafields for contract
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 
@@ -923,7 +921,7 @@ class Contrat extends CommonObject
 				$modCodeContract = new $module();
 
 				if (!empty($modCodeContract->code_auto)) {
-					// Mise a jour ref
+					// Update ref
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 					if ($this->db->query($sql))
 					{
@@ -947,14 +945,14 @@ class Contrat extends CommonObject
 				}
 			}
 
-			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
+			// Insert business contacts ('SALESREPSIGN','contrat')
 			if (! $error)
 			{
     			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
     			if ($result < 0) $error++;
 			}
 
-			// Insert contacts commerciaux ('SALESREPFOLL','contrat')
+			// Insert business contacts ('SALESREPFOLL','contrat')
 			if (! $error)
 			{
                 $result=$this->add_contact($this->commercial_suivi_id,'SALESREPFOLL','internal');
@@ -2473,7 +2471,7 @@ class ContratLigne extends CommonObjectLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='contratdet';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -2483,7 +2481,7 @@ class ContratLigne extends CommonObjectLine
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	var $ref;
 	var $tms;
 

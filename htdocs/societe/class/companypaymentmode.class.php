@@ -566,5 +566,4 @@ class CompanyPaymentMode extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }

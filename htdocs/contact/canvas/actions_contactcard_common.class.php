@@ -318,5 +318,4 @@ abstract class ActionsContactCardCommon
             $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
         }
     }
-
 }

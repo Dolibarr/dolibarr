@@ -144,5 +144,4 @@ class mod_commande_saphir extends ModeleNumRefCommandes
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }

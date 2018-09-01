@@ -369,5 +369,4 @@ class Interfaces
         }
         return $triggers;
     }
-
 }

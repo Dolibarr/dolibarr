@@ -1019,7 +1019,6 @@ class Holiday extends CommonObject
 
 		$statut.= '</select>'."\n";
 		print $statut;
-
 	}
 
 	/**
@@ -1249,7 +1248,6 @@ class Holiday extends CommonObject
 				return -1;
 			}
 		}
-
 	}
 
 	/**
@@ -1327,7 +1325,6 @@ class Holiday extends CommonObject
 		$sql.= " WHERE fk_user = '".$user_id."'";
 
 		$this->db->query($sql);
-
 	}
 
 
@@ -1883,5 +1880,4 @@ class Holiday extends CommonObject
 		$this->halfday=0;
 		$this->fk_type=1;
 	}
-
 }

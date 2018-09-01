@@ -121,5 +121,4 @@ class FormSocialContrib
             dol_print_error($db,$db->lasterror());
         }
     }
-
 }

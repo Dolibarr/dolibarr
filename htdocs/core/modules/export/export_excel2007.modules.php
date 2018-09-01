@@ -122,5 +122,4 @@ class ExportExcel2007 extends ExportExcel
     	}
 		return 1;
 	}
-
 }

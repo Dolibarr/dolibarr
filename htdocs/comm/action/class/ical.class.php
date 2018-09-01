@@ -44,7 +44,6 @@ class ICal
 	 */
 	public function __construct()
 	{
-
 	}
 
 	/**

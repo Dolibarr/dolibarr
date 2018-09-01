@@ -181,5 +181,4 @@ class AdherentStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
-
 }

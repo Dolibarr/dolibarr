@@ -195,6 +195,5 @@ class DolibarrApiAccess implements iAuthenticate
         return $requires
             ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
             : true;
-
     }
 }

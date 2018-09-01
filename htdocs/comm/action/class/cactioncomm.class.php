@@ -226,5 +226,4 @@ class CActionComm
         $transcode=$langs->trans("Action".$this->code);
         if ($transcode != "Action".$this->code) return $transcode;
     }
-
 }

@@ -539,5 +539,4 @@ class WebsitePage extends CommonObject
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);
 	}
-
 }

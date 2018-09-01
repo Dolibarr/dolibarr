@@ -210,5 +210,4 @@ class FormResource
     	print '</select>';
     	if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
-
 }

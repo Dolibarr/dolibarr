@@ -1175,7 +1175,6 @@ class Account extends CommonObject
 		}
 
 		return $solde;
-
 	}
 
 	/**
@@ -1520,7 +1519,6 @@ class Account extends CommonObject
 	 */
 	function info($id)
 	{
-
 	}
 
 	/**
@@ -1565,7 +1563,6 @@ class Account extends CommonObject
 
 		//Get the order the properties are shown
 		return $fieldarray;
-
 	}
 
 	/**
@@ -1639,7 +1636,6 @@ class Account extends CommonObject
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
 	}
-
 }
 
 
@@ -2331,5 +2327,4 @@ class AccountLine extends CommonObject
 		}
 		return 0;
 	}
-
 }

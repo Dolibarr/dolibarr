@@ -145,5 +145,4 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

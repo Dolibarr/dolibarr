@@ -180,5 +180,4 @@ class AntiVir
 
 		return $ret;
 	}
-
 }

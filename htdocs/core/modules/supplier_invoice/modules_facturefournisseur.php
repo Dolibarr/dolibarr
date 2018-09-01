@@ -60,7 +60,6 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 
 		return $list;
 	}
-
 }
 
 /**

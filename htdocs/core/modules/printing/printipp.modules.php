@@ -318,5 +318,4 @@ class printing_printipp extends PrintingDriver
         $this->resprint = $html;
         return $error;
     }
-
 }

@@ -114,5 +114,4 @@ function resource_admin_prepare_head()
 	complete_head_from_modules($conf,$langs,null,$head,$h,'resource_admin','remove');
 
 	return $head;
-
 }

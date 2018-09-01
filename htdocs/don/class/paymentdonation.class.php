@@ -491,8 +491,6 @@ class PaymentDonation extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 

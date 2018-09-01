@@ -297,5 +297,4 @@ class Events // extends CommonObject
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
 	}
-
 }

@@ -796,5 +796,4 @@ class PaiementFourn extends Paiement
 
 		return parent::fetch_thirdparty($force_thirdparty_id);
 	}
-
 }

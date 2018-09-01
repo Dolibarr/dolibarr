@@ -471,7 +471,6 @@ class CMailFile
 			// --------------------------------------
 			$this->error = 'Bad value for sendmode';
 		}
-
 	}
 
 

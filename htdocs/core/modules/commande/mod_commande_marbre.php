@@ -150,5 +150,4 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

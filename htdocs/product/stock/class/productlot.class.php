@@ -582,5 +582,4 @@ class Productlot extends CommonObject
 		$this->fk_user_modif = '';
 		$this->import_key = '';
 	}
-
 }

@@ -32,7 +32,7 @@
  *
  * Parent class for module descriptor class files
  */
-class DolibarrModules           // Can not be abstract, because we need to instantiate it into unActivateModule to be able to disable a module whose files were removed.
+class DolibarrModules // Can not be abstract, because we need to instantiate it into unActivateModule to be able to disable a module whose files were removed.
 {
 	/**
 	 * @var DoliDb Database handler

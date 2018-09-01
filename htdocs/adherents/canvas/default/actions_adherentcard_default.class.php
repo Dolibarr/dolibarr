@@ -118,7 +118,6 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 

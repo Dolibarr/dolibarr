@@ -80,7 +80,6 @@ class pdf_paiement
 		}
 		// which type of document will be generated: clients (client) or providers (fourn) invoices
 		$this->doc_type = "client";
-
 	}
 
 

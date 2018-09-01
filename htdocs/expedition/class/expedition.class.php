@@ -1298,7 +1298,6 @@ class Expedition extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -1709,7 +1708,6 @@ class Expedition extends CommonObject
 			$this->lines[]=$line;
 			$xnbp++;
 		}
-
 	}
 
 	/**
@@ -1852,7 +1850,6 @@ class Expedition extends CommonObject
 		$sql.= ' WHERE rowid='.$id;
 
 		$resql = $this->db->query($sql);
-
 	}
 
 	/**
@@ -1869,7 +1866,6 @@ class Expedition extends CommonObject
 		$sql.= ' WHERE rowid='.$id;
 
 		$resql = $this->db->query($sql);
-
 	}
 
 

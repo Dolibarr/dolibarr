@@ -644,14 +644,13 @@ class Localtax extends CommonObject
 	 *
 	 * @param   int		$status     Statut
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 * @return	string              Libelle du statut
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-    function LibStatut($status,$mode=0)
+    function LibStatut($status, $mode=0)
     {
-        global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+        global $langs;  // TODO Renvoyer le libelle anglais et faire traduction a affichage
 
         return '';
     }
-
 }

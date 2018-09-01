@@ -1662,7 +1662,6 @@ class FormFile
 
 		// Include template
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
-
 	}
 
 	/**
@@ -1834,5 +1833,4 @@ class FormFile
 		}
 		return $out;
 	}
-
 }

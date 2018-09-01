@@ -543,5 +543,4 @@ class SimpleOpenID
         	return $server;
 	    }
     }
-
 }

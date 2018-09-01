@@ -147,5 +147,4 @@ class mod_contract_serpis extends ModelNumRefContracts
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }
