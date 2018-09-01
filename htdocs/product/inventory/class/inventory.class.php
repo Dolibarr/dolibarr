@@ -38,7 +38,7 @@ class Inventory extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'inventory';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -48,7 +48,7 @@ class Inventory extends CommonObject
 	 * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
-	
+
 	/**
 	 * @var string String with name of icon for inventory
 	 */
@@ -123,22 +123,22 @@ class Inventory extends CommonObject
 	 * @var int    Name of subtable line
 	 */
 	//public $table_element_line = 'inventorydet';
-	
+
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
 	//public $fk_element = 'fk_inventory';
-	
+
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
 	//public $class_element_line = 'Inventoryline';
-	
+
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('inventorydet');
-	
+
 	/**
 	 * @var InventoryLine[]     Array of subtable lines
 	 */
@@ -339,6 +339,7 @@ class Inventory extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -346,9 +347,9 @@ class Inventory extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)

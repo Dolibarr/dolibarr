@@ -1068,7 +1068,7 @@ else
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
-            { 
+            {
                 // Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                 print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
