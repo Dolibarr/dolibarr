@@ -60,23 +60,23 @@ class ImportXlsx extends ModeleImports
      */
     public $label;
 
-	var $extension;    // Extension of files imported by driver
-	var $version;      // Version of driver
+	public $extension;    // Extension of files imported by driver
+	public $version;      // Version of driver
 
-	var $label_lib;    // Label of external lib used by driver
-	var $version_lib;  // Version of external lib used by driver
+	public $label_lib;    // Label of external lib used by driver
+	public $version_lib;  // Version of external lib used by driver
 
-	var $separator;
+	public $separator;
 
-    var $file;      // Path of file
-	var $handle;    // Handle fichier
+    public $file;      // Path of file
+	public $handle;    // Handle fichier
 
-	var $cacheconvert=array();      // Array to cache list of value found after a convertion
-	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+	public $cacheconvert=array();      // Array to cache list of value found after a convertion
+	public $cachefieldtable=array();   // Array to cache list of value found into fields@tables
 
-	var $workbook; // temporary import file
-	var $record; // current record
-	var $headers;
+	public $workbook; // temporary import file
+	public $record; // current record
+	public $headers;
 
 
 	/**

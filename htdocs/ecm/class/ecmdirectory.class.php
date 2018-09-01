@@ -37,7 +37,7 @@ class EcmDirectory // extends CommonObject
 	 */
 	//public $table_element='ecm_directories';
 
-	var $picto = 'dir';
+	public $picto = 'dir';
 
 	/**
 	 * @var int ID
@@ -49,16 +49,16 @@ class EcmDirectory // extends CommonObject
      */
     public $label;
 
-	var $fk_parent;
+	public $fk_parent;
 
 	/**
 	 * @var string description
 	 */
 	public $description;
 
-	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
-	var $date_c;
-	var $date_m;
+	public $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
+	public $date_c;
+	public $date_m;
 	public $fk_user_m;
 	public $fk_user_c;
 
@@ -67,11 +67,11 @@ class EcmDirectory // extends CommonObject
 	 */
 	public $ref;
 
-	var $cats=array();
-	var $motherof=array();
+	public $cats=array();
+	public $motherof=array();
 
-	var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
-	var $forbiddencharsdir = array('<','>',':','?','*','|','"');
+	public $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+	public $forbiddencharsdir = array('<','>',':','?','*','|','"');
 
 	public $full_arbo_loaded;
 

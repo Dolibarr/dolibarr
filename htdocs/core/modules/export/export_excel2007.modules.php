@@ -43,17 +43,17 @@ class ExportExcel2007 extends ExportExcel
      */
     public $label;
 
-	var $extension;
-	var $version;
+	public $extension;
+	public $version;
 
-	var $label_lib;
-	var $version_lib;
+	public $label_lib;
+	public $version_lib;
 
-	var $workbook;      // Handle fichier
-	var $worksheet;     // Handle onglet
-	var $row;
-	var $col;
-    var $file;          // To save filename
+	public $workbook;      // Handle fichier
+	public $worksheet;     // Handle onglet
+	public $row;
+	public $col;
+    public $file;          // To save filename
 
 	/**
 	 *	Constructor

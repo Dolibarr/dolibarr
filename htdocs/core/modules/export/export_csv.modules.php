@@ -40,15 +40,15 @@ class ExportCsv extends ModeleExports
      */
     public $label;
 
-	var $extension;
-	var $version;
+	public $extension;
+	public $version;
 
-	var $label_lib;
-	var $version_lib;
+	public $label_lib;
+	public $version_lib;
 
-	var $separator;
+	public $separator;
 
-	var $handle;    // Handle fichier
+	public $handle;    // Handle fichier
 
 
 	/**
