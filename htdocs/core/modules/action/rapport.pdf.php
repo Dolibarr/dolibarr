@@ -100,6 +100,7 @@ class CommActionRapport
      *      @param  Translate	$outputlangs    Lang object for output language
      *      @return int             			1=OK, 0=KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($socid = 0, $catid = 0, $outputlangs='')
 	{
 		global $user,$conf,$langs,$hookmanager;
@@ -350,4 +351,3 @@ class CommActionRapport
 		return $y;
 	}
 }
-

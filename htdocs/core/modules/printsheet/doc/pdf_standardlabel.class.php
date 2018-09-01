@@ -60,6 +60,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
 		global $mysoc, $conf, $langs;
@@ -235,6 +236,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;

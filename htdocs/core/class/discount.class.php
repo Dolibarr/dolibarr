@@ -362,6 +362,7 @@ class DiscountAbsolute
      *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduc payment of invoice)
      *	@return		int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function link_to_invoice($rowidline,$rowidinvoice)
     {
         // Check parameters
@@ -413,6 +414,7 @@ class DiscountAbsolute
      *
      *	@return		int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function unlink_invoice()
     {
         $sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";

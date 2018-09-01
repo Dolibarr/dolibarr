@@ -201,6 +201,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -430,9 +431,10 @@ class doc_generic_user_odt extends ModelePDFUser
      * @param string        $array_key      key for array
      * @return array                        array of substitutions
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_object($object,$outputlangs,$array_key='object')
     {
-		$array_other=array();
+		$array_other = array();
 		foreach($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;

@@ -73,7 +73,7 @@ class Menu
     /**
      * Insert a menu entry into this->liste
      *
-     * @param	int		$idafter	Array key after which inserting new entry
+     * @param   int		$idafter	Array key after which inserting new entry
      * @param	string	$url        Url to follow on click
      * @param   string	$titre      Label of menu to add
      * @param   integer	$level      Level of menu to add
@@ -101,9 +101,12 @@ class Menu
      *
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function remove_last()
     {
-    	if (count($this->liste) > 1) array_pop($this->liste);
+        if (count($this->liste) > 1) {
+            array_pop($this->liste);
+        }
     }
 
     /**

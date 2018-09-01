@@ -441,6 +441,7 @@ class Commande extends CommonOrder
 	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_draft($user, $idwarehouse=-1)
 	{
 		global $conf,$langs;
@@ -522,6 +523,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user       Object user that change status
 	 *	@return     int         		<0 if KO, 0 if nothing is done, >0 if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_reopen($user)
 	{
 		$error=0;
@@ -875,7 +877,7 @@ class Commande extends CommonOrder
 						$line->fk_unit,
 						$this->element,
 						$line->id
-						);
+					);
 					if ($result < 0)
 					{
 						if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
@@ -1493,6 +1495,7 @@ class Commande extends CommonOrder
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 *			insere dans tableau $this->products
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_product($idproduct, $qty, $remise_percent=0.0, $date_start='', $date_end='')
 	{
 		global $conf, $mysoc;
@@ -1513,56 +1516,57 @@ class Commande extends CommonOrder
 			$localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
 
 			// multiprix
-			if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
+			if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level) {
 				$price = $prod->multiprices[$this->thirdparty->price_level];
-				else
-					$price = $prod->price;
+			} else {
+				$price = $prod->price;
+			}
 
-					$line=new OrderLine($this->db);
+			$line=new OrderLine($this->db);
 
-					$line->context = $this->context;
+			$line->context = $this->context;
 
-					$line->fk_product=$idproduct;
-					$line->desc=$prod->description;
-					$line->qty=$qty;
-					$line->subprice=$price;
-					$line->remise_percent=$remise_percent;
-					$line->vat_src_code=$vat_src_code;
-					$line->tva_tx=$tva_tx;
-					$line->localtax1_tx=$localtax1_tx;
-					$line->localtax2_tx=$localtax2_tx;
-					$line->ref=$prod->ref;
-					$line->libelle=$prod->label;
-					$line->product_desc=$prod->description;
-					$line->fk_unit=$prod->fk_unit;
+			$line->fk_product=$idproduct;
+			$line->desc=$prod->description;
+			$line->qty=$qty;
+			$line->subprice=$price;
+			$line->remise_percent=$remise_percent;
+			$line->vat_src_code=$vat_src_code;
+			$line->tva_tx=$tva_tx;
+			$line->localtax1_tx=$localtax1_tx;
+			$line->localtax2_tx=$localtax2_tx;
+			$line->ref=$prod->ref;
+			$line->libelle=$prod->label;
+			$line->product_desc=$prod->description;
+			$line->fk_unit=$prod->fk_unit;
 
-					// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-					// Save the start and end date of the line in the object
-					if ($date_start) { $line->date_start = $date_start; }
-					if ($date_end)   { $line->date_end = $date_end; }
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Save the start and end date of the line in the object
+			if ($date_start) { $line->date_start = $date_start; }
+			if ($date_end)   { $line->date_end = $date_end; }
 
-					$this->lines[] = $line;
+			$this->lines[] = $line;
 
-					/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-					 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
-					 {
-					 $prod = new Product($this->db);
-					 $prod->fetch($idproduct);
-					 $prod -> get_sousproduits_arbo();
-					 $prods_arbo = $prod->get_arbo_each_prod();
-					 if(count($prods_arbo) > 0)
-					 {
-					 foreach($prods_arbo as $key => $value)
-					 {
-					 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-					 if(! in_array($value[1],$this->products))
-					 $this->add_product($value[1], $value[0]);
+			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
+			 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
+			 {
+			 $prod = new Product($this->db);
+			 $prod->fetch($idproduct);
+			 $prod -> get_sousproduits_arbo();
+			 $prods_arbo = $prod->get_arbo_each_prod();
+			 if(count($prods_arbo) > 0)
+			 {
+			 foreach($prods_arbo as $key => $value)
+			 {
+			 // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+			 if(! in_array($value[1],$this->products))
+			 $this->add_product($value[1], $value[0]);
 
-					 }
-					 }
+			 }
+			 }
 
-					 }
-					 **/
+			 }
+			 **/
 		}
 	}
 
@@ -1722,6 +1726,7 @@ class Commande extends CommonOrder
 	 *	@param     int	$idremise			Id de la remise fixe
 	 *	@return    int          			>0 si ok, <0 si ko
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_discount($idremise)
 	{
 		global $langs;
@@ -1799,6 +1804,7 @@ class Commande extends CommonOrder
 	 *	@param		int		$only_product	Return only physical products
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines($only_product=0)
 	{
 		$this->lines=array();
@@ -2025,6 +2031,7 @@ class Commande extends CommonOrder
 	 *
 	 * TODO deprecate, move to Shipping class
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function nb_expedition()
 	{
 		$sql = 'SELECT count(*)';
@@ -2051,6 +2058,7 @@ class Commande extends CommonOrder
 	 *
 	 *	TODO		FONCTION NON FINIE A FINIR
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function stock_array($filtre_statut=self::STATUS_CANCELED)
 	{
 		$this->stocks = array();
@@ -2167,6 +2175,7 @@ class Commande extends CommonOrder
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					<0 if KO, >0 if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise($user, $remise, $notrigger=0)
 	{
 		$remise=trim($remise)?trim($remise):0;
@@ -2233,6 +2242,7 @@ class Commande extends CommonOrder
 	 * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *		@return		int 					<0 if KO, >0 if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise_absolue($user, $remise, $notrigger=0)
 	{
 		$remise=trim($remise)?trim($remise):0;
@@ -2299,6 +2309,7 @@ class Commande extends CommonOrder
 	 * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date($user, $date, $notrigger=0)
 	{
 		if ($user->rights->commande->creer)
@@ -2363,6 +2374,7 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 si ko, >0 si ok
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison, $notrigger=0)
 	{
 		if ($user->rights->commande->creer)
@@ -2432,6 +2444,7 @@ class Commande extends CommonOrder
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     int             		-1 if KO, array with result if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
 	{
 		global $user;
@@ -2569,6 +2582,7 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *  @return     int        			 		>0 if ok, <0 if ko
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function demand_reason($demand_reason_id, $notrigger=0)
 	{
 		global $user;
@@ -2640,6 +2654,7 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return     int             		<0 if KO, >0 if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_ref_client($user, $ref_client, $notrigger=0)
 	{
 		if ($user->rights->commande->creer)
@@ -3250,6 +3265,7 @@ class Commande extends CommonOrder
 	 *	@param		User	$user   Object user
 	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
 		global $conf, $langs;
@@ -3338,6 +3354,7 @@ class Commande extends CommonOrder
 	 *  @param      int     $donotshowbilled  Do not show billed status after order status
 	 *  @return     string					  Label of status
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$billed,$mode,$donotshowbilled=0)
 	{
 		global $langs, $conf;
@@ -3653,6 +3670,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@return     int         <0 si ko, >0 si ok
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $user;
@@ -4288,6 +4306,7 @@ class OrderLine extends CommonOrderLine
 	 *
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
 		$this->db->begin();

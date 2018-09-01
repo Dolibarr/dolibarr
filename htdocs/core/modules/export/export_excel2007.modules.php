@@ -103,6 +103,7 @@ class ExportExcel2007 extends ExportExcel
      *
 	 * 	@return		int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_file()
 	{
 		global $conf;
@@ -122,4 +123,3 @@ class ExportExcel2007 extends ExportExcel
 		return 1;
 	}
 }
-

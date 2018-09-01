@@ -150,9 +150,9 @@ class mod_project_simple extends ModeleNumRefProjects
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function project_get_num($objsoc=0,$project='')
     {
         return $this->getNextValue($objsoc,$project);
     }
 }
-

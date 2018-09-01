@@ -150,9 +150,9 @@ class mod_task_simple extends ModeleNumRefTask
      *  @param  Task	$object		Object task
      *  @return string      		Next not used reference
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function task_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 }
-

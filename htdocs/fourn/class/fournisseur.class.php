@@ -107,6 +107,7 @@ class Fournisseur extends Societe
 	 *
 	 * @return     int         <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf, $user;
@@ -150,6 +151,7 @@ class Fournisseur extends Societe
 	 *	@param		string	$name		Category name
 	 *  @return     int         		<0 if KO, 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function CreateCategory($user, $name)
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
@@ -176,6 +178,7 @@ class Fournisseur extends Societe
 	 *
 	 *	@return		array		Array of suppliers
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function ListArray()
 	{
 		global $conf;
@@ -207,4 +210,3 @@ class Fournisseur extends Societe
 		return $arr;
 	}
 }
-

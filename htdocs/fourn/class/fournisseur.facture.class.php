@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
- * Copyright (C) 2018           Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -681,8 +681,9 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Load this->lines
      *
-     *	@return     int         1 si ok, < 0 si erreur
+     *  @return     int         1 si ok, < 0 si erreur
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_lines()
     {
     	$this->lines = array();
@@ -909,6 +910,7 @@ class FactureFournisseur extends CommonInvoice
      *    @param     int	$idremise	Id of absolute discount
      *    @return    int          		>0 if OK, <0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function insert_discount($idremise)
     {
     	global $langs;
@@ -1162,6 +1164,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
      *	@return int         		<0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_paid($user, $close_code='', $close_note='')
     {
         global $conf,$langs;
@@ -1210,6 +1213,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param      User	$user       Object user that change status
      *	@return     int         		<0 si ok, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_unpaid($user)
     {
         global $conf,$langs;
@@ -1420,6 +1424,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
@@ -1981,9 +1986,10 @@ class FactureFournisseur extends CommonInvoice
 	 *	Renvoi liste des factures remplacables
 	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
 	 *
-	 *	@param		int		$socid		Id societe
+	 *	@param      int		$socid		Id societe
 	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
-	 */
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_replacable_supplier_invoices($socid=0)
 	{
 		global $conf;
@@ -2031,6 +2037,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param		int		$socid		Id societe
 	 *	@return    	array				Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_qualified_avoir_supplier_invoices($socid=0)
 	{
 		global $conf;
@@ -2079,6 +2086,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param      User	$user       Object user
      *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user)
     {
         global $conf, $langs;
@@ -2373,7 +2381,8 @@ class FactureFournisseur extends CommonInvoice
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     <0 if KO, >0 if OK
-	 */
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf, $user;
@@ -2793,10 +2802,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rang       		= $obj->rang;
 		$this->fk_unit           = $obj->fk_unit;
 
-		$this->multicurrency_subprice	= $obj->multicurrency_subprice;
-		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
-		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
-		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
+		$this->multicurrency_subprice = $obj->multicurrency_subprice;
+		$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
+		$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+		$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 		$this->fetch_optionals();
 
@@ -3112,6 +3121,7 @@ class SupplierInvoiceLine extends CommonObjectLine
      *
      *  @return		int		<0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_total()
     {
         $this->db->begin();

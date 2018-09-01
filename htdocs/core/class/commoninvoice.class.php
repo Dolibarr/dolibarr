@@ -337,6 +337,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @return    int         <=0 if no, >0 if yes
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function is_erasable()
 	{
 		global $conf;
@@ -459,6 +460,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($paye, $status, $mode=0, $alreadypaid=-1, $type=0)
 	{
 		global $langs;
@@ -585,8 +587,9 @@ abstract class CommonInvoice extends CommonObject
 	 *	conditions de reglements de la facture et date de facturation
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *	@return     date     			       	Date limite de reglement si ok, <0 si ko
+	 *  @return     date     			       	Date limite de reglement si ok, <0 si ko
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function calculate_date_lim_reglement($cond_reglement=0)
 	{
 		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
@@ -776,4 +779,3 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 		$this->db = $db;
 	}
 }
-

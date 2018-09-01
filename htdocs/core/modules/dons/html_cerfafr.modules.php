@@ -72,6 +72,7 @@ class html_cerfafr extends ModeleDon
 	 *  @param	string		$currency		Currency code
 	 *	@return	int             			>0 if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($don,$outputlangs,$currency='')
 	{
 		global $user,$conf,$langs,$mysoc;
@@ -284,7 +285,7 @@ class html_cerfafr extends ModeleDon
  * @param   mixed   $montant    amount
  * @param   mixed   $devise1    devise 1 ex: euro
  * @param   mixed   $devise2    devise 2 ex: centimes
- * @return string           amount in letters
+ * @return string               amount in letters
  */
 function amountToLetters($montant, $devise1='', $devise2='')
 {

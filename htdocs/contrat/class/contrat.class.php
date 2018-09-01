@@ -251,6 +251,7 @@ class Contrat extends CommonObject
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
 		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
@@ -272,6 +273,7 @@ class Contrat extends CommonObject
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
 		$result=$this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
@@ -711,6 +713,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
 		$this->nbofserviceswait=0;
@@ -1789,6 +1792,7 @@ class Contrat extends CommonObject
 	 *	@return int     			<0 if KO, >0 if OK
 	 *  @deprecated					This function will never be used. Status of a contract is status of its lines.
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_statut($user)
 	{
 		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
@@ -1827,6 +1831,7 @@ class Contrat extends CommonObject
 	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
 	 *	@return string      			Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode)
 	{
 		global $langs;
@@ -2008,6 +2013,7 @@ class Contrat extends CommonObject
 	 *  @param	int		$statut     Status of lines to get
 	 *  @return array       		Array of line's rowid
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function array_detail($statut=-1)
 	{
 		$tab=array();
@@ -2084,6 +2090,7 @@ class Contrat extends CommonObject
      *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
      *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user,$mode)
 	{
 		global $conf, $langs;
@@ -2160,6 +2167,7 @@ class Contrat extends CommonObject
 	 *
 	 *   @return     int         <0 si ko, >0 si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf, $user;
@@ -2593,6 +2601,7 @@ class ContratLigne extends CommonObjectLine
 	 *  @param	string	$moreatt	More attribute
 	 *  @return string      		Libelle
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function LibStatut($statut,$mode,$expired=-1,$moreatt='')
 	{
 		global $langs;
@@ -3012,6 +3021,7 @@ class ContratLigne extends CommonObjectLine
 	 *
 	 *		@return		int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
 		$this->db->begin();
@@ -3131,6 +3141,7 @@ class ContratLigne extends CommonObjectLine
 	 * @param   string 		$comment 	A comment typed by user
 	 * @return 	int                    	<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function active_line($user, $date, $date_end = '', $comment = '')
 	{
 		global $langs, $conf;
@@ -3188,6 +3199,7 @@ class ContratLigne extends CommonObjectLine
      * @param    int	$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @return int                    	<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_line($user, $date_end, $comment = '', $notrigger=0)
 	{
 		global $langs, $conf;

@@ -65,6 +65,7 @@ class AntiVir
 	 *	@param	string	$file		File to scan
 	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dol_avscan_file($file)
 	{
 		global $conf;
@@ -180,4 +181,3 @@ class AntiVir
 		return $ret;
 	}
 }
-

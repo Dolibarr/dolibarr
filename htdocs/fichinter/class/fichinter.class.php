@@ -115,6 +115,7 @@ class Fichinter extends CommonObject
 	 *
 	 *  @return     int         <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $user;
@@ -645,6 +646,7 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return     string      		Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		// Init/load array of translation of status
@@ -987,6 +989,7 @@ class Fichinter extends CommonObject
 	 *	@param      date	$date_delivery   	date of delivery
 	 *	@return     int							<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_delivery($user, $date_delivery)
 	{
 		global $conf;
@@ -1019,6 +1022,7 @@ class Fichinter extends CommonObject
 	 *	@param      string	$description    description
 	 *	@return     int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_description($user, $description)
 	{
 		global $conf;
@@ -1052,6 +1056,7 @@ class Fichinter extends CommonObject
 	 *	@param      int		$contractid		Description
 	 *	@return     int						<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_contrat($user, $contractid)
 	{
 		global $conf;
@@ -1258,6 +1263,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
 		$this->lines = array();
@@ -1572,6 +1578,7 @@ class FichinterLigne extends CommonObjectLine
 	 *
 	 *	@return		int		<0 si ko, >0 si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
 		global $conf;
@@ -1674,4 +1681,3 @@ class FichinterLigne extends CommonObjectLine
 		}
 	}
 }
-

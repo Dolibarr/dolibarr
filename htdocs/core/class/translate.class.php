@@ -764,6 +764,7 @@ class Translate
 	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
 	 *  @return array     				List of languages
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
 	{
 		global $conf;
@@ -802,6 +803,7 @@ class Translate
 	 *  @param  integer	$searchalt      Search also alernate language file
 	 *  @return boolean         		true if exists and readable
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function file_exists($filename,$searchalt=0)
 	{
 		// Test si fichier dans repertoire de la langue
@@ -1024,6 +1026,7 @@ class Translate
 	 *
 	 * @return array	Array of translation keys lang_key => string_translation_loaded
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_translations_for_substitutions()
 	{
 		$substitutionarray = array();
