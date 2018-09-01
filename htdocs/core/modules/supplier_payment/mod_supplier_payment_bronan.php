@@ -149,5 +149,4 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

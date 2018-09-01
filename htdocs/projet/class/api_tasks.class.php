@@ -487,7 +487,6 @@ class Tasks extends DolibarrApi
                 'message' => 'Task deleted'
             )
         );
-
     }
 
 

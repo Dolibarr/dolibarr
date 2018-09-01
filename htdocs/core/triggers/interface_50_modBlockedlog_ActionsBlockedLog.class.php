@@ -133,5 +133,4 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 1;
 		}
     }
-
 }

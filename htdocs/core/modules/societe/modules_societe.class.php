@@ -57,7 +57,6 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 
         return $liste;
     }
-
 }
 
 /**
@@ -251,7 +250,6 @@ abstract class ModeleThirdPartyCode
     {
         return 0;
     }
-
 }
 
 

@@ -2473,7 +2473,6 @@ class Ticket extends CommonObject
         }
         return false;
     }
-
 }
 
 
@@ -2593,5 +2592,4 @@ class TicketsLine
  	 * Close ticket date
 	 */
     public $date_close = '';
-
 }

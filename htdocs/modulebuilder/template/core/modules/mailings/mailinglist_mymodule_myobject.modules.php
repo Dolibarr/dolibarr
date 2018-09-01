@@ -199,6 +199,5 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		if ($a < 0) return -1;
 		return $a;
 	}
-
 }
 

@@ -843,5 +843,4 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		return -1;
 	}
-
 }

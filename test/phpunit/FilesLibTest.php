@@ -502,5 +502,4 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $user->rights->facture->lire = $savpermlire;
         $user->rights->facture->creer = $savpermcreer;
     }
-
 }

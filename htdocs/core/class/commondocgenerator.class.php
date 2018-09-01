@@ -767,7 +767,6 @@ abstract class CommonDocGenerator
 		}
 
 		return $array_to_fill;
-
 	}
 
 

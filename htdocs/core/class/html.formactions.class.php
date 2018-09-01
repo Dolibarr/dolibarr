@@ -366,5 +366,4 @@ class FormActions
         else print $out;
         return '';
     }
-
 }

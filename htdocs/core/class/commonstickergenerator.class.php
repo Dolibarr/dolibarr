@@ -266,5 +266,4 @@ abstract class CommonStickerGenerator
 		$this->_Height	= $this->_Convert_Metric($format['height'], $this->_Metric, $this->_Metric_Doc);
 		$this->Set_Char_Size($pdf, $format['font-size']);
 	}
-
 }

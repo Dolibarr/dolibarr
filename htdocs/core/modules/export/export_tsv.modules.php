@@ -295,6 +295,5 @@ class ExportTsv extends ModeleExports
 
     	return $newvalue;
     }
-
 }
 

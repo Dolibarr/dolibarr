@@ -280,6 +280,5 @@ class box_graph_invoices_permonth extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

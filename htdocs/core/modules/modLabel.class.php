@@ -90,7 +90,6 @@ class modLabel extends DolibarrModules
 		$this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
 		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[4][4] = 'supprimer';
-
 	}
 
 	/**

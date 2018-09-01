@@ -137,7 +137,6 @@ class box_task extends ModeleBoxes
 		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
 		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
 		$this->info_box_contents[$i][] = array('td' => '', 'text' => "");
-
 	}
 
 	/**

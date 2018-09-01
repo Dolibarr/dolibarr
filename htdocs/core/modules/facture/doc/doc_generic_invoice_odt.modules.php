@@ -502,6 +502,5 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 		return -1;
 	}
-
 }
 

@@ -132,6 +132,5 @@ class mod_expedition_ribera extends ModelNumRefExpedition
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
 

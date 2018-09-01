@@ -149,5 +149,4 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

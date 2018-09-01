@@ -1165,7 +1165,6 @@ class SMTPs
 			$this->_setErr(102, 'eMail type not defined.');
 			return false;
 		}
-
 	}
 
 	/**
@@ -1842,8 +1841,6 @@ class SMTPs
 
 		return implode("\n", $_errMsg);
 	}
-
-
 }
 
 

@@ -199,7 +199,6 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' AND p.fk_paiement = 7';
 		$this->export_sql_end[$r] .=' AND ba.entity IN ('.getEntity('bank_account').')';
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
-
 	}
 
 

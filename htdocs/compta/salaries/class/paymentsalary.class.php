@@ -627,5 +627,4 @@ class PaymentSalary extends CommonObject
 	    }*/
 	    return '';
 	}
-
 }

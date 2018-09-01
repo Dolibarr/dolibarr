@@ -146,5 +146,4 @@ class mailing_example extends MailingTargets
 
         return '';
     }
-
 }

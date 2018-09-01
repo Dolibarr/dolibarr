@@ -4236,6 +4236,5 @@ class PropaleLigne extends CommonObjectLine
 			return -2;
 		}
 	}
-
 }
 

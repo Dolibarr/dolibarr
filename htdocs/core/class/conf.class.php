@@ -666,7 +666,6 @@ class Conf
 				$this->loghandlers[$handler] = $loghandlerinstance;
 			}
 		}
-
 	}
 }
 

@@ -175,5 +175,4 @@ class mod_facture_mercure extends ModeleNumRefFactures
     {
         return $this->getNextValue($objsoc,$objforref,$mode);
     }
-
 }

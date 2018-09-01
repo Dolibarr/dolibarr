@@ -152,5 +152,4 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

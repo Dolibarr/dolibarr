@@ -1385,7 +1385,6 @@ class FormMail extends Form
 
 		return $tmparray;
 	}
-
 }
 
 

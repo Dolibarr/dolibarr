@@ -537,7 +537,6 @@ class Contracts extends DolibarrApi
                 'message' => 'Contract deleted'
             )
         );
-
     }
 
     /**

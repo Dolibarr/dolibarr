@@ -348,7 +348,6 @@ class modStock extends DolibarrModules
 		$this->import_run_sql_after_array[$r]=array(    // Because we may change data that are denormalized, we must update dernormalized data after.
 		    'UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
-
 	}
 	
 	

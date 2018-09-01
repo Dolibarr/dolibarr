@@ -222,6 +222,5 @@ class CommandeStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-
 }
 

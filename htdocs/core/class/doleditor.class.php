@@ -135,7 +135,6 @@ class DolEditor
             $this->height				= $height;
             $this->width				= $width;
     	}
-
     }
 
     /**
@@ -345,6 +344,5 @@ class DolEditor
         if ($noprint) return $out;
         else print $out;
     }
-
 }
 
