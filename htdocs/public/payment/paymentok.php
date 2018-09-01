@@ -392,13 +392,15 @@ if ($ispaymentok)
 
 				if (! $error)
 				{
-					dol_syslog("Call ->subscriptionComplementaryActions", LOG_DEBUG, 0, '_payment');
+					dol_syslog("Call ->subscriptionComplementaryActions option=".$option, LOG_DEBUG, 0, '_payment');
 
 					$autocreatethirdparty = 1;	// will create thirdparty if member not yet linked to a thirdparty
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty);
 					if ($result < 0)
 					{
+						dol_syslog("Error ".$object->error." ".join(',', $object->errors), LOG_DEBUG, 0, '_payment');
+
 						$error++;
 						$postactionmessages[] = $object->error;
 						$postactionmessages = array_merge($postactionmessages, $object->errors);
@@ -406,9 +408,21 @@ if ($ispaymentok)
 					}
 					else
 					{
-						if ($option == 'bankviainvoice') $postactionmessages[] = 'Invoice, payment and bank record created';
-						if ($option == 'bankdirect')     $postactionmessages[] = 'Bank record created';
-						if ($option == 'invoiceonly')    $postactionmessages[] = 'Invoice recorded';
+						if ($option == 'bankviainvoice')
+						{
+							$postactionmessages[] = 'Invoice, payment and bank record created';
+							dol_syslog("Invoice, payment and bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'bankdirect')
+						{
+							$postactionmessages[] = 'Bank record created';
+							dol_syslog("Bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'invoiceonly')
+						{
+							$postactionmessages[] = 'Invoice recorded';
+							dol_syslog("Invoice recorded", LOG_DEBUG, 0, '_payment');
+						}
 						$ispostactionok = 1;
 
 						// If an invoice was created, it is into $object->invoice
