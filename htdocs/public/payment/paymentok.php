@@ -638,7 +638,7 @@ if ($ispaymentok)
 					}
 					else
 					{
-						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Not way to record the payment.';
+						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
 						$ispostactionok = -1;
 						$error++;
 					}
@@ -700,9 +700,9 @@ if ($ispaymentok)
 
     $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
-    dol_syslog("Send email to customer to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
+    dol_syslog("Send email to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
 
-	// Send an email to admin
+	// Send an email to admins
     if ($sendemail)
 	{
 		$companylangs = new Translate('', $conf);
