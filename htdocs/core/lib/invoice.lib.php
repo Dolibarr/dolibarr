@@ -169,6 +169,12 @@ function invoice_admin_prepare_head()
 }
 
 
+/**
+ * Return array head with list of tabs to view object informations.
+ *
+ * @param   Facture     $object     Invoice object
+ * @return array                    head array with tabs
+ */
 function invoice_rec_prepare_head($object)
 {
 	global $db, $langs, $conf;

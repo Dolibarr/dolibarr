@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       card.php
+ *  \file       htdocs/asset/card.php
  *  \ingroup    asset
  *  \brief      Page to create/edit/view asset
  */
