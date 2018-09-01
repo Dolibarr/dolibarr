@@ -34,8 +34,14 @@ class Stripe extends CommonObject
 	public $rowid;
 
 	public $fk_soc;
+
 	public $fk_key;
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $mode;
 
 	/**
@@ -44,8 +50,11 @@ class Stripe extends CommonObject
 	public $entity;
 
 	public $statut;
+
 	public $type;
+
 	public $code;
+
 	public $message;
 
 	/**

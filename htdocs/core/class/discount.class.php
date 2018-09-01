@@ -43,7 +43,11 @@ class DiscountAbsolute
 	 */
 	public $errors=array();
 
-	public $id;					// Id discount
+	/**
+	 * @var int ID discount
+	 */
+	public $id;
+
     public $fk_soc;
     public $discount_type;			// 0 => customer discount, 1 => supplier discount
     public $amount_ht;				//

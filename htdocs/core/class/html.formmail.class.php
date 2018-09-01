@@ -1402,6 +1402,9 @@ class FormMail extends Form
  */
 class ModelMail
 {
+	/**
+	 * @var int ID
+	 */
 	public $id;
 
 	/**

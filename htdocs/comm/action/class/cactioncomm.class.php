@@ -43,20 +43,20 @@ class CActionComm
      */
     public $id;
 
-    var $code;
-    var $type;
-    var $libelle;       // deprecated
+    public $code;
+    public $type;
+    public $libelle;       // deprecated
 
     /**
      * @var string Type of agenda event label
      */
     public $label;
 
-    var $active;
-    var $color;
-    var $picto;
+    public $active;
+    public $color;
+    public $picto;
 
-    var $type_actions=array();
+    public $type_actions=array();
 
 
     /**

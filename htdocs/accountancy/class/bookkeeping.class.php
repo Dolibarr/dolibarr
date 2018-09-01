@@ -65,8 +65,7 @@ class BookKeeping extends CommonObject
 	 * @var int ID
 	 */
 	public $id;
-	/**
-	 */
+
 	public $doc_date;
 	public $date_lim_reglement;
 	public $doc_type;
@@ -1865,7 +1864,11 @@ class BookKeeping extends CommonObject
  */
 class BookKeepingLine
 {
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $doc_date = '';
 	public $doc_type;
 	public $doc_ref;

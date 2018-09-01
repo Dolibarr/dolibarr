@@ -55,15 +55,15 @@ class Ccountry // extends CommonObject
 	 */
 	public $id;
 
-	var $code;
-	var $code_iso;
+	public $code;
+	public $code_iso;
 
 	/**
      * @var string Countries label
      */
     public $label;
 
-	var $active;
+	public $active;
 
 
 
