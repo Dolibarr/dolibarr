@@ -161,7 +161,7 @@ class Categorie extends CommonObject
 	public $fk_parent;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Category label
      */
    	public $label;
 

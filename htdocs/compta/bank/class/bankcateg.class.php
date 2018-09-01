@@ -35,7 +35,7 @@ class BankCateg // extends CommonObject
 	public $id;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string bank categories label
      */
     public $label;
 

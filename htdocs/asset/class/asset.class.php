@@ -105,7 +105,7 @@ class Asset extends CommonObject
 	public $entity;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Asset label
      */
    	public $label;
 

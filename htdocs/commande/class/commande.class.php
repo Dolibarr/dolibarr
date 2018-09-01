@@ -3814,7 +3814,7 @@ class OrderLine extends CommonOrderLine
 	var $fk_facture;
 
 	/**
-	 * @var string proper name for given parameter
+	 * @var string Order lines label
 	 */
 	public $label;
 

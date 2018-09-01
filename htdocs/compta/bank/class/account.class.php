@@ -1679,7 +1679,7 @@ class AccountLine extends CommonObject
 	var $amount;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string bank transaction lines label
      */
     public $label;
 

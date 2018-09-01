@@ -61,7 +61,7 @@ class PaymentVarious extends CommonObject
 	var $num_payment;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string various payments label
      */
     public $label;
 

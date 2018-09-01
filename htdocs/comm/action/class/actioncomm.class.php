@@ -38,21 +38,21 @@ class ActionComm extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='action';
-    
+
     /**
      * @var string Name of table without prefix where object is stored
      */
     public $table_element = 'actioncomm';
-	
+
     public $table_rowid = 'id';
     public $picto='action';
-    
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
-    
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user, 2=Same than 1 but accept record if fksoc is empty
      * @var integer
@@ -78,7 +78,7 @@ class ActionComm extends CommonObject
     var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
 
     /**
-     * @var string proper name for given parameter
+     * @var string Agenda event label
      */
     public $label;
 

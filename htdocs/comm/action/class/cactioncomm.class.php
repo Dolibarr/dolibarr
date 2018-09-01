@@ -32,7 +32,7 @@ class CActionComm
      * @var string Error code (or message)
      */
     public $error='';
-	
+
     /**
      * @var DoliDB Database handler.
      */
@@ -46,12 +46,12 @@ class CActionComm
     var $code;
     var $type;
     var $libelle;       // deprecated
-    
+
     /**
-     * @var string proper name for given parameter
+     * @var string Type of agenda event label
      */
     public $label;
-    
+
     var $active;
     var $color;
     var $picto;
