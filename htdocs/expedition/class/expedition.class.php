@@ -476,10 +476,12 @@ class Expedition extends CommonObject
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
 		$sql.= ', i.libelle as libelle_incoterms';
+		$sql.= ', s.libelle as shipping_method'; 
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as s ON e.fk_shipping_method = s.rowid';
 		$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 		if ($id)   	  $sql.= " AND e.rowid=".$id;
 		if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
@@ -497,9 +499,9 @@ class Expedition extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
-				$this->ref_customer			= $obj->ref_customer;
-				$this->ref_ext				= $obj->ref_ext;
-				$this->ref_int				= $obj->ref_int;
+				$this->ref_customer	    = $obj->ref_customer;
+				$this->ref_ext		    = $obj->ref_ext;
+				$this->ref_int		    = $obj->ref_int;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
@@ -509,12 +511,13 @@ class Expedition extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->shipping_method_id	= $obj->fk_shipping_method;
+				$this->shipping_method_id   = $obj->fk_shipping_method;
+				$this->shipping_method	    = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
-				$this->fk_project			= $obj->fk_projet;
+				$this->fk_project	    = $obj->fk_projet;
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -530,13 +533,13 @@ class Expedition extends CommonObject
 				$this->note_private         = $obj->note_private;
 
 				// A denormalized value
-				$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
+				$this->trueSize             = $obj->size."x".$obj->width."x".$obj->height;
 				$this->size_units           = $obj->size_units;
 
 				//Incoterms
-				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->fk_incoterms         = $obj->fk_incoterms;
+				$this->location_incoterms   = $obj->location_incoterms;
+				$this->libelle_incoterms    = $obj->libelle_incoterms;
 
 				$this->db->free($result);
 
