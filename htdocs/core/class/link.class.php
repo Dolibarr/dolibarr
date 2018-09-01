@@ -47,7 +47,7 @@ class Link extends CommonObject
     public $url;
 
     /**
-     * @var string proper name for given parameter
+     * @var string Links label
      */
     public $label;
 

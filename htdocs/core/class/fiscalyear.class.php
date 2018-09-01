@@ -45,7 +45,7 @@ class Fiscalyear extends CommonObject
 	var $rowid;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string fiscal year label
      */
     public $label;
 

@@ -58,7 +58,7 @@ class PaymentSalary extends CommonObject
 	public $num_payment;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string salary payments label
      */
     public $label;
 

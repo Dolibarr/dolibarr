@@ -1399,7 +1399,7 @@ class ModelMail
 	public $id;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Model mail label
      */
     public $label;
 

@@ -37,12 +37,12 @@ class Tva extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='tva';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='tva';
-	
+
 	public $picto='payment';
 
 	var $tms;
@@ -51,12 +51,12 @@ class Tva extends CommonObject
 	var $amount;
 	var $type_payment;
 	var $num_payment;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
+
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
