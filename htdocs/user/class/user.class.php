@@ -44,12 +44,12 @@ class User extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='user';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='user';
-	
+
 	public $fk_element='fk_user';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -146,14 +146,14 @@ class User extends CommonObject
 	public $default_c_exp_tax_cat;
 	public $default_range;
 
-	public $fields=array(
-        	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
-        	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
-        	'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name','enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-    	);
+	public $fields = array(
+        'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+        'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
+        'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name','enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+    );
 
 	/**
-	 *    Constructor de la classe
+	 *    Constructor of the class
 	 *
 	 *    @param   DoliDb  $db     Database handler
 	 */
@@ -1541,7 +1541,7 @@ class User extends CommonObject
 						$adh->zip=$this->zip;
 						$adh->state_id=$this->state_id;
 						$adh->country_id=$this->country_id;
-						
+
 						$adh->email=$this->email;
 						$adh->skype=$this->skype;
 						$adh->phone=$this->office_phone;

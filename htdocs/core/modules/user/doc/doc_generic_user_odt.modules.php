@@ -423,10 +423,18 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
+    /**
+     * get substitution array for object
+     *
+     * @param User          $object         user
+     * @param Translation   $outputlangs    translation object
+     * @param string        $array_key      key for array
+     * @return array                        array of substitutions
+     */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_object($object,$outputlangs,$array_key='object')
     {
-		$array_other=array();
+		$array_other = array();
 		foreach($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;

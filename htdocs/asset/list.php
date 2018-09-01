@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       list.php
+ *   	\file       htdocs/asset/list.php
  *		\ingroup    asset
  *		\brief      List page for asset
  */

@@ -34,11 +34,18 @@ class CdavLib
 
 	private $langs;
 
+    /**
+     * Constructor
+     *
+     * @param   User        $user   user
+     * @param   DoliDB      $db     Database handler
+     * @param   Translation $langs  translation
+     */
 	function __construct($user, $db, $langs)
 	{
-		$this->user 	= $user;
-		$this->db 		= $db;
-		$this->langs 	= $langs;
+		$this->user = $user;
+		$this->db = $db;
+		$this->langs = $langs;
 	}
 
 	/**

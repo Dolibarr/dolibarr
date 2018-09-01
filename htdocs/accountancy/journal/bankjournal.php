@@ -147,6 +147,7 @@ $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $paymentloanstatic = new PaymentLoan($db);
+$accountLinestatic=new AccountLine($db);
 
 // Get code of finance journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -370,7 +371,8 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
 					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
+                                        $accountLinestatic->fetch($links[$key]['url_id']);
+					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- ' .$accountLinestatic ->getNomUrl(1);
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
 					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
 					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);

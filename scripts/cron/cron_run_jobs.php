@@ -239,6 +239,13 @@ exit(0);
 
 
 
+/**
+ * script cron usage
+ *
+ * @param string $path          path
+ * @param string $script_file   filename
+ * @return void
+ */
 function usage($path,$script_file)
 {
 	global $conf;
@@ -252,4 +259,3 @@ function usage($path,$script_file)
 	print "For example, to run pending tasks every 5mn, you can add this line:\n";
 	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 }
-

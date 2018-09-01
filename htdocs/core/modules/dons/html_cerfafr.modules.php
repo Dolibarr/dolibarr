@@ -38,7 +38,7 @@ class html_cerfafr extends ModeleDon
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDb      $db      Database handler
 	 */
 	function __construct($db)
 	{
@@ -168,7 +168,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
 				//$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 				$form = str_replace('__AMOUNT__', price($don->amount), $form);
-				$form = str_replace('__AMOUNTLETTERS__',chiffre_en_lettre($don->amount),$form);
+				$form = str_replace('__AMOUNTLETTERS__',amountToLetters($don->amount),$form);
 				$form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$currency),$form);
 				$form = str_replace('__CURRENCYCODE__',$conf->currency,$form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$form);
@@ -279,8 +279,15 @@ class html_cerfafr extends ModeleDon
 	}
 }
 
-// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-function chiffre_en_lettre($montant, $devise1='', $devise2='')
+/**
+ * numbers to letters
+ *
+ * @param   mixed   $montant    amount
+ * @param   mixed   $devise1    devise 1 ex: euro
+ * @param   mixed   $devise2    devise 2 ex: centimes
+ * @return string               amount in letters
+ */
+function amountToLetters($montant, $devise1='', $devise2='')
 {
 	if(empty($devise1)) $dev1='euros';
 	else $dev1=$devise1;
