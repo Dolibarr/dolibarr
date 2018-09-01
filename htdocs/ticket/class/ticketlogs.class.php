@@ -57,7 +57,10 @@ class Ticketlogs// extends CommonObject
      */
     public $table_element = 'ticketlogs'; //!< Name of table without prefix where object is stored
 
-    public $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
     public $fk_track_id;
     public $fk_user_create;
