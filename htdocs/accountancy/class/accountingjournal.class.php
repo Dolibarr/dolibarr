@@ -45,7 +45,7 @@ class AccountingJournal extends CommonObject
 	public $code;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Accounting Journal label
      */
     public $label;
 

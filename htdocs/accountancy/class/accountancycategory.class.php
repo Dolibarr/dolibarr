@@ -67,7 +67,7 @@ class AccountancyCategory // extends CommonObject
 	public $code;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Accountancy Category label
      */
     public $label;
 

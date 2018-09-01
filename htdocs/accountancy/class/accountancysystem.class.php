@@ -32,22 +32,22 @@ class AccountancySystem
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 	var $rowid;
 	var $fk_pcg_version;
 	var $pcg_type;
 	var $pcg_subtype;
-	
+
     /**
-     * @var string proper name for given parameter
+     * @var string Accountancy System label
      */
     public $label;
-    
+
 	var $account_number;
 	var $account_parent;
 
