@@ -70,7 +70,12 @@ class ProductCombination
 	 */
 	public $entity;
 
-	public function __construct(DoliDB $db)
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct(DoliDB $db)
 	{
 		global $conf;
 
