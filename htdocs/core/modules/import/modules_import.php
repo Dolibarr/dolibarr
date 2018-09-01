@@ -45,7 +45,7 @@ class ModeleImports
 	public $id;
 
     /**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
 

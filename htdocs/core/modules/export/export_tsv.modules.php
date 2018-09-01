@@ -35,12 +35,12 @@ class ExportTsv extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
     /**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
+
     var $extension;
     var $version;
 
@@ -234,14 +234,14 @@ class ExportTsv extends ModeleExports
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
 
 			$newvalue=$this->tsv_clean($newvalue,$outputlangs->charset_output);
-			
+
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
 				$array = unserialize($typefield);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
-			
+
 			fwrite($this->handle,$newvalue.$this->separator);
             $this->col++;
 		}

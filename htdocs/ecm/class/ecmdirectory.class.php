@@ -45,7 +45,7 @@ class EcmDirectory // extends CommonObject
 	public $id;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string ECM directories label
      */
     public $label;
 

@@ -36,12 +36,12 @@ class ExportExcel extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string Export Excel label
      */
     public $label;
-    
+
 	var $extension;
 	var $version;
 
@@ -73,7 +73,7 @@ class ExportExcel extends ModeleExports
 		$this->version='1.30';             // Driver version
 
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
-		
+
 		if (empty($this->disabled))
 		{
     		// If driver use an external library, put its name here
@@ -337,14 +337,14 @@ class ExportExcel extends ModeleExports
 
 			$newvalue=$this->excel_clean($newvalue);
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
-			
+
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
 				$array = unserialize($typefield);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
-			
+
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{

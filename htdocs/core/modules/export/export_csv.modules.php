@@ -34,12 +34,12 @@ class ExportCsv extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string export files label
      */
     public $label;
-    
+
 	var $extension;
 	var $version;
 
@@ -265,7 +265,7 @@ class ExportCsv extends ModeleExports
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
-			
+
 			fwrite($this->handle,$newvalue.$this->separator);
 			$this->col++;
 		}
@@ -310,14 +310,14 @@ class ExportCsv extends ModeleExports
 	{
 		global $conf;
 		$addquote=0;
-		
+
 
 		// Rule Dolibarr: No HTML
    		//print $charset.' '.$newvalue."\n";
    		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
    		$newvalue=dol_htmlcleanlastbr($newvalue);
    		//print $charset.' '.$newvalue."\n";
-		
+
 		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is on, we can keep record as it is but we must add quotes)
 		$oldvalue=$newvalue;
 		$newvalue=str_replace("\r",'',$newvalue);
@@ -328,7 +328,7 @@ class ExportCsv extends ModeleExports
 			$newvalue=$oldvalue;
 			$addquote=1;
 		}
-		
+
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
 		if (preg_match('/"/',$newvalue))
 		{

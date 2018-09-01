@@ -37,14 +37,14 @@ class ImportXlsx extends ModeleImports
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $datatoimport;
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
@@ -54,12 +54,12 @@ class ImportXlsx extends ModeleImports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
+
 	var $extension;    // Extension of files imported by driver
 	var $version;      // Version of driver
 

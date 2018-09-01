@@ -1061,7 +1061,7 @@ class Livraison extends CommonObject
 
 
 /**
- *  Classe de gestion des lignes de bons de livraison
+ *  Management class of delivery note lines
  */
 class LivraisonLigne extends CommonObjectLine
 {
@@ -1079,7 +1079,7 @@ class LivraisonLigne extends CommonObjectLine
 	var $origin_id;
 
     /**
-     * @var string proper name for given parameter
+     * @var string delivery note lines label
      */
     public $label;
 

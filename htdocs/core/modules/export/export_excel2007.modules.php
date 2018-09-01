@@ -37,12 +37,12 @@ class ExportExcel2007 extends ExportExcel
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
+
 	var $extension;
 	var $version;
 
@@ -73,7 +73,7 @@ class ExportExcel2007 extends ExportExcel
 		$this->version='1.30';             // Driver version
 
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
-		
+
 		if (empty($this->disabled))
 		{
     		// If driver use an external library, put its name here
@@ -93,7 +93,7 @@ class ExportExcel2007 extends ExportExcel
                 $this->version_lib='1.8.0';		// No way to get info from library
     		}
 		}
-		
+
 		$this->row=0;
 	}
 
