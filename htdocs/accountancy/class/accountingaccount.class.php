@@ -99,7 +99,6 @@ class AccountingAccount extends CommonObject
     var $active;       // duplicate with status
 
 
-
 	/**
 	 * Constructor
 	 *
