@@ -36,6 +36,15 @@ ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_v
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
 
+create table llx_facture_rec_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+
 -- For 9.0
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT NULL;
