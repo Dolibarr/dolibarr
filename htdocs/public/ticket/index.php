@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
@@ -64,5 +65,8 @@ if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 }
 
 // End of page
-llxFooter();
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
+
+llxFooter('', 'public');
+
 $db->close();
