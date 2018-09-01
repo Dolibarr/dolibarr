@@ -372,20 +372,16 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
-<<<<<<< HEAD
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function calc_mens($capital,$rate,$nbterm)
-=======
-    /**
-     * Calculate mensuality
-     *
-     * @param   double  $capital        Capital
-     * @param   double  $rate           rate
-     * @param   int     $nbterm         nb term
-     * @return  double                  mensuality
-     */
-    function calc_mens($capital, $rate, $nbterm)
->>>>>>> upstream/develop
+	/**
+	 * Calculate mensuality
+	 *
+	 * @param   double  $capital        Capital
+	 * @param   double  $rate           rate
+	 * @param   int     $nbterm         nb term
+	 * @return  double                  mensuality
+	 */
+	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	function calc_mens($capital, $rate, $nbterm)
 	{
 		$result='';
 
