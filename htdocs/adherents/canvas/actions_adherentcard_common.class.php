@@ -82,6 +82,7 @@ abstract class ActionsAdherentCardCommon
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function assign_values(&$action, $id)
     {
         global $conf, $langs, $user, $canvas;
@@ -237,6 +238,7 @@ abstract class ActionsAdherentCardCommon
      *
      *  @return		string					HTML output
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private function assign_post()
     {
         global $langs, $mysoc;

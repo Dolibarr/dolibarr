@@ -99,6 +99,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  @param	array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			<0 if error, number of emails added if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		$target = array();
@@ -200,4 +201,3 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		return $a;
 	}
 }
-

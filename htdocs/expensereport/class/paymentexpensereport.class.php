@@ -55,9 +55,9 @@ class PaymentExpenseReport extends CommonObject
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
-        //Unknow field
-        var $chid;
-        var $total;
+    //Unknow field
+    var $chid;
+    var $total;
 
 	/**
 	 *	Constructor
@@ -457,6 +457,7 @@ class PaymentExpenseReport extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 	    global $langs;
@@ -609,6 +610,7 @@ class PaymentExpenseReport extends CommonObject
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;

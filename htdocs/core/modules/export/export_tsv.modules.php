@@ -151,7 +151,8 @@ class ExportTsv extends ModeleExports
 	 *	@param		string		$file			Path of filename to generate
 	*	@param		Translate	$outputlangs	Output language object
 	*	@return		int							<0 if KO, >=0 if OK
-	*/
+    */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function open_file($file,$outputlangs)
     {
         global $langs;
@@ -178,6 +179,7 @@ class ExportTsv extends ModeleExports
 	 * 	@param		Translate	$outputlangs		Output language object
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_header($outputlangs)
     {
         return 0;
@@ -193,6 +195,7 @@ class ExportTsv extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
     {
         foreach($array_selected_sorted as $code => $value)
@@ -216,6 +219,7 @@ class ExportTsv extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
     {
     	global $conf;
@@ -255,6 +259,7 @@ class ExportTsv extends ModeleExports
 	 * 	@param		Translate	$outputlangs		Output language object
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_footer($outputlangs)
     {
 		return 0;
@@ -265,6 +270,7 @@ class ExportTsv extends ModeleExports
 	 *
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function close_file()
     {
         fclose($this->handle);
@@ -278,6 +284,7 @@ class ExportTsv extends ModeleExports
 	 * @param	string	$charset	Input AND Output character set
      * @return 	string				Value cleaned
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function tsv_clean($newvalue, $charset)
     {
 		// Rule Dolibarr: No HTML
@@ -296,4 +303,3 @@ class ExportTsv extends ModeleExports
     	return $newvalue;
     }
 }
-

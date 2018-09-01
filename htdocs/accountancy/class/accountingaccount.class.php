@@ -99,6 +99,7 @@ class AccountingAccount extends CommonObject
     var $active;       // duplicate with status
 
 
+
 	/**
 	 * Constructor
 	 *
@@ -534,6 +535,7 @@ class AccountingAccount extends CommonObject
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function account_desactivate($id)
     {
 		$result = $this->checkUsage();
@@ -567,6 +569,7 @@ class AccountingAccount extends CommonObject
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function account_activate($id)
     {
 		$this->db->begin();
@@ -606,6 +609,7 @@ class AccountingAccount extends CommonObject
 	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string              Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;

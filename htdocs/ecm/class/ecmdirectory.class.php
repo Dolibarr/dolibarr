@@ -526,6 +526,7 @@ class EcmDirectory // extends CommonObject
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_motherof()
 	{
 		global $conf;
@@ -575,6 +576,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function LibStatut($status,$mode=0)
 	{
 		global $langs;
@@ -601,6 +603,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
 	 *	@return	array			        Tableau de array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_full_arbo($force=0)
 	{
 		global $conf;
@@ -690,6 +693,7 @@ class EcmDirectory // extends CommonObject
 	 * 	@param	int		$protection		Deep counter to avoid infinite loop
 	 * 	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
 		// Define fullpath
@@ -777,6 +781,7 @@ class EcmDirectory // extends CommonObject
      * @param   User      $user           Object user
      * @return  int                       Result of run_triggers
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function call_trigger($trigger_name, $user)
     {
         global $langs,$conf;

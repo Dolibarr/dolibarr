@@ -58,6 +58,7 @@ class FormCron extends Form
 	 * @param   integer	$readonly		Select is read only or not
 	 * @return	string					HTML select field
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_typejob($htmlname,$selected=0,$readonly=0)
 	{
 		global $langs;

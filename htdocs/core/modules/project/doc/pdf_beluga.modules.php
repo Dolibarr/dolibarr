@@ -117,6 +117,7 @@ class pdf_beluga extends ModelePDFProjects
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs)
 	{
 		global $conf, $hookmanager, $langs, $user;

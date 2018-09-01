@@ -75,6 +75,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *  @param  int		$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_code($db, $societe, $type='')
 	{
 		$this->code='';
@@ -87,4 +88,3 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		return 0; // return ok
 	}
 }
-

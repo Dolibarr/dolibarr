@@ -1192,6 +1192,7 @@ class User extends CommonObject
 	 *  @param  string	$password   Password to force
 	 *  @return int 				<0 if error, if OK returns id of created user
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_from_contact($contact,$login='',$password='')
 	{
 		global $conf,$user,$langs;
@@ -1268,6 +1269,7 @@ class User extends CommonObject
 	 * 	@param	string		$login		Login to force
 	 *  @return int						<0 if KO, if OK, return id of created account
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_from_member($member,$login='')
 	{
 		global $conf,$user,$langs;
@@ -1339,6 +1341,7 @@ class User extends CommonObject
 	 *
 	 *    @return     integer erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_default_rights()
 	{
 		global $conf;
@@ -1674,6 +1677,7 @@ class User extends CommonObject
 	 *
 	 *    @return     <0 si echec, >=0 si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_last_login_date()
 	{
 		$now=dol_now();
@@ -1841,6 +1845,7 @@ class User extends CommonObject
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @TODO Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function send_password($user, $password='', $changelater=0)
 	{
 		global $conf,$langs;
@@ -1952,6 +1957,7 @@ class User extends CommonObject
 	 *
 	 * 		@return		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_clicktodial()
 	{
 		$sql = "SELECT url, login, pass, poste ";
@@ -1988,6 +1994,7 @@ class User extends CommonObject
 	 *
 	 *  @return	integer
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_clicktodial()
 	{
 		$this->db->begin();
@@ -2030,6 +2037,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function SetInGroup($group, $entity, $notrigger=0)
 	{
 		global $conf, $langs, $user;
@@ -2090,6 +2098,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function RemoveFromGroup($group, $entity, $notrigger=0)
 	{
 		global $conf,$langs,$user;
@@ -2361,6 +2370,7 @@ class User extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
@@ -2409,6 +2419,7 @@ class User extends CommonObject
 	 *								2=Return key only (RDN) (uid=qqq)
 	 *	@return	string				DN
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_dn($info,$mode=0)
 	{
 		global $conf;
@@ -2424,6 +2435,7 @@ class User extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_info()
 	{
 		global $conf,$langs;
@@ -2695,6 +2707,7 @@ class User extends CommonObject
 	 *
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_ldap2dolibarr(&$ldapuser)
 	{
 		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
@@ -2730,6 +2743,7 @@ class User extends CommonObject
 	 * @return	void
 	 * @see getAllChildIds
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_children()
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
@@ -2761,6 +2775,7 @@ class User extends CommonObject
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function load_parentof()
 	{
 		global $conf;
@@ -2803,6 +2818,7 @@ class User extends CommonObject
 	 *  @param		string	$filter				SQL filter on users
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_full_tree($deleteafterid=0, $filter='')
 	{
 		global $conf, $user;
@@ -2941,6 +2957,7 @@ class User extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop (no more required, a protection is added with array useridfound)
 	 *	@return		int                     < 0 if KO (infinit loop), >= 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_path_from_id_user($id_user,$protection=0)
 	{
 		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
@@ -3000,6 +3017,7 @@ class User extends CommonObject
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf;
@@ -3072,6 +3090,7 @@ class User extends CommonObject
 	 *  @param  string	$mode       'email' or 'mobile'
 	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function user_get_property($rowid,$mode)
 	{
 		$user_property='';

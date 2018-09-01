@@ -49,6 +49,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		dol_syslog(get_class($this)."::liste_modeles");
@@ -163,5 +164,3 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		return $this->libversion[$key];
 	}
 }
-
-

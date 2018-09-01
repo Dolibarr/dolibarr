@@ -813,6 +813,7 @@ class UserGroup extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 	    global $langs;
@@ -906,6 +907,7 @@ class UserGroup extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_dn($info,$mode=0)
 	{
 		global $conf;
@@ -922,6 +924,7 @@ class UserGroup extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_info()
 	{
 		global $conf,$langs;
@@ -1013,4 +1016,3 @@ class UserGroup extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }
-
