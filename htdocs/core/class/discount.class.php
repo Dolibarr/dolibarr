@@ -38,7 +38,12 @@ class DiscountAbsolute
 	 */
 	public $error;
 
-    public $id;					// Id discount
+	/**
+	 * @var string[]	Array of error strings
+	 */
+	public $errors=array();
+
+	public $id;					// Id discount
     public $fk_soc;
     public $discount_type;			// 0 => customer discount, 1 => supplier discount
     public $amount_ht;				//
