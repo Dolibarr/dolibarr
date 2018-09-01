@@ -44,6 +44,9 @@ class Livraison extends CommonObject
 	 */
 	public $element="delivery";
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element="fk_livraison";
 
 	/**
@@ -53,14 +56,14 @@ class Livraison extends CommonObject
 
 	public $table_element_line="livraisondet";
 
-	var $brouillon;
-	var $socid;
-	var $ref_customer;
+	public $brouillon;
+	public $socid;
+	public $ref_customer;
 
-	var $date_delivery;    // Date really received
-	var $date_creation;
-	var $date_valid;
-	var $model_pdf;
+	public $date_delivery;    // Date really received
+	public $date_creation;
+	public $date_valid;
+	public $model_pdf;
 
 	/**
 	 * Constructor

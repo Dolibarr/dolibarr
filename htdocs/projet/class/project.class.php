@@ -44,7 +44,12 @@ class Project extends CommonObject
 	public $table_element = 'projet';
 
     public $table_element_line = 'projet_task';
-    public $fk_element = 'fk_projet';
+
+    /**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_projet';
+
     public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'projectpub';
 

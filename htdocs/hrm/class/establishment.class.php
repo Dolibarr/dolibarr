@@ -39,7 +39,12 @@ class Establishment extends CommonObject
 	public $table_element='establishment';
 
 	public $table_element_line = '';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_establishment';
+
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='building';
 

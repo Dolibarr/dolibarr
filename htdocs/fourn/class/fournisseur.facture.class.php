@@ -52,7 +52,12 @@ class FactureFournisseur extends CommonInvoice
     public $table_element='facture_fourn';
 
     public $table_element_line='facture_fourn_det';
-    public $fk_element='fk_facture_fourn';
+
+    /**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element='fk_facture_fourn';
+
     public $picto='bill';
 
     /**
