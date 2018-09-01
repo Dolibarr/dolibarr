@@ -62,6 +62,23 @@ $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' :
 if ($action == 'update') {
 	$error = 0;
 
+    $accounting_modes = array(
+        'RECETTES-DEPENSES',
+        'CREANCES-DETTES'
+    );
+
+    $accounting_mode = GETPOST('accounting_mode','alpha');
+
+
+    if (in_array($accounting_mode,$accounting_modes)) {
+
+        if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
+            $error++;
+        }
+    } else {
+        $error++;
+    }
+
 	if (! $error)
 	{
 	    foreach ($list as $constname)
@@ -188,6 +205,21 @@ print "</table>\n";
 
 print '<br>';
 */
+print '<table class="noborder" width="100%">';
+
+// case of the parameter ACCOUNTING_MODE
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
+print "</tr>\n";
+print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
+print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
+print "</td></tr>\n";
+print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
+print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
+
+print "</table>\n";
+print "<br>\n";
 
 // Others params
 
