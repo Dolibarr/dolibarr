@@ -24,7 +24,7 @@
 /**
  *  \file       htdocs/livraison/class/livraison.class.php
  *  \ingroup    delivery
- *  \brief      Fichier de la classe de gestion des bons de livraison
+ *  \brief      Delivery Order Management Class File
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -158,7 +158,7 @@ class Livraison extends CommonObject
 
 
 				/*
-				 *  Insertion des produits dans la base
+				 *  Inserting products into the database
 				 */
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
@@ -310,7 +310,7 @@ class Livraison extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				// Retreive all extrafield
+				// Retreive all extrafields
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -361,7 +361,7 @@ class Livraison extends CommonObject
 		{
 			if (! empty($conf->global->LIVRAISON_ADDON_NUMBER))
 			{
-				// Definition du nom de module de numerotation de commande
+				// Setting the command numbering module name
 				$modName = $conf->global->LIVRAISON_ADDON_NUMBER;
 
 				if (is_readable(DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php'))
@@ -370,7 +370,7 @@ class Livraison extends CommonObject
 
 					$now=dol_now();
 
-					// Recuperation de la nouvelle reference
+					// Retrieving the new reference
 					$objMod = new $modName($this->db);
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
@@ -385,8 +385,7 @@ class Livraison extends CommonObject
 		            }
             		$this->newref = $numref;
 
-					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
-					// de decrementer 2 fois le stock.
+					// Test if is not already in valid status. If so, we stop to avoid decrementing the stock twice.
 					$sql = "SELECT ref";
 					$sql.= " FROM ".MAIN_DB_PREFIX."livraison";
 					$sql.= " WHERE ref = '".$this->db->escape($numref)."'";
@@ -493,10 +492,10 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 * 	Cree le bon de livraison depuis une expedition existante
+	 * 	Creating the delivery slip from an existing shipment
 	 *
-	 *	@param	User	$user            Utilisateur qui cree
-	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
+	 *	@param	User	$user            User who creates
+	 *	@param  int		$sending_id      Id of the expedition that serves as a model
 	 *	@return	integer
 	 */
 	function create_from_sending($user, $sending_id)
@@ -1084,7 +1083,7 @@ class LivraisonLigne extends CommonObjectLine
     public $label;
 
 	/**
-	 * @var string description produit
+	 * @var string product description
 	 */
 	public $description;
 
