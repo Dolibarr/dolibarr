@@ -393,6 +393,48 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     			// Web
     			if ($sourcecompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($sourcecompany->url);
     		}
+    		// Intra VAT
+    		if (! empty($conf->global->MAIN_TVAINTRA_IN_SOURCE_ADDRESS))
+    		{
+    			if ($sourcecompany->tva_intra) $stringaddress.=($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($sourcecompany->tva_intra);
+    		}
+    		// Professionnal Ids
+    		if (! empty($conf->global->MAIN_PROFID1_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof1))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId1",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof1);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID2_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof2))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId2",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof2);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID3_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof3))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId3",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof3);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID4_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof4))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId4",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof4);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID5_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof5))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId5",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof5);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID6_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof6))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId6",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof6);
+    		}
     	}
 
     	if ($mode == 'target' || preg_match('/targetwithdetails/',$mode))

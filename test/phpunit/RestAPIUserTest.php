@@ -173,6 +173,11 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertEquals(1, $object['statut']);
     }
 
+    /**
+     * testRestCreateUser
+     *
+     * @return void
+     */
     public function testRestCreateUser()
     {
 
@@ -224,5 +229,4 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertNotNull($object, "Parsing of json result must no be null");
       $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
     }
-
 }

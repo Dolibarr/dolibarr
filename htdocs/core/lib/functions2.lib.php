@@ -1167,6 +1167,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     return $numFinal;
 }
 
+/**
+ * Get string between
+ *
+ * @param   string  $string     String to test
+ * @param   int     $start      Value for start
+ * @param   int     $end        Value for end
+ * @return  string              Return part of string
+ */
 function get_string_between($string, $start, $end)
 {
     $string = " ".$string;

@@ -30,22 +30,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 class ModeleImports
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-    
-    public $datatoimport;
+  /**
+   * @var DoliDB Database handler.
+   */
+  public $db;
 
-    public $error='';
+  public $datatoimport;
 
-    public $id;           // Id of driver
-    
-    /**
-     * @var string proper name for given parameter
-     */
-    public $label;
-    
+  public $error='';
+
+  /**
+	 * @var int id of driver
+	 */
+	public $id;
+
+  /**
+   * @var string proper name for given parameter
+   */
+  public $label;
+  
 	public $extension;    // Extension of files imported by driver
 	public $version;      // Version of driver
 
@@ -255,6 +258,5 @@ class ModeleImports
 	{
 		return $this->libversion[$key];
 	}
-
 }
 

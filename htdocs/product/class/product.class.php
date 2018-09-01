@@ -47,12 +47,12 @@ class Product extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='product';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='product';
-	
+
 	public $fk_element='fk_product';
 	protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -647,7 +647,6 @@ class Product extends CommonObject
             dol_syslog(get_class($this)."::Create fails verify ".join(',',$this->errors), LOG_WARNING);
             return -3;
         }
-
 	}
 
 
@@ -3014,7 +3013,6 @@ class Product extends CommonObject
 		{
 			return 1;
 		}
-
 	}
 
 	/**
@@ -4432,8 +4430,6 @@ class Product extends CommonObject
 
 		$langs->load('products');
 
-		//$this->db->begin();
-
 		$label_type = 'label';
 
 		if ($type == 'short')
@@ -4693,5 +4689,4 @@ class Product extends CommonObject
             dol_print_error($this->db);
         }
     }
-
 }

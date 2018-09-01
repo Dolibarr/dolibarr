@@ -240,5 +240,4 @@ class ActionsMyModule
 	}
 
 	/* Add here any other hooked methods... */
-
 }

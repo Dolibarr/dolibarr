@@ -287,6 +287,5 @@ class modAccounting extends DolibarrModules
 			'aa.account_parent'=>array('rule'=>'zeroifnull'),
 		);
 		$this->import_examplevalues_array[$r]=array('aa.fk_pcg_version'=>"PCG99-ABREGE",'aa.account_number'=>"707",'aa.label'=>"Product sales",'aa.account_parent'=>"1407","aa.fk_accounting_category"=>"","aa.pcg_type"=>"PROD",'aa.pcg_subtype'=>'PRODUCT','aa.active'=>'1','aa.datec'=>"2017-04-28");
-
 	}
 }

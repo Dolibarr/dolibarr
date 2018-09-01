@@ -228,7 +228,6 @@ class Address
 				return $result;
 			}
 		}
-
 	}
 
 	/**
@@ -486,7 +485,6 @@ class Address
 			dol_print_error($this->db);
 		}
 	}
-
 }
 
 

@@ -395,8 +395,6 @@ class Productbatch extends CommonObject
 		$this->eatby='';
 		$this->batch='';
 		$this->import_key='';
-
-
 	}
 
 	/**
@@ -543,5 +541,4 @@ class Productbatch extends CommonObject
             return -1;
         }
     }
-
 }

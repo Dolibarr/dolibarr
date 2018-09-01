@@ -322,5 +322,4 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
 
         return 0;
     }
-
 }

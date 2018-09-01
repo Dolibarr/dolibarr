@@ -632,10 +632,7 @@ class Propalmergepdfproduct extends CommonObject
 		$this->datec='';
 		$this->tms='';
 		$this->import_key='';
-
-
 	}
-
 }
 
 /**
@@ -657,6 +654,9 @@ class PropalmergepdfproductLine
 	var $tms='';
 	var $import_key;
 
+    /**
+     *  Constructor
+     */
     function __construct()
     {
         return 1;

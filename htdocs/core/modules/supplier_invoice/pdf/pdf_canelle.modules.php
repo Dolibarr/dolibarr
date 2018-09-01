@@ -923,7 +923,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->SetXY($this->postotalht-1, $tab_top+1);
 			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHTShort"),'','C');
 		}
-
 	}
 
 	/**
@@ -1015,7 +1014,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -1247,5 +1245,4 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

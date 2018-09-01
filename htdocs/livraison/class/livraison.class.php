@@ -1056,7 +1056,6 @@ class Livraison extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }
 
 
@@ -1118,5 +1117,4 @@ class LivraisonLigne extends CommonObjectLine
 	{
 		$this->db=$db;
 	}
-
 }

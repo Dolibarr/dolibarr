@@ -422,6 +422,14 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
+    /**
+     * get substitution array for object
+     *
+     * @param User          $object         user
+     * @param Translation   $outputlangs    translation object
+     * @param string        $array_key      key for array
+     * @return array                        array of substitutions
+     */
     function get_substitutionarray_object($object,$outputlangs,$array_key='object')
     {
 		$array_other=array();
@@ -432,5 +440,4 @@ class doc_generic_user_odt extends ModelePDFUser
 		}
 		return $array_other;
 	}
-
 }

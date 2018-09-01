@@ -30,25 +30,25 @@ class AccountingJournal extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='accounting_journal';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='accounting_journal';
-	
+
 	public $fk_element = '';
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'generic';
 
-	var $rowid;
+	public $rowid;
 
 	public $code;
 	
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
+   * @var string proper name for given parameter
+   */
+  public $label;
+  
 	public $nature;		// 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
 	public $active;
 

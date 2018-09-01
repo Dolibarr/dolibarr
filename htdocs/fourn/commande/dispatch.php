@@ -513,9 +513,9 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td>' . $langs->trans("Description") . '</td>';
 				if (! empty($conf->productbatch->enabled))
 				{
-					print '<td>' . $langs->trans("batch_number") . '</td>';
-					print '<td>' . $langs->trans("EatByDate") . '</td>';
-					print '<td>' . $langs->trans("SellByDate") . '</td>';
+					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
+					print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
+					print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
 				}
 				else
 				{
@@ -568,16 +568,21 @@ if ($id > 0 || ! empty($ref)) {
 
 						if (! empty($conf->productbatch->enabled)) {
 							if ($objp->tobatch) {
-								print '<td colspan="4">';
+								print '<td>';
 								print $linktoprod;
 								print "</td>";
+								print '<td class="dispatch_batch_number"></td>';
+								print '<td class="dispatch_dluo"></td>';
+								print '<td class="dispatch_dlc"></td>';
 							} else {
 								print '<td>';
 								print $linktoprod;
 								print "</td>";
-								print '<td colspan="3">';
+								print '<td class="dispatch_batch_number">';
 								print $langs->trans("ProductDoesNotUseBatchSerial");
 								print '</td>';
+								print '<td class="dispatch_dluo"></td>';
+								print '<td class="dispatch_dlc"></td>';
 							}
 						} else {
 							print '<td colspan="4">';
@@ -639,6 +644,7 @@ if ($id > 0 || ! empty($ref)) {
 							print '</td>';
 							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {
+
 							$type = 'dispatch';
 							print '<td align="right">';
 							print '</td>';     // Qty to dispatch
@@ -713,21 +719,27 @@ if ($id > 0 || ! empty($ref)) {
 
 		if ($nbproduct)
 		{
-			$checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
+			$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
 
 			print '<br><div class="center">';
-            print $langs->trans("Comment") . ' : ';
-			print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
-			print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
-			// print ' / '.$object->ref_supplier; // Not yet available
-			print '" class="flat"><br>';
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+			// modified by hook
+			if (empty($reshook))
+			{
+				print $langs->trans("Comment").' : ';
+				print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
+				print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
+				// print ' / '.$object->ref_supplier; // Not yet available
+				print '" class="flat"><br>';
 
-			print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
+				print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
 
-			print '<br><input type="submit" class="button" value="' . $langs->trans("DispatchVerb") . '"';
-			if (count($listwarehouses) <= 0)
-				print ' disabled';
-			print '>';
+				print '<br><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
+				if (count($listwarehouses) <= 0)
+					print ' disabled';
+				print '>';
+			}
 			print '</div>';
 		}
 
@@ -767,14 +779,14 @@ if ($id > 0 || ! empty($ref)) {
 			print load_fiche_titre($langs->trans("ReceivingForSameOrder"));
 
 			print '<div class="div-table-responsive">';
-			print '<table class="noborder" width="100%">';
+			print '<table id="dispatch_received_products" class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
 			print '<td>' . $langs->trans("Product") . '</td>';
 			if (! empty($conf->productbatch->enabled)) {
-				print '<td>' . $langs->trans("batch_number") . '</td>';
-				print '<td>' . $langs->trans("EatByDate") . '</td>';
-				print '<td>' . $langs->trans("SellByDate") . '</td>';
+				print '<td class="dispatch_batch_number_title">' . $langs->trans("batch_number") . '</td>';
+				print '<td class="dispatch_dluo_title">' . $langs->trans("EatByDate") . '</td>';
+				print '<td class="dispatch_dlc_title">' . $langs->trans("SellByDate") . '</td>';
 			}
 			print '<td align="right">' . $langs->trans("QtyDispatched") . '</td>';
 			print '<td></td>';
@@ -797,9 +809,9 @@ if ($id > 0 || ! empty($ref)) {
 				print "</td>\n";
 
 				if (! empty($conf->productbatch->enabled)) {
-					print '<td>' . $objp->batch . '</td>';
-					print '<td>' . dol_print_date($db->jdate($objp->eatby), 'day') . '</td>';
-					print '<td>' . dol_print_date($db->jdate($objp->sellby), 'day') . '</td>';
+					print '<td class="dispatch_batch_number">' . $objp->batch . '</td>';
+					print '<td class="dispatch_dluo">' . dol_print_date($db->jdate($objp->eatby), 'day') . '</td>';
+					print '<td class="dispatch_dlc">' . dol_print_date($db->jdate($objp->sellby), 'day') . '</td>';
 				}
 
 				// Qty

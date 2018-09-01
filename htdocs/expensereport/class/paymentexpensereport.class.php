@@ -248,7 +248,6 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
 
 
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -488,8 +487,6 @@ class PaymentExpenseReport extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 

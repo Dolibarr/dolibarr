@@ -671,5 +671,4 @@ class Opensurveysondage extends CommonObject
 	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
 	    }
 	}
-
 }

@@ -1100,5 +1100,4 @@ class RemiseCheque extends CommonObject
 		}
 		return $langs->trans('Unknown');
 	}
-
 }

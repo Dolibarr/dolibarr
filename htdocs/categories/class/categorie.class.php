@@ -152,19 +152,19 @@ class Categorie extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='category';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='categorie';
 
 	public $fk_parent;
-	
+
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
+   * @var string proper name for given parameter
+   */
+  public $label;
+
 	public $description;
 	/**
 	 * @var string     Color
@@ -803,7 +803,7 @@ class Categorie extends CommonObject
 	 *
 	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
-	 * @return  mixed                  -1 if KO, array of instance of object if OK
+	 * @return  array|int              -1 if KO, array of instance of object if OK
 	 * @see containsObject
 	 */
 	function getObjectsInCateg($type, $onlyids=0)

@@ -2635,7 +2635,6 @@ class SupplierProposal extends CommonObject
 
 	    return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }
 
 
@@ -3207,5 +3206,4 @@ class SupplierProposalLine extends CommonObjectLine
             return -2;
         }
     }
-
 }

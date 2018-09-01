@@ -154,7 +154,6 @@ class Deplacement extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -453,6 +452,5 @@ class Deplacement extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
 }
 

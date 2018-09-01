@@ -839,7 +839,6 @@ class pdf_azur extends ModelePDFPropales
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
 
 

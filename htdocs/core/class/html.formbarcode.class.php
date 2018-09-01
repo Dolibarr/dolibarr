@@ -186,6 +186,5 @@ class FormBarCode
             print '</td></tr></table></form>';
         }
     }
-
 }
 

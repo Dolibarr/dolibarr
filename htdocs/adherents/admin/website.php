@@ -19,7 +19,7 @@
  */
 
 /**
- *     	\file       htdocs/adherents/admin/public.php
+ *     	\file       htdocs/adherents/admin/website.php
  *		\ingroup    member
  *		\brief      File of main public page for member module
  *		\author	    Laurent Destailleur
