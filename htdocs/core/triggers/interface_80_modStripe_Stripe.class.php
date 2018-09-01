@@ -137,7 +137,7 @@ class InterfaceStripe
 			$servicestatus = 1;
 		}
 
-		// If customer is linked to Strip, we update/delete Stripe too
+		// If customer is linked to Stripe, we update/delete Stripe too
 		if ($action == 'COMPANY_MODIFY') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
@@ -173,7 +173,8 @@ class InterfaceStripe
 			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
 
 			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
-			if ($customer) {
+			if ($customer)
+			{
 				$customer->delete();
 			}
 
@@ -182,7 +183,7 @@ class InterfaceStripe
 			$this->db->query($sql);
 		}
 
-		// If payment mode is linked to Strip, we update/delete Stripe too
+		// If payment mode is linked to Stripee, we update/delete Stripe too
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 
 			// For creation of credit card, we do not create in Stripe automatically

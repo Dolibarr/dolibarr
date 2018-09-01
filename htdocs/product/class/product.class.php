@@ -4430,8 +4430,6 @@ class Product extends CommonObject
 
 		$langs->load('products');
 
-		//$this->db->begin();
-
 		$label_type = 'label';
 
 		if ($type == 'short')

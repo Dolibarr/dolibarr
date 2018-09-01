@@ -1682,10 +1682,13 @@ else
 			print '</td><td colspan="2">';
 			if (! empty($conf->accounting->enabled))
 			{
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->accountancy_code_sell,1);
+				if (! empty($object->accountancy_code_sell))
+				{
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch('',$object->accountancy_code_sell,1);
 
-				print $accountingaccount->getNomUrl(0,1,1,'',1);
+					print $accountingaccount->getNomUrl(0,1,1,'',1);
+				}
 			} else {
 				print $object->accountancy_code_sell;
 			}
@@ -1701,10 +1704,13 @@ else
 					print '</td><td colspan="2">';
 					if (! empty($conf->accounting->enabled))
 					{
-						$accountingaccount2 = new AccountingAccount($db);
-						$accountingaccount2->fetch('',$object->accountancy_code_sell_intra,1);
+						if (! empty($object->accountancy_code_sell_intra))
+						{
+							$accountingaccount2 = new AccountingAccount($db);
+							$accountingaccount2->fetch('',$object->accountancy_code_sell_intra,1);
 
-						print $accountingaccount2->getNomUrl(0,1,1,'',1);
+							print $accountingaccount2->getNomUrl(0,1,1,'',1);
+						}
 					} else {
 						print $object->accountancy_code_sell_intra;
 					}
@@ -1717,10 +1723,13 @@ else
 				print '</td><td colspan="2">';
 				if (! empty($conf->accounting->enabled))
 				{
-					$accountingaccount3 = new AccountingAccount($db);
-					$accountingaccount3->fetch('',$object->accountancy_code_sell_export,1);
+					if (! empty($object->accountancy_code_sell_export))
+					{
+						$accountingaccount3 = new AccountingAccount($db);
+						$accountingaccount3->fetch('',$object->accountancy_code_sell_export,1);
 
-					print $accountingaccount3->getNomUrl(0,1,1,'',1);
+						print $accountingaccount3->getNomUrl(0,1,1,'',1);
+					}
 				} else {
 					print $object->accountancy_code_sell_export;
 				}
@@ -1733,10 +1742,13 @@ else
 			print '</td><td colspan="2">';
 			if (! empty($conf->accounting->enabled))
 			{
-				$accountingaccount4 = new AccountingAccount($db);
-				$accountingaccount4->fetch('',$object->accountancy_code_buy,1);
+				if (! empty($object->accountancy_code_buy))
+				{
+					$accountingaccount4 = new AccountingAccount($db);
+					$accountingaccount4->fetch('',$object->accountancy_code_buy,1);
 
-				print $accountingaccount4->getNomUrl(0,1,1,'',1);
+					print $accountingaccount4->getNomUrl(0,1,1,'',1);
+				}
 			} else {
 				print $object->accountancy_code_buy;
 			}
