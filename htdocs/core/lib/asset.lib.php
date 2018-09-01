@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    core/lib/assets.lib.php
+ * \file    htdocs/core/lib/asset.lib.php
  * \ingroup asset
  * \brief   Library files with common functions for Assets
  */
