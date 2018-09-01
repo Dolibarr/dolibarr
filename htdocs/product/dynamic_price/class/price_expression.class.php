@@ -33,7 +33,7 @@ class PriceExpression
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -43,15 +43,15 @@ class PriceExpression
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
     /**
 	 * @var int ID
 	 */
 	public $id;
-	
-    var $title;
-	var $expression;
-	
+
+    public $title;
+	public $expression;
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */

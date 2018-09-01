@@ -483,10 +483,12 @@ class InventoryObjectLine
 	 * @var int ID
 	 */
 	public $id;
+
 	/**
 	 * @var mixed Sample line property 1
 	 */
 	public $prop1;
+
 	/**
 	 * @var mixed Sample line property 2
 	 */

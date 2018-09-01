@@ -970,28 +970,28 @@ class PriceByCustomerLine
 	 */
 	public $id;
 
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $default_vat_code;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_tx;
-	var $localtax2_tx;
+	public $entity;
+	public $datec = '';
+	public $tms = '';
+	public $fk_product;
+	public $fk_soc;
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $default_vat_code;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_tx;
+	public $localtax2_tx;
 
 	/**
 	 * @var int User ID
 	 */
 	public $fk_user;
 
-	var $import_key;
-	var $socname;
-	var $prodref;
+	public $import_key;
+	public $socname;
+	public $prodref;
 }

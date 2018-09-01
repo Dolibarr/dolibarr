@@ -76,7 +76,10 @@ class CommandeFournisseur extends CommonOrder
      */
     protected $table_ref_field = 'ref';
 
-    public $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
 	/**
 	 * Supplier order reference

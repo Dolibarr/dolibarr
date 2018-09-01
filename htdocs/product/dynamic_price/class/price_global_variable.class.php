@@ -49,14 +49,14 @@ class PriceGlobalVariable
 	 */
 	public $id;
 
-    var $code;
+    public $code;
 
     /**
 	 * @var string description
 	 */
 	public $description;
 
-    var $value;
+    public $value;
 
     /**
 	 * @var string Name of table without prefix where object is stored

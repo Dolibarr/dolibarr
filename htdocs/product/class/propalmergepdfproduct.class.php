@@ -645,14 +645,14 @@ class PropalmergepdfproductLine
 	 */
 	public $id;
 
-	var $fk_product;
-	var $file_name;
-	var $lang;
-	var $fk_user_author;
-	var $fk_user_mod;
-	var $datec='';
-	var $tms='';
-	var $import_key;
+	public $fk_product;
+	public $file_name;
+	public $lang;
+	public $fk_user_author;
+	public $fk_user_mod;
+	public $datec='';
+	public $tms='';
+	public $import_key;
 
     /**
      *  Constructor
