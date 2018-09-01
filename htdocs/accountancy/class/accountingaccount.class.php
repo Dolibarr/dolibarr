@@ -71,15 +71,15 @@ class AccountingAccount extends CommonObject
 	 */
 	public $id;
 
-	var $rowid;
-	var $datec; // Creation date
-	var $fk_pcg_version;
-	var $pcg_type;
-	var $pcg_subtype;
-	var $account_number;
-	var $account_parent;
-	var $account_category;
-	var $status;
+	public $rowid;
+	public $datec; // Creation date
+	public $fk_pcg_version;
+	public $pcg_type;
+	public $pcg_subtype;
+	public $account_number;
+	public $account_parent;
+	public $account_category;
+	public $status;
 
     /**
      * @var string Label of account
@@ -96,7 +96,7 @@ class AccountingAccount extends CommonObject
      */
     public $fk_user_modif;
 
-    var $active;       // duplicate with status
+    public $active;       // duplicate with status
 
 
 	/**
