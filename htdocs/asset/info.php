@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file       info.php
+ *  \file       htdocs/asset/info.php
  *  \ingroup    asset
  *  \brief      Page to show an asset information
  */

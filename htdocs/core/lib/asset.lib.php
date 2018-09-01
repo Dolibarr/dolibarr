@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    core/lib/assets.lib.php
+ * \file    htdocs/core/lib/asset.lib.php
  * \ingroup asset
  * \brief   Library files with common functions for Assets
  */
@@ -24,7 +24,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return array head array with tabs
  */
 function AssetsAdminPrepareHead()
 {
@@ -65,6 +65,11 @@ function AssetsAdminPrepareHead()
 	return $head;
 }
 
+/**
+ * Prepare admin pages header
+ *
+ * @return array head array with tabs
+ */
 function AssetsPrepareHead()
 {
 	global $langs, $conf;

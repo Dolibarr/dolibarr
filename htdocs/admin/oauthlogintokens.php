@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        htdocs/admin/oauthlogintoken.php
+ * \file        htdocs/admin/oauthlogintokens.php
  * \ingroup     oauth
  * \brief       Setup page to configure oauth access to login information
  */
