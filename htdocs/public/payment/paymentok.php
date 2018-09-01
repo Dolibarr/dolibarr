@@ -87,10 +87,8 @@ if (empty($paymentmethod))
     dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
     exit;
 }
-else
-{
-    dol_syslog("paymentmethod=".$paymentmethod);
-}
+
+dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
 
 $validpaymentmethod=array();
@@ -194,7 +192,7 @@ if (! empty($conf->paypal->enabled))
 		    // From env
 		    $ipaddress          = $_SESSION['ipaddress'];
 
-			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
 
 			// Validate record
 		    if (! empty($paymentType))
@@ -264,6 +262,9 @@ if (empty($paymentType))     $paymentType     = $_SESSION["paymentType"];
 
 $fulltag            = $FULLTAG;
 $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+
+
+dol_syslog("ispaymentok=".$ispaymentok, LOG_DEBUG, 0, '_payment');
 
 
 // Make complementary actions
@@ -372,6 +373,8 @@ if ($ispaymentok)
 				// Create subscription
 				if (! $error)
 				{
+					dol_syslog("Call ->subscription to create subscription", LOG_DEBUG, 0, '_payment');
+
 					$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
 					if ($crowid <= 0)
 					{
@@ -389,7 +392,9 @@ if ($ispaymentok)
 
 				if (! $error)
 				{
-					$autocreatethirdparty = 1;
+					dol_syslog("Call ->subscriptionComplementaryActions", LOG_DEBUG, 0, '_payment');
+
+					$autocreatethirdparty = 1;	// will create thirdparty if member not yet linked to a thirdparty
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty);
 					if ($result < 0)
@@ -416,7 +421,7 @@ if ($ispaymentok)
 					{
 						$thirdparty_id = $object->fk_soc;
 
-						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
 
 						$service = 'StripeTest';
 						$servicestatus = 0;
@@ -436,6 +441,8 @@ if ($ispaymentok)
 
 						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
 						{
+							dol_syslog("No stripe profile found, so we add it", LOG_DEBUG, 0, '_payment');
+
 							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
 							$stripecu = $ch->customer;							// value 'cus_....'
 
@@ -462,9 +469,11 @@ if ($ispaymentok)
 					$db->rollback();
 				}
 
-				// Send email
+				// Send email to member
 				if (! $error)
 				{
+					dol_syslog("Send email to customer to ".$object->email." if we have to (sendalsoemail = ".$sendalsoemail.")", LOG_DEBUG, 0, '_payment');
+
 					// Send confirmation Email
 					if ($object->email && $sendalsoemail)
 					{
@@ -691,7 +700,9 @@ if ($ispaymentok)
 
     $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
-	// Send an email
+    dol_syslog("Send email to customer to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
+
+	// Send an email to admin
     if ($sendemail)
 	{
 		$companylangs = new Translate('', $conf);
