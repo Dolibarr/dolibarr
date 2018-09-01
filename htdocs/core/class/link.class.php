@@ -41,7 +41,12 @@ class Link extends CommonObject
     public $entity;
     public $datea;
     public $url;
+    
+    /**
+     * @var string proper name for given parameter
+     */
     public $label;
+    
     public $objecttype;
     public $objectid;
 
@@ -385,7 +390,5 @@ class Link extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
     }
-
 }

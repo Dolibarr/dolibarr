@@ -651,7 +651,6 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
 function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
 	// TODO
-
 }
 
 /**

@@ -106,7 +106,6 @@ class CdavLib
 		}
 
 		return $sql;
-
 	}
 
 	/**
@@ -295,5 +294,4 @@ class CdavLib
 		}
 		return $calevents;
 	}
-
 }

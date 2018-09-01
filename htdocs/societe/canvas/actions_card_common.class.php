@@ -422,5 +422,4 @@ abstract class ActionsCardCommon
             $this->object->country_label=	$tmparray['label'];
         }
     }
-
 }

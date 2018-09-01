@@ -691,7 +691,6 @@ class Don extends CommonObject
             dol_print_error($this->db);
             return -1;
         }
-
     }
 
     /**
@@ -1046,5 +1045,4 @@ class Don extends CommonObject
 			return 0;
 		}
 	}
-
 }

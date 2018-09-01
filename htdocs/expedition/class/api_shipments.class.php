@@ -472,7 +472,6 @@ class Shipments extends DolibarrApi
                 'message' => 'Shipment deleted'
             )
         );
-
     }
 
     /**

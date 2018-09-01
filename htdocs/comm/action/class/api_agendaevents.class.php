@@ -293,7 +293,6 @@ class AgendaEvents extends DolibarrApi
                 'message' => 'Agenda Event deleted'
             )
         );
-
     }
 
     /**

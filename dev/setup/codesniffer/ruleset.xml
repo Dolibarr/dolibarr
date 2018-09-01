@@ -374,6 +374,9 @@
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
 
+    <rule ref="PSR2.Classes.ClassDeclaration" />
+    <rule ref="PSR2.Methods.FunctionClosingBrace" />
+
 	<!-- This is not in PSR2 -->
 	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">
         <severity>0</severity>

@@ -147,5 +147,4 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	{
 		return $this->getNextValue($fuser,$objforref);
 	}
-
 }

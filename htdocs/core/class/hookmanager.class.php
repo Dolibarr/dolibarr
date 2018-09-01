@@ -283,5 +283,4 @@ class HookManager
 
         return ($error?-1:$resaction);
 	}
-
 }

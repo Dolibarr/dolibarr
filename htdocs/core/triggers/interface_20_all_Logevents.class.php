@@ -202,5 +202,4 @@ class InterfaceLogevents extends DolibarrTriggers
             return -1;
         }
     }
-
 }

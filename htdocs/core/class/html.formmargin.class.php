@@ -282,6 +282,5 @@ class FormMargin
 		print '</table>';
 		print '</div>';
 	}
-
 }
 

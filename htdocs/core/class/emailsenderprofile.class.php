@@ -423,7 +423,6 @@ class EmailSenderProfile extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }
 
 /**

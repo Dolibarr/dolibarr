@@ -163,7 +163,5 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
 		return -1;
 	}
-
-
 }
 

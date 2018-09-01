@@ -137,6 +137,5 @@ class mod_arctic extends ModeleNumRefFicheinter
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
 

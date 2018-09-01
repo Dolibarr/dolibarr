@@ -226,7 +226,6 @@ class Bookmark extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -256,5 +255,4 @@ class Bookmark extends CommonObject
 	{
 	    return '';
 	}
-
 }

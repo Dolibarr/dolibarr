@@ -145,7 +145,6 @@ class modLoan extends DolibarrModules
 		// Exports
 		//--------
 		$r=0;
-
 	}
 
 

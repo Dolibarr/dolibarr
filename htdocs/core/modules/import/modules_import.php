@@ -34,13 +34,21 @@ class ModeleImports
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     public $datatoimport;
 
     public $error='';
 
-    public $id;           // Id of driver
-	public $label;        // Label of driver
+    /**
+	 * @var int id of driver
+	 */
+	public $id;
+
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+
 	public $extension;    // Extension of files imported by driver
 	public $version;      // Version of driver
 
@@ -250,6 +258,5 @@ class ModeleImports
 	{
 		return $this->libversion[$key];
 	}
-
 }
 

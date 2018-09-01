@@ -164,7 +164,5 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
 		return -1;
 	}
-
-
 }
 
