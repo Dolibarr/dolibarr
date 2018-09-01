@@ -291,7 +291,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).')' : '';
+				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subordinatesids).')' : '';
 			}
 			$this->export_sql_end[$r] .=')';
 		}
@@ -328,7 +328,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).')' : '';
+				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subordinatesids).')' : '';
 			}
 			$this->export_sql_end[$r] .=')';
 		}
