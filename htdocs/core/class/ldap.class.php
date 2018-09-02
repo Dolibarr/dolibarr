@@ -38,7 +38,7 @@ class Ldap
 	 * @var string[]	Array of error strings
 	 */
 	public $errors = array();
-	
+
 	/**
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
@@ -149,6 +149,7 @@ class Ldap
 
 	// Connection handling methods -------------------------------------------
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Connect and bind
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
@@ -156,9 +157,9 @@ class Ldap
 	 *
 	 *	@return		int		<0 if KO, 1 if bind anonymous, 2 if bind auth
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function connect_bind()
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$connected=0;
@@ -655,6 +656,7 @@ class Ldap
 		return -1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Build a LDAP message
 	 *
@@ -662,9 +664,9 @@ class Ldap
 	 *	@param	array		$info		Attributes array
 	 *	@return	string					Content of file
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dump_content($dn, $info)
 	{
+        // phpcs:enable
 		$content='';
 
 		// Create file content
@@ -1436,15 +1438,16 @@ class Ldap
 		return($retval);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Convertit le temps ActiveDirectory en Unix timestamp
 	 *
 	 *	@param	string	$value		AD time to convert
 	 *	@return	integer				Unix timestamp
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function convert_time($value)
 	{
+        // phpcs:enable
 		$dateLargeInt=$value; // nano secondes depuis 1601 !!!!
 		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
 		$ADToUnixConvertor=((1970-1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes

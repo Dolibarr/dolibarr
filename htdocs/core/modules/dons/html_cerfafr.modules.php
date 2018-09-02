@@ -64,6 +64,7 @@ class html_cerfafr extends ModeleDon
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Write the object to document file to disk
 	 *
@@ -72,9 +73,9 @@ class html_cerfafr extends ModeleDon
 	 *  @param	string		$currency		Currency code
 	 *	@return	int             			>0 if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($don,$outputlangs,$currency='')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc;
 
 		$now=dol_now();
