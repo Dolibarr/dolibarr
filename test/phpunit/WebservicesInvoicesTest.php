@@ -55,9 +55,9 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	protected $savdb;
 	protected $soapclient;
 	protected $socid;
-	
+
 	protected $ns = 'http://www.dolibarr.org/ns/';
-	
+
 	/**
 	 * Constructor
 	 * We save global variables into local variables
@@ -66,6 +66,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -73,8 +75,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$this->savlangs=$langs;
 		$this->savdb=$db;
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-		
-		
+
+
 		// Set the WebService URL
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$this->soapclient = new nusoap_client($WS_DOL_URL);
@@ -83,7 +85,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			$this->soapclient->soap_defencoding='UTF-8';
 			$this->soapclient->decodeUTF8(false);
 		}
-		
+
 		// create third_parties, needed to test an invoice
 		$societe=new Societe($db);
 		$societe->ref='';
@@ -95,11 +97,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$societe->date_creation=$now;
 		$societe->tva_assuj=0;
 		$societe->particulier=0;
-		
+
 		$societe->create($user);
-		
+
 		$this->socid = $societe->id;
-		
+
 		print __METHOD__." societe created id=".$societe->id."\n";
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
@@ -135,9 +137,9 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-				
+
 		print __METHOD__."\n";
-		
+
     }
 
 	/**
@@ -171,7 +173,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$societe->fetch('', '', 'ref-phpunit');
     	print __METHOD__." societe loaded id=".$societe->id."\n";
         */
-    	
+
     	$body = array (
     			"id" => NULL,
 				"ref" => NULL,
@@ -252,13 +254,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesGetInvoiceByRefExt
-     * 
+     *
      * Retrieve an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		Invoice created by create method
      * @return	array				Invoice
      */
@@ -308,13 +310,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesUpdateInvoiceByRefExt
-     * 
+     *
      * Update an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		invoice created by create method
      * @return	array 				Invoice
      */

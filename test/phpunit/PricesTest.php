@@ -67,7 +67,9 @@ class PricesTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -160,8 +162,8 @@ class PricesTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result1=".join(', ',$result1)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
         $this->assertEquals(array(17.12, 1.71, 18.83, 8.56, 0.856, 9.416, 17.12, 1.71, 18.83, 0, 0, 0, 0, 0, 0, 0, 18.7, 1.87, 20.56),$result1,'Test1 FR');
-		
-		
+
+
         /*
 		 *  Country Spain
 		 */
