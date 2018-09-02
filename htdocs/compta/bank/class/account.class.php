@@ -1664,7 +1664,7 @@ class AccountLine extends CommonObject
 	 */
 	public $table_element='bank';
 
-	var $picto = 'generic';
+	public $picto = 'generic';
 
 	/**
 	 * @var int ID
@@ -1676,32 +1676,32 @@ class AccountLine extends CommonObject
 	 */
 	public $ref;
 
-	var $datec;
-	var $dateo;
+	public $datec;
+	public $dateo;
 
 	/**
 	 * Value date
 	 */
-	var $datev;
-	var $amount;
+	public $datev;
+	public $amount;
 
 	/**
      * @var string bank transaction lines label
      */
     public $label;
 
-	var $note;
-	var $fk_user_author;
-	var $fk_user_rappro;
-	var $fk_type;
-	var $rappro;        // Is it conciliated
-	var $num_releve;    // If conciliated, what is bank statement
-	var $num_chq;       // Num of cheque
-	var $bank_chq;      // Bank of cheque
-	var $fk_bordereau;  // Id of cheque receipt
+	public $note;
+	public $fk_user_author;
+	public $fk_user_rappro;
+	public $fk_type;
+	public $rappro;        // Is it conciliated
+	public $num_releve;    // If conciliated, what is bank statement
+	public $num_chq;       // Num of cheque
+	public $bank_chq;      // Bank of cheque
+	public $fk_bordereau;  // Id of cheque receipt
 
-	var $fk_account;            // Id of bank account
-	var $bank_account_label;    // Label of bank account
+	public $fk_account;            // Id of bank account
+	public $bank_account_label;    // Label of bank account
 
 	public $emetteur;
 

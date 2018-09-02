@@ -81,27 +81,29 @@ class Contrat extends CommonObject
 	 * Customer reference of the contract
 	 * @var string
 	 */
-	var $ref_customer;
+	public $ref_customer;
 
 	/**
 	 * Supplier reference of the contract
 	 * @var string
 	 */
-	var $ref_supplier;
+	public $ref_supplier;
 
 	/**
 	 * Client id linked to the contract
 	 * @var int
 	 */
-	var $socid;
-	var $societe;		// Objet societe
+	public $socid;
+
+	public $societe;		// Objet societe
 
 	/**
 	 * Status of the contract
 	 * @var int
 	 */
-	var $statut=0;		// 0=Draft,
-	var $product;
+	public $statut=0;		// 0=Draft,
+
+	public $product;
 
 	/**
 	 * @var int		Id of user author of the contract
@@ -128,7 +130,7 @@ class Contrat extends CommonObject
 	/**
 	 * @var int		Date of creation
 	 */
-	var $date_creation;
+	public $date_creation;
 
 	/**
 	 * @var int		Date of last modification. Not filled until you call ->info()
@@ -138,34 +140,34 @@ class Contrat extends CommonObject
 	/**
 	 * @var int		Date of validation
 	 */
-	var $date_validation;
+	public $date_validation;
 
 	/**
 	 * @var int		Date when contract was signed
 	 */
-	var $date_contrat;
+	public $date_contrat;
 
 	/**
 	 * @var int		Date of contract closure
 	 * @deprecated we close contract lines, not a contract
 	 */
-	var $date_cloture;
+	public $date_cloture;
 
-	var $commercial_signature_id;
-	var $commercial_suivi_id;
+	public $commercial_signature_id;
+	public $commercial_suivi_id;
 
 	/**
 	 * @deprecated Use fk_project instead
 	 * @see fk_project
 	 */
-	var $fk_projet;
+	public $fk_projet;
 
-	var $extraparams=array();
+	public $extraparams=array();
 
 	/**
 	 * @var ContratLigne[]		Contract lines
 	 */
-	var $lines=array();
+	public $lines=array();
 
 	/**
 	 * Maps ContratLigne IDs to $this->lines indexes
@@ -2492,17 +2494,19 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $ref;
 
-	var $tms;
+	public $tms;
 
-	var $fk_contrat;
-	var $fk_product;
-	var $statut;					// 0 inactive, 4 active, 5 closed
-	var $type;						// 0 for product, 1 for service
+	public $fk_contrat;
+	public $fk_product;
+	public $statut;					// 0 inactive, 4 active, 5 closed
+	public $type;						// 0 for product, 1 for service
+
 	/**
 	 * @var string
 	 * @deprecated
 	 */
-	var $label;
+	public $label;
+
 	/**
 	 * @var string
 	 * @deprecated
@@ -2514,31 +2518,31 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $description;
 
-	var $product_ref;
-	var $product_label;
+	public $product_ref;
+	public $product_label;
 
-	var $date_commande;
+	public $date_commande;
 
-	var $date_start;				// date start planned
-	var $date_start_real;			// date start real
-	var $date_end;					// date end planned
-	var $date_end_real;				// date end real
+	public $date_start;				// date start planned
+	public $date_start_real;			// date start real
+	public $date_end;					// date end planned
+	public $date_end_real;				// date end real
 	// For backward compatibility
-	var $date_ouverture_prevue;		// date start planned
-	var $date_ouverture;			// date start real
-	var $date_fin_validite;			// date end planned
-	var $date_cloture;				// date end real
-	var $tva_tx;
-	var $localtax1_tx;
-	var $localtax2_tx;
-	var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-	var $qty;
-	var $remise_percent;
-	var $remise;
-	var $fk_remise_except;
+	public $date_ouverture_prevue;		// date start planned
+	public $date_ouverture;			// date start real
+	public $date_fin_validite;			// date end planned
+	public $date_cloture;				// date end real
+	public $tva_tx;
+	public $localtax1_tx;
+	public $localtax2_tx;
+	public $localtax1_type;	// Local tax 1 type
+	public $localtax2_type;	// Local tax 2 type
+	public $qty;
+	public $remise_percent;
+	public $remise;
+	public $fk_remise_except;
 
-	var $subprice;					// Unit price HT
+	public $subprice;					// Unit price HT
 
 	/**
 	 * @var float
@@ -2547,22 +2551,22 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $price;
 
-	var $price_ht;
+	public $price_ht;
 
-	var $total_ht;
-	var $total_tva;
-	var $total_localtax1;
-	var $total_localtax2;
-	var $total_ttc;
+	public $total_ht;
+	public $total_tva;
+	public $total_localtax1;
+	public $total_localtax2;
+	public $total_ttc;
 
-	var $fk_fournprice;
-	var $pa_ht;
+	public $fk_fournprice;
+	public $pa_ht;
 
-	var $info_bits;
-	var $fk_user_author;
-	var $fk_user_ouverture;
-	var $fk_user_cloture;
-	var $commentaire;
+	public $info_bits;
+	public $fk_user_author;
+	public $fk_user_ouverture;
+	public $fk_user_cloture;
+	public $commentaire;
 
 	const STATUS_INITIAL = 0;
 	const STATUS_OPEN = 4;
