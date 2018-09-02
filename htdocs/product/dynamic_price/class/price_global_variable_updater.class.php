@@ -33,25 +33,25 @@ class PriceGlobalVariableUpdater
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
     /**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
     var $types=array(0, 1);				//!< Updater types
     var $update_min = 5;				//!< Minimal update rate
-    
+
     /**
 	 * @var int ID
 	 */
 	public $id;
-	
+
     var $type;
     var $description;
     var $parameters;
@@ -59,7 +59,7 @@ class PriceGlobalVariableUpdater
     var $update_interval;				//!< Interval in mins
     var $next_update;					//!< Next update timestamp
     var $last_status;
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -551,6 +551,7 @@ class PriceGlobalVariableUpdater
         return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Update next_update into database
      *
@@ -559,9 +560,9 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_next_update($next_update, $user=0, $notrigger=0)
     {
+        // phpcs:enable
         $error=0;
 
         $this->next_update = $next_update;
@@ -596,6 +597,7 @@ class PriceGlobalVariableUpdater
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Update last_status into database
      *
@@ -604,9 +606,9 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_status($last_status, $user=0, $notrigger=0)
     {
+        // phpcs:enable
         $error=0;
 
         $this->last_status = $last_status;

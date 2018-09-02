@@ -40,12 +40,12 @@ class Paiement extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='payment';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='paiement';
-	
+
     public $picto = 'payment';
 
 	var $facid;
@@ -702,15 +702,16 @@ class Paiement extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
 	 *      @return	int					<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 
@@ -728,15 +729,16 @@ class Paiement extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Updates the payment date
      *
      *  @param	int	$date   New date
      *  @return int					<0 if KO, 0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_date($date)
     {
+        // phpcs:enable
         if (!empty($date) && $this->statut!=1)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -760,15 +762,16 @@ class Paiement extends CommonObject
         return -1; //no date given or already validated
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Updates the payment number
      *
      *  @param	string	$num		New num
      *  @return int					<0 if KO, 0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_num($num)
     {
+        // phpcs:enable
     	if(!empty($num) && $this->statut!=1)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -1123,6 +1126,7 @@ class Paiement extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -1130,9 +1134,9 @@ class Paiement extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
@@ -1174,15 +1178,16 @@ class Paiement extends CommonObject
 		return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load the third party of object, from id into this->thirdparty
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
 	 *	@return		int								<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_thirdparty($force_thirdparty_id=0)
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 		if (empty($force_thirdparty_id))

@@ -486,15 +486,16 @@ class PaymentSalary extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update link between payment salary and line generate into llx_bank
 	 *
 	 *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_salary SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
@@ -584,6 +585,7 @@ class PaymentSalary extends CommonObject
 	    return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -591,9 +593,9 @@ class PaymentSalary extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 	    $langs->load('compta');
