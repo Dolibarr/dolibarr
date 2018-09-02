@@ -461,14 +461,15 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  trans_paiment
 	 *
 	 *  @return void
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function trans_paiment()
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
