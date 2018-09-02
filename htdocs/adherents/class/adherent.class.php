@@ -1359,7 +1359,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
-	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty and we request an option that generate invoice.
+	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *	@return int									<0 if KO, >0 if OK
 	 */
 	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
