@@ -62,6 +62,8 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -201,11 +203,11 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 		$localobject->email='newemail@newemail.com';
 		$localobject->jabberid='New im id';
 		$localobject->default_lang='es_ES';
-		
+
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Holiday::update error');
-		
+
     	$result=$localobject->update_note($localobject->note_private,'_private');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
@@ -213,7 +215,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->update_note($localobject->note_public, '_public');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
-		
+
 
 		$newobject=new Holiday($this->savdb);
     	$result=$newobject->fetch($localobject->id);
