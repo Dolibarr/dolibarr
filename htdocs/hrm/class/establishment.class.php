@@ -38,6 +38,9 @@ class Establishment extends CommonObject
 	 */
 	public $table_element='establishment';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = '';
 
 	/**

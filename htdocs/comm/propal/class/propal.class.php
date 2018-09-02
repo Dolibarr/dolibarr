@@ -55,6 +55,9 @@ class Propal extends CommonObject
 	 */
 	public $table_element='propal';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line='propaldet';
 
 	/**

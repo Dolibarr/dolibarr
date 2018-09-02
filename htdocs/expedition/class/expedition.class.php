@@ -48,61 +48,69 @@ class Expedition extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element="shipping";
-	
+
 	public $fk_element="fk_expedition";
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element="expedition";
-	
+
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line="expeditiondet";
+
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'sending';
 
-	var $socid;
-	var $ref_customer;
-	var $ref_int;
-	var $brouillon;
-	var $entrepot_id;
-	var $lines=array();
-	var $tracking_number;
-	var $tracking_url;
-	var $billed;
-	var $model_pdf;
+	public $socid;
+	public $ref_customer;
+	public $ref_int;
+	public $brouillon;
+	public $entrepot_id;
+	public $lines=array();
+	public $tracking_number;
+	public $tracking_url;
+	public $billed;
+	public $model_pdf;
 
-	var $trueWeight;
-	var $weight_units;
-	var $trueWidth;
-	var $width_units;
-	var $trueHeight;
-	var $height_units;
-	var $trueDepth;
-	var $depth_units;
+	public $trueWeight;
+	public $weight_units;
+	public $trueWidth;
+	public $width_units;
+	public $trueHeight;
+	public $height_units;
+	public $trueDepth;
+	public $depth_units;
 	// A denormalized value
-	var $trueSize;
+	public $trueSize;
 
-	var $date_delivery;		// Date delivery planed
+	public $date_delivery;		// Date delivery planed
+
 	/**
 	 * @deprecated
 	 * @see date_shipping
 	 */
-	var $date;
+	public $date;
+
 	/**
 	 * @deprecated
 	 * @see date_shipping
 	 */
-	var $date_expedition;
+	public $date_expedition;
+
 	/**
 	 * Effective delivery date
 	 * @var int
 	 */
 	public $date_shipping;
-	var $date_creation;
-	var $date_valid;
 
-	var $meths;
-	var $listmeths;			// List of carriers
+	public $date_creation;
+	public $date_valid;
+
+	public $meths;
+	public $listmeths;			// List of carriers
 
 
 	const STATUS_DRAFT = 0;
@@ -478,7 +486,7 @@ class Expedition extends CommonObject
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
 		$sql.= ', i.libelle as libelle_incoterms';
-		$sql.= ', s.libelle as shipping_method'; 
+		$sql.= ', s.libelle as shipping_method';
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
@@ -2293,7 +2301,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='expeditiondet';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */

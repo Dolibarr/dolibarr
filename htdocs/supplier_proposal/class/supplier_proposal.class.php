@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2018 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
@@ -55,14 +55,21 @@ class SupplierProposal extends CommonObject
 	 */
 	public $table_element='supplier_proposal';
 
-    public $table_element_line='supplier_proposaldet';
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line='supplier_proposaldet';
+
     public $fk_element='fk_supplier_proposal';
+
     public $picto='propal';
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -74,24 +81,25 @@ class SupplierProposal extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $socid;		// Id client
+    public $socid;		// Id client
 
 	/**
 	 * @deprecated
 	 * @see user_author_id
 	 */
-    var $author;
-    var $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
-    var $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
-    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
-    var $date;						// Date of proposal
-    var $date_livraison;
+    public $author;
+
+    public $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
+    public $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
+    public $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
+    public $date;						// Date of proposal
+    public $date_livraison;
 
 	/**
 	 * @deprecated
 	 * @see date_creation
 	 */
-	var $datec;
+	public $datec;
 
 	/**
 	 * Creation date
@@ -103,7 +111,7 @@ class SupplierProposal extends CommonObject
 	 * @deprecated
 	 * @see date_validation
 	 */
-	var $datev;
+	public $datev;
 
 	/**
 	 * Validation date
@@ -112,70 +120,76 @@ class SupplierProposal extends CommonObject
 	public $date_validation;
 
 
-    var $user_author_id;
-    var $user_valid_id;
-    var $user_close_id;
+    public $user_author_id;
+    public $user_valid_id;
+    public $user_close_id;
 
 	/**
 	 * @deprecated
 	 * @see price_ht
 	 */
-    var $price;
+    public $price;
+
 	/**
 	 * @deprecated
 	 * @see total_tva
 	 */
-    var $tva;
+    public $tva;
+
 	/**
 	 * @deprecated
 	 * @see total_ttc
 	 */
-    var $total;
+    public $total;
 
-    var $cond_reglement_code;
-    var $mode_reglement_code;
-    var $remise = 0;
-    var $remise_percent = 0;
-    var $remise_absolue = 0;
+    public $cond_reglement_code;
+    public $mode_reglement_code;
+    public $remise = 0;
+    public $remise_percent = 0;
+    public $remise_absolue = 0;
 
-    var $products=array();
-    var $extraparams=array();
+    public $products=array();
+    public $extraparams=array();
 
-    var $lines = array();
-    var $line;
+    public $lines = array();
+    public $line;
 
-    var $labelstatut=array();
-    var $labelstatut_short=array();
+    public $labelstatut=array();
+    public $labelstatut_short=array();
 
-    var $nbtodo;
-    var $nbtodolate;
+    public $nbtodo;
+    public $nbtodolate;
 
-    var $specimen;
+    public $specimen;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_tx;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Signed quote
 	 */
 	const STATUS_SIGNED = 2;
+
 	/**
 	 * Not signed quote, canceled
 	 */
 	const STATUS_NOTSIGNED = 3;
+
 	/**
 	 * Billed or closed/processed quote
 	 */

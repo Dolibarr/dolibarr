@@ -4,11 +4,11 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,10 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $table_element='commande_fournisseur';
 
-    public $table_element_line = 'commande_fournisseurdet';
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line = 'commande_fournisseurdet';
 
     /**
 	 * @var int Field with ID of parent key if this field has a parent
@@ -108,17 +111,20 @@ class CommandeFournisseur extends CommonOrder
      * Delivery date
      */
     public $date_livraison;
+
     public $total_ht;
     public $total_tva;
     public $total_localtax1;   // Total Local tax 1
     public $total_localtax2;   // Total Local tax 2
     public $total_ttc;
     public $source;
+
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
 	 */
     public $note;
+
 	public $note_private;
     public $note_public;
     public $model_pdf;
@@ -144,6 +150,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var CommandeFournisseurLigne[]
 	 */
 	public $lines = array();
+
 	//Add for supplier_proposal
     public $origin;
     public $origin_id;
@@ -161,34 +168,42 @@ class CommandeFournisseur extends CommonOrder
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Accepted
 	 */
 	const STATUS_ACCEPTED = 2;
+
 	/**
 	 * Order sent, shipment on process
 	 */
 	const STATUS_ORDERSENT = 3;
+
 	/**
 	 * Received partially
 	 */
 	const STATUS_RECEIVED_PARTIALLY = 4;
+
 	/**
 	 * Received completely
 	 */
 	const STATUS_RECEIVED_COMPLETELY = 5;
+
 	/**
 	 * Order canceled
 	 */
 	const STATUS_CANCELED = 6;
+
 	/**
 	 * Order canceled/never received
 	 */
 	const STATUS_CANCELED_AFTER_ORDER = 7;
+
 	/**
 	 * Refused
 	 */

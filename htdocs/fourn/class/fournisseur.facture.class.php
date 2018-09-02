@@ -5,7 +5,7 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
@@ -51,7 +51,10 @@ class FactureFournisseur extends CommonInvoice
      */
     public $table_element='facture_fourn';
 
-    public $table_element_line='facture_fourn_det';
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line='facture_fourn_det';
 
     /**
 	 * @var int Field with ID of parent key if this field has a parent
@@ -144,6 +147,7 @@ class FactureFournisseur extends CommonInvoice
 	 * @var SupplierInvoiceLine[]
 	 */
     public $lines = array();
+
 	/**
 	 * @deprecated
 	 */

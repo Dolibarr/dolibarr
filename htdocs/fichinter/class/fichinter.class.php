@@ -50,7 +50,11 @@ class Fichinter extends CommonObject
 	 */
 	public $fk_element='fk_fichinter';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line='fichinterdet';
+
 	public $picto = 'intervention';
 
 	/**
@@ -85,14 +89,17 @@ class Fichinter extends CommonObject
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Billed
 	 */
 	const STATUS_BILLED = 2;
+
 	/**
 	 * Closed
 	 */

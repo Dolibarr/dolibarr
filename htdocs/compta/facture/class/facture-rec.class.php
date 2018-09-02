@@ -49,6 +49,9 @@ class FactureRec extends CommonInvoice
 	 */
 	public $table_element='facture_rec';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line='facturedet_rec';
 
 	/**
@@ -58,30 +61,30 @@ class FactureRec extends CommonInvoice
 
 	public $picto='bill';
 
-	var $entity;
-	var $number;
-	var $date;
-	var $amount;
-	var $remise;
-	var $tva;
-	var $total;
-	var $db_table;
-	var $propalid;
+	public $entity;
+	public $number;
+	public $date;
+	public $amount;
+	public $remise;
+	public $tva;
+	public $total;
+	public $db_table;
+	public $propalid;
 
-	var $date_last_gen;
-	var $date_when;
-	var $nb_gen_done;
-	var $nb_gen_max;
+	public $date_last_gen;
+	public $date_when;
+	public $nb_gen_done;
+	public $nb_gen_max;
 
-	var $frequency;
-	var $unit_frequency;
+	public $frequency;
+	public $unit_frequency;
 
-	var $rang;
-	var $special_code;
+	public $rang;
+	public $special_code;
 
-	var $usenewprice=0;
+	public $usenewprice=0;
 
-	var $suspended;			// status
+	public $suspended;			// status
 
 	const STATUS_NOTSUSPENDED = 0;
 	const STATUS_SUSPENDED = 1;

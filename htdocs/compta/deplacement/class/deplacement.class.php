@@ -41,6 +41,9 @@ class Deplacement extends CommonObject
 	 */
 	public $table_element='deplacement';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = '';
 
 	/**
@@ -50,22 +53,22 @@ class Deplacement extends CommonObject
 
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $datec;         // Creation date
-	var $dated;
-	var $fk_user_author;
+	public $datec;         // Creation date
+	public $dated;
+	public $fk_user_author;
 
 	/**
 	 * @var int User ID
 	 */
 	public $fk_user;
 
-	var $km;
-	var $socid;
-	var $statut;		// 0=draft, 1=validated
-	var $extraparams=array();
+	public $km;
+	public $socid;
+	public $statut;		// 0=draft, 1=validated
+	public $extraparams=array();
 
-	var $statuts=array();
-	var $statuts_short=array();
+	public $statuts=array();
+	public $statuts_short=array();
 
    /**
 	* Constructor

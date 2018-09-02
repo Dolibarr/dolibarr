@@ -38,6 +38,9 @@ class Fiscalyear extends CommonObject
 	 */
 	public $table_element='accounting_fiscalyear';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = '';
 
 	/**
