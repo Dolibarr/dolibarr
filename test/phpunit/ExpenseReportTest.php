@@ -60,7 +60,9 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -151,7 +153,7 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
         $localobject2->initAsSpecimen();        // Init a speciment with lines
         $localobject2->status = 0;
         $localobject2->fk_statut = 0;
-        
+
         $result=$localobject2->create($user);
         print __METHOD__." result=".$result."\n";
         $this->assertGreaterThanOrEqual(0, $result);
