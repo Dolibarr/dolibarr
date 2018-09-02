@@ -34,7 +34,7 @@ class RejetPrelevement
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
      * @var DoliDB Database handler.
      */
@@ -199,15 +199,16 @@ class RejetPrelevement
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
 	 * 	@param	Facture		$fac			Invoice object
 	 * 	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _send_email($fac)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$userid = 0;

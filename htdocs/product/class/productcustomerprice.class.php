@@ -304,6 +304,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load all customer prices in memory from database
 	 *
@@ -314,9 +315,9 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for select
 	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ( empty($sortfield)) $sortfield = "t.rowid";
@@ -418,6 +419,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load all objects in memory from database
 	 *
@@ -428,9 +430,9 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for sql request
 	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if (! empty($sortfield)) $sortfield = "t.rowid";
