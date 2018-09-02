@@ -55,8 +55,12 @@ $langs->load("cron");
 $key = GETPOST('securitykey','alpha');
 if (empty($key))
 {
-	echo 'Securitykey is required. Check setup of cron jobs module.';
-	exit;
+	$key = argv[1];
+	if (empty($key))
+	{		
+		echo 'Securitykey is required. Check setup of cron jobs module.';
+		exit;
+	}
 }
 if($key != $conf->global->CRON_KEY)
 {
@@ -67,8 +71,12 @@ if($key != $conf->global->CRON_KEY)
 $userlogin = GETPOST('userlogin','alpha');
 if (empty($userlogin))
 {
-	echo 'Userlogin is required.';
-	exit;
+	$userlogin = argv[2];
+	if (empty($userlogin))
+	{
+		echo 'Userlogin is required.';
+		exit;
+	}
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user=new User($db);
