@@ -40,12 +40,12 @@ class EcmFiles extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ecmfiles';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'ecm_files';
-	
+
 	public $picto = 'generic';
 
 	public $ref;					// hash of file path
@@ -68,7 +68,7 @@ class EcmFiles extends CommonObject
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
-	
+
 
 	/**
 	 * Constructor
@@ -779,6 +779,7 @@ class EcmFiles extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -786,9 +787,9 @@ class EcmFiles extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		return '';
 	}
