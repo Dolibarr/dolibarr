@@ -1580,6 +1580,10 @@ if ($id)
 							{
 								$valuetoshow = $langs->trans($valuetoshow);
 							}
+							else
+							{
+								$valuetoshow = $langs->trans($valuetoshow);
+							}
 
                             $class='tddict';
                             if ($fieldlist[$field] == 'note' && $id == 10) $class.=' tdoverflowmax200';
