@@ -64,6 +64,7 @@ class ActionsCardProduct
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -72,9 +73,9 @@ class ActionsCardProduct
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id=0, $ref='')
 	{
+        // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
@@ -295,6 +296,7 @@ class ActionsCardProduct
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -304,9 +306,9 @@ class ActionsCardProduct
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
         $this->getFieldList();
