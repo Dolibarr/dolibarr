@@ -39,7 +39,7 @@ class CdavLib
      *
      * @param   User        $user   user
      * @param   DoliDB      $db     Database handler
-     * @param   Translation $langs  translation
+     * @param   Translate   $langs  translation
      */
 	function __construct($user, $db, $langs)
 	{
