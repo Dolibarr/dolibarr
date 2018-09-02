@@ -33,12 +33,12 @@ class AssetType extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'asset_type';
-	
+
 	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'asset_type';
-	
+
 	public $picto = 'group';
 	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -282,14 +282,15 @@ class AssetType extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of asset's type
 	 *
 	 *  @return 	array	List of types of members
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$assettypes = array();
