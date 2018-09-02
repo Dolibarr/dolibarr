@@ -1329,7 +1329,7 @@ class FormFile
 								print '</td>';
 							}
 							else {
-							   	print '<td align="center"'.($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
+							   	print '<td align="center"'.(($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
 							   	print '</td>';
 							}
 					   }
