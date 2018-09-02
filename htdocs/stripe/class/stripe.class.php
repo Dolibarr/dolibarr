@@ -379,7 +379,6 @@ class Stripe extends CommonObject
 			"dol_id" => "" . $item . "",
 			"dol_type" => "" . $origin . "",
 			"dol_thirdparty_id" => "" . $societe->id . "",
-      "FULLTAG" => $description,
 			'dol_thirdparty_name' => $societe->name, 
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
