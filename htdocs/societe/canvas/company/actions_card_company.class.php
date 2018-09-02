@@ -67,6 +67,7 @@ class ActionsCardCompany extends ActionsCardCommon
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -75,9 +76,9 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id=0, $ref='')
 	{
+        // phpcs:enable
 		global $conf, $langs, $user, $mysoc;
 		global $form, $formadmin, $formcompany;
 
