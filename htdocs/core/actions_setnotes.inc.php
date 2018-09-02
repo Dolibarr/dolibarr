@@ -53,8 +53,9 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 			$hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 			$hidedesc = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
 			$hideref = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
-			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+
 			$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			
 			if ($result < 0) dol_print_error($db,$result);
 		}
 	}
