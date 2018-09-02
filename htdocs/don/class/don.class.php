@@ -38,12 +38,12 @@ class Don extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='don';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='don';
-	
+
 	public $fk_element = 'fk_donation';
 	public $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     var $picto = 'generic';
@@ -96,6 +96,7 @@ class Don extends CommonObject
         return $this->LibStatut($this->statut,$mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoi le libelle d'un statut donne
      *
@@ -103,9 +104,9 @@ class Don extends CommonObject
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string 			       	Libelle du statut
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$mode=0)
     {
+        // phpcs:enable
     	if (empty($this->labelstatut) || empty($this->labelstatushort))
     	{
 	    	global $langs;
@@ -124,39 +125,39 @@ class Don extends CommonObject
         {
             return $this->labelstatut[$statut];
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
             return $this->labelstatutshort[$statut];
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatutshort[$statut];
             if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatutshort[$statut];
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatutshort[$statut];
             if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatutshort[$statut];
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
             if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5');
             if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0');
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1');
             if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
             if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatut[$statut];
             if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatut[$statut];
             if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
             if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
         }
-            if ($mode == 5)
+        elseif ($mode == 5)
         {
             if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
             if ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
             if ($statut == 1)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
             if ($statut == 2)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
         }
-        if ($mode == 6)
+        elseif ($mode == 6)
         {
             if ($statut == -1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
             if ($statut == 0)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
@@ -694,6 +695,7 @@ class Don extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Validate a promise of donation
      *
@@ -702,9 +704,9 @@ class Don extends CommonObject
      *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function valid_promesse($id, $userid, $notrigger=0)
     {
+        // phpcs:enable
 		global $langs, $user;
 
 		$error=0;
@@ -745,6 +747,7 @@ class Don extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Classify the donation as paid, the donation was received
      *
@@ -752,9 +755,9 @@ class Don extends CommonObject
      *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_paid($id, $modepayment=0)
     {
+        // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
         if ($modepayment)
         {
@@ -781,15 +784,16 @@ class Don extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Set donation to status cancelled
      *
      *    @param	int		$id   	    id of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_cancel($id)
     {
+        // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
 
         $resql=$this->db->query($sql);
@@ -811,15 +815,16 @@ class Don extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Sum of donations
      *
      *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
      *	@return	int				Summ of donations
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function sum_donations($param)
     {
+        // phpcs:enable
         global $conf;
 
         $result=0;
@@ -839,14 +844,15 @@ class Don extends CommonObject
         return $result;
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *	Charge indicateurs this->nb pour le tableau de bord
      *
      *	@return     int         <0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
+        // phpcs:enable
         global $conf;
 
         $this->nb=array();

@@ -36,22 +36,22 @@ class MyObject extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'myobject';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'mymodule_myobject';
-	
+
 	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
-	
+
 	/**
 	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
-	
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -122,22 +122,22 @@ class MyObject extends CommonObject
 	 * @var int    Name of subtable line
 	 */
 	//public $table_element_line = 'myobjectdet';
-	
+
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
 	//public $fk_element = 'fk_myobject';
-	
+
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
 	//public $class_element_line = 'MyObjectline';
-	
+
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('myobjectdet');
-	
+
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
 	 */
@@ -368,6 +368,7 @@ class MyObject extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -375,9 +376,9 @@ class MyObject extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status, $mode=0)
 	{
+		// phpcs:enable
 		if (empty($this->labelstatus))
 		{
 			global $langs;

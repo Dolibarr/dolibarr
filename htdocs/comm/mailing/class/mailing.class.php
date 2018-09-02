@@ -439,14 +439,15 @@ class Mailing extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Delete targets emailing
 	 *
 	 *  @return int       1 if OK, 0 if error
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_targets()
 	{
+        // phpcs:enable
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql.= " WHERE fk_mailing = ".$this->id;
 
@@ -464,15 +465,16 @@ class Mailing extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Change status of each recipient
 	 *
 	 *	@param	User	$user      	Objet user qui valide
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function reset_targets_status($user)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql.= " SET statut = 0";
 		$sql.= " WHERE fk_mailing = ".$this->id;
