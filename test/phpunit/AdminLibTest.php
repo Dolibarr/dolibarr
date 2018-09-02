@@ -59,7 +59,9 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -142,21 +144,21 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
 
         return $result;
     }
-    
+
     /**
      * testEnableModule
-     * 
+     *
      * @return  void
      */
     public function testEnableModule()
     {
     	global $conf, $db, $langs, $user;
-    	
+
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
 		print "Enable module modExpenseReport";
 		$moduledescriptor=new modExpenseReport($db);
 		$moduledescriptor->init();
 		$conf->setValues($db);
     }
-    
+
 }

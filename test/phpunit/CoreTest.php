@@ -62,7 +62,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -290,22 +292,22 @@ class CoreTest extends PHPUnit_Framework_TestCase
         }
 
         // Run tests
-        
+
         $_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
         $result=test_sql_and_script_inject($_SERVER["PHP_SELF"], 2);
         $expectedresult=0;
         $this->assertEquals($expectedresult, $result, 'Error on test_sql_and_script_inject 1a');
-        
+
         $_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices;badaction';
         $result=test_sql_and_script_inject($_SERVER["PHP_SELF"], 2);
         $expectedresult=1;
         $this->assertEquals($expectedresult, $result, 'Error on test_sql_and_script_inject 1b');
-        
+
         $_GET['aaa']="<img src='1.jpg' onerror =javascript:alert('XSS')>";
         $result=test_sql_and_script_inject($_GET['aaa'], 0);
         $expectedresult=1;
         $this->assertEquals($expectedresult, $result, 'Error on test_sql_and_script_inject 2');
-        
+
         $_POST['bbb']="<img src='1.jpg' onerror =javascript:alert('XSS')>";
         $result=test_sql_and_script_inject($_POST['bbb'], 2);
         $expectedresult=1;

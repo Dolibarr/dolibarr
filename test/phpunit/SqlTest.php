@@ -72,7 +72,9 @@ class SqlTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -143,16 +145,16 @@ class SqlTest extends PHPUnit_Framework_TestCase
 
         $listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
 
-        foreach ($listofsqldir as $dir) 
+        foreach ($listofsqldir as $dir)
         {
             print 'Process dir '.$dir."\n";
             $filesarray = scandir($dir);
-        
-            foreach($filesarray as $key => $file) 
+
+            foreach($filesarray as $key => $file)
             {
                 if (! preg_match('/\.sql$/',$file))
                     continue;
-                    
+
                 print 'Check sql file '.$file."\n";
                 $filecontent=file_get_contents($dir.'/'.$file);
 
@@ -167,7 +169,7 @@ class SqlTest extends PHPUnit_Framework_TestCase
                 $result=strpos($filecontent,'ON DELETE CASCADE');
                 print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
-                
+
                 if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
                 {
                     // Test for migration files only
@@ -176,9 +178,9 @@ class SqlTest extends PHPUnit_Framework_TestCase
                 else
                 {
                     if (preg_match('/\.key\.sql$/',$file))
-                    {                
+                    {
                         // Test for files key files only
-                    
+
                     }
                     else
                     {
