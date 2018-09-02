@@ -436,5 +436,4 @@ class html_cerfafr extends ModeleDon
 		else
 			return $somme. $trio_c. ' ' .$secon_c. ' ' . $dev2;
 	}
-
 }
