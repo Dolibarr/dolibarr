@@ -45,63 +45,68 @@ class SimpleOpenID
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @param	string	$a		Server
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetOpenIDServer($a)
     {
+        // phpcs:enable
         $this->URLs['openid_server'] = $a;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @param	string	$a		Server
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetTrustRoot($a)
     {
+        // phpcs:enable
         $this->URLs['trust_root'] = $a;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @param	string	$a		Server
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetCancelURL($a)
     {
+        // phpcs:enable
         $this->URLs['cancel'] = $a;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetApprovedURL
      *
      * @param	string	$a		Server
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetApprovedURL($a)
     {
+        // phpcs:enable
         $this->URLs['approved'] = $a;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetRequiredFields
      *
      * @param	string	$a		Server
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetRequiredFields($a)
     {
+        // phpcs:enable
         if (is_array($a)) {
             $this->fields['required'] = $a;
         } else {
@@ -109,15 +114,16 @@ class SimpleOpenID
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetOptionalFields
      *
      * @param	string	$a		Server
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetOptionalFields($a)
     {
+        // phpcs:enable
         if (is_array($a)) {
             $this->fields['optional'] = $a;
         } else {
@@ -125,15 +131,16 @@ class SimpleOpenID
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetIdentity
      *
      * @param	string  $a		Server
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetIdentity($a)
     {
+        // phpcs:enable
         // Set Identity URL
         if ((stripos($a, 'http://') === false)
         && (stripos($a, 'https://') === false)) {
@@ -155,30 +162,33 @@ class SimpleOpenID
         $this->openid_url_identity = $a;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * GetIdentity
      *
      * @return	string
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetIdentity()
     {
+        // phpcs:enable
         // Get Identity
         return $this->openid_url_identity;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetError()
     {
+        // phpcs:enable
         $e = $this->error;
         return array('code'=>$e[0],'description'=>$e[1]);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * ErrorStore
      *
@@ -186,9 +196,9 @@ class SimpleOpenID
      * @param	string	$desc		Description
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function ErrorStore($code, $desc = null)
     {
+        // phpcs:enable
         $errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
         if ($desc == null){
             $desc = $errs[$code];
@@ -196,14 +206,15 @@ class SimpleOpenID
         $this->error = array($code,$desc);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * IsError
      *
      * @return	boolean
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function IsError()
     {
+        // phpcs:enable
         if (count($this->error) > 0)
         {
             return true;
@@ -234,15 +245,16 @@ class SimpleOpenID
         return $r;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * OpenID_Standarize
      *
      * @param	string	$openid_identity		Server
      * @return	string
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function OpenID_Standarize($openid_identity = null)
     {
+        // phpcs:enable
         if ($openid_identity === null)
         $openid_identity = $this->openid_url_identity;
 
@@ -280,6 +292,7 @@ class SimpleOpenID
         return $query;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * FSOCK_Request
      *
@@ -288,9 +301,9 @@ class SimpleOpenID
      * @param string	$params		Params
      * @return boolean|unknown
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function FSOCK_Request($url, $method="GET", $params = "")
     {
+        // phpcs:enable
         $fp = fsockopen("ssl://www.myopenid.com", 443, $errno, $errstr, 3); // Connection timeout is 3 seconds
         if (!$fp) {
             $this->ErrorStore('OPENID_SOCKETERROR', $errstr);
@@ -313,6 +326,7 @@ class SimpleOpenID
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * CURL_Request
      *
@@ -321,9 +335,9 @@ class SimpleOpenID
      * @param 	string	$params		Params
      * @return string
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function CURL_Request($url, $method="GET", $params = "")
     {
+        // phpcs:enable
         // Remember, SSL MUST BE SUPPORTED
         if (is_array($params)) $params = $this->array2url($params);
 
@@ -345,15 +359,16 @@ class SimpleOpenID
         return $response;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * HTML2OpenIDServer
      *
      * @param string	$content	Content
      * @return array				Array of servers
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function HTML2OpenIDServer($content)
     {
+        // phpcs:enable
         $get = array();
 
         // Get details of their OpenID server and (optional) delegate
@@ -372,15 +387,16 @@ class SimpleOpenID
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Get openid server
      *
      * @param	string	$url	Url to found endpoint
      * @return 	string			Endpoint
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetOpenIDServer($url='')
     {
+        // phpcs:enable
         global $conf;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -401,14 +417,15 @@ class SimpleOpenID
         return $servers[0];
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * GetRedirectURL
      *
      * @return	string
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetRedirectURL()
     {
+        // phpcs:enable
         $params = array();
         $params['openid.return_to'] = urlencode($this->URLs['approved']);
         $params['openid.mode'] = 'checkid_setup';
@@ -426,14 +443,15 @@ class SimpleOpenID
         return $this->URLs['openid_server'] . "?". $this->array2url($params);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Redirect
      *
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Redirect()
     {
+        // phpcs:enable
         $redirect_to = $this->GetRedirectURL();
         if (headers_sent())
         { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
@@ -447,14 +465,15 @@ class SimpleOpenID
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * ValidateWithServer
      *
      * @return	boolean
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function ValidateWithServer()
     {
+        // phpcs:enable
         $params = array(
 			'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
 			'openid.signed' => urlencode($_GET['openid_signed']),

@@ -32,7 +32,7 @@ class DiscountAbsolute
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -344,6 +344,7 @@ class DiscountAbsolute
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Link the discount to a particular invoice line or a particular invoice.
      *	When discount is a global discount used as an invoice line, we link using rowidline.
@@ -353,9 +354,9 @@ class DiscountAbsolute
      *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduc payment of invoice)
      *	@return		int						<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function link_to_invoice($rowidline,$rowidinvoice)
     {
+        // phpcs:enable
         // Check parameters
         if (! $rowidline && ! $rowidinvoice)
         {
@@ -399,15 +400,16 @@ class DiscountAbsolute
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Link the discount to a particular invoice line or a particular invoice.
      *	Do not call this if discount is linked to a reconcialiated invoice
      *
      *	@return		int							<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function unlink_invoice()
     {
+        // phpcs:enable
         $sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
 		if(! empty($this->discount_type)) {
        		$sql.=" SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
