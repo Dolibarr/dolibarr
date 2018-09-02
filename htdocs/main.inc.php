@@ -638,16 +638,6 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$user->error;
 			}
 
-			// TODO @deprecated Remove this. Hook must be used, not this trigger.
-			// Call triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++;
-			}
-			// End call triggers
-
 			// Hooks on failed login
 			$action='';
 			$hookmanager->initHooks(array('login'));
@@ -734,17 +724,6 @@ if (! defined('NOLOGIN'))
 		$user->update_last_login_date();
 
 		$loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
-
-		// TODO @deprecated Remove this. Hook must be used, not this trigger.
-		$user->trigger_mesg = $loginfo;
-		// Call triggers
-		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		$interface=new Interfaces($db);
-		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
-		if ($result < 0) {
-			$error++;
-		}
-		// End call triggers
 
 		// Hooks on successfull login
 		$action='';
@@ -1753,9 +1732,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= '?title=';
 			$bugbaseurl.= urlencode("Bug: ");
 			$bugbaseurl.= '&body=';
-			// TODO use .github/ISSUE_TEMPLATE.md to generate?
-			$bugbaseurl .= urlencode("# Bug\n");
-			$bugbaseurl .= urlencode("\n");
+			$bugbaseurl.= urlencode("# Bug\n");
+			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Environment\n");
 			$bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
 			$bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
