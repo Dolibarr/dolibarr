@@ -1184,7 +1184,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$formadmin=new FormAdmin($db);
 					$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
 					$morecss='maxwidth150';
-					if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+					if ($conf->browser->layout == 'phone') $morecss='maxwidth100';
 					$out.= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
 				}
 				// Button

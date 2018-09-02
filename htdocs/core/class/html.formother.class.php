@@ -38,7 +38,7 @@
 class FormOther
 {
     private $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -1029,7 +1029,7 @@ class FormOther
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
         		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		if (preg_match('/graph/',$box->class) && empty($conf->browser->phone))
+        		if (preg_match('/graph/',$box->class) && $conf->browser->layout != 'phone')
         		{
         			$label=$label.' <span class="fa fa-bar-chart"></span>';
         		}
@@ -1163,7 +1163,7 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
@@ -1190,7 +1190,7 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();

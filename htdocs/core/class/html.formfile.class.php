@@ -40,7 +40,7 @@ class FormFile
 	 * @var string Error code (or message)
 	 */
 	public $error;
-	
+
 	public $numoffiles;
 	public $infofiles;			// Used to return informations by function getDocumentsLink
 
@@ -678,7 +678,7 @@ class FormFile
 				$formadmin=new FormAdmin($this->db);
 				$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
 				$morecss='maxwidth150';
-				if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+				if ($conf->browser->layout == 'phone') $morecss='maxwidth100';
 				$out.= $formadmin->select_language($defaultlang, 'lang_id', 0, 0, 0, 0, 0, $morecss);
 			}
 			else
@@ -1318,7 +1318,7 @@ class FormFile
 
 						if (empty($disablemove))
 						{
-							if ($nboffiles > 1 && empty($conf->browser->phone)) {
+							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td align="center" class="linecolmove tdlineupdown">';
 								if ($i > 0) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">'.img_up('default',0,'imgupforline').'</a>';
@@ -1329,7 +1329,7 @@ class FormFile
 								print '</td>';
 							}
 							else {
-							   	print '<td align="center"'.((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
+							   	print '<td align="center"'.($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
 							   	print '</td>';
 							}
 					   }
