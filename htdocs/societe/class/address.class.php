@@ -230,6 +230,7 @@ class Address
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Charge depuis la base toutes les adresses d'une societe
 	 *
@@ -237,9 +238,9 @@ class Address
 	 *  @param  User	$user        Objet de l'utilisateur
 	 *  @return int 			     >0 si ok, <0 si ko
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines($socid, $user=null)
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$sql = 'SELECT rowid, nom as name, client, fournisseur';
@@ -324,6 +325,7 @@ class Address
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Charge depuis la base l'objet adresse
 	 *
@@ -331,9 +333,9 @@ class Address
 	 *  @param  User	$user       Objet de l'utilisateur
 	 *  @return int 				>0 si ok, <0 si ko
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_address($id, $user=null)
 	{
+        // phpcs:enable
 		global $langs;
 		global $conf;
 

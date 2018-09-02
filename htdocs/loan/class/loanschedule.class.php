@@ -58,7 +58,7 @@ class LoanSchedule extends CommonObject
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-	var $total;
+	public $total;
 
 	/**
 	 *	Constructor
@@ -372,6 +372,7 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Calculate mensuality
 	 *
@@ -380,9 +381,9 @@ class LoanSchedule extends CommonObject
 	 * @param   int     $nbterm         nb term
 	 * @return  double                  mensuality
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function calc_mens($capital, $rate, $nbterm)
 	{
+        // phpcs:enable
 		$result='';
 
 		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
@@ -465,7 +466,7 @@ class LoanSchedule extends CommonObject
 	 *
 	 *  @return void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function trans_paiment()
 	{
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
