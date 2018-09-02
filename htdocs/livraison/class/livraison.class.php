@@ -43,14 +43,14 @@ class Livraison extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element="delivery";
-	
+
 	public $fk_element="fk_livraison";
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element="livraison";
-	
+
 	public $table_element_line="livraisondet";
 
 	var $brouillon;
@@ -221,6 +221,7 @@ class Livraison extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Create a line
 	 *
@@ -230,9 +231,9 @@ class Livraison extends CommonObject
 	 *	@param	string	$description			Description
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_line($origin_id, $qty, $fk_product, $description)
 	{
+        // phpcs:enable
 		$error = 0;
 		$idprod = $fk_product;
 		$j = 0;
@@ -493,6 +494,7 @@ class Livraison extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Cree le bon de livraison depuis une expedition existante
 	 *
@@ -500,9 +502,9 @@ class Livraison extends CommonObject
 	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
 	 *	@return	integer
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_from_sending($user, $sending_id)
 	{
+        // phpcs:enable
 		$expedition = new Expedition($this->db);
 		$result=$expedition->fetch($sending_id);
 
@@ -539,6 +541,7 @@ class Livraison extends CommonObject
 		return $this->create($user);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Update a livraison line (only extrafields)
 	 *
@@ -546,9 +549,9 @@ class Livraison extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_line($id, $array_options=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$error = 0;
 
@@ -737,14 +740,15 @@ class Livraison extends CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load lines
 	 *
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
+        // phpcs:enable
 		$this->lines = array();
 
 		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped, ld.fk_origin_line, ";
@@ -807,6 +811,7 @@ class Livraison extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -814,34 +819,34 @@ class Livraison extends CommonObject
 	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string					Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode==0)
 		{
 			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled');
-			if ($statut==0)  return $langs->trans('StatusDeliveryDraft');
-			if ($statut==1)  return $langs->trans('StatusDeliveryValidated');
+			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft');
+			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated');
 		}
-		if ($mode==1)
+		elseif ($mode==1)
 		{
 			if ($statut==-1) return $langs->trans($this->statuts[$statut]);
-			if ($statut==0)  return $langs->trans($this->statuts[$statut]);
-			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
+			elseif ($statut==0)  return $langs->trans($this->statuts[$statut]);
+			elseif ($statut==1)  return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'),'statut5').' '.$langs->trans('StatusDeliveryCanceled');
-			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
-			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
+			elseif ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
+			elseif ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'),'statut5');
-			if ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'),'statut0');
-			if ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'),'statut4');
+			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'),'statut0');
+			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'),'statut4');
 		}
 	}
 
@@ -979,6 +984,7 @@ class Livraison extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set the planned delivery date
 	 *
@@ -986,9 +992,9 @@ class Livraison extends CommonObject
 	 *	@param      timestamp		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison)
 	{
+        // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison";
@@ -1083,12 +1089,12 @@ class LivraisonLigne extends CommonObjectLine
 	var $price;
 	var $fk_product;
 	var $origin_id;
-	
+
     /**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	var $description;  // Description produit
 	/**
 	 * @deprecated
@@ -1108,7 +1114,7 @@ class LivraisonLigne extends CommonObjectLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='livraisondet';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */

@@ -39,12 +39,12 @@ class Fichinter extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='fichinter';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='fichinter';
-	
+
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 	public $picto = 'intervention';
@@ -101,14 +101,15 @@ class Fichinter extends CommonObject
 		$this->products = array();
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
 	 *  @return     int         <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $user;
 
 		$this->nb=array();
@@ -630,6 +631,7 @@ class Fichinter extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns the label of a statut
 	 *
@@ -637,9 +639,9 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return     string      		Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		// Init/load array of translation of status
 		if (empty($this->statuts) || empty($this->statuts_short))
 		{
@@ -662,17 +664,17 @@ class Fichinter extends CommonObject
 
 		if ($mode == 0)
 			return $this->statuts[$statut];
-		if ($mode == 1)
+		elseif ($mode == 1)
 			return $this->statuts_short[$statut];
-		if ($mode == 2)
+		elseif ($mode == 2)
 			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts_short[$statut];
-		if ($mode == 3)
+		elseif ($mode == 3)
 			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]);
-		if ($mode == 4)
+		elseif ($mode == 4)
 			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts[$statut];
-		if ($mode == 5)
+		elseif ($mode == 5)
 			return '<span class="hideonsmartphone">'.$this->statuts_short[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
-		if ($mode == 6)
+		elseif ($mode == 6)
 			return '<span class="hideonsmartphone">'.$this->statuts[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
 
 		return '';
@@ -973,6 +975,7 @@ class Fichinter extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Defines a delivery date of intervention
 	 *
@@ -980,9 +983,9 @@ class Fichinter extends CommonObject
 	 *	@param      date	$date_delivery   	date of delivery
 	 *	@return     int							<0 if ko, >0 if ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_delivery($user, $date_delivery)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if ($user->rights->ficheinter->creer)
@@ -1006,6 +1009,7 @@ class Fichinter extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define the label of the intervention
 	 *
@@ -1013,9 +1017,9 @@ class Fichinter extends CommonObject
 	 *	@param      string	$description    description
 	 *	@return     int						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_description($user, $description)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if ($user->rights->ficheinter->creer)
@@ -1040,6 +1044,7 @@ class Fichinter extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Link intervention to a contract
 	 *
@@ -1047,9 +1052,9 @@ class Fichinter extends CommonObject
 	 *	@param      int		$contractid		Description
 	 *	@return     int						<0 if ko, >0 if ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_contrat($user, $contractid)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if ($user->rights->ficheinter->creer)
@@ -1249,14 +1254,15 @@ class Fichinter extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load array lines ->lines
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
+        // phpcs:enable
 		$this->lines = array();
 
 		$sql = 'SELECT rowid, description, duree, date, rang';
@@ -1326,7 +1332,7 @@ class FichinterLigne extends CommonObjectLine
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -1343,12 +1349,12 @@ class FichinterLigne extends CommonObjectLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='fichinterdet';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='fichinterdet';
-	
+
 	public $fk_element='fk_fichinter';
 
 	/**
@@ -1561,14 +1567,15 @@ class FichinterLigne extends CommonObjectLine
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Update total duration into llx_fichinter
 	 *
 	 *	@return		int		<0 si ko, >0 si ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$this->db->begin();
