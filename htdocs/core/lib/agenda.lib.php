@@ -68,7 +68,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	print '<div class="fichecenter">';
 
-	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
+	if ($conf->browser->layout == 'phone') print '<div class="fichehalfleft">';
 	else print '<table class="nobordernopadding" width="100%"><tr><td class="borderright">';
 
 	print '<table class="nobordernopadding centpercent">';
@@ -180,10 +180,10 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	print '</table>';
 
-	if (! empty($conf->browser->phone)) print '</div>';
+	if ($conf->browser->layout == 'phone') print '</div>';
 	else print '</td>';
 
-	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
+	if ($conf->browser->layout == 'phone') print '<div class="fichehalfright">';
 	else print '<td align="center" valign="middle" class="nowrap">';
 
 	print '<table class="centpercent"><tr><td align="center">';
@@ -193,7 +193,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</td></tr>';
 	print '</table>';
 
-	if (! empty($conf->browser->phone)) print '</div>';
+	if ($conf->browser->layout == 'phone') print '</div>';
 	else print '</td></tr></table>';
 
 	print '</div>';	// Close fichecenter

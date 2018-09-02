@@ -272,8 +272,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	$conf->browser->os=$tmp['browseros'];
 	$conf->browser->version=$tmp['browserversion'];
 	$conf->browser->layout=$tmp['layout'];     // 'classic', 'phone', 'tablet'
-	$conf->browser->phone=$tmp['phone'];	   // TODO deprecated, use ->layout
-	$conf->browser->tablet=$tmp['tablet'];	   // TODO deprecated, use ->layout
 	//var_dump($conf->browser);
 
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover=1;
@@ -502,17 +500,6 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
-				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
-				// Call of triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($db);
-				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++;
-				}
-				// End Call of triggers
-
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -581,17 +568,6 @@ if (! defined('NOLOGIN'))
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
 				if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
-				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
-				// Call of triggers
-				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-				$interface=new Interfaces($db);
-				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
-				if ($result < 0) {
-					$error++;
-				}
-				// End Call of triggers
-
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -628,26 +604,11 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
-				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
-
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
-				$user->trigger_mesg=$user->error;
 			}
-
-			// Call triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++;
-			}
-			// End call triggers
 
 			// Hooks on failed login
 			$action='';
@@ -687,27 +648,11 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
-				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
-
-				// TODO @deprecated Remove this. Hook must be used, not this trigger.
-				$user->trigger_mesg=$user->error;
 			}
-
-			// TODO @deprecated Remove this. Hook must be used, not this trigger.
-			// Call triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++;
-			}
-			// End call triggers
 
 			// Hooks on failed login
 			$action='';
@@ -795,17 +740,6 @@ if (! defined('NOLOGIN'))
 		$user->update_last_login_date();
 
 		$loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
-
-		// TODO @deprecated Remove this. Hook must be used, not this trigger.
-		$user->trigger_mesg = $loginfo;
-		// Call triggers
-		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		$interface=new Interfaces($db);
-		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
-		if ($result < 0) {
-			$error++;
-		}
-		// End call triggers
 
 		// Hooks on successfull login
 		$action='';
@@ -916,7 +850,6 @@ if (! empty($conf->dol_use_jmobile) && in_array($conf->theme,array('bureau2crea'
 	$conf->theme='eldy';
 	$conf->css  =  "/theme/".$conf->theme."/style.css.php";
 }
-//var_dump($conf->browser->phone);
 
 if (! defined('NOREQUIRETRAN'))
 {
@@ -1590,7 +1523,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		}
 
 		// Link to print main content area
-		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
+		if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $conf->browser->layout != 'phone')
 		{
 			$qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
@@ -1815,9 +1748,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= '?title=';
 			$bugbaseurl.= urlencode("Bug: ");
 			$bugbaseurl.= '&body=';
-			// TODO use .github/ISSUE_TEMPLATE.md to generate?
-			$bugbaseurl .= urlencode("# Bug\n");
-			$bugbaseurl .= urlencode("\n");
+			$bugbaseurl.= urlencode("# Bug\n");
+			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Environment\n");
 			$bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
 			$bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");

@@ -427,7 +427,7 @@ class doc_generic_user_odt extends ModelePDFUser
      * get substitution array for object
      *
      * @param User          $object         user
-     * @param Translation   $outputlangs    translation object
+     * @param Translate     $outputlangs    translation object
      * @param string        $array_key      key for array
      * @return array                        array of substitutions
      */
