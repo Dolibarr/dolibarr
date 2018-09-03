@@ -1489,8 +1489,6 @@ class Ticket extends CommonObject
 			dol_syslog(get_class($this) . "::assignUser " . $this->error, LOG_ERR);
 			return - 1;
 		}
-
-		return 0;
 	}
 
     /**
