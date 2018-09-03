@@ -56,11 +56,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	protected $savlangs;
 	protected $savdb;
 	protected $soapclient;
-	
+
 	private static $socid;
-	
+
 	protected $ns = 'http://www.dolibarr.org/ns/';
-	
+
 	/**
 	 * Constructor
 	 * We save global variables into local variables
@@ -69,13 +69,15 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
-		
+
 		// Set the WebService URL
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
@@ -85,7 +87,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			$this->soapclient->soap_defencoding='UTF-8';
 			$this->soapclient->decodeUTF8(false);
 		}
-		
+
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
 		print "\n";
@@ -118,7 +120,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$societe->date_creation=$now;
 		$societe->tva_assuj=0;
 		$societe->particulier=0;
-		
+
 		$societe->create($user);
 
 		self::$socid = $societe->id;
@@ -259,13 +261,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesGetInvoiceByRefExt
-     * 
+     *
      * Retrieve an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		Invoice created by create method
      * @return	array				Invoice
      */
@@ -315,13 +317,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesUpdateInvoiceByRefExt
-     * 
+     *
      * Update an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		invoice created by create method
      * @return	array 				Invoice
      */
