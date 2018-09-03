@@ -44,8 +44,6 @@ create table llx_facture_rec_extrafields
 
 
 -- For 9.0
-ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT NULL;
-
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 ALTER TABLE llx_extrafields ADD COLUMN totalizable boolean DEFAULT FALSE after list;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_fourn;
