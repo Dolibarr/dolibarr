@@ -4784,8 +4784,8 @@ class FactureLigne extends CommonInvoiceLine
 	}
 
 	/**
-	 *  Mise a jour en base des champs total_xxx de ligne de facture
-	 *  TODO What is goal of this method ?
+     *	Update DB line fields total_xxx
+	 *	Used by migration
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */

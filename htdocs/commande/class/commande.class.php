@@ -4253,9 +4253,10 @@ class OrderLine extends CommonOrderLine
 	}
 
     /**
-     *	Update totals of order into database
+     *	Update DB line fields total_xxx
+	 *	Used by migration
      *
-     *	@return		int		<0 if ko, >0 if ok
+     *	@return		int		<0 if KO, >0 if OK
      */
     function update_total()
     {
