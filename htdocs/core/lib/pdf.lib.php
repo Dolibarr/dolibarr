@@ -1195,8 +1195,16 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$note=(! empty($object->lines[$i]->note)?$object->lines[$i]->note:'');
 	$dbatch=(! empty($object->lines[$i]->detail_batch)?$object->lines[$i]->detail_batch:false);
 
-	if ($issupplierline) $prodser = new ProductFournisseur($db);
-	else $prodser = new Product($db);
+	if ($issupplierline)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$prodser = new ProductFournisseur($db);
+	}
+	else
+	{
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$prodser = new Product($db);
+	}
 
 	if ($idprod)
 	{

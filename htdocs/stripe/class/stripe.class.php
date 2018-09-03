@@ -384,18 +384,19 @@ class Stripe extends CommonObject
 			$order = new Commande($this->db);
 			$order->fetch($item);
 			$ref = $order->ref;
-			$description = "ORD=" . $ref . ".CUS=" . $societe->id;
+			$description = "ORD=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
 		} elseif ($origin == invoice) {
 			$invoice = new Facture($this->db);
 			$invoice->fetch($item);
 			$ref = $invoice->ref;
-			$description = "INV=" . $ref . ".CUS=" . $societe->id;
+			$description = "INV=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
 		}
 
 		$metadata = array(
 			"dol_id" => "" . $item . "",
 			"dol_type" => "" . $origin . "",
 			"dol_thirdparty_id" => "" . $societe->id . "",
+			'dol_thirdparty_name' => $societe->name,
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
 			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
@@ -413,7 +414,9 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-						// "statement_descriptor" => " ",
+                                                "capture"  => true,
+						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+ 					        "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source"
 					));
@@ -421,8 +424,9 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-						// "statement_descriptor" => " ",
-						"description" => "$description",
+                                                "capture"  => true,
+					        "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					        "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
@@ -442,19 +446,26 @@ class Stripe extends CommonObject
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 
-				$charge = \Stripe\Charge::create(array(
-					"amount" => "$stripeamount",
-					"currency" => "$currency",
-					// "statement_descriptor" => " ",
-					"description" => "$description",
-					"metadata" => $metadata,
-					"source" => "$source",
-					"customer" => "$customer",
-					"application_fee" => "$fee"
-					), array(
-					"idempotency_key" => "$ref",
-					"stripe_account" => "$account"
-				));
+        		$paymentarray = array(
+						"amount" => "$stripeamount",
+						"currency" => "$currency",
+                                                "capture"  => true,
+						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					        "description" => "Stripe payment: ".$description,
+						"metadata" => $metadata,
+						"source" => "$source",
+						"customer" => "$customer"
+					);
+					if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+					{
+						$paymentarray["application_fee"] = $fee;
+					}
+					if ($societe->email && $usethirdpartyemailforreceiptemail)
+					{
+						$paymentarray["receipt_email"] = $societe->email;
+					}
+
+					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref","stripe_account" => "$account"));
 			}
 			if (isset($charge->id)) {}
 

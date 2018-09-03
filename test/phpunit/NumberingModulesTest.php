@@ -59,6 +59,8 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -137,9 +139,9 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$conf->global->FACTURE_ADDON='mercure';
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000}';
 		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}-{0000}';
-        $conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED=0;
+		$conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED=0;
 
-        $localobject=new Facture($this->savdb);
+		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();

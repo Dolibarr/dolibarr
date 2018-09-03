@@ -134,7 +134,7 @@ if (! empty($conf->modulebuilder->enabled))
 
 // Link to print main content area
 /*
-if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
+if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $conf->browser->layout != 'phone')
 {
 	$qs=dol_escape_htmltag($_SERVER["QUERY_STRING"]);
 
