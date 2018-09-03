@@ -736,7 +736,7 @@ if (! defined('NOLOGIN'))
 		{
 			$db->rollback();
 			session_destroy();
-			dol_print_error($db,'Error in some hooks afterLogin (or old trigger USER_LOGIN)');
+			dol_print_error($db,'Error in some hooks afterLogin');
 			exit;
 		}
 		else
