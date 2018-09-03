@@ -336,15 +336,16 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Load array lines
      *
      * @param		int		$only_product	Return only physical products
      * @return		int						<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_lines($only_product=0)
     {
+        // phpcs:enable
     	//$result=$this->fetch_lines();
     	$this->lines=array();
 
@@ -576,6 +577,7 @@ class CommandeFournisseur extends CommonOrder
         return $this->LibStatut($this->statut,$mode,$this->billed);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return label of a status
      *
@@ -584,9 +586,9 @@ class CommandeFournisseur extends CommonOrder
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$mode=0,$billed=0)
     {
+        // phpcs:enable
     	global $conf, $langs;
 
     	if (empty($this->statuts) || empty($this->statutshort))
@@ -1039,6 +1041,7 @@ class CommandeFournisseur extends CommonOrder
         return $result ;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Cancel an approved order.
      *	The cancellation is done after approval
@@ -1047,9 +1050,9 @@ class CommandeFournisseur extends CommonOrder
      *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
      * 	@return	int						>0 if Ok, <0 if Ko
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Cancel($user, $idwarehouse=-1)
     {
+        // phpcs:enable
         global $langs,$conf;
 
 		$error=0;
@@ -1101,6 +1104,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Submit a supplier order to supplier
      *
@@ -1110,9 +1114,9 @@ class CommandeFournisseur extends CommonOrder
      * 	@param		string	$comment	Comment
      * 	@return		int			        <0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     public function commande($user, $date, $methode, $comment='')
     {
+        // phpcs:enable
         global $langs;
         dol_syslog(get_class($this)."::commande");
         $error = 0;
@@ -1960,14 +1964,15 @@ class CommandeFournisseur extends CommonOrder
 		}
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Get list of order methods
      *
      *	@return 0 if Ok, <0 if Ko
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_methodes_commande()
     {
+        // phpcs:enable
         $sql = "SELECT rowid, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
         $sql.= " WHERE active = 1";
@@ -2046,6 +2051,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Set a delivery in database for this supplier order
      *
@@ -2055,9 +2061,9 @@ class CommandeFournisseur extends CommonOrder
      *	@param	string	$comment	Comment
      *	@return	int					<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Livraison($user, $date, $type, $comment)
     {
+        // phpcs:enable
     	global $conf, $langs;
 
         $result = 0;
@@ -2163,7 +2169,8 @@ class CommandeFournisseur extends CommonOrder
         return $result ;
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *	Set the planned delivery date
      *
      *	@param      User			$user        		Objet user making change
@@ -2171,9 +2178,9 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date_livraison($user, $date_livraison, $notrigger=0)
     {
+        // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
         {
         	$error=0;
@@ -2228,6 +2235,7 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *	Set the id projet
      *
@@ -2236,9 +2244,9 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 si ko, >0 si ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_id_projet($user, $id_projet, $notrigger=0)
     {
+        // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
         {
         	$error=0;
@@ -2688,14 +2696,15 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Charge indicateurs this->nb de tableau de bord
      *
      *	@return     int         <0 si ko, >0 si ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
+        // phpcs:enable
         global $conf, $user;
 
         $this->nb=array();
@@ -2730,15 +2739,16 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
      *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user)
     {
+        // phpcs:enable
         global $conf, $langs;
 
         $clause = " WHERE";
