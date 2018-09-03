@@ -20,14 +20,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
---
 
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l''install et tous les sigles '--' sont supprimés.
 --                                                         
--- ID    0 - 1999
--- ID 5000 - 5999
+
+-- ID    0 - 438
+-- ID 1501 - 5999
+-- ADD 100000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401,'PCG99-ABREGE','CAPIT',        'XXXXXX',   '1',    '0', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1402,'PCG99-ABREGE','IMMO',         'XXXXXX',   '2',    '0', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', 1);

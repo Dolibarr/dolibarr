@@ -13,17 +13,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
---
 
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
---
 -- Descriptif des plans comptables DE SKR03 + SKR04
 -- ID 15000 - 16999
---
+-- ADD 500000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account(fk_pcg_version,pcg_type,pcg_subtype,account_number,account_parent,label,active) VALUES ('SKR03','0','XXXXX','RAP',NULL,'Abgenzungsposten',1);
 INSERT INTO llx_accounting_account(fk_pcg_version,pcg_type,pcg_subtype,account_number,account_parent,label,active) VALUES ('SKR03','0','XXXXX','BV',NULL,'Bestandsveränderungen',1);

@@ -13,17 +13,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
---
 
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
---
--- Descriptif des plans comptables BF SYSCOHADA
+-- Descriptif des plans comptables SYSCOHADA CF
 -- ID 15000 - 16999
---
+-- ADD 6500000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (15000,'SYSCOHADA-CF','CAPIT','XXXXXX','1',            0,'Capital','1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (15001,'SYSCOHADA-CF','CAPIT','XXXXXX','101',      15000,'Capital social','1');
