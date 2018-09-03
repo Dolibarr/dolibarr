@@ -534,7 +534,7 @@ if ($ispaymentok)
 							$listofmimes=array(dol_mimetype($file));
 						}
 
-						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1);
 
 						if ($result < 0)
 						{
@@ -546,6 +546,8 @@ if ($ispaymentok)
 						{
 							if ($file) $postactionmessages[] = 'Email sent to member (with invoice document attached)';
 							else $postactionmessages[] = 'Email sent to member (without any attached document)';
+
+							// TODO Add actioncomm event
 						}
 					}
 				}
