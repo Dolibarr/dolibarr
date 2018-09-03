@@ -20,10 +20,10 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
---
 -- Descriptif du système comptable financier DZ NSCF
 -- ID 15000 - 15811
---
+-- ADD 1300000 to rowid # Do no remove this comment --
+
 INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (17000,'NSCF','CAPIT','XXXXXX','1',0,'Comptes de capitaux','1');
 INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (15001,'NSCF','CAPIT','XXXXXX','10',17000,'Capital, réserves et assimilés','1');
 INSERT IGNORE INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (15002,'NSCF','CAPIT','XXXXXX','101',15001,'Capital émis','1');
