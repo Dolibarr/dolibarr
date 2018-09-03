@@ -20,10 +20,9 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
---
--- Descriptif des plans comptables BF SYSCOHADA-CM
+-- Descriptif des plans comptables SYSCOHADA-CM
 -- ID 15000 - 16999
---
+-- ADD 2400000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (15000,'SYSCOHADA-CM','CAPIT','XXXXXX','1',            0,'Capital','1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (15001,'SYSCOHADA-CM','CAPIT','XXXXXX','101',      15000,'Capital social','1');
