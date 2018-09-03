@@ -81,7 +81,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
 function test_sql_and_script_inject($val, $type)
 {
     // phpcs:enable
-    return $this->testSqlAndScriptInject($val, $type);
+    return testSqlAndScriptInject($val, $type);
 }
 
 /**
