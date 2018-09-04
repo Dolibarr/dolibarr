@@ -510,7 +510,8 @@ if (! $sall)
 	$sql.= ' state.code_departement, state.nom,';
 	$sql.= ' country.code,';
 	$sql.= " p.rowid, p.ref, p.title";
-
+	if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
+	// Add fields from extrafields
 	foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
 	{
 		$sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
