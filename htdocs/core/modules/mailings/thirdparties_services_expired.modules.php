@@ -29,12 +29,12 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
     var $require_module=array('contrat');
     var $picto='company';
-    
+
     /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $arrayofproducts=array();
 
 
@@ -78,6 +78,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  This is the main function that returns the array of emails
      *
@@ -85,9 +86,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
      *  @return int           			<0 if error, number of emails added if ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_to_target($mailing_id,$filtersarray=array())
     {
+        // phpcs:enable
         $target = array();
 
         // ----- Your code start here -----
