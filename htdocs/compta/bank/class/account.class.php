@@ -294,6 +294,7 @@ class Account extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Add a link between bank line record and its source
 	 *
@@ -304,9 +305,9 @@ class Account extends CommonObject
 	 *      @param  string	$type       Type of link ('payment', 'company', 'member', ...)
 	 *      @return int         		<0 if KO, id line if OK
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
+        // phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
 		$sql.= "fk_bank";
 		$sql.= ", url_id";
@@ -334,6 +335,7 @@ class Account extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 		TODO Move this into AccountLine
 	 *      Return array with links from llx_bank_url
@@ -343,9 +345,9 @@ class Account extends CommonObject
 	 *      @param  string      $type       To search using type
 	 *      @return array|-1                Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_url($fk_bank='', $url_id='', $type='')
 	{
+        // phpcs:enable
 		$lines = array();
 
 		// Check parameters
@@ -784,15 +786,16 @@ class Account extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update BBAN (RIB) account fields
 	 *
 	 *  @param	User	$user       Object user making update
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_bban(User $user = null)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		// Clean parameters
@@ -1071,6 +1074,7 @@ class Account extends CommonObject
 		return $this->LibStatut($this->clos,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return label of given object status
 	 *
@@ -1078,9 +1082,9 @@ class Account extends CommonObject
 	 *  @param   int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return  string        			    Label
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut, $mode = 0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load('banks');
 
@@ -1109,14 +1113,15 @@ class Account extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Renvoi si un compte peut etre supprimer ou non (sans mouvements)
 	 *
 	 *    @return     boolean     vrai si peut etre supprime, faux sinon
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function can_be_deleted()
 	{
+        // phpcs:enable
 		$can_be_deleted=false;
 
 		$sql = "SELECT COUNT(rowid) as nb";
@@ -1177,6 +1182,7 @@ class Account extends CommonObject
 		return $solde;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1184,9 +1190,9 @@ class Account extends CommonObject
 	 *		@param	int		$filteraccountid	To get info for a particular account id
 	 *      @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board(User $user, $filteraccountid = 0)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -1233,14 +1239,15 @@ class Account extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *		@param		int			$filteraccountid	To get info for a particular account id
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board($filteraccountid = 0)
 	{
+        // phpcs:enable
 		global $user;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
