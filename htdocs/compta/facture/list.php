@@ -509,7 +509,7 @@ if (! $sall)
 	$sql.= ' typent.code,';
 	$sql.= ' state.code_departement, state.nom,';
 	$sql.= ' country.code,';
-	$sql.= " p.rowid, p.ref";
+	$sql.= " p.rowid, p.ref, p.title";
 
 	foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
 	{
