@@ -36,23 +36,23 @@ class ExportExcel extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string Export Excel label
      */
     public $label;
-    
-	var $extension;
-	var $version;
 
-	var $label_lib;
-	var $version_lib;
+	public $extension;
+	public $version;
 
-	var $workbook;      // Handle fichier
-	var $worksheet;     // Handle onglet
-	var $row;
-	var $col;
-    var $file;          // To save filename
+	public $label_lib;
+	public $version_lib;
+
+	public $workbook;      // Handle fichier
+	public $worksheet;     // Handle onglet
+	public $row;
+	public $col;
+    public $file;          // To save filename
 
 
 	/**

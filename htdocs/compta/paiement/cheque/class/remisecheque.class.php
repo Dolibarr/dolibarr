@@ -56,6 +56,10 @@ class RemiseCheque extends CommonObject
 	public $account_label;
 	public $author_id;
 	public $nbcheque;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
 
 	/**

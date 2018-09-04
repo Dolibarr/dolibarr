@@ -41,42 +41,45 @@ class Mailing extends CommonObject
 	 */
 	public $table_element='mailing';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='email';
 
-	var $titre;
-	var $sujet;
-	var $body;
-	var $nbemail;
-	var $bgcolor;
-	var $bgimage;
+	public $titre;
+	public $sujet;
+	public $body;
+	public $nbemail;
+	public $bgcolor;
+	public $bgimage;
 
-	var $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
+	public $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
-	var $email_from;
-	var $email_replyto;
-	var $email_errorsto;
+	public $email_from;
+	public $email_replyto;
+	public $email_errorsto;
 
-	var $joined_file1;
-	var $joined_file2;
-	var $joined_file3;
-	var $joined_file4;
+	public $joined_file1;
+	public $joined_file2;
+	public $joined_file3;
+	public $joined_file4;
 
-	var $user_creat;
-	var $user_valid;
+	public $user_creat;
+	public $user_valid;
 
-	var $date_creat;
-	var $date_valid;
+	public $date_creat;
+	public $date_valid;
 
-	var $extraparams=array();
+	public $extraparams=array();
 
 	public $statut_dest=array();
 	public $statuts=array();
 
 
-	/**
+    /**
      *  Constructor
      *
-     *  @param      DoliDb		$db      Database handler
+     *  @param      DoliDb      $db      Database handler
 	 */
 	function __construct($db)
 	{

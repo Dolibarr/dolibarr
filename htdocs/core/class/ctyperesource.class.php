@@ -50,7 +50,7 @@ class Ctyperesource
 	public $code;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Type resource label
      */
     public $label;
 
@@ -486,7 +486,7 @@ class CtyperesourceLine
 	public $code;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Type resource line label
      */
     public $label;
 

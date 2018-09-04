@@ -33,7 +33,11 @@ class Address
 {
 	protected $db;
 
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $type;
 	public $label;
 	public $socid;
@@ -498,7 +502,12 @@ class Address
 class AddressLine
 {
 	protected $db;
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $date_creation;
 	public $date_modification;
 	public $label;

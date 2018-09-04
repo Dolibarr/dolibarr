@@ -34,21 +34,21 @@ class ExportCsv extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string export files label
      */
     public $label;
-    
-	var $extension;
-	var $version;
 
-	var $label_lib;
-	var $version_lib;
+	public $extension;
+	public $version;
 
-	var $separator;
+	public $label_lib;
+	public $version_lib;
 
-	var $handle;    // Handle fichier
+	public $separator;
+
+	public $handle;    // Handle fichier
 
 
 	/**

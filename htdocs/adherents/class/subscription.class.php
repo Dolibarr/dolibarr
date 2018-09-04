@@ -42,15 +42,18 @@ class Subscription extends CommonObject
 	 */
 	public $table_element='subscription';
 
-    public $picto='payment';
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='payment';
 
-	var $datec;				// Date creation
-	var $datem;				// Date modification
-	var $dateh;				// Subscription start date (date subscription)
-	var $datef;				// Subscription end date
-	var $fk_adherent;
-	var $amount;
-	var $fk_bank;
+	public $datec;				// Date creation
+	public $datem;				// Date modification
+	public $dateh;				// Subscription start date (date subscription)
+	public $datef;				// Subscription end date
+	public $fk_adherent;
+	public $amount;
+	public $fk_bank;
 
 
 	/**

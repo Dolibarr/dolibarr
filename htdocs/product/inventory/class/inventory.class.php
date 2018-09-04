@@ -99,9 +99,21 @@ class Inventory extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'Todo', 1=>'Done', -1=>'Cancel')),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $fk_warehouse;
 	public $date_inventory;
 	public $title;
@@ -472,10 +484,12 @@ class InventoryObjectLine
 	 * @var int ID
 	 */
 	public $id;
+
 	/**
 	 * @var mixed Sample line property 1
 	 */
 	public $prop1;
+
 	/**
 	 * @var mixed Sample line property 2
 	 */

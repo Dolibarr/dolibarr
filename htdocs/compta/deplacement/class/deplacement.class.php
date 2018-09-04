@@ -41,21 +41,34 @@ class Deplacement extends CommonObject
 	 */
 	public $table_element='deplacement';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = '';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = '';
+
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $datec;         // Creation date
-	var $dated;
-	var $fk_user_author;
-	var $fk_user;
-	var $km;
-	var $socid;
-	var $statut;		// 0=draft, 1=validated
-	var $extraparams=array();
+	public $datec;         // Creation date
+	public $dated;
+	public $fk_user_author;
 
-	var $statuts=array();
-	var $statuts_short=array();
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $km;
+	public $socid;
+	public $statut;		// 0=draft, 1=validated
+	public $extraparams=array();
+
+	public $statuts=array();
+	public $statuts_short=array();
 
    /**
 	* Constructor

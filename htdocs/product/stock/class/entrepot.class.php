@@ -61,7 +61,12 @@ class Entrepot extends CommonObject
 	const STATUS_OPEN_INTERNAL = 2;
 
 	var $libelle;
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $statut;
 	var $lieu;
 	var $address;

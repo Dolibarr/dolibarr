@@ -84,7 +84,12 @@ class ActionCommReminder extends CommonObject
 	public $rowid;
 	public $dateremind;
 	public $typeremind;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $offsetvalue;
 	public $offsetunit;
 	public $status;

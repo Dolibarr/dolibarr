@@ -43,15 +43,32 @@ class DiscountAbsolute
 	 */
 	public $errors=array();
 
-	public $id;					// Id discount
+	/**
+	 * @var int ID discount
+	 */
+	public $id;
+
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
+
     public $discount_type;			// 0 => customer discount, 1 => supplier discount
     public $amount_ht;				//
     public $amount_tva;			//
     public $amount_ttc;			//
     public $tva_tx;				// Vat rate
-    public $fk_user;				// Id utilisateur qui accorde la remise
-    public $description;			// Description libre
+
+    /**
+	 * @var int User ID Id utilisateur qui accorde la remise
+	 */
+	public $fk_user;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
+
     public $datec;					// Date creation
     public $fk_facture_line;  		// Id invoice line when a discount is used into an invoice line (for absolute discounts)
     public $fk_facture;			    // Id invoice when a discount line is used into an invoice (for credit note)

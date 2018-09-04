@@ -61,9 +61,17 @@ class ActionsTicket
     public $template;
 
     public $label;
-    public $description;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
 
     public $fk_statut;
+
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
 
     /**

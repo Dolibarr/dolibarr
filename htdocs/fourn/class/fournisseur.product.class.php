@@ -47,7 +47,7 @@ class ProductFournisseur extends Product
      */
     public $error='';
 
-    var $product_fourn_price_id;  // id of ligne product-supplier
+    public $product_fourn_price_id;  // id of ligne product-supplier
 
     /**
      * @var int ID
@@ -58,35 +58,35 @@ class ProductFournisseur extends Product
      * @deprecated
      * @see ref_supplier
      */
-    var $fourn_ref;
-    var $delivery_time_days;
-    var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
-    var $desc_supplier;
-    var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
+    public $fourn_ref;
+    public $delivery_time_days;
+    public $ref_supplier;			  // ref supplier (can be set by get_buyprice)
+    public $desc_supplier;
+    public $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
 
-    var $fourn_id;                //supplier id
-    var $fourn_qty;               // quantity for price (can be set by get_buyprice)
-    var $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
+    public $fourn_id;                //supplier id
+    public $fourn_qty;               // quantity for price (can be set by get_buyprice)
+    public $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
 
-    var $fourn_price;             // price for quantity
-    var $fourn_remise_percent;    // discount for quantity (percent)
-    var $fourn_remise;            // discount for quantity (amount)
-    var $product_fourn_id;        // supplier id
-    var $fk_availability;         // availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
-    var $fourn_unitprice;
-    var $fourn_tva_tx;
-    var $fourn_tva_npr;
+    public $fourn_price;             // price for quantity
+    public $fourn_remise_percent;    // discount for quantity (percent)
+    public $fourn_remise;            // discount for quantity (amount)
+    public $product_fourn_id;        // supplier id
+    public $fk_availability;         // availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
+    public $fourn_unitprice;
+    public $fourn_tva_tx;
+    public $fourn_tva_npr;
 
-    var $fk_supplier_price_expression;
-    var $supplier_reputation;     // reputation of supplier
-    var $reputations=array();     // list of available supplier reputations
+    public $fk_supplier_price_expression;
+    public $supplier_reputation;     // reputation of supplier
+    public $reputations=array();     // list of available supplier reputations
 
     // Multicurreny
-    var $fourn_multicurrency_id;
-    var $fourn_multicurrency_code;
-    var $fourn_multicurrency_tx;
-    var $fourn_multicurrency_price;
-    var $fourn_multicurrency_unitprice;
+    public $fourn_multicurrency_id;
+    public $fourn_multicurrency_code;
+    public $fourn_multicurrency_tx;
+    public $fourn_multicurrency_price;
+    public $fourn_multicurrency_unitprice;
 
     /**
      *	Constructor

@@ -49,13 +49,13 @@ class PriceExpression
 	 */
 	public $id;
 
-    var $title;
-	var $expression;
+    public $title;
+    public $expression;
 
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = "c_price_expression";
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = "c_price_expression";
 
     /**
      *  Constructor

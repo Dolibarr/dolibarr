@@ -100,13 +100,23 @@ class SocieteAccount extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
 	);
 	public $rowid;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $key_account;
 	public $login;
 	public $pass_encoding;
 	public $pass_crypted;
 	public $pass_temp;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $site;
 	public $date_last_login;
 	public $date_previous_login;

@@ -56,22 +56,22 @@ class Website extends CommonObject
 	public $picto = 'globe';
 
 	/**
-	 * @var int
+	 * @var int Entity
 	 */
 	public $entity;
 
 	/**
-	 * @var string
+	 * @var string Ref
 	 */
 	public $ref;
 
 	/**
-	 * @var string
+	 * @var string description
 	 */
 	public $description;
 
 	/**
-	 * @var int
+	 * @var int Status
 	 */
 	public $status;
 

@@ -42,7 +42,11 @@ class AdherentType extends CommonObject
 	 */
 	public $element = 'adherent_type';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'group';
+
 	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
@@ -51,19 +55,25 @@ class AdherentType extends CommonObject
 	 * @see label
 	 */
 	public $libelle;
+
 	/** @var string Label */
 	public $label;
+
 	/**
 	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
 	 */
 	public $subscription;
+
 	/** @var string 	Public note */
 	public $note;
+
 	/** @var integer	Can vote */
 	public $vote;
+
 	/** @var string Email sent during validation */
 	public $mail_valid;
+
 	/** @var array Array of members */
 	public $members=array();
 

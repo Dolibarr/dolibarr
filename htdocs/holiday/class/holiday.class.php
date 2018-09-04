@@ -52,9 +52,18 @@ class Holiday extends CommonObject
 	 */
 	var $rowid;
 
-	var $fk_user;
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
 	var $date_create='';
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $date_debut='';			// Date start in PHP server TZ
 	var $date_fin='';			// Date end in PHP server TZ
 	var $date_debut_gmt='';		// Date start in GMT

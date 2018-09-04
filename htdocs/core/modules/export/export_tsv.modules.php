@@ -35,21 +35,21 @@ class ExportTsv extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
     /**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
-    var $extension;
-    var $version;
 
-    var $label_lib;
-    var $version_lib;
+    public $extension;
+    public $version;
 
-    var $separator="\t";
+    public $label_lib;
+    public $version_lib;
 
-    var $handle;    // Handle fichier
+    public $separator="\t";
+
+    public $handle;    // Handle fichier
 
 
     /**

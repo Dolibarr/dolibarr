@@ -52,15 +52,26 @@ class Commande extends CommonOrder
 	 */
 	public $table_element='commande';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = 'commandedet';
+
 	public $class_element_line = 'OrderLine';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_commande';
+
 	public $picto = 'order';
+
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -87,6 +98,7 @@ class Commande extends CommonOrder
 	 * @var int
 	 */
 	public $statut;
+
 	/**
 	 * Billed
 	 * @var int
@@ -109,21 +121,25 @@ class Commande extends CommonOrder
 	 * @var int
 	 */
 	public $mode_reglement_id;
+
 	/**
 	 * Payment mode code
 	 * @var string
 	 */
 	public $mode_reglement_code;
+
 	/**
 	 * Availability delivery time id
 	 * @var int
 	 */
 	public $availability_id;
+
 	/**
 	 * Availability delivery time code
 	 * @var string
 	 */
 	public $availability_code;
+
 	/**
 	 * Label of availability delivery time. Use it in case translation cannot be found.
 	 * @var string
@@ -133,11 +149,13 @@ class Commande extends CommonOrder
 	public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
 	public $demand_reason_code;
 	public $date;				// Date commande
+
 	/**
 	 * @deprecated
 	 * @see date
 	 */
 	public $date_commande;
+
 	public $date_livraison;	    // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 	public $fk_remise_except;
 	public $remise_percent;
@@ -3849,7 +3867,7 @@ class OrderLine extends CommonOrderLine
 	var $fk_facture;
 
 	/**
-	 * @var string proper name for given parameter
+	 * @var string Order lines label
 	 */
 	public $label;
 

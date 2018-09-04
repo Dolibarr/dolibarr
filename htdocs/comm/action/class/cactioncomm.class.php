@@ -24,7 +24,7 @@
 
 
 /**
- *		Class to manage different types of events
+ *      Class to manage different types of events
  */
 class CActionComm
 {
@@ -43,20 +43,24 @@ class CActionComm
      */
     public $id;
 
-    var $code;
-    var $type;
-    var $libelle;       // deprecated
+    public $code;
+    public $type;
+    public $libelle;       // deprecated
 
     /**
-     * @var string proper name for given parameter
+     * @var string Type of agenda event label
      */
     public $label;
 
-    var $active;
-    var $color;
-    var $picto;
+    public $active;
+    public $color;
 
-    var $type_actions=array();
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto;
+
+    public $type_actions=array();
 
 
     /**

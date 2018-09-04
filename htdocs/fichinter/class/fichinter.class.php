@@ -45,8 +45,16 @@ class Fichinter extends CommonObject
 	 */
 	public $table_element='fichinter';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_fichinter';
+
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line='fichinterdet';
+
 	public $picto = 'intervention';
 
 	/**
@@ -54,36 +62,44 @@ class Fichinter extends CommonObject
 	 */
 	protected $table_ref_field = 'ref';
 
-	var $socid;		// Id client
+	public $socid;		// Id client
 
-	var $author;
-	var $datec;
-	var $datev;
-	var $dateo;
-	var $datee;
-	var $datet;
-	var $datem;
-	var $duration;
-	var $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
-	var $description;
-	var $fk_contrat = 0;
-	var $fk_project = 0;
-	var $extraparams=array();
+	public $author;
+	public $datec;
+	public $datev;
+	public $dateo;
+	public $datee;
+	public $datet;
+	public $datem;
+	public $duration;
+	public $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
-	var $lines = array();
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	public $fk_contrat = 0;
+	public $fk_project = 0;
+	public $extraparams=array();
+
+	public $lines = array();
 
 	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Billed
 	 */
 	const STATUS_BILLED = 2;
+
 	/**
 	 * Closed
 	 */
@@ -1339,11 +1355,11 @@ class FichinterLigne extends CommonObjectLine
 	public $error='';
 
 	// From llx_fichinterdet
-	var $fk_fichinter;
-	var $desc;          	// Description ligne
-	var $datei;           // Date intervention
-	var $duration;        // Duree de l'intervention
-	var $rang = 0;
+	public $fk_fichinter;
+	public $desc;          	// Description ligne
+	public $datei;           // Date intervention
+	public $duration;        // Duree de l'intervention
+	public $rang = 0;
 
 	/**
 	 * @var string ID to identify managed object
@@ -1355,12 +1371,15 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $table_element='fichinterdet';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_fichinter';
 
 	/**
-	 *	Constructor
+	 *  Constructor
 	 *
-	 *	@param	DoliDB	$db		Database handler
+	 *  @param  DoliDB  $db     Database handler
 	 */
 	function __construct($db)
 	{

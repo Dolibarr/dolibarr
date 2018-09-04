@@ -37,14 +37,14 @@ class ImportCsv extends ModeleImports
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $datatoimport;
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
@@ -54,28 +54,28 @@ class ImportCsv extends ModeleImports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
-	var $extension;    // Extension of files imported by driver
-	var $version;      // Version of driver
 
-	var $label_lib;    // Label of external lib used by driver
-	var $version_lib;  // Version of external lib used by driver
+	public $extension;    // Extension of files imported by driver
+	public $version;      // Version of driver
 
-	var $separator;
+	public $label_lib;    // Label of external lib used by driver
+	public $version_lib;  // Version of external lib used by driver
 
-	var $file;      // Path of file
-	var $handle;    // Handle fichier
+	public $separator;
 
-	var $cacheconvert=array();      // Array to cache list of value found after a convertion
-	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+	public $file;      // Path of file
+	public $handle;    // Handle fichier
 
-	var $nbinsert = 0; // # of insert done during the import
-	var $nbupdate = 0; // # of update done during the import
+	public $cacheconvert=array();      // Array to cache list of value found after a convertion
+	public $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+
+	public $nbinsert = 0; // # of insert done during the import
+	public $nbupdate = 0; // # of update done during the import
 
 
 	/**

@@ -63,14 +63,24 @@ class Facture extends CommonInvoice
 	 */
 	public $table_element='facture';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = 'facturedet';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element = 'fk_facture';
+
 	public $picto='bill';
+
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -120,14 +130,17 @@ class Facture extends CommonInvoice
 	public $cond_reglement_code;		// Code in llx_c_paiement
 	public $mode_reglement_code;		// Code in llx_c_paiement
 	public $fk_bank;					// Field to store bank id to use when payment mode is withdraw
+
 	/**
 	 * @deprecated
 	 */
 	public $products=array();
+
 	/**
 	 * @var FactureLigne[]
 	 */
 	public $lines=array();
+
 	public $line;
 	public $extraparams=array();
 	public $specimen;

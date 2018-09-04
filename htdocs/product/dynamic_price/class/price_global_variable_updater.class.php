@@ -44,21 +44,26 @@ class PriceGlobalVariableUpdater
 	 */
 	public $errors = array();
 
-    var $types=array(0, 1);				//!< Updater types
-    var $update_min = 5;				//!< Minimal update rate
+    public $types=array(0, 1);				//!< Updater types
+    public $update_min = 5;				//!< Minimal update rate
 
     /**
 	 * @var int ID
 	 */
 	public $id;
 
-    var $type;
-    var $description;
-    var $parameters;
-    var $fk_variable;
-    var $update_interval;				//!< Interval in mins
-    var $next_update;					//!< Next update timestamp
-    var $last_status;
+    public $type;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
+
+    public $parameters;
+    public $fk_variable;
+    public $update_interval;				//!< Interval in mins
+    public $next_update;					//!< Next update timestamp
+    public $last_status;
 
     /**
 	 * @var string Name of table without prefix where object is stored
@@ -68,7 +73,7 @@ class PriceGlobalVariableUpdater
     /**
      *  Constructor
      *
-     *  @param	DoliDb		$db      Database handler
+     *  @param  DoliDb      $db      Database handler
      */
     function __construct($db)
     {

@@ -35,9 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class ActionComm extends CommonObject
 {
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element='action';
+     * @var string ID to identify managed object
+     */
+    public $element='action';
 
     /**
      * @var string Name of table without prefix where object is stored
@@ -45,7 +45,11 @@ class ActionComm extends CommonObject
     public $table_element = 'actioncomm';
 
     public $table_rowid = 'id';
-    public $picto='action';
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'action';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -78,7 +82,7 @@ class ActionComm extends CommonObject
     var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
 
     /**
-     * @var string proper name for given parameter
+     * @var string Agenda event label
      */
     public $label;
 

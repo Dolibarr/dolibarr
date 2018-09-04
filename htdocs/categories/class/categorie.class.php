@@ -51,8 +51,11 @@ class Categorie extends CommonObject
 	const TYPE_USER      = 'user';
 	const TYPE_PROJECT   = 'project';
 	const TYPE_ACCOUNT   = 'bank_account';
-    	const TYPE_BANK_LINE = 'bank_line';
+    const TYPE_BANK_LINE = 'bank_line';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'category';
 
 
@@ -161,11 +164,15 @@ class Categorie extends CommonObject
 	public $fk_parent;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Category label
      */
-    public $label;
+   	public $label;
 
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	/**
 	 * @var string     Color
 	 */

@@ -53,7 +53,7 @@ class Tva extends CommonObject
 	var $num_payment;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
 

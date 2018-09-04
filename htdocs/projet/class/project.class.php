@@ -43,8 +43,16 @@ class Project extends CommonObject
 	 */
 	public $table_element = 'projet';
 
-    public $table_element_line = 'projet_task';
-    public $fk_element = 'fk_projet';
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line = 'projet_task';
+
+    /**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_projet';
+
     public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'projectpub';
 
@@ -53,38 +61,43 @@ class Project extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $description;
+    /**
+	 * @var string description
+	 */
+	public $description;
+
 	/**
 	 * @var string
 	 * @deprecated
 	 * @see title
 	 */
 	public $titre;
-    var $title;
-    var $date_start;
-    var $date_end;
-    var $date_close;
 
-    var $socid;             // To store id of thirdparty
-    var $thirdparty_name;   // To store name of thirdparty (defined only in some cases)
+    public $title;
+    public $date_start;
+    public $date_end;
+    public $date_close;
 
-    var $user_author_id;    //!< Id of project creator. Not defined if shared project.
-	var $user_close_id;
-    var $public;      //!< Tell if this is a public or private project
-    var $budget_amount;
-    var $bill_time;			// Is the time spent on project must be invoiced or not
+    public $socid;             // To store id of thirdparty
+    public $thirdparty_name;   // To store name of thirdparty (defined only in some cases)
 
-    var $statuts_short;
-    var $statuts_long;
+    public $user_author_id;    //!< Id of project creator. Not defined if shared project.
+	public $user_close_id;
+    public $public;      //!< Tell if this is a public or private project
+    public $budget_amount;
+    public $bill_time;			// Is the time spent on project must be invoiced or not
 
-    var $statut;			// 0=draft, 1=opened, 2=closed
-    var $opp_status;		// opportunity status, into table llx_c_lead_status
-	var $opp_percent;		// opportunity probability
+    public $statuts_short;
+    public $statuts_long;
 
-    var $oldcopy;
+    public $statut;			// 0=draft, 1=opened, 2=closed
+    public $opp_status;		// opportunity status, into table llx_c_lead_status
+	public $opp_percent;		// opportunity probability
 
-    var $weekWorkLoad;			// Used to store workload details of a projet
-    var $weekWorkLoadPerTask;	// Used to store workload details of tasks of a projet
+    public $oldcopy;
+
+    public $weekWorkLoad;			// Used to store workload details of a projet
+    public $weekWorkLoadPerTask;	// Used to store workload details of tasks of a projet
 
 	/**
 	 * @var int Creation date
@@ -92,16 +105,19 @@ class Project extends CommonObject
 	 * @see date_c
 	 */
 	public $datec;
+
 	/**
 	 * @var int Creation date
 	 */
 	public $date_c;
+
 	/**
 	 * @var int Modification date
 	 * @deprecated
 	 * @see date_m
 	 */
 	public $datem;
+
 	/**
 	 * @var int Modification date
 	 */
@@ -116,10 +132,12 @@ class Project extends CommonObject
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Open/Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Closed status
 	 */

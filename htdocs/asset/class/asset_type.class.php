@@ -39,19 +39,28 @@ class AssetType extends CommonObject
 	 */
 	public $element = 'asset_type';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'group';
+
 	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/** @var string Label */
 	public $label;
+
 	/** @var string Accountancy code asset */
 	public $accountancy_code_asset;
+
 	/** @var string Accountancy code depreciation asset */
 	public $accountancy_code_depreciation_asset;
+
 	/** @var string Accountancy code depreciation expense */
 	public $accountancy_code_depreciation_expense;
+
 	/** @var string 	Public note */
 	public $note;
+
 	/** @var array Array of asset */
 	public $asset=array();
 

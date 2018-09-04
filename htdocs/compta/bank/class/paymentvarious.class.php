@@ -47,25 +47,29 @@ class PaymentVarious extends CommonObject
 	 */
 	public $id;
 
-	var $ref;
-	var $tms;
-	var $datep;
-	var $datev;
-	var $sens;
-	var $amount;
-	var $type_payment;
-	var $num_payment;
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
+	public $tms;
+	public $datep;
+	public $datev;
+	public $sens;
+	public $amount;
+	public $type_payment;
+	public $num_payment;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string various payments label
      */
     public $label;
 
-	var $accountancy_code;
-	var $fk_project;
-	var $fk_bank;
-	var $fk_user_author;
-	var $fk_user_modif;
+	public $accountancy_code;
+	public $fk_project;
+	public $fk_bank;
+	public $fk_user_author;
+	public $fk_user_modif;
 
 
 	/**
@@ -85,7 +89,7 @@ class PaymentVarious extends CommonObject
 	 * Update database
 	 *
 	 * @param   User	$user        	User that modify
-	 * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
+	 * @param   int		$notrigger      0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
 	function update($user=null, $notrigger=0)

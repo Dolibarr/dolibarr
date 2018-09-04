@@ -55,9 +55,10 @@ class Productlot extends CommonObject
 	public $lines = array();
 
 	/**
+	 * @var int Entity
 	 */
-
 	public $entity;
+
 	public $fk_product;
 	public $batch;
 	public $eatby = '';
@@ -67,9 +68,6 @@ class Productlot extends CommonObject
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
-
-	/**
-	 */
 
 
 	/**

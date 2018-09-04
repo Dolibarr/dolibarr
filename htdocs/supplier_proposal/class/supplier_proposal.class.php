@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2018 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
@@ -55,14 +55,21 @@ class SupplierProposal extends CommonObject
 	 */
 	public $table_element='supplier_proposal';
 
-    public $table_element_line='supplier_proposaldet';
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line='supplier_proposaldet';
+
     public $fk_element='fk_supplier_proposal';
+
     public $picto='propal';
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -74,24 +81,25 @@ class SupplierProposal extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $socid;		// Id client
+    public $socid;		// Id client
 
 	/**
 	 * @deprecated
 	 * @see user_author_id
 	 */
-    var $author;
-    var $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
-    var $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
-    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
-    var $date;						// Date of proposal
-    var $date_livraison;
+    public $author;
+
+    public $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
+    public $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
+    public $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
+    public $date;						// Date of proposal
+    public $date_livraison;
 
 	/**
 	 * @deprecated
 	 * @see date_creation
 	 */
-	var $datec;
+	public $datec;
 
 	/**
 	 * Creation date
@@ -103,7 +111,7 @@ class SupplierProposal extends CommonObject
 	 * @deprecated
 	 * @see date_validation
 	 */
-	var $datev;
+	public $datev;
 
 	/**
 	 * Validation date
@@ -112,70 +120,76 @@ class SupplierProposal extends CommonObject
 	public $date_validation;
 
 
-    var $user_author_id;
-    var $user_valid_id;
-    var $user_close_id;
+    public $user_author_id;
+    public $user_valid_id;
+    public $user_close_id;
 
 	/**
 	 * @deprecated
 	 * @see price_ht
 	 */
-    var $price;
+    public $price;
+
 	/**
 	 * @deprecated
 	 * @see total_tva
 	 */
-    var $tva;
+    public $tva;
+
 	/**
 	 * @deprecated
 	 * @see total_ttc
 	 */
-    var $total;
+    public $total;
 
-    var $cond_reglement_code;
-    var $mode_reglement_code;
-    var $remise = 0;
-    var $remise_percent = 0;
-    var $remise_absolue = 0;
+    public $cond_reglement_code;
+    public $mode_reglement_code;
+    public $remise = 0;
+    public $remise_percent = 0;
+    public $remise_absolue = 0;
 
-    var $products=array();
-    var $extraparams=array();
+    public $products=array();
+    public $extraparams=array();
 
-    var $lines = array();
-    var $line;
+    public $lines = array();
+    public $line;
 
-    var $labelstatut=array();
-    var $labelstatut_short=array();
+    public $labelstatut=array();
+    public $labelstatut_short=array();
 
-    var $nbtodo;
-    var $nbtodolate;
+    public $nbtodo;
+    public $nbtodolate;
 
-    var $specimen;
+    public $specimen;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_tx;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Signed quote
 	 */
 	const STATUS_SIGNED = 2;
+
 	/**
 	 * Not signed quote, canceled
 	 */
 	const STATUS_NOTSIGNED = 3;
+
 	/**
 	 * Billed or closed/processed quote
 	 */
@@ -2685,25 +2699,37 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $table_element='supplier_proposaldet';
 
-    var $oldline;
+    public $oldline;
 
     // From llx_supplier_proposaldet
+<<<<<<< HEAD
     var $rowid; // deprecated
+=======
+    public $rowid; // deprecated
+>>>>>>> upstream/develop
 
     /**
 	 * @var int ID
 	 */
 	public $id;
 
+<<<<<<< HEAD
     var $fk_supplier_proposal;
     var $fk_parent_line;
     var $desc;          	// Description ligne
     var $fk_product;		// Id produit predefini
+=======
+    public $fk_supplier_proposal;
+    public $fk_parent_line;
+    public $desc;          	// Description ligne
+    public $fk_product;		// Id produit predefini
+
+>>>>>>> upstream/develop
 	/**
 	 * @deprecated
 	 * @see product_type
 	 */
-	var $fk_product_type;
+	public $fk_product_type;
 	/**
 	 * Product type
 	 * @var int
@@ -2711,89 +2737,94 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
     public $product_type = Product::TYPE_PRODUCT;
 
-    var $qty;
-    var $tva_tx;
-    var $subprice;
-    var $remise_percent;
-    var $fk_remise_except;
+    public $qty;
+    public $tva_tx;
+    public $subprice;
+    public $remise_percent;
+    public $fk_remise_except;
 
-    var $rang = 0;
+    public $rang = 0;
 
-	var $fk_fournprice;
-	var $pa_ht;
-	var $marge_tx;
-	var $marque_tx;
+	public $fk_fournprice;
+	public $pa_ht;
+	public $marge_tx;
+	public $marque_tx;
 
-    var $special_code;	// Tag for special lines (exlusive tags)
+    public $special_code;	// Tag for special lines (exlusive tags)
     // 1: frais de port
     // 2: ecotaxe
     // 3: option line (when qty = 0)
 
-    var $info_bits = 0;	// Liste d'options cumulables:
+    public $info_bits = 0;	// Liste d'options cumulables:
     // Bit 0: 	0 si TVA normal - 1 si TVA NPR
     // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
-    var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
-    var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
-    var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
+    public $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
+    public $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
+    public $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
 	/**
 	 * @deprecated
 	 * @see remise_percent, fk_remise_except
 	 */
-    var $remise;
+    public $remise;
+
 	/**
 	 * @deprecated
 	 * @see subprice
 	 */
-    var $price;
+    public $price;
 
     // From llx_product
 	/**
 	 * @deprecated
 	 * @see product_ref
 	 */
-	var $ref;
+	public $ref;
+
 	/**
 	 * Product reference
 	 * @var string
 	 */
 	public $product_ref;
+
 	/**
 	 * @deprecated
 	 * @see product_label
 	 */
-	var $libelle;
+	public $libelle;
+
 	/**
 	 *  Product label
 	 * @var string
 	 */
 	public $product_label;
+
 	/**
 	 * Product description
 	 * @var string
 	 */
 	public $product_desc;
 
-    var $localtax1_tx;		// Local tax 1
-    var $localtax2_tx;		// Local tax 2
-    var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-    var $total_localtax1;  	// Line total local tax 1
-    var $total_localtax2;	// Line total local tax 2
+    public $localtax1_tx;		// Local tax 1
+    public $localtax2_tx;		// Local tax 2
+    public $localtax1_type;	// Local tax 1 type
+	public $localtax2_type;	// Local tax 2 type
+    public $total_localtax1;  	// Line total local tax 1
+    public $total_localtax2;	// Line total local tax 2
 
-    var $skip_update_total; // Skip update price total for special lines
+    public $skip_update_total; // Skip update price total for special lines
 
-    var $ref_fourn;
-    var $ref_supplier;
+    public $ref_fourn;
+    public $ref_supplier;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_subprice;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
     /**
      * 	Class line Contructor

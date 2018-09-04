@@ -41,7 +41,11 @@ class Task extends CommonObject
 	 */
 	public $table_element='projet_task';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_task';
+
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
@@ -52,7 +56,11 @@ class Task extends CommonObject
      */
     public $label;
 
-	var $description;
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $duration_effective;		// total of time spent on this task
 	var $planned_workload;
 	var $date_c;
