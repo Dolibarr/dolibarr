@@ -154,7 +154,7 @@ $arrayfields=array(
 	'p.phone'=>array('label'=>"Phone", 'checked'=>1),
 	'p.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
 	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1),
-	'p.fax'=>array('label'=>"Fax", 'checked'=>1),
+	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'checked'=>1),
 	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->skype->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
