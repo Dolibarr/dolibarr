@@ -57,12 +57,12 @@ class Facture extends CommonInvoice
 	 * @var string ID to identify managed object
 	 */
 	public $element='facture';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='facture';
-	
+
 	public $table_element_line = 'facturedet';
 	public $fk_element = 'fk_facture';
 	public $picto='bill';
@@ -1177,6 +1177,8 @@ class Facture extends CommonInvoice
 			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
+
+		if ($short) return $url;
 
 		$picto='bill';
 		if ($this->type == self::TYPE_REPLACEMENT) $picto.='r';	// Replacement invoice
@@ -4262,7 +4264,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='facturedet';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
