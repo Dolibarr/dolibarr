@@ -28,15 +28,36 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';						// This set stripe glo
  */
 class Stripe extends CommonObject
 {
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $fk_key;
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $mode;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $statut;
+
 	public $type;
+
 	public $code;
+
 	public $message;
 
 	/**

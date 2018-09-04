@@ -73,9 +73,9 @@ abstract class CommonObject
 	public $table_element;
 
 	/**
-	 * @var
+	 * @var int    Name of subtable line
 	 */
-	public $table_element_line;
+	public $table_element_line='';
 
 	/**
 	 * @var string		Key value used to track if data is coming from import wizard
@@ -168,6 +168,7 @@ abstract class CommonObject
 	 * @see fetch_origin()
 	 */
 	public $origin;
+
 	/**
 	 * @var int 	The id of originating object
 	 * @see fetch_origin()
@@ -6175,7 +6176,7 @@ abstract class CommonObject
 			{
 				//Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey',$params) && $key != $params['onlykey']) continue;
-				
+
 				$enabled = 1;
 				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key]))
 				{

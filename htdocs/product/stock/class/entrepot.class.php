@@ -37,12 +37,12 @@ class Entrepot extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='stock';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='entrepot';
-	
+
 	public $picto='stock';
 
 	/**
@@ -61,7 +61,12 @@ class Entrepot extends CommonObject
 	const STATUS_OPEN_INTERNAL = 2;
 
 	var $libelle;
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $statut;
 	var $lieu;
 	var $address;

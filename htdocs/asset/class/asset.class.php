@@ -95,18 +95,36 @@ class Asset extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Active', '-1'=>'Cancel')),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
 	public $entity;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Asset label
      */
-    public $label;
+   	public $label;
 
 	public $amount;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $note_public;
 	public $note_private;
 	public $date_creation;

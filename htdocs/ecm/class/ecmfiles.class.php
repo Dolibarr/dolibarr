@@ -40,22 +40,36 @@ class EcmFiles extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ecmfiles';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'ecm_files';
-	
+
 	public $picto = 'generic';
 
-	public $ref;					// hash of file path
+	/**
+	 * @var string Ref hash of file path
+	 */
+	public $ref;
+
 	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
 	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $cover;
 	public $position;
@@ -68,7 +82,7 @@ class EcmFiles extends CommonObject
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
-	
+
 
 	/**
 	 * Constructor
@@ -831,11 +845,21 @@ class EcmFiles extends CommonObject
 class EcmfilesLine
 {
 	public $label;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $cover;
 	public $position;

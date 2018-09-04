@@ -55,8 +55,19 @@ class Propal extends CommonObject
 	 */
 	public $table_element='propal';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line='propaldet';
-	public $fk_element='fk_propal';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element ='fk_propal';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='propal';
 
 	/**

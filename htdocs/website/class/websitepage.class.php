@@ -39,12 +39,12 @@ class WebsitePage extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'websitepage';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
-	
+
 	/**
 	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -55,7 +55,12 @@ class WebsitePage extends CommonObject
 	public $aliasalt;
 	public $type_container;
 	public $title;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $htmlheader;
 	public $content;

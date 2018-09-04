@@ -40,12 +40,12 @@ class Account extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'bank_account';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'bank_account';
-	
+
 	public $picto = 'account';
 
 	/**
@@ -1648,56 +1648,60 @@ class AccountLine extends CommonObject
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element='bank';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='bank';
-	
-	var $picto = 'generic';
+
+	public $picto = 'generic';
 
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $ref;
-	var $datec;
-	var $dateo;
+
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
+	public $datec;
+	public $dateo;
 
 	/**
 	 * Value date
 	 */
-	var $datev;
-	var $amount;
-	
+	public $datev;
+	public $amount;
+
 	/**
-     * @var string proper name for given parameter
+     * @var string bank transaction lines label
      */
     public $label;
-    
-	var $note;
-	var $fk_user_author;
-	var $fk_user_rappro;
-	var $fk_type;
-	var $rappro;        // Is it conciliated
-	var $num_releve;    // If conciliated, what is bank statement
-	var $num_chq;       // Num of cheque
-	var $bank_chq;      // Bank of cheque
-	var $fk_bordereau;  // Id of cheque receipt
 
-	var $fk_account;            // Id of bank account
-	var $bank_account_label;    // Label of bank account
+	public $note;
+	public $fk_user_author;
+	public $fk_user_rappro;
+	public $fk_type;
+	public $rappro;        // Is it conciliated
+	public $num_releve;    // If conciliated, what is bank statement
+	public $num_chq;       // Num of cheque
+	public $bank_chq;      // Bank of cheque
+	public $fk_bordereau;  // Id of cheque receipt
+
+	public $fk_account;            // Id of bank account
+	public $bank_account_label;    // Label of bank account
 
 	public $emetteur;
 

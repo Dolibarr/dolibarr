@@ -48,7 +48,7 @@ class Localtax extends CommonObject
 	var $amount;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string local tax
      */
     public $label;
 

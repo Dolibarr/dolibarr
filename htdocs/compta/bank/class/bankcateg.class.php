@@ -32,10 +32,13 @@ class BankCateg // extends CommonObject
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
     public $picto='generic';
 
-	public $id;
+	/**
+     * @var int ID
+     */
+    public $id;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string bank categories label
      */
     public $label;
 

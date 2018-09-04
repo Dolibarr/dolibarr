@@ -51,7 +51,11 @@ class Societe extends CommonObject
 	 */
 	public $table_element = 'societe';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_soc';
+
 	public $fieldsforcombobox='nom,name_alias';
 	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
@@ -90,6 +94,9 @@ class Societe extends CommonObject
 	);
 
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	/**
@@ -374,7 +381,11 @@ class Societe extends CommonObject
 	 */
 	public $default_lang;
 
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
 	public $ref_int;
 	/**
 	 * External user reference.

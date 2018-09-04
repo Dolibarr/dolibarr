@@ -76,6 +76,10 @@ class User extends CommonObject
 	public $admin;
 	public $login;
 	public $api_key;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	//! Clear password in memory
@@ -103,6 +107,10 @@ class User extends CommonObject
 	public $contactid;
 
 	public $fk_member;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
 
 	public $clicktodial_url;

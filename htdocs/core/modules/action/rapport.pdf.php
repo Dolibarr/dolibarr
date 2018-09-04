@@ -39,8 +39,12 @@ class CommActionRapport
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $date_edition;
 	var $year;
 	var $month;

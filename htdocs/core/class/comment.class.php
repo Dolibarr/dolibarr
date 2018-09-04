@@ -31,9 +31,16 @@ class Comment extends CommonObject
 	 */
 	public $table_element='comment';
 
-	public $fk_element;
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element ='';
+
 	public $element_type;
 
+	/**
+	 * @var string description
+	 */
 	public $description;
 
 	public $tms;
@@ -42,6 +49,9 @@ class Comment extends CommonObject
 
 	public $fk_user_author;
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	public $import_key;

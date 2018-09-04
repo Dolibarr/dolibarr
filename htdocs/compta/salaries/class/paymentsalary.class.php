@@ -44,7 +44,12 @@ class PaymentSalary extends CommonObject
 	public $picto='payment';
 
 	public $tms;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $datep;
 	public $datev;
 	public $amount;
@@ -53,7 +58,7 @@ class PaymentSalary extends CommonObject
 	public $num_payment;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string salary payments label
      */
     public $label;
 

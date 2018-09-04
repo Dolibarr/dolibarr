@@ -38,7 +38,7 @@ class Inventory extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'inventory';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -48,7 +48,7 @@ class Inventory extends CommonObject
 	 * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
-	
+
 	/**
 	 * @var string String with name of icon for inventory
 	 */
@@ -99,9 +99,21 @@ class Inventory extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'Todo', 1=>'Done', -1=>'Cancel')),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $fk_warehouse;
 	public $date_inventory;
 	public $title;
@@ -123,22 +135,22 @@ class Inventory extends CommonObject
 	 * @var int    Name of subtable line
 	 */
 	//public $table_element_line = 'inventorydet';
-	
+
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
 	//public $fk_element = 'fk_inventory';
-	
+
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
 	//public $class_element_line = 'Inventoryline';
-	
+
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('inventorydet');
-	
+
 	/**
 	 * @var InventoryLine[]     Array of subtable lines
 	 */
@@ -471,10 +483,12 @@ class InventoryObjectLine
 	 * @var int ID
 	 */
 	public $id;
+
 	/**
 	 * @var mixed Sample line property 1
 	 */
 	public $prop1;
+
 	/**
 	 * @var mixed Sample line property 2
 	 */

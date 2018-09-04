@@ -39,17 +39,17 @@ class SocieteAccount extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'societeaccount';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_account';
-	
+
 	/**
 	 * @var array  Does societeaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
-	
+
 	/**
 	 * @var string String with name of icon for societeaccount. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -100,13 +100,23 @@ class SocieteAccount extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
 	);
 	public $rowid;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $key_account;
 	public $login;
 	public $pass_encoding;
 	public $pass_crypted;
 	public $pass_temp;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $site;
 	public $date_last_login;
 	public $date_previous_login;

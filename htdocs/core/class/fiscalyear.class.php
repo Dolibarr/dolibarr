@@ -38,25 +38,36 @@ class Fiscalyear extends CommonObject
 	 */
 	public $table_element='accounting_fiscalyear';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line = '';
-	public $fk_element = '';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
-	var $rowid;
 
 	/**
-     * @var string proper name for given parameter
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = '';
+
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+     * @var string fiscal year label
      */
     public $label;
 
-	var $date_start;
-	var $date_end;
-	var $datec;
-	var $statut;		// 0=open, 1=closed
-	var $entity;
+	public $date_start;
+	public $date_end;
+	public $datec;
+	public $statut;		// 0=open, 1=closed
+	public $entity;
 
-	var $statuts=array();
-	var $statuts_short=array();
+	public $statuts=array();
+	public $statuts_short=array();
 
 	/**
 	 * Constructor

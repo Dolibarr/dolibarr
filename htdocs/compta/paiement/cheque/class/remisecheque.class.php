@@ -37,12 +37,12 @@ class RemiseCheque extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='chequereceipt';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='bordereau_cheque';
-	
+
 	public $picto = 'payment';
 
 	var $num;
@@ -56,6 +56,10 @@ class RemiseCheque extends CommonObject
 	public $account_label;
 	public $author_id;
 	public $nbcheque;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
 
 	/**

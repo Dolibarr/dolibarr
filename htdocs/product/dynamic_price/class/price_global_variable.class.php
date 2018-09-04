@@ -33,26 +33,31 @@ class PriceGlobalVariable
      * @var DoliDB Database handler.
      */
     public $db;
-   
+
     /**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
     /**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
     /**
 	 * @var int ID
 	 */
 	public $id;
-	
-    var $code;
-    var $description;
-    var $value;
-    
+
+    public $code;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
+
+    public $value;
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
