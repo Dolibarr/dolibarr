@@ -3472,60 +3472,60 @@ class Commande extends CommonOrder
 		if (!$user->rights->commande->lire)
 			$option = 'nolink';
 
-			if ($option !== 'nolink')
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
+
+		if ($short) return $url;
+
+		$label = '';
+
+		if ($user->rights->commande->lire) {
+			$label = '<u>'.$langs->trans("ShowOrder").'</u>';
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+			if (!empty($this->total_ht)) {
+				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+			if (!empty($this->total_tva)) {
+				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,	$conf->currency);
+			}
+			if (!empty($this->total_ttc)) {
+				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+			}
+		}
+
+		$linkclose='';
+		if (empty($notooltip) && $user->rights->commande->lire)
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				// Add param to save lastsearch_values or not
-				$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-				if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-				if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+				$label=$langs->trans("ShowOrder");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip"';
+		}
 
-			if ($short) return $url;
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
 
-			$label = '';
+		if ($option === 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
 
-			if ($user->rights->commande->lire) {
-				$label = '<u>'.$langs->trans("ShowOrder").'</u>';
-				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-				$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
-				if (!empty($this->total_ht)) {
-					$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-				}
-				if (!empty($this->total_tva)) {
-					$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,	$conf->currency);
-				}
-				if (!empty($this->total_ttc)) {
-					$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-				}
-			}
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
 
-			$linkclose='';
-			if (empty($notooltip) && $user->rights->commande->lire)
-			{
-				if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-				{
-					$label=$langs->trans("ShowOrder");
-					$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-				}
-				$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-				$linkclose.=' class="classfortooltip"';
-			}
-
-			$linkstart = '<a href="'.$url.'"';
-			$linkstart.=$linkclose.'>';
-			$linkend='</a>';
-
-			if ($option === 'nolink') {
-				$linkstart = '';
-				$linkend = '';
-			}
-
-			$result .= $linkstart;
-			if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-			if ($withpicto != 2) $result.= $this->ref;
-			$result .= $linkend;
-
-			return $result;
+		return $result;
 	}
 
 

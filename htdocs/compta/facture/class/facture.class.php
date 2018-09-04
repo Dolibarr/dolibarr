@@ -1178,6 +1178,8 @@ class Facture extends CommonInvoice
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
+		if ($short) return $url;
+
 		$picto='bill';
 		if ($this->type == self::TYPE_REPLACEMENT) $picto.='r';	// Replacement invoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto.='a';	// Credit note
