@@ -287,6 +287,7 @@ class AssetType extends CommonObject
 	 *
 	 *  @return 	array	List of types of members
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array()
 	{
 		global $conf,$langs;
@@ -437,5 +438,4 @@ class AssetType extends CommonObject
 	{
 		return '';
 	}
-
 }

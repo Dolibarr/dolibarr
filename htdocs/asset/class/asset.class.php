@@ -35,22 +35,22 @@ class Asset extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'asset';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'asset';
-	
+
 	/**
 	 * @var int  Does module support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
-	
+
 	/**
 	 * @var int  Does asset support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
-	
+
 	/**
 	 * @var string String with name of icon for asset. Must be the part after the 'object_' into object_asset.png
 	 */
@@ -98,19 +98,19 @@ class Asset extends CommonObject
 	public $rowid;
 	public $ref;
 	public $entity;
-	
+
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
+   * @var string proper name for given parameter
+   */
+  public $label;
+
 	public $amount;
 	public $fk_soc;
 	
 	/**
-     	 * @var string model description (short text)
-     	 */
-    	public $description;
+   * @var string model description (short text)
+   */
+  public $description;
     
 	public $note_public;
 	public $note_private;
@@ -350,6 +350,7 @@ class Asset extends CommonObject
 	 *  @param  int     $mode           0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string                  Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function LibStatut($status,$mode=0)
 	{
 		global $langs;

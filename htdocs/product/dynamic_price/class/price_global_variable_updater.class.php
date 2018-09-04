@@ -559,6 +559,7 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_next_update($next_update, $user=0, $notrigger=0)
     {
         $error=0;
@@ -603,6 +604,7 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_status($last_status, $user=0, $notrigger=0)
     {
         $error=0;

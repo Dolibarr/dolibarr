@@ -232,6 +232,7 @@ class printing_printgcp extends PrintingDriver
      *
      *  @return array      list of printers
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function getlist_available_printers()
     {
         // Token storage
@@ -299,6 +300,7 @@ class printing_printgcp extends PrintingDriver
      * @param   string      $subdir     subdir for file
      * @return  int                     0 if OK, >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function print_file($file, $module, $subdir='')
     {
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -415,6 +417,7 @@ class printing_printgcp extends PrintingDriver
      *
      *  @return  int                     0 if OK, >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function list_jobs()
     {
         global $conf, $db, $langs, $bc;
@@ -512,5 +515,4 @@ class printing_printgcp extends PrintingDriver
 
         return $error;
     }
-
 }

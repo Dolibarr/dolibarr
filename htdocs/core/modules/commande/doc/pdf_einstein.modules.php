@@ -77,42 +77,42 @@ class pdf_einstein extends ModelePDFCommandes
      * @public string
      */
 	public $version = 'dolibarr';
-    
+
 	/**
      * @var int page_largeur
      */
     public $page_largeur;
-    
+
     /**
      * @var int page_hauteur
      */
     public $page_hauteur;
-    
+
     /**
      * @var array format
      */
     public $format;
-    
+
     /**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
 	public $marge_basse;
-    
+
 	/**
 	* Issuer
 	* @var Societe
@@ -213,6 +213,7 @@ class pdf_einstein extends ModelePDFCommandes
      *  @param		int			$hideref			Do not show ref
      *  @return     int             			    1=OK, 0=KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblignes;
@@ -652,9 +653,9 @@ class pdf_einstein extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
 	}
 
 
@@ -667,6 +668,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
@@ -854,6 +856,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 	    global $conf,$mysoc;
@@ -1441,6 +1444,4 @@ class pdf_einstein extends ModelePDFCommandes
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

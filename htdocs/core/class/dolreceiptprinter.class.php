@@ -204,7 +204,6 @@ class dolReceiptPrinter extends Escpos
             'dol_print_if_customer_tax_number',
             'dol_print_if_customer_account_balance_positive',
         );
-
     }
 
     /**
@@ -360,6 +359,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $parameter      Printer parameter
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function AddPrinter($name, $type, $profile, $parameter)
     {
         global $conf;
@@ -385,6 +385,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function UpdatePrinter($name, $type, $profile, $parameter, $printerid)
     {
         global $conf;
@@ -409,6 +410,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DeletePrinter($printerid)
     {
         global $conf;
@@ -431,6 +433,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $templateid     Template id
      *  @return   int                       0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function UpdateTemplate($name, $template, $templateid)
     {
         global $conf;
@@ -454,6 +457,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SendTestToPrinter($printerid)
     {
         global $conf;
@@ -490,6 +494,7 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SendToPrinter($object, $templateid, $printerid)
     {
         global $conf;
@@ -651,6 +656,7 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function InitPrinter($printerid)
     {
         global $conf;

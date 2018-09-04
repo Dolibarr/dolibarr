@@ -64,6 +64,7 @@ class Interfaces
      *   @param     Conf		$conf       Objet conf
      *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function run_triggers($action,$object,$user,$langs,$conf)
     {
         // Check parameters
@@ -368,5 +369,4 @@ class Interfaces
         }
         return $triggers;
     }
-
 }

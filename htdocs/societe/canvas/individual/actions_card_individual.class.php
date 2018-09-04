@@ -92,6 +92,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id=0, $ref='')
 	{
 		global $conf, $langs;
@@ -134,6 +135,4 @@ class ActionsCardIndividual extends ActionsCardCommon
 	{
 		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
-
 }
-

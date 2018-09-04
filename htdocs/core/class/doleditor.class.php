@@ -135,7 +135,6 @@ class DolEditor
             $this->height				= $height;
             $this->width				= $width;
     	}
-
     }
 
     /**
@@ -149,6 +148,7 @@ class DolEditor
      *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
      *  @return	void|string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='', $option='')
     {
     	global $conf,$langs;
@@ -345,6 +345,4 @@ class DolEditor
         if ($noprint) return $out;
         else print $out;
     }
-
 }
-

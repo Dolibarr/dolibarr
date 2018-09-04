@@ -36,26 +36,26 @@ class Ticketlogs// extends CommonObject
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error; 
-	
+     * @var string Error code (or message)
+     */
+    public $error;
+
     /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-    
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'ticketlogs'; 
-	
+     * @var string ID to identify managed object
+     */
+    public $element = 'ticketlogs';
+
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'ticketlogs'; //!< Name of table without prefix where object is stored
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'ticketlogs'; //!< Name of table without prefix where object is stored
 
     /**
      * @var int ID

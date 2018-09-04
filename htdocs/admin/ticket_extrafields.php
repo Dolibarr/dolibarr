@@ -16,9 +16,9 @@
  */
 
 /**
- *      \file       ticket/admin/ticket_extrafields.php
- *        \ingroup    ticket
- *        \brief      Page to setup extra fields of ticket
+ *      \file       admin/ticket_extrafields.php
+ *      \ingroup    ticket
+ *      \brief      Page to setup extra fields of ticket
  */
 
 require '../main.inc.php';

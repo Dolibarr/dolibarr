@@ -19,7 +19,7 @@
  */
 
 /**
- *     	\file       htdocs/adherents/admin/public.php
+ *     	\file       htdocs/adherents/admin/website.php
  *		\ingroup    member
  *		\brief      File of main public page for member module
  *		\author	    Laurent Destailleur
@@ -55,14 +55,12 @@ if ($action == 'update')
 	$amount=GETPOST('MEMBER_NEWFORM_AMOUNT');
 	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$email=GETPOST('MEMBER_PAYONLINE_SENDEMAIL');
-        $forcetype=GETPOST('MEMBER_NEWFORM_FORCETYPE');
+	$forcetype=GETPOST('MEMBER_NEWFORM_FORCETYPE');
 
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$editamount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$payonline,'chaine',0,'',$conf->entity);
-    $res=dolibarr_set_const($db, "MEMBER_PAYONLINE_SENDEMAIL",$email,'chaine',0,'',$conf->entity);
     if ($forcetype < 0) $res=dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE",$conf->entity);
     else                $res=dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE",$forcetype,'chaine',0,'',$conf->entity);
 
@@ -209,13 +207,6 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
 	if (! empty($conf->stripe->enabled)) $listofval['stripe']='Stripe';
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),0);
-	print "</td></tr>\n";
-
-	// Jump to an online payment page
-	print '<tr class="oddeven" id="tremail"><td>';
-	print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
-	print '</td><td align="right">';
-	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';
 	print "</td></tr>\n";
 
 	print '</table>';

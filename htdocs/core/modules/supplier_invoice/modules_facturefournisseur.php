@@ -47,19 +47,19 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	static function liste_modeles($db, $maxfilenamelength=0)
 	{
 		global $conf;
 
-		$type='invoice_supplier';
-		$liste=array();
+		$type = 'invoice_supplier';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
-
 }
 
 /**

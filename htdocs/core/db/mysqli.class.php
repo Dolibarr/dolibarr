@@ -173,6 +173,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$database	Name of database
 	 *	@return	    boolean  		    true if OK, false if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
@@ -291,6 +292,7 @@ class DoliDBMysqli extends DoliDB
      *	@param	mysqli_result	$resultset	Curseur de la requete voulue
      *	@return	object|null					Object result line or null if KO or end of cursor
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_object($resultset)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
@@ -305,6 +307,7 @@ class DoliDBMysqli extends DoliDB
      *	@param	mysqli_result	$resultset	Resultset of request
      *	@return	array|null					Array or null if KO or end of cursor
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_array($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -318,6 +321,7 @@ class DoliDBMysqli extends DoliDB
      *	@param	mysqli_result	$resultset	Resultset of request
      *	@return	array|null|0				Array or null if KO or end of cursor or 0 if resultset is bool
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_row($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -340,6 +344,7 @@ class DoliDBMysqli extends DoliDB
      *	@return	int				Nb of lines
      *	@see    affected_rows
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function num_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -354,6 +359,7 @@ class DoliDBMysqli extends DoliDB
      *	@return int							Nombre de lignes
      *	@see    num_rows
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function affected_rows($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -463,6 +469,7 @@ class DoliDBMysqli extends DoliDB
 	 * @param	string	$fieldid	Field name
 	 * @return  int|string			Id of row
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function last_insert_id($tab,$fieldid='rowid')
     {
         return $this->db->insert_id;
@@ -543,6 +550,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 * @return	        string      Id connexion
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLGetConnectId()
     {
         $resql=$this->query('SELECT CONNECTION_ID()');
@@ -565,6 +573,7 @@ class DoliDBMysqli extends DoliDB
 	 * 	@param	string	$owner			Username of database owner
 	 * 	@return	bool|mysqli_result		resource defined if OK, null if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLCreateDb($database,$charset='',$collation='',$owner='')
     {
         if (empty($charset))   $charset=$this->forcecharset;
@@ -593,6 +602,7 @@ class DoliDBMysqli extends DoliDB
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLListTables($database, $table='')
     {
         $listtables=array();
@@ -618,6 +628,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$table		Name of table
 	 *	@return	array				Tableau des informations des champs de la table
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLInfoTable($table)
     {
         $infotables=array();
@@ -648,6 +659,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
     {
 	    // FIXME: $fulltext_keys parameter is unused
@@ -724,6 +736,7 @@ class DoliDBMysqli extends DoliDB
      *	@param	    string	$table 			Name of table
      *	@return	    int						<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLDropTable($table)
     {
     	$sql = "DROP TABLE ".$table;
@@ -741,6 +754,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
 	 *	@return	bool|mysqli_result	Resultset x (x->Field, x->Type, ...)
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLDescTable($table,$field="")
     {
         $sql="DESC ".$table." ".$field;
@@ -759,6 +773,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLAddField($table,$field_name,$field_desc,$field_position="")
     {
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
@@ -808,6 +823,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$field_desc 		Array with description of field format
 	 *	@return	int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLUpdateField($table,$field_name,$field_desc)
     {
         $sql = "ALTER TABLE ".$table;
@@ -852,6 +868,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$field_name 	Name of field to drop
 	 *	@return	int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLDropField($table,$field_name)
     {
         $sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
@@ -873,6 +890,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
     {
         $sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'";
@@ -1082,4 +1100,3 @@ class DoliDBMysqli extends DoliDB
         return $result;
     }
 }
-

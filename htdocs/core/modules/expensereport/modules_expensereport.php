@@ -31,11 +31,12 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 
 	/**
 	 *  Return list of active generation modules
-	 *
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
@@ -48,7 +49,6 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 
 		return $liste;
 	}
-
 }
 
 /**
@@ -64,6 +64,7 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
  *  @param      int			$hideref        Hide ref
  *  @return     int         				0 if KO, 1 if OK
  */
+// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);

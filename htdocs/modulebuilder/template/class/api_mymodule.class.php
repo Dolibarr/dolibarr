@@ -279,7 +279,6 @@ class MyModuleApi extends DolibarrApi
                 'message' => 'MyObject deleted'
             )
         );
-
     }
 
 

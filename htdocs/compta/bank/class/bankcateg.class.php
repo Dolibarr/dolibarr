@@ -33,14 +33,14 @@ class BankCateg // extends CommonObject
     public $picto='generic';
 
 	/**
-     * @var int ID
-     */
-    public $id;
+   * @var int ID
+   */
+   public $id;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+   * @var string proper name for given parameter
+   */
+  public $label;
 
 
 	/**
@@ -346,5 +346,4 @@ class BankCateg // extends CommonObject
 		$this->id = 0;
 		$this->label = '';
 	}
-
 }

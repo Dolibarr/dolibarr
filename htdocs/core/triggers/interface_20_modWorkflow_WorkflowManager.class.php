@@ -309,5 +309,4 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
         return 0;
     }
-
 }

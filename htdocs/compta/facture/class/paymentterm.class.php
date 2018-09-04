@@ -482,5 +482,4 @@ class PaymentTerm // extends CommonObject
 		$this->nbjour='';
 		$this->decalage='';
 	}
-
 }

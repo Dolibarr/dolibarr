@@ -202,6 +202,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $product,$langs,$conf,$mysoc,$hookmanager,$user;
@@ -499,6 +500,4 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 		return -1;
 	}
-
 }
-

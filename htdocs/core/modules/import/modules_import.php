@@ -34,7 +34,7 @@ class ModeleImports
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     public $datatoimport;
 
     public $error='';
@@ -43,12 +43,12 @@ class ModeleImports
      * @var int ID of driver
      */
     public $id;     
-    
-	/**
+
+    /**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	public $extension;    // Extension of files imported by driver
 	public $version;      // Version of driver
 
@@ -150,6 +150,7 @@ class ModeleImports
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		dol_syslog(get_class($this)."::liste_modeles");
@@ -258,6 +259,4 @@ class ModeleImports
 	{
 		return $this->libversion[$key];
 	}
-
 }
-

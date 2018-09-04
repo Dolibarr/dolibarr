@@ -38,12 +38,12 @@ class Opensurveysondage extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='opensurvey_sondage';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='opensurvey_sondage';	
-	
+	public $table_element='opensurvey_sondage';
+
     public $picto = 'opensurvey';
 
 	public $id_sondage;
@@ -476,6 +476,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @return 	int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
 		$ret=array();
@@ -633,6 +634,7 @@ class Opensurveysondage extends CommonObject
 	 *	@param      int		$mode        	  0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					  Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode)
 	{
 	    global $langs, $conf;
@@ -675,5 +677,4 @@ class Opensurveysondage extends CommonObject
 	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
 	    }
 	}
-
 }

@@ -409,5 +409,4 @@ class Members extends DolibarrApi
 
 		return $result;
 	}
-
 }

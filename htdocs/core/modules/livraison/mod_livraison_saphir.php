@@ -146,10 +146,9 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      *  @param  Object		$object			Objet livraison
      *  @return string      				Texte descripif
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function livraison_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
-
 }
-

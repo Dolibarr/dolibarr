@@ -33,8 +33,8 @@ class Productbatch extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='productbatch';		
-	
+	public $element='productbatch';
+
 	private static $_table_element='product_batch';		//!< Name of table without prefix where object is stored
 
 	var $tms='';
@@ -395,15 +395,14 @@ class Productbatch extends CommonObject
 		$this->eatby='';
 		$this->batch='';
 		$this->import_key='';
-
-
 	}
 
 	/**
 	 *  Clean fields (triming)
 	 *
-	 *	@return	void
+	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function clean_param()
 	{
 		if (isset($this->fk_product_stock)) $this->fk_product_stock=(int) trim($this->fk_product_stock);
@@ -543,5 +542,4 @@ class Productbatch extends CommonObject
             return -1;
         }
     }
-
 }

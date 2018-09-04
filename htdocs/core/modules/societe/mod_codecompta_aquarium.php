@@ -115,6 +115,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  @param  string		$type			'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_code($db, $societe, $type='')
 	{
 		global $conf;
@@ -212,4 +213,3 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		}
 	}
 }
-

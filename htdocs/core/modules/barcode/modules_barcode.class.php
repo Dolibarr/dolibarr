@@ -44,7 +44,6 @@ abstract class ModeleBarCode
 	{
 		return true;
 	}
-
 }
 
 
@@ -177,6 +176,5 @@ abstract class ModeleNumRefBarCode
 
         return $s;
     }
-
 }
 

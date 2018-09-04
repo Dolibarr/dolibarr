@@ -143,9 +143,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *	@param	Object		$objforref	Holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function holiday_get_num($fuser,$objforref)
 	{
 		return $this->getNextValue($fuser,$objforref);
 	}
-
 }

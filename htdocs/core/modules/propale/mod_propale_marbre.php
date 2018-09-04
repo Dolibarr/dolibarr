@@ -155,5 +155,4 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

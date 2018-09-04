@@ -38,7 +38,7 @@ class Cchargesociales
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cchargesociales';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -51,7 +51,7 @@ class Cchargesociales
 	public $fk_pays;
 	public $module;
 	public $accountancy_code;
-	
+
 
 	/**
 	 * Constructor
@@ -78,7 +78,7 @@ class Cchargesociales
 		$error = 0;
 
 		// Clean parameters
-		
+
 		if (isset($this->libelle)) {
 			 $this->libelle = trim($this->libelle);
 		}
@@ -101,14 +101,14 @@ class Cchargesociales
 			 $this->accountancy_code = trim($this->accountancy_code);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
+
 		$sql.= 'libelle,';
 		$sql.= 'deductible,';
 		$sql.= 'active,';
@@ -117,9 +117,9 @@ class Cchargesociales
 		$sql.= 'module';
 		$sql.= 'accountancy_code';
 
-		
+
 		$sql .= ') VALUES (';
-		
+
 		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(! isset($this->deductible)?'NULL':$this->deductible).',';
 		$sql .= ' '.(! isset($this->active)?'NULL':$this->active).',';
@@ -128,7 +128,7 @@ class Cchargesociales
 		$sql .= ' '.(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'").',';
 		$sql .= ' '.(! isset($this->accountancy_code)?'NULL':"'".$this->db->escape($this->accountancy_code)."'");
 
-		
+
 		$sql .= ')';
 
 		$this->db->begin();
@@ -201,7 +201,7 @@ class Cchargesociales
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->id;
-				
+
 				$this->libelle = $obj->libelle;
 				$this->deductible = $obj->deductible;
 				$this->active = $obj->active;
@@ -210,7 +210,7 @@ class Cchargesociales
 				$this->module = $obj->module;
 				$this->accountancy_code = $obj->accountancy_code;
 
-				
+
 			}
 			$this->db->free($resql);
 
@@ -242,7 +242,7 @@ class Cchargesociales
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->libelle)) {
 			 $this->libelle = trim($this->libelle);
 		}
@@ -265,7 +265,7 @@ class Cchargesociales
 			 $this->accountancy_code = trim($this->accountancy_code);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -449,7 +449,7 @@ class Cchargesociales
 		$result.= $link . $this->ref . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
@@ -468,6 +468,7 @@ class Cchargesociales
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;
@@ -504,8 +505,8 @@ class Cchargesociales
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -515,7 +516,7 @@ class Cchargesociales
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		
+
 		$this->libelle = '';
 		$this->deductible = '';
 		$this->active = '';
@@ -523,8 +524,5 @@ class Cchargesociales
 		$this->fk_pays = '';
 		$this->module = '';
 		$this->accountancy_code = '';
-
-		
 	}
-
 }

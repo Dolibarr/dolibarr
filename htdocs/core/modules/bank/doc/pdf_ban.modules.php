@@ -37,7 +37,7 @@ class pdf_ban extends ModeleBankAccountDoc
 {
 	var $emetteur;	// Objet societe qui emet
 	var $version = 'development';
-	
+
 	/**
 	 *	Constructor
 	 *
@@ -55,7 +55,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		$this->db = $db;
 		$this->name = "ban";
 		$this->description = $langs->trans("DocumentModelBan").' (Volunteer wanted to finish)';
-		
+
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
@@ -92,6 +92,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs)
 	{
 		global $conf, $hookmanager, $langs, $user;
@@ -99,7 +100,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-        
+
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
@@ -119,7 +120,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		        $dir = $conf->bank->dir_output . "/" . $objectref;
 		        $file = $dir . "/" . $objectref . ".pdf";
 		    }
-		    
+
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
@@ -208,9 +209,9 @@ class pdf_ban extends ModeleBankAccountDoc
 
 				$pdf->SetXY($this->marge_gauche, $curY);
 				$pdf->MultiCell(200, 3, $outputlangs->trans("BAN").' : '.$object->account_number, 0, 'L');
-				
-				
-				
+
+
+
 				// Show square
 				if ($pagenb == 1)
 				{
@@ -248,7 +249,7 @@ class pdf_ban extends ModeleBankAccountDoc
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -280,8 +281,6 @@ class pdf_ban extends ModeleBankAccountDoc
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
-
-
 	}
 
 	/**
@@ -368,7 +367,6 @@ class pdf_ban extends ModeleBankAccountDoc
 	    	}
 	    }
         */
-
 	}
 
 	/**
@@ -386,6 +384,4 @@ class pdf_ban extends ModeleBankAccountDoc
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		//return pdf_pagefoot($pdf,$outputlangs,'BANK_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

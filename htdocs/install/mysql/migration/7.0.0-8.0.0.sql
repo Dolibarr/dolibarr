@@ -284,6 +284,13 @@ CREATE TABLE llx_ticket_extrafields
   import_key       varchar(14)
 )ENGINE=innodb;
 
+create table llx_facture_rec_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
 
 
 -- Create dictionaries tables for ticket

@@ -38,27 +38,27 @@ class Ticket extends CommonObject
      * @var string ID to identify managed object
      */
     public $element = 'ticket';
-    
+
     /**
      * @var string Name of table without prefix where object is stored
      */
     public $table_element = 'ticket';
-    
+
     /**
      * @var string Name of field for link to tickets
      */
     public $fk_element='fk_ticket';
-    
+
     /**
      * @var int  Does ticketcore support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      */
-    public $ismultientitymanaged = 0;
-    
+    public $ismultientitymanaged = 1;
+
     /**
      * @var int  Does ticketcore support extrafields ? 0=No, 1=Yes
      */
     public $isextrafieldmanaged = 1;
-    
+
     /**
      * @var string String with name of icon for ticketcore. Must be the part after the 'object_' into object_ticketcore.png
      */
@@ -1025,7 +1025,12 @@ class Ticket extends CommonObject
         $this->tms = '';
     }
 
-
+    /**
+     * print selected status
+     *
+     * @param string    $selected   selected status
+     * @return void
+     */
     public function printSelectStatus($selected = "")
     {
         print Form::selectarray('search_fk_statut', $this->statuts_short, $selected, $show_empty = 1, $key_in_label = 0, $value_as_key = 0, $option = '', $translate = 1, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '');
@@ -1171,6 +1176,7 @@ class Ticket extends CommonObject
      *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      *    @return     string     			 Label
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut, $mode = 0)
     {
         global $langs;
@@ -1483,8 +1489,6 @@ class Ticket extends CommonObject
 			dol_syslog(get_class($this) . "::assignUser " . $this->error, LOG_ERR);
 			return - 1;
 		}
-
-		return 0;
 	}
 
     /**
@@ -2447,6 +2451,7 @@ class Ticket extends CommonObject
 	 *  @param      string		$sdir       Directory to scan
 	 *  @return     boolean     			True if at least one photo is available, False if not
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function is_photo_available($sdir)
     {
         include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -2473,7 +2478,6 @@ class Ticket extends CommonObject
         }
         return false;
     }
-
 }
 
 
@@ -2596,5 +2600,4 @@ class TicketsLine
  	 * Close ticket date
 	 */
     public $date_close = '';
-
 }

@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/core/class/fiscalyear.php
+ *      \file       htdocs/core/class/fiscalyear.class.php
  *		\ingroup    fiscal year
  *		\brief      File of class to manage fiscal years
  */
@@ -32,12 +32,12 @@ class Fiscalyear extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='fiscalyear';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='accounting_fiscalyear';
-	
+
 	public $table_element_line = '';
 	public $fk_element = '';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -48,7 +48,7 @@ class Fiscalyear extends CommonObject
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	var $date_start;
 	var $date_end;
 	var $datec;
@@ -257,6 +257,7 @@ class Fiscalyear extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
@@ -335,5 +336,4 @@ class Fiscalyear extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
 }

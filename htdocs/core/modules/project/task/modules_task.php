@@ -44,8 +44,9 @@ abstract class ModelePDFTask extends CommonDocGenerator
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 

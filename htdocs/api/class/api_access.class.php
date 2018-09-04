@@ -59,14 +59,13 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public static $user = '';
 
-    // @codingStandardsIgnoreStart
-
 	/**
 	 * Check access
 	 *
 	 * @return bool
 	 * @throws RestException
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName
 	public function __isAllowed()
 	{
 		global $conf, $db;
@@ -172,11 +171,11 @@ class DolibarrApiAccess implements iAuthenticate
 	 * @example Digest
 	 * @example OAuth
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName
 	public function __getWWWAuthenticateString()
     {
         return '';
     }
-    // @codingStandardsIgnoreEnd
 
 	/**
 	 * Verify access
@@ -196,6 +195,5 @@ class DolibarrApiAccess implements iAuthenticate
         return $requires
             ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
             : true;
-
     }
 }

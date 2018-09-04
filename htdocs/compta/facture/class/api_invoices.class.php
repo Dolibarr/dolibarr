@@ -1259,5 +1259,4 @@ class Invoices extends DolibarrApi
         }
         return $invoice;
     }
-
 }

@@ -75,7 +75,6 @@ class CoreObject extends CommonObject
         {
 			return false;
 		}
-
 	}
 
     /**
@@ -271,7 +270,6 @@ class CoreObject extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
 	}
 
     /**
@@ -437,5 +435,4 @@ class CoreObject extends CommonObject
 
 		return 1;
 	}
-
 }

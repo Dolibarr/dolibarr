@@ -88,7 +88,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-        
+
 		// Load traductions files requiredby by page
 		$langs->loadLangs(array("main", "companies"));
 
@@ -160,6 +160,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
@@ -167,7 +168,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-        
+
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
@@ -900,7 +901,6 @@ class pdf_stdmovement extends ModelePDFMovement
 		$pdf->SetLineStyle(array('dash'=>'0','color'=>array(220,26,26)));
 		$pdf->line($this->marge_gauche, $tab_top+11, $this->page_largeur-$this->marge_droite, $tab_top+11);
 		$pdf->SetLineStyle(array('dash'=>0));
-
 	}
 
 	/**
@@ -916,7 +916,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="")
 	{
 	    global $conf,$langs,$db,$hookmanager;
-        
+
 	    // Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
 
@@ -1147,6 +1147,4 @@ class pdf_stdmovement extends ModelePDFMovement
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 	    return pdf_pagefoot($pdf,$outputlangs,'PRODUCT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

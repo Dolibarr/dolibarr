@@ -44,22 +44,22 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string ID to identify managed object
 	 */
 	public $element='order_supplier';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='commande_fournisseur';
-	
+
     public $table_element_line = 'commande_fournisseurdet';
     public $fk_element = 'fk_commande';
     public $picto='order';
-    
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
-    
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -81,7 +81,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string
 	 */
     public $ref;
-    
+
     public $ref_supplier;
     public $brouillon;
     public $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
@@ -212,7 +212,7 @@ class CommandeFournisseur extends CommonOrder
      * 	@param	string	$ref		Ref of object
      *	@return int 		        >0 if OK, <0 if KO, 0 if not found
      */
-    public function fetch($id,$ref='')
+    public function fetch($id, $ref='')
     {
         global $conf;
 
@@ -345,6 +345,7 @@ class CommandeFournisseur extends CommonOrder
      * @param		int		$only_product	Return only physical products
      * @return		int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_lines($only_product=0)
     {
     	//$result=$this->fetch_lines();
@@ -586,6 +587,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$mode=0,$billed=0)
     {
     	global $conf, $langs;
@@ -1048,6 +1050,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
      * 	@return	int						>0 if Ok, <0 if Ko
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Cancel($user, $idwarehouse=-1)
     {
         global $langs,$conf;
@@ -1110,6 +1113,7 @@ class CommandeFournisseur extends CommonOrder
      * 	@param		string	$comment	Comment
      * 	@return		int			        <0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     public function commande($user, $date, $methode, $comment='')
     {
         global $langs;
@@ -1964,6 +1968,7 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@return 0 if Ok, <0 if Ko
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_methodes_commande()
     {
         $sql = "SELECT rowid, libelle";
@@ -2053,6 +2058,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param	string	$comment	Comment
      *	@return	int					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Livraison($user, $date, $type, $comment)
     {
     	global $conf, $langs;
@@ -2168,6 +2174,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date_livraison($user, $date_livraison, $notrigger=0)
     {
         if ($user->rights->fournisseur->commande->creer)
@@ -2232,6 +2239,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_id_projet($user, $id_projet, $notrigger=0)
     {
         if ($user->rights->fournisseur->commande->creer)
@@ -2688,6 +2696,7 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@return     int         <0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
         global $conf, $user;
@@ -2730,6 +2739,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param          User	$user   Objet user
      *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user)
     {
         global $conf, $langs;
@@ -2826,7 +2836,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-         *  @param   null|array  $moreparams     Array to provide more information
+     *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int          				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
@@ -3102,7 +3112,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='commande_fournisseurdet';
-    
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -3501,4 +3511,3 @@ class CommandeFournisseurLigne extends CommonOrderLine
         }
     }
 }
-

@@ -35,12 +35,12 @@ class PaymentSalary extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='payment_salary';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_salary';	
-	
+	public $table_element='payment_salary';
+
 	public $picto='payment';
 
 	public $tms;
@@ -51,12 +51,12 @@ class PaymentSalary extends CommonObject
 	public $fk_project;
 	public $type_payment;
 	public $num_payment;
-	
+
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
+   * @var string proper name for given parameter
+   */
+  public $label;
+
 	public $datesp;
 	public $dateep;
 	public $fk_bank;
@@ -492,6 +492,7 @@ class PaymentSalary extends CommonObject
 	 *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_salary SET fk_bank = '.$id_bank;
@@ -590,6 +591,7 @@ class PaymentSalary extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
 	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
@@ -632,5 +634,4 @@ class PaymentSalary extends CommonObject
 	    }*/
 	    return '';
 	}
-
 }

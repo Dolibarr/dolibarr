@@ -34,24 +34,24 @@ class Task extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='project_task';	
-	
+	public $element='project_task';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='projet_task';	
-	
+	public $table_element='projet_task';
+
 	public $fk_element='fk_task';
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
-	var $fk_task_parent;
-	
-	/**
-     * @var string proper name for given parameter
+    public $fk_task_parent;
+
+    /**
+     * @var string Label of task
      */
     public $label;
-    
+
 	var $description;
 	var $duration_effective;		// total of time spent on this task
 	var $planned_workload;
@@ -1718,6 +1718,7 @@ class Task extends CommonObject
 	 *	@param	integer		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	@return	string	  				Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut, $mode=0)
 	{
 		// list of Statut of the task
@@ -1834,6 +1835,7 @@ class Task extends CommonObject
 	 * @param	User	$user   Objet user
 	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
 		global $conf, $langs;
@@ -1906,6 +1908,7 @@ class Task extends CommonObject
 	 *
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $user;

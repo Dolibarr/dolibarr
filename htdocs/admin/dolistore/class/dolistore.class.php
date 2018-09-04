@@ -25,9 +25,18 @@ include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class
  */
 class Dolistore
 {
-	// params
-	public $start;       // beginning of pagination
-	public $end;         // end of pagination
+    /**
+     * beginning of pagination
+     * @var int
+     */
+
+     public $start;
+    /**
+     * end of pagination
+     * @var int
+     */
+    public $end;
+
 	public $per_page;    // pagination: display per page
 	public $categorie;   // the current categorie
 	public $search;      // the search keywords
@@ -160,6 +169,7 @@ class Dolistore
 	 * @param 	int			$parent		Id of parent category
 	 * @return 	string
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_categories($parent = 0)
 	{
 		if (!isset($this->categories)) die('not possible');
@@ -206,6 +216,7 @@ class Dolistore
 	 *
 	 * @return string			HTML output
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_products()
 	{
 		global $langs, $conf;
@@ -282,17 +293,37 @@ class Dolistore
 		return $html;
 	}
 
+    /**
+     * get previous link
+     *
+     * @param   string    $text     symbol previous
+     * @return  string              html previous link
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_previous_link($text = '<<')
 	{
 		return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
 	}
 
+    /**
+     * get next link
+     *
+     * @param   string    $text     symbol next
+     * @return  string              html next link
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_next_link($text = '>>')
 	{
 		return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
 	}
 
-	function get_previous_url()
+   /**
+     * get previous url
+     *
+     * @return string    previous url
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+ 	function get_previous_url()
 	{
 		$param_array = array();
 		if ($this->start < $this->per_page) {
@@ -309,6 +340,12 @@ class Dolistore
 		return $this->url."&".$param;
 	}
 
+    /**
+     * get next url
+     *
+     * @return string    next url
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_next_url()
 	{
 		$param_array = array();
@@ -326,6 +363,14 @@ class Dolistore
 		return $this->url."&".$param;
 	}
 
+    /**
+     * version compare
+     *
+     * @param   string  $v1     version 1
+     * @param   string  $v2     version 2
+     * @return int              result of compare
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function version_compare($v1, $v2)
 	{
 		$v1       = explode('.', $v1);
@@ -355,4 +400,3 @@ class Dolistore
 		return $ret;
 	}
 }
-

@@ -40,7 +40,7 @@ if (! empty($conf->accounting->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills'));
+$langs->loadLangs(array('compta', 'bills', 'banks'));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');

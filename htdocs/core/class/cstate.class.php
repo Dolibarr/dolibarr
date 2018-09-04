@@ -317,5 +317,4 @@ class Cstate // extends CommonObject
 			return 1;
 		}
 	}
-
 }

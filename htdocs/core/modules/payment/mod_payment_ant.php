@@ -131,10 +131,9 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function commande_get_num($objsoc,$objforref)
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

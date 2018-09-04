@@ -69,6 +69,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -91,6 +93,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -131,6 +138,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
+    /**
+     * tearDownAfterClass
+     *
+     * @return void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -418,5 +430,4 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-
 }

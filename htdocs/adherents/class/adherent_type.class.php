@@ -295,6 +295,7 @@ class AdherentType extends CommonObject
 	 *
 	 *  @return 	array	List of types of members
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array()
 	{
 		global $conf,$langs;
@@ -430,6 +431,7 @@ class AdherentType extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_dn($info,$mode=0)
 	{
 		global $conf;
@@ -446,6 +448,7 @@ class AdherentType extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_info()
 	{
 		global $conf,$langs;
@@ -555,5 +558,4 @@ class AdherentType extends CommonObject
 
 		return '';
 	}
-
 }

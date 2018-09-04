@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2005-2012 Regis Houssin	    <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015-2017 Nicolas ZABOURI        <info@inovea-conseil.com>
+ * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,50 +40,53 @@ class FormMail extends Form
      */
     public $db;
 
-	var $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
+	public $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
 
-	var $fromname;
-	var $frommail;
-	var $replytoname;
-	var $replytomail;
-	var $toname;
-	var $tomail;
-	var $trackid;
+	public $fromname;
+	public $frommail;
+	public $replytoname;
+	public $replytomail;
+	public $toname;
+	public $tomail;
+	public $trackid;
 
-	var $withsubstit;			// Show substitution array
-	var $withfrom;
+	public $withsubstit;			// Show substitution array
+	public $withfrom;
+
 	/**
 	 * @var int
 	 * @deprecated Fill withto with array before calling method.
 	 * @see withto
 	 */
 	public $withtosocid;
+
 	/**
 	 * @var int|int[]
 	 */
 	public $withto;				// Show recipient emails
-	var $withtofree;			// Show free text for recipient emails
-	var $withtocc;
-	var $withtoccc;
-	var $withtopic;
-	var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
-	var $withmaindocfile;		// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
-	var $withbody;
 
-	var $withfromreadonly;
-	var $withreplytoreadonly;
-	var $withtoreadonly;
-	var $withtoccreadonly;
-	var $withtocccreadonly;
-	var $withtopicreadonly;
-	var $withfilereadonly;
-	var $withdeliveryreceipt;
-	var $withcancel;
-	var $withfckeditor;
+	public $withtofree;			// Show free text for recipient emails
+	public $withtocc;
+	public $withtoccc;
+	public $withtopic;
+	public $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	public $withmaindocfile;		// 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
+	public $withbody;
 
-	var $substit=array();
-	var $substit_lines=array();
-	var $param=array();
+	public $withfromreadonly;
+	public $withreplytoreadonly;
+	public $withtoreadonly;
+	public $withtoccreadonly;
+	public $withtocccreadonly;
+	public $withtopicreadonly;
+	public $withfilereadonly;
+	public $withdeliveryreceipt;
+	public $withcancel;
+	public $withfckeditor;
+
+	public $substit=array();
+	public $substit_lines=array();
+	public $param=array();
 
 	public $withtouser=array();
 	public $withtoccuser=array();
@@ -138,6 +141,7 @@ class FormMail extends Form
 	 *
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function clear_attached_files()
 	{
 		global $conf,$user;
@@ -162,6 +166,7 @@ class FormMail extends Form
 	 * @param 	string   $type   Mime type (can be dol_mimetype($file))
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_attached_files($path, $file='', $type='')
 	{
 		$listofpaths=array();
@@ -192,6 +197,7 @@ class FormMail extends Form
 	 * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function remove_attached_files($keytodelete)
 	{
 		$listofpaths=array();
@@ -219,6 +225,7 @@ class FormMail extends Form
 	 *
 	 * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_attached_files()
 	{
 		$listofpaths=array();
@@ -241,6 +248,7 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function show_form($addfileaction='addfile',$removefileaction='removefile')
 	{
 		print $this->get_form($addfileaction,$removefileaction);
@@ -256,6 +264,7 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return string						Form to show
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_form($addfileaction='addfile', $removefileaction='removefile')
 	{
 		global $conf, $langs, $user, $hookmanager, $form;
@@ -1385,7 +1394,6 @@ class FormMail extends Form
 
 		return $tmparray;
 	}
-
 }
 
 
@@ -1395,15 +1403,15 @@ class FormMail extends Form
 class ModelMail
 {
 	/**
-     * @var int ID
-     */
-    public $id;
+   * @var int ID
+   */
+  public $id;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
-    
+   * @var string proper name for given parameter
+   */
+  public $label;
+
 	public $topic;
 	public $content;
 	public $content_lines;

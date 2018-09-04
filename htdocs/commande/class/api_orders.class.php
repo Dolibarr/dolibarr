@@ -473,7 +473,6 @@ class Orders extends DolibarrApi
                 'message' => 'Order deleted'
             )
         );
-
     }
 
     /**

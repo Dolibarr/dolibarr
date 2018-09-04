@@ -105,7 +105,7 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Browser")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("UserAgent")."</td><td>" .$_SERVER["HTTP_USER_AGENT"]."</td></tr>\n";
-print "<tr $bc[1]><td width=\"280\">".$langs->trans("Smartphone")."</td><td>".(empty($conf->browser->phone)?$langs->trans("No"):$conf->browser->phone)."</td></tr>\n";
+print "<tr $bc[1]><td width=\"280\">".$langs->trans("Smartphone")."</td><td>".(($conf->browser->layout != 'phone')?$langs->trans("No"):$langs->trans("Yes"))."</td></tr>\n";
 print '</table>';
 print '<br>';
 

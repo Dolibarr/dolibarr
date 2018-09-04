@@ -31,13 +31,13 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'product_customer_price'; 
-	
+	public $element = 'product_customer_price';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'product_customer_price'; 
-	
+	public $table_element = 'product_customer_price';
+
 	var $entity;
 	var $datec = '';
 	var $tms = '';
@@ -314,6 +314,7 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for select
 	 * @return 	int 				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
 		global $langs;
@@ -427,6 +428,7 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for sql request
 	 * @return 	int 			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
 		global $langs;
@@ -962,7 +964,7 @@ class PriceByCustomerLine
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	var $entity;
 	var $datec = '';
 	var $tms = '';

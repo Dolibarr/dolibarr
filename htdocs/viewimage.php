@@ -56,10 +56,11 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
 	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
-	// For multicompany
-	$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-	if (is_numeric($entity)) define("DOLENTITY", $entity);
 }
+
+// For multicompany
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 /**
  * Header empty
@@ -228,7 +229,7 @@ if (preg_match('/\.\./',$fullpath_original_file) || preg_match('/[<>|]/',$fullpa
 if ($modulepart == 'barcode')
 {
     $generator=GETPOST("generator","alpha");
-    $code=GETPOST("code",'alpha');
+    $code=GETPOST("code",'none');							// This can be rich content (qrcode, datamatrix, ...)
     $encoding=GETPOST("encoding","alpha");
     $readable=GETPOST("readable",'alpha')?GETPOST("readable","alpha"):"Y";
 

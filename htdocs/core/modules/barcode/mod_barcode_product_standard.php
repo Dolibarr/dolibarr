@@ -224,13 +224,14 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 
 	/**
-	 *		Return if a code is used (by other element)
+	 *	Return if a code is used (by other element)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
-	 *		@param	string		$code		Code to check
-	 *		@param	Product		$product	Objet product
-	 *		@return	int						0 if available, <0 if KO
+	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	string		$code		Code to check
+	 *	@param	Product		$product	Objet product
+	 *	@return	int						0 if available, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_dispo($db, $code, $product)
 	{
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
@@ -253,7 +254,6 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		{
 			return -2;
 		}
-
 	}
 
 	/**
@@ -263,6 +263,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
      *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
 	 *	@return	int						0 if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_syntax($codefortest, $typefortest)
 	{
 		global $conf;
@@ -300,6 +301,4 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $result;
 	}
-
 }
-

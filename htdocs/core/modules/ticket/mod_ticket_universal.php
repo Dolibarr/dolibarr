@@ -121,5 +121,4 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
         return $numFinal;
     }
-
 }

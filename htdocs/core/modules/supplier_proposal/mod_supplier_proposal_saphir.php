@@ -127,5 +127,4 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		return  $numFinal;
 	}
-
 }
