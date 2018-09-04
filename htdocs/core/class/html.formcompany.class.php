@@ -266,7 +266,7 @@ class FormCompany
 						}
 
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						if(!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
+						if (!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
 						($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')) {
 							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
 								$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
