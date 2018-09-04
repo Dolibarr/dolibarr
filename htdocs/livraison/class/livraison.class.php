@@ -1100,25 +1100,21 @@ class LivraisonLigne extends CommonObjectLine
      */
     public $label;
 
-<<<<<<< HEAD
-	var $description;  // Description produit
-=======
 	/**
 	 * @var string product description
 	 */
 	public $description;
 
->>>>>>> upstream/develop
 	/**
 	 * @deprecated
 	 * @see product_ref
 	 */
-	var $ref;
+	public $ref;
 	/**
 	 * @deprecated
 	 * @see product_label;
 	 */
-	var $libelle;
+	public $libelle;
 
 	public $product_ref;
 	public $product_label;

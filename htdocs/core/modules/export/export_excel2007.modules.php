@@ -98,7 +98,7 @@ class ExportExcel2007 extends ExportExcel
 	}
 
 
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Close Excel file
      *

@@ -67,6 +67,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -75,9 +76,9 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *  @param  int		$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_code($db, $societe, $type='')
 	{
+        // phpcs:enable
 		$this->code='';
 
 		if (is_object($societe)) {
