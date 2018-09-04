@@ -32,17 +32,17 @@ class FormBarCode
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     /**
-     *	Constructor
+     *  Constructor
      *
-     *	@param	DoliDB		$db		Database handler
+     *  @param  DoliDB		$db		Database handler
      */
     function __construct($db)
     {
@@ -103,6 +103,7 @@ class FormBarCode
         return $select_encoder;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Return form to select type of barcode
      *
@@ -111,9 +112,9 @@ class FormBarCode
      *  @param  int		$useempty          Affiche valeur vide dans liste
      *  @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_barcode_type($selected='',$htmlname='barcodetype_id',$useempty=0)
     {
+        // phpcs:enable
         global $langs,$conf;
 
         $sql = "SELECT rowid, code, libelle";
@@ -163,6 +164,7 @@ class FormBarCode
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Show form to select type of barcode
      *
@@ -171,9 +173,9 @@ class FormBarCode
      *  @param  string		$htmlname    	Nom du formulaire select
      *  @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
     {
+        // phpcs:enable
         global $langs,$conf;
         if ($htmlname != "none")
         {

@@ -139,15 +139,16 @@ class DoliDBMssql extends DoliDB
 		return $line;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Select a database
 	 *
 	 *	@param	    string	$database	Name of database
 	 *	@return	    boolean  		    true if OK, false if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_db($database)
 	{
+        // phpcs:enable
 		return @mssql_select_db($database, $this->db);
 	}
 
@@ -460,49 +461,53 @@ class DoliDBMssql extends DoliDB
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
 	 *	@param	resource	$resultset  Curseur de la requete voulue
 	 *	@return	object|false			Object result line or false if KO or end of cursor
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_object($resultset)
 	{
+        // phpcs:enable
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_fetch_object($resultset);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *	Return datas as an array
      *
      *	@param	resource	$resultset  Resultset of request
      *	@return	array|false				Array or false if KO or end of cursor
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_array($resultset)
 	{
+        // phpcs:enable
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_fetch_array($resultset);
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *	Return datas as an array
      *
      *	@param	resource	$resultset  Resultset of request
      *	@return	array|false				Array or false if KO or end of cursor
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_row($resultset)
 	{
+        // phpcs:enable
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return @mssql_fetch_row($resultset);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *	Return number of lines for result of a SELECT
      *
@@ -510,14 +515,15 @@ class DoliDBMssql extends DoliDB
      *	@return int		    			Nb of lines
      *	@see    affected_rows
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function num_rows($resultset)
 	{
+        // phpcs:enable
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		return mssql_num_rows($resultset);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
@@ -525,9 +531,9 @@ class DoliDBMssql extends DoliDB
 	 *	@return int		    Nombre de lignes
 	 *	@see    num_rows
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function affected_rows($resultset)
 	{
+        // phpcs:enable
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
 		// mssql necessite un link de base pour cette fonction contrairement
@@ -645,6 +651,7 @@ class DoliDBMssql extends DoliDB
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Get last ID after an insert INSERT
 	 *
@@ -652,9 +659,9 @@ class DoliDBMssql extends DoliDB
 	 * @param	string	$fieldid	Field name
 	 * @return  int     			Id of row or -1 on error
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function last_insert_id($tab,$fieldid='rowid')
 	{
+        // phpcs:enable
 		$res = $this->query("SELECT @@IDENTITY as id");
 		if ($res && $data = $this->fetch_array($res))
 		{
@@ -709,14 +716,15 @@ class DoliDBMssql extends DoliDB
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return connexion ID
 	 *
 	 * @return	        string      Id connexion
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLGetConnectId()
 	{
+        // phpcs:enable
 		$resql=$this->query('SELECT CONNECTION_ID()');
 		if ($resql)
 		{
@@ -726,6 +734,7 @@ class DoliDBMssql extends DoliDB
 		else return '?';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Create a new database
 	 *	Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
@@ -737,9 +746,9 @@ class DoliDBMssql extends DoliDB
 	 * 	@param	string	$owner			Username of database owner
 	 * 	@return	false|resource|true		resource defined if OK, false if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
+        // phpcs:enable
         /*if (empty($charset))   $charset=$this->forcecharset;
         if (empty($collation)) $collation=$this->forcecollate;
         */
@@ -763,6 +772,7 @@ class DoliDBMssql extends DoliDB
 	    return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  List tables into a database
 	 *
@@ -770,22 +780,23 @@ class DoliDBMssql extends DoliDB
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
      *  @return	array					List of tables in an array
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLListTables($database,$table='')
 	{
+        // phpcs:enable
 		$this->_results = mssql_list_tables($database, $this->db);
 		return $this->_results;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
 	 *	@return	array				Tableau des informations des champs de la table
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLInfoTable($table)
 	{
+        // phpcs:enable
 
 		// FIXME: Dummy method
 		// TODO: Implement
@@ -795,6 +806,7 @@ class DoliDBMssql extends DoliDB
 		return $infotables;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Create a table into database
 	 *
@@ -807,9 +819,9 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
 	{
+        // phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
@@ -875,15 +887,16 @@ class DoliDBMssql extends DoliDB
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Drop a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
 	 *	@return	    int						<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLDropTable($table)
 	{
+        // phpcs:enable
 		$sql = "DROP TABLE ".$table;
 
 		if (! $this->query($sql))
@@ -892,6 +905,7 @@ class DoliDBMssql extends DoliDB
 			return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return a pointer of line with description of a table or field
 	 *
@@ -899,9 +913,9 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
 	 *	@return	false|resource|true	Resource
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLDescTable($table,$field="")
 	{
+        // phpcs:enable
 		$sql="DESC ".$table." ".$field;
 
 		dol_syslog($sql);
@@ -909,6 +923,7 @@ class DoliDBMssql extends DoliDB
 		return $this->_results;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Create a new field into table
 	 *
@@ -918,9 +933,9 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
+        // phpcs:enable
 		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
@@ -946,6 +961,7 @@ class DoliDBMssql extends DoliDB
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Update format of a field into a table
 	 *
@@ -954,9 +970,9 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$field_desc 		Array with description of field format
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLUpdateField($table,$field_name,$field_desc)
 	{
+        // phpcs:enable
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
 		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
@@ -970,6 +986,7 @@ class DoliDBMssql extends DoliDB
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Drop a field from table
 	 *
@@ -977,9 +994,9 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$field_name 	Name of field to drop
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLDropField($table,$field_name)
 	{
+        // phpcs:enable
 		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
@@ -990,6 +1007,7 @@ class DoliDBMssql extends DoliDB
 		else return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
@@ -999,10 +1017,10 @@ class DoliDBMssql extends DoliDB
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-	    $sql = "CREATE LOGIN ".$this->EscapeFieldName($dolibarr_main_db_user)." WITH PASSWORD='$dolibarr_main_db_pass'";
+        // phpcs:enable
+        $sql = "CREATE LOGIN ".$this->EscapeFieldName($dolibarr_main_db_user)." WITH PASSWORD='$dolibarr_main_db_pass'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
@@ -1150,19 +1168,21 @@ class DoliDBMssql extends DoliDB
 		return array();
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Escape a field name according to escape's syntax
 	 *
 	 * @param      string $fieldname   Field's name to escape
 	 * @return     string              field's name escaped
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function EscapeFieldName($fieldname)
     {
+        // phpcs:enable
 	    return "[".$fieldname."]";
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Get information on field
 	 *
@@ -1170,9 +1190,9 @@ class DoliDBMssql extends DoliDB
 	 * @param      mixed   $fields     String for one field or array of string for multiple field
 	 * @return false|object
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetFieldInformation($table,$fields)
     {
+        // phpcs:enable
 	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";
 	    if (is_array($fields))
 	    {

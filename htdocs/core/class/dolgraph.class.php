@@ -682,6 +682,7 @@ class DolGraph
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Build a graph onto disk using Artichow library and return img string to it
 	 *
@@ -689,9 +690,9 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	void
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function draw_artichow($file,$fileurl)
 	{
+        // phpcs:enable
 		global $artichow_defaultfont;
 
 		dol_syslog(get_class($this)."::draw_artichow this->type=".join(',',$this->type));
