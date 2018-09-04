@@ -124,7 +124,11 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	public $rowid;
 
-	public $fk_soc;
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $label;
 	public $bank;
 	public $code_banque;

@@ -68,6 +68,10 @@ class ActionsTicket
 	public $description;
 
     public $fk_statut;
+
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
 
     /**

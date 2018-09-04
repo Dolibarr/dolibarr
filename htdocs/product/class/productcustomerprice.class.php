@@ -974,7 +974,12 @@ class PriceByCustomerLine
 	public $datec = '';
 	public $tms = '';
 	public $fk_product;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $price;
 	public $price_ttc;
 	public $price_min;
