@@ -39,7 +39,11 @@ class Bookmark extends CommonObject
     public $table_element='bookmark';
 
     public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    public $picto = 'bookmark';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'bookmark';
 
     /**
      * @var DoliDB Database handler.
@@ -56,12 +60,12 @@ class Bookmark extends CommonObject
 	 */
 	public $fk_user;
 
-    var $datec;
-    var $url;
-    var $target;	// 0=replace, 1=new window
-    var $title;
-    var $position;
-    var $favicon;
+    public $datec;
+    public $url;
+    public $target;	// 0=replace, 1=new window
+    public $title;
+    public $position;
+    public $favicon;
 
 
     /**
