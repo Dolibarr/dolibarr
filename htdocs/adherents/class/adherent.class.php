@@ -53,66 +53,69 @@ class Adherent extends CommonObject
 
 	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $mesgs;
+	public $mesgs;
 
-	var $login;
+	public $login;
 
 	//! Clear password in memory
-	var $pass;
+	public $pass;
 	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
-	var $pass_indatabase;
+	public $pass_indatabase;
 	//! Encrypted password in database (always defined)
-	var $pass_indatabase_crypted;
+	public $pass_indatabase_crypted;
 
-	var $societe;
-	var $company;
-	var $address;
-	var $zip;
-	var $town;
+	public $societe;
+	public $company;
+	public $address;
+	public $zip;
+	public $town;
 
-	var $state_id;              // Id of department
-	var $state_code;            // Code of department
-	var $state;                 // Label of department
+	public $state_id;              // Id of department
+	public $state_code;            // Code of department
+	public $state;                 // Label of department
 
-	var $email;
-	var $skype;
-	var $phone;
-	var $phone_perso;
-	var $phone_mobile;
+	public $email;
+	public $skype;
+	public $phone;
+	public $phone_perso;
+	public $phone_mobile;
 
-	var $morphy;
-	var $public;
-	var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
-	var $photo;
+	public $morphy;
+	public $public;
+	public $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
+	public $photo;
 
-	var $datec;
-	var $datem;
-	var $datefin;
-	var $datevalid;
-	var $birth;
+	public $datec;
+	public $datem;
+	public $datefin;
+	public $datevalid;
+	public $birth;
 
-	var $note_public;
-	var $note_private;
+	public $note_public;
+	public $note_private;
 
-	var $typeid;			// Id type adherent
-	var $type;				// Libelle type adherent
-	var $need_subscription;
+	public $typeid;			// Id type adherent
+	public $type;				// Libelle type adherent
+	public $need_subscription;
 
-	var $user_id;
-	var $user_login;
+	public $user_id;
+	public $user_login;
 
-	var $fk_soc;
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
 
 	// Fields loaded by fetch_subscriptions()
-	var $first_subscription_date;
-	var $first_subscription_amount;
-	var $last_subscription_date;
-	var $last_subscription_date_start;
-	var $last_subscription_date_end;
-	var $last_subscription_amount;
-	var $subscriptions=array();
+	public $first_subscription_date;
+	public $first_subscription_amount;
+	public $last_subscription_date;
+	public $last_subscription_date_start;
+	public $last_subscription_date_end;
+	public $last_subscription_amount;
+	public $subscriptions=array();
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 	/**
 	 * @var int Entity

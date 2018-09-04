@@ -111,7 +111,12 @@ class SocieteAccount extends CommonObject
 	public $pass_encoding;
 	public $pass_crypted;
 	public $pass_temp;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $site;
 	public $date_last_login;
 	public $date_previous_login;
