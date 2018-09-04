@@ -143,6 +143,12 @@ $object = new Cronjob($db);
 
 $filter=array();
 if (! empty($id)) {
+	if (! is_numeric($id))
+	{
+		echo "Error: Bad value for parameter job id";
+		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
+		exit;
+	}
 	$filter['t.rowid']=$id;
 }
 
@@ -162,7 +168,7 @@ foreach($object->lines as $val)
 	$qualifiedjobs[] = $val;
 }
 
-// TODO This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
+// TODO Duplicate. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
 $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
