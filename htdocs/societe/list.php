@@ -711,48 +711,48 @@ if (! empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
 	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
-	print '<input class="flat searchstring" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_nom" value="'.dol_escape_htmltag($search_nom).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.name_alias']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_alias" size="8" value="'.dol_escape_htmltag($search_alias).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_alias" value="'.dol_escape_htmltag($search_alias).'">';
 	print '</td>';
 }
 // Barcode
 if (! empty($arrayfields['s.barcode']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_barcode" value="'.dol_escape_htmltag($search_barcode).'">';
 	print '</td>';
 }
 // Customer code
 if (! empty($arrayfields['s.code_client']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="8" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'">';
 	print '</td>';
 }
 // Supplier code
 if (! empty($arrayfields['s.code_fournisseur']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="8" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'">';
 	print '</td>';
 }
 // Account Customer code
 if (! empty($arrayfields['s.code_compta']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="8" type="text" name="search_account_customer_code" value="'.dol_escape_htmltag($search_account_customer_code).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_account_customer_code" value="'.dol_escape_htmltag($search_account_customer_code).'">';
 	print '</td>';
 }
 // Account Supplier code
 if (! empty($arrayfields['s.code_compta_fournisseur']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="8" type="text" name="search_account_supplier_code" value="'.dol_escape_htmltag($search_account_supplier_code).'">';
+	print '<input class="flat maxwidth50" type="text" name="search_account_supplier_code" value="'.dol_escape_htmltag($search_account_supplier_code).'">';
 	print '</td>';
 }
 // Town
