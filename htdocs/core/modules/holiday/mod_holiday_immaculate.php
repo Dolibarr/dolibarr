@@ -118,16 +118,17 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		return  $numFinal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Return next value
+	 *  Return next value
 	 *
-	 *	@param	User		$fuser     	User object
-	 *	@param	Object		$objforref	Holiday object
-	 *	@return string      			Value if OK, 0 if KO
+	 *  @param  User		$fuser     	User object
+	 *  @param  Object		$objforref	Holiday object
+	 *  @return string      			Value if OK, 0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function holiday_get_num($fuser, $objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($fuser, $objforref);
     }
 }
