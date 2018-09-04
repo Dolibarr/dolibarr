@@ -6956,17 +6956,22 @@ class Form
             	$("#checkallactions").click(function() {
                     if($(this).is(\':checked\')){
                         console.log("We check all");
-                		$(".'.$cssclass.'").prop(\'checked\', true);
+                		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
                     }
                     else
                     {
                         console.log("We uncheck all");
-                		$(".'.$cssclass.'").prop(\'checked\', false);
+                		$(".'.$cssclass.'").prop(\'checked\', false).trigger(\'change\');
                     }'."\n";
 		if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out.='         });
-                });
-            </script>';
+                            
+        	$(".checkforselect").change(function() {
+				$(this).closest("tr").toggleClass("highlight", this.checked);
+			});
+ 		
+ 	});
+    </script>';
 
 		return $out;
 	}
