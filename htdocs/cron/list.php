@@ -355,7 +355,7 @@ else
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
 
 
-print $langs->trans('CronInfo').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
 
 $text =$langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
