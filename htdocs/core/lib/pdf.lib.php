@@ -432,8 +432,17 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
     			if (!empty($targetcontact->address)) {
     				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
-    			}else {
-    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
+    			} else {
+    				$companytouseforaddress = $targetcompany;
+
+				// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
+    				if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id)
+				{
+    					$targetcontact->fetch_thirparty();
+    					$companytouseforaddress = $targetcontact->thirdparty;
+    				}
+
+    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
     			}
     			// Country
     			if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
