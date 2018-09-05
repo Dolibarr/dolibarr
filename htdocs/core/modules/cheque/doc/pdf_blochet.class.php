@@ -74,6 +74,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fonction to generate document on disk
 	 *
@@ -83,9 +84,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate		$outputlangs	Lang output object
      *	@return	int     						1=ok, 0=ko
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $_dir, $number, $outputlangs)
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
 
         if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -198,6 +199,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Generate Header
 	 *
@@ -207,9 +209,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object language for output
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
+        // phpcs:enable
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -305,6 +307,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Output array
 	 *
@@ -314,9 +317,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object lang
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Body(&$pdf, $pagenb, $pages, $outputlangs)
 	{
+        // phpcs:enable
 		// x=10 - Num
 		// x=30 - Banque
 		// x=100 - Emetteur
