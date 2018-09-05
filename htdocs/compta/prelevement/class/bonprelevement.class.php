@@ -43,33 +43,36 @@ class BonPrelevement extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='widthdraw';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='prelevement_bons';
-	
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'payment';
 
-	var $date_echeance;
-	var $raison_sociale;
-	var $reference_remise;
-	var $emetteur_code_guichet;
-	var $emetteur_numero_compte;
-	var $emetteur_code_banque;
-	var $emetteur_number_key;
+	public $date_echeance;
+	public $raison_sociale;
+	public $reference_remise;
+	public $emetteur_code_guichet;
+	public $emetteur_numero_compte;
+	public $emetteur_code_banque;
+	public $emetteur_number_key;
 
-	var $emetteur_iban;
-	var $emetteur_bic;
-	var $emetteur_ics;
+	public $emetteur_iban;
+	public $emetteur_bic;
+	public $emetteur_ics;
 
-	var $total;
-	var $_fetched;
-	var $statut;    // 0-Wait, 1-Trans, 2-Done
-	var $labelstatut=array();
+	public $total;
+	public $_fetched;
+	public $statut;    // 0-Wait, 1-Trans, 2-Done
+	public $labelstatut=array();
 
-	var $invoice_in_error=array();
-	var $thirdparty_in_error=array();
+	public $invoice_in_error=array();
+	public $thirdparty_in_error=array();
 
 
 	/**

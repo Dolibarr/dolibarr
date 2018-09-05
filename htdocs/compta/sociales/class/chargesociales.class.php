@@ -36,33 +36,36 @@ class ChargeSociales extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='chargesociales';
-	
+
     public $table='chargesociales';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='chargesociales';
-	
-    public $picto = 'bill';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'bill';
 
     /**
      * {@inheritdoc}
      */
     protected $table_ref_field = 'ref';
 
-    var $date_ech;
-    var $lib;
-    var $type;
-    var $type_libelle;
-    var $amount;
-    var $paye;
-    var $periode;
-    var $date_creation;
-    var $date_modification;
-    var $date_validation;
-    var $fk_account;
-	var $fk_project;
+    public $date_ech;
+    public $lib;
+    public $type;
+    public $type_libelle;
+    public $amount;
+    public $paye;
+    public $periode;
+    public $date_creation;
+    public $date_modification;
+    public $date_validation;
+    public $fk_account;
+	public $fk_project;
 
 
     /**
