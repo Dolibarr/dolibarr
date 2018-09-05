@@ -67,7 +67,7 @@ class BonPrelevement extends CommonObject
 	public $emetteur_ics;
 
 	public $total;
-	public $_fetched;
+	public $fetched;
 	public $statut;    // 0-Wait, 1-Trans, 2-Done
 	public $labelstatut=array();
 
@@ -109,7 +109,7 @@ class BonPrelevement extends CommonObject
 
 		$this->methodes_trans[0] = "Internet";
 
-		$this->_fetched = 0;
+		$this->fetched = 0;
 	}
 
 	/**
@@ -315,7 +315,7 @@ class BonPrelevement extends CommonObject
 
 				$this->statut             = $obj->statut;
 
-				$this->_fetched = 1;
+				$this->fetched = 1;
 
 				return 1;
 			}
@@ -423,7 +423,7 @@ class BonPrelevement extends CommonObject
 
 		$error = 0;
 
-		if ($this->_fetched == 1)
+		if ($this->fetched == 1)
 		{
 			if ($date >= $this->date_trans)
 			{
