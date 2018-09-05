@@ -86,7 +86,7 @@ catch(\UnexpectedValueException $e) {
 // Do something with $event
 
 http_response_code(200); // PHP 5.4 or greater
-$langs->load("main");
+$langs->loadLangs(array("main","other","dict","bills","companies","errors","stripe"));     // File with generic data
 $user = new User($db);
 $user->fetch(5);
 $user->getrights();
@@ -157,7 +157,7 @@ elseif ($event->type == 'payout.paid') {
 		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
 
 		$accountto=new Account($db);
-		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANFERS);
+		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
 
 		if ($accountto->currency_code != $accountfrom->currency_code) {
 			$error++;
