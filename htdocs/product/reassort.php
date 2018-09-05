@@ -319,11 +319,12 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 
-		print '<tr>';
-		print '<td class="nowrap">';
 		$product=new Product($db);
 		$product->fetch($objp->rowid);
 		$product->load_stock();
+
+		print '<tr>';
+		print '<td class="nowrap">';
 		print $product->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
@@ -360,15 +361,13 @@ if ($resql)
 			}
 		}
 
-
-
 		// Virtual stock
 		if ($virtualdiffersfromphysical)
 		{
-	    		print '<td align="right">';
+			print '<td align="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-	    		print $product->stock_theorique;
-	    		print '</td>';
+			print $product->stock_theorique;
+			print '</td>';
 		}
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';
