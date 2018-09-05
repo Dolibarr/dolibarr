@@ -6717,16 +6717,17 @@ class Form
 	 * 		@param	string		$imagesize		    'mini', 'small' or '' (original)
 	 *      @param  int         $addlinktofullsize  Add link to fullsize image
 	 *      @param  int         $cache              1=Accept to use image in cache
+	 *      @param	string		$forcecapture		Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if empty.
 	 * 	  	@return string    						HTML code to output photo
 	 */
-	static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1, $cache=0)
+	static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1, $cache=0, $forcecapture='')
 	{
 		global $conf,$langs;
 
 		$entity = (! empty($object->entity) ? $object->entity : $conf->entity);
 		$id = (! empty($object->id) ? $object->id : $object->rowid);
 
-		$ret='';$dir='';$file='';$originalfile='';$altfile='';$email='';
+		$ret='';$dir='';$file='';$originalfile='';$altfile='';$email='';$capture='';
 		if ($modulepart=='societe')
 		{
 			$dir=$conf->societe->multidir_output[$entity];
@@ -6750,6 +6751,7 @@ class Form
 				$originalfile=get_exdir(0, 0, 0, 0, $object, 'contact').'/photos/'.$object->photo;
 			}
 			$email=$object->email;
+			$capture='user';
 		}
 		else if ($modulepart=='userphoto')
 		{
@@ -6763,6 +6765,7 @@ class Form
 			}
 			if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
 			$email=$object->email;
+			$capture='user';
 		}
 		else if ($modulepart=='memberphoto')
 		{
@@ -6776,6 +6779,7 @@ class Form
 			}
 			if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
 			$email=$object->email;
+			$capture='user';
 		}
 		else
 		{
@@ -6791,6 +6795,8 @@ class Form
 			if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
 			$email=$object->email;
 		}
+
+		if ($forcecapture) $capture = $forcecapture;
 
 		if ($dir)
 		{
@@ -6848,7 +6854,7 @@ class Form
 				if ($object->photo) $ret.="<br>\n";
 				$ret.='<table class="nobordernopadding centpercent">';
 				if ($object->photo) $ret.='<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput"></td></tr>';
+				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
 				$ret.='</table>';
 			}
 

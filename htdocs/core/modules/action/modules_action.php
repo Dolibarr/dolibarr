@@ -33,16 +33,17 @@ abstract class ModeleAction extends CommonDocGenerator
 	 */
 	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of active generation modules
      *
-	 * 	@param	DoliDB		$db					Database handler
+     * 	@param	DoliDB		$db					Database handler
      *  @param	integer		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+        // phpcs:enable
         global $conf;
 
         $type='action';
@@ -54,6 +55,8 @@ abstract class ModeleAction extends CommonDocGenerator
         return $liste;
     }
 }
+
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Create an product document on disk using template defined into PRODUCT_ADDON_PDF
  *
@@ -66,9 +69,9 @@ abstract class ModeleAction extends CommonDocGenerator
  *  @param  int			$hideref        Hide ref
  *  @return int         				0 if KO, 1 if OK
  */
-// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 function action_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+    // phpcs:enable
 	global $conf,$langs,$user;
 	$langs->load("action");
 
