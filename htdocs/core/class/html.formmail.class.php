@@ -52,6 +52,7 @@ class FormMail extends Form
 
 	var $withsubstit;			// Show substitution array
 	var $withfrom;
+
 	/**
 	 * @var int
 	 * @deprecated Fill withto with array before calling method.
@@ -1398,12 +1399,12 @@ class ModelMail
      * @var int ID
      */
     public $id;
-	
+
 	/**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	public $topic;
 	public $content;
 	public $content_lines;

@@ -39,38 +39,40 @@ class ActionsTicket
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     public $dao;
 
     public $mesg;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
 	public $error;
-	
+
     /**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
     //! Numero de l'erreur
     public $errno = 0;
 
     public $template_dir;
+
     public $template;
 
     /**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
     /**
      * @var string model description (short text)
      */
     public $description;
 
     public $fk_statut;
+
     public $fk_soc;
 
     /**

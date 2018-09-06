@@ -32,13 +32,14 @@ class Establishment extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='establishment';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='establishment';
-	
+
 	public $table_element_line = '';
+
 	public $fk_element = 'fk_establishment';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='building';
@@ -47,7 +48,7 @@ class Establishment extends CommonObject
      * @var int ID
      */
     public $id;
-    
+
     public $ref;
 	public $rowid;
 

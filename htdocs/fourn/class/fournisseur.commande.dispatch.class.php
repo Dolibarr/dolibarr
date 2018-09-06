@@ -37,27 +37,28 @@ class CommandeFournisseurDispatch extends CommonObject
 	/**
      * @var DoliDB Database handler.
      */
-    public $db;	
-    
+    public $db;
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error;
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element='commandefournisseurdispatch';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
+
 	public $lines=array();
 
     /**

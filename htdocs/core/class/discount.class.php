@@ -32,7 +32,7 @@ class DiscountAbsolute
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -42,20 +42,21 @@ class DiscountAbsolute
      * @var int ID discount
      */
     public $id;
-    
+
     public $fk_soc;
+
     public $discount_type;			// 0 => customer discount, 1 => supplier discount
     public $amount_ht;				//
     public $amount_tva;			//
     public $amount_ttc;			//
     public $tva_tx;				// Vat rate
     public $fk_user;				// Id utilisateur qui accorde la remise
-    
+
     /**
      * @var string model description (short text)
      */
     public $description;
-    
+
     public $datec;					// Date creation
     public $fk_facture_line;  		// Id invoice line when a discount is used into an invoice line (for absolute discounts)
     public $fk_facture;			    // Id invoice when a discount line is used into an invoice (for credit note)

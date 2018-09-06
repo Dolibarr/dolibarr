@@ -37,15 +37,16 @@ class Address
      * @var int ID
      */
     public $id;
-    
+
 	public $type;
-	
+
 	/**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	public $socid;
+
 	public $name;
 	public $address;
 	public $zip;
@@ -505,20 +506,20 @@ class Address
 class AddressLine
 {
 	protected $db;
-	
+
 	/**
      * @var int ID
      */
     public $id;
-    
+
 	public $date_creation;
 	public $date_modification;
-	
+
 	/**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	public $name;
 	public $address;
 	public $zip;

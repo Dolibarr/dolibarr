@@ -35,17 +35,17 @@ class BookKeeping extends CommonObject
 	 * @var string Error code (or message)
 	 */
 	public $error;
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	/**
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'accountingbookkeeping';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -64,6 +64,7 @@ class BookKeeping extends CommonObject
 	public $id;
 
 	public $doc_date;
+
 	public $date_lim_reglement;
 	public $doc_type;
 	public $doc_ref;
@@ -1861,7 +1862,7 @@ class BookKeepingLine
      * @var int ID
      */
     public $id;
-    
+
 	public $doc_date = '';
 	public $doc_type;
 	public $doc_ref;

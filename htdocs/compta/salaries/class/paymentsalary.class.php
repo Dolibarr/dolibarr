@@ -35,12 +35,12 @@ class PaymentSalary extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='payment_salary';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_salary';	
-	
+	public $table_element='payment_salary';
+
 	public $picto='payment';
 
 	public $tms;
@@ -51,12 +51,12 @@ class PaymentSalary extends CommonObject
 	public $fk_project;
 	public $type_payment;
 	public $num_payment;
-	
+
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
+     * @var string proper name for given parameter
+     */
+    public $label;
+
 	public $datesp;
 	public $dateep;
 	public $fk_bank;

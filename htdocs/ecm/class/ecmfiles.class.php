@@ -40,32 +40,32 @@ class EcmFiles extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ecmfiles';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'ecm_files';
-	
+
 	public $picto = 'generic';
 
 	public $ref;					// hash of file path
-	
+
 	/**
-     	 * @var string proper name for given parameter: hash of file content (md5_file(dol_osencode($destfull))
-     	 */
-    	public $label;
-    
+     * @var string proper name for given parameter: hash of file content (md5_file(dol_osencode($destfull))
+     */
+    public $label;
+
 	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 	public $entity;
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
-	
+
 	/**
-     	 * @var string model description (short text)
-     	 */
-    	public $description;
-    
+     * @var string model description (short text)
+     */
+    public $description;
+
 	public $keywords;
 	public $cover;
 	public $position;
@@ -78,7 +78,7 @@ class EcmFiles extends CommonObject
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
-	
+
 
 	/**
 	 * Constructor
@@ -349,7 +349,7 @@ class EcmFiles extends CommonObject
 		else {
 			$sql .= ' AND t.rowid = '.$this->db->escape($id);					// rowid already unique
 		}
-		
+
 		$this->db->plimit(1);	// When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only
 		$this->db->order('t.rowid', 'ASC');
 
@@ -843,17 +843,17 @@ class EcmfilesLine
      	 * @var string proper name for given parameter
      	 */
     	public $label;
-    
+
 	public $entity;
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
-	
+
 	/**
      	 * @var string model description (short text)
      	 */
     	public $description;
-    
+
 	public $keywords;
 	public $cover;
 	public $position;
