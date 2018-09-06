@@ -210,6 +210,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -219,9 +220,9 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_dispo($db, $code, $soc, $type=0)
 	{
+        // phpcs:enable
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -250,15 +251,16 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi si un code respecte la syntaxe
 	 *
 	 *	@param	string		$code		Code a verifier
 	 *	@return	int						0 si OK, <0 si KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_syntax($code)
 	{
+        // phpcs:enable
 		$res = 0;
 
 		if (dol_strlen($code) < 11)

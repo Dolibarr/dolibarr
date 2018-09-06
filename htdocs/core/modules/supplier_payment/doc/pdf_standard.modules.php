@@ -176,7 +176,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		PaiementFourn		$object				Id of object to generate
@@ -187,9 +188,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -513,6 +514,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -522,9 +524,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *	@param	Translate		$outputlangs	Objet langs
 	 *	@return int								Position pour suite
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);

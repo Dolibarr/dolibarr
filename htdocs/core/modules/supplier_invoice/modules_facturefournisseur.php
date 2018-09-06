@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2016   Philippe Grand  <philippe.grand@atoo-net.com>
- * Copyright (C) 2014   Marcos García   <marcosgdf@gmail.com>
+/* Copyright (C) 2010       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2016  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
@@ -47,9 +48,9 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function liste_modeles($db, $maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type = 'invoice_supplier';
