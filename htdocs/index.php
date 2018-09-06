@@ -358,7 +358,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Dolibarr Working Board with weather
  */
-$showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
+$showweather=(empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
 
 //Array that contains all WorkboardResponse classes to process them
 $dashboardlines=array();
@@ -536,7 +536,7 @@ $boxwork.='</tr>'."\n";
 if ($showweather)
 {
     $boxwork.='<tr class="nohover">';
-    $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
+    $boxwork.='<td class="nohover'.($conf->global->MAIN_DISABLE_METEO == 2 ?' hideonsmartphone' : '').' center valignmiddle">';
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
     else $text=$langs->transnoentitiesnoconv("NoItemLate");
