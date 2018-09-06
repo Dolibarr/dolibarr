@@ -169,12 +169,12 @@ if ($action == 'create')
 
 	// Date start
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-	print $form->select_date(($date_start ? $date_start : ''), 'fiscalyear');
+	$form->select_date(($date_start ? $date_start : ''), 'fiscalyear');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
+	$form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
 	print '</td></tr>';
 
 	/*
@@ -225,12 +225,12 @@ if ($action == 'create')
 
 			// Date start
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-			print $form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
+			$form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-			print $form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
+			$form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
 			print '</td></tr>';
 
 			// Statut
