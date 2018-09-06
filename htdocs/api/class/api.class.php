@@ -65,6 +65,8 @@ class DolibarrApi
 
         $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
         $this->r->setAPIVersion(1);
+        //$this->r->setSupportedFormats('json');
+        //$this->r->setSupportedFormats('jsonFormat');
     }
 
     /**
@@ -96,6 +98,7 @@ class DolibarrApi
 
         // Remove $db object property for object
         unset($object->db);
+        unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 

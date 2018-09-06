@@ -50,4 +50,4 @@ BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Unalterable Logs modu
 BlockedLogDisableNotAllowedForCountry=List of countries where usage of this module is mandatory (just to prevent to disable the module by error, if your country is in this list, disable of module is not possible without editing this list first. Note also that enabling/disabling this module will keep a track into the unalterable log).
 OnlyNonValid=Non valid
 TooManyRecordToScanRestrictFilters=Too many record to scan/analyze. Please restrict list with more restrictive filters.
-RestrictYearToExport=Restrict year to export
+RestrictYearToExport=Restrict month / year to export

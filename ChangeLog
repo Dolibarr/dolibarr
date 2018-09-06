@@ -2,6 +2,38 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 8.0.1 compared to 8.0.0 *****
+FIX: #9258
+FIX: #9328
+FIX: #9337
+FIX: adding GROUP BY for PostgreSQL
+FIX: API template for list pages in module builder
+FIX: API template for record page to delete a record
+FIX: a removed option was still in setup
+FIX: badge on time spent on project and tasks
+FIX: Delete file on smartphone
+FIX: Fetch function will fetch comments
+FIX: Fetch task will now fetch comments
+FIX: $fk_account is always empty, must be $soc->fk_account
+FIX: Force stripe api version to avoid trouble if we update stripe api
+FIX: get_product_vat_for_country functions.lib.php
+FIX: Get templates in a forced language
+FIX: hook on dispatch order fourn
+FIX: Language selection lost if error during creation of email template
+FIX: Look and feel v8
+FIX: propal.class.php
+FIX: Add calls to fetchComments function
+FIX: Remove fetchComments from project and task fetch function
+FIX: remove internal property isextrafieldmanaged from API returns
+FIX: sql error
+FIX: table llx_chargessociales doesn't exists
+FIX: trans on null object
+FIX: vat rate code not returned by get_product_vat_for_country
+FIX: warning for late template invoices to remove when suspended
+FIX: Add hidden option MAIN_xxx_IN_SOURCE_ADDRESS to solve legal issues on PDF
+FIX: Table llx_facture_rec_extrafields missing after migration
+
+
 ***** ChangeLog for 8.0.0 compared to 7.0.0 *****
 
 For Users:

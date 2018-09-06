@@ -66,6 +66,7 @@ class MyObject extends CommonObject
 	 *  'position' is the sort order of field.
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
@@ -285,7 +286,7 @@ class MyObject extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
-		global $db, $conf, $langs, $hoomanager;
+		global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 

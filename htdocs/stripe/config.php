@@ -55,3 +55,4 @@ else
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
 \Stripe\Stripe::setAppInfo("Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
+\Stripe\Stripe::setApiVersion("2018-07-27"); // force version API

@@ -3067,15 +3067,21 @@ class Commande extends CommonOrder
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-	            // Call trigger
-	            $result=$this->call_trigger('ORDER_MODIFY', $user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('ORDER_MODIFY', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -4247,9 +4253,10 @@ class OrderLine extends CommonOrderLine
 	}
 
     /**
-     *	Update totals of order into database
+     *	Update DB line fields total_xxx
+	 *	Used by migration
      *
-     *	@return		int		<0 if ko, >0 if ok
+     *	@return		int		<0 if KO, >0 if OK
      */
     function update_total()
     {

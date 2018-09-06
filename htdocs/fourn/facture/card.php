@@ -2423,7 +2423,7 @@ else
             $discount = new DiscountAbsolute($db);
             $result = $discount->fetch(0, 0, $object->id);
             if ($result > 0){
-                print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(), $discount->getNomUrl(1, 'discount')).'<br>';
+                print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'<br>';
             }
         }
         print '</td></tr>';
@@ -2898,7 +2898,7 @@ else
 			if ($resteapayeraffiche <= 0)
 				print $langs->trans('RemainderToPayBack');
 			else
-				print $langs->trans('ExcessPaydBack');
+				print $langs->trans('ExcessPaid');
 			print ' :</td>';
 			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';

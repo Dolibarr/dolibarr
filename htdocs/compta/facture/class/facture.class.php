@@ -1185,9 +1185,9 @@ class Facture extends CommonInvoice
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
                 $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-            if (! empty($this->total_localtax1))
-                $label.= '<br><b>' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
-            if (! empty($this->total_localtax2))
+            if (! empty($this->total_localtax1) && $this->total_localtax1 != 0)		// We keep test != 0 because $this->total_localtax1 can be '0.00000000'
+                $label.= '<br><b>eee' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
+            if (! empty($this->total_localtax2) && $this->total_localtax2 != 0)
                 $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
                 $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
@@ -1549,6 +1549,8 @@ class Facture extends CommonInvoice
 	 */
 	function update(User $user, $notrigger=0)
 	{
+		global $conf;
+
 		$error=0;
 
 		// Clean parameters
@@ -1614,15 +1616,21 @@ class Facture extends CommonInvoice
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-	            // Call trigger
-	            $result=$this->call_trigger('BILL_MODIFY',$user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('BILL_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -4776,8 +4784,8 @@ class FactureLigne extends CommonInvoiceLine
 	}
 
 	/**
-	 *  Mise a jour en base des champs total_xxx de ligne de facture
-	 *  TODO What is goal of this method ?
+     *	Update DB line fields total_xxx
+	 *	Used by migration
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
@@ -4836,7 +4844,7 @@ class FactureLigne extends CommonInvoiceLine
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
-				return $res['situation_percent'];
+				return floatval($res['situation_percent']);
 			} else {
 				$this->error = $this->db->error();
 				dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);

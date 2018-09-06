@@ -90,6 +90,8 @@ $search_level_from = GETPOST("search_level_from","alpha");
 $search_level_to   = GETPOST("search_level_to","alpha");
 $search_stcomm=GETPOST('search_stcomm','int');
 $search_import_key  = GETPOST("search_import_key","alpha");
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $type=GETPOST('type','alpha');
 $optioncss=GETPOST('optioncss','alpha');
@@ -103,7 +105,7 @@ $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-if (empty($page) || $page == -1) { $page = 0; }
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -709,48 +711,48 @@ if (! empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
 	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
-	print '<input class="flat searchstring" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_nom" value="'.dol_escape_htmltag($search_nom).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.name_alias']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_alias" size="8" value="'.dol_escape_htmltag($search_alias).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_alias" value="'.dol_escape_htmltag($search_alias).'">';
 	print '</td>';
 }
 // Barcode
 if (! empty($arrayfields['s.barcode']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_barcode" value="'.dol_escape_htmltag($search_barcode).'">';
 	print '</td>';
 }
 // Customer code
 if (! empty($arrayfields['s.code_client']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="8" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'">';
 	print '</td>';
 }
 // Supplier code
 if (! empty($arrayfields['s.code_fournisseur']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="8" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'">';
 	print '</td>';
 }
 // Account Customer code
 if (! empty($arrayfields['s.code_compta']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="8" type="text" name="search_account_customer_code" value="'.dol_escape_htmltag($search_account_customer_code).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_account_customer_code" value="'.dol_escape_htmltag($search_account_customer_code).'">';
 	print '</td>';
 }
 // Account Supplier code
 if (! empty($arrayfields['s.code_compta_fournisseur']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="8" type="text" name="search_account_supplier_code" value="'.dol_escape_htmltag($search_account_supplier_code).'">';
+	print '<input class="flat maxwidth50" type="text" name="search_account_supplier_code" value="'.dol_escape_htmltag($search_account_supplier_code).'">';
 	print '</td>';
 }
 // Town
@@ -764,21 +766,21 @@ if (! empty($arrayfields['s.town']['checked']))
 if (! empty($arrayfields['s.zip']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
 	print '</td>';
 }
 // State
 if (! empty($arrayfields['state.nom']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 	print '</td>';
 }
 // Region
 if (! empty($arrayfields['region.nom']['checked']))
 {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
 	print '</td>';
 }
 // Country
@@ -799,14 +801,14 @@ if (! empty($arrayfields['s.email']['checked']))
 {
 	// Email
 	print '<td class="liste_titre">';
-	print '<input class="flat searchemail" size="4" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
+	print '<input class="flat searchemail maxwidth50" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.phone']['checked']))
 {
 	// Phone
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.fax']['checked']))
@@ -820,14 +822,14 @@ if (! empty($arrayfields['s.url']['checked']))
 {
 	// Url
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_url" value="'.dol_escape_htmltag($search_url).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_url" value="'.dol_escape_htmltag($search_url).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.siren']['checked']))
 {
 	// IdProf1
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_idprof1" value="'.dol_escape_htmltag($search_idprof1).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_idprof1" value="'.dol_escape_htmltag($search_idprof1).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.siret']['checked']))
@@ -848,28 +850,28 @@ if (! empty($arrayfields['s.idprof4']['checked']))
 {
 	// IdProf4
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_idprof4" value="'.dol_escape_htmltag($search_idprof4).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_idprof4" value="'.dol_escape_htmltag($search_idprof4).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.idprof5']['checked']))
 {
 	// IdProf5
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_idprof5" value="'.dol_escape_htmltag($search_idprof5).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_idprof5" value="'.dol_escape_htmltag($search_idprof5).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.idprof6']['checked']))
 {
 	// IdProf6
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_idprof6" value="'.dol_escape_htmltag($search_idprof6).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_idprof6" value="'.dol_escape_htmltag($search_idprof6).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.tva_intra']['checked']))
 {
 	// Vat number
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" size="4" type="text" name="search_vat" value="'.dol_escape_htmltag($search_vat).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_vat" value="'.dol_escape_htmltag($search_vat).'">';
 	print '</td>';
 }
 
@@ -956,7 +958,7 @@ if (! empty($arrayfields['s.status']['checked']))
 if (! empty($arrayfields['s.import_key']['checked']))
 {
 	print '<td class="liste_titre center">';
-	print '<input class="flat searchstring" type="text" name="search_import_key" size="3" value="'.dol_escape_htmltag($search_import_key).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
 // Action column

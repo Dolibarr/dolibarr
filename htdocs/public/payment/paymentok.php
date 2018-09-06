@@ -87,10 +87,8 @@ if (empty($paymentmethod))
     dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
     exit;
 }
-else
-{
-    dol_syslog("paymentmethod=".$paymentmethod);
-}
+
+dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
 
 $validpaymentmethod=array();
@@ -194,7 +192,7 @@ if (! empty($conf->paypal->enabled))
 		    // From env
 		    $ipaddress          = $_SESSION['ipaddress'];
 
-			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
 
 			// Validate record
 		    if (! empty($paymentType))
@@ -264,6 +262,9 @@ if (empty($paymentType))     $paymentType     = $_SESSION["paymentType"];
 
 $fulltag            = $FULLTAG;
 $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+
+
+dol_syslog("ispaymentok=".$ispaymentok, LOG_DEBUG, 0, '_payment');
 
 
 // Make complementary actions
@@ -372,6 +373,8 @@ if ($ispaymentok)
 				// Create subscription
 				if (! $error)
 				{
+					dol_syslog("Call ->subscription to create subscription", LOG_DEBUG, 0, '_payment');
+
 					$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
 					if ($crowid <= 0)
 					{
@@ -389,11 +392,15 @@ if ($ispaymentok)
 
 				if (! $error)
 				{
-					$autocreatethirdparty = 1;
+					dol_syslog("Call ->subscriptionComplementaryActions option=".$option, LOG_DEBUG, 0, '_payment');
+
+					$autocreatethirdparty = 1;	// will create thirdparty if member not yet linked to a thirdparty
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty);
 					if ($result < 0)
 					{
+						dol_syslog("Error ".$object->error." ".join(',', $object->errors), LOG_DEBUG, 0, '_payment');
+
 						$error++;
 						$postactionmessages[] = $object->error;
 						$postactionmessages = array_merge($postactionmessages, $object->errors);
@@ -401,9 +408,21 @@ if ($ispaymentok)
 					}
 					else
 					{
-						if ($option == 'bankviainvoice') $postactionmessages[] = 'Invoice, payment and bank record created';
-						if ($option == 'bankdirect')     $postactionmessages[] = 'Bank record created';
-						if ($option == 'invoiceonly')    $postactionmessages[] = 'Invoice recorded';
+						if ($option == 'bankviainvoice')
+						{
+							$postactionmessages[] = 'Invoice, payment and bank record created';
+							dol_syslog("Invoice, payment and bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'bankdirect')
+						{
+							$postactionmessages[] = 'Bank record created';
+							dol_syslog("Bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'invoiceonly')
+						{
+							$postactionmessages[] = 'Invoice recorded';
+							dol_syslog("Invoice recorded", LOG_DEBUG, 0, '_payment');
+						}
 						$ispostactionok = 1;
 
 						// If an invoice was created, it is into $object->invoice
@@ -416,7 +435,7 @@ if ($ispaymentok)
 					{
 						$thirdparty_id = $object->fk_soc;
 
-						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
 
 						$service = 'StripeTest';
 						$servicestatus = 0;
@@ -436,6 +455,8 @@ if ($ispaymentok)
 
 						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
 						{
+							dol_syslog("No stripe profile found, so we add it", LOG_DEBUG, 0, '_payment');
+
 							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
 							$stripecu = $ch->customer;							// value 'cus_....'
 
@@ -462,9 +483,11 @@ if ($ispaymentok)
 					$db->rollback();
 				}
 
-				// Send email
+				// Send email to member
 				if (! $error)
 				{
+					dol_syslog("Send email to customer to ".$object->email." if we have to (sendalsoemail = ".$sendalsoemail.")", LOG_DEBUG, 0, '_payment');
+
 					// Send confirmation Email
 					if ($object->email && $sendalsoemail)
 					{
@@ -511,7 +534,7 @@ if ($ispaymentok)
 							$listofmimes=array(dol_mimetype($file));
 						}
 
-						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1);
 
 						if ($result < 0)
 						{
@@ -523,6 +546,8 @@ if ($ispaymentok)
 						{
 							if ($file) $postactionmessages[] = 'Email sent to member (with invoice document attached)';
 							else $postactionmessages[] = 'Email sent to member (without any attached document)';
+
+							// TODO Add actioncomm event
 						}
 					}
 				}
@@ -629,7 +654,7 @@ if ($ispaymentok)
 					}
 					else
 					{
-						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Not way to record the payment.';
+						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
 						$ispostactionok = -1;
 						$error++;
 					}
@@ -691,7 +716,9 @@ if ($ispaymentok)
 
     $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
-	// Send an email
+    dol_syslog("Send email to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
+
+	// Send an email to admins
     if ($sendemail)
 	{
 		$companylangs = new Translate('', $conf);

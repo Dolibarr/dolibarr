@@ -313,7 +313,7 @@ class Expedition extends CommonObject
 				}
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 				{
 					$result=$this->insertExtraFields();
 					if ($result < 0)
@@ -541,8 +541,7 @@ class Expedition extends CommonObject
 				 */
 				$result=$this->fetch_thirdparty();
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
+				// Retreive extrafields
 				$this->fetch_optionals();
 
 				/*
@@ -2412,7 +2411,8 @@ class ExpeditionLigne extends CommonObjectLine
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)

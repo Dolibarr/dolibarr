@@ -150,11 +150,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	if (! empty($conf->salaries->enabled)) $menuqualified++;
 	if (! empty($conf->supplier_invoice->enabled)) $menuqualified++;
 	if (! empty($conf->loan->enabled)) $menuqualified++;
-	if (! empty($conf->banque->enabled)) $menuqualified++;
 	$tmpentry=array(
 	   'enabled'=>$menuqualified,
-	   'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read) || ! empty($user->rights->banque->lire)),
-	   'module'=>'facture|supplier_invoice|don|tax|salaries|loan|banque');
+	   'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
+	   'module'=>'facture|supplier_invoice|don|tax|salaries|loan');
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
