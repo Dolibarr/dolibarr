@@ -98,6 +98,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -464,6 +465,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show area for the customer to sign
 	 *
@@ -473,9 +475,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 	    $tab_top = $posy + 4;
 	    $tab_hl = 4;

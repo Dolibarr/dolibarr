@@ -117,16 +117,17 @@ class mod_contract_magre extends ModelNumRefContracts
 		return  $numFinal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Return next value
+	 *  Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$objforref	contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function contract_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
 }
