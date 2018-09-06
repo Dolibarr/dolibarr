@@ -36,7 +36,7 @@ class Stripe extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+  public $fk_soc;
 
 	public $fk_key;
 

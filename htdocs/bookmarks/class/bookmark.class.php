@@ -29,9 +29,9 @@
 class Bookmark extends CommonObject
 {
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element='bookmark';
+	   * @var string ID to identify managed object
+	   */
+	  public $element='bookmark';
 
     /**
      * @var string Name of table without prefix where object is stored
@@ -41,9 +41,9 @@ class Bookmark extends CommonObject
     public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     /**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
-	 */
-	public $picto = 'bookmark';
+	   * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	   */
+	  public $picto = 'bookmark';
 
     /**
      * @var DoliDB Database handler.
@@ -56,9 +56,9 @@ class Bookmark extends CommonObject
     public $id;
 
     /**
-	 * @var int User ID
-	 */
-	public $fk_user;
+	   * @var int User ID
+	   */
+	  public $fk_user;
 
     public $datec;
     public $url;
