@@ -48,7 +48,11 @@ class DiscountAbsolute
 	 */
 	public $id;
 
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
+
     public $discount_type;			// 0 => customer discount, 1 => supplier discount
     public $amount_ht;				//
     public $amount_tva;			//

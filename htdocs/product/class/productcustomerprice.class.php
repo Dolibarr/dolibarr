@@ -38,29 +38,34 @@ class Productcustomerprice extends CommonObject
 	 */
 	public $table_element = 'product_customer_price';
 
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_type;
-	var $localtax1_tx;
-	var $localtax2_type;
-	var $localtax2_tx;
+	public $entity;
+	public $datec = '';
+	public $tms = '';
+	public $fk_product;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_type;
+	public $localtax1_tx;
+	public $localtax2_type;
+	public $localtax2_tx;
 
 	/**
 	 * @var int User ID
 	 */
 	public $fk_user;
 
-	var $lines = array ();
+	public $lines = array ();
 
 	/**
 	 * Constructor
@@ -974,7 +979,12 @@ class PriceByCustomerLine
 	public $datec = '';
 	public $tms = '';
 	public $fk_product;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
 	public $price;
 	public $price_ttc;
 	public $price_min;

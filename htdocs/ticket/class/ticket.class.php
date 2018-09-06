@@ -2502,8 +2502,8 @@ class TicketsLine
     public $track_id;
 
     /**
-	 * Thirdparty ID
-	*/
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
 
     /**
