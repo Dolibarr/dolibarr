@@ -1010,7 +1010,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 		else
 		{
-			print '<input size="40" type="text" name="skype" value="'.GETPOST('skype').'">';
+			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype').'">';
 		}
 		print '</td></tr>';
 	}
