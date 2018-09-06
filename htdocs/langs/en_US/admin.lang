@@ -1809,3 +1809,4 @@ UseSearchToSelectResource=Use a search form to choose a resource (rather than a 
 DisabledResourceLinkUser=Disable feature to link a resource to users
 DisabledResourceLinkContact=Disable feature to link a resource to contacts
 ConfirmUnactivation=Confirm module reset
+OnMobileOnly=On small screen (smartphone) only
