@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -43,6 +43,7 @@ class ActionComm extends CommonObject
      * @var int
      */
     public $ismultientitymanaged = 1;
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user, 2=Same than 1 but accept record if fksoc is empty
      * @var integer
@@ -1223,7 +1224,7 @@ class ActionComm extends CommonObject
 
                 if ((!$user->rights->agenda->allactions->read && $this->author->id != $user->id) || (!$user->rights->agenda->myactions->read && $this->author->id == $user->id))
                     $option = 'nolink';
-		
+
                 $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility
 

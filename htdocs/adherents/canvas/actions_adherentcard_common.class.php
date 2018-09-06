@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2018 Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ abstract class ActionsAdherentCardCommon
      * @var DoliDb Database handler
      */
     public $db;
-    
+
     var $dirmodule;
     var $targetmodule;
     var $canvas;

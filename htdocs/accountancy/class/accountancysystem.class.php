@@ -32,8 +32,9 @@ class AccountancySystem
      * @var DoliDb Database handler
      */
     public $db;
-    
+
 	var $error;
+
 	var $rowid;
 	var $fk_pcg_version;
 	var $pcg_type;

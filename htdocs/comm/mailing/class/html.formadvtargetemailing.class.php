@@ -30,8 +30,9 @@ class FormAdvTargetEmailing extends Form
      * @var DoliDb Database handler
      */
     public $db;
-    
+
 	var $error;
+
 
 	/**
 	 * Constructor

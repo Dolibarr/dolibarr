@@ -29,14 +29,14 @@
 class CActionComm
 {
     var $error;
-    
+
     /**
      * @var DoliDb Database handler
      */
     public $db;
 
     /**
-     * @var string ID 
+     * @var string ID
      */
     public $id;
 
@@ -46,6 +46,7 @@ class CActionComm
     var $label;
     var $active;
     var $color;
+
     var $picto;
 
     var $type_actions=array();

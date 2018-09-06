@@ -39,6 +39,7 @@ class AccountingAccount extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -49,15 +50,15 @@ class AccountingAccount extends CommonObject
      * @var DoliDb Database handler
      */
     public $db;
-    
+
 	var $error;
 	var $errors;
-	
+
 	/**
-	 * @var string ID 
+	 * @var string ID
 	 */
 	public $id;
-	
+
 	var $rowid;
 	var $datec; // Creation date
 	var $fk_pcg_version;
