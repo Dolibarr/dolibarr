@@ -48,6 +48,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -55,9 +56,9 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_user($user,$outputlangs)
     {
+        // phpcs:enable
         global $conf;
 
         $logotouse=$conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
@@ -85,6 +86,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -92,9 +94,9 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_mysoc($mysoc,$outputlangs)
     {
+        // phpcs:enable
         global $conf;
 
         if (empty($mysoc->forme_juridique) && ! empty($mysoc->forme_juridique_code))
@@ -144,6 +146,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -151,9 +154,9 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_thirdparty($object,$outputlangs)
     {
+        // phpcs:enable
         global $conf;
 
         if (empty($object->country) && ! empty($object->country_code))
@@ -224,6 +227,7 @@ abstract class CommonDocGenerator
 		return $array_thirdparty;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
@@ -232,9 +236,9 @@ abstract class CommonDocGenerator
 	 * @param   array_key	$array_key	    Name of the key for return array
 	 * @return	array of substitution key->code
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
     {
+        // phpcs:enable
 		global $conf;
 
 		if(empty($object->country) && ! empty($object->country_code))
@@ -297,15 +301,16 @@ abstract class CommonDocGenerator
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_other($outputlangs)
     {
+        // phpcs:enable
     	global $conf;
 
     	$now=dol_now('gmt');	// gmt
@@ -334,6 +339,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -342,9 +348,9 @@ abstract class CommonDocGenerator
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$sumpayed=$sumdeposit=$sumcreditnote='';
@@ -481,6 +487,7 @@ abstract class CommonDocGenerator
 		return $resarray;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -488,9 +495,9 @@ abstract class CommonDocGenerator
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_substitutionarray_lines($line,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$resarray= array(
@@ -559,6 +566,7 @@ abstract class CommonDocGenerator
 		return $resarray;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple substitution key => substitution value
      *
@@ -567,9 +575,9 @@ abstract class CommonDocGenerator
      * @param   array_key		$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
     {
+        // phpcs:enable
     	global $conf;
 		dol_include_once('/core/lib/product.lib.php');
 		$object->list_delivery_methods($object->shipping_method_id);
@@ -621,6 +629,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Define array with couple substitution key => substitution value
      *
@@ -628,10 +637,10 @@ abstract class CommonDocGenerator
      *	@param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_shipment_lines($line, $outputlangs)
     {
-    	global $conf;
+        // phpcs:enable
+        global $conf;
         dol_include_once('/core/lib/product.lib.php');
 
         $resarray = array(
@@ -668,6 +677,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -676,17 +686,17 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
     {
+        // phpcs:enable
         $array_other = array();
-        if(!empty($object)) {
+        if (!empty($object)) {
             foreach($object as $key => $value) {
-                if(!empty($value)) {
-                    if(!is_array($value) && !is_object($value)) {
+                if (!empty($value)) {
+                    if (!is_array($value) && !is_object($value)) {
                         $array_other['object_'.$key] = $value;
                     }
-                    if(is_array($value) && $recursive){
+                    if (is_array($value) && $recursive) {
                         $array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value,$outputlangs,false);
                     }
                 }
@@ -696,6 +706,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Fill array with couple extrafield key => extrafield value
      *
@@ -706,9 +717,9 @@ abstract class CommonDocGenerator
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function fill_substitutionarray_with_extrafields($object,$array_to_fill,$extrafields,$array_key,$outputlangs)
+    function fill_substitutionarray_with_extrafields($object,$array_to_fill,$extrafields,$array_key,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
