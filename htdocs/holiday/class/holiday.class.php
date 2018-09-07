@@ -946,53 +946,53 @@ class Holiday extends CommonObject
 		if ($mode == 0)
 		{
 			if ($statut == 1) return $langs->trans('DraftCP');
-			if ($statut == 2) return $langs->trans('ToReviewCP');
-			if ($statut == 3) return $langs->trans('ApprovedCP');
-			if ($statut == 4) return $langs->trans('CancelCP');
-			if ($statut == 5) return $langs->trans('RefuseCP');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP');
+			elseif ($statut == 3) return $langs->trans('ApprovedCP');
+			elseif ($statut == 4) return $langs->trans('CancelCP');
+			elseif ($statut == 5) return $langs->trans('RefuseCP');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
 
-		return $statut;
+		else return $statut;
 	}
 
 

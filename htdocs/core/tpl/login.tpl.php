@@ -61,13 +61,13 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 
 $colorbackhmenu1='60,70,100';      // topmenu
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
-$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.'), rgb(240,240,240));"':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -78,7 +78,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="login_center center">
+<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.'), rgb(240,240,240));"':'' ?>>
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">

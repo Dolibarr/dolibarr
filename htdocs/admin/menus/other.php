@@ -24,9 +24,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("user","other","admin"));
 
 if (! $user->admin) accessforbidden();
 

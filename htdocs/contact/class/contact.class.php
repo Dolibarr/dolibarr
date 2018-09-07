@@ -41,13 +41,17 @@ class Contact extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='contact';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='socpeople';
-	
+
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'contact';
 
 
@@ -726,7 +730,7 @@ class Contact extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				
+
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
 				$this->departement_code	= $obj->state_code;	       // deprecated

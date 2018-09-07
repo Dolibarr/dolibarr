@@ -43,23 +43,26 @@ class Tva extends CommonObject
 	 */
 	public $table_element='tva';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='payment';
 
-	var $tms;
-	var $datep;
-	var $datev;
-	var $amount;
-	var $type_payment;
-	var $num_payment;
+	public $tms;
+	public $datep;
+	public $datev;
+	public $amount;
+	public $type_payment;
+	public $num_payment;
 
 	/**
      * @var string label
      */
     public $label;
 
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
 
     /**
 	 *	Constructor
