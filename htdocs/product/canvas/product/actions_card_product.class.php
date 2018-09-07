@@ -72,6 +72,7 @@ class ActionsCardProduct
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id=0, $ref='')
 	{
 		global $limit, $offset, $sortfield, $sortorder;
@@ -238,7 +239,6 @@ class ActionsCardProduct
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 
@@ -304,6 +304,7 @@ class ActionsCardProduct
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf, $langs;
@@ -431,6 +432,4 @@ class ActionsCardProduct
 			dol_print_error($this->db);
 		}
 	}
-
 }
-

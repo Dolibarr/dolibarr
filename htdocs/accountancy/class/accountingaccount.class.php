@@ -31,12 +31,12 @@
 class AccountingAccount extends CommonObject
 {
 	public $element='accounting_account';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='accounting_account';
-	
+
 	public $picto = 'billr';
 
 	/**
@@ -44,7 +44,7 @@ class AccountingAccount extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
-	
+
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -55,22 +55,22 @@ class AccountingAccount extends CommonObject
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';	
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	var $rowid;
 	var $datec; // Creation date
 	var $fk_pcg_version;
@@ -79,16 +79,24 @@ class AccountingAccount extends CommonObject
 	var $account_number;
 	var $account_parent;
 	var $account_category;
-	
-	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
-    
-	var $fk_user_author;
-	var $fk_user_modif;
-	var $active;       // duplicate with status
-	var $status;
+
+    /**
+     * @var string Label of account
+     */
+    public $label;
+
+    /**
+     * @var int ID
+     */
+    public $fk_user_author;
+
+    /**
+     * @var int ID
+     */
+    public $fk_user_modif;
+
+    public $active;       // duplicate with status
+    public $status;
 
 
 	/**
@@ -422,7 +430,7 @@ class AccountingAccount extends CommonObject
 	 * @param	string  $moretitle					Add more text to title tooltip
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return	string	String with URL
+	 * @return  string	String with URL
 	 */
 	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0, $save_lastsearch_value=-1)
 	{
@@ -526,6 +534,7 @@ class AccountingAccount extends CommonObject
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function account_desactivate($id)
     {
 		$result = $this->checkUsage();
@@ -559,6 +568,7 @@ class AccountingAccount extends CommonObject
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function account_activate($id)
     {
 		$this->db->begin();
@@ -598,6 +608,7 @@ class AccountingAccount extends CommonObject
 	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string              Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;

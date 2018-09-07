@@ -277,6 +277,7 @@ class DolibarrApi
 	 * @param  array    $matches       Array of found string by regex search
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function _forge_criteria_callback($matches)
 	{
 	    global $db;

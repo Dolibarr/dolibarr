@@ -111,6 +111,7 @@ class FormBarCode
      *  @param  int		$useempty          Affiche valeur vide dans liste
      *  @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_barcode_type($selected='',$htmlname='barcodetype_id',$useempty=0)
     {
         global $langs,$conf;
@@ -170,6 +171,7 @@ class FormBarCode
      *  @param  string		$htmlname    	Nom du formulaire select
      *  @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
     {
         global $langs,$conf;
@@ -186,6 +188,4 @@ class FormBarCode
             print '</td></tr></table></form>';
         }
     }
-
 }
-

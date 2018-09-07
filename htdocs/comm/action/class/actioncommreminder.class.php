@@ -175,42 +175,37 @@ class ActionCommReminder extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function LibStatut($status,$mode=0)
 	{
 		global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Done');
-			if ($status == 0) return $langs->trans('ToDo');
-		}
-		if ($mode == 1)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Done');
 			if ($status == 0) return $langs->trans('ToDo');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'),'statut4').' '.$langs->trans('Done');
 			if ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'),'statut4');
 			if ($status == 0) return img_picto($langs->trans('ToDo'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'),'statut4').' '.$langs->trans('Done');
 			if ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'),'statut4');
 			if ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'),'statut4');
 			if ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
@@ -227,6 +222,4 @@ class ActionCommReminder extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }
-

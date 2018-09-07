@@ -121,6 +121,9 @@ if (empty($reshook))
 			if ($country_code)
 			{
 				$sqlfile = DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_accounting_account_'.strtolower($country_code).'.sql';
+
+				// FIXME Get the ADD rowid and pass it + num of comapny * 100 000 000 to run_sql as a new parameter to say to update sql on the fly to add offset to rowid and account_parent value.
+
 				$result = run_sql($sqlfile, 1, 0, 1);
 			}
 

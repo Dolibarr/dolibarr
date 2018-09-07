@@ -226,6 +226,7 @@ class mailing_fraise extends MailingTargets
      *  @param  array    $filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *  @return int                       < 0 si erreur, nb ajout si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_to_target($mailing_id,$filtersarray=array())
     {
 	    // Deprecation warning
@@ -319,5 +320,4 @@ class mailing_fraise extends MailingTargets
 
         return parent::add_to_target($mailing_id, $cibles);
     }
-
 }

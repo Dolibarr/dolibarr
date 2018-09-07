@@ -289,7 +289,6 @@ class ChargeSociales extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
     }
 
 
@@ -374,6 +373,7 @@ class ChargeSociales extends CommonObject
      *    @param	User	$user       Object user making change
      *    @return	int					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_paid($user)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
@@ -389,6 +389,7 @@ class ChargeSociales extends CommonObject
      *    @param	User	$user       Object user making change
      *    @return	int					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_unpaid($user)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
@@ -419,6 +420,7 @@ class ChargeSociales extends CommonObject
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$mode=0,$alreadypaid=-1)
     {
         global $langs;
@@ -646,4 +648,3 @@ class ChargeSociales extends CommonObject
         $this->type_libelle = 'Social contribution label';
     }
 }
-

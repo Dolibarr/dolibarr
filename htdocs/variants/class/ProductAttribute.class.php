@@ -53,6 +53,11 @@ class ProductAttribute
 	 */
 	public $rang;
 
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
 	public function __construct(DoliDB $db)
 	{
 		global $conf;

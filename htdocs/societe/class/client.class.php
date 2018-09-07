@@ -52,6 +52,7 @@ class Client extends Societe
      *
      *  @return     int         <0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
         global $user;
@@ -88,7 +89,6 @@ class Client extends Societe
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -114,5 +114,4 @@ class Client extends Societe
 		}
 		return 1;
     }
-
 }

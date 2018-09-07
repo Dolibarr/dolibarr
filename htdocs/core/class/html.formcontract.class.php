@@ -31,7 +31,7 @@ class FormContract
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -59,6 +59,7 @@ class FormContract
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbr of project if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_contract($socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
 	{
 		global $db,$user,$conf,$langs;
@@ -173,11 +174,11 @@ class FormContract
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line
-	 *	@return int         		Nbr of project if OK, <0 if KO
+	 *	@return int                 Nbr of project if OK, <0 if KO
 	 */
 	function formSelectContract($page, $socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
 	{
-	    global $langs;
+        global $langs;
 
         print "\n";
         print '<form method="post" action="'.$page.'">';
@@ -186,6 +187,5 @@ class FormContract
         $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty);
         print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
         print '</form>';
-	}
-
+    }
 }

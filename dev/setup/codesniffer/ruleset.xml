@@ -363,16 +363,19 @@
         <severity>0</severity>
 	</rule>
 
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
+    <!--<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
         <severity>0</severity>
-	</rule>
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
+    </rule>-->
+	<!--<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
         <severity>0</severity>
-	</rule>
+	</rule>-->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
         <severity>0</severity>
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
+
+    <rule ref="PSR2.Classes.ClassDeclaration" />
+    <rule ref="PSR2.Methods.FunctionClosingBrace" />
 
 	<!-- This is not in PSR2 -->
 	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">

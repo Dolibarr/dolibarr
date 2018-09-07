@@ -283,6 +283,5 @@ class modPropale extends DolibarrModules
 		);
 
 		return $this->_init($sql,$options);
-
 	}
 }

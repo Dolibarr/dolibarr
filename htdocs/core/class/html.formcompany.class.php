@@ -41,7 +41,6 @@ class FormCompany
 	 */
 	public $error='';
 
-
 	/**
 	 *	Constructor
 	 *
@@ -62,6 +61,7 @@ class FormCompany
 	 *      @param  string	$filter     Add a SQL filter to select
 	 *    	@return array      			Array of types
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function typent_array($mode=0, $filter='')
 	{
 		global $langs,$mysoc;
@@ -103,6 +103,7 @@ class FormCompany
 	 *	@param  string	$filter     Add a SQL filter to select
 	 *  @return array				Array of types d'effectifs
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function effectif_array($mode=0, $filter='')
 	{
 		$effs = array();
@@ -143,6 +144,7 @@ class FormCompany
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_prospect_level($page, $selected='', $htmlname='prospect_level_id', $empty=0)
 	{
 		global $user, $langs;
@@ -195,6 +197,7 @@ class FormCompany
 	 *   @param     string	$htmlname			Id of department
 	 *   @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_departement($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		print $this->select_state($selected,$country_codeid, $htmlname);
@@ -213,6 +216,7 @@ class FormCompany
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_state($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		global $conf,$langs,$user;
@@ -324,6 +328,7 @@ class FormCompany
 	 *   @param		string		$htmlname		Name of HTML select field
 	 *   @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_region($selected='',$htmlname='region_id')
 	{
 		global $conf,$langs;
@@ -388,6 +393,7 @@ class FormCompany
 	 *  @param  string  $morecss        Add more css on SELECT element
 	 *  @return	string					String with HTML select
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_civility($selected='',$htmlname='civility_id',$morecss='maxwidth100')
 	{
 		global $conf,$langs,$user;
@@ -447,6 +453,7 @@ class FormCompany
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
 	 *    @see select_juridicalstatus()
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_forme_juridique($selected='', $country_codeid=0, $filter='')
 	{
 		print $this->select_juridicalstatus($selected, $country_codeid, $filter);
@@ -462,6 +469,7 @@ class FormCompany
      *    @param	string		$htmlname			HTML name of select
      *    @return	string							String with HTML select
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_juridicalstatus($selected='', $country_codeid=0, $filter='', $htmlname='forme_juridique_code')
 	{
 		global $conf,$langs,$user;
@@ -758,6 +766,7 @@ class FormCompany
 	 *    @param    string      $morecss                More css
 	 *    @return	string
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0, $moreattrib='',$morecss='')
 	{
 		global $conf;
@@ -787,6 +796,7 @@ class FormCompany
      *  @param  string  $morecss        More css
      *  @return	string					HTML string with prof id
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_input_id_prof($idprof,$htmlname,$preselected,$country_code,$morecss='maxwidth100onsmartphone quatrevingtpercent')
     {
         global $conf,$langs;
@@ -835,6 +845,7 @@ class FormCompany
      * @param 	string      $htmlname		HTML select name
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_localtax($local, $selected, $htmlname)
     {
     	$tax=get_localtax_by_third($local);
@@ -867,6 +878,4 @@ class FormCompany
     		}
     	}
     }
-
 }
-

@@ -51,6 +51,7 @@ class SimpleOpenID
      * @param	string	$a		Server
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetOpenIDServer($a)
     {
         $this->URLs['openid_server'] = $a;
@@ -62,6 +63,7 @@ class SimpleOpenID
      * @param	string	$a		Server
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetTrustRoot($a)
     {
         $this->URLs['trust_root'] = $a;
@@ -73,6 +75,7 @@ class SimpleOpenID
      * @param	string	$a		Server
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetCancelURL($a)
     {
         $this->URLs['cancel'] = $a;
@@ -84,6 +87,7 @@ class SimpleOpenID
      * @param	string	$a		Server
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetApprovedURL($a)
     {
         $this->URLs['approved'] = $a;
@@ -95,11 +99,12 @@ class SimpleOpenID
      * @param	string	$a		Server
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetRequiredFields($a)
     {
-        if (is_array($a)){
+        if (is_array($a)) {
             $this->fields['required'] = $a;
-        }else{
+        } else {
             $this->fields['required'][] = $a;
         }
     }
@@ -110,11 +115,12 @@ class SimpleOpenID
      * @param	string	$a		Server
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetOptionalFields($a)
     {
-        if (is_array($a)){
+        if (is_array($a)) {
             $this->fields['optional'] = $a;
-        }else{
+        } else {
             $this->fields['optional'][] = $a;
         }
     }
@@ -122,14 +128,15 @@ class SimpleOpenID
     /**
      * SetIdentity
      *
-     * @param	string	$a		Server
+     * @param	string  $a		Server
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetIdentity($a)
     {
         // Set Identity URL
         if ((stripos($a, 'http://') === false)
-        && (stripos($a, 'https://') === false)){
+        && (stripos($a, 'https://') === false)) {
             $a = 'http://'.$a;
         }
         /*
@@ -153,6 +160,7 @@ class SimpleOpenID
      *
      * @return	string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetIdentity()
     {
         // Get Identity
@@ -164,6 +172,7 @@ class SimpleOpenID
      *
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetError()
     {
         $e = $this->error;
@@ -177,6 +186,7 @@ class SimpleOpenID
      * @param	string	$desc		Description
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function ErrorStore($code, $desc = null)
     {
         $errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
@@ -191,6 +201,7 @@ class SimpleOpenID
      *
      * @return	boolean
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function IsError()
     {
         if (count($this->error) > 0)
@@ -229,6 +240,7 @@ class SimpleOpenID
      * @param	string	$openid_identity		Server
      * @return	string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function OpenID_Standarize($openid_identity = null)
     {
         if ($openid_identity === null)
@@ -276,6 +288,7 @@ class SimpleOpenID
      * @param string	$params		Params
      * @return boolean|unknown
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function FSOCK_Request($url, $method="GET", $params = "")
     {
         $fp = fsockopen("ssl://www.myopenid.com", 443, $errno, $errstr, 3); // Connection timeout is 3 seconds
@@ -308,6 +321,7 @@ class SimpleOpenID
      * @param 	string	$params		Params
      * @return string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function CURL_Request($url, $method="GET", $params = "")
     {
         // Remember, SSL MUST BE SUPPORTED
@@ -337,6 +351,7 @@ class SimpleOpenID
      * @param string	$content	Content
      * @return array				Array of servers
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function HTML2OpenIDServer($content)
     {
         $get = array();
@@ -363,6 +378,7 @@ class SimpleOpenID
      * @param	string	$url	Url to found endpoint
      * @return 	string			Endpoint
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetOpenIDServer($url='')
     {
         global $conf;
@@ -373,12 +389,12 @@ class SimpleOpenID
         $response = getURLContent($url);
 
         list($servers, $delegates) = $this->HTML2OpenIDServer($response);
-        if (count($servers) == 0){
+        if (count($servers) == 0) {
             $this->ErrorStore('OPENID_NOSERVERSFOUND');
             return false;
         }
         if (isset($delegates[0])
-        && ($delegates[0] != "")){
+        && ($delegates[0] != "")) {
             $this->SetIdentity($delegates[0]);
         }
         $this->SetOpenIDServer($servers[0]);
@@ -390,6 +406,7 @@ class SimpleOpenID
      *
      * @return	string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetRedirectURL()
     {
         $params = array();
@@ -414,6 +431,7 @@ class SimpleOpenID
      *
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Redirect()
     {
         $redirect_to = $this->GetRedirectURL();
@@ -434,6 +452,7 @@ class SimpleOpenID
      *
      * @return	boolean
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function ValidateWithServer()
     {
         $params = array(
@@ -524,5 +543,4 @@ class SimpleOpenID
         	return $server;
 	    }
     }
-
 }

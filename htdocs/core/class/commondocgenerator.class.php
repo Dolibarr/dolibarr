@@ -55,6 +55,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_user($user,$outputlangs)
     {
         global $conf;
@@ -91,6 +92,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_mysoc($mysoc,$outputlangs)
     {
         global $conf;
@@ -149,6 +151,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_thirdparty($object,$outputlangs)
     {
         global $conf;
@@ -229,6 +232,7 @@ abstract class CommonDocGenerator
 	 * @param   array_key	$array_key	    Name of the key for return array
 	 * @return	array of substitution key->code
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
     {
 		global $conf;
@@ -299,6 +303,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_other($outputlangs)
     {
     	global $conf;
@@ -337,6 +342,7 @@ abstract class CommonDocGenerator
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
 		global $conf;
@@ -482,6 +488,7 @@ abstract class CommonDocGenerator
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_substitutionarray_lines($line,$outputlangs)
 	{
 		global $conf;
@@ -560,6 +567,7 @@ abstract class CommonDocGenerator
      * @param   array_key		$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
     {
     	global $conf;
@@ -614,16 +622,17 @@ abstract class CommonDocGenerator
 
 
     /**
-     *	Define array with couple substitution key => substitution value
+     *  Define array with couple substitution key => substitution value
      *
      *	@param  ExpeditionLigne	$line				Object line
      *	@param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_shipment_lines($line, $outputlangs)
     {
     	global $conf;
-		dol_include_once('/core/lib/product.lib.php');
+        dol_include_once('/core/lib/product.lib.php');
 
         $resarray = array(
 	    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
@@ -645,7 +654,7 @@ abstract class CommonDocGenerator
 	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
     	);
 
-		// Retrieve extrafields
+        // Retrieve extrafields
         $extrafieldkey = $line->element;
         $array_key = "line";
         require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -667,6 +676,7 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
     {
         $array_other = array();
@@ -696,6 +706,7 @@ abstract class CommonDocGenerator
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fill_substitutionarray_with_extrafields($object,$array_to_fill,$extrafields,$array_key,$outputlangs)
 	{
 		global $conf;
@@ -767,7 +778,6 @@ abstract class CommonDocGenerator
 		}
 
 		return $array_to_fill;
-
 	}
 
 

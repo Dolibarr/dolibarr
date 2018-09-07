@@ -437,7 +437,6 @@ class ActionComm extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -648,7 +647,6 @@ class ActionComm extends CommonObject
         }
 
         return $num;
-
     }
 
 	/**
@@ -701,6 +699,7 @@ class ActionComm extends CommonObject
      *
      *    @return	int				<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_userassigned()
     {
         $sql ="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
@@ -1025,6 +1024,7 @@ class ActionComm extends CommonObject
      * @param	int		$load_state_board	Charge indicateurs this->nb de tableau de bord
      * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user, $load_state_board=0)
     {
     	global $conf, $langs;
@@ -1151,6 +1151,7 @@ class ActionComm extends CommonObject
      *      @param  int     $datestart      Date start of event
      *    	@return string		    		Label
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($percent,$mode,$hidenastatus=0,$datestart='')
     {
         global $langs;
@@ -1360,6 +1361,7 @@ class ActionComm extends CommonObject
      *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
      *		@return int     					<0 if error, nb of events in new file if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)
     {
         global $conf,$langs,$dolibarr_main_url_root,$mysoc;
@@ -1680,8 +1682,6 @@ class ActionComm extends CommonObject
 
 		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
-
-
     	// Delete also very old past events (we do not keep more than 1 month record in past)
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
 		$this->db->query($sql);
@@ -1690,5 +1690,4 @@ class ActionComm extends CommonObject
 
     	return $error;
     }
-
 }

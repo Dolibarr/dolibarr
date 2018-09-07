@@ -304,6 +304,7 @@ class Account extends CommonObject
 	 *      @param  string	$type       Type of link ('payment', 'company', 'member', ...)
 	 *      @return int         		<0 if KO, id line if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
@@ -342,6 +343,7 @@ class Account extends CommonObject
 	 *      @param  string      $type       To search using type
 	 *      @return array|-1                Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_url($fk_bank='', $url_id='', $type='')
 	{
 		$lines = array();
@@ -783,11 +785,12 @@ class Account extends CommonObject
 
 
 	/**
-	 *    	Update BBAN (RIB) account fields
+	 *  Update BBAN (RIB) account fields
 	 *
-	 *    	@param	User	$user       Object user making update
-	 *		@return	int					<0 if KO, >0 if OK
+	 *  @param	User	$user       Object user making update
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_bban(User $user = null)
 	{
 		global $conf,$langs;
@@ -1075,6 +1078,7 @@ class Account extends CommonObject
 	 *  @param   int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return  string        			    Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut, $mode = 0)
 	{
 		global $langs;
@@ -1110,6 +1114,7 @@ class Account extends CommonObject
 	 *
 	 *    @return     boolean     vrai si peut etre supprime, faux sinon
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function can_be_deleted()
 	{
 		$can_be_deleted=false;
@@ -1170,7 +1175,6 @@ class Account extends CommonObject
 		}
 
 		return $solde;
-
 	}
 
 	/**
@@ -1180,6 +1184,7 @@ class Account extends CommonObject
 	 *		@param	int		$filteraccountid	To get info for a particular account id
 	 *      @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board(User $user, $filteraccountid = 0)
 	{
 		global $conf, $langs;
@@ -1233,6 +1238,7 @@ class Account extends CommonObject
 	 *		@param		int			$filteraccountid	To get info for a particular account id
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board($filteraccountid = 0)
 	{
 		global $user;
@@ -1513,7 +1519,6 @@ class Account extends CommonObject
 	 */
 	function info($id)
 	{
-
 	}
 
 	/**
@@ -1558,7 +1563,6 @@ class Account extends CommonObject
 
 		//Get the order the properties are shown
 		return $fieldarray;
-
 	}
 
 	/**
@@ -1632,7 +1636,6 @@ class Account extends CommonObject
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
 	}
-
 }
 
 
@@ -1887,6 +1890,7 @@ class AccountLine extends CommonObject
 	 *		@param	User	$user	User object that delete
 	 *      @return	int 			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_urls(User $user = null)
 	{
 		$nbko=0;
@@ -1952,12 +1956,13 @@ class AccountLine extends CommonObject
 
 
 	/**
-	 *		Update conciliation field
+	 *	Update conciliation field
 	 *
-	 *		@param	User	$user		Objet user making update
-	 *		@param 	int		$cat		Category id
-	 *		@return	int					<0 if KO, >0 if OK
+	 *	@param	User	$user		Objet user making update
+	 *	@param 	int		$cat		Category id
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_conciliation(User $user, $cat)
 	{
 		global $conf,$langs;
@@ -2020,6 +2025,7 @@ class AccountLine extends CommonObject
 	 *	@param	int		$sign		1 or -1
 	 *	@return	int					>0 if OK, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function datev_change($rowid,$sign=1)
 	{
 		$sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
@@ -2057,6 +2063,7 @@ class AccountLine extends CommonObject
 	 *	@param	int		$id		Id of line to change
 	 *	@return	int				>0 if OK, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function datev_next($id)
 	{
 		return $this->datev_change($id,1);
@@ -2068,6 +2075,7 @@ class AccountLine extends CommonObject
 	 *	@param	int		$id		Id of line to change
 	 *	@return	int				>0 if OK, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function datev_previous($id)
 	{
 		return $this->datev_change($id,-1);
@@ -2081,6 +2089,7 @@ class AccountLine extends CommonObject
 	 *	@param	int		$sign		1 or -1
 	 *	@return	int					>0 if OK, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dateo_change($rowid,$sign=1)
 	{
 		$sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
@@ -2118,6 +2127,7 @@ class AccountLine extends CommonObject
 	 *	@param	int		$id		Id of line to change
 	 *	@return	int				>0 if OK, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dateo_next($id)
 	{
 		return $this->dateo_change($id,1);
@@ -2129,6 +2139,7 @@ class AccountLine extends CommonObject
 	 *	@param	int		$id		Id of line to change
 	 *	@return	int				>0 if OK, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dateo_previous($id)
 	{
 		return $this->dateo_change($id,-1);
@@ -2244,6 +2255,7 @@ class AccountLine extends CommonObject
 	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string          		Libelle du statut
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
@@ -2315,5 +2327,4 @@ class AccountLine extends CommonObject
 		}
 		return 0;
 	}
-
 }

@@ -39,9 +39,9 @@ class Menubase
 	public $error;
 
     /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
     /**
      * @var int ID
@@ -698,6 +698,4 @@ class Menubase
             }
         }
    }
-
 }
-

@@ -443,8 +443,9 @@ class FactureRec extends CommonInvoice
 	/**
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
-	 *	@return     int         1 if OK, < 0 if KO
- 	 */
+	 *  @return     int         1 if OK, < 0 if KO
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
 		$this->lines=array();
@@ -1191,6 +1192,7 @@ class FactureRec extends CommonInvoice
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($recur, $status, $mode=0, $alreadypaid=-1, $type=0)
 	{
 		global $langs;
@@ -1858,7 +1860,5 @@ class FactureLigneRec extends CommonInvoiceLine
     		$this->db->rollback();
     		return -2;
     	}
-
     }
-
 }

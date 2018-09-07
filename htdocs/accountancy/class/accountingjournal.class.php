@@ -40,7 +40,7 @@ class AccountingJournal extends CommonObject
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'generic';
 
-	var $rowid;
+	public $rowid;
 
 	public $code;
 
@@ -267,6 +267,7 @@ class AccountingJournal extends CommonObject
 	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
 	 *  @return string 				   	Label of type
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibType($nature,$mode=0)
 	{
 		global $langs;

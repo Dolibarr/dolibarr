@@ -85,6 +85,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
      *  @return int           			<0 if error, number of emails added if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_to_target($mailing_id,$filtersarray=array())
     {
         $target = array();
@@ -241,6 +242,4 @@ class mailing_thirdparties_services_expired extends MailingTargets
     {
         return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
     }
-
 }
-

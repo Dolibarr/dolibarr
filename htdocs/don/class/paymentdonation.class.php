@@ -32,13 +32,13 @@ class PaymentDonation extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='payment_donation';	
-	
+	public $element='payment_donation';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='payment_donation';
-	
+
     public $picto = 'payment';
 
 	public $rowid;
@@ -76,7 +76,7 @@ class PaymentDonation extends CommonObject
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user			User making payment
-	 *	@param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
 	function create($user, $notrigger=false)
@@ -460,6 +460,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
 	    global $langs;
@@ -490,8 +491,6 @@ class PaymentDonation extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 
@@ -584,6 +583,7 @@ class PaymentDonation extends CommonObject
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;

@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 /**
  * Class to manage categories of an accounting account
  */
-class AccountancyCategory 	// extends CommonObject
+class AccountancyCategory // extends CommonObject
 {
 	/**
      * @var DoliDB Database handler.
@@ -833,5 +833,4 @@ class AccountancyCategory 	// extends CommonObject
 			return -1;
 		}
 	}
-
 }

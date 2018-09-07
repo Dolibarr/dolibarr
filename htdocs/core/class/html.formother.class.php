@@ -38,7 +38,7 @@
 class FormOther
 {
     private $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -68,7 +68,8 @@ class FormOther
      *    @param    int		$fk_user          Utilisateur créant le modèle
      *    @return	void
      */
-    function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0, $fk_user=null)
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    function select_export_model($selected='', $htmlname='exportmodelid', $type='', $useempty=0, $fk_user=null)
     {
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
@@ -118,7 +119,8 @@ class FormOther
      *    @param    int		$useempty          Affiche valeur vide dans liste
      *    @return	void
      */
-    function select_import_model($selected='',$htmlname='importmodelid',$type='',$useempty=0)
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    function select_import_model($selected='', $htmlname='importmodelid', $type='', $useempty=0)
     {
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."import_model";
@@ -165,7 +167,8 @@ class FormOther
      *    @param    string	$htmlname	Name of combo list
      *    @return	integer
      */
-    function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    function select_ecotaxes($selected='', $htmlname='ecotaxe_id')
     {
         global $langs;
 
@@ -222,7 +225,8 @@ class FormOther
      *    @param    string	$country_code   Country Code
      *    @return	string					HTML select list
      */
-    function select_revenue_stamp($selected='',$htmlname='revenuestamp',$country_code='')
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    function select_revenue_stamp($selected='', $htmlname='revenuestamp', $country_code='')
     {
     	global $langs;
 
@@ -283,6 +287,7 @@ class FormOther
      *    @param    int     $showempty      Add also an empty line
      *    @return   string					HTML select string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100,$showempty=0)
     {
         $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
@@ -319,6 +324,7 @@ class FormOther
      * @return  string		        	Html combo list code
      * @see	select_all_categories
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_categories($type, $selected=0, $htmlname='search_categ', $nocateg=0, $showempty=1, $morecss='')
     {
         global $conf, $langs;
@@ -378,6 +384,7 @@ class FormOther
      *  @param	string	$morecss		More CSS
      *  @return string					Html combo list code
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0,$showempty=1,$morecss='')
     {
         global $conf,$langs;
@@ -633,6 +640,7 @@ class FormOther
      * 		@deprecated Use instead selectColor
      *      @see selectColor()
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
     	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
@@ -748,6 +756,7 @@ class FormOther
      *	@param	int		$y      	Hauteur de l'image en pixels
      *	@return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function CreateColorIcon($color,$module,$name,$x='12',$y='12')
     {
         global $conf;
@@ -785,6 +794,7 @@ class FormOther
      *    	@param  int			$useempty          Affiche valeur vide dans liste
      *    	@return	string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
     {
         global $langs;
@@ -829,6 +839,7 @@ class FormOther
      *      @param	string		$morecss			More Css
      *      @return string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_month($selected='', $htmlname='monthid', $useempty=0, $longlabel=0, $morecss='')
     {
         global $langs;
@@ -874,6 +885,7 @@ class FormOther
      *  @param	string		$morecss		More CSS
      *  @return	string
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
         print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option,$morecss);
@@ -943,6 +955,7 @@ class FormOther
      * @param  	int		$originid      	Id de l'origine
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function form_address($page, $selected, $socid, $htmlname='address_id', $origin='', $originid='')
     {
         global $langs,$conf;
@@ -1016,7 +1029,7 @@ class FormOther
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
         		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		if (preg_match('/graph/',$box->class) && empty($conf->browser->phone))
+        		if (preg_match('/graph/',$box->class) && $conf->browser->layout != 'phone')
         		{
         			$label=$label.' <span class="fa fa-bar-chart"></span>';
         		}
@@ -1150,7 +1163,7 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
@@ -1177,7 +1190,7 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();
@@ -1205,6 +1218,7 @@ class FormOther
      *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_dictionary($htmlname,$dictionarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0,$moreattrib='')
     {
         global $langs, $conf;
@@ -1255,6 +1269,4 @@ class FormOther
             dol_print_error($this->db);
         }
     }
-
 }
-

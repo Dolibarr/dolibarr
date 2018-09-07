@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
  */
 class CommandeFournisseurDispatch extends CommonObject
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -490,6 +490,7 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *  @return string				Label of status
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$mode=0)
     {
         global $langs;
@@ -551,8 +552,6 @@ class CommandeFournisseurDispatch extends CommonObject
 		$this->batch='';
 		$this->eatby='';
 		$this->sellby='';
-
-
 	}
 
 	/**
@@ -650,5 +649,4 @@ class CommandeFournisseurDispatch extends CommonObject
 			return - 1;
 		}
 	}
-
 }

@@ -88,6 +88,4 @@ class PrintingDriver
         if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
         else return $this->desc;
     }
-
 }
-

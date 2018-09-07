@@ -83,6 +83,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate		$outputlangs	Lang output object
      *	@return	int     						1=ok, 0=ko
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $_dir, $number, $outputlangs)
 	{
 		global $user,$conf,$langs,$hookmanager;
@@ -206,6 +207,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object language for output
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
 		global $langs;
@@ -312,6 +314,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object lang
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Body(&$pdf, $pagenb, $pages, $outputlangs)
 	{
 		// x=10 - Num

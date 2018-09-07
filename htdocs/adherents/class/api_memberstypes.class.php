@@ -320,5 +320,4 @@ class MembersTypes extends DolibarrApi
 
         return $object;
     }
-
 }

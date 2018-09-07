@@ -162,6 +162,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param		int				$hideref			Do not show ref
 	 *  @return		int									1=OK, 0=KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
@@ -730,5 +731,4 @@ class pdf_soleil extends ModelePDFFicheinter
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'FICHINTER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

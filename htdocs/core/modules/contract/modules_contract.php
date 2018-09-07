@@ -50,6 +50,7 @@ abstract class ModelePDFContract extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;

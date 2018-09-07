@@ -347,5 +347,4 @@ class BankCateg // extends CommonObject
 		$this->id = 0;
 		$this->label = '';
 	}
-
 }

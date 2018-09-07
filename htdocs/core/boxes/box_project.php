@@ -184,7 +184,6 @@ class box_project extends ModeleBoxes
             'td' => '',
             'text' => "&nbsp;",
         );
-
 	}
 
 	/**

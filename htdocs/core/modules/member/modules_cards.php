@@ -47,6 +47,7 @@ class ModelePDFCards
 	 *	@param	integer	$maxfilenamelength	Max length of value to show
 	 *	@return	array						List of templates
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
@@ -73,22 +74,23 @@ class ModelePDFCards
  *	@param	string		$template		pdf generenate document class to use default 'standard'
  *	@return int							<0 if KO, >0 if OK
  */
+// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir='', $template='standard')
 {
 	global $conf,$langs;
 	$langs->load("members");
 
 	$error=0;
-	
+
 	// Increase limit for PDF build
 	$err=error_reporting();
 	error_reporting(0);
 	@set_time_limit(120);
 	error_reporting($err);
-	
+
 	$code='';
 	$srctemplatepath='';
-	
+
 	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
@@ -111,7 +113,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		$srctemplatepath=$tmp[1];
 	}
 	else $srctemplatepath=$code;
-	
+
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
@@ -121,7 +123,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		foreach(array('doc','pdf') as $prefix)
 		{
 			$file = $prefix."_".$template.".class.php";
-			
+
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/member/doc/".$file,0);
 			if (file_exists($file))
@@ -133,8 +135,8 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		}
 		if ($filefound) break;
 	}
-	
-	
+
+
 	// Charge le modele
 	if ($filefound)
 	{
@@ -163,7 +165,4 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
 		return -1;
 	}
-
-
 }
-

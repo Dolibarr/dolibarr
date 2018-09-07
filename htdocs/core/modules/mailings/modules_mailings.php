@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 /**
  *		Parent class of emailing target selectors modules
  */
-class MailingTargets    // This can't be abstract as it is used for some method
+class MailingTargets // This can't be abstract as it is used for some method
 {
     /**
      * @var DoliDB Database handler.
@@ -42,7 +42,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
 	public $error='';
 	
     var $tooltip='';
-    
+
 
     /**
 	 *	Constructor
@@ -62,7 +62,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
     function getDesc()
     {
         global $langs, $form;
-        
+
         $langs->load("mails");
         $transstring="MailingModuleDesc".$this->name;
         $s='';
@@ -123,6 +123,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
      * @param	int		$mailing_id          Id of emailing
      * @return  int			                 < 0 si erreur, nb destinataires si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_nb($mailing_id)
     {
         // Mise a jour nombre de destinataire dans table des mailings
@@ -156,6 +157,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
      * @param   array	$cibles        Array with targets
      * @return  int      			   < 0 si erreur, nb ajout si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_to_target($mailing_id, $cibles)
     {
     	global $conf;
@@ -238,6 +240,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
      *	@param	int		$mailing_id        Id of emailing
      *	@return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function clear_target($mailing_id)
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
@@ -250,6 +253,4 @@ class MailingTargets    // This can't be abstract as it is used for some method
 
         $this->update_nb($mailing_id);
     }
-
 }
-

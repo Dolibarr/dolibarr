@@ -62,7 +62,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 abstract class CommonStickerGenerator
 {
 
-	public $code;		// Code of format
+	public $code;   // Code of format
 	public $format;	// Array with informations
 
 	// protected
@@ -103,6 +103,7 @@ abstract class CommonStickerGenerator
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @return int             				1=OK, 0=KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	abstract function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='');
 
 	/**
@@ -123,6 +124,7 @@ abstract class CommonStickerGenerator
 	 * @param    int        $pt    point
 	 * @return   void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Set_Char_Size(&$pdf,$pt)
 	{
 		if ($pt > 3) {
@@ -144,6 +146,7 @@ abstract class CommonStickerGenerator
 	 * @param 	int		$nbPointilles		Nb pointilles
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
 	{
 		$pdf->SetLineWidth($epaisseur);
@@ -185,6 +188,7 @@ abstract class CommonStickerGenerator
 	 * @param int	$taille             Size
 	 * @return void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _Croix(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=4)
 	{
 		$pdf->SetDrawColor(192,192,192);
@@ -216,6 +220,7 @@ abstract class CommonStickerGenerator
 	 * @param string    $dest   to
 	 * @return float    value   value after conversion
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _Convert_Metric($value, $src, $dest)
 	{
 		if ($src != $dest) {
@@ -233,6 +238,7 @@ abstract class CommonStickerGenerator
 	 * @param  int    $pt    Point
 	 * @return int           Height chars
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _Get_Height_Chars($pt)
 	{
 		// Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
@@ -251,20 +257,20 @@ abstract class CommonStickerGenerator
 	 * @param    string    $format  Format
 	 * @return   void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _Set_Format(&$pdf, $format)
 	{
-		$this->_Metric 	= $format['metric'];
-		$this->_Avery_Name 	= $format['name'];
-		$this->_Avery_Code	= $format['code'];
+		$this->_Metric = $format['metric'];
+		$this->_Avery_Name = $format['name'];
+		$this->_Avery_Code = $format['code'];
 		$this->_Margin_Left	= $this->_Convert_Metric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Margin_Top	= $this->_Convert_Metric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
-		$this->_X_Space 	= $this->_Convert_Metric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Y_Space 	= $this->_Convert_Metric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
-		$this->_X_Number 	= $format['NX'];
-		$this->_Y_Number 	= $format['NY'];
-		$this->_Width 	= $this->_Convert_Metric($format['width'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Height	= $this->_Convert_Metric($format['height'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Margin_Top = $this->_Convert_Metric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
+		$this->_X_Space = $this->_Convert_Metric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Y_Space = $this->_Convert_Metric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
+		$this->_X_Number = $format['NX'];
+		$this->_Y_Number = $format['NY'];
+		$this->_Width = $this->_Convert_Metric($format['width'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Height = $this->_Convert_Metric($format['height'], $this->_Metric, $this->_Metric_Doc);
 		$this->Set_Char_Size($pdf, $format['font-size']);
 	}
-
 }

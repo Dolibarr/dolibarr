@@ -219,6 +219,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_dispo($db, $code, $soc, $type=0)
 	{
 		global $conf, $mc;
@@ -255,6 +256,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *	@param	string		$code		Code a verifier
 	 *	@return	int						0 si OK, <0 si KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_syntax($code)
 	{
 		$res = 0;
@@ -269,6 +271,4 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		return $res;
 	}
-
 }
-

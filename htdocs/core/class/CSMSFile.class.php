@@ -198,6 +198,7 @@ class CSMSFile
 	 *
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dump_sms()
 	{
 		global $conf,$dolibarr_main_data_root;
@@ -228,6 +229,7 @@ class CSMSFile
      *  @param	int		$result		Result of sms sending
      *  @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function dump_sms_result($result)
     {
         global $conf,$dolibarr_main_data_root;
@@ -244,6 +246,4 @@ class CSMSFile
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
     }
-
 }
-

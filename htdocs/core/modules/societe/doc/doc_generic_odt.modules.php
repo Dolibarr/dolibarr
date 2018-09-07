@@ -83,7 +83,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function info($langs)
 	{
 		global $conf,$langs;
-        
+
 		// Load traductions files requiredby by page
 		$langs->loadLangs(array("companies", "errors"));
 
@@ -175,6 +175,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
      *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -197,7 +198,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
-        
+
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
@@ -428,6 +429,4 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->error='UnknownError';
 		return -1;
 	}
-
 }
-

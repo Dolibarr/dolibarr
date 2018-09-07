@@ -203,6 +203,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *
 	 *   @return	int			0 or 1
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_prefixIsUsed()
 	{
 		global $conf;
@@ -281,6 +282,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 *		@param	Product		$product		Objet product
 	 *		@return	int						0 if available, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_dispo($db, $code, $product)
 	{
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
@@ -303,8 +305,5 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			return -2;
 		}
-
 	}
-
 }
-

@@ -176,6 +176,7 @@ class MailmanSpip
      *	@param	Adherent	$object		Object with data (->firstname, ->lastname, ->email and ->login)
      *  @return	int					=0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_to_spip($object)
     {
         dol_syslog(get_class($this)."::add_to_spip");
@@ -218,6 +219,7 @@ class MailmanSpip
      *	@param	Adherent	$object		Object with data (->login)
      *  @return	int					=0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function del_to_spip($object)
     {
         dol_syslog(get_class($this)."::del_to_spip");
@@ -257,6 +259,7 @@ class MailmanSpip
      *	@param	object	$object		Object with data (->login)
      *  @return int     			1=exists, 0=does not exists, -1=error
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function is_in_spip($object)
     {
         if ($this->isSpipEnabled())
@@ -308,6 +311,7 @@ class MailmanSpip
      *  @param	array	$listes    	To force mailing-list (string separated with ,)
      *  @return	int		  			<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_to_mailman($object,$listes='')
     {
         global $conf,$langs,$user;
@@ -380,6 +384,7 @@ class MailmanSpip
      *  @param	array	$listes     To force mailing-list (string separated with ,)
      *  @return int         		<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function del_to_mailman($object,$listes='')
     {
         global $conf,$langs,$user;
@@ -443,5 +448,4 @@ class MailmanSpip
 	        }
         }
     }
-
 }

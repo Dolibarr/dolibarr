@@ -445,7 +445,6 @@ class ExpenseReports extends DolibarrApi
                 'message' => 'Expense Report deleted'
             )
         );
-
     }
 
     /**

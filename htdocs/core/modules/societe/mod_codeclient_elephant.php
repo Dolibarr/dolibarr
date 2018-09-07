@@ -221,6 +221,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *
 	 *   @return	int			0 or 1
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_prefixIsUsed()
 	{
 		global $conf;
@@ -300,6 +301,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_dispo($db, $code, $soc, $type=0)
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -323,8 +325,5 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		{
 			return -2;
 		}
-
 	}
-
 }
-

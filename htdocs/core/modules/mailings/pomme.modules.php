@@ -153,6 +153,7 @@ class mailing_pomme extends MailingTargets
 	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		// Deprecation warning
@@ -223,5 +224,4 @@ class mailing_pomme extends MailingTargets
 
 		return parent::add_to_target($mailing_id, $cibles);
 	}
-
 }

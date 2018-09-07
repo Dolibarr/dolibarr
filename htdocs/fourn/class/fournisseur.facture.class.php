@@ -45,22 +45,22 @@ class FactureFournisseur extends CommonInvoice
 	 * @var string ID to identify managed object
 	 */
 	public $element='invoice_supplier';
-    
+
     /**
      * @var string Name of table without prefix where object is stored
      */
     public $table_element='facture_fourn';
-	
+
     public $table_element_line='facture_fourn_det';
     public $fk_element='fk_facture_fourn';
     public $picto='bill';
-    
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
-    
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -110,13 +110,13 @@ class FactureFournisseur extends CommonInvoice
     public $total_localtax1=0;
     public $total_localtax2=0;
     public $total_ttc=0;
-    
+
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
 	 */
     public $note;
-    
+
     public $note_private;
     public $note_public;
     public $propalid;
@@ -671,11 +671,14 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Load this->lines
      *
-     *	@return     int         1 si ok, < 0 si erreur
+     *  @return     int         1 si ok, < 0 si erreur
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_lines()
     {
-        $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
+    	$this->lines = array();
+
+        $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
@@ -684,7 +687,6 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
         $sql.= ' WHERE fk_facture_fourn='.$this->id;
         $sql.= ' ORDER BY f.rang, f.rowid';
-
 
         dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
         $resql_rows = $this->db->query($sql);
@@ -703,6 +705,9 @@ class FactureFournisseur extends CommonInvoice
                     $line->id				= $obj->rowid;
                     $line->rowid			= $obj->rowid;
                     $line->description		= $obj->description;
+                    $line->date_start		= $obj->date_start;
+                    $line->date_end			= $obj->date_end;
+
                     $line->product_ref		= $obj->product_ref;
                     $line->ref				= $obj->product_ref;
                     $line->ref_supplier		= $obj->ref_supplier;
@@ -895,6 +900,7 @@ class FactureFournisseur extends CommonInvoice
      *    @param     int	$idremise	Id of absolute discount
      *    @return    int          		>0 if OK, <0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function insert_discount($idremise)
     {
     	global $langs;
@@ -1148,6 +1154,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
      *	@return int         		<0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_paid($user, $close_code='', $close_note='')
     {
         global $conf,$langs;
@@ -1196,6 +1203,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param      User	$user       Object user that change status
      *	@return     int         		<0 si ok, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_unpaid($user)
     {
         global $conf,$langs;
@@ -1406,6 +1414,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
@@ -1736,7 +1745,7 @@ class FactureFournisseur extends CommonInvoice
     public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null, $pu_ht_devise=0, $ref_supplier='')
     {
     	global $mysoc;
-        dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$fk_unit,$pu_ht_devise,$ref_supplier", LOG_DEBUG);
+        dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$notrigger,$date_start,$date_end,$fk_unit,$pu_ht_devise,$ref_supplier", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         $pu = price2num($pu);
@@ -1815,6 +1824,9 @@ class FactureFournisseur extends CommonInvoice
 	    $line->qty = $qty;
 	    $line->remise_percent = $remise_percent;
 	    $line->ref_supplier = $ref_supplier;
+
+	    $line->date_start = $date_start;
+	    $line->date_end = $date_end;
 
 	    $line->vat_src_code=$vat_src_code;
 	    $line->tva_tx = $vatrate;
@@ -1964,9 +1976,10 @@ class FactureFournisseur extends CommonInvoice
 	 *	Renvoi liste des factures remplacables
 	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
 	 *
-	 *	@param		int		$socid		Id societe
+	 *	@param      int		$socid		Id societe
 	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
-	 */
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_replacable_supplier_invoices($socid=0)
 	{
 		global $conf;
@@ -2014,6 +2027,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param		int		$socid		Id societe
 	 *	@return    	array				Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_qualified_avoir_supplier_invoices($socid=0)
 	{
 		global $conf;
@@ -2062,6 +2076,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param      User	$user       Object user
      *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user)
     {
         global $conf, $langs;
@@ -2356,7 +2371,8 @@ class FactureFournisseur extends CommonInvoice
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     <0 if KO, >0 if OK
-	 */
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf, $user;
@@ -2572,7 +2588,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='facture_fourn_det';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -2585,7 +2601,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see product_ref
 	 */
 	public $ref;
-	
+
 	/**
 	 * Internal ref
 	 * @var string
@@ -2604,7 +2620,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see label
 	 */
 	public $libelle;
-	
+
 	/**
 	 * Product description
 	 * @var string
@@ -2618,7 +2634,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see subprice
 	 */
 	public $pu_ht;
-	
+
 	public $subprice;
 
 	/**
@@ -2634,7 +2650,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see total_tva
 	 */
 	public $tva;
-	
+
 	public $total_tva;
 
 	/**
@@ -2655,6 +2671,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $description;
+
+	public $date_start;
+	public $date_end;
 
 	public $skip_update_total; // Skip update price total for special lines
 
@@ -2713,7 +2732,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
+		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
 		$sql.= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_facture_fourn, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
@@ -2740,6 +2759,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rowid				= $obj->rowid;
 		$this->fk_facture_fourn			= $obj->fk_facture_fourn;
 		$this->description		= $obj->description;
+		$this->date_start		= $obj->date_start;
+		$this->date_end			= $obj->date_end;
 		$this->product_ref		= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->libelle			= $obj->label;
@@ -2771,10 +2792,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rang       		= $obj->rang;
 		$this->fk_unit           = $obj->fk_unit;
 
-		$this->multicurrency_subprice	= $obj->multicurrency_subprice;
-		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
-		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
-		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
+		$this->multicurrency_subprice = $obj->multicurrency_subprice;
+		$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
+		$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+		$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 		$this->fetch_optionals();
 
@@ -2871,6 +2892,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
 		$sql.= "  description ='".$this->db->escape($this->description)."'";
 		$sql.= ", ref ='".$this->db->escape($this->ref_supplier ? $this->ref_supplier : $this->ref)."'";
+		$sql.= ", date_start = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : "null");
+		$sql.= ", date_end = ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql.= ", pu_ht = ".price2num($this->pu_ht);
 		$sql.= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql.= ", qty = ".price2num($this->qty);
@@ -3045,12 +3068,11 @@ class SupplierInvoiceLine extends CommonObjectLine
         $sql.= ", ".price2num($this->multicurrency_total_ttc);
         $sql.= ')';
 
-        dol_syslog(get_class($this)."::insert", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-            $this->rowid=$this->id;
+            $this->rowid=$this->id;		// backward compatibility
 
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
@@ -3089,6 +3111,7 @@ class SupplierInvoiceLine extends CommonObjectLine
      *
      *  @return		int		<0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_total()
     {
         $this->db->begin();

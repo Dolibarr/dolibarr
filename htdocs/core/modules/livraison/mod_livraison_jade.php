@@ -149,9 +149,9 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
      *  @param  Object		$object			Object livraison
      *  @return string      				Texte descripif
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function livraison_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
-
 }

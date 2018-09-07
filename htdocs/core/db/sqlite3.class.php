@@ -302,6 +302,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string	$database	Name of database
 	 *	@return	    boolean  		    true if OK, false if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
@@ -496,6 +497,7 @@ class DoliDBSqlite3 extends DoliDB
      *	@param	SQLite3Result	$resultset  Curseur de la requete voulue
      *	@return	false|object				Object result line or false if KO or end of cursor
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_object($resultset)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
@@ -515,6 +517,7 @@ class DoliDBSqlite3 extends DoliDB
      *	@param	SQLite3Result	$resultset  Resultset of request
      *	@return	false|array					Array or false if KO or end of cursor
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_array($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -530,6 +533,7 @@ class DoliDBSqlite3 extends DoliDB
      *	@param	SQLite3Result	$resultset  Resultset of request
      *	@return	false|array					Array or false if KO or end of cursor
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_row($resultset)
     {
         // If resultset not provided, we take the last used by connexion
@@ -552,6 +556,7 @@ class DoliDBSqlite3 extends DoliDB
      *	@return int		    			Nb of lines
      *	@see    affected_rows
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function num_rows($resultset)
     {
 	    // FIXME: SQLite3Result does not have a queryString member
@@ -571,6 +576,7 @@ class DoliDBSqlite3 extends DoliDB
      *	@return int		    			Nb of lines
      *	@see    affected_rows
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function affected_rows($resultset)
     {
 	    // FIXME: SQLite3Result does not have a queryString member
@@ -699,6 +705,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * @param	string	$fieldid	Field name
 	 * @return  int     			Id of row
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function last_insert_id($tab,$fieldid='rowid')
     {
         return $this->db->lastInsertRowId();
@@ -778,6 +785,7 @@ class DoliDBSqlite3 extends DoliDB
      *
 	 * @return	        string      Id connexion
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLGetConnectId()
     {
         return '?';
@@ -795,6 +803,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * 	@param	string	$owner			Username of database owner
 	 * 	@return	SQLite3Result   		resource defined if OK, null if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLCreateDb($database,$charset='',$collation='',$owner='')
     {
         if (empty($charset))   $charset=$this->forcecharset;
@@ -823,6 +832,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  @param	string		$table		Name of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLListTables($database, $table='')
     {
         $listtables=array();
@@ -849,6 +859,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@return	array				Tableau des informations des champs de la table
 	 *	TODO modify for sqlite
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLInfoTable($table)
     {
         $infotables=array();
@@ -879,6 +890,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
     {
 	    // FIXME: $fulltext_keys parameter is unused
@@ -951,6 +963,7 @@ class DoliDBSqlite3 extends DoliDB
      *	@param	    string	$table 			Name of table
      *	@return	    int						<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLDropTable($table)
     {
     	$sql = "DROP TABLE ".$table;
@@ -968,6 +981,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
 	 *	@return	SQLite3Result		Resource
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLDescTable($table,$field="")
     {
         $sql="DESC ".$table." ".$field;
@@ -986,6 +1000,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
 	 *	@return	int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLAddField($table,$field_name,$field_desc,$field_position="")
     {
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
@@ -1028,6 +1043,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_desc 		Array with description of field format
 	 *	@return	int							<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLUpdateField($table,$field_name,$field_desc)
     {
         $sql = "ALTER TABLE ".$table;
@@ -1049,6 +1065,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_name 	Name of field to drop
 	 *	@return	int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLDropField($table,$field_name)
     {
         $sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
@@ -1071,6 +1088,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
     {
         $sql = "INSERT INTO user ";
@@ -1302,6 +1320,7 @@ class DoliDBSqlite3 extends DoliDB
      * @param	int     $day 		Day
      * @return int Formatted date
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private static function calc_daynr($year, $month, $day)
     {
         $y = $year;
@@ -1323,6 +1342,7 @@ class DoliDBSqlite3 extends DoliDB
      * @param bool	$sunday_first_day_of_week		???
      * @return int
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private static function calc_weekday($daynr, $sunday_first_day_of_week)
     {
       $ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
@@ -1335,6 +1355,7 @@ class DoliDBSqlite3 extends DoliDB
      * @param 	string	$year		Year
      * @return	int					Nb of days in year
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private static function calc_days_in_year($year)
     {
       return (($year & 3) == 0 && ($year%100 || ($year%400 == 0 && $year)) ? 366 : 365);
@@ -1350,6 +1371,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * @param 	string	$calc_year			???
 	 * @return	string						???
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year)
     {
         $daynr=self::calc_daynr($year,$month,$day);
@@ -1389,5 +1411,4 @@ class DoliDBSqlite3 extends DoliDB
       }
       return floor($days/7+1);
     }
-
 }

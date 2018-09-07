@@ -292,7 +292,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	</td>
 
 	<?php
-	if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
+	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
 	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
@@ -306,7 +306,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo ((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
+    <td align="center"<?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>

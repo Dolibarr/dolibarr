@@ -491,7 +491,6 @@ class Proposals extends DolibarrApi
 				'message' => 'Commercial Proposal deleted'
 			)
 		);
-
 	}
 
 	/**

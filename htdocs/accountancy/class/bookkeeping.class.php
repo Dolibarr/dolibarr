@@ -1557,6 +1557,7 @@ class BookKeeping extends CommonObject
 	 * @param	string	$model	Model
 	 * @return	int				Result
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function export_bookkeping($model = 'ebp')
     {
 		global $conf;
@@ -1714,7 +1715,8 @@ class BookKeeping extends CommonObject
 	* @param int		$select_out	Set value returned by select 0=rowid (default), 1=account_number
 	* @param int		$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
 	* @return string	String with HTML select
-	*/
+    */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
     {
 		global $conf;
@@ -1779,6 +1781,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string 	$account	Accounting account
 	 * @return 	string 				Root account
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_compte_racine($account = null)
 	{
 		global $conf;
@@ -1819,6 +1822,7 @@ class BookKeeping extends CommonObject
 	 * @param	string	$account	Accounting account
 	 * @return	string				Account desc
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_compte_desc($account = null)
 	{
 		global $conf;

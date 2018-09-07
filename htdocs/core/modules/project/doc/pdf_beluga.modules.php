@@ -117,6 +117,7 @@ class pdf_beluga extends ModelePDFProjects
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs)
 	{
 		global $conf, $hookmanager, $langs, $user;
@@ -794,5 +795,4 @@ class pdf_beluga extends ModelePDFProjects
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

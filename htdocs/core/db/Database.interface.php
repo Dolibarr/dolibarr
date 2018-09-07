@@ -41,6 +41,7 @@ interface Database
 	 * @param   resource $resultset Resultset of request
 	 * @return  array                    Array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_row($resultset);
 
 	/**
@@ -77,6 +78,7 @@ interface Database
 	 * @param   string 		$owner 			Username of database owner
 	 * @return  resource                	resource defined if OK, null if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLCreateDb($database, $charset = '', $collation = '', $owner = '');
 
 	/**
@@ -102,6 +104,7 @@ interface Database
 	 * @return 	int            Nombre de lignes
 	 * @see    	num_rows
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function affected_rows($resultset);
 
 	/**
@@ -118,6 +121,7 @@ interface Database
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLListTables($database, $table = '');
 
 	/**
@@ -150,6 +154,7 @@ interface Database
 	 * @param   resource $resultset Resultset of request
 	 * @return  array                    Array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_array($resultset);
 
 	/**
@@ -174,6 +179,7 @@ interface Database
 	 * @param   string 	$fieldid 	Field name
 	 * @return  int                	Id of row
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function last_insert_id($tab, $fieldid = 'rowid');
 
 	/**
@@ -254,6 +260,7 @@ interface Database
 	 * @return 	int                        Nb of lines
 	 * @see    	affected_rows
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function num_rows($resultset);
 
 	/**
@@ -289,6 +296,7 @@ interface Database
 	 * @param        array $keys 			Tableau des champs cles noms => valeur
 	 * @return       int                    <0 if KO, >=0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
 
 	/**
@@ -297,6 +305,7 @@ interface Database
 	 * @param        string $table 			Name of table
 	 * @return       int                    <0 if KO, >=0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLDropTable($table);
 
 	/**
@@ -315,6 +324,7 @@ interface Database
 	 * @param    string $field_position 	Optionnel ex.: "after champtruc"
 	 * @return   int                        <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLAddField($table, $field_name, $field_desc, $field_position = "");
 
 	/**
@@ -324,6 +334,7 @@ interface Database
 	 * @param    string $field_name 		Name of field to drop
 	 * @return   int                        <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLDropField($table, $field_name);
 
 	/**
@@ -334,6 +345,7 @@ interface Database
 	 * @param    string 	$field_desc 	Array with description of field format
 	 * @return   int                        <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLUpdateField($table, $field_name, $field_desc);
 
 	/**
@@ -350,6 +362,7 @@ interface Database
 	 * @param    string 	$field 			Optionnel : Name of field if we want description of field
 	 * @return   resource            		Resource
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLDescTable($table, $field = "");
 
 	/**
@@ -375,6 +388,7 @@ interface Database
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
 	 * @return   int                            <0 if KO, >=0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLCreateUser(
 		$dolibarr_main_db_host,
 		$dolibarr_main_db_user,
@@ -417,6 +431,7 @@ interface Database
 	 * @param   string 			$table 			Name of table
 	 * @return  array                			Array with inforation on table
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLInfoTable($table);
 
 	/**
@@ -447,6 +462,7 @@ interface Database
 	 *
 	 * @return  string      Id connexion
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function DDLGetConnectId();
 
 	/**
@@ -455,6 +471,7 @@ interface Database
 	 * @param   resource $resultset Curseur de la requete voulue
 	 * @return  Object                    Object result line or false if KO or end of cursor
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_object($resultset);
 
 	/**
@@ -463,6 +480,6 @@ interface Database
 	 * @param	string $database Name of database
 	 * @return  boolean            true if OK, false if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_db($database);
-
 }

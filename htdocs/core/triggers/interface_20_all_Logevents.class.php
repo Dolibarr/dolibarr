@@ -60,7 +60,7 @@ class InterfaceLogevents extends DolibarrTriggers
         $date = dol_now();
 
         // Actions
-        if ($action == 'USER_LOGIN')
+        /*if ($action == 'USER_LOGIN')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -87,7 +87,7 @@ class InterfaceLogevents extends DolibarrTriggers
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogoff,".$object->login.")";
             $desc="(UserLogoff,".$object->login.")";
-        }
+        }*/
         if ($action == 'USER_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -202,5 +202,4 @@ class InterfaceLogevents extends DolibarrTriggers
             return -1;
         }
     }
-
 }

@@ -57,7 +57,6 @@ class MenuManager
 	 */
 	function loadMenu()
 	{
-
 	}
 
 

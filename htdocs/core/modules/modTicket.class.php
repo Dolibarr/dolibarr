@@ -305,5 +305,4 @@ class modTicket extends DolibarrModules
 
         return $this->_init($sql, $options);
     }
-
 }

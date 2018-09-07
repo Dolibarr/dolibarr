@@ -62,7 +62,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -257,6 +259,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
          * @param       string $type    1=GET, 0=POST, 2=PHP_SELF
          * @return      int             >0 if there is an injection
          */
+        // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
         function test_sql_and_script_inject($val, $type)
         {
 		    $inj = 0;

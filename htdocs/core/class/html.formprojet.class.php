@@ -71,6 +71,7 @@ class FormProjets
 	 *	@param  int     $htmlid         Html id to use instead of htmlname
 	 *	@return string           		Return html content
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='', $htmlid='')
 	{
 		global $langs,$conf,$form;
@@ -138,6 +139,7 @@ class FormProjets
 	 * @param  string  $morecss            More CSS
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='', $morecss='maxwidth500')
 	{
 		global $user,$conf,$langs;
@@ -478,6 +480,7 @@ class FormProjets
 	 *    @param	string		$projectkey			Equivalent key  to fk_projet for actual table_element
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2,$projectkey="fk_projet")
 	{
 		global $conf, $langs;
@@ -488,7 +491,7 @@ class FormProjets
 		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','chargesociales'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
-		
+
 		//print $table_element;
 		switch ($table_element)
 		{
@@ -665,5 +668,4 @@ class FormProjets
 			return -1;
 		}
 	}
-
 }

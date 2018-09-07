@@ -607,19 +607,19 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 }
 
 
-/**
- *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
- *  This prefix is valid in a web context only and is unique for instance and avoid conflict
- *  between multi-instances, even when having two instances with one root dir or two instances
- *  in virtual servers.
- *
- *  @param  string  $mode       			'' (prefix for session name) or 'email' (prefix for email id)
- *  @return	string      					A calculated prefix
- */
 if (! function_exists('dol_getprefix'))
 {
-	function dol_getprefix($mode='')
-	{
+    /**
+     *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
+     *  This prefix is valid in a web context only and is unique for instance and avoid conflict
+     *  between multi-instances, even when having two instances with one root dir or two instances
+     *  in virtual servers.
+     *
+     *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
+     *  @return	string                          A calculated prefix
+     */
+    function dol_getprefix($mode='')
+    {
 		global $conf;
 
 		// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
@@ -1353,7 +1353,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$width=80; $cssclass='photoref';
 		$showimage=$object->is_photo_available($conf->product->multidir_output[$entity]);
 		$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
-		if ($conf->browser->phone) $maxvisiblephotos=1;
+		if ($conf->browser->layout == 'phone') $maxvisiblephotos=1;
 		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
 		else
 		{
@@ -1372,7 +1372,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$width=80; $cssclass='photoref';
 		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->track_id);
 		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
-		if ($conf->browser->phone) $maxvisiblephotos=1;
+		if ($conf->browser->layout == 'phone') $maxvisiblephotos=1;
 		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
 		else
 		{
@@ -2549,7 +2549,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 	}
 	if (! empty($addlink))	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 	{
-		if (! empty($conf->browser->phone) || (! empty($conf->clicktodial->enabled) && ! empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
+		if ($conf->browser->layout == 'phone' || (! empty($conf->clicktodial->enabled) && ! empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
 		{
 			$newphone ='<a href="tel:'.$phone.'"';
 			$newphone.='>'.$phone.'</a>';
@@ -4859,7 +4859,6 @@ function get_localtax_by_third($local)
 	}
 
 	return 0;
-
 }
 
 
@@ -4985,7 +4984,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" order/invoice)
+ *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
  *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country
  */
@@ -5006,7 +5005,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 
 		if ($mysoc->country_code == $thirdparty_seller->country_code) // If selling country is ours
 		{
-			if ($idprodfournprice > 0)     // We want vat for product for a "supplier" order or invoice
+			if ($idprodfournprice > 0)     // We want vat for product for a "supplier" object
 			{
 				$product->get_buyprice($idprodfournprice,0,0,0);
 				$ret=$product->vatrate_supplier;
@@ -5031,7 +5030,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS))
 		{
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
-			$sql = "SELECT taux as vat_rate";
+			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
@@ -5044,6 +5043,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 				if ($obj)
 				{
 					$ret=$obj->vat_rate;
+					if ($obj->default_vat_code) $ret.=' ('.$obj->default_vat_code.')';
 				}
 				$db->free($sql);
 			}

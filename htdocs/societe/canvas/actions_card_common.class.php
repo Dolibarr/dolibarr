@@ -78,6 +78,7 @@ abstract class ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function assign_values(&$action, $id=0, $ref='')
     {
         global $conf, $langs, $user, $mysoc, $canvas;
@@ -375,6 +376,7 @@ abstract class ActionsCardCommon
      *	@param		string		$action		Action string
      *  @return		string					HTML output
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private function assign_post($action)
     {
         global $langs, $mysoc;
@@ -391,7 +393,7 @@ abstract class ActionsCardCommon
         $this->object->town					=	$_POST["town"];
         $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         $this->object->state_id		        =	$_POST["state_id"];
-        $this->object->phone					=	$_POST["tel"];
+        $this->object->phone				=	$_POST["tel"];
         $this->object->fax					=	$_POST["fax"];
         $this->object->email				=	$_POST["email"];
         $this->object->url					=	$_POST["url"];
@@ -422,5 +424,4 @@ abstract class ActionsCardCommon
             $this->object->country_label=	$tmparray['label'];
         }
     }
-
 }

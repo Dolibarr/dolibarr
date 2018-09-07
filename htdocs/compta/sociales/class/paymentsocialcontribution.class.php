@@ -35,30 +35,30 @@ class PaymentSocialContribution extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='paiementcharge';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='paiementcharge';	
-	
+	public $table_element='paiementcharge';
+
 	public $picto = 'payment';
 
-	var $fk_charge;
-	var $datec='';
-	var $tms='';
-	var $datep='';
+	public $fk_charge;
+	public $datec='';
+	public $tms='';
+	public $datep='';
 	/**
 	 * @deprecated
 	 * @see amount
 	 */
-	var $total;
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $fk_typepaiement;
-	var $num_paiement;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $total;
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+	public $fk_typepaiement;
+	public $num_paiement;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
 
 	/**
 	 *	Constructor
@@ -501,8 +501,6 @@ class PaymentSocialContribution extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 
@@ -608,6 +606,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
@@ -644,6 +643,7 @@ class PaymentSocialContribution extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
@@ -716,5 +716,3 @@ class PaymentSocialContribution extends CommonObject
 		return $result;
 	}
 }
-
-

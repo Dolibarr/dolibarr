@@ -28,18 +28,22 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
--- Missing in 8.0 ?
+-- Missing in 8.0
 ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 ALTER TABLE llx_accounting_account MODIFY COLUMN fk_pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version    FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accounting_system (pcg_version);
 
-ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
+create table llx_facture_rec_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
 
 -- For 9.0
-
-ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT NULL;
-
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 ALTER TABLE llx_extrafields ADD COLUMN totalizable boolean DEFAULT FALSE after list;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_fourn;
@@ -63,3 +67,6 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',204);
 
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
+
+ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
+

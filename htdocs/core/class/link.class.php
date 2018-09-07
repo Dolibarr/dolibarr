@@ -390,7 +390,5 @@ class Link extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
     }
-
 }

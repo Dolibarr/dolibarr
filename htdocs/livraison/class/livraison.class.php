@@ -230,6 +230,7 @@ class Livraison extends CommonObject
 	 *	@param	string	$description			Description
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_line($origin_id, $qty, $fk_product, $description)
 	{
 		$error = 0;
@@ -499,6 +500,7 @@ class Livraison extends CommonObject
 	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
 	 *	@return	integer
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_from_sending($user, $sending_id)
 	{
 		$expedition = new Expedition($this->db);
@@ -544,6 +546,7 @@ class Livraison extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_line($id, $array_options=0)
 	{
 		global $conf;
@@ -739,6 +742,7 @@ class Livraison extends CommonObject
 	 *
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
 		$this->lines = array();
@@ -810,6 +814,7 @@ class Livraison extends CommonObject
 	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string					Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode)
 	{
 		global $langs;
@@ -981,6 +986,7 @@ class Livraison extends CommonObject
 	 *	@param      timestamp		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison)
 	{
 		if ($user->rights->expedition->creer)
@@ -1056,7 +1062,6 @@ class Livraison extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }
 
 
@@ -1118,5 +1123,4 @@ class LivraisonLigne extends CommonObjectLine
 	{
 		$this->db=$db;
 	}
-
 }
