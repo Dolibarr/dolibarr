@@ -32,6 +32,10 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	public $family = 'mailmanspip';
 	public $description = "Triggers of this module allows to synchronize Mailman an Spip.";
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
 
 	/**
