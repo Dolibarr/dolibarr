@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("members");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members"));
 
 $action=GETPOST('action', 'alpha');
 
