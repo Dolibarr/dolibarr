@@ -29,10 +29,8 @@ if (! empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("members");
-$langs->load("users");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills","users"));
 
 $adh = new Adherent($db);
 $object = new Subscription($db);

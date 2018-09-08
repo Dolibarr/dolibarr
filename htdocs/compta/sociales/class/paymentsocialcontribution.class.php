@@ -41,17 +41,22 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public $table_element='paiementcharge';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'payment';
 
 	public $fk_charge;
 	public $datec='';
 	public $tms='';
 	public $datep='';
+
 	/**
 	 * @deprecated
 	 * @see amount
 	 */
 	public $total;
+
     public $amount;            // Total amount of payment
     public $amounts=array();   // Array of amounts
 	public $fk_typepaiement;

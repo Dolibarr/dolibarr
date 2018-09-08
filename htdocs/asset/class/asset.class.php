@@ -109,16 +109,16 @@ class Asset extends CommonObject
 	public $entity;
 
 	/**
-     * @var string Asset label
-     */
-   	public $label;
+   * @var string Asset label
+   */
+  public $label;
 
 	public $amount;
 
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+  public $fk_soc;
 
 	/**
 	 * @var string description

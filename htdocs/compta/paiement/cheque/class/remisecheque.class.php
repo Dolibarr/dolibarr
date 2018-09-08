@@ -43,12 +43,15 @@ class RemiseCheque extends CommonObject
 	 */
 	public $table_element='bordereau_cheque';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'payment';
 
-	var $num;
-	var $intitule;
+	public $num;
+	public $intitule;
 	//! Numero d'erreur Plage 1024-1279
-	var $errno;
+	public $errno;
 
 	public $amount;
 	public $date_bordereau;
