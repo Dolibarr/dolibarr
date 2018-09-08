@@ -219,7 +219,7 @@ if (empty($reshook))
 llxHeader("",$langs->trans("VariousPayment"));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 if ($id)
