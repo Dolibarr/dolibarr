@@ -210,11 +210,11 @@ class Form
 				}
 				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
 				{
-					$ret.=$this->select_date($value,$htmlname,0,0,1,'form'.$htmlname,1,0,1);
+					$ret.=$this->selectDate($value,$htmlname,0,0,1,'form'.$htmlname,1,0);
 				}
 				else if ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker')
 				{
-					$ret.=$this->select_date($value,$htmlname,1,1,1,'form'.$htmlname,1,0,1);
+					$ret.=$this->selectDate($value,$htmlname,1,1,1,'form'.$htmlname,1,0);
 				}
 				else if (preg_match('/^select;/',$typeofdata))
 				{
@@ -3780,7 +3780,7 @@ class Form
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
 						$more.='<td align="left">';
-						$more.=$this->select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
+						$more.=$this->selectDate($input['value'],$input['name'],0,0,0,'',1,0);
 						$more.='</td></tr>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
 						$formquestion[] = array('name'=>$input['name'].'month');
@@ -4139,7 +4139,7 @@ class Form
 	 *    @param    int			$displaymin		Display minutes selector
 	 *    @param	int			$nooutput		1=No print output, return string
 	 *    @return	string
-	 *    @see		select_date
+	 *    @see		selectDate
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
@@ -4155,7 +4155,7 @@ class Form
 			$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			$ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			$ret.='<tr><td>';
-			$ret.=$this->select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname,1,0,1);
+			$ret.=$this->selectDate($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname,1,0);
 			$ret.='</td>';
 			$ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			$ret.='</tr></table></form>';
@@ -4916,7 +4916,7 @@ class Form
 	 * 	@param	int			$addnowlink		Add a link "Now"
 	 * 	@param 	int			$disabled		Disable input fields
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
-	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
+	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date, select_month, select_year, select_dayofweek
