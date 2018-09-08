@@ -328,7 +328,7 @@ if ($action == 'create')
 
     // Date
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
-	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
+	print $form->selectDate($donation_date?$donation_date:-1, '', '', '', '', "add", 1, 1);
 	print '</td>';
 
     // Amount
@@ -455,7 +455,7 @@ if (! empty($id) && $action == 'edit')
 
 	// Date
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$form->select_date($object->date,'','','','',"update");
+	print $form->selectDate($object->date,'','','','',"update");
 	print '</td>';
 
 	// Amount
