@@ -416,7 +416,7 @@ class LoanSchedule extends CommonObject
 		{
 			while($obj = $this->db->fetch_object($resql))
 			{
-				$line = New LoanSchedule($this->db);
+				$line = new LoanSchedule($this->db);
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
 
