@@ -40,40 +40,46 @@ class Paiement extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='payment';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='paiement';
-	
-    public $picto = 'payment';
 
-	var $facid;
-	var $datepaye;
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
+
+	public $facid;
+	public $datepaye;
+
 	/**
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-    var $total;
+    public $total;
+
 	/**
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-	var $montant;
-	var $amount;            // Total amount of payment
-	var $amounts=array();   // Array of amounts
-	var $multicurrency_amounts=array();   // Array of amounts
-	var $author;
-	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
+	public $montant;
+
+	public $amount;            // Total amount of payment
+	public $amounts=array();   // Array of amounts
+	public $multicurrency_amounts=array();   // Array of amounts
+	public $author;
+	public $paiementid;	// Type de paiement. Stocke dans fk_paiement
 	// de llx_paiement qui est lie aux types de
 	//paiement de llx_c_paiement
-	var $num_paiement;	// Numero du CHQ, VIR, etc...
-	var $num_payment;	// Numero du CHQ, VIR, etc...
-	var $bank_account;	// Id compte bancaire du paiement
-	var $bank_line;     // Id de la ligne d'ecriture bancaire
+	public $num_paiement;	// Numero du CHQ, VIR, etc...
+	public $num_payment;	// Numero du CHQ, VIR, etc...
+	public $bank_account;	// Id compte bancaire du paiement
+	public $bank_line;     // Id de la ligne d'ecriture bancaire
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
-    var $fk_paiement;    // Type of paiment
+    public $fk_paiement;    // Type of paiment
 
 
 	/**

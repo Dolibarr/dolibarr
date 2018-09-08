@@ -31,7 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
+
 	public $family = 'core';
 	public $description = "Triggers of this module allows to add security event records inside Dolibarr.";
 	public $version = self::VERSION_DOLIBARR;
