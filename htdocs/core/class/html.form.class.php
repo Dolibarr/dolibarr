@@ -4885,11 +4885,43 @@ class Form
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
-	 * 	@return	string|null						Nothing or string if nooutput is 1
-	 *  @see	form_date, select_month, select_year, select_dayofweek
+	 *  @return	string|null						Nothing or string if nooutput is 1
+     *  @deprecated
+	 *  @see    form_date, select_month, select_year, select_dayofweek
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
+    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
+    {
+        $retstring = selectDate($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $disabled=0, $fullday='', $addplusone='', $adddateof='');
+        if (! empty($nooutput)) return $retstring;
+
+		print $retstring;
+		return;
+    }
+
+    /**
+     *  Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
+	 *  Fields are preselected with :
+	 *              - set_time date (must be a local PHP server timestamp or string date with format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM')
+	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
+	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
+	 *
+	 *  @param  timestamp   $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 *  @param	string		$prefix			Prefix for fields name
+	 *  @param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
+	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+	 *	@param	string		$form_name 		Not used
+	 *	@param	int			$d				1=Show days, month, years
+	 * 	@param	int			$addnowlink		Add a link "Now"
+	 * 	@param 	int			$disabled		Disable input fields
+	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
+	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
+	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
+	 * 	@return string                      Html for selectDate
+	 *  @see    form_date, select_month, select_year, select_dayofweek
+	 */
+	function selectDate($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
 	{
 		global $conf,$langs;
 
@@ -5235,10 +5267,7 @@ class Form
 			$retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof,'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$langs->trans("DateInvoice").'</a>';
 		}
 
-		if (! empty($nooutput)) return $retstring;
-
-		print $retstring;
-		return;
+		return $retstring;
 	}
 
 	/**
