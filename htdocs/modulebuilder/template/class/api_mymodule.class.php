@@ -120,6 +120,7 @@ class MyModuleApi extends DolibarrApi
         $restictonsocid = 0;	// Set to 1 if there is a field socid in table of object
 
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if ($restictonsocid && ! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
