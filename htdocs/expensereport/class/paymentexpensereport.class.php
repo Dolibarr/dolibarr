@@ -40,24 +40,27 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $table_element='payment_expensereport';
 
-    public $picto = 'payment';
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
 
-	var $rowid;
+	public $rowid;
 
-	var $fk_expensereport;
-	var $datec='';
-	var $tms='';
-	var $datep='';
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $fk_typepayment;
-	var $num_payment;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $fk_expensereport;
+	public $datec='';
+	public $tms='';
+	public $datep='';
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+	public $fk_typepayment;
+	public $num_payment;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
     //Unknow field
-    var $chid;
-    var $total;
+    public $chid;
+    public $total;
 
 	/**
 	 *	Constructor

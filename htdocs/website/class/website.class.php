@@ -491,6 +491,14 @@ class Website extends CommonObject
 			}
 		}
 
+		if (! $error && ! empty($this->ref))
+		{
+			global $dolibarr_main_data_root;
+			$pathofwebsite=$dolibarr_main_data_root.'/website/'.$this->ref;
+
+			dol_delete_dir_recursive($pathofwebsite);
+		}
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();

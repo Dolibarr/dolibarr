@@ -37,6 +37,9 @@ class EcmDirectory // extends CommonObject
 	 */
 	//public $table_element='ecm_directories';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'dir';
 
 	/**

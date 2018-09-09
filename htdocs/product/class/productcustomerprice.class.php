@@ -46,7 +46,7 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+  public $fk_soc;
 
 	public $price;
 	public $price_ttc;
@@ -66,6 +66,7 @@ class Productcustomerprice extends CommonObject
 	public $fk_user;
 
 	public $lines = array ();
+
 
 	/**
 	 * Constructor
@@ -983,7 +984,7 @@ class PriceByCustomerLine
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+  public $fk_soc;
 
 	public $price;
 	public $price_ttc;

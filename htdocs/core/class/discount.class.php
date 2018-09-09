@@ -34,9 +34,9 @@ class DiscountAbsolute
     public $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error;
+	   * @var string Error code (or message)
+	   */
+	  public $error;
 
 	/**
 	 * @var string[]	Array of error strings
@@ -48,9 +48,9 @@ class DiscountAbsolute
 	 */
 	public $id;
 
-    /**
-	 * @var int Thirdparty ID
-	 */
+   /**
+	  * @var int Thirdparty ID
+	  */
     public $fk_soc;
 
     public $discount_type;			// 0 => customer discount, 1 => supplier discount
@@ -60,14 +60,14 @@ class DiscountAbsolute
     public $tva_tx;				// Vat rate
 
     /**
-	 * @var int User ID Id utilisateur qui accorde la remise
-	 */
-	public $fk_user;
+	   * @var int User ID Id utilisateur qui accorde la remise
+	   */
+	  public $fk_user;
 
     /**
-	 * @var string description
-	 */
-	public $description;
+	   * @var string description
+	   */
+	  public $description;
 
     public $datec;					// Date creation
     public $fk_facture_line;  		// Id invoice line when a discount is used into an invoice line (for absolute discounts)
