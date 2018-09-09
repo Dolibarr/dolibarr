@@ -493,7 +493,7 @@ class AccountancyCategory
 	 *
 	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
 	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
-	 * @return 	array       					Array of accounting accounts
+	 * @return 	array|int       				Array of accounting accounts or -1 if error
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{
