@@ -1003,8 +1003,8 @@ class FactureRec extends CommonInvoice
 
 		$error=0;
 
-		$langs->load("bills");
-		$langs->load('main');
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","bills"));
 
 		$nb_create=0;
 

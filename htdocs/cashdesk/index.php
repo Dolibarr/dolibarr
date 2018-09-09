@@ -28,8 +28,8 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("admin");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","cashdesk"));
 
 // Test if user logged
 if ( $_SESSION['uid'] > 0 )
