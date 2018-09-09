@@ -1335,7 +1335,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
-	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
+	print $form->selectDate($date_start?$date_start:-1, 'date_debut', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -1343,7 +1343,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
-	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
+	print $form->selectDate($date_end?$date_end:-1, 'date_fin', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -1500,13 +1500,13 @@ else
 				print '<tr>';
 				print '<td>'.$langs->trans("DateStart").'</td>';
 				print '<td>';
-				$form->select_date($object->date_debut,'date_debut');
+				print $form->selectDate($object->date_debut, 'date_debut');
 				print '</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("DateEnd").'</td>';
 				print '<td>';
-				$form->select_date($object->date_fin,'date_fin');
+				print $form->selectDate($object->date_fin, 'date_fin');
 				print '</td>';
 				print '</tr>';
 
@@ -2078,7 +2078,7 @@ else
 
 								// Select date
 								print '<td class="center">';
-								$form->select_date($line->date,'date');
+								print $form->selectDate($line->date,'date');
 								print '</td>';
 
 								// Select project
@@ -2161,7 +2161,7 @@ else
 
 					// Select date
 					print '<td align="center">';
-					$form->select_date($date?$date:-1,'date');
+					print $form->selectDate($date?$date:-1, 'date');
 					print '</td>';
 
 					// Select project

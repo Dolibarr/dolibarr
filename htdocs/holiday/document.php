@@ -152,7 +152,7 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
-        $form->select_date($object->date_debut,'date_debut_');
+        print $form->selectDate($object->date_debut, 'date_debut_');
         print ' &nbsp; &nbsp; ';
 		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
         print '</td>';
@@ -174,9 +174,9 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
-        $form->select_date($object->date_fin,'date_fin_');
+        print $form->selectDate($object->date_fin, 'date_fin_');
         print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
         print '</td>';
         print '</tr>';
     }

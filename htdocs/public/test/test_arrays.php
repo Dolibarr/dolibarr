@@ -174,9 +174,9 @@ if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
 if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
 if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
 if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
-$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
-$nav.='</form>';
+$nav.= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+$nav.= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav.= '</form>';
 
 $limit=10;
 print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 500, '', 0, $nav, '', $limit);

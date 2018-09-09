@@ -980,7 +980,7 @@ else
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
+		print $form->selectDate(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
@@ -1218,7 +1218,7 @@ else
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
+		print $form->selectDate(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
