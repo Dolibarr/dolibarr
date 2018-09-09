@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2017 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -350,7 +351,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("Docdate") . '</td>';
 	print '<td>';
-	print $html->select_date('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $html->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -432,7 +433,7 @@ if ($action == 'create')
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			$form->select_date($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
+			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +157,7 @@ print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
 
-print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0,1);
+print $form->selectDate($champdatefin?$champdatefin:-1, 'champdatefin', '', '', '', "add", 1, 0);
 
 print '</tr>'."\n";
 print '</table>'."\n";

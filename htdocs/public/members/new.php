@@ -4,6 +4,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		J. Fernando Lagrange    <fernando@demo-tic.org>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -624,7 +625,7 @@ if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 }
 // Birthday
 print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
-print $form->select_date($birthday,'birth',0,0,1,"newmember",1,0,1);
+print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
 print '</td></tr>'."\n";
 // Photo
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
