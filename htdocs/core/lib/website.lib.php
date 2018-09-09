@@ -542,8 +542,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent.= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 	$aliascontent.= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+	if (! empty($conf->global->MAIN_UMASK)) {
+        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
+    }
 
 		return ($result?true:false);
 }
@@ -621,7 +622,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
  * @param	string		$filetpl				File tpl to index.php page redirect to
- * @param	string		$fileindex				Full path of file wrapper.php
+ * @param	string		$filewrapper			Full path of file wrapper.php
  * @return	boolean								True if OK
  */
 function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
@@ -801,5 +802,3 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 
 		return true;
 }
-
-
