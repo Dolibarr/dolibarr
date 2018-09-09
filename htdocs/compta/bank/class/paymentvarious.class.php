@@ -85,7 +85,6 @@ class PaymentVarious extends CommonObject
 		$this->db = $db;
 		$this->element = 'payment_various';
 		$this->table_element = 'payment_various';
-		return 1;
 	}
 
 	/**
@@ -387,13 +386,14 @@ class PaymentVarious extends CommonObject
 
 					// Insert payment into llx_bank
 					// Add link 'payment_various' in bank_url between payment and bank transaction
-					if ($this->sens == '0') $sign='-';
+					$sign=1;
+					if ($this->sens == '0') $sign=-1;
 
 					$bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,
-						$sign.abs($this->amount),
+						$sign * abs($this->amount),
 						$this->num_payment,
 						'',
 						$user
@@ -545,11 +545,13 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Send name clicable (with possibly the picto)
 	 *
-	 *	@param  int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param  string	$option			link option
-	 *	@return string					Chaine with URL
+	 *	@param  int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param  string	$option						link option
+	 *  @param  int     $save_lastsearch_value	 	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param	int  	$notooltip		 			1=Disable tooltip
+	 *	@return string								String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $save_lastsearch_value=-1, $notooltip=0)
 	{
 		global $langs;
 
@@ -560,8 +562,8 @@ class PaymentVarious extends CommonObject
 		$linkend='</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
 		$result .= $linkend;
 
 		return $result;
