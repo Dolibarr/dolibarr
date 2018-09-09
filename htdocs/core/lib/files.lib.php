@@ -2161,10 +2161,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$dirins.'/'.$original_file;
 	}
 	// Wrapping for some images
-	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
+	elseif ($modulepart == 'mycompany' && !empty($conf->mycompany->dir_output))
 	{
 		$accessallowed=1;
-		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
+		$original_file=$conf->mycompany->dir_output.'/'.$original_file;
 	}
 	// Wrapping for users photos
 	elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output))
