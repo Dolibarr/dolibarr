@@ -8,6 +8,7 @@
  * Copyright (C) 2012	   Cedric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016-2018 Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

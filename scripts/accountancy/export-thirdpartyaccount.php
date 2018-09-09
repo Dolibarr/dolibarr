@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

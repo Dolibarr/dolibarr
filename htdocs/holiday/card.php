@@ -4,7 +4,8 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014-2017	Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

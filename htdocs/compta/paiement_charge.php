@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/paiement_charge.php
- *		\ingroup    tax
- *		\brief      Page to add payment of a tax
+ *      \file       htdocs/compta/paiement_charge.php
+ *      \ingroup    tax
+ *      \brief      Page to add payment of a tax
  */
 
 require '../main.inc.php';

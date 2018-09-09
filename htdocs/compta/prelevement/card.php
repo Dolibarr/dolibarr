@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2016 Juanjo Menent 		<jmenent@2byte.es>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,7 +245,7 @@ if ($id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
-		print $form->select_date('','','','','',"userfile",1,1);
+		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
 		print '</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode",$object->methodes_trans);
@@ -268,7 +269,7 @@ if ($id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->select_date('','','','','',"infocredit",1,1);
+		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
