@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,11 +138,17 @@ class Website extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-		if (empty($this->date_creation)) $this->date_creation = $now;
-		if (empty($this->date_modification)) $this->date_modification = $now;
+		if (empty($this->date_creation)) {
+            $this->date_creation = $now;
+        }
+		if (empty($this->date_modification)) {
+            $this->date_modification = $now;
+        }
 
 		// Check parameters
-		if (empty($this->entity)) { $this->entity = $conf->entity; }
+		if (empty($this->entity)) {
+            $this->entity = $conf->entity;
+        }
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
@@ -178,16 +185,16 @@ class Website extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+            // Uncomment this and change MYOBJECT to your own tag if you
+            // want this action to call a trigger.
+            // if (!$notrigger) {
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
-			}
-		}
+            //     // Call triggers
+            //     $result = $this->call_trigger('MYOBJECT_CREATE',$user);
+            //     if ($result < 0) $error++;
+            //     // End call triggers
+            // }
+        }
 
 		// Commit or rollback
 		if ($error) {
