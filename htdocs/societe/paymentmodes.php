@@ -1023,8 +1023,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				print '<td>';
 				print $langs->trans("Remote");
+				//if ($src->cvc_check == 'fail') print ' - CVC check fail';
 				print '</td>';
 				print '<td>';
+				//var_dump($src);
 				print '';
 				print '</td>';
 				print '<td align="right" class="nowraponall">';

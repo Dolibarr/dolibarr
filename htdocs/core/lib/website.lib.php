@@ -150,11 +150,13 @@ function dolWebsiteOutput($content)
 		$nbrep=0;
 		if (! $symlinktomediaexists)
 		{
-			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\document.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/viewimage.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/viewimage.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/',  '\1/viewimage.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/',  '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 		}
 		else
 		{
@@ -163,6 +165,8 @@ function dolWebsiteOutput($content)
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1medias/\4\5', $content, -1, $nbrep);
+
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 		}
 	}
 
@@ -612,22 +616,24 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 
 
 /**
- * Save content of the index.php page
+ * Save content of the index.php and wrapper.php page
  *
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
  * @param	string		$filetpl				File tpl to index.php page redirect to
+ * @param	string		$fileindex				Full path of file wrapper.php
  * @return	boolean								True if OK
  */
-function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl)
+function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 {
 	global $conf;
 
-	$result=0;
+	$result1=false;
+	$result2=false;
 
 	dol_mkdir($pathofwebsite);
-	dol_delete_file($fileindex);
 
+	dol_delete_file($fileindex);
 	$indexcontent = '<?php'."\n";
 	$indexcontent.= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
 	$indexcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
@@ -639,11 +645,25 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl)
 	$indexcontent.= "}\n";
 	$indexcontent.= "include_once './".basename($filetpl)."'\n";
 	$indexcontent.= '// END PHP ?>'."\n";
-	$result = file_put_contents($fileindex, $indexcontent);
+	$result1 = file_put_contents($fileindex, $indexcontent);
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 
-	return $result;
+	dol_delete_file($filewrapper);
+	$wrappercontent = '<?php'."\n";
+	$wrappercontent.= "// BEGIN PHP File generated to provide a wrapper.php - DO NOT MODIFY - It is just a generated wrapper.\n";
+	$wrappercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+	$wrappercontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+	$wrappercontent.= '$original_file=str_replace("../","/", GETPOST("file","alpha"));'."\n";
+	$wrappercontent.= 'if ($_GET["modulepart"] == "mycompany" && preg_match(\'/^\/?logos\//\', $original_file)) readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));'."\n";
+	$wrappercontent.= "else print 'Bad value for modulepart or file';\n";
+	$wrappercontent.= 'if (is_object($db)) $db->close();'."\n";
+	$wrappercontent.= '// END PHP ?>'."\n";
+	$result2 = file_put_contents($filewrapper, $wrappercontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+
+	return ($result1 && $result2);
 }
 
 
