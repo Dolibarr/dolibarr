@@ -621,7 +621,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
  * @param	string		$filetpl				File tpl to index.php page redirect to
- * @param	string		$fileindex				Full path of file wrapper.php
+ * @param	string		$filewrapper			Full path of file wrapper.php
  * @return	boolean								True if OK
  */
 function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
@@ -801,5 +801,3 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 
 		return true;
 }
-
-
