@@ -31,21 +31,21 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class box_task extends ModeleBoxes
 {
-    var $boxcode="projet";
-    var $boximg="object_projecttask";
-    var $boxlabel;
-    //var $depends = array("projet");
-    
+    public $boxcode="projet";
+    public $boximg="object_projecttask";
+    public $boxlabel;
+    //public $depends = array("projet");
+
     /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-    var $param;
-    var $enabled = 0;		// Disabled because bugged.
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $param;
+    public $enabled = 0;		// Disabled because bugged.
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -57,8 +57,10 @@ class box_task extends ModeleBoxes
     function __construct($db,$param='')
     {
         global $user, $langs;
-        $langs->load("boxes");
-        $langs->load("projects");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array('boxes', 'projects'));
+
         $this->boxlabel="Tasks";
         $this->db = $db;
 
@@ -131,7 +133,7 @@ class box_task extends ModeleBoxes
 		}
 
 
-		// Add the sum à the bottom of the boxes
+		// Add the sum at the bottom of the boxes
 		$this->info_box_contents[$i][] = array('tr' => 'class="liste_total"', 'td' => '', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 		$this->info_box_contents[$i][] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
