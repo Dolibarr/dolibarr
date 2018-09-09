@@ -1069,13 +1069,13 @@ while ($i < min($num, $limit))
 	// Customer code
 	if (! empty($arrayfields['s.code_client']['checked']))
 	{
-		print '<td>'.$obj->code_client.'</td>';
+		print '<td class="nowraponall">'.$obj->code_client.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Supplier code
 	if (! empty($arrayfields['s.code_fournisseur']['checked']))
 	{
-		print '<td>'.$obj->code_fournisseur.'</td>';
+		print '<td class="nowraponall">'.$obj->code_fournisseur.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Account customer code
