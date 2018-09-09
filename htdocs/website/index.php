@@ -58,6 +58,7 @@ $type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
 
+if (GETPOST('deletesite','alpha')) { $action='deletesite'; }
 if (GETPOST('delete','alpha')) { $action='delete'; }
 if (GETPOST('preview','alpha')) $action='preview';
 if (GETPOST('createsite','alpha')) { $action='createsite'; }
@@ -711,6 +712,41 @@ if ($action == 'addcontainer')
 		}
 
 		$action = 'preview';
+	}
+}
+
+// Delete site
+if ($action == 'deletesite')
+{
+	$error = 0;
+
+	$db->begin();
+
+	$res = $object->fetch(0, $websitekey);
+	$website = $object;
+
+	if ($res > 0)
+	{
+		$res = $object->delete($user);
+		if ($res <= 0)
+		{
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SiteDeleted", $object->ref, $websitekey), null, 'mesgs');
+
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		$db->rollback();
+		dol_print_error($db);
 	}
 }
 
@@ -1590,6 +1626,8 @@ if (count($object->records) > 0)
 			print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
 		}
 
+		print '<input type="submit" class="buttonDelete" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage?' disabled="disabled"':'').'>';
+
 		print ' &nbsp; ';
 
 		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
@@ -1635,11 +1673,11 @@ if (count($object->records) > 0)
 		//print '<input type="submit" class="button" name="previewwebsite" target="tab'.$websitekey.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
 		$htmltext =$langs->trans("SetHereVirtualHost", $dataroot);
 		$htmltext.='<br>';
-		$htmltext.='<br>';
-		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
-		$htmltext.='<br>';
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+		$htmltext.='<br>';
+		$htmltext.='<br>';
+		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
 		print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helpvirtualhost');
 		print '</div>';
 
