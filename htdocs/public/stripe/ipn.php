@@ -21,9 +21,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
-//require '../../main.inc.php';
 require "../../main.inc.php";
-
 
 if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
