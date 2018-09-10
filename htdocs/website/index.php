@@ -180,12 +180,26 @@ if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfil
 if ($action == 'seteditinline')
 {
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
+	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0);	// Force disable of show included containers
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
 	exit;
 }
 if ($action == 'unseteditinline')
 {
 	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
+	exit;
+}
+if ($action == 'setshowsubcontainers')
+{
+	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
+	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0);	// Force disable of edit inline
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
+	exit;
+}
+if ($action == 'unsetshowsubcontainers')
+{
+	dolibarr_del_const($db, 'WEBSITE_SUBCONTAINERSINLINE');
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
 	exit;
 }
