@@ -21,9 +21,9 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");		// to work if your module directory is into a subdir of root htdocs directory
-if (! $res) die("Include of main fails");
+//require '../../main.inc.php';
+require "../../main.inc.php";
+
 
 if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -90,33 +90,35 @@ catch(\UnexpectedValueException $e) {
 http_response_code(200); // PHP 5.4 or greater
 $langs->loadLangs(array("main","other","dict","bills","companies","errors","stripe")); 
 $user = new User($db);
-$user->fetch(5);
+$user->fetch($conf->global->STRIPE_WEBHOOK_USER);
 $user->getrights();
 
-if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc)) {
+if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc) && isset($_GET['connect'])) {
+
 	$sql = "SELECT entity";
 	$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
-	$sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
+	$sql.= " WHERE tokenstring LIKE '%".$db->escape($event->account)."%' ";
 
-	dol_syslog(get_class($db) . "::fetch", LOG_DEBUG);
-	$result = $db->query($sql);
-	if ($result)
-	{
-		if ($db->num_rows($result))
+		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
+		$result = $db->query($sql);
+    	if ($result)
 		{
-			$obj = $db->fetch_object($result);
-			$key=$obj->entity;
-		}
-		else {
-			$key=1;
-		}
-	}
-	else {
-		$key=1;
-	}
-	$ret=$mc->switchEntity($key);
-	if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
-	if (! $res) die("Include of main fails");
+			if ($db->num_rows($result))
+			{
+				$obj = $db->fetch_object($result);
+    			$key = $obj->entity;
+    		}
+    		else {
+    			$key='1';
+    		}
+    	}
+    	else {
+    		dol_print_error($db);
+    	}
+      
+  $conf->entity = $key;
+	$conf->setValues($db);
+  
 }
 
 // list of  action
@@ -209,8 +211,10 @@ elseif ($event->type == 'charge.succeeded') {
 
 }
 elseif ($event->type == 'customer.source.created') {
-
-	//TODO: save customer's source
+	global $conf;
+	$subject = 'Your payment has been received: '.$conf->entity.'';
+	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+	mail('ptibogxiv@msn.com', $subject, 'test', $headers);
 
 }
 elseif ($event->type == 'customer.source.updated') {
