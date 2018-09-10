@@ -1425,6 +1425,21 @@ if ($action == 'importsiteconfirm')
 	{
 		if (! empty($_FILES))
 		{
+			// Check symlink to medias and restore it if ko
+			$pathtomedias=DOL_DATA_ROOT.'/medias';
+			$pathtomediasinwebsite=$pathofwebsite.'/medias';
+			if (! is_link(dol_osencode($pathtomediasinwebsite)))
+			{
+				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+				dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+				$result = symlink($pathtomedias, $pathtomediasinwebsite);
+				if (! $result)
+				{
+					setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+					$action = 'importsite';
+				}
+			}
+
 			if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
 			else $userfiles=array($_FILES['userfile']['tmp_name']);
 
