@@ -180,22 +180,37 @@ class FormBarCode
      *  @param  int			$selected    	Id condition preselected
      *  @param  string		$htmlname    	Nom du formulaire select
      *  @return	void
+     *  @deprecated
      */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
     {
-        global $langs,$conf;
-        if ($htmlname != "none")
-        {
-            print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            print $this->selectBarcodeType($selected, $htmlname, 1);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-            print '</td></tr></table></form>';
+        print $this->formBarcodeType($page, $selected, $htmlname);
+    }
+
+    /**
+     *  Return html form to select type of barcode
+     *
+     *  @param  string      $page           Page
+     *  @param  int         $selected       Id condition preselected
+     *  @param  string      $htmlname       Nom du formulaire select
+     *  @return string
+     */
+    function formBarcodeType($page, $selected='', $htmlname='barcodetype_id')
+    {
+        global $langs, $conf;
+        $out = '';
+        if ($htmlname != "none") {
+            $out .= '<form method="post" action="' . $page . '">';
+            $out .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+            $out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
+            $out .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            $out .= '<tr><td>';
+            $out .= $this->selectBarcodeType($selected, $htmlname, 1);
+            $out .= '</td>';
+            $out .= '<td align="left"><input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+            $out .= '</td></tr></table></form>';
         }
+        return $out;
     }
 }

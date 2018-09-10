@@ -1639,7 +1639,7 @@ else
 				}
                 if ($action == 'editbarcodetype')
                 {
-                    $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
+                    print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
                 }
                 else
                 {
