@@ -973,7 +973,7 @@ class Website extends CommonObject
 
 		// Now generate the master.inc.php page
 		$filemaster=$conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
-		dolSaveMasterFile($filemaster);
+		$result = dolSaveMasterFile($filemaster);
 		if (! $result)
 		{
 			$this->errors[]='Failed to write file '.$filemaster;
