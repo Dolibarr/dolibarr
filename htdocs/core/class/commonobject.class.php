@@ -1072,7 +1072,7 @@ abstract class CommonObject
 		$sql.= " AND tc.code = '".$code."'";
 		$sql.= " AND tc.active = 1";
 		if ($status) $sql.= " AND ec.statut = ".$status;
-echo $sql;exit;
+
 		dol_syslog(get_class($this)."::getIdContact", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
