@@ -134,6 +134,7 @@ if ($event->type == 'payout.created') {
         } else {
             $sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
         }
+        $replyto = $sendto;
         $sendtocc = '';
         if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
             $sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
