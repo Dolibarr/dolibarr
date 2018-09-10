@@ -523,6 +523,33 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 /**
  * Save content of a page on disk
  *
+ * @param	string		$filemaster			Full path of filename master.inc.php for website to generate
+ * @return	boolean							True if OK
+ */
+function dolSaveMasterFile($filemaster)
+{
+	global $conf;
+
+	// Now generate the master.inc.php page
+	dol_syslog("We regenerate the master file");
+	dol_delete_file($filemaster);
+
+	$mastercontent = '<?php'."\n";
+	$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
+	$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent.= '?>'."\n";
+	$result = file_put_contents($filemaster, $mastercontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+
+	if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+
+	return ($result?true:false);
+}
+
+/**
+ * Save content of a page on disk
+ *
  * @param	string		$filealias			Full path of filename to generate
  * @param	Website		$object				Object website
  * @param	WebsitePage	$objectpage			Object websitepage
@@ -545,7 +572,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
 
-		return ($result?true:false);
+	return ($result?true:false);
 }
 
 
