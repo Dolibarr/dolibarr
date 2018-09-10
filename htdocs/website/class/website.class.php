@@ -873,7 +873,7 @@ class Website extends CommonObject
 			$allaliases = $objectpageold->pageurl;
 			$allaliases.= ($objectpageold->aliasalt ? ','.$objectpageold->aliasalt : '');
 
-			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;';
+			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;';	// newid start at 1, 2...
 			$line.= "\n";
 			fputs($fp, $line);
 
@@ -914,6 +914,15 @@ class Website extends CommonObject
 			$line.= ");";
 			$line.= "\n";
 			fputs($fp, $line);
+
+			// Add line to update home page id during import
+			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
+			if ($this->fk_default_home > 0 && ($objectpageold->id == $this->fk_default_home) && ($objectpageold->newid > 0))	// This is the record with home page
+			{
+				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
+				$line.= "\n";
+				fputs($fp, $line);
+			}
 		}
 
 		fclose($fp);
