@@ -209,10 +209,8 @@ elseif ($event->type == 'charge.succeeded') {
 
 }
 elseif ($event->type == 'customer.source.created') {
-	global $conf;
-	$subject = 'Your payment has been received: '.$conf->entity.'';
-	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-	mail('ptibogxiv@msn.com', $subject, 'test', $headers);
+	
+	//TODO: create customer's source
 
 }
 elseif ($event->type == 'customer.source.updated') {
