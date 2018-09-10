@@ -70,7 +70,11 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
-	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
+    $result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) {
+        $error ++;
+    }
+    $result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
   $result = dolibarr_set_const($db, "STRIPE_MINIMAL_3DSECURE", GETPOST('STRIPE_MINIMAL_3DSECURE', 'int'), 'chaine', 0, '', $conf->entity);
@@ -252,6 +256,11 @@ print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
+print $langs->trans("StripeUserAccountForActions").'</td><td>';
+print $form->select_dolusers($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS, 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
 print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
@@ -357,4 +366,3 @@ if (! empty($conf->use_javascript_ajax))
 // End of page
 llxFooter();
 $db->close();
-
