@@ -542,9 +542,7 @@ function dolSaveMasterFile($filemaster)
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
 
-	if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
-
-	return ($result?true:false);
+	return $result;
 }
 
 /**
@@ -618,7 +616,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
 	$tplcontent.= '<!-- Include HTML header from common file -->'."\n";
-	$tplcontent.= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/'.$object->ref.'/htmlheader.html")); ?>'."\n";
+	$tplcontent.= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")); ?>'."\n";
 	$tplcontent.= '<!-- Include HTML header from page header block -->'."\n";
 	$tplcontent.= preg_replace('/<\/?html>/ims', '', $objectpage->htmlheader)."\n";
 	$tplcontent.= '</head>'."\n";

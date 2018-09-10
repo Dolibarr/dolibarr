@@ -974,6 +974,11 @@ class Website extends CommonObject
 		// Now generate the master.inc.php page
 		$filemaster=$conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
 		dolSaveMasterFile($filemaster);
+		if (! $result)
+		{
+			$this->errors[]='Failed to write file '.$filemaster;
+			$error++;
+		}
 
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);	// Medias can be shared, do not overwrite if exists
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey',    $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
@@ -999,7 +1004,7 @@ class Website extends CommonObject
 		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);
 		if ($runsql <= 0)
 		{
-			$this->errors[]='Failed to load sql file '.$sqlfile.'.';
+			$this->errors[]='Failed to load sql file '.$sqlfile;
 			$error++;
 		}
 
