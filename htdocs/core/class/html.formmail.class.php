@@ -271,9 +271,8 @@ class FormMail extends Form
 
 		if (! is_object($form)) $form=new Form($this->db);
 
-		$langs->load("other");
-		$langs->load("mails");
-
+		// Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
 		if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))

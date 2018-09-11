@@ -62,7 +62,6 @@ function payment_prepare_head(Paiement $object)
  */
 function payment_supplier_prepare_head(Paiement $object)
 {
-
 	global $langs, $conf;
 
 	$h = 0;
@@ -127,8 +126,9 @@ function showOnlinePaymentUrl($type,$ref)
 {
 	global $conf, $langs;
 
-	$langs->load("payment");
-	$langs->load("paybox");
+	// Load translation files required by the page
+    $langs->loadLangs(array('payment', 'paybox'));
+
 	$servicename='Online';
 
 	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
