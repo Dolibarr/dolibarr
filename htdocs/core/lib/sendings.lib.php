@@ -36,8 +36,8 @@ function shipping_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -121,8 +121,8 @@ function delivery_prepare_head($object)
 {
 	global $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();

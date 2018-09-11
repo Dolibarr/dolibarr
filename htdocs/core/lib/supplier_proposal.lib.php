@@ -32,8 +32,9 @@
 function supplier_proposal_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("supplier_proposal");
-	$langs->load("compta");
+
+	// Load translation files required by the page
+    $langs->loadLangs(array("supplier_proposal","compta"));
 
 	$h = 0;
 	$head = array();

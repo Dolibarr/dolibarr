@@ -190,8 +190,9 @@ function product_prepare_head($object)
 function productlot_prepare_head($object)
 {
     global $db, $langs, $conf, $user;
-    $langs->load("products");
-    $langs->load("productbatch");
+
+    // Load translation files required by the page
+    $langs->loadLangs(array("products","productbatch"));
 
     $h = 0;
     $head = array();
@@ -200,7 +201,7 @@ function productlot_prepare_head($object)
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
 	$h++;
-	
+
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
