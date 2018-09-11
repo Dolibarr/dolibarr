@@ -5102,7 +5102,7 @@ abstract class CommonObject
 					}
 					elseif ($value=='')
 					{
-						$new_array_options[$key] = null;
+						$this->array_options["options_".$key] = null;
 					}
 					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
