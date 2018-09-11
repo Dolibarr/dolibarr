@@ -47,7 +47,7 @@ $object->fetch($facid);
 
 <div class="entete">
     <div class="logo">
-        <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
+        <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">'; ?>
     </div>
     <div class="infos">
         <p class="address"><?php echo $mysoc->name; ?><br>

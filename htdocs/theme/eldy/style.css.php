@@ -177,7 +177,7 @@ $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));    // Norma
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }
-else { $colortextbacktab='111111'; }
+else { $colortextbacktab='000000'; }
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
@@ -2460,20 +2460,23 @@ span.butAction, span.butActionDelete {
     cursor: pointer;
     /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
-    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);*/
+    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
-
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;*/
 }
 a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
 a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
 
-.butAction:hover, .butActionNew:hover   {
+.butAction:hover   {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+}
+.butActionNew:hover   {
+  text-decoration: underline;
+  box-shadow: unset !important;
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
@@ -3874,6 +3877,13 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
     vertical-align: middle;
     float: right;
     padding-top: 8px;
+}
+.websiteselectionsection {
+	border-left: 1px solid #bbb;
+	border-right: 1px solid #bbb;
+	margin-left: 0px;
+	padding-left: 8px;
+	margin-right: 5px;
 }
 
 
