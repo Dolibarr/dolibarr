@@ -1,5 +1,8 @@
+
 <?php
-/* Copyright (C) 2018 Patrick Delcroix <pmpdelcroix@gmail.com>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +188,7 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
 if($result & $action=="dl"){
         unset($zip);
    $log='date,type,ref,total,paid,filename,item_id'."\n";
-        $zipname = 'export.zip';
+        $zipname = ($date_start)."-".($date_stop).'_export.zip';
         $zip = new ZipArchive;
         $res = $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
         if ($res){
@@ -200,6 +203,7 @@ if($result & $action=="dl"){
           header('Content-disposition: attachment; filename='.$zipname);
           header('Content-Length: ' . filesize($zipname));
           readfile($zipname);
+                unlink($zipname);
           exit();
         }
 }
@@ -285,14 +289,17 @@ if ($result)
         }
 print "</table>";
 print   '<form name="dl" action="?action=dl" method="POST" >'."\n\t\t\t";
-print   '<input type="hidden" name="date_start" value="'.dol_print_date($date_start,'day').'" />';
-print   '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'day').'" />';
 
-print   '<input type="hidden" name="date_stopDay"  value="'.dol_print_date($date_stop, '%d').'" />';
-print   '<input type="hidden" name="date_stopMonth"  value="'.dol_print_date($date_stop, '%m').'" />';
-print   '<input type="hidden" name="date_stopYear"  value="'.dol_print_date($date_stop, '%Y').'" />';
+print   '<input type="hidden" name="date_start" value="'.dol_print_date($date_start,'dayxcard').'" />';
+print   '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
 
+//print   '<input type="hidden" name="date_stopDay"  value="'.dol_print_date($date_stop, '%d').'" />';
+//print   '<input type="hidden" name="date_stopMonth"  value="'.dol_print_date($date_stop, '%m').'" />';
+//print   '<input type="hidden" name="date_stopYear"  value="'.dol_print_date($date_stop, '%Y').'" />';
 
+//print   '<input type="hidden" name="date_startDay"  value="'.dol_print_date($date_start, '%d').'" />';
+//print   '<input type="hidden" name="date_startMonth"  value="'.dol_print_date($date_start, '%m').'" />';
+//print   '<input type="hidden" name="date_startYear"  value="'.dol_print_date($date_start, '%m').'" />';
 
 
 print   '<input class="butAction" type="submit" value="Download" /></form>'."\n\t\t</th>\n\t\t<th>\n\t\t\t";
