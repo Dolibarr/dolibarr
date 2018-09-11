@@ -7651,3 +7651,33 @@ function roundUpToNextMultiple($n, $x=5)
 {
 	return (ceil($n)%$x === 0) ? ceil($n) : round(($n+$x/2)/$x)*$x;
 }
+
+/**
+ * Convert localized numeric string to sql numeric string.
+ *
+ * @param 	string	$value		Numeric string
+ * @return 	string				Sql numeric string.
+ */
+function localeNumericStringToSqlNumericString($value)
+{
+	global $langs,$conf;
+
+	// SQL does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
+	// Numbers must be '1234.56'
+	// Decimal delimiter for PHP and database SQL requests must be '.'
+	$dec=','; $thousand=' ';
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
+	if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
+	if ($thousand == 'None') $thousand='';
+	elseif ($thousand == 'Space') $thousand=' ';
+	//print "value=".$value." dec='".$dec."' thousand='".$thousand."'<br>";
+
+	//print 'PP'.$value.' - '.$dec.' - '.$thousand.'<br>';
+	// Make replace
+	if ($thousand != ',' && $thousand != '.') $value=str_replace(',','.',$value);	// To accept 2 notations for french users
+	$value=str_replace(' ','',$value);		// To avoid spaces
+	$value=str_replace($thousand,'',$value);	// Replace of thousand before replace of dec to avoid pb if thousand is .
+	$value=str_replace($dec,'.',$value);
+
+	return $value;
+}
