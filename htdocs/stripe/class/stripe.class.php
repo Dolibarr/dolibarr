@@ -326,7 +326,7 @@ class Stripe extends CommonObject
 	 * @param	int		$usethirdpartyemailforreceiptemail		Use thirdparty email as receipt email
 	 * @return Stripe
 	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0)
+	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0, $capture=true)
 	{
 		global $conf;
 
@@ -406,6 +406,7 @@ class Stripe extends CommonObject
 						"currency" => "$currency",
 						// "statement_descriptor" => " ",
 						"description" => "$description",
+            "capture"  => $capture,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
@@ -430,6 +431,7 @@ class Stripe extends CommonObject
 					"currency" => "$currency",
 					// "statement_descriptor" => " ",
 					"description" => "$description",
+          "capture"  => $capture,							
 					"metadata" => $metadata,
 					"source" => "$source",
 					"customer" => "$customer",
