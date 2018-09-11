@@ -190,14 +190,16 @@ if (!$rowid)
 	    // Status
 	    print '<TD align="right">';
 	    if ($charge->refunded=='1'){
-	    	print $langs->trans("refunded");
+	    	print img_picto($langs->trans("refunded"),'statut6');
 	    } elseif ($charge->paid=='1'){
-	    	print $langs->trans("".$charge->status."");
+
+        print img_picto($langs->trans("".$charge->status.""),'statut4');
+             
 	    } else {
 	    	$label="Message: ".$charge->failure_message."<br>";
 	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
 	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-	    	print $form->textwithpicto($langs->trans("".$charge->status.""),$label,1);
+	    	print $form->textwithpicto(img_picto($langs->trans("".$charge->status.""),'statut8'),$label,1);
 	    }
 	    print "</TD>\n";
 
