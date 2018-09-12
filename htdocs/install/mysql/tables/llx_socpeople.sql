@@ -43,6 +43,8 @@ create table llx_socpeople
   email				varchar(255),
   jabberid			varchar(255),
   skype				varchar(255),
+  twitter			varchar(255),                        		--
+  facebook			varchar(255),                        		--
   photo				varchar(255),
   no_email			smallint NOT NULL DEFAULT 0,
   priv				smallint NOT NULL DEFAULT 0,
