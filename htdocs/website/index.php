@@ -2211,7 +2211,7 @@ if ($action == 'createsite')
 
     dol_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
     */
-	if ($action == 'createcontainer') print_fiche_titre($langs->trans("AddSite"));
+	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddSite"));
 
 	print '<!-- Add site -->'."\n";
 	//print '<div class="fichecenter">';
@@ -2273,7 +2273,7 @@ if ($action == 'importsite')
 
 	print '<br>';
 
-	print_fiche_titre($langs->trans("ImportSite"));
+	print load_fiche_titre($langs->trans("ImportSite"));
 
 	dol_fiche_head(array(), '0', '', -1);
 
@@ -2305,7 +2305,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
     dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
     */
-	if ($action == 'createcontainer') print_fiche_titre($langs->trans("AddPage"));
+	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddPage"));
 
 	print '<!-- Edit or create page/container -->'."\n";
 	//print '<div class="fichecenter">';

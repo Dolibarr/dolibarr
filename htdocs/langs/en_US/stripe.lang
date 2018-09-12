@@ -22,7 +22,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
-SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe. 
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Account parameters
 UsageParameter=Usage parameters
 InformationToFindParameters=Help to find your %s account information
@@ -61,3 +61,4 @@ ConfirmDeleteCard=Are you sure you want to delete this Credit or Debit card?
 CreateCustomerOnStripe=Create customer on Stripe
 CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
+StripeUserAccountForActions=User account to use for some emails notification of Stripe events (Stripe payouts)

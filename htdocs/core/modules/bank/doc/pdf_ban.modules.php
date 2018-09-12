@@ -47,10 +47,8 @@ class pdf_ban extends ModeleBankAccountDoc
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("bank");
-		$langs->load("withdrawals");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","bank","withdrawals","companies"));
 
 		$this->db = $db;
 		$this->name = "ban";

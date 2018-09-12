@@ -40,10 +40,8 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","admin","users","other"));
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;

@@ -109,9 +109,9 @@ class mailing_fraise extends MailingTargets
     function formFilter()
     {
         global $conf, $langs;
-        $langs->load("members");
-		$langs->load("categories");
-		$langs->load("companies");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array("members","companies","categories"));
 
         $form=new Form($this->db);
 

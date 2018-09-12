@@ -30,9 +30,8 @@ include '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php';
 
-$langs->load("main");
-$langs->load("admin");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("main","admin","cashdesk"));
 
 $username = GETPOST("txtUsername");
 $password = GETPOST("pwdPassword");
@@ -119,7 +118,7 @@ if ( $retour >= 0 )
 		$_SESSION['firstname'] = $tab['firstname'];
 		$_SESSION['CASHDESK_ID_THIRDPARTY'] = ($thirdpartyid > 0 ? $thirdpartyid : '');
         $_SESSION['CASHDESK_ID_WAREHOUSE'] = ($warehouseid > 0 ? $warehouseid : '');
-        
+
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] = ($bankid_cash > 0 ? $bankid_cash : '');
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] = ($bankid_cheque > 0 ? $bankid_cheque : '');
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] = ($bankid_cb > 0 ? $bankid_cb : '');
@@ -135,8 +134,8 @@ if ( $retour >= 0 )
 }
 else
 {
-	$langs->load("errors");
-    $langs->load("other");
+	// Load translation files required by the page
+    $langs->loadLangs(array("other","errors"));
 	$retour=$langs->trans("ErrorBadLoginPassword");
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;

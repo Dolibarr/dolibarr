@@ -238,7 +238,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
