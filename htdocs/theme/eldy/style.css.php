@@ -754,6 +754,9 @@ select.flat.selectlimit {
 .marginleftonly {
 	margin-left: 10px !important;
 }
+.marginleftonlyshort {
+	margin-left: 4px !important;
+}
 .nomarginleft {
 	margin-left: 0px !important;
 }
