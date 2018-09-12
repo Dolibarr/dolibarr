@@ -253,7 +253,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 				$out.=($mode?'</font>':'');
 			}
 		}
-	}  
+	}
 
 	// For multicompany
 	if (! empty($out) && ! empty($conf->multicompany->enabled)) $out.="&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
