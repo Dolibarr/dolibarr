@@ -126,9 +126,8 @@ class FormTicket
     {
         global $conf, $langs, $user, $hookmanager;
 
-        $langs->load("other");
-        $langs->load("mails");
-        $langs->load("ticket");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails', 'ticket'));
 
         $form = new Form($this->db);
         $formcompany = new FormCompany($this->db);

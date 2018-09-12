@@ -194,9 +194,10 @@ function dol_print_file($langs,$filename,$searchalt=0)
  */
 function dol_print_object_info($object, $usetable=0)
 {
-    global $langs,$db;
-    $langs->load("other");
-    $langs->load("admin");
+    global $langs, $db;
+
+    // Load translation files required by the page
+    $langs->loadLangs(array('other', 'admin'));
 
     include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 

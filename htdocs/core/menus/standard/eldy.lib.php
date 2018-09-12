@@ -80,8 +80,8 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
-		$langs->load("companies");
-		$langs->load("suppliers");
+	    // Load translation files required by the page
+        $langs->loadLangs(array("companies","suppliers"));
 
 		$classname="";
 		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
@@ -174,8 +174,8 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
-		$langs->load("compta");
-		$langs->load("banks");
+	    // Load translation files required by the page
+        $langs->loadLangs(array("compta","banks"));
 
 		$classname="";
 		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
@@ -528,8 +528,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 			if ($usemenuhider || empty($leftmenu) || $leftmenu=="setup")
 			{
-				$langs->load("admin");
-				$langs->load("help");
+			    // Load translation files required by the page
+                $langs->loadLangs(array("admin","help"));
 
 				$warnpicto='';
 				if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
@@ -1176,10 +1176,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		 */
 		if ($mainmenu == 'bank')
 		{
-			$langs->load("withdrawals");
-			$langs->load("banks");
-			$langs->load("bills");
-			$langs->load('categories');
+		    // Load translation files required by the page
+            $langs->loadLangs(array("withdrawals","banks","bills","categories"));
 
 			// Bank-Caisse
 			if (! empty($conf->banque->enabled))
@@ -1402,8 +1400,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			// Leave/Holiday/Vacation module
 			if (! empty($conf->holiday->enabled))
 			{
-				$langs->load("holiday");
-				$langs->load("trips");
+			    // Load translation files required by the page
+                $langs->loadLangs(array("holiday","trips"));
 
 				$newmenu->add("/holiday/list.php?leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $mainmenu, 'hrm');
 				$newmenu->add("/holiday/card.php?action=request", $langs->trans("New"), 1,$user->rights->holiday->write);
@@ -1499,8 +1497,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		{
 			if (! empty($conf->adherent->enabled))
 			{
-				$langs->load("members");
-				$langs->load("compta");
+				// Load translation files required by the page
+                $langs->loadLangs(array("members","compta"));
 
 				$newmenu->add("/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire, '', $mainmenu, 'members');
 				$newmenu->add("/adherents/card.php?leftmenu=members&amp;action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
