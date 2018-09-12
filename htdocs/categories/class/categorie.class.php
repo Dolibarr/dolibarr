@@ -524,7 +524,6 @@ class Categorie extends CommonObject
             'categorie_product' => 'fk_categorie',
             'categorie_member' => 'fk_categorie',
             'categorie_contact' => 'fk_categorie',
-            'categorie_contact' => 'fk_categorie',
             'categorie_account' => 'fk_categorie',
             'bank_class' => 'fk_categ',
             'categorie_lang' => 'fk_category',
