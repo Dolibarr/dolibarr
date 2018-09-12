@@ -152,7 +152,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	if (! empty($conf->loan->enabled)) $menuqualified++;
 	$tmpentry=array(
 	   'enabled'=>$menuqualified,
-	   'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
+	'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
 	   'module'=>'facture|supplier_invoice|don|tax|salaries|loan');
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -883,7 +883,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				global $mysoc;
 
-				$permtoshowmenu=((! empty($conf->tax->enabled) && $user->rights->tax->charges->lire) || (! empty($conf->salaries->enabled) && $user->rights->salaries->read) || (! empty($conf->loan->enabled) && $user->rights->loan->read) || (! empty($conf->banque->enabled) && $user->rights->banque->lire));
+				$permtoshowmenu=((! empty($conf->tax->enabled) && $user->rights->tax->charges->lire) || (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) || (! empty($conf->loan->enabled) && $user->rights->loan->read) || (! empty($conf->banque->enabled) && $user->rights->banque->lire));
 				$newmenu->add("/compta/charges/index.php?leftmenu=tax&amp;mainmenu=billing",$langs->trans("MenuSpecialExpenses"), 0, $permtoshowmenu, '', $mainmenu, 'tax');
 
 				// Social contributions
@@ -931,10 +931,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (! empty($conf->salaries->enabled))
 				{
 					$langs->load("salaries");
-					$newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary&amp;mainmenu=billing",$langs->trans("Salaries"),1,$user->rights->salaries->payment->read, '', $mainmenu, 'tax_salary');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/card.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->salaries->payment->write);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->payment->read);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"),2,$user->rights->salaries->payment->read);
+					$newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary&amp;mainmenu=billing",$langs->trans("Salaries"),1,$user->rights->salaries->read, '', $mainmenu, 'tax_salary');
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/card.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->salaries->write);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->read);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"),2,$user->rights->salaries->read);
 				}
 
 				// Loan
