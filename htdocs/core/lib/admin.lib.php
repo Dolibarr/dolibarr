@@ -1706,7 +1706,7 @@ function email_admin_prepare_head()
 	}
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-	$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+	$head[$h][1] = $langs->trans("EMailTemplates");
 	$head[$h][2] = 'templates';
 	$h++;
 
