@@ -378,7 +378,7 @@ class AccountancyCategory
 	 * Return list of personalized groups that are active
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
-	 * @return	array							Array of groups
+	 * @return	array|int						Array of groups or -1 if error
 	 */
 	public function getCats($categorytype=-1)
 	{
@@ -493,7 +493,7 @@ class AccountancyCategory
 	 *
 	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
 	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
-	 * @return 	array       					Array of accounting accounts
+	 * @return 	array|int       				Array of accounting accounts or -1 if error
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{
