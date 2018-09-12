@@ -236,6 +236,24 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
+	if ($type == 'donation')
+	{
+		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
+		if ($mode == 1) $out.='donation_ref';
+		if ($mode == 0) $out.=urlencode($ref);
+		$out.=($mode?'</font>':'');
+		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+		{
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			else
+			{
+				$out.='&securekey='.($mode?'<font color="#666666">':'');
+				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + donation_ref)";
+				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
+				$out.=($mode?'</font>':'');
+			}
+		}
+	}  
 
 	// For multicompany
 	if (! empty($out) && ! empty($conf->multicompany->enabled)) $out.="&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
