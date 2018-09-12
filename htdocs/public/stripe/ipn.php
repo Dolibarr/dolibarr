@@ -131,7 +131,7 @@ if ($event->type == 'payout.created') {
 
 	if ($result > 0)
 	{
-        $subject = '[NOTIFICATION] Payment out scheduled';
+        $subject = '[NOTIFICATION] Stripe payout scheduled';
         if (!empty($user->email)) {
             $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
         } else {
