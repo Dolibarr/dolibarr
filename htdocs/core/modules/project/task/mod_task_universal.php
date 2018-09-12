@@ -45,8 +45,8 @@ class mod_task_universal extends ModeleNumRefTask
     {
     	global $conf,$langs;
 
-		$langs->load("projects");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("projects","admin"));
 
 		$form = new Form($this->db);
 
