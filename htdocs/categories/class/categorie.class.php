@@ -517,112 +517,28 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_societe";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_fournisseur";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-		    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql .= " WHERE fk_categ = ".$this->id;
-		    if (!$this->db->query($sql))
-		    {
-		        $this->error=$this->db->lasterror();
-		        dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-		        $error++;
-		    }
-		}
 
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
-			$sql .= " WHERE fk_category = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
-			}
-		}
-
-		// Delete category
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
-			$sql .= " WHERE rowid = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
+        $arraydelete = array(
+            'categorie_societe' => 'fk_categorie',
+            'categorie_fournisseur' => 'fk_categorie',
+            'categorie_product' => 'fk_categorie',
+            'categorie_member' => 'fk_categorie',
+            'categorie_contact' => 'fk_categorie',
+            'categorie_contact' => 'fk_categorie',
+            'categorie_account' => 'fk_categorie',
+            'bank_class' => 'fk_categ',
+            'categorie_lang' => 'fk_category',
+            'categorie' => 'rowid',
+        );
+        foreach ($arraydelete as $key => $value) {
+            $sql  = "DELETE FROM " . MAIN_DB_PREFIX . $key;
+            $sql .= " WHERE ".$value." = ".$this->id;
+            if (!$this->db->query($sql)) {
+                $this->errors[] = $this->db->lasterror();
+                dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+                $error++;
+            }
+        }
 
 		// Removed extrafields
 		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
