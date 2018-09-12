@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-if (! empty($conf->projet->enabled))                                
+if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -327,85 +327,89 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 	print '<tbody>';
-  
-  // Ref
+
+	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
-  
-	if (! empty($conf->societe->enabled)) {  
-	// Thirdparty
-	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0 && ! GETPOST('fac_rec','alpha'))
+
+	// Company
+	if (! empty($conf->societe->enabled))
 	{
-		print '<td colspan="2">';
-		print $soc->getNomUrl(1);
-		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
-		// Outstanding Bill
-		$outstandingBills = $soc->get_OutstandingBill();
-		print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
-		print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
-		if ($soc->outstanding_limit != '')
+		// Thirdparty
+		print '<td>' . $langs->trans('Customer') . '</td>';
+		if ($soc->id > 0 && ! GETPOST('fac_rec','alpha'))
 		{
-			if ($outstandingBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
-			print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
+			print '<td colspan="2">';
+			print $soc->getNomUrl(1);
+			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
+			// Outstanding Bill
+			$outstandingBills = $soc->get_OutstandingBill();
+			print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
+			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
+			if ($soc->outstanding_limit != '')
+			{
+				if ($outstandingBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+				print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
+			}
+			print ')';
+			print '</td>';
 		}
-		print ')';
-		print '</td>';
+		else
+		{
+			print '<td colspan="2">';
+			print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+			// Option to reload page to retrieve customer informations. Note, this clear other input
+			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+			{
+				print '<script type="text/javascript">
+				$(document).ready(function() {
+					$("#socid").change(function() {
+						var socid = $(this).val();
+				        var fac_rec = $(\'#fac_rec\').val();
+						// reload page
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+					});
+				});
+				</script>';
+			}
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+			print '</td>';
+		}
+		print '</tr>' . "\n";
+
 	}
 	else
 	{
-		print '<td colspan="2">';
-		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
-		// Option to reload page to retrieve customer informations. Note, this clear other input
-		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
-		{
-			print '<script type="text/javascript">
-			$(document).ready(function() {
-				$("#socid").change(function() {
-					var socid = $(this).val();
-			        var fac_rec = $(\'#fac_rec\').val();
-					// reload page
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
-				});
-			});
-			</script>';
-		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
-		print '</td>';
+		print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" class="maxwidth200"></td></tr>';
+		print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
+		print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';
+		print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.dol_escape_htmltag(GETPOST("address")).'</textarea></td></tr>';
+
+		// Zip / Town
+		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+		print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
+		print ' ';
+		print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
+		print '</tr>';
+
+		// Country
+		print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td class="maxwidthonsmartphone">';
+		print $form->select_country(GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+		print '</td></tr>';
+
+		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
 	}
-	print '</tr>' . "\n";
-  
-} else {
 
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" class="maxwidth200"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.dol_escape_htmltag(GETPOST("address")).'</textarea></td></tr>';
-
-    // Zip / Town
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-   	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
-    print ' ';
-    print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
-    print '</tr>';
-
-	  // Country
-    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td class="maxwidthonsmartphone">';
-    print $form->select_country(GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id);
-    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-    print '</td></tr>';
-
-	  print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
-}
-
-  // Date
+	// Date
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
 	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
-  // Amount
-  print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	// Amount
+	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
+	// Public donation
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
 	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
@@ -841,11 +845,11 @@ if (! empty($id) && $action != 'edit')
 	// Show links to link elements
 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-  
+
 		// Show online payment link
 		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
 
-		if ($useonlinepayment) //$object->statut != Facture::STATUS_DRAFT && 
+		if ($useonlinepayment) //$object->statut != Facture::STATUS_DRAFT &&
 		{
 			print '<br><!-- Link to pay -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
