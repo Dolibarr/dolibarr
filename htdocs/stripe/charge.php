@@ -120,12 +120,16 @@ if (!$rowid)
 	foreach ($list->data as $charge)
 	{
 		// The metadata FULLTAG is defined by the online payment page
-		$FULLTAG=$charge->description;
+		$FULLTAG=$charge->metadata->FULLTAG;
 
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']) && $charge->metadata->dol_thirdparty_id)
+		if (! empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
+		{
+			$societestatic->fetch($tmparray['CUS']);
+		}
+		elseif (! empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
 		{
 			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 		}
@@ -133,7 +137,7 @@ if (!$rowid)
 		{
 			$societestatic->id = 0;
 		}
-		if (! empty($tmparray['MEM']) && $charge->metadata->dol_thirdparty_id)
+		if (! empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
 		{
 			$memberstatic->fetch($tmparray['MEM']);
 		}
@@ -142,9 +146,9 @@ if (!$rowid)
 			$memberstatic->id = 0;
 		}
 
-	    print '<TR class="oddeven">';
-	    // Ref
-      $url='https://dashboard.stripe.com/test/payments/'.$charge->id;
+		print '<TR class="oddeven">';
+		// Ref
+		$url='https://dashboard.stripe.com/test/payments/'.$charge->id;
 			if ($servicestatus)
 			{
 				$url='https://dashboard.stripe.com/payments/'.$charge->id;
