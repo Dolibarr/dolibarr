@@ -131,7 +131,7 @@ if ($event->type == 'payout.created') {
 
 	if ($result > 0)
 	{
-        $subject = '[NOTIFICATION] Virement programmée';
+        $subject = '[NOTIFICATION] Payment out scheduled';
         if (!empty($user->email)) {
             $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
         } else {
@@ -143,7 +143,7 @@ if ($event->type == 'payout.created') {
             $sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
         }
 
-        $message = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." est attendu sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date);
+        $message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." should arrive in your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
         $mailfile = new CMailFile(
             $subject,
@@ -159,7 +159,7 @@ if ($event->type == 'payout.created') {
             -1
         );
 
-        $ret = $mailfile->sendfile())
+        $ret = $mailfile->sendfile();
 
         return 1;
 	}
