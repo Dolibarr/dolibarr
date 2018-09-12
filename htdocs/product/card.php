@@ -977,7 +977,7 @@ else
 	        }
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
             $formbarcode = new FormBarCode($db);
-	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+            print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
@@ -1343,7 +1343,7 @@ else
 		        }
 		        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 	            $formbarcode = new FormBarCode($db);
-		        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+                print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
@@ -1639,7 +1639,7 @@ else
 				}
                 if ($action == 'editbarcodetype')
                 {
-                    $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
+                    print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
                 }
                 else
                 {
