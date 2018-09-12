@@ -221,7 +221,8 @@ Following changes may create regressions for some external modules, but were nec
 * Remove method Categorie:get_nb_categories() that was not used.
 * Hook getnomurltooltip provide a duplicate feature compared to hook getNomUrl so all hooks getnomurltooltip 
   are now replaced with hook getNomUrl.
-
+* The substitution key __CONTACTCIVNAME__ is no longer present, it has been replaced by __CONTACT_NAME_{TYPE}__
+  where {TYPE} is contact type code (BILLING, SHIPPING, CUSTOMER, ... see contact type dictionnary). 
 
 
 ***** ChangeLog for 7.0.3 compared to 7.0.2 *****
