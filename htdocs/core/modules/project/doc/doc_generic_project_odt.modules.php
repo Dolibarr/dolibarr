@@ -361,8 +361,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf,$langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("companies","errors"));
 
 		$form = new Form($this->db);
 
