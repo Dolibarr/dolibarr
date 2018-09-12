@@ -51,8 +51,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";

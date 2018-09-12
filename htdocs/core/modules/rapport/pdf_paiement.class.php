@@ -40,9 +40,9 @@ class pdf_paiement
 	function __construct($db)
 	{
 		global $langs,$conf;
-		$langs->load("bills");
-		$langs->load("compta");
-		$langs->load("main");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","compta","main"));
 
 		$this->db = $db;
 		$this->description = $langs->transnoentities("ListOfCustomerPayments");

@@ -48,8 +48,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
