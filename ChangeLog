@@ -19,7 +19,7 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * If you use some links like viewimages.php?modulepart=mycompany&file=... in you external modules, you must
-  relace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
+  replace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
   modulepart=mycompany that now works like others).
 
 
