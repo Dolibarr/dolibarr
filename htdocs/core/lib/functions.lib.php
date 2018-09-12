@@ -6093,7 +6093,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-				$outputlangs->load('paypal');
+				$outputlangs->loadLangs(array('paypal','other'));
 				$typeforonlinepayment='free';
 				if (is_object($object) && $object->element == 'commande') $typeforonlinepayment='order';
 				if (is_object($object) && $object->element == 'facture')  $typeforonlinepayment='invoice';

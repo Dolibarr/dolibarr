@@ -15,6 +15,13 @@ For developers:
 * Code changes to be more compatible with PSR2
 * Removed trigger USER_LOGOUT, USER_LOGIN, USER_LOGIN_FAILED (Some hooks are already dedicated for that)
 
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* If you use some links like viewimages.php?modulepart=mycompany&file=... in you external modules, you must
+  replace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
+  modulepart=mycompany that now works like others).
+
 
 
 ***** ChangeLog for 8.0.1 compared to 8.0.0 *****
@@ -235,7 +242,8 @@ Following changes may create regressions for some external modules, but were nec
 * Remove method Categorie:get_nb_categories() that was not used.
 * Hook getnomurltooltip provide a duplicate feature compared to hook getNomUrl so all hooks getnomurltooltip 
   are now replaced with hook getNomUrl.
-
+* The substitution key __CONTACTCIVNAME__ is no longer present, it has been replaced by __CONTACT_NAME_{TYPE}__
+  where {TYPE} is contact type code (BILLING, SHIPPING, CUSTOMER, ... see contact type dictionnary). 
 
 
 ***** ChangeLog for 7.0.3 compared to 7.0.2 *****

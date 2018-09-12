@@ -4444,6 +4444,7 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
     DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
     DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/modSkype.class.php',
     DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
     DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',

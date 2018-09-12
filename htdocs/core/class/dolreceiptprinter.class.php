@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,6 +216,7 @@ class dolReceiptPrinter extends Escpos
         global $conf;
         $error = 0;
         $line = 0;
+        $obj = array();
         $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
         $sql.= ' WHERE entity = '.$conf->entity;
@@ -283,6 +284,7 @@ class dolReceiptPrinter extends Escpos
         global $conf;
         $error = 0;
         $line = 0;
+        $obj = array();
         $sql = 'SELECT rowid, name, template';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
         $sql.= ' WHERE entity = '.$conf->entity;

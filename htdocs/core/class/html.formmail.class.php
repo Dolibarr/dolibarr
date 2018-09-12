@@ -277,9 +277,8 @@ class FormMail extends Form
 
 		if (! is_object($form)) $form=new Form($this->db);
 
-		$langs->load("other");
-		$langs->load("mails");
-
+		// Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
 		if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
@@ -960,6 +959,7 @@ class FormMail extends Form
 
 				if (count($validpaymentmethod) > 0 && $paymenturl)
 				{
+					$langs->load('other');
 					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=str_replace('\n',"\n",$langs->transnoentities("PredefinedMailContentLink", $paymenturl));
 					$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
 				}
