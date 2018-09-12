@@ -88,7 +88,10 @@ catch(\UnexpectedValueException $e) {
 // Do something with $event
 
 http_response_code(200); // PHP 5.4 or greater
+
 $langs->load("main");
+
+// TODO Do we really need a user in setup just to have an name to fill an email topic when it is a technical system notification email
 $user = new User($db);
 $user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 $user->getrights();
