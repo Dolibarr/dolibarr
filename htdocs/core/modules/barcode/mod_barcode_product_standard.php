@@ -223,6 +223,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return if a code is used (by other element)
 	 *
@@ -231,9 +232,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *	@param	Product		$product	Objet product
 	 *	@return	int						0 if available, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_dispo($db, $code, $product)
 	{
+        // phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE barcode = '".$code."'";
 		if ($product->id > 0) $sql.= " AND rowid <> ".$product->id;
@@ -256,6 +257,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return if a barcode value match syntax
 	 *
@@ -263,9 +265,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
      *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
 	 *	@return	int						0 if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_syntax($codefortest, $typefortest)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$result = 0;

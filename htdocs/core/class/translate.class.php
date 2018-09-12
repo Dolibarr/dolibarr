@@ -756,6 +756,7 @@ class Translate
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of all available languages
 	 *
@@ -764,9 +765,9 @@ class Translate
 	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
 	 *  @return array     				List of languages
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		// We scan directory langs to detect available languages
@@ -796,6 +797,7 @@ class Translate
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
@@ -803,9 +805,9 @@ class Translate
 	 *  @param  integer	$searchalt      Search also alernate language file
 	 *  @return boolean         		true if exists and readable
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function file_exists($filename,$searchalt=0)
 	{
+        // phpcs:enable
 		// Test si fichier dans repertoire de la langue
 		foreach($this->dir as $searchdir)
 		{
@@ -1020,15 +1022,16 @@ class Translate
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return an array with content of all loaded translation keys (found into this->tab_translate) so
 	 * we get a substitution array we can use for substitutions (for mail or ODT generation for example)
 	 *
 	 * @return array	Array of translation keys lang_key => string_translation_loaded
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_translations_for_substitutions()
 	{
+        // phpcs:enable
 		$substitutionarray = array();
 
 		foreach($this->tab_translate as $code => $label) {

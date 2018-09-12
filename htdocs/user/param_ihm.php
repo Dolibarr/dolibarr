@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
+ * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +136,12 @@ if (empty($reshook)) {
 				$tabparam["THEME_ELDY_USE_HOVER"] = 1;
 			} else {
 				$tabparam["THEME_ELDY_USE_HOVER"] = 0;
+			}
+
+			if (GETPOST('check_THEME_ELDY_USE_CHECKED') == 'on') {
+				$tabparam["THEME_ELDY_USE_CHECKED"] = 1;
+			} else {
+				$tabparam["THEME_ELDY_USE_CHECKED"] = 0;
 			}
 
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);

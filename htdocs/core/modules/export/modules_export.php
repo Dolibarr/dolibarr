@@ -42,6 +42,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	var $libversion=array();
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load into memory list of available export format
 	 *
@@ -49,9 +50,9 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/export/";

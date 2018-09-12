@@ -494,15 +494,16 @@ class Project extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Return list of projects
      *
      * 	@param		int		$socid		To filter on a particular third party
      * 	@return		array				List of projects
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function liste_array($socid='')
     {
+        // phpcs:enable
         global $conf;
 
         $projects = array();
@@ -536,6 +537,7 @@ class Project extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Return list of elements for type, linked to a project
      *
@@ -547,9 +549,9 @@ class Project extends CommonObject
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='', $projectkey='fk_projet')
     {
+        // phpcs:enable
         $elements = array();
 
         if ($this->id <= 0) return $elements;
@@ -925,6 +927,7 @@ class Project extends CommonObject
         return $this->LibStatut($this->statut, $mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoi status label for a status
      *
@@ -932,9 +935,9 @@ class Project extends CommonObject
      *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      * 	@return string				Label
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut, $mode=0)
     {
+        // phpcs:enable
         global $langs;
 
         if ($mode == 0)
@@ -1598,16 +1601,17 @@ class Project extends CommonObject
 	}
 
 
-	 /**
-	  *    Associate element to a project
-	  *
-	  *    @param	string	$tableName			Table of the element to update
-	  *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
-	  *    @return	int							1 if OK or < 0 if KO
-      */
-      // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 *    Associate element to a project
+	 *
+	 *    @param	string	$tableName			Table of the element to update
+	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @return	int							1 if OK or < 0 if KO
+     */
 	function update_element($tableName, $elementSelectId)
 	{
+        // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
 		if ($tableName == "actioncomm")
@@ -1631,6 +1635,7 @@ class Project extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Associate element to a project
 	 *
@@ -1638,9 +1643,9 @@ class Project extends CommonObject
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function remove_element($tableName, $elementSelectId)
 	{
+        // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
 
 		if ($TableName=="actioncomm")
@@ -1762,15 +1767,16 @@ class Project extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      * @param	User	$user   Objet user
      * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user)
     {
+        // phpcs:enable
         global $conf, $langs;
 
         // For external user, no check is done on company because readability is managed by public status of project and assignement.
@@ -1847,14 +1853,15 @@ class Project extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb pour le tableau de bord
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
+        // phpcs:enable
 	    global $user;
 
 	    $this->nb=array();

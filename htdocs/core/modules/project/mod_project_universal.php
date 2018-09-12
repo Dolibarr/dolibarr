@@ -45,8 +45,8 @@ class mod_project_universal extends ModeleNumRefProjects
     {
     	global $conf,$langs;
 
-		$langs->load("projects");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("projects","admin"));
 
 		$form = new Form($this->db);
 
@@ -127,6 +127,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -134,9 +135,9 @@ class mod_project_universal extends ModeleNumRefProjects
      *  @param  Project		$project	Object project
      *  @return string      			Next not used reference
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function project_get_num($objsoc=0,$project='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$project);
     }
 }

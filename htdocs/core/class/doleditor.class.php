@@ -137,6 +137,7 @@ class DolEditor
     	}
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Output edit area inside the HTML stream.
      *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
@@ -148,9 +149,9 @@ class DolEditor
      *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
      *  @return	void|string
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='', $option='')
     {
+        // phpcs:enable
     	global $conf,$langs;
 
     	$fullpage=false;

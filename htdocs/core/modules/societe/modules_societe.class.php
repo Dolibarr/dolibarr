@@ -38,23 +38,24 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 	 */
 	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of active generation modules
      *
-	 * 	@param	DoliDB		$db					Database handler
+     * 	@param	DoliDB		$db					Database handler
      *  @param	integer		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+        // phpcs:enable
         global $conf;
 
         $type='company';
         $liste=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db,$type,$maxfilenamelength);
+        $liste = getListOfModels($db,$type,$maxfilenamelength);
 
         return $liste;
     }
@@ -67,7 +68,7 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 abstract class ModeleThirdPartyCode
 {
     /**
-	 * @var string Error code (or message)
+     * @var string Error code (or message)
 	 */
 	public $error='';
 
@@ -144,6 +145,7 @@ abstract class ModeleThirdPartyCode
         return $langs->trans("NotAvailable");
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoie la liste des modeles de numérotation
      *
@@ -151,9 +153,9 @@ abstract class ModeleThirdPartyCode
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+        // phpcs:enable
         $liste=array();
         $sql ="";
 
@@ -177,12 +179,12 @@ abstract class ModeleThirdPartyCode
     }
 
     /**
-     *      Return description of module parameters
+     *  Return description of module parameters
      *
-     *      @param	Translate	$langs      Output language
-     *		@param	Societe		$soc		Third party object
-     *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
-     *		@return	string					HTML translated description
+     *  @param	Translate	$langs      Output language
+     *  @param	Societe		$soc		Third party object
+     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *  @return	string					HTML translated description
      */
     function getToolTip($langs,$soc,$type)
     {
@@ -243,14 +245,15 @@ abstract class ModeleThirdPartyCode
         return $s;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
 	 *   @return    int	    0=no, 1=yes
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function verif_prefixIsUsed()
     {
+        // phpcs:enable
         return 0;
     }
 }
@@ -355,6 +358,7 @@ abstract class ModeleAccountancyCode
         return $s;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Set accountancy account code for a third party into this->code
      *
@@ -363,10 +367,10 @@ abstract class ModeleAccountancyCode
      *  @param  int		$type			'customer' or 'supplier'
      *  @return	int						>=0 if OK, <0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_code($db, $societe, $type='')
     {
-	    global $langs;
+        // phpcs:enable
+        global $langs;
 
         return $langs->trans("NotAvailable");
     }
@@ -374,6 +378,7 @@ abstract class ModeleAccountancyCode
 
 
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Create a document onto disk according to template module.
  *
@@ -389,9 +394,9 @@ abstract class ModeleAccountancyCode
  *  @deprecated Use the new function generateDocument of Facture class
  *  @see Societe::generateDocument()
  */
-// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+    // phpcs:enable
 	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);

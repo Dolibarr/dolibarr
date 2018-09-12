@@ -714,6 +714,7 @@ abstract class CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Add a link between element $this->element and a contact
 	 *
@@ -723,9 +724,9 @@ abstract class CommonObject
 	 *  @param  int		$notrigger			Disable all triggers
 	 *  @return int                 		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_contact($fk_socpeople, $type_contact, $source='external',$notrigger=0)
 	{
+        // phpcs:enable
 		global $user,$langs;
 
 
@@ -837,6 +838,7 @@ abstract class CommonObject
 		} else return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Copy contact from one element to current
 	 *
@@ -844,9 +846,9 @@ abstract class CommonObject
 	 *    @param    string          $source     Nature of contact ('internal' or 'external')
 	 *    @return   int                         >0 if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function copy_linked_contact($objFrom, $source='internal')
 	{
+        // phpcs:enable
 		$contacts = $objFrom->liste_contact(-1, $source);
 		foreach($contacts as $contact)
 		{
@@ -859,6 +861,7 @@ abstract class CommonObject
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Update a link to contact line
 	 *
@@ -868,9 +871,9 @@ abstract class CommonObject
 	 *      @param  int		$fk_socpeople	    Id of soc_people to update (not modified if 0)
 	 *      @return int                 		<0 if KO, >= 0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_contact($rowid, $statut, $type_contact_id=0, $fk_socpeople=0)
 	{
+        // phpcs:enable
 		// Insert into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
 		$sql.= " statut = ".$statut;
@@ -889,6 +892,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Delete a link to contact line
 	 *
@@ -896,9 +900,9 @@ abstract class CommonObject
 	 *    @param	int		$notrigger		Disable all triggers
 	 *    @return   int						>0 if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_contact($rowid, $notrigger=0)
 	{
+        // phpcs:enable
 		global $user;
 
 
@@ -927,6 +931,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Delete all links between an object $this and all its contacts
 	 *
@@ -934,9 +939,9 @@ abstract class CommonObject
 	 *	  @param	string	$code		Type of contact (code or id)
 	 *    @return   int					>0 if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_linked_contact($source='',$code='')
 	{
+        // phpcs:enable
 		$temp = array();
 		$typeContact = $this->liste_type_contact($source,'',0,0,$code);
 
@@ -963,6 +968,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Get array of all contacts for an object
 	 *
@@ -972,9 +978,9 @@ abstract class CommonObject
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array		            Array of contacts
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_contact($statut=-1,$source='external',$list=0,$code='')
 	{
+        // phpcs:enable
 		global $langs;
 
 		$tab=array();
@@ -1071,6 +1077,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Return array with list of possible values for type of contacts
 	 *
@@ -1081,9 +1088,9 @@ abstract class CommonObject
 	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
 	 *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_type_contact($source='internal', $order='position', $option=0, $activeonly=0, $code='')
 	{
+        // phpcs:enable
 		global $langs;
 
 		if (empty($order)) $order='position';
@@ -1185,15 +1192,16 @@ abstract class CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Load object contact with id=$this->contactid into $this->contact
 	 *
 	 *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
 	 *		@return	int						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_contact($contactid=null)
 	{
+        // phpcs:enable
 		if (empty($contactid)) $contactid=$this->contactid;
 
 		if (empty($contactid)) return 0;
@@ -1205,15 +1213,16 @@ abstract class CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
 	 *
 	 *		@param		int		$force_thirdparty_id	Force thirdparty id
 	 *		@return		int								<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_thirdparty($force_thirdparty_id=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id))
@@ -1267,6 +1276,7 @@ abstract class CommonObject
 		return $this->fetch($result->rowid);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load data for barcode into properties ->barcode_type*
 	 *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
@@ -1274,9 +1284,9 @@ abstract class CommonObject
 	 *
 	 *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_barcode()
 	{
+        // phpcs:enable
 		global $conf;
 
 		dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
@@ -1317,14 +1327,15 @@ abstract class CommonObject
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Load the project with id $this->fk_project into this->project
 	 *
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_projet()
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (empty($this->fk_project) && ! empty($this->fk_projet)) $this->fk_project = $this->fk_projet;	// For backward compatibility
@@ -1338,14 +1349,15 @@ abstract class CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Load the product with id $this->fk_product into this->product
 	 *
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_product()
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 		if (empty($this->fk_product)) return 0;
@@ -1357,29 +1369,31 @@ abstract class CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Load the user with id $userid into this->user
 	 *
 	 *		@param	int		$userid 		Id du contact
 	 *		@return	int						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_user($userid)
 	{
+        // phpcs:enable
 		$user = new User($this->db);
 		$result=$user->fetch($userid);
 		$this->user = $user;
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Read linked origin object
 	 *
 	 *	@return		void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_origin()
 	{
+        // phpcs:enable
 		if ($this->origin == 'shipping') $this->origin = 'expedition';
 		if ($this->origin == 'delivery') $this->origin = 'livraison';
 
@@ -1539,6 +1553,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Load properties id_previous and id_next by comparing $fieldid with $this->ref
 	 *
@@ -1547,9 +1562,9 @@ abstract class CommonObject
 	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
 	 *      @return int         		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_previous_next_ref($filter, $fieldid, $nodbprefix=0)
 	{
+        // phpcs:enable
 		global $conf, $user;
 
 		if (! $this->table_element)
@@ -2174,6 +2189,7 @@ abstract class CommonObject
 
 	// TODO: Move line related operations to CommonObjectLine?
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Save a new position (field rang) for details lines.
 	 *  You can choose to set position for lines with already a position or lines without any position defined.
@@ -2183,9 +2199,9 @@ abstract class CommonObject
 	 * 	@param		boolean		$fk_parent_line    Table with fk_parent_line field or not
 	 * 	@return		int                            <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function line_order($renum=false, $rowidorder='ASC', $fk_parent_line=true)
 	{
+        // phpcs:enable
 		if (! $this->table_element_line)
 		{
 			dol_syslog(get_class($this)."::line_order was called on objet with property table_element_line not defined",LOG_ERR);
@@ -2294,6 +2310,7 @@ abstract class CommonObject
 		return $rows;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Update a line to have a lower rank
 	 *
@@ -2301,9 +2318,9 @@ abstract class CommonObject
 	 * 	@param	boolean		$fk_parent_line		Table with fk_parent_line field or not
 	 * 	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function line_up($rowid, $fk_parent_line=true)
 	{
+        // phpcs:enable
 		$this->line_order(false, 'ASC', $fk_parent_line);
 
 		// Get rang of line
@@ -2313,6 +2330,7 @@ abstract class CommonObject
 		$this->updateLineUp($rowid, $rang);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Update a line to have a higher rank
 	 *
@@ -2320,9 +2338,9 @@ abstract class CommonObject
 	 * 	@param	boolean		$fk_parent_line		Table with fk_parent_line field or not
 	 * 	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function line_down($rowid, $fk_parent_line=true)
 	{
+        // phpcs:enable
 		$this->line_order(false, 'ASC', $fk_parent_line);
 
 		// Get rang of line
@@ -2357,15 +2375,16 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Update position of line with ajax (rang)
 	 *
 	 * 	@param	array	$rows	Array of rows
 	 * 	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function line_ajaxorder($rows)
 	{
+        // phpcs:enable
 		$num = count($rows);
 		for ($i = 0 ; $i < $num ; $i++)
 		{
@@ -2473,15 +2492,16 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Get max value used for position of line (rang)
 	 *
 	 * 	@param		int		$fk_parent_line		Parent line id
 	 *  @return     int  			   			Max value of rang in table of lines
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function line_max($fk_parent_line=0)
 	{
+        // phpcs:enable
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line)
 		{
@@ -2520,15 +2540,16 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update external ref of element
 	 *
 	 *  @param      string		$ref_ext	Update field ref_ext
 	 *  @return     int      		   		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_ref_ext($ref_ext)
 	{
+        // phpcs:enable
 		if (! $this->table_element)
 		{
 			dol_syslog(get_class($this)."::update_ref_ext was called on objet with property table_element not defined", LOG_ERR);
@@ -2552,6 +2573,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update note of element
 	 *
@@ -2559,9 +2581,9 @@ abstract class CommonObject
 	 *  @param		string		$suffix		'', '_public' or '_private'
 	 *  @return     int      		   		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_note($note, $suffix='')
 	{
+        // phpcs:enable
 		global $user;
 
 		if (! $this->table_element)
@@ -2604,6 +2626,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Update public note (kept for backward compatibility)
 	 *
@@ -2612,12 +2635,13 @@ abstract class CommonObject
 	 * @deprecated
 	 * @see update_note()
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_note_public($note)
 	{
+        // phpcs:enable
 		return $this->update_note($note,'_public');
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Update total_ht, total_ttc, total_vat, total_localtax1, total_localtax2 for an object (sum of lines).
 	 *  Must be called at end of methods addline or updateline.
@@ -2628,9 +2652,9 @@ abstract class CommonObject
 	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
 	 *	@return	int    			           	<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $action;
 
 		// Some external module want no update price after a trigger because they have another method to calculate the total (ex: with an extrafield)
@@ -2857,6 +2881,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Add objects linked in llx_element_element.
 	 *
@@ -2865,9 +2890,9 @@ abstract class CommonObject
 	 *	@return		int					<=0 if KO, >0 if OK
 	 *	@see		fetchObjectLinked, updateObjectLinked, deleteObjectLinked
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_object_linked($origin=null, $origin_id=null)
 	{
+        // phpcs:enable
 		$origin = (! empty($origin) ? $origin : $this->origin);
 		$origin_id = (! empty($origin_id) ? $origin_id : $this->origin_id);
 
@@ -3618,15 +3643,16 @@ abstract class CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Return incoterms informations
 	 *    TODO Use a cache for label get
 	 *
 	 *    @return	string	incoterms info
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function display_incoterms()
 	{
+        // phpcs:enable
 		$out = '';
 		$this->libelle_incoterms = '';
 		if (!empty($this->fk_incoterms))
@@ -4226,6 +4252,7 @@ abstract class CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Add resources to the current object : add entry into llx_element_resources
 	 *	Need $this->element & $this->id
@@ -4236,9 +4263,9 @@ abstract class CommonObject
 	 *	@param		int		$mandatory			Mandatory or not
 	 *	@return		int							<=0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_element_resource($resource_id, $resource_type, $busy=0, $mandatory=0)
 	{
+        // phpcs:enable
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_resources (";
@@ -4271,6 +4298,7 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Delete a link to resource line
 	 *
@@ -4279,9 +4307,9 @@ abstract class CommonObject
 	 *    @param	int		$notrigger		Disable all triggers
 	 *    @return   int						>0 if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_resource($rowid, $element, $notrigger=0)
 	{
+        // phpcs:enable
 		global $user;
 
 		$this->db->begin();
@@ -4654,6 +4682,7 @@ abstract class CommonObject
 	/* For triggers */
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Call trigger based on this instance.
 	 * Some context information may also be provided into array property this->context.
@@ -4664,9 +4693,9 @@ abstract class CommonObject
 	 * @param   User      $user           Object user
 	 * @return  int                       Result of run_triggers
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function call_trigger($trigger_name, $user)
 	{
+        // phpcs:enable
 		global $langs,$conf;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -4691,6 +4720,7 @@ abstract class CommonObject
 	/* Functions for extrafields */
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Function to get extra fields of an object into $this->array_options
 	 *  This method is in most cases called by method fetch of objects but you can call it separately.
@@ -4699,9 +4729,9 @@ abstract class CommonObject
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
 	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_optionals($rowid=null, $optionsArray=null)
 	{
+        // phpcs:enable
 		if (empty($rowid)) $rowid=$this->id;
 
 		// To avoid SQL errors. Probably not the better solution though
@@ -6463,6 +6493,7 @@ abstract class CommonObject
 		return $buyPrice;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show photos of an object (nbmax maximum), into several columns
 	 *
@@ -6480,9 +6511,9 @@ abstract class CommonObject
 	 *  @param		int		$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
 	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function show_photos($modulepart, $sdir, $size=0, $nbmax=0, $nbbyrow=5, $showfilename=0, $showaction=0, $maxHeight=120, $maxWidth=160, $nolink=0, $notitle=0, $usesharelink=0)
 	{
+        // phpcs:enable
 		global $conf,$user,$langs;
 
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';

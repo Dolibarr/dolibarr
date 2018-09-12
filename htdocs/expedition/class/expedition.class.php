@@ -392,6 +392,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create a expedition line
 	 *
@@ -401,9 +402,9 @@ class Expedition extends CommonObject
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, line_id if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_line($entrepot_id, $origin_line_id, $qty,$array_options=0)
 	{
+        //phpcs:enable
 		$expeditionline = new ExpeditionLigne($this->db);
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
@@ -419,6 +420,7 @@ class Expedition extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create the detail (eat-by date) of the expedition line
 	 *
@@ -426,9 +428,9 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_line_batch($line_ext,$array_options=0)
 	{
+        // phpcs:enable
 		$error = 0;
 		$stockLocationQty = array(); // associated array with batch qty in stock location
 
@@ -819,15 +821,16 @@ class Expedition extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Create a delivery receipt from a shipment
 	 *
 	 *	@param	User	$user       User
 	 *  @return int  				<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_delivery($user)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if ($conf->livraison_bon->enabled)
@@ -927,6 +930,7 @@ class Expedition extends CommonObject
 		$this->lines[$num] = $line;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Add a shipment line with batch record
 	 *
@@ -934,9 +938,9 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function addline_batch($dbatch,$array_options=0)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$num = count($this->lines);
@@ -1315,14 +1319,15 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load lines
 	 *
 	 *	@return	int		>0 if OK, Otherwise if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
+        // phpcs:enable
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
 
@@ -1602,6 +1607,7 @@ class Expedition extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return label of a status
 	 *
@@ -1609,9 +1615,9 @@ class Expedition extends CommonObject
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode==0)
@@ -1725,6 +1731,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set the planned delivery date
 	 *
@@ -1732,9 +1739,9 @@ class Expedition extends CommonObject
 	 *	@param      timestamp		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison)
 	{
+        // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
@@ -1760,14 +1767,15 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
 	 *
 	 * 	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_delivery_methods()
 	{
+        // phpcs:enable
 		global $langs;
 		$this->meths = array();
 
@@ -1787,15 +1795,16 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Fetch all deliveries method and return an array. Load array this->listmeths.
 	 *
 	 *  @param  id      $id     only this carrier, all if none
 	 *  @return void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_delivery_methods($id='')
 	{
+        // phpcs:enable
 		global $langs;
 
 		$this->listmeths = array();
@@ -1822,6 +1831,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update/create delivery method.
 	 *
@@ -1829,9 +1839,9 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_delivery_method($id='')
 	{
+        // phpcs:enable
 		if ($id=='')
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
@@ -1851,6 +1861,7 @@ class Expedition extends CommonObject
 		if ($resql < 0) dol_print_error($this->db,'');
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Activate delivery method.
 	 *
@@ -1858,15 +1869,16 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function activ_delivery_method($id)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
 		$sql.= ' WHERE rowid='.$id;
 
 		$resql = $this->db->query($sql);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  DesActivate delivery method.
 	 *
@@ -1874,9 +1886,9 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function disable_delivery_method($id)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
 		$sql.= ' WHERE rowid='.$id;
 
@@ -1884,15 +1896,16 @@ class Expedition extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Forge an set tracking url
 	 *
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function GetUrlTrackingStatus($value='')
 	{
+        // phpcs:enable
 		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
@@ -2070,14 +2083,15 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_billed()
 	{
+        // phpcs:enable
 		global $user;
 		$error=0;
 

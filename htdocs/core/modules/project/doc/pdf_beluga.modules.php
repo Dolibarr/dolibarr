@@ -110,6 +110,7 @@ class pdf_beluga extends ModelePDFProjects
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
@@ -117,9 +118,9 @@ class pdf_beluga extends ModelePDFProjects
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
 
         $formproject=new FormProjets($this->db);

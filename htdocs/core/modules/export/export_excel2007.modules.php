@@ -98,14 +98,15 @@ class ExportExcel2007 extends ExportExcel
 	}
 
 
-	/**
-     *	Close Excel file
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Close Excel file
      *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 *  @return		int							<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_file()
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))

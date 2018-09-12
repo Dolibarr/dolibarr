@@ -133,6 +133,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		return $this->prefix.$yymm."-".$num;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -140,9 +141,9 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function expedition_get_num($objsoc,$objforref)
 	{
+        // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
 }

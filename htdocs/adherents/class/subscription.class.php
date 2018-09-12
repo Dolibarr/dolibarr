@@ -366,15 +366,16 @@ class Subscription extends CommonObject
 	    return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
 	 *  @param	int			$statut      			Id statut
 	 *  @return string      						Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut)
 	{
+        // phpcs:enable
 	    global $langs;
 	    $langs->load("members");
 	    return '';

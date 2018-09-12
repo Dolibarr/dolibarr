@@ -35,9 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class ActionComm extends CommonObject
 {
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element='action';
+     * @var string ID to identify managed object
+     */
+    public $element='action';
 
     /**
      * @var string Name of table without prefix where object is stored
@@ -47,9 +47,9 @@ class ActionComm extends CommonObject
     public $table_rowid = 'id';
 
     /**
-	   * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
-	   */
-	  public $picto='action';
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto = 'action';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -698,14 +698,15 @@ class ActionComm extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Initialize this->userassigned array with list of id of user assigned to event
      *
      *    @return	int				<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_userassigned()
     {
+        // phpcs:enable
         $sql ="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
 		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
 		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
@@ -1021,6 +1022,7 @@ class ActionComm extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -1028,10 +1030,10 @@ class ActionComm extends CommonObject
      * @param	int		$load_state_board	Charge indicateurs this->nb de tableau de bord
      * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user, $load_state_board=0)
     {
-    	global $conf, $langs;
+        // phpcs:enable
+        global $conf, $langs;
 
     	if(empty($load_state_board)) $sql = "SELECT a.id, a.datep as dp";
     	else {
@@ -1146,6 +1148,7 @@ class ActionComm extends CommonObject
         return $this->LibStatut($this->percentage,$mode,$hidenastatus,$this->datep);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *		Return label of action status
      *
@@ -1155,9 +1158,9 @@ class ActionComm extends CommonObject
      *      @param  int     $datestart      Date start of event
      *    	@return string		    		Label
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($percent,$mode,$hidenastatus=0,$datestart='')
     {
+        // phpcs:enable
         global $langs;
 
         if ($mode == 0)
@@ -1355,6 +1358,7 @@ class ActionComm extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *		Export events from database into a cal file.
      *
@@ -1365,9 +1369,9 @@ class ActionComm extends CommonObject
      *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
      *		@return int     					<0 if error, nb of events in new file if ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)
     {
+        // phpcs:enable
         global $conf,$langs,$dolibarr_main_url_root,$mysoc;
 
         require_once DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php";

@@ -930,6 +930,7 @@ class Holiday extends CommonObject
 		return $this->LibStatut($this->statut, $mode, $this->date_debut);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns the label of a statut
 	 *
@@ -938,9 +939,9 @@ class Holiday extends CommonObject
 	 *  @param		date	$startdate	Date holiday should start
 	 *	@return     string      		Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut, $mode=0, $startdate='')
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
@@ -1589,15 +1590,16 @@ class Holiday extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"
 	 *
 	 * @return  array       Array of user ids
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_users_approver_holiday()
 	{
+        // phpcs:enable
 		$users_validator=array();
 
 		$sql = "SELECT DISTINCT ur.fk_user";

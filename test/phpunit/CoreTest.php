@@ -252,6 +252,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         // This is code copied from main.inc.php !!!!!!!!!!!!!!!
 
+        // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
         /**
          * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
          *
@@ -259,9 +260,9 @@ class CoreTest extends PHPUnit_Framework_TestCase
          * @param       string $type    1=GET, 0=POST, 2=PHP_SELF
          * @return      int             >0 if there is an injection
          */
-        // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
         function test_sql_and_script_inject($val, $type)
         {
+            // phpcs:enable
 		    $inj = 0;
 		    // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
 		    if ($type != 2)

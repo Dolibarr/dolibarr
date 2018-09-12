@@ -88,6 +88,7 @@ class FormSms
         return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Show the form to input an sms.
      *
@@ -95,9 +96,9 @@ class FormSms
      *  @param  int     $showform       Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function show_form($morecss='titlefield', $showform=1)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $form;
 
         if (! is_object($form)) $form=new Form($this->db);

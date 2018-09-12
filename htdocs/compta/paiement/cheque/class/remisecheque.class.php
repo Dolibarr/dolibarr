@@ -495,15 +495,16 @@ class RemiseCheque extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param      User	$user       Objet user
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -549,14 +550,15 @@ class RemiseCheque extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $user;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -864,14 +866,15 @@ class RemiseCheque extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Charge les proprietes ref_previous et ref_next
 	 *
 	 *  @return     int   <0 if KO, 0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_previous_next_id()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$this->errno = 0;
@@ -906,6 +909,7 @@ class RemiseCheque extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Set the creation date
      *
@@ -913,9 +917,9 @@ class RemiseCheque extends CommonObject
      *      @param  int   $date           Date creation
      *      @return int                 		<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date($user, $date)
     {
+        // phpcs:enable
         if ($user->rights->banque->cheque)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
@@ -941,6 +945,7 @@ class RemiseCheque extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Set the ref of bordereau
 	 *
@@ -948,9 +953,9 @@ class RemiseCheque extends CommonObject
 	 *      @param  int   $ref         ref of bordereau
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_number($user, $ref)
 	{
+        // phpcs:enable
 		if ($user->rights->banque->cheque)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
@@ -1064,6 +1069,7 @@ class RemiseCheque extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return label of a status
 	 *
@@ -1071,9 +1077,9 @@ class RemiseCheque extends CommonObject
 	 *  @param  int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return string      		Libelle du statut
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 		$langs->load('compta');
 		if ($mode == 0)
@@ -1081,32 +1087,32 @@ class RemiseCheque extends CommonObject
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut0').' '.$langs->trans('ToValidate');
 			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut0');
 			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut0').' '.$langs->trans('ToValidate');
 			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut0');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut0');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');

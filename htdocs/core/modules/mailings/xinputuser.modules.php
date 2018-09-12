@@ -108,6 +108,7 @@ class mailing_xinputuser extends MailingTargets
 		return $s;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
@@ -115,9 +116,9 @@ class mailing_xinputuser extends MailingTargets
 	 *  @param	array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
+        // phpcs:enable
 		global $conf,$langs,$_FILES;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -154,8 +155,8 @@ class mailing_xinputuser extends MailingTargets
 		}
 		else
 		{
-		   	$langs->load("errors");
-		   	$this->error = $langs->trans("ErrorBadEmail",$email);
+            $langs->load("errors");
+            $this->error = $langs->trans("ErrorBadEmail",$email);
 			return -1;
 		}
 	}

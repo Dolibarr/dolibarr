@@ -271,6 +271,7 @@ class AccountingJournal extends CommonObject
 		return $this->LibType($this->nature,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return type of an accounting journal
 	 *
@@ -278,9 +279,9 @@ class AccountingJournal extends CommonObject
 	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
 	 *  @return string 				   	Label of type
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibType($nature,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->loadLangs(array("accountancy"));

@@ -216,8 +216,6 @@ class Ticket extends CommonObject
     const STATUS_CANCELED = 9;
 
 
-
-
     /**
      *  Constructor
      *
@@ -1169,6 +1167,7 @@ class Ticket extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return status label of object
      *
@@ -1176,146 +1175,146 @@ class Ticket extends CommonObject
      *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      *    @return     string     			 Label
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut, $mode = 0)
     {
+        // phpcs:enable
         global $langs;
 
         if ($mode == 0) {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 1) {
+        elseif ($mode == 1) {
             return $langs->trans($this->statuts_short[$statut]);
         }
-        if ($mode == 2) {
+        elseif ($mode == 2) {
             if ($statut == 0) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 1) {
+            elseif ($statut == 1) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 3) {
+            elseif ($statut == 3) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 4) {
+            elseif ($statut == 4) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 5) {
+            elseif ($statut == 5) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 6) {
+            elseif ($statut == 6) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 8) {
+            elseif ($statut == 8) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 9) {
+            elseif ($statut == 9) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
         }
-        if ($mode == 3) {
+        elseif ($mode == 3) {
             if ($statut == 0) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
             }
 
-            if ($statut == 1) {
+            elseif ($statut == 1) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
             }
 
-            if ($statut == 3) {
+            elseif ($statut == 3) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
             }
 
-            if ($statut == 4) {
+            elseif ($statut == 4) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket');
             }
 
-            if ($statut == 5) {
+            elseif ($statut == 5) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
             }
 
-            if ($statut == 6) {
+            elseif ($statut == 6) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
             }
 
-            if ($statut == 8) {
+            elseif ($statut == 8) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
             }
 
-            if ($statut == 9) {
+            elseif ($statut == 9) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
             }
         }
-        if ($mode == 4) {
+        elseif ($mode == 4) {
             if ($statut == 0) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 1) {
+            elseif ($statut == 1) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 3) {
+            elseif ($statut == 3) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 4) {
+            elseif ($statut == 4) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 5) {
+            elseif ($statut == 5) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 6) {
+            elseif ($statut == 6) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 8) {
+            elseif ($statut == 8) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
 
-            if ($statut == 9) {
+            elseif ($statut == 9) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
         }
-        if ($mode == 5) {
+        elseif ($mode == 5) {
             if ($statut == 0) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
             }
 
-            if ($statut == 1) {
+            elseif ($statut == 1) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
             }
 
-            if ($statut == 3) {
+            elseif ($statut == 3) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
             }
 
-            if ($statut == 4) {
+            elseif ($statut == 4) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket');
             }
 
-            if ($statut == 5) {
+            elseif ($statut == 5) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
             }
 
-            if ($statut == 6) {
+            elseif ($statut == 6) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
             }
 
-            if ($statut == 8) {
+            elseif ($statut == 8) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
             }
 
-            if ($statut == 9) {
+            elseif ($statut == 9) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
             }
         }
@@ -2445,15 +2444,16 @@ class Ticket extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
 	 *  Return if at least one photo is available
 	 *
 	 *  @param      string		$sdir       Directory to scan
 	 *  @return     boolean     			True if at least one photo is available, False if not
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function is_photo_available($sdir)
     {
+        // phpcs:enable
         include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
         global $conf;

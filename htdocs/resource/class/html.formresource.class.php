@@ -60,6 +60,7 @@ class FormResource
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Output html form to select a resource
      *
@@ -75,9 +76,9 @@ class FormResource
      *  @param	int		$limit			Limit number of answers
      * 	@return	string					HTML string with
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_resource_list($selected='',$htmlname='fk_resource',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
     {
+        // phpcs:enable
     	global $conf,$user,$langs;
 
     	$out='';
@@ -155,6 +156,7 @@ class FormResource
     	return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return html list of tickets type
      *
@@ -167,9 +169,9 @@ class FormResource
      *  @param  int		$maxlength      Max length of label
      * 	@return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_types_resource($selected='',$htmlname='type_resource',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
     {
+        // phpcs:enable
     	global $langs,$user;
 
     	$resourcestat = new Dolresource($this->db);

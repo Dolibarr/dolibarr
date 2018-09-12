@@ -35,7 +35,7 @@ class LignePrelevement
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
      * @var DoliDB Database handler.
      */
@@ -128,6 +128,7 @@ class LignePrelevement
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Return status label for a status
 	 *
@@ -135,28 +136,28 @@ class LignePrelevement
 	 *    @param    int		$mode       0=Label, 1=Picto + label, 2=Picto, 3=Label + Picto
 	 * 	  @return   string      		Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);   // Waiting
 			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);   // Credited
 			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);   // Refused
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
 			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
 			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
 			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
