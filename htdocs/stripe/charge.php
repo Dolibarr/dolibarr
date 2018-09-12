@@ -96,7 +96,7 @@ if (!$rowid)
 
     print '<TR class="liste_titre">';
     print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    //print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+    print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("Origin",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"","","",'align="center"',$sortfield,$sortorder);
@@ -155,7 +155,7 @@ if (!$rowid)
 			}
 		print "<TD><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></TD>\n";
 		// Stripe customer
-		//print "<TD>".$charge->customer."</TD>\n";
+		print "<TD>".$charge->customer."</TD>\n";
 		// Link
 		print "<TD>";
 		if ($societestatic->id > 0)
@@ -165,7 +165,7 @@ if (!$rowid)
 		elseif ($memberstatic->id > 0)
 		{
 			print $memberstatic->getNomUrl(1);
-		} else print $charge->customer;
+		}
 		print "</TD>\n";
 		// Origine
 		print "<TD>";
