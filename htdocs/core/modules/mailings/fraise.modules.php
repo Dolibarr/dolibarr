@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -199,9 +200,9 @@ class mailing_fraise extends MailingTargets
 
         $s.='<br>';
         $s.=$langs->trans("DateEndSubscription").': &nbsp;';
-        $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("After").' > '.$form->selectDate(-1,'subscriptionafter',0,0,1,'fraise',1,0,0);
         $s.=' &nbsp; ';
-        $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("Before").' < '.$form->selectDate(-1,'subscriptionbefore',0,0,1,'fraise',1,0,0);
 
         return $s;
     }

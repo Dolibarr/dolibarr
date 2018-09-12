@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville   	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur   	<eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
- * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
- * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
- * Copyright (C) 2012-2018 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2015	   Ferran Marcet			<fmarcet@2byte.es>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Andreu Bisquerra Gaya   <jove@bisquerra.com>
+ * Copyright (C) 2012       David Rodriguez Martinez <davidrm146@gmail.com>
+ * Copyright (C) 2012-2018  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -442,7 +443,7 @@ if ($action == 'create' && !$error)
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-	$html->select_date('','','','','',"add",1,1);
+	print $html->selectDate('', '', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -596,8 +597,8 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		$num = $db->num_rows($resql);
 		print load_fiche_titre($title);
 		$i = 0;
-		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
-		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
+		$period=$html->selectDate($date_start,'date_start',0,0,1,'',1,0).' - '.$html->selectDate($date_end,'date_end',0,0,1,'',1,0);
+		$periodely=$html->selectDate($date_starty,'date_start_dely',0,0,1,'',1,0).' - '.$html->selectDate($date_endy,'date_end_dely',0,0,1,'',1,0);
 
 		if (! empty($socid))
 		{
@@ -654,7 +655,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
-		
+
 		$generic_commande = new Commande($db);
 
 		while ($i < $num)

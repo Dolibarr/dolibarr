@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry         <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -636,11 +637,11 @@ if ($id > 0 || ! empty($ref)) {
 							print '</td>';
 							print '<td class="nowraponall">';
 							$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc' . $suffix . 'month'), GETPOST('dlc' . $suffix . 'day'), GETPOST('dlc' . $suffix . 'year'));
-							$form->select_date($dlcdatesuffix, 'dlc' . $suffix, '', '', 1, "");
+							print $form->selectDate($dlcdatesuffix, 'dlc' . $suffix, '', '', 1, '');
 							print '</td>';
 							print '<td class="nowraponall">';
 							$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo' . $suffix . 'month'), GETPOST('dluo' . $suffix . 'day'), GETPOST('dluo' . $suffix . 'year'));
-							$form->select_date($dluodatesuffix, 'dluo' . $suffix, '', '', 1, "");
+							print $form->selectDate($dluodatesuffix, 'dluo' . $suffix, '', '', 1, '');
 							print '</td>';
 							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {

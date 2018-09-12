@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2016       Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,9 +194,9 @@ else {
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateStart') . ': ';
-	$moreforfilter .= $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->selectDate($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= $langs->trans('DateEnd') . ': ';
-	$moreforfilter .= $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->selectDate($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= '</div>';
 
 	if (! empty($moreforfilter)) {
