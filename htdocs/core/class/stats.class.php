@@ -42,7 +42,7 @@ abstract class Stats
      *	@param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array					Array of values
 	 */
-	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
+	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $startmonth=0)
 	{
 		global $conf,$user,$langs;
 
@@ -86,6 +86,7 @@ abstract class Stats
 		else
 		{
 			$year=$startyear;
+			if ($startmonth != 0) $year = $year - 1;
 			while ($year <= $endyear)
 			{
 				$datay[$year] = $this->getNbByMonth($year, $format);
@@ -96,11 +97,11 @@ abstract class Stats
 
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
-				$data[$i][]=$datay[$endyear][$i][0];
+				$data[$i][]=$datay[$endyear][($i+$startmonth)%12][0];
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year][$i][1];
+					$data[$i][]=$datay[$year - (1 - (int)($i+$startmonth)/12)][($i+$startmonth)%12][1];
 					$year++;
 				}
 			}
@@ -136,7 +137,7 @@ abstract class Stats
      * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array					Array of values
 	 */
-	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
+	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $startmonth=0)
 	{
 		global $conf,$user,$langs;
 
@@ -181,6 +182,7 @@ abstract class Stats
         else
 		{
 			$year=$startyear;
+			if ($startmonth != 0) $year = $year - 1;
 			while($year <= $endyear)
 			{
 				$datay[$year] = $this->getAmountByMonth($year, $format);
@@ -191,11 +193,11 @@ abstract class Stats
 			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			for ($i = 0 ; $i < 12 ; $i++)
 			{
-				$data[$i][]=$datay[$endyear][$i][0];	// set label
+				$data[$i][]=$datay[$endyear][($i+$startmonth)%12][0];	// set label
 				$year=$startyear;
 				while($year <= $endyear)
 				{
-					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+					$data[$i][]=$datay[$year - (1 - (int)($i+$startmonth)/12)][($i+$startmonth)%12][1];	// set yval for x=i
 					$year++;
 				}
 			}
