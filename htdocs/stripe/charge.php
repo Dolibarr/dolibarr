@@ -96,7 +96,7 @@ if (!$rowid)
 
     print '<TR class="liste_titre">';
     print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-    print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+    //print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("Origin",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"","","",'align="center"',$sortfield,$sortorder);
@@ -120,20 +120,20 @@ if (!$rowid)
 	foreach ($list->data as $charge)
 	{
 		// The metadata FULLTAG is defined by the online payment page
-		$FULLTAG=$charge->metadata->FULLTAG;
+		$FULLTAG=$charge->description;
 
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']))
+		if (! empty($tmparray['CUS']) && $charge->metadata->dol_thirdparty_id)
 		{
-			$societestatic->fetch($tmparray['CUS']);
+			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 		}
 		else
 		{
 			$societestatic->id = 0;
 		}
-		if (! empty($tmparray['MEM']))
+		if (! empty($tmparray['MEM']) && $charge->metadata->dol_thirdparty_id)
 		{
 			$memberstatic->fetch($tmparray['MEM']);
 		}
@@ -144,32 +144,40 @@ if (!$rowid)
 
 	    print '<TR class="oddeven">';
 	    // Ref
-		print "<TD><A href='".DOL_URL_ROOT."/stripe/charge.php?rowid=".$charge->id."'>".$charge->id."</A></TD>\n";
+      $url='https://dashboard.stripe.com/test/payments/'.$charge->id;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/payments/'.$charge->id;
+			}
+		print "<TD><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></TD>\n";
 		// Stripe customer
-		print "<TD>".$charge->customer."</TD>\n";
+		//print "<TD>".$charge->customer."</TD>\n";
 		// Link
 		print "<TD>";
 		if ($societestatic->id > 0)
 		{
 			print $societestatic->getNomUrl(1);
 		}
-		if ($memberstatic->id > 0)
+		elseif ($memberstatic->id > 0)
 		{
 			print $memberstatic->getNomUrl(1);
-		}
+		} else print $charge->customer;
 		print "</TD>\n";
 		// Origine
 		print "<TD>";
-		print $FULLTAG;
-		if ($charge->metadata->source=="order"){
+		if ($charge->metadata->dol_type=="order"){
 			$object = new Commande($db);
-			$object->fetch($charge->metadata->idsource);
-			print "<A href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->idsource."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
-		} elseif ($charge->metadata->source=="invoice"){
+			$object->fetch($charge->metadata->dol_id);
+      if ($object->id > 0) {
+			print "<A href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
+      } else print $FULLTAG;
+		} elseif ($charge->metadata->dol_type=="invoice"){
 			$object = new Facture($db);
-			$object->fetch($charge->metadata->idsource);
-		    print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->idsource."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
-		}
+			$object->fetch($charge->metadata->dol_id);
+      if ($object->id > 0) {
+		  print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
+      } else print $FULLTAG;
+		} else print $FULLTAG;
 	    print "</TD>\n";
 		// Date payment
 	    print '<TD align="center">'.dol_print_date($charge->created,'%d/%m/%Y %H:%M')."</TD>\n";
