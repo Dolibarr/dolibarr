@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
- *	Parent class of document generator for address sheet.
+ *  Parent class of document generator for address sheet.
  */
 class ModelePDFLabels
 {
@@ -40,16 +40,17 @@ class ModelePDFLabels
 	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
+     *  @param  DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='members_labels';
@@ -63,6 +64,7 @@ class ModelePDFLabels
 }
 
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Create a document onto disk according to template module.
  *
@@ -75,9 +77,9 @@ class ModelePDFLabels
  *  @param  string      $filename           Short file name of PDF output file
  *	@return int        						<0 if KO, >0 if OK
  */
-// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='', $template='standardlabel', $filename='tmp_address_sheet.pdf')
 {
+    // phpcs:enable
 	global $conf,$langs;
 	$langs->load("members");
 

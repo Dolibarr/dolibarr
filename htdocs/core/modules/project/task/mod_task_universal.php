@@ -127,6 +127,7 @@ class mod_task_universal extends ModeleNumRefTask
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -134,9 +135,9 @@ class mod_task_universal extends ModeleNumRefTask
      *  @param  Task		$object	    Object task
      *  @return string      			Next not used reference
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function project_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$object);
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
     }
 }

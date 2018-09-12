@@ -50,12 +50,12 @@ class PriceExpression
 	public $id;
 
     public $title;
-	public $expression;
+    public $expression;
 
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = "c_price_expression";
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = "c_price_expression";
 
     /**
      *  Constructor
@@ -176,14 +176,15 @@ class PriceExpression
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    List all price expressions
      *
      *    @return	array				Array of price expressions
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function list_price_expression()
     {
+        // phpcs:enable
         $sql = "SELECT rowid, title, expression";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " ORDER BY title";
@@ -214,15 +215,16 @@ class PriceExpression
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Returns any existing rowid with specified title
      *
      *  @param		String	$title  Title of expression
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function find_title($title)
     {
+        // phpcs:enable
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE title = '".$this->db->escape($title)."'";

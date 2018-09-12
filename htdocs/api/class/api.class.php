@@ -271,15 +271,16 @@ class DolibarrApi
 	    return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches       Array of found string by regex search
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function _forge_criteria_callback($matches)
 	{
+        // phpcs:enable
 	    global $db;
 
 	    //dol_syslog("Convert matches ".$matches[1]);

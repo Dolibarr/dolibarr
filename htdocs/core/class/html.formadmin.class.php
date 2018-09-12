@@ -29,15 +29,8 @@
  */
 class FormAdmin
 {
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-	
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+	var $db;
+	var $error;
 
 
 	/**
@@ -51,6 +44,7 @@ class FormAdmin
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
@@ -66,9 +60,9 @@ class FormAdmin
 	 *      @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *      @return		string						Return HTML select string with list of languages
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_language($selected='', $htmlname='lang_id', $showauto=0, $filter=null, $showempty='', $showwarning=0, $disabled=0, $morecss='', $showcode=0, $forcecombo=0)
 	{
+		// phpcs:enable
 		global $langs;
 
 		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT,12);
@@ -127,6 +121,7 @@ class FormAdmin
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *    Return list of available menus (eldy_backoffice, ...)
      *
@@ -136,9 +131,9 @@ class FormAdmin
      *    @param    string		$moreattrib      More attributes on html select tag
      *    @return	integer|null
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib='')
     {
+		// phpcs:enable
         global $langs,$conf;
 
         // Clean parameters
@@ -217,6 +212,7 @@ class FormAdmin
 		print '</select>';
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return combo list of available menu families
      *
@@ -225,9 +221,9 @@ class FormAdmin
      *  @param	string[]	$dirmenuarray    Directories to scan
      *  @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_menu_families($selected, $htmlname, $dirmenuarray)
     {
+		// phpcs:enable
 		global $langs,$conf;
 
         //$expdevmenu=array('smartphone_backoffice.php','smartphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
@@ -289,6 +285,7 @@ class FormAdmin
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return a HTML select list of timezones
      *
@@ -296,9 +293,9 @@ class FormAdmin
      *  @param  string		$htmlname        Nom de la zone select
      *  @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_timezone($selected,$htmlname)
     {
+		// phpcs:enable
 		global $langs,$conf;
 
         print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -342,6 +339,7 @@ class FormAdmin
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
@@ -351,9 +349,9 @@ class FormAdmin
 	 * 	@param		int		$showempty		Add empty value
 	 * 	@return		string					Return HTML output
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_paper_format($selected='',$htmlname='paperformat_id',$filter=0,$showempty=0)
 	{
+		// phpcs:enable
 		global $langs;
 
 		$langs->load("dict");

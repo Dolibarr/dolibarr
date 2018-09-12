@@ -75,16 +75,17 @@ abstract class ActionsAdherentCardCommon
     	//}
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Set content of ->tpl array, to use into template
      *
      *  @param	string		$action    Type of action
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function assign_values(&$action, $id)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
@@ -233,14 +234,15 @@ abstract class ActionsAdherentCardCommon
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Assign POST values into object
      *
      *  @return		string					HTML output
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private function assign_post()
     {
+        // phpcs:enable
         global $langs, $mysoc;
 
         $this->object->old_name 			= 	$_POST["old_name"];

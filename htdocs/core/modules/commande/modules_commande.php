@@ -44,16 +44,17 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
 	 */
 	public $error='';
 
-	/**
-	 *  Return list of active generation modules
-	 *
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function liste_modeles($db, $maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type = 'order';

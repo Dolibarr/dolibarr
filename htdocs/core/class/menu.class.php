@@ -96,14 +96,15 @@ class Menu
         $this->liste=array_merge($array_start,$array_new,$array_end);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Remove a menu entry from this->liste
      *
      * @return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function remove_last()
     {
+        // phpcs:enable
         if (count($this->liste) > 1) {
             array_pop($this->liste);
         }

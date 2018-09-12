@@ -217,9 +217,10 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Add line into array products
-     *	$this->client doit etre charge
+     *  $this->client doit etre charge
      *
      * 	@param  int		$idproduct       	Product Id to add
      * 	@param  int		$qty             	Quantity
@@ -229,9 +230,9 @@ class SupplierProposal extends CommonObject
      *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
      *			insere dans tableau $this->products
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_product($idproduct, $qty, $remise_percent=0)
     {
+        // phpcs:enable
         global $conf, $mysoc;
 
         if (! $qty) $qty = 1;
@@ -273,15 +274,16 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Adding line of fixed discount in the proposal in DB
      *
      *	@param     int		$idremise			Id of fixed discount
      *  @return    int          				>0 if OK, <0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function insert_discount($idremise)
     {
+        // phpcs:enable
         global $langs;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1088,6 +1090,7 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Insert into DB a supplier_proposal object completely defined by its data members (ex, results from copy).
      *
@@ -1095,9 +1098,9 @@ class SupplierProposal extends CommonObject
      *	@return    	int				Id of the new object if ok, <0 if ko
      *	@see       	create
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function create_from($user)
     {
+        // phpcs:enable
         $this->products=$this->lines;
 
         return $this->create($user);
@@ -1518,6 +1521,7 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Set delivery date
      *
@@ -1525,9 +1529,9 @@ class SupplierProposal extends CommonObject
      *	@param      int			$date_livraison     Delivery date
      *	@return     int         					<0 if ko, >0 if ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date_livraison($user, $date_livraison)
     {
+        // phpcs:enable
         if (! empty($user->rights->supplier_proposal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
@@ -1548,6 +1552,7 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Set an overall discount on the proposal
      *
@@ -1555,9 +1560,9 @@ class SupplierProposal extends CommonObject
      *	@param      double	$remise      Amount discount
      *	@return     int         		<0 if ko, >0 if ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_remise_percent($user, $remise)
     {
+        // phpcs:enable
         $remise=trim($remise)?trim($remise):0;
 
         if (! empty($user->rights->supplier_proposal->creer))
@@ -1582,6 +1587,7 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Set an absolute overall discount on the proposal
      *
@@ -1589,9 +1595,9 @@ class SupplierProposal extends CommonObject
      *	@param      double	$remise      Amount discount
      *	@return     int         		<0 if ko, >0 if ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_remise_absolue($user, $remise)
     {
+        // phpcs:enable
         $remise=trim($remise)?trim($remise):0;
 
         if (! empty($user->rights->supplier_proposal->creer))
@@ -1855,15 +1861,16 @@ class SupplierProposal extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *	Set draft status
+     *  Set draft status
      *
      *	@param		User	$user		Object user that modify
      *	@return		int					<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_draft($user)
     {
+        // phpcs:enable
         global $conf,$langs;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET fk_statut = 0";
@@ -1882,6 +1889,7 @@ class SupplierProposal extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of askprice (eventually filtered on user) into an array
      *
@@ -1895,9 +1903,9 @@ class SupplierProposal extends CommonObject
      *    @param    string	$sortorder			Sort order
      *    @return	int		       				-1 if KO, array with result if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datec', $sortorder='DESC')
     {
+        // phpcs:enable
         global $conf,$user;
 
         $ga = array();
@@ -2147,16 +2155,17 @@ class SupplierProposal extends CommonObject
         return $this->LibStatut($this->statut,$mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *    	Return label of a status (draft, validated, ...)
+     *  Return label of a status (draft, validated, ...)
      *
-     *    	@param      int			$statut		id statut
-     *    	@param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     *    	@return     string      Label
+     *  @param      int			$statut		id statut
+     *  @param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *  @return     string      Label
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=1)
     {
+        // phpcs:enable
     	// Init/load array of translation of status
     	if (empty($this->labelstatut) || empty($this->labelstatut_short))
     	{
@@ -2176,21 +2185,22 @@ class SupplierProposal extends CommonObject
 
     	$statuttrans='';
 		if ($statut==0) $statuttrans='statut0';
-		if ($statut==1) $statuttrans='statut1';
-		if ($statut==2) $statuttrans='statut3';
-		if ($statut==3) $statuttrans='statut5';
-		if ($statut==4) $statuttrans='statut6';
+		elseif ($statut==1) $statuttrans='statut1';
+		elseif ($statut==2) $statuttrans='statut3';
+		elseif ($statut==3) $statuttrans='statut5';
+		elseif ($statut==4) $statuttrans='statut6';
 
 		if ($mode == 0)	return $this->labelstatut[$statut];
-		if ($mode == 1)	return $this->labelstatut_short[$statut];
-		if ($mode == 2)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		if ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		if ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
-		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
-		if ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
+		elseif ($mode == 2)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
+		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
+		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
+		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -2198,9 +2208,9 @@ class SupplierProposal extends CommonObject
      *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
      *      @return         int             <0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user,$mode)
     {
+        // phpcs:enable
         global $conf, $user, $langs;
 
         $now=dol_now();
@@ -2352,14 +2362,15 @@ class SupplierProposal extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Charge indicateurs this->nb de tableau de bord
      *
      *      @return     int         <0 if ko, >0 if ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
+        // phpcs:enable
         global $conf, $user;
 
         $this->nb=array();
@@ -3205,15 +3216,16 @@ class SupplierProposalLine extends CommonObjectLine
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Update DB line fields total_xxx
      *	Used by migration
      *
      *	@return		int		<0 if ko, >0 if ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_total()
     {
+        // phpcs:enable
         $this->db->begin();
 
         // Mise a jour ligne en base

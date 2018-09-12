@@ -216,14 +216,15 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
 	 *   @return	int			0 or 1
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_prefixIsUsed()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
@@ -292,6 +293,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -301,9 +303,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function verif_dispo($db, $code, $soc, $type=0)
 	{
+        // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		if ($type == 1) $sql.= " WHERE code_fournisseur = '".$code."'";
 		else $sql.= " WHERE code_client = '".$code."'";

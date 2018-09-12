@@ -53,7 +53,7 @@ class mailing_fraise extends MailingTargets
      */
     function __construct($db)
     {
-        $this->db=$db;
+        $this->db = $db;
     }
 
 
@@ -219,6 +219,7 @@ class mailing_fraise extends MailingTargets
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Ajoute destinataires dans table des cibles
      *
@@ -226,9 +227,9 @@ class mailing_fraise extends MailingTargets
      *  @param  array    $filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *  @return int                       < 0 si erreur, nb ajout si ok
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_to_target($mailing_id,$filtersarray=array())
     {
+        // phpcs:enable
 	    // Deprecation warning
 	    if ($filtersarray) {
 		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
@@ -269,8 +270,8 @@ class mailing_fraise extends MailingTargets
         // Filter on type
         if ($_POST['filter_type']) $sql.= " AND ta.rowid='".$_POST['filter_type']."'";
         // Filter on category
-		if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
-		$sql.= " ORDER BY a.email";
+        if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
+        $sql.= " ORDER BY a.email";
         //print $sql;
 
         // Add targets into table

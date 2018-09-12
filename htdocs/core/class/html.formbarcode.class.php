@@ -41,9 +41,9 @@ class FormBarCode
 
 
     /**
-     *	Constructor
+     *  Constructor
      *
-     *	@param	DoliDB		$db		Database handler
+     *  @param  DoliDB		$db		Database handler
      */
     function __construct($db)
     {
@@ -104,18 +104,19 @@ class FormBarCode
         return $select_encoder;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Print form to select type of barcode
      *
-     *	@param	int		$selected          Id code pre-selected
-     *  @param	string	$htmlname          Name of HTML select field
-     *  @param  int		$useempty          Affiche valeur vide dans liste
-     *  @return	void
+     *  @param  int     $selected          Id code pre-selected
+     *  @param  string  $htmlname          Name of HTML select field
+     *  @param  int     $useempty          Affiche valeur vide dans liste
+     *  @return void
      *  @deprecated
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_barcode_type($selected='', $htmlname='barcodetype_id', $useempty=0)
     {
+        // phpcs:enable
         print $this->selectBarcodeType($selected, $htmlname, $useempty);
     }
 
@@ -173,6 +174,7 @@ class FormBarCode
         return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Show form to select type of barcode
      *
@@ -182,9 +184,9 @@ class FormBarCode
      *  @return	void
      *  @deprecated
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
     {
+        // phpcs:enable
         print $this->formBarcodeType($page, $selected, $htmlname);
     }
 

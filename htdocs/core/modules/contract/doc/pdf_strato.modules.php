@@ -159,7 +159,8 @@ class pdf_strato extends ModelePDFContract
 		$this->posxdesc=$this->marge_gauche+1;
 	}
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		CommonObject	$object				Id of object to generate
@@ -170,9 +171,9 @@ class pdf_strato extends ModelePDFContract
      *  @param		int				$hideref			Do not show ref
      *  @return		int									1=OK, 0=KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$hookmanager,$mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;

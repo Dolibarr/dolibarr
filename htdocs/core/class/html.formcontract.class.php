@@ -49,6 +49,7 @@ class FormContract
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -59,9 +60,9 @@ class FormContract
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbr of project if OK, <0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_contract($socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
 	{
+        // phpcs:enable
 		global $db,$user,$conf,$langs;
 
 		$hideunselectables = false;

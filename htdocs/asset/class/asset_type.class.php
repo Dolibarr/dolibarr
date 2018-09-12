@@ -291,14 +291,15 @@ class AssetType extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of asset's type
 	 *
 	 *  @return 	array	List of types of members
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$assettypes = array();

@@ -47,6 +47,7 @@ class pdf_standard extends CommonStickerGenerator
 		// use this method in future refactoring
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - __LOGO__ is replace with company logo
@@ -62,9 +63,9 @@ class pdf_standard extends CommonStickerGenerator
 	 * @param	 string		$photo			Photo (full path to image file used as replacement for key __PHOTOS__ into left, right, header or footer text)
 	 * @return	 void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photo='')
 	{
+        // phpcs:enable
 		global $db,$mysoc,$conf,$langs;
 		global $forceimgscalewidth,$forceimgscaleheight;
 
@@ -236,6 +237,7 @@ class pdf_standard extends CommonStickerGenerator
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
@@ -246,9 +248,9 @@ class pdf_standard extends CommonStickerGenerator
 	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
 	 *	@return	int								1=OK, 0=KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $outputlangs, $srctemplatepath, $mode='member', $nooutput=0)
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;

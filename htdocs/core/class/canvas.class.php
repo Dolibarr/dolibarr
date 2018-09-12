@@ -32,7 +32,7 @@ class Canvas
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -133,6 +133,7 @@ class Canvas
         //print ' => template_dir='.$this->template_dir.'<br>';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
 	 * 	Shared method for canvas to assign values for templates
 	 *
@@ -141,9 +142,9 @@ class Canvas
 	 * 	@param		string		$ref		Object ref (if id not provided)
 	 * 	@return		void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action='view', $id=0, $ref='')
 	{
+        // phpcs:enable
 		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id, $ref);
 	}
 
@@ -161,6 +162,7 @@ class Canvas
         else return 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Display a canvas page. This will include the template for output.
 	 *	Variables used by templates may have been defined or loaded before into the assign_values function.
@@ -168,9 +170,9 @@ class Canvas
 	 *	@param	string	$action		Action code
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function display_canvas($action)
 	{
+        // phpcs:enable
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 

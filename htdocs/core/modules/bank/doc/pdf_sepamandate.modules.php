@@ -83,8 +83,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
-	/**
-	 *	Fonction generant le projet sur le disque
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+	 *  Fonction generant le projet sur le disque
 	 *
 	 *	@param	    Project		$object   		    Object project a generer
 	 *	@param	    Translate	$outputlangs	    Lang output object
@@ -95,9 +96,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
      *  @param      null|array  $moreparams         More parameters
 	 *	@return	    int         				    1 if OK, <=0 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -427,6 +428,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -436,10 +438,10 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
-	    global $conf, $mysoc;
+        // phpcs:enable
+        global $conf, $mysoc;
 
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -463,6 +465,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show area for the customer to sign
 	 *
@@ -472,9 +475,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 	    $tab_top = $posy + 4;
 	    $tab_hl = 4;

@@ -138,6 +138,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Function sending an email has the adherent with the text supplied in parameter.
 	 *
@@ -153,9 +154,9 @@ class Adherent extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		// Detect if message is HTML
@@ -644,6 +645,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Update denormalized last subscription date.
 	 * 	This function is called when we delete a subscription for example.
@@ -651,9 +653,9 @@ class Adherent extends CommonObject
 	 *	@param	User	$user			User making change
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_end_date($user)
 	{
+        // phpcs:enable
 		$this->db->begin();
 
 		// Search for last subscription id and end date
@@ -999,15 +1001,16 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Method to load member from its login
 	 *
 	 *	@param	string	$login		login of member
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_login($login)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
@@ -1029,6 +1032,7 @@ class Adherent extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Method to load member from its name
 	 *
@@ -1036,9 +1040,9 @@ class Adherent extends CommonObject
 	 *	@param	string	$lastname	Lastname
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_name($firstname,$lastname)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
@@ -1201,6 +1205,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fonction qui recupere pour un adherent les parametres
 	 *				first_subscription_date
@@ -1210,9 +1215,9 @@ class Adherent extends CommonObject
 	 *
 	 *	@return		int			<0 si KO, >0 si OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_subscriptions()
 	{
+        // phpcs:enable
 		global $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
@@ -1756,14 +1761,15 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Function to add member into external tools mailing-list, spip, etc.
 	 *
 	 *  @return		int		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_abo()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -1814,14 +1820,15 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Function to delete a member from external tools like mailing-list, spip, etc.
 	 *
 	 *  @return     int     <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function del_to_abo()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -1994,6 +2001,7 @@ class Adherent extends CommonObject
 		return $this->LibStatut($this->statut,$this->need_subscription,$this->datefin,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -2003,9 +2011,9 @@ class Adherent extends CommonObject
 	 *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string      						Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load("members");
 		if ($mode == 0)
@@ -2019,7 +2027,7 @@ class Adherent extends CommonObject
 			}
 			if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
 			if ($statut >= 1)
@@ -2030,7 +2038,7 @@ class Adherent extends CommonObject
 			}
 			if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraftShort");
 			if ($statut >= 1)
@@ -2041,7 +2049,7 @@ class Adherent extends CommonObject
 			}
 			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
 			if ($statut >= 1)
@@ -2052,7 +2060,7 @@ class Adherent extends CommonObject
 			}
 			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
 			if ($statut >= 1)
@@ -2063,7 +2071,7 @@ class Adherent extends CommonObject
 			}
 			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliated");
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
 			if ($statut >= 1)
@@ -2074,7 +2082,7 @@ class Adherent extends CommonObject
 			}
 			if ($statut == 0)  return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusResiliated").' </span>'.img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
 			if ($statut >= 1)
@@ -2088,14 +2096,15 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$this->nb=array();
@@ -2123,15 +2132,16 @@ class Adherent extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -2266,6 +2276,7 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2275,9 +2286,9 @@ class Adherent extends CommonObject
 	 *								2=Return key only (uid=qqq)
 	 *	@return	string				DN
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_dn($info,$mode=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS].",".$conf->global->LDAP_MEMBER_DN;
@@ -2287,14 +2298,15 @@ class Adherent extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_info()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$info=array();

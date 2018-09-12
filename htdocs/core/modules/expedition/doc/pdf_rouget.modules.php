@@ -36,17 +36,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_rouget extends ModelePdfExpedition
 {
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
 
-	/**
+    /**
      * @var string model name
      */
     public $name;
 
-	/**
+    /**
      * @var string model description (short text)
      */
     public $description;
@@ -173,6 +173,7 @@ class pdf_rouget extends ModelePdfExpedition
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
@@ -184,9 +185,9 @@ class pdf_rouget extends ModelePdfExpedition
      *  @param		int			$hideref			Do not show ref
      *  @return     int         	    			1=OK, 0=KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
 
 		$object->fetch_thirdparty();
@@ -652,6 +653,7 @@ class pdf_rouget extends ModelePdfExpedition
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -662,9 +664,9 @@ class pdf_rouget extends ModelePdfExpedition
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 
         $sign=1;

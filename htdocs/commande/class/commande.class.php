@@ -450,6 +450,7 @@ class Commande extends CommonOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set draft status
 	 *
@@ -457,9 +458,9 @@ class Commande extends CommonOrder
 	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_draft($user, $idwarehouse=-1)
 	{
+        //phpcs:enable
 		global $conf,$langs;
 
 		$error=0;
@@ -532,6 +533,7 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Tag the order as validated (opened)
 	 *	Function used when order is reopend after being closed.
@@ -539,9 +541,9 @@ class Commande extends CommonOrder
 	 *	@param      User	$user       Object user that change status
 	 *	@return     int         		<0 if KO, 0 if nothing is done, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_reopen($user)
 	{
+        // phpcs:enable
 		$error=0;
 
 		if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED)
@@ -1497,6 +1499,7 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Add line into array
 	 *	$this->client must be loaded
@@ -1511,9 +1514,9 @@ class Commande extends CommonOrder
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 *			insere dans tableau $this->products
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_product($idproduct, $qty, $remise_percent=0.0, $date_start='', $date_end='')
 	{
+        // phpcs:enable
 		global $conf, $mysoc;
 
 		if (! $qty) $qty = 1;
@@ -1736,15 +1739,16 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Adding line of fixed discount in the order in DB
 	 *
 	 *	@param     int	$idremise			Id de la remise fixe
 	 *	@return    int          			>0 si ok, <0 si ko
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_discount($idremise)
 	{
+        // phpcs:enable
 		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1814,15 +1818,16 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load array lines
 	 *
 	 *	@param		int		$only_product	Return only physical products
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines($only_product=0)
 	{
+        // phpcs:enable
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx,';
@@ -2040,6 +2045,7 @@ class Commande extends CommonOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns a array with expeditions lines number
 	 *
@@ -2047,9 +2053,9 @@ class Commande extends CommonOrder
 	 *
 	 * TODO deprecate, move to Shipping class
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function nb_expedition()
 	{
+        // phpcs:enable
 		$sql = 'SELECT count(*)';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql.= ', '.MAIN_DB_PREFIX.'element_element as el';
@@ -2066,6 +2072,7 @@ class Commande extends CommonOrder
 		else dol_print_error($this->db);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return a array with the pending stock by product
 	 *
@@ -2074,9 +2081,9 @@ class Commande extends CommonOrder
 	 *
 	 *	TODO		FONCTION NON FINIE A FINIR
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function stock_array($filtre_statut=self::STATUS_CANCELED)
 	{
+        // phpcs:enable
 		$this->stocks = array();
 
 		// Tableau des id de produit de la commande
@@ -2183,6 +2190,7 @@ class Commande extends CommonOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Applique une remise relative
 	 *
@@ -2191,9 +2199,9 @@ class Commande extends CommonOrder
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					<0 if KO, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise($user, $remise, $notrigger=0)
 	{
+        // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
 
 		if ($user->rights->commande->creer)
@@ -2250,6 +2258,7 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 		Applique une remise absolue
 	 *
@@ -2258,9 +2267,9 @@ class Commande extends CommonOrder
 	 * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *		@return		int 					<0 if KO, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise_absolue($user, $remise, $notrigger=0)
 	{
+        // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
 
 		if ($user->rights->commande->creer)
@@ -2317,6 +2326,7 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set the order date
 	 *
@@ -2325,9 +2335,9 @@ class Commande extends CommonOrder
 	 * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date($user, $date, $notrigger=0)
 	{
+        // phpcs:enable
 		if ($user->rights->commande->creer)
 		{
 			$error=0;
@@ -2382,6 +2392,7 @@ class Commande extends CommonOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set the planned delivery date
 	 *
@@ -2390,9 +2401,9 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 si ko, >0 si ok
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison, $notrigger=0)
 	{
+        // phpcs:enable
 		if ($user->rights->commande->creer)
 		{
 			$error=0;
@@ -2447,6 +2458,7 @@ class Commande extends CommonOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of orders (eventuelly filtered on a user) into an array
 	 *
@@ -2460,9 +2472,9 @@ class Commande extends CommonOrder
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     int             		-1 if KO, array with result if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
 	{
+        // phpcs:enable
 		global $user;
 
 		$ga = array();
@@ -2591,6 +2603,7 @@ class Commande extends CommonOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Update order demand_reason
 	 *
@@ -2598,9 +2611,9 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *  @return     int        			 		>0 if ok, <0 if ko
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function demand_reason($demand_reason_id, $notrigger=0)
 	{
+        // phpcs:enable
 		global $user;
 
 		dol_syslog('Commande::demand_reason('.$demand_reason_id.')');
@@ -2662,6 +2675,7 @@ class Commande extends CommonOrder
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set customer ref
 	 *
@@ -2670,9 +2684,9 @@ class Commande extends CommonOrder
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return     int             		<0 if KO, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_ref_client($user, $ref_client, $notrigger=0)
 	{
+        // phpcs:enable
 		if ($user->rights->commande->creer)
 		{
 			$error=0;
@@ -3275,15 +3289,16 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param		User	$user   Object user
 	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		$clause = " WHERE";
@@ -3361,6 +3376,7 @@ class Commande extends CommonOrder
 		return $this->LibStatut($this->statut, $this->billed, $mode);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of status
 	 *
@@ -3370,9 +3386,9 @@ class Commande extends CommonOrder
 	 *  @param      int     $donotshowbilled  Do not show billed status after order status
 	 *  @return     string					  Label of status
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$billed,$mode,$donotshowbilled=0)
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$billedtext = '';
@@ -3681,14 +3697,15 @@ class Commande extends CommonOrder
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Charge indicateurs this->nb de tableau de bord
 	 *
 	 *	@return     int         <0 si ko, >0 si ok
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $user;
 
 		$this->nb=array();
@@ -4317,15 +4334,16 @@ class OrderLine extends CommonOrderLine
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
+        // phpcs:enable
 		$this->db->begin();
 
 		// Clean parameters

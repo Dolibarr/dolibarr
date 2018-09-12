@@ -32,7 +32,7 @@ class FormCron extends Form
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -50,6 +50,7 @@ class FormCron extends Form
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Display On Off selector
 	 *
@@ -58,9 +59,9 @@ class FormCron extends Form
 	 * @param   integer	$readonly		Select is read only or not
 	 * @return	string					HTML select field
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_typejob($htmlname,$selected=0,$readonly=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->load('cron@cron');
