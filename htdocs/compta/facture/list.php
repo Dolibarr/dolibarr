@@ -575,14 +575,14 @@ if ($resql)
 	if ($search_zip)         $param.='&search_zip='.urlencode($search_zip);
 	if ($search_sale > 0)    $param.='&search_sale=' .urlencode($search_sale);
 	if ($search_user > 0)    $param.='&search_user=' .urlencode($search_user);
-	if ($search_product_category > 0)   $param.='$search_product_category=' .urlencode($search_product_category);
+	if ($search_product_category > 0)   $param.='&search_product_category=' .urlencode($search_product_category);
 	if ($search_montant_ht != '')  $param.='&search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_vat != '')  $param.='&search_montant_vat='.urlencode($search_montant_vat);
 	if ($search_montant_localtax1 != '')  $param.='&search_montant_localtax1='.urlencode($search_montant_localtax1);
 	if ($search_montant_localtax2 != '')  $param.='&search_montant_localtax2='.urlencode($search_montant_localtax2);
 	if ($search_montant_ttc != '') $param.='&search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($search_status != '') $param.='&search_status='.urlencode($search_status);
-	if ($search_paymentmode > 0) $param.='search_paymentmode='.urlencode($search_paymentmode);
+	if ($search_paymentmode > 0) $param.='&search_paymentmode='.urlencode($search_paymentmode);
 	if ($show_files)         $param.='&show_files='.urlencode($show_files);
 	if ($option)             $param.="&search_option=".urlencode($option);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
