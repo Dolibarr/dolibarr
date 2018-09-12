@@ -598,17 +598,18 @@ if ($mode == 'common')
         }
 
         // Print a separator if we change family
-        if ($familykey!=$oldfamily)
-        {
-        	if ($oldfamily) print '</table></div><br>';
+        if ($familykey != $oldfamily) {
+            if ($oldfamily) {
+                print '</table></div><br>';
+            }
 
-            $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
-            print_fiche_titre($familytext, '', '');
+            $familytext = empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
+            print load_fiche_titre($familytext, '', '');
 
             print '<div class="div-table-responsive">';
-        	print '<table class="tagtable liste" summary="list_of_modules">'."\n";
+            print '<table class="tagtable liste" summary="list_of_modules">'."\n";
 
-        	$atleastoneforfamily=0;
+            $atleastoneforfamily=0;
         }
 
         $atleastoneforfamily++;

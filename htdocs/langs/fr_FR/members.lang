@@ -116,7 +116,7 @@ SendingEmailOnCancelation=Envoie d'email à l'annulation
 # Topic of email templates
 YourMembershipRequestWasReceived=Votre demande d'adhésion a été reçue.
 YourMembershipWasValidated=Votre adhésion a été enregistrée
-YourSubscriptionWasRecorded=Votre nouvel adhésion a été enregistrée
+YourSubscriptionWasRecorded=Votre nouvelle adhésion a été enregistrée
 SubscriptionReminderEmail=Rappel de cotisation
 YourMembershipWasCanceled=Votre adhésion a été annulée
 CardContent=Contenu de votre fiche adhérent

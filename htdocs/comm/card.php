@@ -181,7 +181,7 @@ if (empty($reshook))
 	if ($action == 'setorder_min_amount')
 	{
 		$object->fetch($id);
-		$object->order_min_amount=GETPOST('order_min_amount');
+		$object->order_min_amount=price2num(GETPOST('order_min_amount','alpha'));
 		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -423,15 +423,21 @@ if ($object->id > 0)
 
 	    print '</td>';
 	    print '</tr>';
+	}
 
-		print '<tr class="nowrap">';
-	    print '<td>';
-	    print $form->editfieldkey("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer);
-	    print '</td><td>';
-	    print $form->editfieldval("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
-
-	    print '</td>';
-	    print '</tr>';
+	if ($object->client)
+	{
+		if (! empty($conf->commande->enabled) && ! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT))
+		{
+		    print '<!-- Minimim amount for orders -->'."\n";
+		    print '<tr class="nowrap">';
+		    print '<td>';
+		    print $form->editfieldkey("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer);
+		    print '</td><td>';
+		    print $form->editfieldval("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
+		    print '</td>';
+		    print '</tr>';
+		}
 	}
 
 

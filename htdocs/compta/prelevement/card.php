@@ -31,14 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories'));
+$langs->loadLangs(array('banks', 'categories','bills','withdrawals'));
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
-
-$langs->load("bills");
-$langs->load("withdrawals");
-
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();

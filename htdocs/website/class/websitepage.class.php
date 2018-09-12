@@ -158,7 +158,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_modif";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -200,6 +202,8 @@ class WebsitePage extends CommonObject
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_modif = $obj->fk_user_modif;
 			}
 			$this->db->free($resql);
 
@@ -250,7 +254,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_modif";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
@@ -299,6 +305,8 @@ class WebsitePage extends CommonObject
 				$record->grabbed_from = $obj->grabbed_from;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
+				$record->fk_user_create = $obj->fk_user_create;
+				$record->fk_user_modif = $obj->fk_user_modif;
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
@@ -393,6 +401,7 @@ class WebsitePage extends CommonObject
 		$object->ref = $newref;
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
+		$object->fk_user_create = $user->id;
 		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
@@ -526,6 +535,8 @@ class WebsitePage extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		global $user;
+
 		$this->id = 0;
 
 		$now=dol_now();
@@ -543,5 +554,6 @@ class WebsitePage extends CommonObject
 		$this->grabbed_from = '';
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);
+		$this->fk_user_create = $user->id;
 	}
 }

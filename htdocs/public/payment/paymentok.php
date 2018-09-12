@@ -801,6 +801,11 @@ if ($ispaymentok)
 		$content.="<br>\n";
 		$content.="tag=".$fulltag."<br>\ntoken=".$onlinetoken."<br>\npaymentType=".$paymentType."<br>\ncurrencycodeType=".$currencyCodeType."<br>\npayerId=".$payerID."<br>\nipaddress=".$ipaddress."<br>\nFinalPaymentAmt=".$FinalPaymentAmt."<br>\n";
 
+		if (! empty($ErrorCode))         $content.="ErrorCode = ".$ErrorCode."<br>\n";
+		if (! empty($ErrorShortMsg))     $content.="ErrorShortMsg = ".$ErrorShortMsg."<br>\n";
+		if (! empty($ErrorLongMsg))      $content.="ErrorLongMsg = ".$ErrorLongMsg."<br>\n";
+		if (! empty($ErrorSeverityCode)) $content.="ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
+
 		$ishtml=dol_textishtml($content);	// May contain urls
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';

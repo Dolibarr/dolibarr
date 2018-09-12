@@ -422,7 +422,7 @@ if (! $error && $xml)
     	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
 
-    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
     print $langs->trans("ExpectedChecksum").' = '. $outexpectedchecksum .'<br>';
     print $langs->trans("CurrentChecksum").' = '. $outcurrentchecksum;
 
@@ -438,4 +438,3 @@ llxFooter();
 $db->close();
 
 exit($error);
-

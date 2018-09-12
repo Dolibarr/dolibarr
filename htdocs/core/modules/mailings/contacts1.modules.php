@@ -116,10 +116,9 @@ class mailing_contacts1 extends MailingTargets
 	function formFilter()
 	{
 		global $langs;
-		$langs->load("companies");
-		$langs->load("commercial");
-		$langs->load("suppliers");
-		$langs->load("categories");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","companies","suppliers","categories"));
 
 		$s='';
 

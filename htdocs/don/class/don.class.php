@@ -73,12 +73,6 @@ class Don extends CommonObject
 	public $labelstatut;
 	public $labelstatutshort;
 
-	/**
-	 * @deprecated
-	 * @see note_private, note_public
-	 */
-	public $commentaire;
-
 
     /**
      *  Constructor
@@ -87,9 +81,7 @@ class Don extends CommonObject
      */
     function __construct($db)
     {
-        global $langs;
-
-        $this->db = $db;
+         $this->db = $db;
     }
 
 
@@ -383,8 +375,8 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->address)."'";
         $sql.= ", '".$this->db->escape($this->zip)."'";
         $sql.= ", '".$this->db->escape($this->town)."'";
-		$sql.= ", ".$this->country_id;
-        $sql.= ", ".$this->public;
+        $sql.= ", ".($this->country_id > 0 ? $this->country_id : '0');
+        $sql.= ", ".((int) $this->public);
         $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
        	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
@@ -396,7 +388,6 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->phone_mobile)."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -432,8 +423,8 @@ class Don extends CommonObject
 
 		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
-            $res = $this->setValid($user);
-            if ($res < 0) $error++;
+            //$res = $this->setValid($user);
+            //if ($res < 0) $error++;
         }
 
         if (!$error)
@@ -687,7 +678,6 @@ class Don extends CommonObject
                 $this->note_private	  = $obj->note_private;
                 $this->note_public	  = $obj->note_public;
                 $this->modelpdf       = $obj->model_pdf;
-                $this->commentaire    = $obj->note;	// deprecated
 
                 // Retreive all extrafield
                 // fetch optionals attributes and labels

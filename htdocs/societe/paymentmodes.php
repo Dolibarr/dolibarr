@@ -550,13 +550,17 @@ if (empty($reshook))
 
 			$db->begin();
 
+                if (empty($newcu)) {
+                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+                } else {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
 			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
 			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-
+                }
+     
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
-			if (empty($num))
+			if (empty($num) && !empty($newcu))
 			{
 				$societeaccount = new SocieteAccount($db);
 				$societeaccount->fk_soc = $object->id;
@@ -1023,8 +1027,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				print '<td>';
 				print $langs->trans("Remote");
+				//if ($src->cvc_check == 'fail') print ' - CVC check fail';
 				print '</td>';
 				print '<td>';
+				//var_dump($src);
 				print '';
 				print '</td>';
 				print '<td align="right" class="nowraponall">';

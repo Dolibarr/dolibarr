@@ -165,7 +165,7 @@ class Website extends CommonObject
 		$sql .= ' '.((empty($this->entity) && $this->entity != '0')?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
-		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
+		$sql .= ' '.(! isset($this->status)?'1':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
@@ -880,7 +880,7 @@ class Website extends CommonObject
 			$allaliases = $objectpageold->pageurl;
 			$allaliases.= ($objectpageold->aliasalt ? ','.$objectpageold->aliasalt : '');
 
-			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;';
+			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;';	// newid start at 1, 2...
 			$line.= "\n";
 			fputs($fp, $line);
 
@@ -921,6 +921,15 @@ class Website extends CommonObject
 			$line.= ");";
 			$line.= "\n";
 			fputs($fp, $line);
+
+			// Add line to update home page id during import
+			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
+			if ($this->fk_default_home > 0 && ($objectpageold->id == $this->fk_default_home) && ($objectpageold->newid > 0))	// This is the record with home page
+			{
+				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
+				$line.= "\n";
+				fputs($fp, $line);
+			}
 		}
 
 		fclose($fp);
@@ -978,6 +987,15 @@ class Website extends CommonObject
 
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1);	// Overwrite if exists
 
+		// Now generate the master.inc.php page
+		$filemaster=$conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
+		$result = dolSaveMasterFile($filemaster);
+		if (! $result)
+		{
+			$this->errors[]='Failed to write file '.$filemaster;
+			$error++;
+		}
+
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);	// Medias can be shared, do not overwrite if exists
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey',    $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
 
@@ -1002,7 +1020,7 @@ class Website extends CommonObject
 		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);
 		if ($runsql <= 0)
 		{
-			$this->errors[]='Failed to load sql file '.$sqlfile.'.';
+			$this->errors[]='Failed to load sql file '.$sqlfile;
 			$error++;
 		}
 

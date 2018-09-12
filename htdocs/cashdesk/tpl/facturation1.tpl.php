@@ -27,10 +27,8 @@ if (empty($langs) || ! is_object($langs))
 	exit;
 }
 
-
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","cashdesk"));
 
 // Object $form must de defined
 

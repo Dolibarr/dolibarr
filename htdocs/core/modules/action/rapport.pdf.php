@@ -68,8 +68,9 @@ class CommActionRapport
 	function __construct($db, $month, $year)
 	{
 		global $conf,$langs;
-		$langs->load("commercial");
-		$langs->load("projects");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","projects"));
 
 		$this->db = $db;
 		$this->description = "";
