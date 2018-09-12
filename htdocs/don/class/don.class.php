@@ -423,8 +423,8 @@ class Don extends CommonObject
 
 		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
-            $res = $this->setValid($user);
-            if ($res < 0) $error++;
+            //$res = $this->setValid($user);
+            //if ($res < 0) $error++;
         }
 
         if (!$error)

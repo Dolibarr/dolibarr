@@ -332,7 +332,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
 
 	// Company
-	if (! empty($conf->societe->enabled))
+	if (! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES))
 	{
 		// Thirdparty
 		print '<td>' . $langs->trans('Customer') . '</td>';
@@ -377,7 +377,21 @@ if ($action == 'create')
 		print '</tr>' . "\n";
 
 	}
-	else
+
+	// Date
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
+	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
+	print '</td>';
+
+	// Amount
+	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+
+	// Public donation
+	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
+	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
+	print "</td></tr>\n";
+
+	if (empty($conf->societe->enabled) || empty($conf->global->DONATION_USE_THIRDPARTIES))
 	{
 		print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
@@ -400,19 +414,6 @@ if ($action == 'create')
 
 		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
 	}
-
-	// Date
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
-	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
-	print '</td>';
-
-	// Amount
-	print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.dol_escape_htmltag(GETPOST("amount")).'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
-
-	// Public donation
-	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
-	print "</td></tr>\n";
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
