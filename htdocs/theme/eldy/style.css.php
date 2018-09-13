@@ -1884,16 +1884,27 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	border: none;
-	border-bottom: solid 1px rgba(180,180,180,.4);
+	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
 	margin-left: 5px;
 	margin-top: 5px;
+	margin-bottom: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
 	outline: none !important;
-	/* box-shadow: none;
-	-webkit-box-shadow: 0 0 0 50px #FFF inset;
-	box-shadow: 0 0 0 50px #FFF inset;*/
+}
+.login_table .trinputlogin {
+	margin: 8px;
+}
+.login_table .tdinputlogin {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    min-width: 200px;
+    border-radius: 2px;
+}
+.login_table .tdinputlogin .fa {
+	padding-left: 10px;
+	width: 14px;
 }
 .login_main_message {
 	text-align: center;
