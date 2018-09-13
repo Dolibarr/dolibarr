@@ -118,7 +118,7 @@ if (! $rowid) {
 		$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 	}
 
-	foreach ($txn->data as $txn) 
+	foreach ($txn->data as $txn)
 	{
 		//$charge = $txn;
 		//var_dump($txn);
