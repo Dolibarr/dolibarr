@@ -88,9 +88,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
-	$entitytouseforuserdir = $object->entity;
-	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;
-	$upload_dir = $conf->user->multidir_output[$entitytouseforuserdir] . "/" . $object->id ;
+	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
+	// For users, the upload_dir is always $conf->user->entity for the moment
+	$upload_dir = $conf->user->dir_output. "/" . $object->id ;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
