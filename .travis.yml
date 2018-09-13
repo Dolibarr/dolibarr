@@ -62,8 +62,8 @@ matrix:
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
-  - php: '5.4'
-    env: DB=mariadb
+  #- php: '5.4'
+  #  env: DB=mariadb
   - php: '5.5'
     env: DB=mariadb
   - php: '5.6'
