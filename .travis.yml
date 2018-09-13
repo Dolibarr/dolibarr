@@ -3,7 +3,7 @@
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 # We use dist: precise to have php 5.3 available 
-dist: precise
+dist: trusty
 sudo: required
 
 language: php
@@ -31,7 +31,7 @@ addons:
     - pgloader
 
 php:
-- '5.3'
+#- '5.3'
 - '5.4'
 - '5.5'
 - '5.6'
@@ -62,8 +62,8 @@ matrix:
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
-  - php: '5.4'
-    env: DB=mariadb
+  #- php: '5.4'
+  #  env: DB=mariadb
   - php: '5.5'
     env: DB=mariadb
   - php: '5.6'
