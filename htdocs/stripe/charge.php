@@ -198,7 +198,7 @@ if (!$rowid)
 		}
 	    print '</TD>';
 	    // Amount
-	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100)."</TD>";
+	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</TD>";
 	    // Status
 	    print '<TD align="right">';
 	    if ($charge->refunded=='1'){
