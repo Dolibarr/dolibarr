@@ -34,6 +34,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 	public $family = 'ldap';
 	public $description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
 
 	/**
@@ -799,5 +803,4 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 		return $result;
 	}
-
 }

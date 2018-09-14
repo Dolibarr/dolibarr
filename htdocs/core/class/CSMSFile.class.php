@@ -192,6 +192,7 @@ class CSMSFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Write content of a SendSms request into a dump file (mode = all)
 	 *  Used for debugging.
@@ -200,6 +201,7 @@ class CSMSFile
 	 */
 	function dump_sms()
 	{
+        // phpcs:enable
 		global $conf,$dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
@@ -221,6 +223,7 @@ class CSMSFile
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Write content of a SendSms result into a dump file (mode = all)
      *  Used for debugging.
@@ -230,6 +233,7 @@ class CSMSFile
      */
     function dump_sms_result($result)
     {
+        // phpcs:enable
         global $conf,$dolibarr_main_data_root;
 
         if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
@@ -244,6 +248,4 @@ class CSMSFile
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
     }
-
 }
-

@@ -196,7 +196,6 @@ class modFicheinter extends DolibarrModules
         $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
         $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('intervention').')';
         $r++;
-
     }
 
 

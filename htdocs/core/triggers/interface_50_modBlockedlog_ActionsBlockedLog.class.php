@@ -33,6 +33,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	public $family = 'system';
 	public $description = "Triggers of this module add action for BlockedLog module.";
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
 
 	/**
@@ -133,5 +137,4 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 1;
 		}
     }
-
 }

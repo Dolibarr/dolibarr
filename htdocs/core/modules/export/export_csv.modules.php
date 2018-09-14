@@ -30,17 +30,25 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
  */
 class ExportCsv extends ModeleExports
 {
-	var $id;
-	var $label;
-	var $extension;
-	var $version;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $label_lib;
-	var $version_lib;
+	/**
+     * @var string export files label
+     */
+    public $label;
 
-	var $separator;
+	public $extension;
+	public $version;
 
-	var $handle;    // Handle fichier
+	public $label_lib;
+	public $version_lib;
+
+	public $separator;
+
+	public $handle;    // Handle fichier
 
 
 	/**
@@ -68,7 +76,6 @@ class ExportCsv extends ModeleExports
 		// If driver use an external library, put its name here
 		$this->label_lib='Dolibarr';
 		$this->version_lib=DOL_VERSION;
-
 	}
 
 	/**
@@ -142,6 +149,7 @@ class ExportCsv extends ModeleExports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Open output file
 	 *
@@ -151,6 +159,7 @@ class ExportCsv extends ModeleExports
 	 */
 	function open_file($file,$outputlangs)
 	{
+        // phpcs:enable
 		global $langs;
 
 		dol_syslog("ExportCsv::open_file file=".$file);
@@ -169,6 +178,7 @@ class ExportCsv extends ModeleExports
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output header into file
 	 *
@@ -177,10 +187,12 @@ class ExportCsv extends ModeleExports
 	 */
 	function write_header($outputlangs)
 	{
+        // phpcs:enable
 		return 0;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output title line into file
 	 *
@@ -192,6 +204,7 @@ class ExportCsv extends ModeleExports
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
@@ -215,7 +228,8 @@ class ExportCsv extends ModeleExports
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *	Output record line into file
      *
      *  @param     	array		$array_selected_sorted      Array with list of field to export
@@ -226,6 +240,7 @@ class ExportCsv extends ModeleExports
 	 */
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
@@ -258,7 +273,7 @@ class ExportCsv extends ModeleExports
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
-			
+
 			fwrite($this->handle,$newvalue.$this->separator);
 			$this->col++;
 		}
@@ -267,6 +282,7 @@ class ExportCsv extends ModeleExports
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output footer into file
 	 *
@@ -275,9 +291,11 @@ class ExportCsv extends ModeleExports
 	 */
 	function write_footer($outputlangs)
 	{
+        // phpcs:enable
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
@@ -285,6 +303,7 @@ class ExportCsv extends ModeleExports
 	 */
 	function close_file()
 	{
+        // phpcs:enable
 		fclose($this->handle);
 		return 0;
 	}
@@ -303,14 +322,14 @@ class ExportCsv extends ModeleExports
 	{
 		global $conf;
 		$addquote=0;
-		
+
 
 		// Rule Dolibarr: No HTML
    		//print $charset.' '.$newvalue."\n";
    		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
    		$newvalue=dol_htmlcleanlastbr($newvalue);
    		//print $charset.' '.$newvalue."\n";
-		
+
 		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is on, we can keep record as it is but we must add quotes)
 		$oldvalue=$newvalue;
 		$newvalue=str_replace("\r",'',$newvalue);
@@ -321,7 +340,7 @@ class ExportCsv extends ModeleExports
 			$newvalue=$oldvalue;
 			$addquote=1;
 		}
-		
+
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
 		if (preg_match('/"/',$newvalue))
 		{
@@ -337,6 +356,4 @@ class ExportCsv extends ModeleExports
 
 		return ($addquote?'"':'').$newvalue.($addquote?'"':'');
 	}
-
 }
-

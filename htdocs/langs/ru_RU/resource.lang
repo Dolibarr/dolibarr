@@ -16,7 +16,7 @@ ResourceFormLabel_description=Описание ресурса
 
 ResourcesLinkedToElement=Ресурс связан с элементом
 
-ShowResource=Show resource
+ShowResource=Показать ресурс
 
 ResourceElementPage=Элемент ресурсов
 ResourceCreatedWithSuccess=Ресурс успешно создан
@@ -30,7 +30,7 @@ DictionaryResourceType=Тип ресурсов
 
 SelectResource=Выберете ресурс
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=Ресурс Id
+AssetNumber=Серийный номер
+ResourceTypeCode=Код типа ресурса
 ImportDataset_resource_1=Ресурсы

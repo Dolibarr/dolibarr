@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,16 +35,28 @@ use OAuth\OAuth2\Service\Google;
  */
 class printing_printgcp extends PrintingDriver
 {
-    var $name = 'printgcp';
-    var $desc = 'PrintGCPDesc';
-    var $picto = 'printer';
-    var $active = 'PRINTING_PRINTGCP';
-    var $conf = array();
-    var $google_id = '';
-    var $google_secret = '';
-    var $error;
-    var $errors = array();
-    var $db;
+    public $name = 'printgcp';
+    public $desc = 'PrintGCPDesc';
+    public $picto = 'printer';
+    public $active = 'PRINTING_PRINTGCP';
+    public $conf = array();
+    public $google_id = '';
+    public $google_secret = '';
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     private $OAUTH_SERVICENAME_GOOGLE = 'Google';
 
@@ -215,6 +227,7 @@ class printing_printgcp extends PrintingDriver
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of available printers
      *
@@ -222,6 +235,7 @@ class printing_printgcp extends PrintingDriver
      */
     function getlist_available_printers()
     {
+        // phpcs:enable
         // Token storage
         $storage = new DoliStorage($this->db, $this->conf);
         // Setup the credentials for the requests
@@ -279,6 +293,7 @@ class printing_printgcp extends PrintingDriver
         return $ret;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Print selected file
      *
@@ -289,6 +304,7 @@ class printing_printgcp extends PrintingDriver
      */
     function print_file($file, $module, $subdir='')
     {
+        // phpcs:enable
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         global $conf, $user;
@@ -398,6 +414,7 @@ class printing_printgcp extends PrintingDriver
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  List jobs print
      *
@@ -405,6 +422,7 @@ class printing_printgcp extends PrintingDriver
      */
     function list_jobs()
     {
+        // phpcs:enable
         global $conf, $db, $langs, $bc;
 
         $error = 0;
@@ -500,5 +518,4 @@ class printing_printgcp extends PrintingDriver
 
         return $error;
     }
-
 }

@@ -238,7 +238,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -286,13 +286,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
+	print $form->selectDate($datestart?$datestart:-1,'start','','','','add',1,1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
+	print $form->selectDate($dateend?$dateend:-1,'end','','','','add',1,1);
 	print '</td></tr>';
 
 	// Number of terms
@@ -501,7 +501,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
+			print $form->selectDate($object->datestart, 'start', 0, 0, 0, 'update', 1, 0);
 		}
 		else
 		{
@@ -514,7 +514,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
+			print $form->selectDate($object->dateend, 'end', 0, 0, 0, 'update', 1, 0);
 		}
 		else
 		{
@@ -805,6 +805,6 @@ if ($id > 0)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

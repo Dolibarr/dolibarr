@@ -1,4 +1,4 @@
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -147,7 +147,7 @@ padding: 4px 4px 4px 4px;
 
 tr.title
 {
-background: #DDDFDD;	
+background: #DDDFDD;
 }
 
 table { font-size: 12px; }

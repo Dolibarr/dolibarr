@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuBankCash=Banco/Caixa
 BankAccounts=Contas bancárias
 ShowAccount=Mostrar conta
 AccountRef=Ref. da conta financeira
@@ -105,7 +104,6 @@ PaymentDateUpdateSucceeded=Data de pagamento atualizada com sucesso
 PaymentDateUpdateFailed=Data de pagamento não foi possível ser atualizada
 Transactions=Transações
 BankTransactionLine=Entrada no bancária
-AllAccounts=Todas contas bancária/caixa
 BackToAccount=Voltar para conta
 ShowAllAccounts=Mostrar todas as contas
 FutureTransaction=Transação futura. Não pode ser conciliada.

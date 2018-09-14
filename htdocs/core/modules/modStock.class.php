@@ -65,8 +65,11 @@ class modStock extends DolibarrModules
 		$this->config_page_url = array("stock.php");
 
 		// Dependencies
-		$this->depends = array("modProduct");
-		$this->requiredby = array("modProductBatch");
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array("modProduct");		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array("modProductBatch");	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->langfiles = array("stocks");
 
 		// Constants
@@ -345,7 +348,6 @@ class modStock extends DolibarrModules
 		$this->import_run_sql_after_array[$r]=array(    // Because we may change data that are denormalized, we must update dernormalized data after.
 		    'UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
-
 	}
 	
 	

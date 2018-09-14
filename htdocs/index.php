@@ -270,11 +270,11 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
     	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
     	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial&leftmenu=orders',
-    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy&leftmenu=customers_bills',
+    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=customers_bills',
     	    DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
     	    DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=ficheinter',
     	    DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers',
-	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=accountancy&leftmenu=suppliers_bills',
+	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=billing&leftmenu=suppliers_bills',
 	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
@@ -358,7 +358,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Dolibarr Working Board with weather
  */
-$showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
+$showweather=(empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
 
 //Array that contains all WorkboardResponse classes to process them
 $dashboardlines=array();
@@ -524,7 +524,7 @@ foreach($valid_dashboardlines as $board)
     }
 }
 //var_dump($totallate, $totaltodo);
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($totallate / $totaltodo * 100, 2);
+if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) && !empty($totaltodo)) $totallate = round($totallate / $totaltodo * 100, 2);
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
@@ -536,10 +536,11 @@ $boxwork.='</tr>'."\n";
 if ($showweather)
 {
     $boxwork.='<tr class="nohover">';
-    $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
+    $boxwork.='<td class="nohover'.($conf->global->MAIN_DISABLE_METEO == 2 ?' hideonsmartphone' : '').' center valignmiddle">';
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
-    $text.='. '.$langs->trans("LateDesc");
+    else $text=$langs->transnoentitiesnoconv("NoItemLate");
+    $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
     //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
     $options='height="64px"';
     $boxwork.=showWeather($totallate,$text,$options);
@@ -564,6 +565,10 @@ if (! empty($valid_dashboardlines))
         $sep=($conf->dol_use_jmobile?'<br>':' ');
         $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
         $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
+        if ($board->total > 0 && ! empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX))
+	{
+		$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.price($board->total)	.'</span></a>';
+	}
         $boxwork .= '</div>';
         if ($board->nbtodolate > 0)
         {
@@ -674,8 +679,8 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 
 //print 'mem='.memory_get_usage().' - '.memory_get_peak_usage();
 
+// End of page
 llxFooter();
-
 $db->close();
 
 

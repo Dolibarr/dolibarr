@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,6 +109,7 @@ if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_
 if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
 if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
@@ -145,9 +147,11 @@ $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 
 // Hover color
 $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
@@ -193,6 +197,7 @@ $colorbacklineimpair2=join(',',colorStringToArray($colorbacklineimpair2));
 $colorbacklinepair1=join(',',colorStringToArray($colorbacklinepair1));
 $colorbacklinepair2=join(',',colorStringToArray($colorbacklinepair2));
 if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',',colorStringToArray($colorbacklinepairhover));
+if ($colorbacklinepairchecked != '') $colorbacklinepairchecked=join(',',colorStringToArray($colorbacklinepairchecked));
 $colorbackbody=join(',',colorStringToArray($colorbackbody));
 $colortexttitlenotab=join(',',colorStringToArray($colortexttitlenotab));
 $colortexttitle=join(',',colorStringToArray($colortexttitle));
@@ -211,6 +216,7 @@ print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
 print 'colorbacklinepair1='.$colorbacklinepair1."\n";
 print 'colorbacklinepair2='.$colorbacklinepair2."\n";
 print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
+print 'colorbacklinepairchecked='.$colorbacklinepairchecked."\n";
 print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
@@ -734,6 +740,9 @@ select.flat.selectlimit {
 }
 .marginleftonly {
 	margin-left: 10px !important;
+}
+.marginleftonlyshort {
+	margin-left: 4px !important;
 }
 .nomarginleft {
 	margin-left: 0px !important;
@@ -1809,7 +1818,9 @@ foreach($mainmenuusedarray as $val)
     	display: none;
     <?php } ?>
 }
-
+a.tmenuimage {
+    display: block;
+}
 
 
 /* Login */
@@ -1864,17 +1875,29 @@ form#login {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode{
 	border: none;
-	border-bottom: solid 1px rgba(180,180,180,.4);
+	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
 	margin-left: 18px;
 	margin-top: 5px;
+	margin-bottom: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
 	outline: none !important;
-	/* box-shadow: none;
-	-webkit-box-shadow: 0 0 0 50px #FFF inset;
-	box-shadow: 0 0 0 50px #FFF inset;*/
 }
+.login_table .trinputlogin {
+	margin: 8px;
+}
+.login_table .tdinputlogin {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    min-width: 200px;
+    border-radius: 2px;
+}
+.login_table .tdinputlogin .fa {
+	padding-left: 10px;
+	width: 14px;
+}
+
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -2892,12 +2915,24 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 
 
 /* Set the color for hover lines */
+
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
+}
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 <?php } ?>
 }
+
+<?php if ($colorbacklinepairchecked) { ?>
+.highlight {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
+}
+<?php } ?>
 
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {
@@ -3735,6 +3770,8 @@ tr.visible {
     border: 0px;
     background-color: transparent;
     background-image: none;
+    color: #000 !important;
+    text-shadow: none;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;

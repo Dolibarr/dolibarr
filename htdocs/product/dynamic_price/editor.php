@@ -244,5 +244,6 @@ print '<script type="text/javascript">
 	}
 </script>';
 
+// End of page
 llxFooter();
 $db->close();

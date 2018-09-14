@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,9 +105,24 @@ function project_prepare_head($object)
 		$head[$h][2] = 'tasks';
 		$h++;
 
+		$nbTimeSpent=0;
+		$sql = "SELECT t.rowid";
+		//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+		//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql .= " WHERE t.fk_task = pt.rowid";
+		$sql .= " AND pt.fk_projet =".$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbTimeSpent=1;
+		}
+		else dol_print_error($db);
+
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$object->id;
 		$head[$h][1] = $langs->trans("TimeSpent");
-		//if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
+		if ($nbTimeSpent > 0) $head[$h][1].= ' <span class="badge">...</span>';
 		$head[$h][2] = 'timespent';
 		$h++;
 	}
@@ -165,9 +181,10 @@ function task_prepare_head($object)
 	// Is there timespent ?
 	$nbTimeSpent=0;
 	$sql = "SELECT t.rowid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
-	$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-	$sql .= " AND t.fk_task =".$object->id;
+	//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+	//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+	$sql .= " WHERE t.fk_task =".$object->id;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -1026,7 +1043,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Form to add new time
 				print '<td class="nowrap leftborder" align="center">';
-				$tableCell=$form->select_date($preselectedday,$lines[$i]->id,1,1,2,"addtime",0,0,1,$disabledtask);
+				$tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
 				print $tableCell;
 				print '</td>';
 
@@ -1680,4 +1697,3 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		print '</table></form>';
 	}
 }
-

@@ -32,7 +32,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormSms
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     var $fromname;
     var $fromsms;
@@ -56,7 +59,10 @@ class FormSms
     var $substit=array();
     var $param=array();
 
-    var $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -82,6 +88,7 @@ class FormSms
         return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Show the form to input an sms.
      *
@@ -91,6 +98,7 @@ class FormSms
      */
     function show_form($morecss='titlefield', $showform=1)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $form;
 
         if (! is_object($form)) $form=new Form($this->db);
@@ -354,6 +362,4 @@ function limitChars(textarea, limit, infodiv)
 
         print "<!-- End form SMS -->\n";
     }
-
 }
-

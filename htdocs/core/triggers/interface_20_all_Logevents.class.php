@@ -31,7 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
+
 	public $family = 'core';
 	public $description = "Triggers of this module allows to add security event records inside Dolibarr.";
 	public $version = self::VERSION_DOLIBARR;
@@ -60,7 +64,7 @@ class InterfaceLogevents extends DolibarrTriggers
         $date = dol_now();
 
         // Actions
-        if ($action == 'USER_LOGIN')
+        /*if ($action == 'USER_LOGIN')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -87,7 +91,7 @@ class InterfaceLogevents extends DolibarrTriggers
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogoff,".$object->login.")";
             $desc="(UserLogoff,".$object->login.")";
-        }
+        }*/
         if ($action == 'USER_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -202,5 +206,4 @@ class InterfaceLogevents extends DolibarrTriggers
             return -1;
         }
     }
-
 }

@@ -127,6 +127,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoie la reference de commande suivante non utilisee
      *
@@ -136,7 +137,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
     function commande_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
 }
-

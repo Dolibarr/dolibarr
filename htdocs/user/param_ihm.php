@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
+ * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +138,12 @@ if (empty($reshook)) {
 				$tabparam["THEME_ELDY_USE_HOVER"] = 0;
 			}
 
+			if (GETPOST('check_THEME_ELDY_USE_CHECKED') == 'on') {
+				$tabparam["THEME_ELDY_USE_CHECKED"] = 1;
+			} else {
+				$tabparam["THEME_ELDY_USE_CHECKED"] = 0;
+			}
+
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
@@ -244,7 +251,7 @@ if ($action == 'edit')
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
+    print '<td align="left" class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
@@ -259,7 +266,7 @@ if ($action == 'edit')
     print $s?$s.' ':'';
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"");
+    print '<td align="left" class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
@@ -269,7 +276,7 @@ if ($action == 'edit')
     // Taille max des listes
     print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
+    print '<td align="left" class="nowrap" width="20%"><input class="oddeven" name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'') . '"></td></tr>';
@@ -306,7 +313,7 @@ else
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
-    print '<td align="left" class="nowrap"><input '.$bc[$var].' name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
+    print '<td align="left" class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(! empty($object->conf->MAIN_LANDING_PAGE)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
@@ -326,7 +333,7 @@ else
     print ($s?$s.' ':'');
     print (isset($conf->global->MAIN_LANG_DEFAULT) && $conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
-    print '<td align="left" class="nowrap"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" class="nowrap"><input class="oddeven" type="checkbox" disabled '.(! empty($object->conf->MAIN_LANG_DEFAULT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $s=(isset($object->conf->MAIN_LANG_DEFAULT) ? picto_from_langcode($object->conf->MAIN_LANG_DEFAULT) : '');
     print ($s?$s.' ':'');
@@ -336,7 +343,7 @@ else
 
     print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
-    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'&nbsp;') . '</td></tr>';
 
     print '</table><br>';
@@ -374,5 +381,6 @@ if ($action == 'edit')
     print '</form>';
 }
 
+// End of page
 llxFooter();
 $db->close();

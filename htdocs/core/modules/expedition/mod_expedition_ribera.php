@@ -121,6 +121,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		return  $numFinal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -130,8 +131,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
     function expedition_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

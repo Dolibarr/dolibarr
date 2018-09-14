@@ -29,13 +29,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Loan extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='loan';
+
 	public $table='loan';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='loan';
 
 	public $picto = 'bill';
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
 	public $datestart;
 	public $dateend;
 	public $label;
@@ -278,7 +290,6 @@ class Loan extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 
@@ -326,6 +337,7 @@ class Loan extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Tag loan as payed completely
 	 *
@@ -334,6 +346,7 @@ class Loan extends CommonObject
 	 */
 	function set_paid($user)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql.= " paid = 1";
 		$sql.= " WHERE rowid = ".$this->id;
@@ -358,6 +371,7 @@ class Loan extends CommonObject
 		return $this->LibStatut($this->paid,$mode,$alreadypaid);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return label for given status
 	 *
@@ -368,51 +382,47 @@ class Loan extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0,$alreadypaid=-1)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->loadLangs(array("customers","bills"));
 
-		if ($mode == 0)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($statut ==  0) return $langs->trans("Unpaid");
 			if ($statut ==  1) return $langs->trans("Paid");
 		}
-		if ($mode == 1)
-		{
-			if ($statut ==  0) return $langs->trans("Unpaid");
-			if ($statut ==  1) return $langs->trans("Paid");
-		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
 			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
 			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
 			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
 			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
 			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
 			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
 			if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
 			if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
 			if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
 			if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
 		}
 
-		return "Error, mode/status not found";
+		else return "Error, mode/status not found";
 	}
 
 

@@ -27,8 +27,8 @@ if (empty($langs) || ! is_object($langs))
 
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->load("main");
-$langs->load('cashdesk');
+// Load translation files required by the page
+$langs->loadLangs(array("main","cashdesk"));
 
 top_httphead('text/html');
 
@@ -47,7 +47,7 @@ $object->fetch($facid);
 
 <div class="entete">
     <div class="logo">
-        <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?>
+        <?php print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">'; ?>
     </div>
     <div class="infos">
         <p class="address"><?php echo $mysoc->name; ?><br>

@@ -288,7 +288,6 @@ if ($user->rights->categorie->creer)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

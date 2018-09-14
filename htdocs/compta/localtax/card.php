@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011-2014      Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2015			Marcos García <marcosgdf@gmail.com>
+/* Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,11 +173,11 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add',1,1);
+    print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add',1,1);
+    print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
 	// Label
@@ -299,6 +300,6 @@ if ($id)
 	print "</div>";
 }
 
+// End of page
 llxFooter();
 $db->close();
-

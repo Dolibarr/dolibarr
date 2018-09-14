@@ -32,7 +32,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 {
     var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
 	var $prefix='FI';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom = 'pacific';
 
 
@@ -142,6 +145,4 @@ class mod_pacific extends ModeleNumRefFicheinter
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }
-

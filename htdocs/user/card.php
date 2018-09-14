@@ -11,8 +11,9 @@
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,6 +220,9 @@ if (empty($reshook)) {
 			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 			$object->dateemployment = $dateemployment;
 
+			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
+			$object->dateemploymentend = $dateemploymentend;
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 			if ($ret < 0) {
@@ -361,6 +365,8 @@ if (empty($reshook)) {
 				$object->color = GETPOST("color",'alpha') != '' ? GETPOST("color",'alpha') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth','int'), GETPOST('dateemploymentday','int'), GETPOST('dateemploymentyear','int'));
 				$object->dateemployment = $dateemployment;
+				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth','int'), GETPOST('dateemploymentendday','int'), GETPOST('dateemploymentendyear','int'));
+				$object->dateemploymentend = $dateemploymentend;
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -1005,7 +1011,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 		else
 		{
-			print '<input size="40" type="text" name="skype" value="'.GETPOST('skype').'">';
+			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype').'">';
 		}
 		print '</td></tr>';
 	}
@@ -1053,22 +1059,23 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Multicompany
-	// This is now done with hook formObjectOptions
-	/*
-	 if (! empty($conf->multicompany->enabled) && is_object($mc))
-	 {
-	 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
-	 {
-	 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-	 print "<td>".$mc->select_entities($conf->entity);
-	 print "</td></tr>\n";
-	 }
-	 else
-	 {
-	 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-	 }
-	 }
-	 */
+	if (! empty($conf->multicompany->enabled) && is_object($mc))
+	{
+		// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+		if (! method_exists($mc, 'formObjectOptions'))
+		{
+			if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+			{
+				 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+				 print "<td>".$mc->select_entities($conf->entity);
+				 print "</td></tr>\n";
+			}
+			else
+			{
+				 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+			}
+		 }
+	}
 
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
@@ -1152,14 +1159,21 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Date employment
 	print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 	print '<td>';
-	echo $form->select_date(GETPOST('dateemployment'),'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+	print $form->selectDate(GETPOST('dateemployment'), 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+	print '</td>';
+	print "</tr>\n";
+
+	// Date employment END
+	print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+	print '<td>';
+	print $form->selectDate(GETPOST('dateemploymentend'), 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
 	// Date birth
 	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 	print '<td>';
-	echo $form->select_date(GETPOST('birth'),'birth',0,0,1,'createuser',1,0,1);
+	print $form->selectDate(GETPOST('birth'), 'birth', 0, 0, 1, 'createuser', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
@@ -1190,8 +1204,11 @@ else
 		$res=$object->fetch_optionals();
 
 		// Check if user has rights
-		$object->getrights();
-		if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+		{
+			$object->getrights();
+			if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		}
 
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
@@ -1498,7 +1515,14 @@ else
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			print dol_print_date($object->dateemployment);
+			print dol_print_date($object->dateemployment, 'day');
+			print '</td>';
+			print "</tr>\n";
+
+			// Date employment
+			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			print '<td>';
+			print dol_print_date($object->dateemploymentend);
 			print '</td>';
 			print "</tr>\n";
 
@@ -1558,23 +1582,25 @@ else
 			print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 			print "</tr>\n";
 
-			// Multicompany
-			// This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
-			/*
-		     if (! empty($conf->multicompany->enabled) && is_object($mc))
-		     {
-		     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-		     {
-		     print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
-		     if (empty($object->entity)) {
-		     print $langs->trans("AllEntities");
-		     } else {
-		     $mc->getInfo($object->entity);
-		     print $mc->label;
-		     }
-		     print "</td></tr>\n";
-		     }
-		     }*/
+		    // Multicompany
+			if (! empty($conf->multicompany->enabled) && is_object($mc))
+			{
+				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+				if (! method_exists($mc, 'formObjectOptions'))
+				{
+				     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+				     {
+				     	print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
+				     	if (empty($object->entity)) {
+				     		print $langs->trans("AllEntities");
+				     	} else {
+				     		$mc->getInfo($object->entity);
+				     		print $mc->label;
+				     	}
+				     	print "</td></tr>\n";
+				     }
+			     }
+			}
 
 			// Other attributes
 			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -1731,7 +1757,7 @@ else
 					}
 				}
 			}
-			
+
 			print "</div>\n";
 
 
@@ -1820,7 +1846,7 @@ else
 								if ($caneditgroup)
 								{
 									print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
-									print img_delete($langs->trans("RemoveFromGroup"));
+									print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 									print '</a>';
 								}
 								else
@@ -2322,24 +2348,25 @@ else
 				print "</tr>\n";
 			}
 
-			// Multicompany
-			// This is now done with hook formObjectOptions
-			/*
+            // Multicompany
             // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
             if (! empty($conf->multicompany->enabled) && is_object($mc))
             {
-            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+            	if (! method_exists($mc, 'formObjectOptions'))
             	{
-            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
-            		print "</td></tr>\n";
-            	}
-            	else
-            	{
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-            	}
-            }
-            */
+            		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+	            	{
+	            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
+	            		print "</td></tr>\n";
+	            	}
+	            	else
+	            	{
+	            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+	            	}
+	            }
+			}
 
 			// Other attributes
 			$parameters=array('colspan' => ' colspan="2"');
@@ -2428,14 +2455,22 @@ else
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+			print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
 			print '</td>';
 			print "</tr>\n";
+
+			// Date employmentEnd
+			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			print '<td>';
+			print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+			print '</td>';
+			print "</tr>\n";
+
 
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
-			echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
+			print $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
 			print '</td>';
 			print "</tr>\n";
 
@@ -2504,5 +2539,6 @@ if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
+// End of page
 llxFooter();
 $db->close();

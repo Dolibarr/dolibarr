@@ -65,14 +65,15 @@ class modAgenda extends DolibarrModules
 		$this->dirs = array("/agenda/temp");
 
 		// Config pages
-		//-------------
 		$this->config_page_url = array("agenda_other.php");
 
-		// Dependancies
-		//-------------
-		$this->depends = array();
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies");
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Module parts
         $this->module_parts = array();
@@ -89,7 +90,7 @@ class modAgenda extends DolibarrModules
 		$resql = $this->db->query($sqlreadactions);
 		if ($resql)
 		{
-		    while ($obj = $this->db->fetch_object($sqlreadactions))
+		    while ($obj = $this->db->fetch_object($resql))
 		    {
 		        //if (preg_match('/_CREATE$/',$obj->code) && (! in_array($obj->code, array('COMPANY_CREATE','PRODUCT_CREATE','TASK_CREATE')))) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty/product/task creation because there is no validation).
 		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
@@ -112,9 +113,9 @@ class modAgenda extends DolibarrModules
 
 		// Cronjobs
 		//------------
+		$datestart=dol_now();
 		$this->cronjobs = array(
-			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>10, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'1'),
-		    // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
+			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>10, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'1', 'datestart'=>$datestart),
 		);
 
 		// Permissions
@@ -418,7 +419,5 @@ class modAgenda extends DolibarrModules
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.(empty($user)?0:$user->id).' OR ac.fk_soc IS NULL)';
 		if (empty($user->rights->agenda->allactions->read)) $this->export_sql_end[$r] .=' AND acr.fk_element = '.(empty($user)?0:$user->id);
 		$this->export_sql_end[$r] .=' ORDER BY ac.datep';
-
 	}
-
 }

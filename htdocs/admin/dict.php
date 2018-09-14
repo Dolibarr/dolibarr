@@ -261,7 +261,7 @@ $tabfield[10]= "country_id,country,code,taux,localtax1_type,localtax1,localtax2_
 $tabfield[11]= "element,source,code,libelle,position";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfield[13]= "code,libelle,type,entity";
-$tabfield[14]= "code,label,price,organization,country_id,country";
+$tabfield[14]= "code,label,price,organization,country";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle,sortorder";
 $tabfield[17]= "code,label,accountancy_code";
@@ -379,7 +379,7 @@ $tabrowid[9] = "code_iso";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
 $tabrowid[12]= "";
-$tabrowid[13]= "";
+$tabrowid[13]= "id";
 $tabrowid[14]= "";
 $tabrowid[15]= "";
 $tabrowid[16]= "code";
@@ -1735,7 +1735,7 @@ else
 
 print '<br>';
 
-
+// End of page
 llxFooter();
 $db->close();
 

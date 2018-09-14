@@ -78,7 +78,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">',$tooltip,1,1).'</td>';
         $texte.= '</tr>';
-        
+
         // Parametrage du prefix des avoirs
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$tooltip,1,1).'</td>';
@@ -135,7 +135,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         // Get Mask value
         $mask = '';
-        if (is_object($facture) && $facture->type == 1) 
+        if (is_object($facture) && $facture->type == 1)
         {
         	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
         	if (! $mask)
@@ -175,5 +175,4 @@ class mod_facture_mercure extends ModeleNumRefFactures
     {
         return $this->getNextValue($objsoc,$objforref,$mode);
     }
-
 }

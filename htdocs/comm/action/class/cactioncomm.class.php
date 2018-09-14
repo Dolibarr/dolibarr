@@ -24,24 +24,43 @@
 
 
 /**
- *		Class to manage different types of events
+ *      Class to manage different types of events
  */
 class CActionComm
 {
-    var $error;
-    var $db;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-    var $id;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $code;
-    var $type;
-    var $libelle;       // deprecated
-    var $label;
-    var $active;
-    var $color;
-    var $picto;
+    /**
+     * @var int ID
+     */
+    public $id;
 
-    var $type_actions=array();
+    public $code;
+    public $type;
+    public $libelle;       // deprecated
+
+    /**
+     * @var string Type of agenda event label
+     */
+    public $label;
+
+    public $active;
+    public $color;
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto;
+
+    public $type_actions=array();
 
 
     /**
@@ -99,6 +118,7 @@ class CActionComm
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of event types: array(id=>label) or array(code=>label)
      *
@@ -112,6 +132,7 @@ class CActionComm
      */
     function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='', $shortlabel=0)
     {
+        // phpcs:enable
         global $langs,$conf;
         $langs->load("commercial");
 
@@ -210,5 +231,4 @@ class CActionComm
         $transcode=$langs->trans("Action".$this->code);
         if ($transcode != "Action".$this->code) return $transcode;
     }
-
 }

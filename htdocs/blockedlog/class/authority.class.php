@@ -50,10 +50,10 @@ class BlockedLogAuthority
 	 *
 	 *      @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db) {
+    public function __construct($db)
+    {
 
     	$this->db = $db;
-
 	}
 
 	/**
@@ -61,7 +61,8 @@ class BlockedLogAuthority
 	 *
 	 *	@return     string         			blockchain
 	 */
-	public function getLocalBlockChain() {
+    public function getLocalBlockChain()
+    {
 
 		$block_static = new BlockedLog($this->db);
 
@@ -84,10 +85,10 @@ class BlockedLogAuthority
 	 *
 	 *	@return     string         			hash md5 of blockchain
 	 */
-	public function getBlockchainHash() {
+    public function getBlockchainHash()
+    {
 
 		return md5($this->signature.$this->blockchain);
-
 	}
 
 	/**
@@ -96,21 +97,22 @@ class BlockedLogAuthority
 	 *	@param      string		$hash		hash md5 of blockchain to test
 	 *	@return     boolean
 	 */
-	public function checkBlockchain($hash) {
+    public function checkBlockchain($hash)
+    {
 
 		return ($hash === $this->getBlockchainHash() );
-
 	}
 
 	/**
 	 *	Add a new block to the chain
 	 *
-	 *	@param      string		$block		new block to chain
+     *	@param      string		$block		new block to chain
+     *  @return void
 	 */
-	public function addBlock($block) {
+    public function addBlock($block)
+    {
 
 		$this->blockchain.=$block;
-
 	}
 
 	/**
@@ -119,7 +121,8 @@ class BlockedLogAuthority
 	 *	@param      string		$block		new block to chain
 	 *	@return     boolean
 	 */
-	public function checkBlock($block) {
+    public function checkBlock($block)
+    {
 
 		if(strlen($block)!=64) return false;
 
@@ -141,7 +144,8 @@ class BlockedLogAuthority
 	 *	@param      string		$signature		Signature of object to load
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($id, $signature='') {
+    public function fetch($id, $signature='')
+    {
 
 		global $langs;
 
@@ -189,7 +193,6 @@ class BlockedLogAuthority
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -198,7 +201,8 @@ class BlockedLogAuthority
 	 *	@param	User	$user      		Object user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	public function create($user) {
+    public function create($user)
+    {
 
 		global $conf,$langs,$hookmanager;
 
@@ -243,7 +247,6 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -252,7 +255,8 @@ class BlockedLogAuthority
 	 *	@param	User	$user      		Object user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	public function update($user) {
+    public function update($user)
+    {
 
 		global $conf,$langs,$hookmanager;
 
@@ -281,7 +285,6 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -289,7 +292,8 @@ class BlockedLogAuthority
 	 *
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	public function syncSignatureWithAuthority() {
+    public function syncSignatureWithAuthority()
+    {
 		global $conf, $langs;
 
 		//TODO create cron task on activation
@@ -329,5 +333,4 @@ class BlockedLogAuthority
 
 		return 1;
 	}
-
 }

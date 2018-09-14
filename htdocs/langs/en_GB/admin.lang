@@ -90,5 +90,6 @@ Permission302=Delete barcodes
 DictionaryAccountancyJournal=Finance journals
 CompanyZip=Postcode
 LDAPFieldZip=Postcode
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
 GenbarcodeLocation=Barcode generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to automatically generate codes, you must first set a rule to define the barcode number.

@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
+/* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
  *       \brief      Page of a contract
  */
 
-require ("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
@@ -1242,7 +1243,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
-	$form->select_date($datecontrat,'',0,0,'',"contrat");
+	print $form->selectDate($datecontrat, '', 0, 0, '', "contrat");
 	print "</td></tr>";
 
 	// Project
@@ -1781,9 +1782,9 @@ else
 					print '<tr class="oddeven">';
 					print '<td colspan="'.$colspan.'">';
 					print $langs->trans("DateStartPlanned").' ';
-					$form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
+					print $form->selectDate($db->jdate($objp->date_debut), "date_start_update", $usehm, $usehm, ($db->jdate($objp->date_debut)>0?0:1), "update");
 					print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
-					$form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
+					print $form->selectDate($db->jdate($objp->date_fin), "date_end_update", $usehm, $usehm, ($db->jdate($objp->date_fin)>0?0:1), "update");
 					print '</td>';
 					print '</tr>';
 
@@ -1966,10 +1967,10 @@ else
 
 				print '<tr class="oddeven">';
 				print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
-				print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
+				print $form->selectDate($dateactstart, '', $usehm, $usehm, '', "active", 1, 0);
 				print '</td>';
 				print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
-				print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
+				print $form->selectDate($dateactend, "end", $usehm, $usehm, '', "active", 1, 0);
 				print '</td>';
 				print '<td class="center nohover">';
 				print '</td>';
@@ -2027,7 +2028,7 @@ else
 					if ($objp->statut == 4)
 					{
 						print $langs->trans("DateEndReal").' ';
-						print $form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1,1);
+						print $form->selectDate($dateactend, "end", $usehm, $usehm, ($objp->date_fin_reelle>0?0:1), "closeline", 1, 1);
 					}
 				}
 				print '</td>';

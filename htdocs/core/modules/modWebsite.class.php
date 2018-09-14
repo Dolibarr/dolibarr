@@ -51,7 +51,7 @@ class modWebsite extends DolibarrModules
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable to build and serve public web sites with CMS features";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -61,27 +61,23 @@ class modWebsite extends DolibarrModules
 		$this->dirs = array("/website/temp");
 
         // Config pages
-        //-------------
         $this->config_page_url = array('website.php');
 
-        // Dependancies
-        //-------------
+        // Dependencies
 		$this->hidden = ! empty($conf->global->MODULE_WEBSITE_DISABLED);	// A condition to disable module
 		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("website");
 
         // Constants
-        //-----------
        	$this->const = array();
 
         // New pages on tabs
-        // -----------------
        	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
         // Boxes
-        //------
         $this->boxes = array();
 
 		// Permissions

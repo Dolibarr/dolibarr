@@ -507,6 +507,7 @@ NoneF=Ništa
 NoneOrSeveral=Nijedan ili više
 Late=Kasno
 LateDesc=Kašnjenje za definiranje ako je zapis zakasnio ili nije zavisan u vašem podešenju. Pitajte administratora za promjenu kašnjenja u meniju Početan - Postavke - Upozorenja.
+NoItemLate=No late item
 Photo=Slika
 Photos=Slike
 AddPhoto=Dodaj sliku
@@ -945,3 +946,5 @@ KeyboardShortcut=Prečica na tastaturi
 AssignedTo=Dodijeljeno korisniku
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

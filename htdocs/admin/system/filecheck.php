@@ -366,11 +366,11 @@ if (! $error && $xml)
         // Show warning
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
-            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+            setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
         }
         else
         {
-            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+            setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
         }
     }
     else
@@ -422,7 +422,7 @@ if (! $error && $xml)
     	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
 
-    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
     print $langs->trans("ExpectedChecksum").' = '. $outexpectedchecksum .'<br>';
     print $langs->trans("CurrentChecksum").' = '. $outcurrentchecksum;
 
@@ -433,12 +433,8 @@ if (! $error && $xml)
     print $out;
 }
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 exit($error);
-

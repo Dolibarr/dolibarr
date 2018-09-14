@@ -153,6 +153,6 @@ if ($geoip)
 	$geoip->close();
 }
 
+// End of page
 llxFooter();
-
 $db->close();
