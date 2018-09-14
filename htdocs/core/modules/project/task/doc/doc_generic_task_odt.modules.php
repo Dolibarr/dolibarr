@@ -69,8 +69,8 @@ class doc_generic_task_odt extends ModelePDFTask
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -104,6 +104,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -114,6 +115,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$resarray=array(
@@ -147,6 +149,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		return $resarray;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -156,6 +159,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_tasks($task,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -176,6 +180,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -185,6 +190,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_project_contacts($contact,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -199,6 +205,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -208,6 +215,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_project_file($file,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -217,6 +225,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -226,6 +235,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_project_reference($refdetail,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -239,6 +249,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -248,6 +259,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_tasksressource($taskressource,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
@@ -261,6 +273,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -270,6 +283,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_taskstime($tasktime,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -284,6 +298,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -293,6 +308,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function get_substitutionarray_task_file($file,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -313,8 +329,8 @@ class doc_generic_task_odt extends ModelePDFTask
 	{
 		global $conf,$langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
 
 		$form = new Form($this->db);
 
@@ -392,6 +408,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -402,6 +419,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -843,5 +861,4 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		return -1;
 	}
-
 }

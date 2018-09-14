@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       document.php
+ *  \file       htdocs/asset/document.php
  *  \ingroup    asset
  *  \brief      Tab for documents linked to Assets
  */
@@ -100,7 +100,7 @@ if ($object->id)
 	dol_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
 
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -148,6 +148,6 @@ else
 	accessforbidden('',0,0);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

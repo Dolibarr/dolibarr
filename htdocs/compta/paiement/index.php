@@ -31,5 +31,6 @@ llxHeader();
 
 print load_fiche_titre("Payments");
 
+// End of page
 llxFooter();
 $db->close();

@@ -15,6 +15,7 @@ LocalTax1IsNotUsedDesc=No usar un 2º tipo de impuesto (Distinto del ITBIS)
 LocalTax2IsNotUsedDesc=No usar un 2º tipo de impuesto (Distinto del ITBIS)
 UnitPriceOfProduct=Precio unitario sin ITBIS de un producto
 ShowVATIntaInAddress=Ocultar el identificador ITBIS en las direcciones de los documentos
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
 OptionVatMode=Opción de carga de ITBIS
 OptionVatDefaultDesc=La carga del ITBIS es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
 OptionVatDebitOptionDesc=La carga del ITBIS es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios

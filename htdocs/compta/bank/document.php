@@ -24,7 +24,7 @@
  * 	\ingroup    banque
  * 	\brief      Page de gestion des documents attaches a un compte bancaire
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/bank.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/images.lib.php";
@@ -105,7 +105,7 @@ if ($id > 0 || !empty($ref)) {
         dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
 
 
-        // Construit liste des fichiers
+        // Build file list
         $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$',
                 $sortfield,
                 (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
@@ -147,7 +147,6 @@ else {
     exit;
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

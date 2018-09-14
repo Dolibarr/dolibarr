@@ -38,7 +38,11 @@ class box_factures_imp extends ModeleBoxes
 	var $boxlabel="BoxOldestUnpaidCustomerBills";
 	var $depends = array("facture");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -205,5 +209,4 @@ class box_factures_imp extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }

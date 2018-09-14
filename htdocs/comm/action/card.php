@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -689,9 +690,13 @@ if ($action == 'create')
 	$datep=($datep?$datep:$object->datep);
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
 	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $form->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+	if (GETPOST("afaire") == 1) {
+        print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldayend');
+    } elseif (GETPOST("afaire") == 2) {
+        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+    } else {
+        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+    }
 	print '</td></tr>';
 
 	// Date end
@@ -702,12 +707,17 @@ if ($action == 'create')
 		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
 	}
 	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	if (GETPOST("afaire") == 1) {
+        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+    } elseif (GETPOST("afaire") == 2) {
+        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+    } else {
+        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+    }
 	print '</td></tr>';
 
-	$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);	// Dev in progress
+    // Dev in progress
+	$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 	if ($userepeatevent)
 	{
 		// Repeat
@@ -927,6 +937,15 @@ if ($action == 'create')
 if ($id > 0)
 {
 	$result1=$object->fetch($id);
+	if ($result1 <= 0)
+	{
+		$langs->load("errors");
+		print $langs->trans("ErrorRecordNotFound");
+
+		llxFooter();
+		exit;
+	}
+
 	$result2=$object->fetch_thirdparty();
 	$result2=$object->fetch_projet();
 	$result3=$object->fetch_contact();
@@ -957,7 +976,7 @@ if ($id > 0)
 		$object->note = GETPOST("note",'none');
 	}
 
-	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
+	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
 	{
 		dol_print_error($db,$object->error);
 		exit;
@@ -1048,30 +1067,38 @@ if ($id > 0)
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
-		else if (GETPOST("afaire") == 2) $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
-		else $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		if (GETPOST("afaire") == 1) {
+            print $form->selectDate($datep?$datep:$object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart');
+        } elseif (GETPOST("afaire") == 2) {
+            print $form->selectDate($datep?$datep:$object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+        } else {
+            print $form->selectDate($datep?$datep:$object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+        }
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else if (GETPOST("afaire") == 2) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		//else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend','ap');
-		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		if (GETPOST("afaire") == 1) {
+            print $form->selectDate($datef?$datef:$object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+        } elseif (GETPOST("afaire") == 2) {
+            print $form->selectDate($datef?$datef:$object->datef,'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+        } else {
+            print $form->selectDate($datef?$datef:$object->datef,'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+        }
 		print '</td></tr>';
 
-		$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);	// Dev in progress
+        // Dev in progress
+		$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 		if ($userepeatevent)
 		{
 			// Repeat
 			print '<tr><td>'.$langs->trans("RepeatEvent").'</td><td colspan="3">';
 			print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
-			$arrayrecurrulefreq=array(
-					'no'=>$langs->trans("No"),
-					'MONTHLY'=>$langs->trans("EveryMonth"),
-					'WEEKLY'=>$langs->trans("EveryWeek"),
-					//'DAYLY'=>$langs->trans("EveryDay")
-					);
+			$arrayrecurrulefreq = array(
+				'no'=>$langs->trans("No"),
+				'MONTHLY'=>$langs->trans("EveryMonth"),
+				'WEEKLY'=>$langs->trans("EveryWeek"),
+				//'DAYLY'=>$langs->trans("EveryDay"),
+			);
 			$selectedrecurrulefreq='no';
 			$selectedrecurrulebymonthday='';
 			$selectedrecurrulebyday='';
@@ -1241,8 +1268,13 @@ if ($id > 0)
 		if (! empty($object->fk_element) && ! empty($object->elementtype))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
+            print '<tr>';
+			print '<td>'.$langs->trans("LinkedObject").'</td>';
+			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1);
+			print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+			print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+			print '</td>';
+			print '</tr>';
 		}
 
         // Description
@@ -1611,7 +1643,6 @@ if ($id > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -33,7 +33,10 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='RQ';               // RQ = Request for quotation
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom = "Marbre";
 
 
@@ -149,5 +152,4 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

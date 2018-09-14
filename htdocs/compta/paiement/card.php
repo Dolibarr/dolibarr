@@ -450,6 +450,6 @@ if ($user->societe_id == 0 && $action == '')
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

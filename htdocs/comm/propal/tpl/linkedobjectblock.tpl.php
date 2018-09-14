@@ -57,7 +57,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)
             {
                 $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
-                print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';  
+                print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
             }
         ?>
         </td>

@@ -35,8 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 class CommActionRapport
 {
-	var $db;
-	var $description;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $date_edition;
 	var $year;
 	var $month;
@@ -60,8 +68,9 @@ class CommActionRapport
 	function __construct($db, $month, $year)
 	{
 		global $conf,$langs;
-		$langs->load("commercial");
-		$langs->load("projects");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","projects"));
 
 		$this->db = $db;
 		$this->description = "";
@@ -84,6 +93,7 @@ class CommActionRapport
         $this->subject=$langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *      Write the object to document file to disk
      *
@@ -94,17 +104,15 @@ class CommActionRapport
 	 */
 	function write_file($socid = 0, $catid = 0, $outputlangs='')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
         $dir = $conf->agenda->dir_temp."/";
 		$file = $dir . "actions-".$this->month."-".$this->year.".pdf";
@@ -345,4 +353,3 @@ class CommActionRapport
 		return $y;
 	}
 }
-

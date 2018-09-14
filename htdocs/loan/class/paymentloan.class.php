@@ -30,8 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentLoan extends CommonObject
 {
-	public $element='payment_loan';			//!< Id that identify managed objects
-	public $table_element='payment_loan';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_loan';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_loan';
 
 	var $fk_loan;
 	var $datec='';
@@ -209,8 +216,8 @@ class PaymentLoan extends CommonObject
 				$this->type_code = $obj->type_code;
 				$this->type_libelle = $obj->type_libelle;
 
-				$this->bank_account   = $obj->fk_account;
-				$this->bank_line      = $obj->fk_bank;
+				$this->bank_account = $obj->fk_account;
+				$this->bank_line = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -250,7 +257,6 @@ class PaymentLoan extends CommonObject
 		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 
 		// Check parameters
-		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
@@ -472,6 +478,7 @@ class PaymentLoan extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update link between loan's payment and the line generate in llx_bank
 	 *
@@ -480,6 +487,7 @@ class PaymentLoan extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);

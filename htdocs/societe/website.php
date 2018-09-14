@@ -31,7 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/website/class/websiteaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -57,12 +57,12 @@ if (! $sortorder) $sortorder='ASC';
 
 // Initialize technical objects
 $object=new Societe($db);
-$objectwebsiteaccount=new WebsiteAccount($db);
+$objectwebsiteaccount=new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('websiteaccount');
+$extralabels = $extrafields->fetch_name_optionals_label('thirdpartyaccount');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
@@ -252,9 +252,9 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
-$sql.= " FROM ".MAIN_DB_PREFIX."website_account as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."websiteaccount_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe_account as t";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_account_extrafields as ef on (t.rowid = ef.fk_object)";
+if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('societeaccount').")";
 else $sql.=" WHERE 1 = 1";
 $sql.=" AND fk_soc = ".$object->id;
 foreach($search as $key => $val)
@@ -335,9 +335,9 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
-$modelmail="websiteaccount";
-$objecttmp=new WebsiteAccount($db);
-$trackid='websiteaccount'.$object->id;
+$modelmail="societeaccount";
+$objecttmp=new SocieteAccount($db);
+$trackid='thi'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
@@ -535,7 +535,7 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 
 	// Show list of available documents
@@ -549,8 +549,6 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 	print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

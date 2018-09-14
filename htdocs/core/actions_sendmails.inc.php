@@ -42,7 +42,7 @@ if (GETPOST('addfile','alpha'))
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir_tmp = $vardir.'/temp';             // TODO Add $keytoavoidconflict in upload_dir path
 
-	dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, $trackid);
+	dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, $trackid, 0);
 	$action='presend';
 }
 

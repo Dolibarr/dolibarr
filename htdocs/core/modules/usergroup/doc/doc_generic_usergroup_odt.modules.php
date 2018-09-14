@@ -192,6 +192,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -205,6 +206,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -510,6 +512,4 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 		return -1;
 	}
-
 }
-

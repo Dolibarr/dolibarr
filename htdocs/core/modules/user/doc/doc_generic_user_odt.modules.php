@@ -190,6 +190,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -203,6 +204,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -409,7 +411,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else
@@ -422,8 +424,19 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
-	function get_substitutionarray_object($object,$outputlangs,$array_key='object') {
-		$array_other=array();
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     * get substitution array for object
+     *
+     * @param User          $object         user
+     * @param Translate     $outputlangs    translation object
+     * @param string        $array_key      key for array
+     * @return array                        array of substitutions
+     */
+    function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+    {
+        // phpcs:enable
+		$array_other = array();
 		foreach($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;
@@ -431,6 +444,4 @@ class doc_generic_user_odt extends ModelePDFUser
 		}
 		return $array_other;
 	}
-
 }
-

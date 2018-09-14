@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013      Florian Henry	      <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  */
 
 /**
- * \file accounting/bookkeeping/thirdparty_lettrage.php
+ * \file accountancy/bookkeeping/thirdparty_lettrage_supplier.php
  * \ingroup Advanced accountancy
  * \brief Tab to setup lettering
  */
@@ -86,8 +86,9 @@ $socid = GETPOST("socid", 'int');
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
-if ($result<0) {
-	setEventMessage($object->error,'errors');
+if ($result<0)
+{
+	setEventMessages($object->error, $object->errors, 'errors');
 }
 
 $form = new Form($db);
@@ -133,7 +134,7 @@ if (!empty($search_doc_ref)) $param.='&search_doc_ref='.$search_doc_ref;
 
 
 /*
- * Affichage onglets
+ * Display tabs
  */
 $head = societe_prepare_head($object);
 
@@ -272,7 +273,6 @@ if ($resql) {
 	print '</td>';
 	print '</tr>';
 
-	$var = false;
 	$solde = 0;
 	$tmp = '';
 	while ($obj = $db->fetch_object($resql)) {
@@ -281,11 +281,10 @@ if ($resql) {
 			$tmp = $obj->lettering_code;
 
 			if ($tmp != $obj->lettering_code || empty($obj->lettering_code))
-			$var = ! $var;
 
 		$solde += ($obj->credit - $obj->debit);
 
-		print "<tr $bc[$var]>";
+		print '<tr class="oddeven">';
 
 		if (empty($obj->lettering_code)) {
 			print '<td><a href="' . dol_buildpath('/accountancy/bookkeeping/card.php', 1) . '?piece_num=' . $obj->piece_num . '">';
@@ -320,7 +319,7 @@ if ($resql) {
 	print '<td colspan="5"></td>';
 	print "</tr>\n";
 
-	print "<tr $bc[$var]>";
+	print '<tr class="oddeven">';
 	print '<td colspan="9">Solde Comptable</td>' . "\n";
 	print '<td><strong>' . price($credit - $debit) . '</strong></td>';
 	print '<td colspan="5"></td>';

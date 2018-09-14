@@ -13,7 +13,7 @@ Other modules are available on <a href="https://www.dolistore.com" target="_new"
 
 ### Translations
 
-Translations can be define manually by editing files into directories [langs](langs). 
+Translations can be define manually by editing files into directories *langs*. 
 
 <!--
 This module contains also a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service. 
@@ -91,7 +91,7 @@ Licenses
 
 GPLv3 or (at your option) any later version.
 
-See [COPYING](COPYING) for more information.
+See file COPYING for more information.
 
 #### Documentation
 

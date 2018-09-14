@@ -23,11 +23,14 @@
 require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 
 /**
- *	Class to offer components to list and upload files
+ *  Class to offer components to list and upload files
  */
 class FormMailing extends Form
 {
-	public $errors=array();
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 	/**
 	 * Output a select with destinaries status
@@ -37,7 +40,8 @@ class FormMailing extends Form
 	 * @param integer  $show_empty     Show empty option
 	 * @return string HTML select
 	 */
-	public function selectDestinariesStatus($selectedid='',$htmlname='dest_status', $show_empty=0) {
+    public function selectDestinariesStatus($selectedid='', $htmlname='dest_status', $show_empty=0)
+    {
 
 		global $langs;
 		$langs->load("mails");
@@ -54,5 +58,5 @@ class FormMailing extends Form
         $options = $options + $mailing->statut_dest;
 
         return Form::selectarray($htmlname, $options, $selectedid, 0, 0, 0, '', 1);
-	}
+    }
 }

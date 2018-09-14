@@ -34,14 +34,11 @@ class Cpaiement
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cpaiement';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_paiement';
-
-
-	/**
-	 */
 
 	public $code;
 	public $libelle;
@@ -49,9 +46,6 @@ class Cpaiement
 	public $active;
 	public $accountancy_code;
 	public $module;
-
-	/**
-	 */
 
 
 	/**
@@ -375,8 +369,5 @@ class Cpaiement
 		$this->active = '';
 		$this->accountancy_code = '';
 		$this->module = '';
-
-
 	}
-
 }

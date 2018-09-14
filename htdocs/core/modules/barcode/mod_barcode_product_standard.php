@@ -223,16 +223,18 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *		Return if a code is used (by other element)
+	 *	Return if a code is used (by other element)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
-	 *		@param	string		$code		Code to check
-	 *		@param	Product		$product	Objet product
-	 *		@return	int						0 if available, <0 if KO
+	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	string		$code		Code to check
+	 *	@param	Product		$product	Objet product
+	 *	@return	int						0 if available, <0 if KO
 	 */
 	function verif_dispo($db, $code, $product)
 	{
+        // phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE barcode = '".$code."'";
 		if ($product->id > 0) $sql.= " AND rowid <> ".$product->id;
@@ -253,9 +255,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		{
 			return -2;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return if a barcode value match syntax
 	 *
@@ -265,6 +267,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	function verif_syntax($codefortest, $typefortest)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$result = 0;
@@ -300,6 +303,4 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $result;
 	}
-
 }
-

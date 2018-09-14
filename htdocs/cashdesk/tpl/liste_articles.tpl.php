@@ -28,9 +28,8 @@ if (empty($langs) || ! is_object($langs))
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","cashdesk"));
 
 ?>
 

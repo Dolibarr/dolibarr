@@ -162,15 +162,15 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *
  *    	@param      int		$iSecond		Number of seconds
  *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30",
- *                                                         'allwithouthour': total delay days without hour part like "2 days",
- *                                                         'allhourmin': total delay with format hours:min like "60:30",
- *                                                         'allhour': total delay hours without min/sec like "60:30",
- *                                                         'fullhour': total delay hour decimal like "60.5" for 60:30,
- *                                                         'hour': only hours part "12",
- *                                                         'min': only minutes part "30",
- *                                                         'sec': only seconds part,
- *                                                         'month': only month part,
- *                                                         'year': only year part);
+ *                                          - 'allwithouthour': total delay days without hour part like "2 days",
+ *                                          - 'allhourmin': total delay with format hours:min like "60:30",
+ *                                          - 'allhour': total delay hours without min/sec like "60:30",
+ *                                          - 'fullhour': total delay hour decimal like "60.5" for 60:30,
+ *                                          - 'hour': only hours part "12",
+ *                                          - 'min': only minutes part "30",
+ *                                          - 'sec': only seconds part,
+ *                                          - 'month': only month part,
+ *                                          - 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration
@@ -439,7 +439,6 @@ function dol_get_next_week($day, $week, $month, $year)
 	$tmparray=dol_getdate($time,true);
 
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
-
 }
 
 /**	Return GMT time for first day of a month or year
@@ -964,4 +963,3 @@ function monthArray($outputlangs,$short=0)
 
 	return $montharray;
 }
-

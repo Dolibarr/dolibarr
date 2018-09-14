@@ -34,13 +34,17 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -131,7 +135,8 @@ if (empty($pageid))
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 
     $langs->load("website");
-    print $langs->trans("PreviewOfSiteNotYetAvailable");
+
+    if (! GETPOSTISSET('pageref')) print $langs->trans("PreviewOfSiteNotYetAvailable", $websitekey);
 
     include DOL_DOCUMENT_ROOT.'/public/error-404.php';
     exit;
@@ -203,4 +208,3 @@ print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html
 include_once $original_file_osencoded;		// Note: The pageXXX.tpl.php showed here contains a formatage with dolWebsiteOutput() at end of page.
 
 if (is_object($db)) $db->close();
-

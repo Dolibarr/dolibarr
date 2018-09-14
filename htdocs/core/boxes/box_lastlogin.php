@@ -35,7 +35,11 @@ class box_lastlogin extends ModeleBoxes
     var $boxlabel='BoxLoginInformation';
     var $depends = array("user");
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $param;
     var $enabled = 1;
 
@@ -94,7 +98,6 @@ class box_lastlogin extends ModeleBoxes
             'td' => '',
             'text' => $tmp,
         );
-        
     }
 
 

@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/template/lib/myobject.lib.php
+ * \file    htdocs/modulebuilder/template/lib/mymodule_myobject.lib.php
  * \ingroup mymodule
  * \brief   Library files with common functions for MyObject
  */

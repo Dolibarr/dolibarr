@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        htdocs/admin/oauthlogintoken.php
+ * \file        htdocs/admin/oauthlogintokens.php
  * \ingroup     oauth
  * \brief       Setup page to configure oauth access to login information
  */
@@ -394,6 +394,6 @@ if ($mode == 'userconf' && $user->admin)
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,9 +1,18 @@
 <?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/*
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 print '<script type="text/javascript" language="javascript">
@@ -36,8 +45,8 @@ print '<script type="text/javascript" language="javascript">
 		});
 	});
 </script>';
-		
-		
+
+
 		print_fiche_titre($langs->trans("AdvTgtTitle"));
 
 		print '<div class="tabBar">' . "\n";
@@ -272,9 +281,9 @@ print '<script type="text/javascript" language="javascript">
 
 						print '<table class="nobordernopadding"><tr>';
 						print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-						print $form->select_date('', 'options_' . $key . '_st_dt');
+						print $form->selectDate('', 'options_' . $key . '_st_dt');
 						print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-						print $form->select_date('', 'options_' . $key . '_end_dt');
+						print $form->selectDate('', 'options_' . $key . '_end_dt');
 						print '</td></tr></table>';
 
 						print '</td><td>' . "\n";
@@ -397,9 +406,9 @@ print '<script type="text/javascript" language="javascript">
 		print '</td><td>' . "\n";
 		print '<table class="nobordernopadding"><tr>';
 		print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-		print $form->select_date($array_query['contact_create_st_dt'], 'contact_create_st_dt', 0, 0, 1, 'find_customer', 1, 1);
+		print $form->selectDate($array_query['contact_create_st_dt'], 'contact_create_st_dt', 0, 0, 1, 'find_customer', 1, 1);
 		print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-		print $form->select_date($array_query['contact_create_end_dt'], 'contact_create_end_dt', 0, 0, 1, 'find_customer', 1, 1);
+		print $form->selectDate($array_query['contact_create_end_dt'], 'contact_create_end_dt', 0, 0, 1, 'find_customer', 1, 1);
 		print '</td></tr></table>';
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
@@ -412,9 +421,9 @@ print '<script type="text/javascript" language="javascript">
 		print '</td><td>' . "\n";
 		print '<table class="nobordernopadding"><tr>';
 		print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-		print $form->select_date($array_query['contact_update_st_dt'], 'contact_update_st_dt', 0, 0, 1, 'find_customer', 1, 1);
+		print $form->selectDate($array_query['contact_update_st_dt'], 'contact_update_st_dt', 0, 0, 1, 'find_customer', 1, 1);
 		print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-		print $form->select_date($array_query['contact_update_end_dt'], 'contact_update_end_dt', 0, 0, 1, 'find_customer', 1, 1);
+		print $form->selectDate($array_query['contact_update_end_dt'], 'contact_update_end_dt', 0, 0, 1, 'find_customer', 1, 1);
 		print '</td></tr></table>';
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
@@ -461,9 +470,9 @@ print '<script type="text/javascript" language="javascript">
 
 					print '<table class="nobordernopadding"><tr>';
 					print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
-					print $form->select_date('', 'options_' . $key . '_st_dt' . '_cnct');
+					print $form->selectDate('', 'options_' . $key . '_st_dt' . '_cnct');
 					print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
-					print $form->select_date('', 'options_' . $key . '_end_dt' . '_cnct');
+					print $form->selectDate('', 'options_' . $key . '_end_dt' . '_cnct');
 					print '</td></tr></table>';
 
 					print '</td><td>' . "\n";

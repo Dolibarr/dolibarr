@@ -204,3 +204,7 @@ MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=利用できないオプションを表示しない
 HideNotAvailableOptions=利用できないオプションを非表示
 ErrorFoundDuringMigration=移行プロセス中にエラーが報告されたので、次のステップは利用できません。 エラーを無視するには、<a href="%s">ここをクリック</a> してください。ただし、修正されるまでアプリケーションまたは一部の機能が正しく動作しない場合があります。
+YouTryInstallDisabledByDirLock=The application try to sefl upgrade, but install/upgrade pages have been disabled for security reason (directory renamed with .lock suffix).<br>
+YouTryInstallDisabledByFileLock=The application try to sefl upgrade, but install/upgrade pages pages have been disabled for security reason (by lock file <strong>install.lock</strong> into dolibarr documents directory).<br>
+ClickHereToGoToApp=Click here to go to your application
+ClickOnLinkOrRemoveManualy=Click on following link and if you always reach this page, you must remove the file install.lock into documents directory manually

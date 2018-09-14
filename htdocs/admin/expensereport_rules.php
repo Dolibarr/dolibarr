@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2012      Mikael Carlavan        <contact@mika-carl.fr>
- * Copyright (C) 2017      ATM Consulting         <contact@atm-consulting.fr>
- * Copyright (C) 2017      Pierre-Henry Favre     <phf@atm-consulting.fr>
+/* Copyright (C) 2012       Mikael Carlavan         <contact@mika-carl.fr>
+ * Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2017       Pierre-Henry Favre      <phf@atm-consulting.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,8 +183,8 @@ if ($action != 'edit')
 
 	echo '<td>'.$form->selectExpense('', 'fk_c_type_fees', 0, 1, 1).'</td>';
 	echo '<td>'.$form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0).'</td>';
-	echo '<td>'.$form->select_date(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0, 1).'</td>';
-	echo '<td>'.$form->select_date(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0, 1).'</td>';
+	echo '<td>'.$form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0).'</td>';
+	echo '<td>'.$form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0).'</td>';
 	echo '<td><input type="text" value="" name="amount" class="amount" />'.$conf->currency.'</td>';
 	echo '<td>'.$form->selectyesno('restrictive', 0, 1).'</td>';
 	echo '<td align="right"><input type="submit" class="button" value="'.$langs->trans('Add').'" /></td>';
@@ -270,7 +271,7 @@ foreach ($rules as $rule)
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
-		echo $form->select_date(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0, 1);
+		print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0);
 	}
 	else
 	{
@@ -282,7 +283,7 @@ foreach ($rules as $rule)
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
-		echo $form->select_date(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0, 1);
+		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
 	}
 	else
 	{
@@ -354,6 +355,7 @@ echo '<script type="text/javascript"> $(function() {
 }); </script>';
 
 dol_fiche_end();
-llxFooter();
 
+// End of page
+llxFooter();
 $db->close();

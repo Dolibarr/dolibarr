@@ -88,8 +88,8 @@ class pdf_standard extends ModelePDFProduct
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "standard";
@@ -117,6 +117,7 @@ class pdf_standard extends ModelePDFProduct
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -130,19 +131,15 @@ class pdf_standard extends ModelePDFProduct
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("orders");
-		$outputlangs->load("deliveries");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
 		$nblignes = count($object->lines);
 
@@ -688,11 +685,9 @@ class pdf_standard extends ModelePDFProduct
 	{
 	    global $conf,$langs,$hookmanager;
 
-	    $outputlangs->load("main");
-	    $outputlangs->load("bills");
-	    $outputlangs->load("propal");
-	    $outputlangs->load("companies");
-	    $outputlangs->load("orders");
+	    // Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders"));
+
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 
 	    if ($object->type == 1) $titlekey='ServiceSheet';
@@ -841,6 +836,4 @@ class pdf_standard extends ModelePDFProduct
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 	    return pdf_pagefoot($pdf,$outputlangs,'PRODUCT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

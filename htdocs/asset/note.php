@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       note.php
+ *  \file       htdocs/asset/note.php
  *  \ingroup    asset
  *  \brief      Card with notes on Asset
  */
@@ -144,6 +144,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -48,8 +48,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -83,7 +83,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function info($langs)
 	{
 		global $conf,$langs;
-        
+
 		// Load traductions files requiredby by page
 		$langs->loadLangs(array("companies", "errors"));
 
@@ -164,6 +164,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -177,6 +178,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -197,7 +199,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
-        
+
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
@@ -428,6 +430,4 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->error='UnknownError';
 		return -1;
 	}
-
 }
-

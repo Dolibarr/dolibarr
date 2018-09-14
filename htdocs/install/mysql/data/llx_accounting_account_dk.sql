@@ -20,16 +20,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
---
 
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
---
 -- Description of the accounts in DK-STD
---
+-- ADD 8000000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (5082, 'DK-STD', 'Indtægter', '', '1000', '', 'Salg af varer/ydelser m. moms', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (5083, 'DK-STD', 'Indtægter', '', '1010', '', 'Salg af varer EU', 1);

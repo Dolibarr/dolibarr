@@ -26,9 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -491,7 +490,6 @@ print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
 print '<br>';
 */
 
-
+// End of page
 llxFooter();
-
 $db->close();
