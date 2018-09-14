@@ -62,11 +62,13 @@ llxHeader('', $langs->trans("StripeChargeList"));
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
+	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
 	$service = 'StripeLive';
+	$servicestatus = '1';
 }
 
 $stripeaccount = $stripe->getStripeAccount($service);
