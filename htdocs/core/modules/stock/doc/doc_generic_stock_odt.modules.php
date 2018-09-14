@@ -96,8 +96,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 	{
 		global $conf,$langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));;
 
 		$form = new Form($this->db);
 
