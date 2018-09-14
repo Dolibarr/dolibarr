@@ -149,11 +149,12 @@ if (!$rowid)
 		}
 
 		print '<TR class="oddeven">';
-		// Ref
-		$url='https://dashboard.stripe.com/test/payments/'.$charge->id;
+		// Ref    	
+		if (! empty($conf->stripe->enabled) && !empty($stripeaccount)) $connect=$stripeaccount.'/';
+		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
 			if ($servicestatus)
 			{
-				$url='https://dashboard.stripe.com/payments/'.$charge->id;
+				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
 			}
 		print "<TD><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></TD>\n";
 		// Stripe customer
