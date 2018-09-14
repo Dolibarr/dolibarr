@@ -727,8 +727,8 @@ class FormTicket
     {
         global $conf, $langs, $user, $mysoc;
 
-        $langs->load("other");
-        $langs->load("mails");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails'));
 
         $addfileaction = 'addfile';
 
