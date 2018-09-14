@@ -76,7 +76,7 @@ class pdf_eratosthene extends ModelePDFCommandes
      * Dolibarr version of the loaded document
      * @public string
      */
-	public $version = 'dolibarr';
+	public $version = 'development';
 
     public $page_largeur;
     public $page_hauteur;

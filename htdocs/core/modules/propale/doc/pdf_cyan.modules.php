@@ -47,7 +47,7 @@ class pdf_cyan extends ModelePDFPropales
 	var $type;
 
 	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	var $version = 'development';
 
 	var $page_largeur;
 	var $page_hauteur;
