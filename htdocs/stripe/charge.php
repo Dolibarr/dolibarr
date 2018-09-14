@@ -62,16 +62,16 @@ llxHeader('', $langs->trans("StripeChargeList"));
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
-	$servicestatus = '0';
+  $servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
-	$service = 'StripeLive';
-	$servicestatus = '1';
+  $service = 'StripeLive';
+  $servicestatus = '1';
 }
 
-$stripeaccount = $stripe->getStripeAccount($service);
+$stripeacc = $stripe->getStripeAccount($service);
 /*if (empty($stripeaccount))
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
@@ -109,9 +109,9 @@ if (!$rowid)
 
 	print "</TR>\n";
 
-	if ($stripeaccount)
+	if ($stripeacc)
 	{
-		$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeaccount));
+		$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 	}
 	else
 	{
@@ -149,8 +149,10 @@ if (!$rowid)
 		}
 
 		print '<TR class="oddeven">';
-		// Ref    	
-		if (! empty($conf->stripe->enabled) && !empty($stripeaccount)) $connect=$stripeaccount.'/';
+    
+    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+    
+		// Ref
 		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
 			if ($servicestatus)
 			{
@@ -158,7 +160,17 @@ if (!$rowid)
 			}
 		print "<TD><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></TD>\n";
 		// Stripe customer
-		print "<TD>".$charge->customer."</TD>\n";
+		print "<TD>";
+
+    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
+		if ($servicestatus)
+		{
+    $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
+		}
+		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+  
+    print "</TD>\n";
 		// Link
 		print "<TD>";
 		if ($societestatic->id > 0)
