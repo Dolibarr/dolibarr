@@ -669,8 +669,13 @@ textarea.centpercent {
 }
 .badge {
 	display: inline-block;
+    	position: absolute;
+    	top: -10px;
+    	right: -5px;
+    	text-align: right;
+	
 	min-width: 10px;
-	padding: 2px 5px;
+	padding: 5px 5px;
 	font-size: 10px;
 	font-weight: 700;
 	line-height: 1em;
@@ -678,9 +683,15 @@ textarea.centpercent {
 	text-align: center;
 	white-space: nowrap;
 	vertical-align: text-bottom;
-	background-color: #aaa;
+	background-color: #6482bb;
 	border-radius: 10px;
 }
+
+
+.tab .badge{
+	font-size: 9px;
+}
+
 .borderrightlight
 {
 	border-right: 1px solid #DDD;
@@ -2289,6 +2300,7 @@ div.tabs {
 }
 div.tabsElem {
 	margin-top: 1px;
+	z-index:0;
 }	/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
     /* font-weight: normal !important; */
@@ -2362,21 +2374,34 @@ a.tabTitle {
 }
 
 a.tabunactive {
-    color: rgb(<?php print $colortextlink; ?>) !important;
+    color: #333 !important;
 }
+a.tabunactive:hover {
+    color: rgb(<?php print $colortextlink; ?>) !important;
+	border-top: 1px solid rgb(<?php print $colorbackhmenu1 ; ?>) !important;
+}
+
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
+    position: relative;
 	font-family: <?php print $fontlist ?>;
 	padding: 12px 9px 13px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
 
-	border-right: 1px solid transparent;
-	border-left: 1px solid transparent;
-	border-top: 1px solid transparent;
-	border-bottom: 0px !important;
+	border-right: 1px solid #ebebeb;
+	border-left: 1px solid #ebebeb;
+	border-top: 1px solid #ebebeb;
+	border-bottom: 0px;
+	
+	z-index:0;
 
-	background-image: none !important;
+	
+	
+    	background: -moz-linear-gradient(top, rgba(253,253,253,1) 90%, rgba(0,0,0,0.05) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(253,253,253,1) 90%,rgba(0,0,0,0.05) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(253,253,253,1) 90%,rgba(0,0,0,0.05) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	
 }
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
@@ -2387,6 +2412,8 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid #CCC !important;
 	/* border-top: <?php echo 2; ?>px solid rgb(<?php echo $colortopbordertitle1; ?>) !important; */
 	border-top: <?php echo 2; ?>px solid rgb(<?php echo $colorbackhmenu1 ?>) !important;
+    	border-bottom: 1px solid #fff !important;
+	margin-bottom: -1px !important;
 }
 a.tab:hover
 {
@@ -2394,7 +2421,7 @@ a.tab:hover
 	background: rgba(<?php echo $colorbacktabcard1; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 	color: #<?php echo $colortextbacktab; ?>;
 	*/
-	text-decoration: underline;
+	text-decoration: none;
 }
 a.tabimage {
     color: #434956;
@@ -2480,12 +2507,12 @@ span.butAction, span.butActionDelete {
     cursor: pointer;
     /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
-    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
+    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);*/
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;*/
+    border-bottom-left-radius: 0 !important;
 }
 a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
 a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
