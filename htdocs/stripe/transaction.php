@@ -198,14 +198,18 @@ if (! $rowid) {
 		print "<td align=\"right\">" . price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency)) . "</td>";
 		// Status
 		print "<td align='right'>";
-    if ($txn->status=='available')
-    {
-      print img_picto($langs->trans("".$txn->status.""),'statut4');} 
-elseif ($txn->status=='pending')
- {print img_picto($langs->trans("".$txn->status.""),'statut7');}
-elseif ($txn->status=='failed')
- {
-		print img_picto($langs->trans("".$txn->status.""),'statut8');}
+		if ($txn->status=='available')
+		{
+			print img_picto($langs->trans("".$txn->status),'statut4');
+		}
+		elseif ($txn->status=='pending')
+		{
+			print img_picto($langs->trans("".$txn->status),'statut7');
+		}
+		elseif ($txn->status=='failed')
+		{
+			print img_picto($langs->trans("".$txn->status),'statut8');
+		}
 		print '</td>';
 		print "</tr>\n";
 	}
