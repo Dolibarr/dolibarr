@@ -4711,6 +4711,10 @@ class Form
 				$tmpthirdparty=new Societe($this->db);
 				$defaulttx=get_default_tva($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
 				$defaultnpr=get_default_npr($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
+		        if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
+			        $defaultcode=$reg[1];
+			        $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
+		        }
 				if (empty($defaulttx)) $defaultnpr=0;
 			}
 
