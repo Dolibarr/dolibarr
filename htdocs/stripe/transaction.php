@@ -207,5 +207,6 @@ elseif ($txn->status=='failed')
 	print '</FORM>';
 } else {}
 
+// End of page
 llxFooter();
 $db->close();
