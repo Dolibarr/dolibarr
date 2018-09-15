@@ -1108,8 +1108,8 @@ class Form
 		else if (!is_array($selected)) $selected = array($selected);
 
 		// Clean $filter that may contains sql conditions so sql code
-		if (function_exists('test_sql_and_script_inject')) {
-			if (test_sql_and_script_inject($filter, 3)>0) {
+		if (function_exists('testSqlAndScriptInject')) {
+			if (testSqlAndScriptInject($filter, 3)>0) {
 				$filter ='';
 			}
 		}
