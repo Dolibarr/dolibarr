@@ -123,26 +123,29 @@ if ($disablenofollow) echo '</a>';
 
 <div id="login_right">
 
-<table class="left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
+<div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
+
 <!-- Login -->
-<tr>
-<td class="nowrap center valignmiddle">
+<div class="trinputlogin">
+<div class="tagtd nowrap center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
-</td>
-</tr>
+<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+</div>
+</div>
+
 <!-- Password -->
-<tr>
-<td class="nowrap center valignmiddle">
+<div class="trinputlogin">
+<div class="tagtd nowrap center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key">
-<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
 </span>
-</td></tr>
+<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
+</div></div>
+
 <?php
 if (! empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
@@ -168,10 +171,11 @@ if ($captcha) {
 	// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
-	<tr>
-	<td class="nowrap none center">
+	<div class="trinputlogin">
+	<div class="tagtd nowrap none center valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent"><tr>
+	<table class="login_table_securitycode centpercent">
+	<tr class="valignmiddle">
 	<td>
 	<span class="span-icon-security">
 	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
@@ -179,11 +183,13 @@ if ($captcha) {
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
 	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
+	</tr>
+	</table>
 
-	</td></tr>
+	</div></div>
 <?php } ?>
-</table>
+
+</div>
 
 </div> <!-- end div login-right -->
 

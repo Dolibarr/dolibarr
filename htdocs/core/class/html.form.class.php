@@ -1108,8 +1108,8 @@ class Form
 		else if (!is_array($selected)) $selected = array($selected);
 
 		// Clean $filter that may contains sql conditions so sql code
-		if (function_exists('test_sql_and_script_inject')) {
-			if (test_sql_and_script_inject($filter, 3)>0) {
+		if (function_exists('testSqlAndScriptInject')) {
+			if (testSqlAndScriptInject($filter, 3)>0) {
 				$filter ='';
 			}
 		}
@@ -5730,7 +5730,7 @@ class Form
 	 *  @param	string	$morecss				Add more class to css styles
 	 *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 *  @param  string  $placeholder            String to use as placeholder
-	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
 	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
 	 */
@@ -5832,7 +5832,7 @@ class Form
 	 *  @param	string	$morecss				Add more class to css styles
 	 *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 *  @param  string  $placeholder            String to use as placeholder
-	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
 	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
 	 */
@@ -5949,55 +5949,76 @@ class Form
 	 *  @param	int		$width			Force width of select box. May be used only when using jquery couch. Example: 250, 95%
 	 *  @param	string	$moreattrib		Add more options on select component. Example: 'disabled'
 	 *  @param	string	$elemtype		Type of element we show ('category', ...)
+	 *  @param	string	$placeholder	String to use as placeholder
+	 *  @param	int		$addjscombo		Add js combo
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray
 	 */
-	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
+	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='', $elemtype='', $placeholder='', $addjscombo=1)
 	{
 		global $conf, $langs;
 
 		$out = '';
 
+
 		// Add code for jquery to use multiselect
 		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-   			$out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-    			<script type="text/javascript">
-	    			function formatResult(record) {'."\n";
-						if ($elemtype == 'category')
-						{
-							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
-						}
-						else
-						{
-							$out.='return record.text;';
-						}
-			$out.= '	};
-    				function formatSelection(record) {'."\n";
-						if ($elemtype == 'category')
-						{
-							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
-						}
-						else
-						{
-							$out.='return record.text;';
-						}
-			$out.= '	};
-	    			$(document).ready(function () {
-    					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
-    						dir: \'ltr\',
-							// Specify format function for dropdown item
-							formatResult: formatResult,
-    					 	templateResult: formatResult,		/* For 4.0 */
-							// Specify format function for selected item
-							formatSelection: formatSelection,
-    					 	templateResult: formatSelection		/* For 4.0 */
-    					});
-    				});
-    			</script>';
+			$out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+						<script type="text/javascript">'."\n";
+			if ($addjscombo == 1)
+			{
+				$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$out.=	'function formatResult(record) {'."\n";
+				if ($elemtype == 'category')
+				{
+					$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+				}
+				else
+				{
+					$out.='return record.text;';
+				}
+				$out.=	'};'."\n";
+				$out.=	'function formatSelection(record) {'."\n";
+				if ($elemtype == 'category')
+				{
+					$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+				}
+				else
+				{
+					$out.='return record.text;';
+				}
+				$out.=	'};'."\n";
+				$out.=	'$(document).ready(function () {
+							$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+								dir: \'ltr\',
+								// Specify format function for dropdown item
+								formatResult: formatResult,
+							 	templateResult: formatResult,		/* For 4.0 */
+								// Specify format function for selected item
+								formatSelection: formatSelection,
+							 	templateResult: formatSelection		/* For 4.0 */
+							});
+						});'."\n";
+			}
+			elseif ($addjscombo == 2)
+			{
+				// Add other js lib
+				// ...
+				$out.= '$(document).ready(function () {
+							$(\'#'.$htmlname.'\').multiSelect({
+								containerHTML: \'<div class="multi-select-container">\',
+								menuHTML: \'<div class="multi-select-menu">\',
+								buttonHTML: \'<span class="multi-select-button '.$morecss.'">\',
+								menuItemHTML: \'<label class="multi-select-menuitem">\',
+								activeClass: \'multi-select-container--open\',
+								noneText: \''.$placeholder.'\'
+							});
+						})';
+			}
+			$out.=	'</script>';
 		}
 
 		// Try also magic suggest

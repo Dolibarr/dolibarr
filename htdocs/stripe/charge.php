@@ -62,14 +62,16 @@ llxHeader('', $langs->trans("StripeChargeList"));
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
+  $servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
-	$service = 'StripeLive';
+  $service = 'StripeLive';
+  $servicestatus = '1';
 }
 
-$stripeaccount = $stripe->getStripeAccount($service);
+$stripeacc = $stripe->getStripeAccount($service);
 /*if (empty($stripeaccount))
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
@@ -87,7 +89,7 @@ if (!$rowid)
     print '<INPUT type="hidden" name="page" value="'.$page.'">';
 
     $title=$langs->trans("StripeChargeList");
-    $title.=($stripeaccount?' (Stripe connection with Stripe OAuth Connect account '.$stripeaccount.')':' (Stripe connection with keys from Stripe module setup)');
+    $title.=($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
@@ -107,9 +109,9 @@ if (!$rowid)
 
 	print "</TR>\n";
 
-	if ($stripeaccount)
+	if ($stripeacc)
 	{
-		$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeaccount));
+		$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 	}
 	else
 	{
@@ -147,15 +149,28 @@ if (!$rowid)
 		}
 
 		print '<TR class="oddeven">';
+    
+    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+    
 		// Ref
-		$url='https://dashboard.stripe.com/test/payments/'.$charge->id;
+		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
 			if ($servicestatus)
 			{
-				$url='https://dashboard.stripe.com/payments/'.$charge->id;
+				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
 			}
 		print "<TD><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></TD>\n";
 		// Stripe customer
-		print "<TD>".$charge->customer."</TD>\n";
+		print "<TD>";
+
+    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
+		if ($servicestatus)
+		{
+    $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
+		}
+		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+  
+    print "</TD>\n";
 		// Link
 		print "<TD>";
 		if ($societestatic->id > 0)
@@ -198,7 +213,7 @@ if (!$rowid)
 		}
 	    print '</TD>';
 	    // Amount
-	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100)."</TD>";
+	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</TD>";
 	    // Status
 	    print '<TD align="right">';
 	    if ($charge->refunded=='1'){

@@ -3174,18 +3174,18 @@ class Propal extends CommonObject
 
 		$statuttrans='';
 		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
-		if ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
-		if ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
-		if ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
-		if ($statut==self::STATUS_BILLED) $statuttrans='statut6';
+		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
+		elseif ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
+		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
+		elseif ($statut==self::STATUS_BILLED) $statuttrans='statut6';
 
 		if ($mode == 0)	return $this->labelstatut[$statut];
-		if ($mode == 1)	return $this->labelstatut_short[$statut];
-		if ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		if ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		if ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
-		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
-		if ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
+		elseif ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
+		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
+		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
+		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
 	}
 
 

@@ -103,7 +103,7 @@ if (! $rowid) {
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
@@ -177,28 +177,35 @@ if (! $rowid) {
 		}
 		print "</td>\n";*/
 		// Origine
-		print "<td>";
-		print $FULLTAG;
-		if ($charge->metadata->source=="order"){
-			$object = new Commande($db);
-			$object->fetch($charge->metadata->idsource);
-			print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->idsource."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
-		} elseif ($charge->metadata->source=="invoice") {
-			$object = new Facture($db);
-			$object->fetch($charge->metadata->idsource);
-			print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->idsource."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
-		}
-		print "</td>\n";
+
+		//print "<TD>";
+		////if ($charge->metadata->dol_type=="order"){
+		//	$object = new Commande($db);
+		//	$object->fetch($charge->metadata->dol_id);
+		//	print "<A href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->dol_id."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
+		//} elseif ($charge->metadata->dol_type=="invoice"){
+		//	$object = new Facture($db);
+		//	$object->fetch($charge->metadata->dol_id);
+		//	print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
+		//}
+		//print "</TD>\n";
 		// Date payment
 		print '<td align="center">' . dol_print_date($txn->created, '%d/%m/%Y %H:%M') . "</td>\n";
 		// Type
 		print '<td>' . $txn->type . '</td>';
 		// Amount
-		print "<td align=\"right\">" . price(($txn->amount) / 100) . "</td>";
-		print "<td align=\"right\">" . price(($txn->fee) / 100) . "</td>";
+		print "<td align=\"right\">" . price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency)) . "</td>";
+		print "<td align=\"right\">" . price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency)) . "</td>";
 		// Status
 		print "<td align='right'>";
-		print $txn->status;
+    if ($txn->status=='available')
+    {
+      print img_picto($langs->trans("".$txn->status.""),'statut4');} 
+elseif ($txn->status=='pending')
+ {print img_picto($langs->trans("".$txn->status.""),'statut7');}
+elseif ($txn->status=='failed')
+ {
+		print img_picto($langs->trans("".$txn->status.""),'statut8');}
 		print '</td>';
 		print "</tr>\n";
 	}
