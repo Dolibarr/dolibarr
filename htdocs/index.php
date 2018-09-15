@@ -703,15 +703,27 @@ function showWeather($totallate,$text,$options)
 
     $used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
 
-    $level0=$offset;           if (! empty($conf->global->{$used_conf.'0'})) $level0=$conf->global->{$used_conf.'0'};
-    $level1=$offset+1*$factor; if (! empty($conf->global->{$used_conf.'1'})) $level1=$conf->global->{$used_conf.'1'};
-    $level2=$offset+2*$factor; if (! empty($conf->global->{$used_conf.'2'})) $level2=$conf->global->{$used_conf.'2'};
-    $level3=$offset+3*$factor; if (! empty($conf->global->{$used_conf.'3'})) $level3=$conf->global->{$used_conf.'3'};
+    $level0=$offset;
+    if (! empty($conf->global->{$used_conf.'0'})) {
+        $level0=$conf->global->{$used_conf.'0'};
+    }
+    $level1=$offset+1*$factor;
+    if (! empty($conf->global->{$used_conf.'1'})) {
+        $level1=$conf->global->{$used_conf.'1'};
+    }
+    $level2=$offset+2*$factor;
+    if (! empty($conf->global->{$used_conf.'2'})) {
+        $level2=$conf->global->{$used_conf.'2'};
+    }
+    $level3=$offset+3*$factor;
+    if (! empty($conf->global->{$used_conf.'3'})) {
+        $level3=$conf->global->{$used_conf.'3'};
+    }
 
     if ($totallate <= $level0) $out.=img_weather($text,'weather-clear.png',$options);
-    if ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text,'weather-few-clouds.png',$options);
-    if ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text,'weather-clouds.png',$options);
-    if ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text,'weather-many-clouds.png',$options);
-    if ($totallate > $level3) $out.=img_weather($text,'weather-storm.png',$options);
+    elseif ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text,'weather-few-clouds.png',$options);
+    elseif ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text,'weather-clouds.png',$options);
+    elseif ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text,'weather-many-clouds.png',$options);
+    elseif ($totallate > $level3) $out.=img_weather($text,'weather-storm.png',$options);
     return $out;
 }
