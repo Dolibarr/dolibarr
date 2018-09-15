@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /**
  *      \file       htdocs/core/modules/printing/printipp.modules.php
- *      \ingroup    mailing
+ *      \ingroup    printing
  *      \brief      File to provide printing with PrintIPP
  */
 
@@ -40,17 +40,17 @@ class printing_printipp extends PrintingDriver
     var $userid;    /* user login */
     var $user;
     var $password;
-    
+
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-	
+     * @var string Error code (or message)
+     */
+    public $error='';
+
     /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-	
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
     /**
      * @var DoliDB Database handler.
      */
@@ -78,6 +78,7 @@ class printing_printipp extends PrintingDriver
         $this->conf[] = array('enabled'=>1, 'type'=>'submit');
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Print selected file
      *
@@ -87,9 +88,9 @@ class printing_printipp extends PrintingDriver
      *
      * @return  int                     0 if OK, >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function print_file($file, $module, $subdir='')
     {
+        // phpcs:enable
         global $conf, $user;
         $error = 0;
 
@@ -118,11 +119,11 @@ class printing_printipp extends PrintingDriver
             {
                 if (! empty($conf->global->PRINTIPP_URI_DEFAULT))
                 {
-					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
+                    dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
                     $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
                 }
                 else
-				{
+                {
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;
@@ -195,24 +196,25 @@ class printing_printipp extends PrintingDriver
                 $html.= img_picto($langs->trans("Default"),'on');
             }
             else
-			{
-            	$html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-          	}
-			$html.= '</td>';
+            {
+                $html.= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+            }
+            $html.= '</td>';
             $html.= '</tr>'."\n";
         }
         $this->resprint = $html;
         return $error;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of available printers
      *
      *  @return array                list of printers
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function getlist_available_printers()
     {
+        // phpcs:enable
         global $conf,$db;
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
@@ -225,15 +227,16 @@ class printing_printipp extends PrintingDriver
         return $ipp->available_printers;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Get printer detail
      *
      *  @param  string  $uri    URI
      *  @return array           List of attributes
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_printer_detail($uri)
     {
+        // phpcs:enable
         global $conf,$db;
 
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
@@ -248,6 +251,7 @@ class printing_printipp extends PrintingDriver
         return $ipp->printer_attributes;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  List jobs print
      *
@@ -255,9 +259,9 @@ class printing_printipp extends PrintingDriver
      *
      *  @return  int                     0 if OK, >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function list_jobs($module)
     {
+        // phpcs:enable
         global $conf, $db, $bc;
         $error = 0;
         $html = '';

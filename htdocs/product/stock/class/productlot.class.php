@@ -39,7 +39,7 @@ class Productlot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'productlot';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -55,9 +55,10 @@ class Productlot extends CommonObject
 	public $lines = array();
 
 	/**
+	 * @var int Entity
 	 */
-
 	public $entity;
+
 	public $fk_product;
 	public $batch;
 	public $eatby = '';
@@ -67,9 +68,6 @@ class Productlot extends CommonObject
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
-
-	/**
-	 */
 
 
 	/**
@@ -475,6 +473,7 @@ class Productlot extends CommonObject
 	    return $this->LibStatut(0,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of a given status
 	 *
@@ -482,9 +481,9 @@ class Productlot extends CommonObject
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 	    global $langs;
 
 	    //$langs->load('stocks');

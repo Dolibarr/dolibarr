@@ -35,21 +35,21 @@ class ExportTsv extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
     /**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
-    var $extension;
-    var $version;
 
-    var $label_lib;
-    var $version_lib;
+    public $extension;
+    public $version;
 
-    var $separator="\t";
+    public $label_lib;
+    public $version_lib;
 
-    var $handle;    // Handle fichier
+    public $separator="\t";
+
+    public $handle;    // Handle fichier
 
 
     /**
@@ -145,6 +145,7 @@ class ExportTsv extends ModeleExports
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
 	*	Open output file
 	*
@@ -152,14 +153,14 @@ class ExportTsv extends ModeleExports
 	*	@param		Translate	$outputlangs	Output language object
 	*	@return		int							<0 if KO, >=0 if OK
     */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function open_file($file,$outputlangs)
+    function open_file($file,$outputlangs)
     {
+        // phpcs:enable
         global $langs;
 
         dol_syslog("ExportTsv::open_file file=".$file);
 
-		$ret=1;
+        $ret=1;
 
         $outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
@@ -173,20 +174,22 @@ class ExportTsv extends ModeleExports
 		return $ret;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output header into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_header($outputlangs)
     {
+        // phpcs:enable
         return 0;
     }
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Output title line into file
      *
      *  @param      array		$array_export_fields_label   	Array with list of label of fields
@@ -195,9 +198,9 @@ class ExportTsv extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
     {
+        // phpcs:enable
         foreach($array_selected_sorted as $code => $value)
         {
             $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);		// newvalue is now $outputlangs->charset_output encoded
@@ -210,6 +213,7 @@ class ExportTsv extends ModeleExports
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output record line into file
 	 *
@@ -219,9 +223,9 @@ class ExportTsv extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
     {
+        // phpcs:enable
     	global $conf;
 
 		$this->col=0;
@@ -253,40 +257,43 @@ class ExportTsv extends ModeleExports
         return 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output footer into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function write_footer($outputlangs)
     {
+        // phpcs:enable
 		return 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function close_file()
     {
+        // phpcs:enable
         fclose($this->handle);
         return 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Clean a cell to respect rules of TSV file cells
      *
      * @param 	string	$newvalue	String to clean
-	 * @param	string	$charset	Input AND Output character set
+     * @param	string	$charset	Input AND Output character set
      * @return 	string				Value cleaned
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function tsv_clean($newvalue, $charset)
     {
+        // phpcs:enable
 		// Rule Dolibarr: No HTML
 		$newvalue=dol_string_nohtmltag($newvalue, 1, $charset);
 
@@ -300,6 +307,6 @@ class ExportTsv extends ModeleExports
 			$newvalue=str_replace("\t"," ",$newvalue);
 		}
 
-    	return $newvalue;
+        return $newvalue;
     }
 }

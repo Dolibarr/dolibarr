@@ -60,14 +60,22 @@ class CommandeFournisseurDispatch extends CommonObject
 	public $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
 	public $lines=array();
 
-    public $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
 	public $fk_commande;
 	public $fk_product;
 	public $fk_commandefourndet;
 	public $qty;
 	public $fk_entrepot;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $datec='';
 	public $comment;
 	public $status;
@@ -479,6 +487,7 @@ class CommandeFournisseurDispatch extends CommonObject
         return $this->LibStatut($this->status,$mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return label of a status
      *
@@ -486,9 +495,9 @@ class CommandeFournisseurDispatch extends CommonObject
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *  @return string				Label of status
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$mode=0)
     {
+        // phpcs:enable
         global $langs;
         $langs->load('orders');
 
@@ -496,27 +505,27 @@ class CommandeFournisseurDispatch extends CommonObject
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
             return $langs->trans($this->statutshort[$statut]);
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
             if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
             if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
             if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
             if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 5)
+        elseif ($mode == 5)
         {
             if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
             if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut4');

@@ -266,6 +266,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -276,9 +277,9 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;

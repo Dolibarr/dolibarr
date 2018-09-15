@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003 Steve Dillon
- * Copyright (C) 2003 Laurent Passebecq
- * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
+/* Copyright (C) 2003       Steve Dillon
+ * Copyright (C) 2003       Laurent Passebecq
+ * Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Francis Appels          <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,15 @@
  */
 
 /**
- *	\file		htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
- *	\ingroup	core
- *	\brief		Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *  \file       htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
+ *  \ingroup    core
+ *  \brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
 
 /**
- *	Class to generate stick sheet with format Avery or other personalised
+ *  Class to generate stick sheet with format Avery or other personalised
  */
 class pdf_standardlabel extends CommonStickerGenerator
 {
@@ -46,6 +46,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		// use this method in future refactoring
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
@@ -60,9 +61,9 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
+        // phpcs:enable
 		global $mysoc, $conf, $langs;
 		global $forceimgscalewidth, $forceimgscaleheight;
 
@@ -226,6 +227,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -236,9 +238,9 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;

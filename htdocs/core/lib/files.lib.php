@@ -1268,7 +1268,7 @@ function dol_delete_dir($dir,$nophperrors=0)
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$onlysub		Delete only files and subdir, not main directory
  *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
- *  @return int             		Number of files and directory we try to remove. NB really removed is returned into $countdeleted.
+ *  @return int             		Number of files and directory we try to remove. NB really removed is returned into var by reference $countdeleted.
  */
 function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$countdeleted=0)
 {
@@ -2161,10 +2161,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$dirins.'/'.$original_file;
 	}
 	// Wrapping for some images
-	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
+	elseif ($modulepart == 'mycompany' && !empty($conf->mycompany->dir_output))
 	{
 		$accessallowed=1;
-		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
+		$original_file=$conf->mycompany->dir_output.'/'.$original_file;
 	}
 	// Wrapping for users photos
 	elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output))

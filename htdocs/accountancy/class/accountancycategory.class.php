@@ -56,24 +56,69 @@ class AccountancyCategory // extends CommonObject
 	 */
 	public $table_element='c_accounting_category';
 
-	public $id;
+	/**
+     * @var int ID
+     */
+    public $id;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $code;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Accountancy Category label
      */
     public $label;
 
+    /**
+	 * @var mixed Sample property 1
+	 */
 	public $range_account;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $sens;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $category_type;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $formula;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $position;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $fk_country;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $active;
 
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $lines_cptbk;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $lines_display;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $sdc;
 
 
@@ -150,18 +195,18 @@ class AccountancyCategory // extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_accounting_category");
 
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
 
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -289,18 +334,17 @@ class AccountancyCategory // extends CommonObject
 
 		if (! $error)
 		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -345,18 +389,17 @@ class AccountancyCategory // extends CommonObject
 
 		if (! $error)
 		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback

@@ -51,9 +51,20 @@ class Contrat extends CommonObject
 	 */
 	public $table_element='contrat';
 
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line='contratdet';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_contrat';
-    public $picto='contract';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='contract';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -76,27 +87,29 @@ class Contrat extends CommonObject
 	 * Customer reference of the contract
 	 * @var string
 	 */
-	var $ref_customer;
+	public $ref_customer;
 
 	/**
 	 * Supplier reference of the contract
 	 * @var string
 	 */
-	var $ref_supplier;
+	public $ref_supplier;
 
 	/**
 	 * Client id linked to the contract
 	 * @var int
 	 */
-	var $socid;
-	var $societe;		// Objet societe
+	public $socid;
+
+	public $societe;		// Objet societe
 
 	/**
 	 * Status of the contract
 	 * @var int
 	 */
-	var $statut=0;		// 0=Draft,
-	var $product;
+	public $statut=0;		// 0=Draft,
+
+	public $product;
 
 	/**
 	 * @var int		Id of user author of the contract
@@ -123,7 +136,7 @@ class Contrat extends CommonObject
 	/**
 	 * @var int		Date of creation
 	 */
-	var $date_creation;
+	public $date_creation;
 
 	/**
 	 * @var int		Date of last modification. Not filled until you call ->info()
@@ -133,34 +146,34 @@ class Contrat extends CommonObject
 	/**
 	 * @var int		Date of validation
 	 */
-	var $date_validation;
+	public $date_validation;
 
 	/**
 	 * @var int		Date when contract was signed
 	 */
-	var $date_contrat;
+	public $date_contrat;
 
 	/**
 	 * @var int		Date of contract closure
 	 * @deprecated we close contract lines, not a contract
 	 */
-	var $date_cloture;
+	public $date_cloture;
 
-	var $commercial_signature_id;
-	var $commercial_suivi_id;
+	public $commercial_signature_id;
+	public $commercial_suivi_id;
 
 	/**
 	 * @deprecated Use fk_project instead
 	 * @see fk_project
 	 */
-	var $fk_projet;
+	public $fk_projet;
 
-	var $extraparams=array();
+	public $extraparams=array();
 
 	/**
 	 * @var ContratLigne[]		Contract lines
 	 */
-	var $lines=array();
+	public $lines=array();
 
 	/**
 	 * Maps ContratLigne IDs to $this->lines indexes
@@ -236,6 +249,7 @@ class Contrat extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Activate a contract line
 	 *
@@ -246,9 +260,9 @@ class Contrat extends CommonObject
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
+        // phpcs:enable
 		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
 		if ($result < 0)
 		{
@@ -259,6 +273,7 @@ class Contrat extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Close a contract line
 	 *
@@ -268,9 +283,9 @@ class Contrat extends CommonObject
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
+        // phpcs:enable
 		$result=$this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
 		if ($result < 0)
 		{
@@ -702,15 +717,16 @@ class Contrat extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load lines array into this->lines.
 	 *  This set also nbofserviceswait, nbofservicesopened, nbofservicesexpired and nbofservicesclosed
 	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
+        // phpcs:enable
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
 		$this->nbofservicesexpired=0;
@@ -1780,6 +1796,7 @@ class Contrat extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update statut of contract according to services
 	 *
@@ -1787,9 +1804,9 @@ class Contrat extends CommonObject
 	 *	@return int     			<0 if KO, >0 if OK
 	 *  @deprecated					This function will never be used. Status of a contract is status of its lines.
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_statut($user)
 	{
+        // phpcs:enable
 		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
 		// If draft, we keep it (should not happen)
@@ -1819,6 +1836,7 @@ class Contrat extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi label of a given contrat status
 	 *
@@ -1826,9 +1844,9 @@ class Contrat extends CommonObject
 	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
 	 *	@return string      			Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load("contracts");
 		if ($mode == 0)
@@ -2002,15 +2020,16 @@ class Contrat extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of line rowid
 	 *
 	 *  @param	int		$statut     Status of lines to get
 	 *  @return array       		Array of line's rowid
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function array_detail($statut=-1)
 	{
+        // phpcs:enable
 		$tab=array();
 
 		$sql = "SELECT cd.rowid";
@@ -2078,6 +2097,7 @@ class Contrat extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -2085,9 +2105,9 @@ class Contrat extends CommonObject
      *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
      *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user,$mode)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
@@ -2157,14 +2177,15 @@ class Contrat extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Charge indicateurs this->nb de tableau de bord
 	 *
 	 *   @return     int         <0 si ko, >0 si ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $conf, $user;
 
 		$this->nb=array();
@@ -2482,51 +2503,60 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $id;
 
-	var $ref;
-	var $tms;
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
 
-	var $fk_contrat;
-	var $fk_product;
-	var $statut;					// 0 inactive, 4 active, 5 closed
-	var $type;						// 0 for product, 1 for service
+	public $tms;
+
+	public $fk_contrat;
+	public $fk_product;
+	public $statut;					// 0 inactive, 4 active, 5 closed
+	public $type;						// 0 for product, 1 for service
+
 	/**
 	 * @var string
 	 * @deprecated
 	 */
-	var $label;
+	public $label;
+
 	/**
 	 * @var string
 	 * @deprecated
 	 */
 	public $libelle;
 
-	var $description;
+	/**
+	 * @var string description
+	 */
+	public $description;
 
-	var $product_ref;
-	var $product_label;
+	public $product_ref;
+	public $product_label;
 
-	var $date_commande;
+	public $date_commande;
 
-	var $date_start;				// date start planned
-	var $date_start_real;			// date start real
-	var $date_end;					// date end planned
-	var $date_end_real;				// date end real
+	public $date_start;				// date start planned
+	public $date_start_real;			// date start real
+	public $date_end;					// date end planned
+	public $date_end_real;				// date end real
 	// For backward compatibility
-	var $date_ouverture_prevue;		// date start planned
-	var $date_ouverture;			// date start real
-	var $date_fin_validite;			// date end planned
-	var $date_cloture;				// date end real
-	var $tva_tx;
-	var $localtax1_tx;
-	var $localtax2_tx;
-	var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-	var $qty;
-	var $remise_percent;
-	var $remise;
-	var $fk_remise_except;
+	public $date_ouverture_prevue;		// date start planned
+	public $date_ouverture;			// date start real
+	public $date_fin_validite;			// date end planned
+	public $date_cloture;				// date end real
+	public $tva_tx;
+	public $localtax1_tx;
+	public $localtax2_tx;
+	public $localtax1_type;	// Local tax 1 type
+	public $localtax2_type;	// Local tax 2 type
+	public $qty;
+	public $remise_percent;
+	public $remise;
+	public $fk_remise_except;
 
-	var $subprice;					// Unit price HT
+	public $subprice;					// Unit price HT
 
 	/**
 	 * @var float
@@ -2535,22 +2565,22 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $price;
 
-	var $price_ht;
+	public $price_ht;
 
-	var $total_ht;
-	var $total_tva;
-	var $total_localtax1;
-	var $total_localtax2;
-	var $total_ttc;
+	public $total_ht;
+	public $total_tva;
+	public $total_localtax1;
+	public $total_localtax2;
+	public $total_ttc;
 
-	var $fk_fournprice;
-	var $pa_ht;
+	public $fk_fournprice;
+	public $pa_ht;
 
-	var $info_bits;
-	var $fk_user_author;
-	var $fk_user_ouverture;
-	var $fk_user_cloture;
-	var $commentaire;
+	public $info_bits;
+	public $fk_user_author;
+	public $fk_user_ouverture;
+	public $fk_user_cloture;
+	public $commentaire;
 
 	const STATUS_INITIAL = 0;
 	const STATUS_OPEN = 4;
@@ -2580,6 +2610,7 @@ class ContratLigne extends CommonObjectLine
 		return $this->LibStatut($this->statut,$mode,((! empty($this->date_fin_validite))?($this->date_fin_validite < dol_now()?1:0):-1));
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return label of a contract line status
 	 *
@@ -2589,9 +2620,9 @@ class ContratLigne extends CommonObjectLine
 	 *  @param	string	$moreatt	More attribute
 	 *  @return string      		Libelle
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	static function LibStatut($statut,$mode,$expired=-1,$moreatt='')
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load("contracts");
 		if ($mode == 0)
@@ -3003,15 +3034,16 @@ class ContratLigne extends CommonObjectLine
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Mise a jour en base des champs total_xxx de ligne
 	 *		Used by migration process
 	 *
 	 *		@return		int		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
+        // phpcs:enable
 		$this->db->begin();
 
 		// Mise a jour ligne en base
@@ -3120,6 +3152,7 @@ class ContratLigne extends CommonObjectLine
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Activate a contract line
 	 *
@@ -3129,9 +3162,9 @@ class ContratLigne extends CommonObjectLine
 	 * @param   string 		$comment 	A comment typed by user
 	 * @return 	int                    	<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function active_line($user, $date, $date_end = '', $comment = '')
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$error = 0;
@@ -3178,6 +3211,7 @@ class ContratLigne extends CommonObjectLine
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Close a contract line
 	 *
@@ -3187,9 +3221,9 @@ class ContratLigne extends CommonObjectLine
      * @param    int	$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @return int                    	<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_line($user, $date_end, $comment = '', $notrigger=0)
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		// Update object

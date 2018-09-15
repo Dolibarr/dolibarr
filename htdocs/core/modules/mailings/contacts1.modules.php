@@ -116,10 +116,9 @@ class mailing_contacts1 extends MailingTargets
 	function formFilter()
 	{
 		global $langs;
-		$langs->load("companies");
-		$langs->load("commercial");
-		$langs->load("suppliers");
-		$langs->load("categories");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","companies","suppliers","categories"));
 
 		$s='';
 
@@ -327,16 +326,17 @@ class mailing_contacts1 extends MailingTargets
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
-	 *  @param	int		$mailing_id    	Id of emailing
+	 *  @param  int		$mailing_id    	Id of emailing
 	 *  @param  array	$filtersarray   Optional filter data (deprecated)
 	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		$filter = GETPOST('filter','alpha');

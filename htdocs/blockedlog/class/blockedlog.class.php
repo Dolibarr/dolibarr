@@ -39,6 +39,7 @@ class BlockedLog
 	 * @var int
 	 */
 	public $id;
+
 	/**
 	 * Entity
 	 * @var int
@@ -46,7 +47,7 @@ class BlockedLog
 	public $entity;
 
 	public $error = '';
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */

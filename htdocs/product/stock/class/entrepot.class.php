@@ -37,12 +37,12 @@ class Entrepot extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='stock';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='entrepot';
-	
+
 	public $picto='stock';
 
 	/**
@@ -61,7 +61,12 @@ class Entrepot extends CommonObject
 	const STATUS_OPEN_INTERNAL = 2;
 
 	var $libelle;
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $statut;
 	var $lieu;
 	var $address;
@@ -415,15 +420,16 @@ class Entrepot extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of all warehouses
 	 *
 	 *	@param	int		$status		Status
 	 * 	@return array				Array list of warehouses
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_array($status=1)
 	{
+        // phpcs:enable
 		$liste = array();
 
 		$sql = "SELECT rowid, ref as label";
@@ -447,14 +453,15 @@ class Entrepot extends CommonObject
 		return $liste;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function nb_different_products()
 	{
+        // phpcs:enable
 		$ret=array();
 
 		$sql = "SELECT count(distinct p.rowid) as nb";
@@ -480,14 +487,15 @@ class Entrepot extends CommonObject
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return stock and value of warehosue
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function nb_products()
 	{
+        // phpcs:enable
 		$ret=array();
 
 		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
@@ -525,6 +533,7 @@ class Entrepot extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of a given status
 	 *
@@ -532,9 +541,9 @@ class Entrepot extends CommonObject
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->load('stocks');
@@ -652,14 +661,15 @@ class Entrepot extends CommonObject
         $this->country_code='FR';
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return full path to current warehouse
 	 *
 	 *	@return		string	String full path to current warehouse separated by " >> "
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_full_arbo()
 	{
+        // phpcs:enable
         global $user,$langs,$conf;
 
         $TArbo = array(empty($this->label)?$this->libelle:$this->label);
@@ -693,6 +703,7 @@ class Entrepot extends CommonObject
         return implode(' >> ', array_reverse($TArbo));
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
@@ -700,9 +711,9 @@ class Entrepot extends CommonObject
 	 * @param	array	$TChildWarehouses	array which will contain all children (param by reference)
 	 * @return	array	$TChildWarehouses	array which will contain all children
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_children_warehouses($id, &$TChildWarehouses)
     {
+        // phpcs:enable
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot

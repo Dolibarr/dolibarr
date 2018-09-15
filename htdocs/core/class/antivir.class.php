@@ -41,7 +41,7 @@ class AntiVir
 	public $errors = array();
 
 	var $output;
-	
+
 	/**
      * @var DoliDB Database handler.
      */
@@ -57,6 +57,7 @@ class AntiVir
 		$this->db=$db;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
@@ -65,9 +66,9 @@ class AntiVir
 	 *	@param	string	$file		File to scan
 	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dol_avscan_file($file)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$return = 0;

@@ -101,11 +101,15 @@ else
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
-if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
-if ($action == 'default')
+
+$defaultview = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+$defaultview = (empty($user->conf->AGENDA_DEFAULT_VIEW) ? $defaultview : $user->conf->AGENDA_DEFAULT_VIEW);
+if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=$defaultview;
+if ($action == 'default')	// When action is default, we want a calendar view and not the list
 {
-	$action = ((! empty($conf->global->AGENDA_DEFAULT_VIEW) && $conf->global->AGENDA_DEFAULT_VIEW!='show_list') ? $conf->global->AGENDA_DEFAULT_VIEW : 'show_month');
+	$action = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
+
 if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week')  {
     $action='show_month'; $day='';
 }                                                   // View by month

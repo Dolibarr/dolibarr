@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018 	Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect'])){
@@ -86,9 +88,12 @@ catch(\UnexpectedValueException $e) {
 // Do something with $event
 
 http_response_code(200); // PHP 5.4 or greater
+
 $langs->load("main");
+
+// TODO Do we really need a user in setup just to have an name to fill an email topic when it is a technical system notification email
 $user = new User($db);
-$user->fetch(5);
+$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 $user->getrights();
 
 if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc)) {
@@ -126,12 +131,37 @@ if ($event->type == 'payout.created') {
 
 	if ($result > 0)
 	{
-		// TODO Use CMail and translation
-		$body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." est attendu sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date);
-		$subject = '[NOTIFICATION] Virement programmée';
-		$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>'; // TODO  convert in dolibarr standard
-		mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers);
-		return 1;
+        $subject = '[NOTIFICATION] Stripe payout scheduled';
+        if (!empty($user->email)) {
+            $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
+        } else {
+            $sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+        }
+        $replyto = $sendto;
+        $sendtocc = '';
+        if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+            $sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+        }
+
+        $message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." should arrive in your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+
+        $mailfile = new CMailFile(
+            $subject,
+            $sendto,
+            $replyto,
+            $message,
+            array(),
+            array(),
+            array(),
+            $sendtocc,
+            '',
+            0,
+            -1
+        );
+
+        $ret = $mailfile->sendfile();
+
+        return 1;
 	}
 	else
 	{

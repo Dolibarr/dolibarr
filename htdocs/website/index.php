@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ $type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
 
+if (GETPOST('deletesite','alpha')) { $action='deletesite'; }
 if (GETPOST('delete','alpha')) { $action='delete'; }
 if (GETPOST('preview','alpha')) $action='preview';
 if (GETPOST('createsite','alpha')) { $action='createsite'; }
@@ -139,6 +140,7 @@ $filerobot=$pathofwebsite.'/robots.txt';
 $filehtaccess=$pathofwebsite.'/.htaccess';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 $fileindex=$pathofwebsite.'/index.php';
+$filewrapper=$pathofwebsite.'/wrapper.php';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -178,12 +180,26 @@ if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfil
 if ($action == 'seteditinline')
 {
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
+	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0);	// Force disable of show included containers
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
 	exit;
 }
 if ($action == 'unseteditinline')
 {
 	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
+	exit;
+}
+if ($action == 'setshowsubcontainers')
+{
+	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
+	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0);	// Force disable of edit inline
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
+	exit;
+}
+if ($action == 'unsetshowsubcontainers')
+{
+	dolibarr_del_const($db, 'WEBSITE_SUBCONTAINERSINLINE');
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
 	exit;
 }
@@ -714,6 +730,41 @@ if ($action == 'addcontainer')
 	}
 }
 
+// Delete site
+if ($action == 'deletesite')
+{
+	$error = 0;
+
+	$db->begin();
+
+	$res = $object->fetch(0, $websitekey);
+	$website = $object;
+
+	if ($res > 0)
+	{
+		$res = $object->delete($user);
+		if ($res <= 0)
+		{
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SiteDeleted", $object->ref, $websitekey), null, 'mesgs');
+
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		$db->rollback();
+		dol_print_error($db);
+	}
+}
+
 // Delete page
 if ($action == 'delete')
 {
@@ -945,7 +996,7 @@ if ($action == 'setashome')
 
 		// Generate the index.php page to be the home page
 		//-------------------------------------------------
-		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl);
+		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
 		if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
 		else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
@@ -1083,19 +1134,7 @@ if ($action == 'updatemeta')
 
 
 		// Now generate the master.inc.php page
-		dol_syslog("We regenerate the master file (because we update meta)");
-		dol_delete_file($filemaster);
-
-		$mastercontent = '<?php'."\n";
-		$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
-		//$mastercontent.= "include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';"."\n";
-		//$mastercontent.= '$website = new WebSite($db)'."\n";
-		$mastercontent.= '?>'."\n";
-		$result = file_put_contents($filemaster, $mastercontent);
-		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
-
+		$result = dolSaveMasterFile($filemaster);
 		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
 
 		// Now delete the alias.php page
@@ -1283,16 +1322,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 
 				// Now generate the master.inc.php page
-				dol_syslog("We regenerate the master file");
-				dol_delete_file($filemaster);
-
-				$mastercontent = '<?php'."\n";
-				$mastercontent.= '// File generated to link to the master file'."\n";
-				$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
-				$mastercontent.= '?>'."\n";
-				$result = file_put_contents($filemaster, $mastercontent);
-				if (! empty($conf->global->MAIN_UMASK))
-					@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+				$result = dolSaveMasterFile($filemaster);
 
 				if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
 
@@ -1374,6 +1404,21 @@ if ($action == 'importsiteconfirm')
 	{
 		if (! empty($_FILES))
 		{
+			// Check symlink to medias and restore it if ko
+			$pathtomedias=DOL_DATA_ROOT.'/medias';
+			$pathtomediasinwebsite=$pathofwebsite.'/medias';
+			if (! is_link(dol_osencode($pathtomediasinwebsite)))
+			{
+				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+				dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
+				$result = symlink($pathtomedias, $pathtomediasinwebsite);
+				if (! $result)
+				{
+					setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+					$action = 'importsite';
+				}
+			}
+
 			if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
 			else $userfiles=array($_FILES['userfile']['tmp_name']);
 
@@ -1590,6 +1635,8 @@ if (count($object->records) > 0)
 			print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
 		}
 
+		print '<input type="submit" class="buttonDelete" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage?' disabled="disabled"':'').'>';
+
 		print ' &nbsp; ';
 
 		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
@@ -1635,11 +1682,11 @@ if (count($object->records) > 0)
 		//print '<input type="submit" class="button" name="previewwebsite" target="tab'.$websitekey.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
 		$htmltext =$langs->trans("SetHereVirtualHost", $dataroot);
 		$htmltext.='<br>';
-		$htmltext.='<br>';
-		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
-		$htmltext.='<br>';
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+		$htmltext.='<br>';
+		$htmltext.='<br>';
+		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
 		print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helpvirtualhost');
 		print '</div>';
 
@@ -1819,14 +1866,18 @@ if (count($object->records) > 0)
 
 				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
 
+				print '<div class="websiteselectionsection inline-block">';
+				print '<div class="inline-block">';
 				if ($websitepage->grabbed_from)
 				{
 					//print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+					$langs->trans("EditInLine");
 					print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("EditInLineOff"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
 				}
 				else
 				{
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+					print $langs->trans("EditInLine");
 					if (empty($conf->global->WEBSITE_EDITINLINE))
 					{
 						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOff"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
@@ -1836,8 +1887,19 @@ if (count($object->records) > 0)
 						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOn"),'switch_on','',false,0,0,'','nomarginleft').'</a>';
 					}
 				}
-
-				print ' &nbsp; ';
+				print '</div>';
+				print '<div class="inline-block">';
+				print $langs->trans("ShowSubcontainers");
+				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
+				{
+					print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOff"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
+				}
+				else
+				{
+					print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOn"),'switch_on','',false,0,0,'','nomarginleft').'</a>';
+				}
+				print '</div>';
+				print '</div>';
 
 				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
 				else print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
@@ -2149,7 +2211,7 @@ if ($action == 'createsite')
 
     dol_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
     */
-	if ($action == 'createcontainer') print_fiche_titre($langs->trans("AddSite"));
+	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddSite"));
 
 	print '<!-- Add site -->'."\n";
 	//print '<div class="fichecenter">';
@@ -2211,7 +2273,7 @@ if ($action == 'importsite')
 
 	print '<br>';
 
-	print_fiche_titre($langs->trans("ImportSite"));
+	print load_fiche_titre($langs->trans("ImportSite"));
 
 	dol_fiche_head(array(), '0', '', -1);
 
@@ -2243,7 +2305,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
     dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
     */
-	if ($action == 'createcontainer') print_fiche_titre($langs->trans("AddPage"));
+	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddPage"));
 
 	print '<!-- Edit or create page/container -->'."\n";
 	//print '<div class="fichecenter">';

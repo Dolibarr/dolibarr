@@ -30,12 +30,18 @@ class BankCateg // extends CommonObject
 {
 	//public $element='bank_categ';			//!< Id that identify managed objects
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
-    public $picto='generic';
-
-	public $id;
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='generic';
 
 	/**
-     * @var string proper name for given parameter
+     * @var int ID
+     */
+    public $id;
+
+	/**
+     * @var string bank categories label
      */
     public $label;
 

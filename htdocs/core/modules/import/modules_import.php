@@ -45,7 +45,7 @@ class ModeleImports
 	public $id;
 
     /**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
 
@@ -143,16 +143,17 @@ class ModeleImports
 	}
 
 
-	/**
-	 *  Charge en memoire et renvoie la liste des modeles actifs
-	 *
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Charge en memoire et renvoie la liste des modeles actifs
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/import/";

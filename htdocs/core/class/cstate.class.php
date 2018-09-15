@@ -36,7 +36,7 @@ class Cstate // extends CommonObject
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -46,7 +46,7 @@ class Cstate // extends CommonObject
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	//var $element='cstate';			//!< Id that identify managed objects
 	//var $table_element='cstate';	    //!< Name of table without prefix where object is stored
 
@@ -54,10 +54,10 @@ class Cstate // extends CommonObject
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $code_departement;
-	var $nom;
-	var $active;
+
+	public $code_departement;
+	public $nom;
+	public $active;
 
 
 

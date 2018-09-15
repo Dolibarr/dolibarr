@@ -31,7 +31,7 @@ class FormSocialContrib
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -48,9 +48,10 @@ class FormSocialContrib
 	    $this->db = $db;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *	Return list of social contributions.
-     * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
+     *  Return list of social contributions.
+     *  Use mysoc->country_id or mysoc->country_code so they must be defined.
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
@@ -60,9 +61,9 @@ class FormSocialContrib
      *  @param	string	$morecss		Add more CSS on select
      * 	@return	void
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1, $morecss='minwidth300')
     {
+        // phpcs:enable
         global $conf,$db,$langs,$user,$mysoc;
 
         if (empty($mysoc->country_id) && empty($mysoc->country_code))

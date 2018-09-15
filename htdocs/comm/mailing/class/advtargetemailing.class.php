@@ -254,15 +254,16 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_by_mailing($id=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -320,6 +321,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load object in memory from the database
 	 *
@@ -327,9 +329,9 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	string	$type_element	Type target
 	 *  @return int          			<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_by_element($id=0, $type_element='mailing')
 	{
+        // phpcs:enable
 		global $langs;
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -546,15 +548,16 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
 	 * 	@param		array		$arrayquery	All element to Query
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function query_thirdparty($arrayquery)
 	{
+        // phpcs:enable
 		global $langs,$conf;
 
 		$sql = "SELECT";
@@ -700,6 +703,7 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
@@ -707,9 +711,9 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
+        // phpcs:enable
 		global $langs,$conf;
 
 		$sql = "SELECT";

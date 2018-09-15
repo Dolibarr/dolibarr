@@ -28,15 +28,36 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';						// This set stripe glo
  */
 class Stripe extends CommonObject
 {
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+  public $fk_soc;
+
 	public $fk_key;
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $mode;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $statut;
+
 	public $type;
+
 	public $code;
+
 	public $message;
 
 	/**
@@ -314,18 +335,19 @@ class Stripe extends CommonObject
 	/**
 	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
 	 *
-	 * @param int 		$amount									Amount to pay
-	 * @param string 	$currency								EUR, GPB...
-	 * @param string 	$origin									Object type to pay (order, invoice, contract...)
-	 * @param int 		$item									Object id to pay
-	 * @param string 	$source									src_xxxxx or card_xxxxx
-	 * @param string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
+	 * @param	int 	$amount									Amount to pay
+	 * @param	string 	$currency								EUR, GPB...
+	 * @param	string 	$origin									Object type to pay (order, invoice, contract...)
+	 * @param	int 	$item									Object id to pay
+	 * @param	string 	$source									src_xxxxx or card_xxxxx
+	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
 	 * @param	int		$status									Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail		Use thirdparty email as receipt email
+	 * @param	boolean	$capture								Set capture flag to true (take payment) or false (wait)
 	 * @return Stripe
 	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0)
+	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0, $capture=true)
 	{
 		global $conf;
 
@@ -396,9 +418,9 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-                                                "capture"  => true,
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
- 					        "description" => "Stripe payment: ".$description,
+						"description" => "Stripe payment: ".$description,
+						"capture"  => $capture,
 						"metadata" => $metadata,
 						"source" => "$source"
 					));
@@ -406,9 +428,9 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-                                                "capture"  => true,
-					        "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
-					        "description" => "Stripe payment: ".$description,
+						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+						"description" => "Stripe payment: ".$description,
+						"capture"  => $capture,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
@@ -431,9 +453,9 @@ class Stripe extends CommonObject
         		$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-                                                "capture"  => true,
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
-					        "description" => "Stripe payment: ".$description,
+						"description" => "Stripe payment: ".$description,
+						"capture"  => $capture,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"

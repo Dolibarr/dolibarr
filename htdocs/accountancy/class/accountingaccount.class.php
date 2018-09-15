@@ -37,6 +37,9 @@ class AccountingAccount extends CommonObject
 	 */
 	public $table_element='accounting_account';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'billr';
 
 	/**
@@ -71,14 +74,19 @@ class AccountingAccount extends CommonObject
 	 */
 	public $id;
 
-	var $rowid;
-	var $datec; // Creation date
-	var $fk_pcg_version;
-	var $pcg_type;
-	var $pcg_subtype;
-	var $account_number;
-	var $account_parent;
-	var $account_category;
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	public $datec; // Creation date
+	public $fk_pcg_version;
+	public $pcg_type;
+	public $pcg_subtype;
+	public $account_number;
+	public $account_parent;
+	public $account_category;
+	public $status;
 
     /**
      * @var string Label of account
@@ -96,7 +104,6 @@ class AccountingAccount extends CommonObject
     public $fk_user_modif;
 
     public $active;       // duplicate with status
-    public $status;
 
 
 	/**
@@ -528,15 +535,16 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Account deactivated
 	 *
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function account_desactivate($id)
     {
+        // phpcs:enable
 		$result = $this->checkUsage();
 
 		if ($result > 0) {
@@ -562,15 +570,16 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Account activated
 	 *
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function account_activate($id)
     {
+        // phpcs:enable
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
@@ -601,6 +610,7 @@ class AccountingAccount extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -608,9 +618,9 @@ class AccountingAccount extends CommonObject
 	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string              Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->loadLangs(array("users"));
 
@@ -620,27 +630,27 @@ class AccountingAccount extends CommonObject
 			if ($statut == 1) return $langs->trans('Enabled');
 			if ($statut == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut == 1) return $langs->trans('Enabled');
 			if ($statut == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4');
 			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');

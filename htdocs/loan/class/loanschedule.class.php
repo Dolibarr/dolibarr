@@ -58,7 +58,7 @@ class LoanSchedule extends CommonObject
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-	var $total;
+	public $total;
 
 	/**
 	 *	Constructor
@@ -372,6 +372,7 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Calculate mensuality
 	 *
@@ -380,9 +381,9 @@ class LoanSchedule extends CommonObject
 	 * @param   int     $nbterm         nb term
 	 * @return  double                  mensuality
 	 */
-	// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function calc_mens($capital, $rate, $nbterm)
 	{
+        // phpcs:enable
 		$result='';
 
 		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
@@ -429,7 +430,7 @@ class LoanSchedule extends CommonObject
 		{
 			while($obj = $this->db->fetch_object($resql))
 			{
-				$line = New LoanSchedule($this->db);
+				$line = new LoanSchedule($this->db);
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
 
@@ -460,14 +461,15 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  trans_paiment
 	 *
 	 *  @return void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function trans_paiment()
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

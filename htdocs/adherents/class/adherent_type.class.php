@@ -36,13 +36,17 @@ class AdherentType extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'adherent_type';
-	
+
 	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'adherent_type';
-	
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'group';
+
 	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
@@ -51,19 +55,25 @@ class AdherentType extends CommonObject
 	 * @see label
 	 */
 	public $libelle;
+
 	/** @var string Label */
 	public $label;
+
 	/**
 	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
 	 */
 	public $subscription;
+
 	/** @var string 	Public note */
 	public $note;
+
 	/** @var integer	Can vote */
 	public $vote;
+
 	/** @var string Email sent during validation */
 	public $mail_valid;
+
 	/** @var array Array of members */
 	public $members=array();
 
@@ -290,14 +300,15 @@ class AdherentType extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of members' type
 	 *
 	 *  @return 	array	List of types of members
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$adherenttypes = array();
@@ -422,6 +433,7 @@ class AdherentType extends CommonObject
 		return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -431,9 +443,9 @@ class AdherentType extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_dn($info,$mode=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_MEMBERS_TYPES."=".$info[$conf->global->LDAP_KEY_MEMBERS_TYPES].",".$conf->global->LDAP_MEMBER_TYPE_DN;
@@ -443,14 +455,15 @@ class AdherentType extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_info()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$info=array();

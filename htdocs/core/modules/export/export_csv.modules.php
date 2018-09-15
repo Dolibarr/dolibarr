@@ -34,21 +34,21 @@ class ExportCsv extends ModeleExports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string export files label
      */
     public $label;
-    
-	var $extension;
-	var $version;
 
-	var $label_lib;
-	var $version_lib;
+	public $extension;
+	public $version;
 
-	var $separator;
+	public $label_lib;
+	public $version_lib;
 
-	var $handle;    // Handle fichier
+	public $separator;
+
+	public $handle;    // Handle fichier
 
 
 	/**
@@ -149,6 +149,7 @@ class ExportCsv extends ModeleExports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Open output file
 	 *
@@ -156,9 +157,9 @@ class ExportCsv extends ModeleExports
 	 * 	@param		Translate	$outputlangs	Output language object
 	 *	@return		int							<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function open_file($file,$outputlangs)
 	{
+        // phpcs:enable
 		global $langs;
 
 		dol_syslog("ExportCsv::open_file file=".$file);
@@ -177,19 +178,21 @@ class ExportCsv extends ModeleExports
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output header into file
 	 *
 	 * 	@param		Translate	$outputlangs	Output language object
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_header($outputlangs)
 	{
+        // phpcs:enable
 		return 0;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output title line into file
 	 *
@@ -199,9 +202,9 @@ class ExportCsv extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
@@ -225,7 +228,8 @@ class ExportCsv extends ModeleExports
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *	Output record line into file
      *
      *  @param     	array		$array_selected_sorted      Array with list of field to export
@@ -234,9 +238,9 @@ class ExportCsv extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (! empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
@@ -278,26 +282,28 @@ class ExportCsv extends ModeleExports
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output footer into file
 	 *
 	 * 	@param		Translate	$outputlangs	Output language object
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_footer($outputlangs)
 	{
+        // phpcs:enable
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function close_file()
 	{
+        // phpcs:enable
 		fclose($this->handle);
 		return 0;
 	}

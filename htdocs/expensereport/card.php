@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1335,7 +1336,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
-	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
+	print $form->selectDate($date_start?$date_start:-1, 'date_debut', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -1343,7 +1344,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
-	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
+	print $form->selectDate($date_end?$date_end:-1, 'date_fin', 0, 0, 0, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -1500,13 +1501,13 @@ else
 				print '<tr>';
 				print '<td>'.$langs->trans("DateStart").'</td>';
 				print '<td>';
-				$form->select_date($object->date_debut,'date_debut');
+				print $form->selectDate($object->date_debut, 'date_debut');
 				print '</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("DateEnd").'</td>';
 				print '<td>';
-				$form->select_date($object->date_fin,'date_fin');
+				print $form->selectDate($object->date_fin, 'date_fin');
 				print '</td>';
 				print '</tr>';
 
@@ -2078,7 +2079,7 @@ else
 
 								// Select date
 								print '<td class="center">';
-								$form->select_date($line->date,'date');
+								print $form->selectDate($line->date,'date');
 								print '</td>';
 
 								// Select project
@@ -2161,7 +2162,7 @@ else
 
 					// Select date
 					print '<td align="center">';
-					$form->select_date($date?$date:-1,'date');
+					print $form->selectDate($date?$date:-1, 'date');
 					print '</td>';
 
 					// Select project

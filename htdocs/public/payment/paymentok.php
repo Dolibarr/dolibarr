@@ -157,12 +157,12 @@ else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
 	$width=150;
 }
 // Output html code for logo
@@ -534,7 +534,7 @@ if ($ispaymentok)
 							$listofmimes=array(dol_mimetype($file));
 						}
 
-						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1);
 
 						if ($result < 0)
 						{
@@ -546,6 +546,8 @@ if ($ispaymentok)
 						{
 							if ($file) $postactionmessages[] = 'Email sent to member (with invoice document attached)';
 							else $postactionmessages[] = 'Email sent to member (without any attached document)';
+
+							// TODO Add actioncomm event
 						}
 					}
 				}
@@ -798,6 +800,11 @@ if ($ispaymentok)
 		$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 		$content.="<br>\n";
 		$content.="tag=".$fulltag."<br>\ntoken=".$onlinetoken."<br>\npaymentType=".$paymentType."<br>\ncurrencycodeType=".$currencyCodeType."<br>\npayerId=".$payerID."<br>\nipaddress=".$ipaddress."<br>\nFinalPaymentAmt=".$FinalPaymentAmt."<br>\n";
+
+		if (! empty($ErrorCode))         $content.="ErrorCode = ".$ErrorCode."<br>\n";
+		if (! empty($ErrorShortMsg))     $content.="ErrorShortMsg = ".$ErrorShortMsg."<br>\n";
+		if (! empty($ErrorLongMsg))      $content.="ErrorLongMsg = ".$ErrorLongMsg."<br>\n";
+		if (! empty($ErrorSeverityCode)) $content.="ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
 
 		$ishtml=dol_textishtml($content);	// May contain urls
 

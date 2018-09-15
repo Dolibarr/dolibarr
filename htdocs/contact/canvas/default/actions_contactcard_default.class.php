@@ -29,8 +29,8 @@ include_once DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class
  */
 class ActionsContactCardDefault extends ActionsContactCardCommon
 {
-	/**
-     *	Constructor
+    /**
+     *  Constructor
      *
      *	@param	DoliDB	$db				Handler acces base de donnees
      *	@param	string	$dirmodule		Name of directory of module
@@ -66,6 +66,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Assign custom values for canvas
 	 *
@@ -73,9 +74,9 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  @param	int			$id				Id
 	 *  @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id)
 	{
+        // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
@@ -120,6 +121,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -129,9 +131,9 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
         //$this->getFieldList();

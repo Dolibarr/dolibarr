@@ -1488,10 +1488,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	    require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-	    $formactions=new FormActions($db);
+        $formactions=new FormActions($db);
 
-	    $actionstatic=new ActionComm($db);
+        $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
 

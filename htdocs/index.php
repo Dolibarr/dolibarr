@@ -270,11 +270,11 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
     	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
     	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial&leftmenu=orders',
-    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy&leftmenu=customers_bills',
+    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=customers_bills',
     	    DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
     	    DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=ficheinter',
     	    DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers',
-	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=accountancy&leftmenu=suppliers_bills',
+	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=billing&leftmenu=suppliers_bills',
 	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
@@ -358,7 +358,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Dolibarr Working Board with weather
  */
-$showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
+$showweather=(empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
 
 //Array that contains all WorkboardResponse classes to process them
 $dashboardlines=array();
@@ -536,7 +536,7 @@ $boxwork.='</tr>'."\n";
 if ($showweather)
 {
     $boxwork.='<tr class="nohover">';
-    $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
+    $boxwork.='<td class="nohover'.($conf->global->MAIN_DISABLE_METEO == 2 ?' hideonsmartphone' : '').' center valignmiddle">';
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
     else $text=$langs->transnoentitiesnoconv("NoItemLate");

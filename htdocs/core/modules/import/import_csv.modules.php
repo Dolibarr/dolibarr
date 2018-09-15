@@ -37,14 +37,14 @@ class ImportCsv extends ModeleImports
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $datatoimport;
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
@@ -54,28 +54,28 @@ class ImportCsv extends ModeleImports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
-	var $extension;    // Extension of files imported by driver
-	var $version;      // Version of driver
 
-	var $label_lib;    // Label of external lib used by driver
-	var $version_lib;  // Version of external lib used by driver
+	public $extension;    // Extension of files imported by driver
+	public $version;      // Version of driver
 
-	var $separator;
+	public $label_lib;    // Label of external lib used by driver
+	public $version_lib;  // Version of external lib used by driver
 
-	var $file;      // Path of file
-	var $handle;    // Handle fichier
+	public $separator;
 
-	var $cacheconvert=array();      // Array to cache list of value found after a convertion
-	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+	public $file;      // Path of file
+	public $handle;    // Handle fichier
 
-	var $nbinsert = 0; // # of insert done during the import
-	var $nbupdate = 0; // # of update done during the import
+	public $cacheconvert=array();      // Array to cache list of value found after a convertion
+	public $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+
+	public $nbinsert = 0; // # of insert done during the import
+	public $nbupdate = 0; // # of update done during the import
 
 
 	/**
@@ -109,18 +109,20 @@ class ImportCsv extends ModeleImports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output header of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @return	string
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_header_example($outputlangs)
 	{
+        // phpcs:enable
 		return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output title line of an example file for this format
 	 *
@@ -128,13 +130,14 @@ class ImportCsv extends ModeleImports
 	 *  @param	array		$headerlinefields	Array of fields name
 	 * 	@return	string
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_title_example($outputlangs,$headerlinefields)
 	{
+        // phpcs:enable
 		$s=join($this->separator,array_map('cleansep',$headerlinefields));
 		return $s."\n";
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output record of an example file for this format
 	 *
@@ -142,36 +145,38 @@ class ImportCsv extends ModeleImports
 	 * 	@param	array		$contentlinevalues	Array of lines
 	 * 	@return	string
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_record_example($outputlangs,$contentlinevalues)
 	{
+        // phpcs:enable
 		$s=join($this->separator,array_map('cleansep',$contentlinevalues));
 		return $s."\n";
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output footer of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @return	string
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_footer_example($outputlangs)
 	{
+        // phpcs:enable
 		return '';
 	}
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
 	 *	@return	int					<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function import_open_file($file)
 	{
+        // phpcs:enable
 		global $langs;
 		$ret=1;
 
@@ -195,39 +200,42 @@ class ImportCsv extends ModeleImports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function import_get_nb_of_lines($file)
 	{
-	   return dol_count_nb_of_line($file);
+        // phpcs:enable
+       return dol_count_nb_of_line($file);
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Input header line from file
 	 *
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function import_read_header()
 	{
+        // phpcs:enable
 		return 0;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Return array of next record in input file.
 	 *
 	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function import_read_record()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
@@ -276,19 +284,21 @@ class ImportCsv extends ModeleImports
 		return $newarrayres;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
 	 *  @return	integer
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function import_close_file()
 	{
+        // phpcs:enable
 		fclose($this->handle);
 		return 0;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Insert a record into database
 	 *
@@ -300,9 +310,9 @@ class ImportCsv extends ModeleImports
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updatekeys)
 	{
+        // phpcs:enable
 		global $langs,$conf,$user;
         global $thirdparty_static;    	// Specific to thirdparty import
 		global $tablewithentity_cache;	// Cache to avoid to call  desc at each rows on tables
@@ -577,9 +587,13 @@ class ImportCsv extends ModeleImports
 						$listfields[] = $fieldname;
 
 						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
-						if (empty($newval) && $arrayrecord[($key-1)]['type'] < 0)		 $listvalues[] = ($newval=='0'?$newval:"null");
-						elseif (empty($newval) && $arrayrecord[($key-1)]['type'] == 0)	 $listvalues[] = "''";
-						else															 $listvalues[] = "'".$this->db->escape($newval)."'";
+						if (empty($newval) && $arrayrecord[($key-1)]['type'] < 0) {
+                            $listvalues[] = ($newval=='0'?$newval:"null");
+                        } elseif (empty($newval) && $arrayrecord[($key-1)]['type'] == 0) {
+                            $listvalues[] = "''";
+                        } else {
+                            $listvalues[] = "'".$this->db->escape($newval)."'";
+                        }
 					}
 					$i++;
 				}

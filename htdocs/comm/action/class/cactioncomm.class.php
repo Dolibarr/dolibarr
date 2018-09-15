@@ -24,7 +24,7 @@
 
 
 /**
- *		Class to manage different types of events
+ *      Class to manage different types of events
  */
 class CActionComm
 {
@@ -32,7 +32,7 @@ class CActionComm
      * @var string Error code (or message)
      */
     public $error='';
-	
+
     /**
      * @var DoliDB Database handler.
      */
@@ -43,20 +43,24 @@ class CActionComm
      */
     public $id;
 
-    var $code;
-    var $type;
-    var $libelle;       // deprecated
-    
+    public $code;
+    public $type;
+    public $libelle;       // deprecated
+
     /**
-     * @var string proper name for given parameter
+     * @var string Type of agenda event label
      */
     public $label;
-    
-    var $active;
-    var $color;
-    var $picto;
 
-    var $type_actions=array();
+    public $active;
+    public $color;
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto;
+
+    public $type_actions=array();
 
 
     /**
@@ -114,6 +118,7 @@ class CActionComm
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of event types: array(id=>label) or array(code=>label)
      *
@@ -125,9 +130,9 @@ class CActionComm
      *  @param	int			$shortlabel		1=Get short label instead of long label
      *  @return mixed      					Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='', $shortlabel=0)
     {
+        // phpcs:enable
         global $langs,$conf;
         $langs->load("commercial");
 

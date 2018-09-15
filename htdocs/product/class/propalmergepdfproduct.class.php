@@ -223,6 +223,7 @@ class Propalmergepdfproduct extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Load object in memory from the database
      *
@@ -230,9 +231,9 @@ class Propalmergepdfproduct extends CommonObject
      *  @param	string	$lang  			Lang string code
      *  @return int          	<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_by_product($product_id, $lang='')
     {
+        // phpcs:enable
     	global $langs,$conf;
 
     	$sql = "SELECT";
@@ -436,6 +437,7 @@ class Propalmergepdfproduct extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
@@ -445,9 +447,9 @@ class Propalmergepdfproduct extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_by_product($user, $product_id, $lang_id='',  $notrigger=0)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 		$error=0;
 
@@ -501,15 +503,16 @@ class Propalmergepdfproduct extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Delete object in database
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_by_file($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 		$error=0;
 
@@ -645,14 +648,14 @@ class PropalmergepdfproductLine
 	 */
 	public $id;
 
-	var $fk_product;
-	var $file_name;
-	var $lang;
-	var $fk_user_author;
-	var $fk_user_mod;
-	var $datec='';
-	var $tms='';
-	var $import_key;
+	public $fk_product;
+	public $file_name;
+	public $lang;
+	public $fk_user_author;
+	public $fk_user_mod;
+	public $datec='';
+	public $tms='';
+	public $import_key;
 
     /**
      *  Constructor

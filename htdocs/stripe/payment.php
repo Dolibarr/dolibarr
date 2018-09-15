@@ -8,6 +8,7 @@
  * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Teddy Andreotti       <125155@supinfo.com>
  * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018      ThibaultFOUCART		 <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -639,36 +640,24 @@ print '<td ';
 if (($action == 'add_paiement' && $src->id!=$source) or ($src->object=='source' && $src->card->three_d_secure=='required')) { print'class="opacitymedium"';}
 
 print' >';
-if ($src->object=='card'){
-if ($src->brand == 'Visa') {$brand='cc-visa';}
-elseif ($src->brand == 'MasterCard') {$brand='cc-mastercard';}
-elseif ($src->brand == 'American Express') {$brand='cc-amex';}
-elseif ($src->brand == 'Discover') {$brand='cc-discover';}
-elseif ($src->brand == 'JCB') {$brand='cc-jcb';}
-elseif ($src->brand == 'Diners Club') {$brand='cc-diners-club';}
-else {$brand='credit-card-alt';}
-print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
-}
-elseif ($src->object=='source' && $src->type=='card'){
-if ($src->card->brand == 'Visa') {$brand='cc-visa';}
-elseif ($src->card->brand == 'MasterCard') {$brand='cc-mastercard';}
-elseif ($src->card->brand == 'American Express') {$brand='cc-amex';}
-elseif ($src->card->brand == 'Discover') {$brand='cc-discover';}
-elseif ($src->card->brand == 'JCB') {$brand='cc-jcb';}
-elseif ($src->card->brand == 'Diners Club') {$brand='cc-diners-club';}
-else {$brand='credit-card-alt';}
-
-print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
-}
-elseif ($src->object=='source' && $src->type=='sepa_debit'){
-print '<span class="fa fa-university fa-3x fa-fw"></span>';
-}
+				if ($src->object=='card')
+				{
+					print img_credit_card($src->brand);
+				}
+				elseif ($src->object=='source' && $src->type=='card')
+				{
+					print img_credit_card($src->card->brand);
+				}
+				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				{
+					print '<span class="fa fa-university fa-2x fa-fw"></span>';
+				}
 print '</td>';
 print '<td ';
 if (($action == 'add_paiement' && $src->id!=$source) or ($src->object=='source' && $src->card->three_d_secure=='required')) { print'class="opacitymedium"';}
 print' >';
 if ($src->object=='card'){
-print '**** '.$src->last4.'<br>Exp. '.$src->exp_month.'/'.$src->exp_year.'';
+					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
 print '</td><td>';
  if ($src->country)
 	{
@@ -679,7 +668,7 @@ print '</td><td>';
 	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 }
 elseif ($src->object=='source' && $src->type=='card'){
-					print $src->owner->name.'<br>**** '.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+          print $src->owner->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 print '</td><td>';
  if ($src->card->country)
 	{

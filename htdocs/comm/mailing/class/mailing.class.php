@@ -35,48 +35,51 @@ class Mailing extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='mailing';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='mailing';
-	
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='email';
 
-	var $titre;
-	var $sujet;
-	var $body;
-	var $nbemail;
-	var $bgcolor;
-	var $bgimage;
+	public $titre;
+	public $sujet;
+	public $body;
+	public $nbemail;
+	public $bgcolor;
+	public $bgimage;
 
-	var $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
+	public $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
-	var $email_from;
-	var $email_replyto;
-	var $email_errorsto;
+	public $email_from;
+	public $email_replyto;
+	public $email_errorsto;
 
-	var $joined_file1;
-	var $joined_file2;
-	var $joined_file3;
-	var $joined_file4;
+	public $joined_file1;
+	public $joined_file2;
+	public $joined_file3;
+	public $joined_file4;
 
-	var $user_creat;
-	var $user_valid;
+	public $user_creat;
+	public $user_valid;
 
-	var $date_creat;
-	var $date_valid;
+	public $date_creat;
+	public $date_valid;
 
-	var $extraparams=array();
+	public $extraparams=array();
 
 	public $statut_dest=array();
 	public $statuts=array();
 
 
-	/**
+    /**
      *  Constructor
      *
-     *  @param      DoliDb		$db      Database handler
+     *  @param      DoliDb      $db      Database handler
 	 */
 	function __construct($db)
 	{
@@ -439,14 +442,15 @@ class Mailing extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Delete targets emailing
 	 *
 	 *  @return int       1 if OK, 0 if error
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_targets()
 	{
+        // phpcs:enable
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql.= " WHERE fk_mailing = ".$this->id;
 
@@ -464,15 +468,16 @@ class Mailing extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Change status of each recipient
 	 *
 	 *	@param	User	$user      	Objet user qui valide
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function reset_targets_status($user)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql.= " SET statut = 0";
 		$sql.= " WHERE fk_mailing = ".$this->id;
@@ -536,6 +541,7 @@ class Mailing extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -543,42 +549,38 @@ class Mailing extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string        			Label
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load('mails');
 
-		if ($mode == 0)
+		if ($mode == 0 || $mode == 1)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
-		{
-			return $langs->trans($this->statuts[$statut]);
-		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
 			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut == 3) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == 0)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut == 1)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut1');
@@ -606,39 +608,39 @@ class Mailing extends CommonObject
 		{
 			return $langs->trans('MailingStatusError');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $langs->trans('MailingStatusSent');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 		    if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
 		    if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut4');
 		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 		    if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error($desc);
 		    if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');

@@ -550,13 +550,17 @@ if (empty($reshook))
 
 			$db->begin();
 
+                if (empty($newcu)) {
+                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+                } else {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
 			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
 			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-
+                }
+     
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
-			if (empty($num))
+			if (empty($num) && !empty($newcu))
 			{
 				$societeaccount = new SocieteAccount($db);
 				$societeaccount->fk_soc = $object->id;
@@ -826,7 +830,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<td></td>';
 		print '<td align="center">'.$langs->trans('Default').'</td>';
 		print '<td>'.$langs->trans('Note').'</td>';
-		print "<td></td></tr>\n";
+		print '<td>'.$langs->trans('DateModification').'</td>';
+		print "<td></td>";
+		print "</tr>\n";
 
 		$nbremote = 0;
 		$nblocal = 0;
@@ -906,6 +912,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td>';
 							if (empty($companypaymentmodetemp->stripe_card_ref)) print $langs->trans("Local");
 							else print $langs->trans("LocalAndRemote");
+							print '</td>';
+							print '<td>';
+							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
 							print '</td>';
 							print '<td align="right" class="nowraponall">';
 							if ($user->rights->societe->creer)
@@ -1018,6 +1027,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				print '<td>';
 				print $langs->trans("Remote");
+				//if ($src->cvc_check == 'fail') print ' - CVC check fail';
+				print '</td>';
+				print '<td>';
+				//var_dump($src);
+				print '';
 				print '</td>';
 				print '<td align="right" class="nowraponall">';
 				if ($user->rights->societe->creer)

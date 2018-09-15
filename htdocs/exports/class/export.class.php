@@ -70,6 +70,7 @@ class Export
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Load an exportable dataset
 	 *
@@ -77,9 +78,9 @@ class Export
 	 *    @param  	string		$filter    	Load a particular dataset only
 	 *    @return	int						<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_arrays($user,$filter='')
 	{
+        // phpcs:enable
 		global $langs,$conf,$mysoc;
 
 		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
@@ -208,6 +209,7 @@ class Export
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build the sql export request.
 	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
@@ -217,9 +219,9 @@ class Export
 	 *      @param      array	$array_filterValue  Filter records on array of value for fields
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_sql($indice, $array_selected, $array_filterValue)
 	{
+        // phpcs:enable
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
 		$i=0;
@@ -271,6 +273,7 @@ class Export
 		return $sql;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build the conditionnal string from filter the query
 	 *
@@ -279,9 +282,9 @@ class Export
 	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
 	 *      @return		string					sql string of then field ex : "field='xxx'>"
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
+        // phpcs:enable
 		//print $TypeField." ".$NameField." ".$ValueField;
 		$InfoFieldList = explode(":", $TypeField);
 		// build the input field on depend of the type of file
@@ -365,6 +368,7 @@ class Export
 		return $Condition;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build an input field used to filter the query
 	 *
@@ -373,9 +377,9 @@ class Export
 	 *      @param		string	$ValueField		Initial value of the field to filter
 	 *      @return		string					html string of the input field ex : "<input type=text name=... value=...>"
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_filterField($TypeField, $NameField, $ValueField)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$szFilterField='';
@@ -514,6 +518,7 @@ class Export
 		return $szMsg;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build export file.
 	 *      File is built into directory $conf->export->dir_temp.'/'.$user->id
@@ -527,9 +532,9 @@ class Export
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
  	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$indice=0;
@@ -825,15 +830,16 @@ class Export
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Output list all export models
 	 *  TODO Move this into a class htmlxxx.class.php
 	 *
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_export_model()
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		$sql = "SELECT em.rowid, em.field, em.label, em.type, em.filter";

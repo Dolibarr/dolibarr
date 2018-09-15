@@ -31,7 +31,7 @@ class mailing_thirdparties extends MailingTargets
 
 	var $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
 	var $picto='company';
-	
+
 	/**
      * @var DoliDB Database handler.
      */
@@ -52,6 +52,7 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
@@ -59,9 +60,9 @@ class mailing_thirdparties extends MailingTargets
 	 *    @param	array	$filtersarray   If you used the formFilter function. Empty otherwise.
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function add_to_target($mailing_id,$filtersarray=array())
+	function add_to_target($mailing_id, $filtersarray=array())
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		$cibles = array();
@@ -96,53 +97,53 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
 		}
 
-                $addDescription= "";
-                if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
-                {
-                    $sql.= " AND s.client=" . $_POST["filter_client"];
-                    $addDescription= $langs->trans('ProspectCustomer')."=";
-                    if ($_POST["filter_client"] == 0)
-                    {
-                        $addDescription.= $langs->trans('NorProspectNorCustomer');
-                    }
-                    else if ($_POST["filter_client"] == 1)
-                    {
-                        $addDescription.= $langs->trans('Customer');
-                    }
-                    else if ($_POST["filter_client"] == 2)
-                    {
-                        $addDescription.= $langs->trans('Prospect');
-                    }
-                    else if ($_POST["filter_client"] == 3)
-                    {
-                        $addDescription.= $langs->trans('ProspectCustomer');
-                    }
-                    else
-                    {
-                        $addDescription.= "Unknown status ".$_POST["filter_client"];
-                    }
-                }
-                if (isset($_POST["filter_status"]))
-                {
-                    if (strlen($addDescription) > 0)
-                    {
-                        $addDescription.= ";";
-                    }
-                    $addDescription.= $langs->trans("Status")."=";
-                    if ($_POST["filter_status"] == '1')
-                    {
-                        $sql.= " AND s.status=1";
-                        $addDescription.= $langs->trans("Enabled");
-                    }
-                    else
-                    {
-                        $sql.= " AND s.status=0";
-                        $addDescription.= $langs->trans("Disabled");
-                    }
-                }
-		$sql.= " ORDER BY email";
+        $addDescription= "";
+        if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
+        {
+            $sql.= " AND s.client=" . $_POST["filter_client"];
+            $addDescription= $langs->trans('ProspectCustomer')."=";
+            if ($_POST["filter_client"] == 0)
+            {
+                $addDescription.= $langs->trans('NorProspectNorCustomer');
+            }
+            elseif ($_POST["filter_client"] == 1)
+            {
+                $addDescription.= $langs->trans('Customer');
+            }
+            elseif ($_POST["filter_client"] == 2)
+            {
+                $addDescription.= $langs->trans('Prospect');
+            }
+            elseif ($_POST["filter_client"] == 3)
+            {
+                $addDescription.= $langs->trans('ProspectCustomer');
+            }
+            else
+            {
+                $addDescription.= "Unknown status ".$_POST["filter_client"];
+            }
+        }
+        if (isset($_POST["filter_status"]))
+        {
+            if (strlen($addDescription) > 0)
+            {
+                $addDescription.= ";";
+            }
+            $addDescription.= $langs->trans("Status")."=";
+            if ($_POST["filter_status"] == '1')
+            {
+                $sql.= " AND s.status=1";
+                $addDescription.= $langs->trans("Enabled");
+            }
+            else
+            {
+                $sql.= " AND s.status=0";
+                $addDescription.= $langs->trans("Disabled");
+            }
+        }
+        $sql.= " ORDER BY email";
 
-		// Stock recipients emails into targets table
+        // Stock recipients emails into targets table
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -313,7 +314,7 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 
-	/**
+    /**
 	 *  Can include an URL link on each record provided by selector shown on target page.
 	 *
      *  @param	int		$id		ID

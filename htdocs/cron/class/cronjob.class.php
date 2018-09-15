@@ -40,9 +40,16 @@ class Cronjob extends CommonObject
 	 */
 	public $table_element='cronjob';
 
-    public $picto = 'cron';
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'cron';
 
-    public $entity;
+    /**
+	 * @var int Entity
+	 */
+	public $entity;
+
     public $jobtype;
 	public $tms='';
 	public $datec='';
@@ -368,6 +375,7 @@ class Cronjob extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Load object in memory from the database
      *
@@ -380,10 +388,10 @@ class Cronjob extends CommonObject
 	 *  @param  int         $processing     Processing or not
      *  @return int          			    <0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='', $processing=-1)
     {
-    	global $langs;
+        // phpcs:enable
+        global $langs;
 
     	$this->lines=array();
 
@@ -920,6 +928,7 @@ class Cronjob extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Run a job.
 	 * Once job is finished, status and nb of run is updated.
@@ -928,9 +937,9 @@ class Cronjob extends CommonObject
 	 * @param   string		$userlogin    	User login
 	 * @return	int					 		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function run_jobs($userlogin)
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$now=dol_now();
@@ -1191,6 +1200,7 @@ class Cronjob extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Reprogram a job
 	 *
@@ -1198,9 +1208,9 @@ class Cronjob extends CommonObject
 	 * @param  timestamp    $now            Date returned by dol_now()
 	 * @return int					        <0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function reprogram_jobs($userlogin, $now)
 	{
+        // phpcs:enable
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -1279,6 +1289,7 @@ class Cronjob extends CommonObject
 	    return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -1286,10 +1297,10 @@ class Cronjob extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
-	    global $langs;
+        // phpcs:enable
+        global $langs;
 	    $langs->load('users');
 
 	    if ($mode == 0)
@@ -1333,7 +1344,14 @@ class Cronjob extends CommonObject
 class Cronjobline
 {
 
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
 
 	public $tms='';

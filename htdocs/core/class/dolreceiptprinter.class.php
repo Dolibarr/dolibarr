@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,25 +105,25 @@ class dolReceiptPrinter extends Escpos
     const CONNECTOR_NETWORK_PRINT = 3;
     const CONNECTOR_WINDOWS_PRINT = 4;
     //const CONNECTOR_JAVA = 5;
-    
+
     /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $tags;
     var $printer;
     var $template;
-    
+
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-	
+     * @var string Error code (or message)
+     */
+    public $error='';
+
     /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
 
 
@@ -216,6 +216,7 @@ class dolReceiptPrinter extends Escpos
         global $conf;
         $error = 0;
         $line = 0;
+        $obj = array();
         $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
         $sql.= ' WHERE entity = '.$conf->entity;
@@ -283,6 +284,7 @@ class dolReceiptPrinter extends Escpos
         global $conf;
         $error = 0;
         $line = 0;
+        $obj = array();
         $sql = 'SELECT rowid, name, template';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
         $sql.= ' WHERE entity = '.$conf->entity;
@@ -350,6 +352,7 @@ class dolReceiptPrinter extends Escpos
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Add a printer in db
      *
@@ -359,9 +362,9 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $parameter      Printer parameter
      *  @return  int                        0 if OK; >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function AddPrinter($name, $type, $profile, $parameter)
     {
+        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt';
@@ -375,6 +378,7 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Update a printer in db
      *
@@ -385,9 +389,9 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function UpdatePrinter($name, $type, $profile, $parameter, $printerid)
     {
+        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt';
@@ -404,15 +408,16 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Delete a printer from db
      *
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DeletePrinter($printerid)
     {
+        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt';
@@ -425,6 +430,7 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Update a printer template in db
      *
@@ -433,9 +439,9 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $templateid     Template id
      *  @return   int                       0 if OK; >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function UpdateTemplate($name, $template, $templateid)
     {
+        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt_template';
@@ -451,15 +457,16 @@ class dolReceiptPrinter extends Escpos
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Send Test page to Printer
      *
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SendTestToPrinter($printerid)
     {
+        // phpcs:enable
         global $conf;
         $error = 0;
         $img = new EscposImage(DOL_DOCUMENT_ROOT .'/theme/common/dolibarr_logo_bw.png');
@@ -486,6 +493,7 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Print Receipt Ticket
      *
@@ -494,9 +502,9 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SendToPrinter($object, $templateid, $printerid)
     {
+        // phpcs:enable
         global $conf;
         $error = 0;
         $ret = $this->loadTemplate($templateid);
@@ -650,15 +658,16 @@ class dolReceiptPrinter extends Escpos
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function Init Printer
      *
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function InitPrinter($printerid)
     {
+        // phpcs:enable
         global $conf;
         $error=0;
         $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';

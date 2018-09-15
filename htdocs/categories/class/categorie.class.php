@@ -51,8 +51,11 @@ class Categorie extends CommonObject
 	const TYPE_USER      = 'user';
 	const TYPE_PROJECT   = 'project';
 	const TYPE_ACCOUNT   = 'bank_account';
-    	const TYPE_BANK_LINE = 'bank_line';
+    const TYPE_BANK_LINE = 'bank_line';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'category';
 
 
@@ -161,11 +164,15 @@ class Categorie extends CommonObject
 	public $fk_parent;
 
 	/**
-     * @var string proper name for given parameter
+     * @var string Category label
      */
-    public $label;
+   	public $label;
 
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	/**
 	 * @var string     Color
 	 */
@@ -510,112 +517,27 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_societe";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_fournisseur";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-		    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql .= " WHERE fk_categ = ".$this->id;
-		    if (!$this->db->query($sql))
-		    {
-		        $this->error=$this->db->lasterror();
-		        dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-		        $error++;
-		    }
-		}
 
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
-			$sql .= " WHERE fk_category = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
-			}
-		}
-
-		// Delete category
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
-			$sql .= " WHERE rowid = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
+        $arraydelete = array(
+            'categorie_societe' => 'fk_categorie',
+            'categorie_fournisseur' => 'fk_categorie',
+            'categorie_product' => 'fk_categorie',
+            'categorie_member' => 'fk_categorie',
+            'categorie_contact' => 'fk_categorie',
+            'categorie_account' => 'fk_categorie',
+            'bank_class' => 'fk_categ',
+            'categorie_lang' => 'fk_category',
+            'categorie' => 'rowid',
+        );
+        foreach ($arraydelete as $key => $value) {
+            $sql  = "DELETE FROM " . MAIN_DB_PREFIX . $key;
+            $sql .= " WHERE ".$value." = ".$this->id;
+            if (!$this->db->query($sql)) {
+                $this->errors[] = $this->db->lasterror();
+                dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+                $error++;
+            }
+        }
 
 		// Removed extrafields
 		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -640,6 +562,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Link an object to the category
 	 *
@@ -647,9 +570,9 @@ class Categorie extends CommonObject
 	 * @param   string     		$type 	Type of category ('product', ...)
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_type($obj, $type)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf;
 
 		$error=0;
@@ -742,6 +665,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Delete object from category
 	 *
@@ -750,9 +674,9 @@ class Categorie extends CommonObject
 	 *
 	 * @return  int          1 if OK, -1 if KO
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function del_type($obj,$type)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf;
 
 		$error=0;
@@ -966,14 +890,15 @@ class Categorie extends CommonObject
 		return $categories;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return childs of a category
 	 *
 	 * @return	array|int   <0 KO, array ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_filles()
 	{
+        // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent = ".$this->id;
 
@@ -996,14 +921,15 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function load_motherof()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$this->motherof=array();
@@ -1031,6 +957,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Rebuilding the category tree as an array
 	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
@@ -1046,9 +973,9 @@ class Categorie extends CommonObject
 	 *
 	 * @return  array               	Array of categories. this->cats and this->motherof are set.
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_full_arbo($type, $markafterid=0)
 	{
+        // phpcs:enable
 	    global $conf, $langs;
 
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
@@ -1123,6 +1050,7 @@ class Categorie extends CommonObject
 		return $this->cats;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel
 	 *
@@ -1130,9 +1058,9 @@ class Categorie extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_path_from_id_categ($id_categ,$protection=1000)
 	{
+        // phpcs:enable
 		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		if (! empty($this->cats[$id_categ]['fullpath']))
@@ -1166,14 +1094,15 @@ class Categorie extends CommonObject
 		return;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Display content of $this->cats
 	 *
 	 *	@return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function debug_cats()
 	{
+        // phpcs:enable
 		// Display $this->cats
 		foreach($this->cats as $key => $val)
 		{
@@ -1188,6 +1117,7 @@ class Categorie extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Returns all categories
 	 *
@@ -1195,9 +1125,9 @@ class Categorie extends CommonObject
 	 *	@param	boolean		$parent		Just parent categories if true
 	 *	@return	array					Table of Object Category
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_all_categories($type=null, $parent=false)
 	{
+        // phpcs:enable
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
@@ -1226,14 +1156,15 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
 	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function already_exists()
 	{
+        // phpcs:enable
 		$type=$this->type;
 
 		if (! is_numeric($type)) $type=$this->MAP_ID[$type];
@@ -1276,18 +1207,20 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns the top level categories (which are not girls)
 	 *
 	 *	@param		int		$type		Type of category (0, 1, ...)
 	 *	@return		array
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_main_categories($type=null)
 	{
+        // phpcs:enable
 		return $this->get_all_categories($type, true);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns the path of the category, with the names of the categories
 	 * separated by $sep (" >> " by default)
@@ -1297,9 +1230,9 @@ class Categorie extends CommonObject
 	 * @param   int     $nocolor     0
 	 * @return	array
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function print_all_ways($sep = " &gt;&gt; ", $url='', $nocolor=0)
 	{
+        // phpcs:enable
 		$ways = array();
 
 		$allways = $this->get_all_ways(); // Load array of categories
@@ -1346,14 +1279,15 @@ class Categorie extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
 	 *	@return	int|array <0 KO, array OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_meres()
 	{
+        // phpcs:enable
 		$parents = array();
 
 		$sql = "SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie";
@@ -1381,15 +1315,16 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Returns in a table all possible paths to get to the category
 	 * 	starting with the major categories represented by Tables of categories
 	 *
 	 *	@return	array
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_all_ways()
 	{
+        // phpcs:enable
 		$ways = array();
 
 		$parents=$this->get_meres();
@@ -1596,6 +1531,7 @@ class Categorie extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
 	 *
@@ -1603,9 +1539,9 @@ class Categorie extends CommonObject
 	 *  @param      string	$file		Nom du fichier uploade
 	 *	@return		void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_photo($sdir, $file)
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
@@ -1646,6 +1582,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Return tableau de toutes les photos de la categorie
 	 *
@@ -1653,9 +1590,9 @@ class Categorie extends CommonObject
 	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
 	 *    @return     array       			Tableau de photos
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_photos($dir,$nbmax=0)
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$nbphoto=0;
@@ -1702,15 +1639,16 @@ class Categorie extends CommonObject
 		return $tabobj;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Efface la photo de la categorie et sa vignette
 	 *
 	 *    @param	string		$file		Path to file
 	 *    @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_photo($file)
 	{
+        // phpcs:enable
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
@@ -1731,15 +1669,16 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load size of image file
 	 *
 	 *  @param    	string	$file        Path to file
 	 *  @return		void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_image_size($file)
 	{
+        // phpcs:enable
 		$infoImg = getimagesize($file); // Recuperation des infos de l'image
 		$this->imgWidth = $infoImg[0]; // Largeur de l'image
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image

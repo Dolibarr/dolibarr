@@ -344,14 +344,15 @@ class SMTPs
 		$_aryToList = $this->getTO();
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attempt a connection to mail server
 	 *
 	 * @return mixed  $_retVal   Boolean indicating success or failure on connection
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _server_connect()
 	{
+        // phpcs:enable
 		// Default return value
 		$_retVal = true;
 
@@ -407,14 +408,15 @@ class SMTPs
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
 	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _server_authenticate()
 	{
+        // phpcs:enable
 		global $conf;
 
 		// Send the RFC2554 specified EHLO.
@@ -1038,6 +1040,7 @@ class SMTPs
 		$this->_msgRecipients = $aryHost;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of the various parts of an email address
 	 * This assumes a well formed address:
@@ -1054,9 +1057,9 @@ class SMTPs
 	 *	@param		string		$_strAddr		Email address
 	 * 	@return 	array	 					An array of the various parts of an email address
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _strip_email($_strAddr)
 	{
+        // phpcs:enable
 		// Keep the orginal
 		$_aryEmail['org'] = $_strAddr;
 
@@ -1090,6 +1093,7 @@ class SMTPs
 		return $_aryEmail;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of bares addresses for use with 'RCPT TO:'
 	 * This is a "build as you go" method. Each time this method is called
@@ -1097,9 +1101,9 @@ class SMTPs
 	 *
 	 * @return 		array		Returns an array of bares addresses
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_RCPT_list()
 	{
+        // phpcs:enable
 		/**
 		 * An array of bares addresses for use with 'RCPT TO:'
 		 */
@@ -1121,15 +1125,16 @@ class SMTPs
 		return $_RCPT_list;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of addresses for a specific type; TO, CC or BCC
 	 *
 	 * @param 		string 	       $_which 	    Which collection of addresses to return ('to', 'cc', 'bcc')
 	 * @return 		string|false 				Array of emaill address
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_email_list($_which = null)
 	{
+        // phpcs:enable
 		// We need to know which address segment to pull
 		if ( $_which )
 		{
@@ -1750,6 +1755,7 @@ class SMTPs
 		else if ($type == 'alternative') return $this->_smtpsAlternativeBoundary;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions
@@ -1758,9 +1764,9 @@ class SMTPs
 	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function server_parse($socket, $response)
 	{
+        // phpcs:enable
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
 		 * Default value is set at true
@@ -1792,6 +1798,7 @@ class SMTPs
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Send str
 	 *
@@ -1800,9 +1807,9 @@ class SMTPs
 	 * @param 	string		$CRLF			CRLF
 	 * @return 	boolean|null						True or false
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{
+        // phpcs:enable
 		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
 		fputs($this->socket, $_strSend . $CRLF);
 		if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;

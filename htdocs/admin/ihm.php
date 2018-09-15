@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +133,9 @@ if ($action == 'update')
 
 	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
 	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
+
+	if (GETPOST('THEME_ELDY_USE_CHECKED') == '') dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", '0', 'chaine', 0, '', $conf->entity);
+	else dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $_POST["THEME_ELDY_USE_CHECKED"], 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", $_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", $_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
@@ -413,7 +417,7 @@ if ($action == 'edit')	// Edit
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
 			print ' &nbsp; ';
-			print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
+			print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
 		}
 	} else {
 		print '<img class="paddingleft valignmiddle" width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -561,7 +565,7 @@ else	// Show
 	print $conf->global->MAIN_LOGIN_BACKGROUND;
 	if ($conf->global->MAIN_LOGIN_BACKGROUND && is_file($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND))
 	{
-		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'">';
+		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
 	}
 	else
 	{

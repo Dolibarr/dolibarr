@@ -27,7 +27,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	var $enabled=0;
 	var $require_module=array();
 	var $picto='mymodule@mymodule';
-	
+
 	/**
      * @var DoliDB Database handler.
      */
@@ -92,6 +92,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  This is the main function that returns the array of emails
 	 *
@@ -99,9 +100,9 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  @param	array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			<0 if error, number of emails added if ok
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
+        // phpcs:enable
 		$target = array();
 		$cibles = array();
 		$j = 0;

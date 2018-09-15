@@ -37,29 +37,32 @@ class Tva extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='tva';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='tva';
-	
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='payment';
 
-	var $tms;
-	var $datep;
-	var $datev;
-	var $amount;
-	var $type_payment;
-	var $num_payment;
-	
+	public $tms;
+	public $datep;
+	public $datev;
+	public $amount;
+	public $type_payment;
+	public $num_payment;
+
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
 
     /**
 	 *	Constructor
@@ -363,15 +366,16 @@ class Tva extends CommonObject
         return $solde;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Total of the VAT from invoices emitted by the thirdparty.
      *
      *	@param	int		$year		Year
      *  @return	double				Amount
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function tva_sum_collectee($year = 0)
     {
+        // phpcs:enable
 
         $sql = "SELECT sum(f.tva) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
@@ -403,15 +407,16 @@ class Tva extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	VAT payed
      *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function tva_sum_payee($year = 0)
     {
+        // phpcs:enable
 
         $sql = "SELECT sum(f.total_tva) as total_tva";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -444,15 +449,16 @@ class Tva extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Total of the VAT payed
      *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function tva_sum_reglee($year = 0)
     {
+        // phpcs:enable
 
         $sql = "SELECT sum(f.amount) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
@@ -636,15 +642,16 @@ class Tva extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
 	 *  Update link between payment tva and line generate into llx_bank
      *
      *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
@@ -800,6 +807,7 @@ class Tva extends CommonObject
 	    return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -807,9 +815,9 @@ class Tva extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($status,$mode=0)
     {
+        // phpcs:enable
         global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
         return '';

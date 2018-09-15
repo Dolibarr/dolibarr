@@ -35,17 +35,17 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $length;
+
+	public $length;
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $conf;
-	var $lang;
-	var $user;
+
+	public $conf;
+	public $lang;
+	public $user;
 
 
 	/**

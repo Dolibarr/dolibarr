@@ -1185,7 +1185,7 @@ elseif (! empty($module))
 				print '<br>';
 				print '<br>';
 
-				print_fiche_titre($langs->trans("DescriptorFile"));
+				print load_fiche_titre($langs->trans("DescriptorFile"));
 
 				if (! empty($moduleobj))
 				{
@@ -1249,7 +1249,7 @@ elseif (! empty($module))
 					print '<br><br>';
 
 					// Readme file
-					print_fiche_titre($langs->trans("ReadmeFile"));
+					print load_fiche_titre($langs->trans("ReadmeFile"));
 
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
@@ -1259,7 +1259,7 @@ elseif (! empty($module))
 					print '<br><br>';
 
 					// ChangeLog
-					print_fiche_titre($langs->trans("ChangeLog"));
+					print load_fiche_titre($langs->trans("ChangeLog"));
 
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';

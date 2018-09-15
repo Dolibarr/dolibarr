@@ -35,22 +35,25 @@ class BookKeeping extends CommonObject
 	 * @var string Error code (or message)
 	 */
 	public $error;
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	/**
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'accountingbookkeeping';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'accounting_bookkeeping';
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	/**
@@ -62,8 +65,7 @@ class BookKeeping extends CommonObject
 	 * @var int ID
 	 */
 	public $id;
-	/**
-	 */
+
 	public $doc_date;
 	public $date_lim_reglement;
 	public $doc_type;
@@ -333,18 +335,15 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
-		if (! $error) {
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action to call a trigger.
+		//if (! $error && ! $notrigger) {
 
-			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
-
-				// // Call triggers
-				// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				// if ($result < 0) $error++;
-				// // End call triggers
-			}
-		}
+		// // Call triggers
+		// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+		// if ($result < 0) $error++;
+		// // End call triggers
+		//}
 
 		// Commit or rollback
 		if ($error) {
@@ -564,15 +563,15 @@ class BookKeeping extends CommonObject
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element . $mode);
 
-			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
+			//if (! $notrigger) {
 
-				// // Call triggers
-				// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				// if ($result < 0) $error++;
-				// // End call triggers
-			}
+			// // Call triggers
+			// $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			// if ($result < 0) $error++;
+			// // End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -1129,15 +1128,15 @@ class BookKeeping extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
-		if (! $error && ! $notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (! $error && ! $notrigger) {
 
-			// // Call triggers
-			// $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			// // End call triggers
-		}
+		// // Call triggers
+		// $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		// // End call triggers
+		//}
 
 		// Commit or rollback
 		if ($error) {
@@ -1203,17 +1202,15 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		if (! $error) {
-			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
+		//if (! $error && ! $notrigger) {
 
-				// // Call triggers
-				// $result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				// // End call triggers
-			}
-		}
+		// // Call triggers
+		// $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		// if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		// // End call triggers
+		//}
 
 		if (! $error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element.$mode;
@@ -1551,15 +1548,16 @@ class BookKeeping extends CommonObject
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Export bookkeping
 	 *
 	 * @param	string	$model	Model
 	 * @return	int				Result
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function export_bookkeping($model = 'ebp')
     {
+        // phpcs:enable
 		global $conf;
 
 		$sql = "SELECT rowid, doc_date, doc_type,";
@@ -1704,11 +1702,12 @@ class BookKeeping extends CommonObject
 		*/
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	* Return list of accounts with label by chart of accounts
 	*
-	* @param string		$selectid	Preselected chart of accounts
-	* @param string		$htmlname	Name of field in html form
+	* @param string     $selectid   Preselected chart of accounts
+	* @param string     $htmlname	Name of field in html form
 	* @param int		$showempty	Add an empty field
 	* @param array		$event		Event options
 	* @param int		$select_in	Value is a aa.rowid (0 default) or aa.account_number (1)
@@ -1716,9 +1715,9 @@ class BookKeeping extends CommonObject
 	* @param int		$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
 	* @return string	String with HTML select
     */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
     {
+        // phpcs:enable
 		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -1775,15 +1774,16 @@ class BookKeeping extends CommonObject
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Description of a root accounting account
 	 *
 	 * @param 	string 	$account	Accounting account
 	 * @return 	string 				Root account
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_compte_racine($account = null)
 	{
+        // phpcs:enable
 		global $conf;
 		$pcgver = $conf->global->CHARTOFACCOUNTS;
 
@@ -1816,15 +1816,16 @@ class BookKeeping extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Description of accounting account
 	 *
 	 * @param	string	$account	Accounting account
 	 * @return	string				Account desc
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_compte_desc($account = null)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$pcgver = $conf->global->CHARTOFACCOUNTS;
@@ -1862,7 +1863,11 @@ class BookKeeping extends CommonObject
  */
 class BookKeepingLine
 {
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $doc_date = '';
 	public $doc_type;
 	public $doc_ref;

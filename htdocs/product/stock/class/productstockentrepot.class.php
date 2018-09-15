@@ -44,7 +44,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ProductStockEntrepot';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -511,6 +511,7 @@ class ProductStockEntrepot extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -518,9 +519,9 @@ class ProductStockEntrepot extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)

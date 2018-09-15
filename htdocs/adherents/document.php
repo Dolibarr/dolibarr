@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("members");
-$langs->load("companies");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","other"));
+
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
