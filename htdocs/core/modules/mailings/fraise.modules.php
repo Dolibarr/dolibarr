@@ -237,8 +237,9 @@ class mailing_fraise extends MailingTargets
 	    }
 
     	global $langs,$_POST;
-		$langs->load("members");
-        $langs->load("companies");
+
+    	// Load translation files required by the page
+        $langs->loadLangs(array("members","companies"));
 
         $cibles = array();
         $now=dol_now();

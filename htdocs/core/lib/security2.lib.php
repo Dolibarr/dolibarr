@@ -105,9 +105,9 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     			{
     				dol_syslog("Authentification ko - failed to load file '".$authfile."'", LOG_ERR);
     				sleep(1);
-    				$langs->load('main');
-    				$langs->load('other');
-    				$langs->load('errors');
+    				// Load translation files required by the page
+                    $langs->loadLangs(array('other', 'main', 'errors'));
+
     				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode", $mode);
     			}
     		}
