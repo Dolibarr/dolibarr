@@ -2685,6 +2685,8 @@ table.paddingtopbottomonly tr td {
 }
 tr.liste_titre_filter td.liste_titre {
     border-bottom: 1px solid #FDFFFF;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
@@ -4772,7 +4774,81 @@ span.noborderoncategories {
 
 
 /* ============================================================================== */
-/*  Multiselect with checkbox                                                     */
+/*  External lib multiselect with checkbox                                        */
+/* ============================================================================== */
+
+.multi-select-container {
+  display: inline-block;
+  position: relative;
+}
+
+.multi-select-menu {
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  float: left;
+  min-width: 100%;
+  background: #fff;
+  margin: 1em 0;
+  padding: 0.4em 0;
+  border: 1px solid #aaa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.multi-select-menu input {
+  margin-right: 0.3em;
+  vertical-align: 0.1em;
+}
+
+.multi-select-button {
+  display: inline-block;
+  max-width: 20em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  background-color: #fff;
+  cursor: default;
+
+  border: none;
+  border-bottom: solid 1px rgba(0,0,0,.2);
+  padding: 5px;
+  padding-left: 2px;
+  height: 17px;
+}
+.multi-select-button:focus {
+  outline: none;
+  border-bottom: 1px solid #666;
+}
+
+.multi-select-button:after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0.5em 0.23em 0em 0.23em;
+  border-color: #444 transparent transparent transparent;
+  margin-left: 0.4em;
+}
+
+.multi-select-container--open .multi-select-menu { display: block; }
+
+.multi-select-container--open .multi-select-button:after {
+  border-width: 0 0.4em 0.4em 0.4em;
+  border-color: transparent transparent #999 transparent;
+}
+
+.multi-select-menuitem {
+    clear: both;
+    float: left;
+    padding-left: 5px
+}
+
+
+/* ============================================================================== */
+/*  Native multiselect with checkbox                                              */
 /* ============================================================================== */
 
 ul.ulselectedfields {
