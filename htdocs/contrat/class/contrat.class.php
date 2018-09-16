@@ -2382,7 +2382,7 @@ class Contrat extends CommonObject
 	 */
     function createFromClone($socid = 0, $notrigger=0)
     {
-		global $db, $user, $langs, $conf, $hookmanager;
+		global $db, $user, $langs, $conf, $hookmanager, $extrafields;
 
 		dol_include_once('/projet/class/project.class.php');
 
@@ -2391,6 +2391,7 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		$this->fetch($this->id);
+
 		// Load dest object
 		$clonedObj = clone $this;
         $clonedObj->socid = $socid;
@@ -2401,8 +2402,23 @@ class Contrat extends CommonObject
 
 		$objsoc->fetch($clonedObj->socid);
 
-		// $clonedObj->id=0;
+		// Clean data
 		$clonedObj->statut = 0;
+		// Clean extrafields
+		if (is_array($clonedObj->array_options) && count($clonedObj->array_options) > 0)
+		{
+			$extrafields->fetch_name_optionals_label($this->element);
+			foreach($clonedObj->array_options as $key => $option)
+			{
+				$shortkey = preg_replace('/options_/', '', $key);
+				//var_dump($shortkey); var_dump($extrafields->attributes[$this->element]['unique'][$shortkey]);
+				if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+				{
+					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					unset($clonedObj->array_options[$key]);
+				}
+			}
+		}
 
 		if (empty($conf->global->CONTRACT_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT . "/core/modules/contract/" . $conf->global->CONTRACT_ADDON . ".php")) {
 			$this->error = 'ErrorSetupNotComplete';
@@ -2417,8 +2433,8 @@ class Contrat extends CommonObject
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone
-		foreach ( $this->lines as $line ) {
-			$line->fetch_optionals($line->rowid);
+		foreach ($this->lines as $line) {
+			$line->fetch_optionals($line->id);
 		}
 
 		// Create clone
