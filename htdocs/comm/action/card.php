@@ -1302,7 +1302,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="titlefieldcreate nowrap" >'.$langs->trans("Priority").'</td><td>';
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
 
