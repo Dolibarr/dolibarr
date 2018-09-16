@@ -2019,52 +2019,47 @@ class Adherent extends CommonObject
 		if ($mode == 0)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
 				else                                     return $langs->trans("MemberStatusPaid");
 			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliated");
 		}
 		elseif ($mode == 1)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
 				else                                     return $langs->trans("MemberStatusPaidShort");
 			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
+			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
 		}
 		elseif ($mode == 2)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraftShort");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaidShort");
 			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
+			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
 		}
 		elseif ($mode == 3)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4');
 			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
 		elseif ($mode == 4)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaid");
@@ -2074,8 +2069,7 @@ class Adherent extends CommonObject
 		elseif ($mode == 5)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
@@ -2085,8 +2079,7 @@ class Adherent extends CommonObject
 		elseif ($mode == 6)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			if ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActive").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLate").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaid").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
@@ -2107,7 +2100,7 @@ class Adherent extends CommonObject
         // phpcs:enable
 		global $conf;
 
-		$this->nb=array();
+		$this->nb = array();
 
 		$sql = "SELECT count(a.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
