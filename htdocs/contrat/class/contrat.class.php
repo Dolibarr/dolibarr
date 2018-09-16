@@ -643,56 +643,49 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$result = $this->db->fetch_array($resql);
+			$obj = $this->db->fetch_object($resql);
 
-			if ($result)
+			if ($obj)
 			{
-				$this->id						= $result["rowid"];
-				$this->ref						= (!isset($result["ref"]) || !$result["ref"]) ? $result["rowid"] : $result["ref"];
-				$this->ref_customer				= $result["ref_customer"];
-				$this->ref_supplier				= $result["ref_supplier"];
-				$this->ref_ext					= $result["ref_ext"];
-				$this->statut					= $result["statut"];
-				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
+				$this->id						= $obj->rowid;
+				$this->ref						= (!isset($obj->ref) || !$obj->ref) ? $obj->rowid : $obj->ref;
+				$this->ref_customer				= $obj->ref_customer;
+				$this->ref_supplier				= $obj->ref_supplier;
+				$this->ref_ext					= $obj->ref_ext;
+				$this->statut					= $obj->statut;
+				$this->mise_en_service			= $this->db->jdate($obj->datemise);
 
-				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
-				$this->date_creation			= $this->db->jdate($result["datecontrat"]);
+				$this->date_contrat				= $this->db->jdate($obj->datecontrat);
+				$this->date_creation			= $this->db->jdate($obj->datecontrat);
 
-				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
-				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
+				$this->fin_validite				= $this->db->jdate($obj->fin_validite);
+				$this->date_cloture				= $this->db->jdate($obj->date_cloture);
 
 
-				$this->user_author_id			= $result["fk_user_author"];
+				$this->user_author_id			= $obj->fk_user_author;
 
-				$this->commercial_signature_id	= $result["fk_commercial_signature"];
-				$this->commercial_suivi_id		= $result["fk_commercial_suivi"];
+				$this->commercial_signature_id	= $obj->fk_commercial_signature;
+				$this->commercial_suivi_id		= $obj->fk_commercial_suivi;
 
-				$this->note_private				= $result["note_private"];
-				$this->note_public				= $result["note_public"];
-				$this->modelpdf					= $result["model_pdf"];
+				$this->note_private				= $obj->note_private;
+				$this->note_public				= $obj->note_public;
+				$this->modelpdf					= $obj->model_pdf;
 
-				$this->fk_projet				= $result["fk_projet"]; // deprecated
-				$this->fk_project				= $result["fk_projet"];
+				$this->fk_projet				= $obj->fk_projet; // deprecated
+				$this->fk_project				= $obj->fk_projet;
 
-				$this->socid					= $result["fk_soc"];
-				$this->fk_soc					= $result["fk_soc"];
+				$this->socid					= $obj->fk_soc;
+				$this->fk_soc					= $obj->fk_soc;
 
-				$this->extraparams				= (array) json_decode($result["extraparams"], true);
+				$this->extraparams				= (array) json_decode($obj->extraparams, true);
 
 				$this->db->free($resql);
-
 
 				// Retreive all extrafields
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-
-				/*
-				 * Lines
-				 */
-
-				$this->lines  = array();
-
+				// Lines
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
