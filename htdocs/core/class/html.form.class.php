@@ -2013,6 +2013,7 @@ class Form
 
 		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		(count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
+		$selectFields .= ", pcat.fk_categorie as categorie_product_id";
 
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
@@ -2063,6 +2064,8 @@ class Form
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 		}
+		//Product category
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as pcat ON pcat.fk_product=p.rowid";
 
 		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 		if (count($warehouseStatusArray))
@@ -2113,9 +2116,10 @@ class Form
 		{
 			$sql.= ' GROUP BY'.$selectFields;
 		}
-		$sql.= $db->order("p.ref");
-		$sql.= $db->plimit($limit, 0);
-
+		
+		(! empty($conf->global->PRODUIT_SORT_BY_CATEGORY)) ? $sql.= $db->order("pcat.fk_categorie") : $sql.= $db->order("p.ref");
+		$sql.= $db->plimit($limit, 0)
+		
 		// Build output string
 		dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
 		$result=$this->db->query($sql);
