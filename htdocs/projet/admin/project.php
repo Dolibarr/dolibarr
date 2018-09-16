@@ -107,17 +107,26 @@ else if ($action == 'specimen')
 	$project->initAsSpecimen();
 
 	// Search template files
+	// NB an additional module (mymodule) may be located in :
+	// - dolibarr/htdocs/mymodule
+	// - dolibarr/htdocs/custom/mymodule
+	// so we must check the two locations
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-		$file=dol_buildpath($reldir."core/modules/project/doc/pdf_".$modele.".modules.php",0);
-		if (file_exists($file))
+		$files = array(dol_buildpath($reldir."core/modules/project/doc/pdf_".$modele.".modules.php",0),dol_buildpath("/custom".$reldir."core/modules/project/pdf_".$modele.".modules.php",0));
+		foreach($files as $file)
 		{
-			$filefound=1;
-			$classname = "pdf_".$modele;
-			break;
+			dol_syslog("admin/project.php PDF model : ".$file, LOG_DEBUG);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname = "pdf_".$modele;
+				break;
+			}
 		}
+		if ($filefound == 1) break;
 	}
 
 	if ($filefound)
@@ -152,17 +161,26 @@ else if ($action == 'specimentask')
 	$project->initAsSpecimen();
 
 	// Search template files
+	// NB an additional module (mymodule) may be located in :
+	// - dolibarr/htdocs/mymodule
+	// - dolibarr/htdocs/custom/mymodule
+	// so we must check the two locations
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-		$file=dol_buildpath($reldir."core/modules/project/task/doc/pdf_".$modele.".modules.php",0);
-		if (file_exists($file))
+		$files = array(dol_buildpath($reldir."core/modules/task/doc/pdf_".$modele.".modules.php",0),dol_buildpath("/custom".$reldir."core/modules/task/pdf_".$modele.".modules.php",0));
+		foreach($files as $file)
 		{
-			$filefound=1;
-			$classname = "pdf_".$modele;
-			break;
+			dol_syslog("admin/project.php PDF model : ".$file, LOG_DEBUG);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname = "pdf_".$modele;
+				break;
+			}
 		}
+		if ($filefound == 1) break;
 	}
 
 	if ($filefound)

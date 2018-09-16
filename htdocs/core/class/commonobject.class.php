@@ -4344,14 +4344,21 @@ abstract class CommonObject
 				if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php";     // Member module use prefix_module.class.php
 				else $file = $prefix."_".$modele.".modules.php";
 
-				// On verifie l'emplacement du modele
-				$file=dol_buildpath($reldir.$modelspath.$file,0);
-				if (file_exists($file))
+				// NB an additional module (mymodule) may be located in :
+				// - dolibarr/htdocs/mymodule
+				// - dolibarr/htdocs/custom/mymodule
+				// so we must check the two locations
+				$files=array(dol_buildpath($reldir.$modelspath.$file,0),dol_buildpath('/custom'.$reldir.preg_replace('/doc/','',$modelspath).$file,0));
+				foreach($files as $file)
 				{
-					$filefound=1;
-					$classname=$prefix.'_'.$modele;
-					break;
+					if (file_exists($file))
+					{
+						$filefound=1;
+						$classname=$prefix.'_'.$modele;
+						break;
+					}
 				}
+				if ($filefound) break;
 			}
 			if ($filefound) break;
 		}
