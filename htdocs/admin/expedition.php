@@ -126,7 +126,6 @@ else if ($action == 'specimen')
 			}
 		}
 		if ($filefound == 1) break;
-		}
 	}
 
 	if ($filefound)
