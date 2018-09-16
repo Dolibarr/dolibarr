@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       PtibogXIV               <support@ptibogxiv.net>
+/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,11 +65,13 @@ llxHeader('', $langs->trans("StripeTransactionList"));
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
+  $servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
-	$service = 'StripeLive';
+  $service = 'StripeLive';
+  $servicestatus = '1';
 }
 
 $stripeaccount = $stripe->getStripeAccount($service);
@@ -80,26 +82,25 @@ $stripeaccount = $stripe->getStripeAccount($service);
 
 if (! $rowid) {
 
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-	if ($optioncss != '') {
-        print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
-    }
-	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-	print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-	print '<input type="hidden" name="page" value="' . $page . '">';
+	print '<FORM method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	if ($optioncss != '')
+		print '<INPUT type="hidden" name="optioncss" value="' . $optioncss . '">';
+	print '<INPUT type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<INPUT type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<INPUT type="hidden" name="action" value="list">';
+	print '<INPUT type="hidden" name="sortfield" value="' . $sortfield . '">';
+	print '<INPUT type="hidden" name="sortorder" value="' . $sortorder . '">';
+	print '<INPUT type="hidden" name="page" value="' . $page . '">';
 
 	$title=$langs->trans("StripeTransactionList");
 	$title.=($stripeaccount?' (Stripe connection with Stripe OAuth Connect account '.$stripeaccount.')':' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
+	print '<DIV class="div-table-responsive">';
+	print '<TABLE class="tagtable liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
 
-	print '<tr class="liste_titre">';
+	print '<TR class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -109,9 +110,9 @@ if (! $rowid) {
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"');
-	print "</tr>\n";
+	print "</TR>\n";
 
-	print "</tr>\n";
+	print "</TR>\n";
 
 	if ($stripeaccount)
 	{
@@ -122,14 +123,14 @@ if (! $rowid) {
 		$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 	}
 
-	foreach ($txn->data as $txn)
+	foreach ($txn->data as $txn) 
 	{
 		//$charge = $txn;
 		//var_dump($txn);
-
+		
 		// The metadata FULLTAG is defined by the online payment page
 		/*$FULLTAG=$charge->metadata->FULLTAG;
-
+		
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 		// Load origin object according to metadata
@@ -149,7 +150,7 @@ if (! $rowid) {
 		{
 			$memberstatic->id = 0;
 		}*/
-
+		
 		$societestatic->fetch($charge->metadata->idcustomer);
 		$societestatic->id = $charge->metadata->idcustomer;
 		$societestatic->lastname = $obj->lastname;
@@ -159,10 +160,26 @@ if (! $rowid) {
 		$societestatic->email = $obj->email;
 		$societestatic->societe_id = $obj->fk_soc;
 
-		print '<tr class="oddeven">';
-
+		print '<TR class="oddeven">';
+		
 		// Ref
-		print "<td><a href='" . DOL_URL_ROOT . "/stripe/transaction.php?rowid=" . $txn->source . "'>" . $txn->source . "</A></td>\n";
+    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+    
+		// Ref
+    if (preg_match('/po_/i', $txn->source)){
+    $origin="payouts";
+    } elseif (preg_match('/fee_/i', $txn->source)) {
+    $origin="connect/application_fees";    
+    } else {
+    $origin="payments";    
+        }
+         
+		$url='https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
+			}
+		print "<TD><A href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</A></TD>\n";
 		// Stripe customer
 		//print "<td>".$charge->customer."</td>\n";
 		// Link
