@@ -37,7 +37,12 @@ class Facturation
      * int $prix		=> Prix HT du produit en cours
      * int $tva			=> 'rowid' du taux de tva dans llx_c_tva
      */
-    public $id;
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
     protected $ref;
     protected $qte;
     protected $stock;
@@ -167,7 +172,6 @@ class Facturation
         $_SESSION['poscart']=$newcartarray;
 
         $this->raz();
-
     }
 
     /**
@@ -269,7 +273,6 @@ class Facturation
         $this->prixTotalHt('RESET');
         $this->montantTva('RESET');
         $this->prixTotalTtc('RESET');
-
     }
 
 
@@ -310,7 +313,7 @@ class Facturation
      * @return	string			Ref
      */
     public function ref($aRef=null)
-     {
+    {
 
         if (is_null($aRef))
         {
@@ -324,7 +327,6 @@ class Facturation
         {
             $this->ref = $aRef;
         }
-
     }
 
     /**
@@ -348,7 +350,6 @@ class Facturation
         {
             $this->qte = $aQte;
         }
-
     }
 
     /**
@@ -372,7 +373,6 @@ class Facturation
         {
             $this->stock = $aStock;
         }
-
     }
 
     /**
@@ -396,7 +396,6 @@ class Facturation
         {
             $this->remise_percent = $aRemisePercent;
         }
-
     }
 
     /**
@@ -421,7 +420,6 @@ class Facturation
             $this->montant_remise = $aMontantRemise;
 
         }
-
     }
 
     /**
@@ -446,7 +444,6 @@ class Facturation
             $this->prix = $aPrix;
 
         }
-
     }
 
     /**
@@ -470,7 +467,6 @@ class Facturation
             $this->tva = $aTva;
 
         }
-
     }
 
     /**
@@ -518,7 +514,6 @@ class Facturation
             $this->mode_reglement = $aModeReglement;
 
         }
-
     }
 
     /**
@@ -543,7 +538,6 @@ class Facturation
             $this->montant_encaisse = $aMontantEncaisse;
 
         }
-
     }
 
     /**
@@ -567,7 +561,6 @@ class Facturation
             $this->montant_rendu = $aMontantRendu;
 
         }
-
     }
 
     /**
@@ -637,7 +630,6 @@ class Facturation
             $this->montant_tva = $aMontantTva;
 
         }
-
     }
 
     /**
@@ -652,7 +644,7 @@ class Facturation
         {
             return $this->prix_total_ttc;
         }
-        else if ( $aTotalTtc == 'RESET' )
+        elseif ( $aTotalTtc == 'RESET' )
         {
             $this->prix_total_ttc = null;
         }
@@ -661,6 +653,4 @@ class Facturation
             $this->prix_total_ttc = $aTotalTtc;
         }
     }
-
 }
-

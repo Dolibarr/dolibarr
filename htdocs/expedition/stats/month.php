@@ -71,6 +71,6 @@ print $px->show();
 print '</td></tr>';
 print '</table>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -107,6 +107,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -117,6 +118,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function get_code($db, $societe, $type='')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$i = 0;
@@ -212,4 +214,3 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		}
 	}
 }
-

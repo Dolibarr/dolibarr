@@ -21,7 +21,7 @@
 
 /**
  *      \file       dev/initdata/import-product.php
- *		\brief      Script example to insert products from a csv file. 
+ *		\brief      Script example to insert products from a csv file.
  *                  To purge data, you can have a look at purge-data.php
  */
 
@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere root dolibarr
 $path=preg_replace('/import-products.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../../htdocs/master.inc.php");
+require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -118,22 +118,22 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 {
     $i++;
     $errorrecord=0;
-    
+
     if ($startlinenb && $i < $startlinenb) continue;
     if ($endlinenb && $i > $endlinenb) continue;
-    
+
     $nboflines++;
-    
+
     $produit = new Product($db);
     $produit->type = 0;
     $produit->status = 1;
     $produit->ref = trim($fields[0]);
-    
+
     print "Process line nb ".$i.", ref ".$produit->ref;
     $produit->label = trim($fields[2]);
     $produit->description = trim($fields[4]."\n".($fields[5] ? $fields[5].' x '.$fields[6].' x '.$fields[7] : ''));
     $produit->volume = price2num($fields[8]);
-    $produit->volume_unit = 0;     
+    $produit->volume_unit = 0;
     $produit->weight = price2num($fields[9]);
     $produit->weight_units = 0;          // -3 = g
 
@@ -142,9 +142,9 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 
     $produit->status = 1;
     $produit->status_buy = 1;
-    
+
     $produit->finished = 1;
-    
+
     $produit->price_min = null;
     $produit->price_min_ttc = null;
     $produit->price = price2num($fields[11]);
@@ -152,25 +152,25 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     $produit->price_base_type = 'TTC';
     $produit->tva_tx = price2num($fields[13]);
     $produit->tva_npr = 0;
-    
+
     $produit->cost_price = price2num($fields[16]);
-    
+
     // Extrafields
     $produit->array_options['options_ecotaxdeee']=price2num($fields[17]);
-    
+
     $ret=$produit->create($user);
     if ($ret < 0)
     {
         print " - Error in create result code = ".$ret." - ".$produit->errorsToString();
         $errorrecord++;
     }
-	else 
+	else
 	{
 	    print " - Creation OK with ref ".$produit->ref." - id = ".$ret;
 	}
 
 	dol_syslog("Add prices");
-	
+
     // If we use price level, insert price for each level
 	if (! $errorrecord && 1)
 	{
@@ -181,14 +181,14 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
             print " - Error in updatePrice result code = ".$ret1." ".$ret2." - ".$produit->errorsToString();
             $errorrecord++;
         }
-    	else 
+    	else
     	{
     	    print " - updatePrice OK";
     	}
 	}
-	
+
 	dol_syslog("Add multilangs");
-	
+
 	// Add alternative languages
 	if (! $errorrecord && 1)
 	{
@@ -201,15 +201,15 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
             print " - Error in setMultiLangs result code = ".$ret." - ".$produit->errorsToString();
             $errorrecord++;
         }
-    	else 
+    	else
     	{
     	    print " - setMultiLangs OK";
     	}
 	}
-	
+
 	print "\n";
-	
-	if ($errorrecord) 
+
+	if ($errorrecord)
 	{
 	    fwrite($fhandleerr, 'Error on record nb '.$i." - ".$produit->errorsToString()."\n");
 	    $error++;    // $errorrecord will be reset

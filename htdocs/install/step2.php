@@ -58,7 +58,7 @@ if ($dolibarr_main_db_type == "sqlite3")  $choix=5;
 
 //if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
 
-// Now we load forced value from install.forced.php file.
+// Now we load forced values from install.forced.php file.
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
@@ -67,7 +67,7 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
-dolibarr_install_syslog("--- step2: entering step2.php page");
+dolibarr_install_syslog("- step2: entering step2.php page");
 
 
 /*
@@ -88,7 +88,7 @@ if ($action == "set")
 {
     print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
-    print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
+    print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
     $error=0;
 
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
@@ -237,7 +237,7 @@ if ($action == "set")
                         print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
                         print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer.' <br>Executed query : '.$db->lastquery;
                         print "\n</td>";
-                        print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
+                        print '<td><span class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</span></td></tr>';
                         $error++;
                     }
                 }
@@ -246,7 +246,7 @@ if ($action == "set")
             {
                 print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
                 print "</td>";
-                print '<td><font class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</td></tr>';
+                print '<td><span class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</span></td></tr>';
                 $error++;
                 dolibarr_install_syslog("step2: failed to open file " . $dir . $file, LOG_ERR);
             }
@@ -384,7 +384,7 @@ if ($action == "set")
                                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
                                 print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$db->lastqueryerror();
                                 print "\n</td>";
-                                print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
+                                print '<td><span class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</span></td></tr>';
                                 $error++;
                             }
                         }
@@ -395,7 +395,7 @@ if ($action == "set")
             {
                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
                 print "</td>";
-                print '<td><font class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</font></td></tr>";
+                print '<td><span class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</span></td></tr>";
                 $error++;
                 dolibarr_install_syslog("step2: failed to open file " . $dir . $file, LOG_ERR);
             }
@@ -417,7 +417,7 @@ if ($action == "set")
      ***************************************************************************************/
     if ($ok && $createfunctions)
     {
-        // For this file, we use directory according to database type
+        // For this file, we use a directory according to database type
         if ($choix==1) $dir = "mysql/functions/";
         elseif ($choix==2) $dir = "pgsql/functions/";
         elseif ($choix==3) $dir = "mssql/functions/";
@@ -473,7 +473,7 @@ if ($action == "set")
                             print "<tr><td>".$langs->trans("FunctionsCreation");
                             print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
                             print "\n</td>";
-                            print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
+                            print '<td><span class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</span></td></tr>';
                             $error++;
                         }
                     }
@@ -594,7 +594,7 @@ if ($action == "set")
                         {
                             $ok = 0;
                             $okallfile = 0;
-                            print '<font class="error">'.$langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."</font><br>";
+                            print '<span class="error">'.$langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."</span><br>";
                         }
                     }
                 }
@@ -627,7 +627,7 @@ $ret=0;
 if (!$ok && isset($argv[1])) $ret=1;
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- step2: end");
+dolibarr_install_syslog("- step2: end");
 
 pFooter($ok?0:1,$setuplang);
 
@@ -635,4 +635,3 @@ if (isset($db) && is_object($db)) $db->close();
 
 // Return code if ran from command line
 if ($ret) exit($ret);
-

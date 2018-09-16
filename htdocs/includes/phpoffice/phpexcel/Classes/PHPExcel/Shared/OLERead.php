@@ -289,7 +289,6 @@ class PHPExcel_Shared_OLERead {
 
 			$offset += self::PROPERTY_STORAGE_BLOCK_SIZE;
 		}
-
 	}
 
 	/**

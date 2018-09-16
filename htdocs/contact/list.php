@@ -154,7 +154,7 @@ $arrayfields=array(
 	'p.phone'=>array('label'=>"Phone", 'checked'=>1),
 	'p.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
 	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1),
-	'p.fax'=>array('label'=>"Fax", 'checked'=>1),
+	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'checked'=>1),
 	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->skype->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
@@ -307,7 +307,7 @@ if ($search_societe)                $sql.= natural_search('s.nom', $search_socie
 if ($search_country)                $sql .= " AND p.fk_pays IN (".$search_country.')';
 if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_poste);
 if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
-if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone);
+if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone_pro);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
 if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
 if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);

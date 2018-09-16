@@ -20,14 +20,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
---
 
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l''install et tous les sigles '--' sont supprimés.
 --                                                         
--- ID    0 - 1999
--- ID 5000 - 5999
+
+-- ID    0 - 438
+-- ID 1501 - 5999
+-- ADD 100000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401,'PCG99-ABREGE','CAPIT',        'XXXXXX',   '1',    '0', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1402,'PCG99-ABREGE','IMMO',         'XXXXXX',   '2',    '0', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', 1);
@@ -38,10 +39,10 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1407,'PCG99-ABREGE','INCOME',       'XXXXXX',   '7',    '0', 'Produits', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   1,'PCG99-ABREGE','CAPIT', 'CAPITAL',       '101', '1401', 'Capital', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   2,'PCG99-ABREGE','CAPIT', 'XXXXXX',        '105', '1401', 'Ecarts de réévaluation', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   3,'PCG99-ABREGE','CAPIT', 'XXXXXX', '      1061', '1401', 'Réserve légale', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   4,'PCG99-ABREGE','CAPIT', 'XXXXXX', '      1063', '1401', 'Réserves statutaires ou contractuelles', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   5,'PCG99-ABREGE','CAPIT', 'XXXXXX', '      1064', '1401', 'Réserves réglementées', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   6,'PCG99-ABREGE','CAPIT', 'XXXXXX', '      1068', '1401', 'Autres réserves', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   3,'PCG99-ABREGE','CAPIT', 'XXXXXX',       '1061', '1401', 'Réserve légale', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   4,'PCG99-ABREGE','CAPIT', 'XXXXXX',       '1063', '1401', 'Réserves statutaires ou contractuelles', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   5,'PCG99-ABREGE','CAPIT', 'XXXXXX',       '1064', '1401', 'Réserves réglementées', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   6,'PCG99-ABREGE','CAPIT', 'XXXXXX',       '1068', '1401', 'Autres réserves', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   7,'PCG99-ABREGE','CAPIT', 'XXXXXX',        '108', '1401', 'Compte de l''exploitant', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   8,'PCG99-ABREGE','CAPIT', 'XXXXXX',         '12', '1401', 'Résultat de l''exercice', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (   9,'PCG99-ABREGE','CAPIT', 'XXXXXX',        '145', '1401', 'Amortissements dérogatoires', 1);
@@ -52,9 +53,9 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  14,'PCG99-ABREGE','CAPIT', 'XXXXXX',         '16', '1401', 'Emprunts et dettes assimilees', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  15,'PCG99-ABREGE', 'IMMO', 'XXXXXX',         '20', '1402', 'Immobilisations incorporelles', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  16,'PCG99-ABREGE', 'IMMO', 'XXXXXX',        '201',   '15', 'Frais d''établissement', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  17,'PCG99-ABREGE', 'IMMO', 'XXXXXX',        '206',	 '15', 'Droit au bail', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  18,'PCG99-ABREGE', 'IMMO', 'XXXXXX',        '207',	 '15', 'Fonds commercial', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  19,'PCG99-ABREGE', 'IMMO', 'XXXXXX',        '208',	 '15', 'Autres immobilisations incorporelles', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  17,'PCG99-ABREGE', 'IMMO', 'XXXXXX',        '206',	'15', 'Droit au bail', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  18,'PCG99-ABREGE', 'IMMO', 'XXXXXX',        '207',	'15', 'Fonds commercial', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  19,'PCG99-ABREGE', 'IMMO', 'XXXXXX',        '208',	'15', 'Autres immobilisations incorporelles', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  20,'PCG99-ABREGE', 'IMMO', 'XXXXXX',         '21', '1402', 'Immobilisations corporelles', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  21,'PCG99-ABREGE', 'IMMO', 'XXXXXX',         '23', '1402', 'Immobilisations en cours', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  22,'PCG99-ABREGE', 'IMMO', 'XXXXXX',         '27', '1402', 'Autres immobilisations financieres', 1);
@@ -86,7 +87,7 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  48,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',   '445', '1404', 'Etat - Taxes sur chiffre affaires', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  49,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',   '447', '1404', 'Autres impôts, taxes et versements assimilés', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  50,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',    '45', '1404', 'Groupe et associes', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  51,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',   '455',	 '50', 'Associés', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  51,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',   '455',   '50', 'Associés', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  52,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',    '46', '1404', 'Débiteurs divers et créditeurs divers', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  53,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',    '47', '1404', 'Comptes transitoires ou d''attente', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  54,'PCG99-ABREGE','THIRDPARTY', 'XXXXXX',   '481', '1404', 'Charges à répartir sur plusieurs exercices', 1);

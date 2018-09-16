@@ -82,6 +82,5 @@ class modDynamicPrices extends DolibarrModules
         $this->rights = array();
         $this->rights_class = 'dynamicprices';
         $r=0;
-
     }
 }

@@ -37,7 +37,11 @@ class box_actions extends ModeleBoxes
 	var $boxlabel="BoxLastActions";
 	var $depends = array("agenda");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -256,6 +260,5 @@ class box_actions extends ModeleBoxes
 
 		return '';
 	}
-
 }
 

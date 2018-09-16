@@ -198,6 +198,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
@@ -205,6 +206,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	function verif_prefixIsUsed()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
@@ -273,6 +275,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -283,6 +286,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	function verif_dispo($db, $code, $product)
 	{
+        // phpcs:enable
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE ref = '".$code."'";
 		if ($product->id > 0) $sql.= " AND rowid <> ".$product->id;
@@ -303,8 +307,5 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			return -2;
 		}
-
 	}
-
 }
-

@@ -1,5 +1,5 @@
 body
-{ 
+{
 background: #FFFFFF
 }
 
@@ -100,7 +100,7 @@ li.listalpha3 {
         width: auto;
         height: auto;
         white-space: normal;
-       }	   
+       }
 
 /*li.listalpha2, li.listalpha, li.listalpha3
 {
@@ -207,7 +207,7 @@ p.listcontinue3 {
         height: auto;
 }
 
-.prcontinuous 
+.prcontinuous
 {font-family: "Courier New", verdana, arial, helvetica, sans-serif;
         font-style: normal;
         font-variant: normal;
@@ -237,7 +237,7 @@ p.listcontinue3 {
         height: auto;
        }
 
-.prefblue 
+.prefblue
 {display: inline;
         font-family: "Courier New", verdana, arial, helvetica, sans-serif;
         font-size: 10pt;
@@ -253,7 +253,7 @@ p.listcontinue3 {
         padding-left: 0pt;
         padding-right: 0pt;
        }
-.prefred 
+.prefred
 {display: inline;
         font-family: "Courier New", verdana, arial, helvetica, sans-serif;
         font-size: 10pt;
@@ -269,7 +269,7 @@ p.listcontinue3 {
         padding-left: 0pt;
         padding-right: 0pt;
        }
-.prefdarkblue 
+.prefdarkblue
 {display: inline;
         font-family: "Courier New", verdana, arial, helvetica, sans-serif;
         font-weight: bold;
@@ -286,7 +286,7 @@ p.listcontinue3 {
         padding-left: 0pt;
         padding-right: 0pt;
        }
-.prefgrey 
+.prefgrey
 {display: inline;
         font-family: "Courier New", verdana, arial, helvetica, sans-serif;
         font-size: 10pt;
@@ -303,7 +303,7 @@ p.listcontinue3 {
         padding-right: 0pt;
        }
 
-.expandingblock 
+.expandingblock
 {font-family: "Tahoma", verdana, arial, helvetica, sans-serif;
         border-color: #AFAFAF;
         border-top-style: dotted;
@@ -363,7 +363,7 @@ p.listcontinue3 {
 
 .pagenavigation a, .pagenavigation a:link, .pagenavigation a:visited {
 	color: #000000;
-	text-decoration: none;	
+	text-decoration: none;
 }
 .pagenavigation a:hover {
 	text-decoration: none;
@@ -387,7 +387,7 @@ p.listcontinue3 {
 }
 .nav a, .nav a:link, .nav a:visited {
 	color: #000000;
-	text-decoration: none;	
+	text-decoration: none;
 }
 .nav a:hover {
 	text-decoration: none;
@@ -400,9 +400,9 @@ td.navTabActive {
 	vertical-align: middle;
 	font-family: tahoma, verdana, arial, helvetica, sans-serif;
 	font-size: 8pt;
-	padding-top: 4px;  
-	padding-bottom: 0px; 
-	padding-left: 8px; 
+	padding-top: 4px;
+	padding-bottom: 0px;
+	padding-left: 8px;
 	padding-right: 8px;
 	font-weight: bold;
 	background-image: url('nav_bg_active.gif');
@@ -567,7 +567,7 @@ a:visited,
         border-right-color: #FFFFFF;
 	     border-bottom-style: solid;
         border-bottom-width: 2px;
-        border-bottom-color: #ffffff; 
+        border-bottom-color: #ffffff;
 }
 .bodytext {
         font-family: verdana, tahoma, arial, helvetica, sans-serif;
@@ -582,7 +582,7 @@ a:visited,
 		  font-weight: bold;
         font-size: 8pt;
 		  line-height: 12px;
-        color: #2f739b; 
+        color: #2f739b;
 		  line-height: 11px;
         margin: 0px;
         padding: 3px;
@@ -1303,7 +1303,7 @@ li.listnumber2 {
         font-style: normal;
         font-variant: normal;
 		  font-size: 12pt;
-        color: #5c5b64; 
+        color: #5c5b64;
         background-color: inherit;
         word-spacing: normal;
         letter-spacing: normal;
@@ -1512,7 +1512,7 @@ li.listnumber2 {
 span.toc {
 	line-height: 19px;
 }
-		 
+
 .searchDetails {
         font-family: tahoma, verdana, arial, helvetica, sans-serif;
         font-size: 11px;
@@ -1561,7 +1561,7 @@ form {
 	font-weight: bold;
 }
 .searchFoundWord {
-	background-color: #fffdce; 
+	background-color: #fffdce;
 }
 .searchToTop {
 	text-align: left;

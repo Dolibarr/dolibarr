@@ -204,3 +204,7 @@ MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Nem elérhető opciók mutatása
 HideNotAvailableOptions=Nem elérhető opciók elrejtése
 ErrorFoundDuringMigration=Migráció alatt hiba történt, így nem lehet végrehajtani a következő lépést. A hibák elvetéséhez, végrehajthatja a <a href="%s">kattintson ide</a>, de az alkalmazás egyes lehetőségei nem fognak megfelelően működni a hibajavítás nélkül.
+YouTryInstallDisabledByDirLock=The application try to sefl upgrade, but install/upgrade pages have been disabled for security reason (directory renamed with .lock suffix).<br>
+YouTryInstallDisabledByFileLock=The application try to sefl upgrade, but install/upgrade pages pages have been disabled for security reason (by lock file <strong>install.lock</strong> into dolibarr documents directory).<br>
+ClickHereToGoToApp=Click here to go to your application
+ClickOnLinkOrRemoveManualy=Click on following link and if you always reach this page, you must remove the file install.lock into documents directory manually

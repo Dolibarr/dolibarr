@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +24,11 @@
  *	\brief      Page to create a new survey
  */
 
-require_once('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 // Security check
 if (!$user->rights->opensurvey->write) accessforbidden();
@@ -156,7 +157,7 @@ print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
 
-print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0,1);
+print $form->selectDate($champdatefin?$champdatefin:-1, 'champdatefin', '', '', '', "add", 1, 0);
 
 print '</tr>'."\n";
 print '</table>'."\n";
@@ -204,6 +205,6 @@ else
 print '<br><br><br>'."\n";
 print '</form>'."\n";
 
+// End of page
 llxFooter();
-
 $db->close();

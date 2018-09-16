@@ -36,11 +36,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 // librarie core
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
-if (! $res) {
-	$res = @include("../../../main.inc.php"); // From "custom" directory
-}
-if (! $res) die("Include of master.inc.php fails");
+require '../../main.inc.php';
 
 // librarie jobs
 dol_include_once("/cron/class/cronjob.class.php");
@@ -50,10 +46,6 @@ global $langs, $conf;
 // Language Management
 $langs->load("admin");
 $langs->load("cron");
-
-
-
-
 
 /*
  * View
@@ -111,15 +103,14 @@ if (! empty($id))
 		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
 		exit;
 	}
-	$filter=array();
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetch_all('ASC,ASC,ASC','t.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
-	echo "Error: ".$cronjob->error;
-	dol_syslog("cron_run_jobs.php fetch Error".$cronjob->error, LOG_WARNING);
+	echo "Error: ".$object->error;
+	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_WARNING);
 	exit;
 }
 

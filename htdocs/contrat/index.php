@@ -24,9 +24,9 @@
  *		\brief      Home page of contract area
  */
 
-require ("../main.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require "../main.inc.php";
+require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies', 'contracts'));

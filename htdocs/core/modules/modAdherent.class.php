@@ -347,22 +347,24 @@ class modAdherent extends DolibarrModules
 		);
 
         // Cronjobs
+        $arraydate=dol_getdate(dol_now());
+        $datestart=dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
         $this->cronjobs = array(
 			0=>array(
-				'label'=>'SendReminderForExpiredSubscription',
+				'label'=>'SendReminderForExpiredSubscriptionTitle',
 				'jobtype'=>'method', 'class'=>'adherents/class/adherent.class.php',
 				'objectname'=>'Adherent',
 				'method'=>'sendReminderForExpiredSubscription',
 				'parameters'=>'10',
-				'comment'=>'sendReminderForExpiredSubscription',
+				'comment'=>'SendReminderForExpiredSubscription',
 				'frequency'=>1,
 				'unitfrequency'=> 3600 * 24,
 				'priority'=>50,
 				'status'=>0,
 				'test'=>true,
+				'datestart'=>$datestart
 			),
         );
-
     }
 
 

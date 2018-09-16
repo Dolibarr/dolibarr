@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
- * Copyright (C) 2017	Neil Orley	<neil.orley@oeris.fr>
+ * Copyright (C) 2017	Regis Houssin	        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -188,6 +188,7 @@ class Setup extends DolibarrApi
      * @param int       $id        ID of country
      * @param string    $lang      Code of the language the name of the
      *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
      *
      * @url     GET dictionary/countries/{id}
      *
@@ -293,6 +294,7 @@ class Setup extends DolibarrApi
      * @param Ccountry $country   Country
      * @param string   $lang      Code of the language the name of the
      *                            country must be translated to
+     * @return void
      */
     private function translateLabel($country, $lang)
     {
@@ -863,11 +865,11 @@ class Setup extends DolibarrApi
     			// Show warning
     			if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
     			{
-    				//setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+    				//setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
     			}
     			else
     			{
-    				//setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+    				//setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
     			}
     		}
     		else
@@ -916,5 +918,4 @@ class Setup extends DolibarrApi
 
     	return array('resultcode'=>$resultcode, 'resultcomment'=>$resultcomment, 'expectedchecksum'=> $outexpectedchecksum, 'currentchecksum'=> $outcurrentchecksum, 'out'=>$out);
     }
-
 }

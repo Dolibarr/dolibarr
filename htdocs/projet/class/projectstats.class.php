@@ -29,7 +29,12 @@ class ProjectStats extends Stats
 	public $socid;
 	public $year;
 
-	function __construct($db)
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    function __construct($db)
 	{
 		global $conf, $user;
 

@@ -28,13 +28,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Link extends CommonObject
 {
-    public $element = 'link';
-    public $table_element = 'links';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'link';
 
-    public $entity;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'links';
+
+    /**
+	 * @var int Entity
+	 */
+	public $entity;
+
     public $datea;
     public $url;
+
+    /**
+     * @var string Links label
+     */
     public $label;
+
     public $objecttype;
     public $objectid;
 
@@ -378,7 +394,5 @@ class Link extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
     }
-
 }

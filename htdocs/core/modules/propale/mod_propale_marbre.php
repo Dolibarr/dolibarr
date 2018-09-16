@@ -33,7 +33,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PR';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom = "Marbre";
 
 
@@ -152,5 +155,4 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

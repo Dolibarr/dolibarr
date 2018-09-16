@@ -30,7 +30,10 @@ class mod_expedition_safor extends ModelNumRefExpedition
 {
 	var $version='dolibarr';
 	var $prefix='SH';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Safor';
 
 
@@ -130,6 +133,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		return $this->prefix.$yymm."-".$num;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -139,7 +143,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 */
 	function expedition_get_num($objsoc,$objforref)
 	{
+        // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

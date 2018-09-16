@@ -471,7 +471,6 @@ class CMailFile
 			// --------------------------------------
 			$this->error = 'Bad value for sendmode';
 		}
-
 	}
 
 
@@ -828,6 +827,7 @@ class CMailFile
 		return '=?'.$conf->file->character_set_client.'?B?'.base64_encode($stringtoencode).'?=';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
@@ -836,6 +836,7 @@ class CMailFile
 	 */
 	function _encode_file($sourcefile)
 	{
+        // phpcs:enable
 		$newsourcefile=dol_osencode($sourcefile);
 
 		if (is_readable($newsourcefile))
@@ -853,6 +854,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
 	 *  Used for debugging.
@@ -862,6 +864,7 @@ class CMailFile
 	 */
 	function dump_mail()
 	{
+        // phpcs:enable
 		global $conf,$dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
@@ -946,6 +949,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create SMTP headers (mode = 'mail')
 	 *
@@ -953,6 +957,7 @@ class CMailFile
 	 */
 	function write_smtpheaders()
 	{
+        // phpcs:enable
 		global $conf;
 		$out = "";
 
@@ -1008,6 +1013,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
@@ -1017,6 +1023,7 @@ class CMailFile
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
+        // phpcs:enable
 		$mimedone=0;
 		$out = "";
 
@@ -1037,6 +1044,7 @@ class CMailFile
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return email content (mode = 'mail')
 	 *
@@ -1045,6 +1053,7 @@ class CMailFile
 	 */
 	function write_body($msgtext)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$out='';
@@ -1137,6 +1146,7 @@ class CMailFile
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attach file to email (mode = 'mail')
 	 *
@@ -1147,6 +1157,7 @@ class CMailFile
 	 */
 	function write_files($filename_list,$mimetype_list,$mimefilename_list)
 	{
+        // phpcs:enable
 		$out = '';
 
 		$filename_list_size=count($filename_list);
@@ -1184,6 +1195,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attach an image to email (mode = 'mail')
 	 *
@@ -1192,6 +1204,7 @@ class CMailFile
 	 */
 	function write_images($images_list)
 	{
+        // phpcs:enable
 		$out = '';
 
 		if ($images_list)
@@ -1215,6 +1228,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Try to create a socket connection
 	 *
@@ -1224,6 +1238,7 @@ class CMailFile
 	 */
 	function check_server_port($host,$port)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$_retVal=0;
@@ -1278,6 +1293,7 @@ class CMailFile
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions.
@@ -1288,6 +1304,7 @@ class CMailFile
 	 */
 	function server_parse($socket, $response)
 	{
+        // phpcs:enable
 		$_retVal = true;	// Indicates if Object was created or not
 		$server_response = '';
 
@@ -1512,4 +1529,3 @@ class CMailFile
 		return $ret;
 	}
 }
-

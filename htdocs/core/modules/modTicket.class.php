@@ -95,12 +95,11 @@ class modTicket extends DolibarrModules
         $this->config_page_url = array("ticket.php");
 
         // Dependencies
-        // List of modules id that must be enabled if this module is enabled
-        $this->depends = array();
-        // List of modules id to disable if this one is disabled
-        $this->requiredby = array();
-        // Minimum version of PHP required by module
-        $this->phpmin = array(5, 3);
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("ticket");
         // Constants
         // List of particular constants to add when module is enabled
@@ -115,7 +114,7 @@ class modTicket extends DolibarrModules
             'project:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?projectid=__ID__',
         );
 
-        // Dictionnaries
+        // Dictionaries
         if (! isset($conf->ticket->enabled)) {
             $conf->ticket=new stdClass();
             $conf->ticket->enabled=0;
@@ -306,5 +305,4 @@ class modTicket extends DolibarrModules
 
         return $this->_init($sql, $options);
     }
-
 }

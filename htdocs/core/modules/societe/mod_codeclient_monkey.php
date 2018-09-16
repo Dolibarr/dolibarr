@@ -210,6 +210,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -221,6 +222,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function verif_dispo($db, $code, $soc, $type=0)
 	{
+        // phpcs:enable
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -249,6 +251,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi si un code respecte la syntaxe
 	 *
@@ -257,6 +260,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function verif_syntax($code)
 	{
+        // phpcs:enable
 		$res = 0;
 
 		if (dol_strlen($code) < 11)
@@ -269,6 +273,4 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		return $res;
 	}
-
 }
-

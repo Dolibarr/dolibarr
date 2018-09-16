@@ -26,8 +26,8 @@ include '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 
 $langs->load("admin");
 $langs->load("bills");
@@ -278,5 +278,6 @@ dol_fiche_end();
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

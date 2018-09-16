@@ -29,6 +29,11 @@ class TaskStats extends Stats
 	public $socid;
 	public $year;
 
+    /**
+     * Constructor of the class
+     *
+     * @param   DoliDb  $db     Database handler
+     */
 	function __construct($db)
 	{
 		global $conf, $user;

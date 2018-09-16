@@ -415,6 +415,5 @@ class CompanyBankAccount extends Account
 
 		$this->socid = 0;
 	}
-
 }
 

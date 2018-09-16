@@ -38,7 +38,11 @@ class box_comptes extends ModeleBoxes
 	var $boxlabel="BoxCurrentAccounts";
 	var $depends = array("banque");     // Box active if module banque active
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 	var $enabled = 1;
 
@@ -170,7 +174,6 @@ class box_comptes extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
 	}
 
 	/**
@@ -185,6 +188,5 @@ class box_comptes extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

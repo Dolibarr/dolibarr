@@ -67,8 +67,11 @@ class modSyslog extends DolibarrModules
 		$this->config_page_url = array("syslog.php");
 
 		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array();
@@ -82,7 +85,7 @@ class modSyslog extends DolibarrModules
 
 		// Cronjobs
 		$this->cronjobs = array(
-		    0=>array('label'=>'CompressSyslogs', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'compressSyslogs', 'parameters'=>'', 'comment'=>'Compress and archive log files', 'frequency'=>1, 'unitfrequency'=> 3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>true),
+		    0=>array('label'=>'CompressSyslogs', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'compressSyslogs', 'parameters'=>'', 'comment'=>'Compress and archive log files. Warning, batch must be run with same account than your web server to avoid to get lof files with different owner than required by web server !', 'frequency'=>1, 'unitfrequency'=> 3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>true),
 		);
 	}
 }

@@ -27,7 +27,10 @@
  */
 class Utils
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $output;   // Used by Cron method to return message
 	var $result;   // Used by Cron method to return data
@@ -677,7 +680,8 @@ class Utils
 	 *
 	 * @return	int						0 if OK, < 0 if KO
 	 */
-	function compressSyslogs() {
+    function compressSyslogs()
+    {
 		global $conf;
 
 		if(empty($conf->loghandlers['mod_syslog_file'])) { // File Syslog disabled

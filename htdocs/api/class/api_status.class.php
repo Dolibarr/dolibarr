@@ -26,18 +26,21 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
  */
 class Status
 {
-	/**
+    /**
      * Get status (Dolibarr version)
-	 */
-	function index() {
-		global $conf;
+     *
+     * @return array
+     */
+    function index()
+    {
+        global $conf;
 
-		return array(
-			'success' => array(
-				'code' => 200,
-				'dolibarr_version' => DOL_VERSION,
-				'access_locked' => (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)?'0':$conf->global->MAIN_ONLY_LOGIN_ALLOWED)
-			)
-		);
+        return array(
+            'success' => array(
+                'code' => 200,
+                'dolibarr_version' => DOL_VERSION,
+                'access_locked' => (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)?'0':$conf->global->MAIN_ONLY_LOGIN_ALLOWED),
+            ),
+        );
     }
 }

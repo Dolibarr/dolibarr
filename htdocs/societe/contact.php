@@ -171,8 +171,6 @@ if ($action != 'presend')
 	}
 }
 
-
-
 // End of page
 llxFooter();
 $db->close();

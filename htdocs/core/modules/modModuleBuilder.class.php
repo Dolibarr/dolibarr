@@ -49,7 +49,7 @@ class modModuleBuilder extends DolibarrModules
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -62,7 +62,7 @@ class modModuleBuilder extends DolibarrModules
         //-------------
         $this->config_page_url = array('setup@modulebuilder');
 
-        // Dependancies
+        // Dependencies
         //-------------
 	    $this->hidden = false;	// A condition to disable module
 	    $this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -98,6 +98,5 @@ class modModuleBuilder extends DolibarrModules
             'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
-
     }
 }

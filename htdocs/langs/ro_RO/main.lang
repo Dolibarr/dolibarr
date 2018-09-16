@@ -507,6 +507,7 @@ NoneF=Niciunul
 NoneOrSeveral=None or several
 Late=Întârziat
 LateDesc=Durata care defineşte dacă o înregistrare este întârziată depinde de configurare. Contactaţi administratorul pentru a schimbă durata din Acasă - Setări - Alerte.
+NoItemLate=No late item
 Photo=Foto
 Photos=Fotografii
 AddPhoto=Adauga Foto
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Atribuit lui
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

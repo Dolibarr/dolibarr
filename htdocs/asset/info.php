@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file       info.php
+ *  \file       htdocs/asset/info.php
  *  \ingroup    asset
  *  \brief      Page to show an asset information
  */
@@ -79,5 +79,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

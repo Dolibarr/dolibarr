@@ -124,6 +124,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -133,8 +134,7 @@ class mod_payment_ant extends ModeleNumRefPayments
      */
     function commande_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

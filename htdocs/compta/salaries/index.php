@@ -148,7 +148,7 @@ if ($result)
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	$newcardbutton='';
-	if ($user->rights->salaries->payment->write)
+	if (! empty($user->rights->salaries->write))
 	{
 		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewSalaryPayment').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
@@ -294,6 +294,6 @@ else
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

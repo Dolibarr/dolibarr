@@ -29,8 +29,15 @@
  */
 class FormActions
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -45,6 +52,7 @@ class FormActions
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Show list of action status
      *
@@ -59,6 +67,7 @@ class FormActions
      */
     function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
+        // phpcs:enable
         global $langs,$conf;
 
         $listofstatus = array(
@@ -306,6 +315,7 @@ class FormActions
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Output html select list of type of event
      *
@@ -320,6 +330,7 @@ class FormActions
      */
     function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
+        // phpcs:enable
         global $langs,$user,$form,$conf;
 
         if (! is_object($form)) $form=new Form($db);
@@ -359,5 +370,4 @@ class FormActions
         else print $out;
         return '';
     }
-
 }

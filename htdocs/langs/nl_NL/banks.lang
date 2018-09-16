@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
-MenuBankCash=Bank / Kas
+MenuBankCash=Bank | Kas
 MenuVariousPayment=Diverse betalingen
 MenuNewVariousPayment=Nieuwe diverse betaling
 BankName=Banknaam
@@ -132,7 +132,7 @@ PaymentDateUpdateSucceeded=Betaaldatum succesvol bijgewerkt
 PaymentDateUpdateFailed=Betaaldatum kon niet worden bijgewerkt
 Transactions=Transacties
 BankTransactionLine=Bankmutatie
-AllAccounts=Alle bank-/ kasrekeningen
+AllAccounts=All bank and cash accounts
 BackToAccount=Terug naar rekening
 ShowAllAccounts=Toon alle rekeningen
 FutureTransaction=Overboeking in de toekomst. Geen manier mogelijk om af te stemmen
@@ -160,5 +160,6 @@ VariousPayment=Diverse betalingen
 VariousPayments=Diverse betalingen
 ShowVariousPayment=Toon diverse betalingen
 AddVariousPayment=Voeg verschillende betalingen toe
+SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

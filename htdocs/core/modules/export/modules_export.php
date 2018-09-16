@@ -30,7 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $driverlabel=array();
 	var $driverversion=array();
@@ -39,6 +42,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	var $libversion=array();
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load into memory list of available export format
 	 *
@@ -48,6 +52,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/export/";
@@ -159,7 +164,4 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	{
 		return $this->libversion[$key];
 	}
-
 }
-
-
