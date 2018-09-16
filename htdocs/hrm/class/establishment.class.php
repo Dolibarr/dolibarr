@@ -93,8 +93,6 @@ class Establishment extends CommonObject
 
 		$this->statuts_short = array(0 => 'Closed', 1 => 'Opened');
         $this->statuts = array(0 => 'Closed', 1 => 'Opened');
-
-		return 1;
 	}
 
 	/**

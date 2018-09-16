@@ -84,8 +84,6 @@ class FormSms
         $this->withtoreadonly=0;
         $this->withtopicreadonly=0;
         $this->withbodyreadonly=0;
-
-        return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

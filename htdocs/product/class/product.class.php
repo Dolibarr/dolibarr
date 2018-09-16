@@ -354,8 +354,6 @@ class Product extends CommonObject
 	 */
 	function __construct($db)
 	{
-		global $langs;
-
 		$this->db = $db;
 		$this->canvas = '';
 	}

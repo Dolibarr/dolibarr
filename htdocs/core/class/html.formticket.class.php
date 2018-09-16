@@ -112,8 +112,6 @@ class FormTicket
         $this->withref = 0;
         $this->withextrafields = 0;         // Show extrafields or not
         //$this->withtopicreadonly=0;
-
-        return 1;
     }
 
     /**

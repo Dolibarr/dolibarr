@@ -54,7 +54,6 @@ class FormFile
 	{
 		$this->db = $db;
 		$this->numoffiles=0;
-		return 1;
 	}
 
 

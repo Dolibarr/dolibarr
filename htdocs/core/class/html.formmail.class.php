@@ -132,8 +132,6 @@ class FormMail extends Form
 		$this->withbodyreadonly=0;
 		$this->withdeliveryreceiptreadonly=0;
 		$this->withfckeditor=-1;	// -1 = Auto
-
-		return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

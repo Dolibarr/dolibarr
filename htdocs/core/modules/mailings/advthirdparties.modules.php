@@ -46,8 +46,6 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	function __construct($db)
 	{
-		global $conf;
-
 		$this->db=$db;
 	}
 

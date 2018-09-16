@@ -48,7 +48,6 @@ class FormProjets
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
