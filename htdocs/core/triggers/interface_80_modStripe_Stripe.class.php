@@ -114,13 +114,12 @@ class InterfaceStripe
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Put here code you want to execute when a Dolibarr business events occurs.
+		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
-		$langs->load("members");
-		$langs->load("users");
-		$langs->load("mails");
-		$langs->load('other');
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("members","other","users","mails"));
 
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
