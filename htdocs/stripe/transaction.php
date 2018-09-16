@@ -65,13 +65,13 @@ llxHeader('', $langs->trans("StripeTransactionList"));
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
-  $servicestatus = '0';
+	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
-  $service = 'StripeLive';
-  $servicestatus = '1';
+	$service = 'StripeLive';
+	$servicestatus = '1';
 }
 
 $stripeaccount = $stripe->getStripeAccount($service);
@@ -127,7 +127,7 @@ if (! $rowid) {
 	{
 		//$charge = $txn;
 		//var_dump($txn);
-		
+
 		// The metadata FULLTAG is defined by the online payment page
 		/*$FULLTAG=$charge->metadata->FULLTAG;
 		
@@ -150,7 +150,7 @@ if (! $rowid) {
 		{
 			$memberstatic->id = 0;
 		}*/
-		
+
 		$societestatic->fetch($charge->metadata->idcustomer);
 		$societestatic->id = $charge->metadata->idcustomer;
 		$societestatic->lastname = $obj->lastname;
