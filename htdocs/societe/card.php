@@ -1962,7 +1962,7 @@ else
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
 	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-	        print dol_escape_htmltag(price($object->capital));
+	        print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
 	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
 			// Assign a Name

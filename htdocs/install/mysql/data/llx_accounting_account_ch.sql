@@ -1,7 +1,8 @@
---
+
 -- Descriptif plan comptable Suisse
 -- ID 13000 - 13299
---
+-- ADD 600000 to rowid # Do no remove this comment --
+
 INSERT INTO llx_const (name, value, type, note, visible, entity) values ('ACCOUNTING_MANAGE_ZERO','1','chaine','Manage the  0 for the accountancy account',1,0);
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (13000,'PCG_SUISSE','XXXXXX','XXXXXX','1',0,'Actifs','1');

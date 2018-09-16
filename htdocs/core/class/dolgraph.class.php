@@ -924,7 +924,7 @@ class DolGraph
 								var percent=Math.round(series.percent);
 								var number=series.data[0][1];
 								return \'';
-								$this->stringtoshow.='<div style="font-size:8pt;text-align:center;padding:2px;color:black;">';
+								$this->stringtoshow.='<span style="font-size:8pt;text-align:center;padding:2px;color:black;">';
 								if ($urltemp) $this->stringtoshow.='<a style="color: #FFFFFF;" border="0" href="'.$urltemp.'">';
 								$this->stringtoshow.='\'+';
 								$this->stringtoshow.=($showlegend?'':'label+\' \'+');	// Hide label if already shown in legend
@@ -932,7 +932,7 @@ class DolGraph
 								$this->stringtoshow.=($showpercent?'\'<br/>\'+percent+\'%\'+':'');
 								$this->stringtoshow.='\'';
 								if ($urltemp) $this->stringtoshow.='</a>';
-								$this->stringtoshow.='</div>\';
+								$this->stringtoshow.='</span>\';
 							},
 							background: {
 							opacity: 0.0,

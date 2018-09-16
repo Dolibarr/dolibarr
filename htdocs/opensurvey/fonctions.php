@@ -70,6 +70,8 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
  */
 function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
+	global $conf, $mysoc;
+
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 	print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 

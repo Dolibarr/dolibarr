@@ -925,16 +925,13 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (! $error)
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
-			    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			    {
-			    	$result=$this->insertExtraFields();
-			    	if ($result < 0)
-			        {
-			            $error++;
-			        }
-			    }
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
@@ -1048,7 +1045,7 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				$this->error="Failed to add contact";
+				$this->error="Failed to add contract";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -1283,24 +1280,21 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Call triggers
-				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
-				if ($result < 0) { $error++; }
-				// End call triggers
-			}
-		}
-
-		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0)
 			{
 				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger('CONTRACT_MODIFY',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Commit or rollback

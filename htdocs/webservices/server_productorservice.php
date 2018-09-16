@@ -1048,11 +1048,11 @@ function getProductsForCategory($authentication,$id,$lang='')
 				$res  = $db->query($sql);
 				if ($res)
 				{
+					$iProduct = 0;
 					while ($rec = $db->fetch_array($res))
 					{
 						$obj = new Product($db);
 						$obj->fetch($rec['fk_'.$field]);
-						$iProduct = 0;
 						if($obj->status > 0 )
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);

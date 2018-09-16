@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018
+/* Copyright (C) 2018 	Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.p
 if (! $res) die("Include of main fails");
 
 if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -42,11 +43,13 @@ if (isset($_GET['connect'])){
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
+    $servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
+    $servicestatus = 1;    
 	}
 }
 else {
@@ -54,11 +57,13 @@ else {
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
+    $servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
+    $servicestatus = 1;
 	}
 }
 $payload = @file_get_contents("php://input");
@@ -119,7 +124,7 @@ $stripe=new Stripe($db);
 if ($event->type == 'payout.created') {
 	$error=0;
 
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
+	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0)
 	{
@@ -139,7 +144,7 @@ if ($event->type == 'payout.created') {
 elseif ($event->type == 'payout.paid') {
 	global $conf;
 	$error=0;
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
 	if ($result)
 	{
 		$langs->load("errors");
@@ -227,19 +232,37 @@ elseif ($event->type == 'charge.failed') {
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
 
-	$stripe=new Stripe($db);
-	$charge=$stripe->CreatePaymentStripe($event->data->object->amount/100,$event->data->object->currency,$event->data->object->metadata->source,$event->data->object->metadata->idsource,$event->data->object->id,$event->data->object->metadata->customer,$stripe->getStripeAccount($service));
+  $fulltag=$event->data->object->metadata->FULLTAG;
+	// Save into $tmptag all metadata
+	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
+  
+  if (! empty($tmptag['ORD'])){
+  $order=new Commande($db);
+	$order->fetch('',$tmptag['ORD']);
+  $origin='order';
+  $item=$order->id;
+  } elseif (! empty($tmptag['INV'])) {
+  $invoice = new Facture($db);
+	$invoice->fetch('',$tmptag['INV']);
+  $origin='invoice';
+  $item=$invoice->id;
+  }
 
+  $stripe=new Stripe($db); 
+  $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+  $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
+	$charge=$stripe->createPaymentStripe($event->data->object->amount/100,$event->data->object->currency,$origin,$item,$event->data->object->id,$stripecu,$stripeacc,$servicestatus);
+  
 	if (isset($charge->id) && $charge->statut=='error'){
 		$msg=$charge->message;
 		$code=$charge->code;
 		$error++;
-	}
-	elseif (isset($charge->id) && $charge->statut=='success' && $event->data->object->metadata->source=='order') {
-		$order=new Commande($db);
-		$order->fetch($event->data->object->metadata->idsource);
+	}              
+	elseif (isset($charge->id) && $charge->statut=='success' && (! empty($tmptag['ORD']))) {
+    //$order=new Commande($db);
+	  //$order->fetch('',$tmptag['ORD']);
 		$invoice = new Facture($db);
-		$idinv=$invoice->createFromOrder($order);
+		$idinv=$invoice->createFromOrder($order,$user);
 
 		if ($idinv > 0)
 		{
@@ -265,7 +288,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 
 	if (!$error){
 		$datepaye = dol_now();
-		$paiementcode ="CB";
+		$paymentType ="CB";
 		$amounts=array();
 		$amounts[$invoice->id] = $total;
 		$multicurrency_amounts=array();
@@ -274,7 +297,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 		$paiement->datepaye     = $datepaye;
 		$paiement->amounts      = $amounts;   // Array with all payments dispatching
 		$paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
-		$paiement->paiementid   = dol_getIdFromCode($db,$paiementcode,'c_paiement');
+		$paiement->paiementid   = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 		$paiement->num_paiement = $charge->message;
 		$paiement->note         = '';
 	}

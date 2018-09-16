@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -927,6 +927,15 @@ if ($action == 'create')
 if ($id > 0)
 {
 	$result1=$object->fetch($id);
+	if ($result1 <= 0)
+	{
+		$langs->load("errors");
+		print $langs->trans("ErrorRecordNotFound");
+
+		llxFooter();
+		exit;
+	}
+
 	$result2=$object->fetch_thirdparty();
 	$result2=$object->fetch_projet();
 	$result3=$object->fetch_contact();
@@ -957,7 +966,7 @@ if ($id > 0)
 		$object->note = GETPOST("note",'none');
 	}
 
-	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
+	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
 	{
 		dol_print_error($db,$object->error);
 		exit;
@@ -1241,8 +1250,13 @@ if ($id > 0)
 		if (! empty($object->fk_element) && ! empty($object->elementtype))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
+            print '<tr>';
+			print '<td>'.$langs->trans("LinkedObject").'</td>';
+			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1);
+			print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+			print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+			print '</td>';
+			print '</tr>';
 		}
 
         // Description

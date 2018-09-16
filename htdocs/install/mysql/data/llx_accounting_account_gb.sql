@@ -13,17 +13,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
---
 
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
---
 -- Descriptif des plans comptables UK ENG-BASE 
 -- ID 70000 - 79999
---
+-- ADD 700000 to rowid # Do no remove this comment --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (71501, 'ENG-BASE', 'CAPIT',  'XXXXXX', '1', '0', 'Equity, provisions for liabilities and charges and liabilities at more than one year', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (71502, 'ENG-BASE', 'IMMO',   'XXXXXX', '2', '0', 'Administration fees.Fixed assets and receivables over one year', 1);

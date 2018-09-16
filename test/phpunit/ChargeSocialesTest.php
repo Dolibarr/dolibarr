@@ -60,6 +60,8 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -117,7 +119,7 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 
     /**
      * testChargeSocialesCreate
-     * 
+     *
      * @return	void
      */
     public function testChargeSocialesCreate()
@@ -139,10 +141,10 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 
     /**
      * testChargeSocialesFetch
-     * 
+     *
      * @param	int		$id		Id of social contribution
      * @return	void
-     * 
+     *
      * @depends	testChargeSocialesCreate
      * The depends says test is run only if previous is ok
      */
@@ -164,10 +166,10 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 
     /**
      * testChargeSocialesValid
-     * 
+     *
      * @param	Object		$localobject	Social contribution
      * @return	void
-     * 
+     *
      * @depends	testChargeSocialesFetch
      * The depends says test is run only if previous is ok
      */
@@ -188,10 +190,10 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 
     /**
      * testChargeSocialesOther
-     * 
+     *
      * @param	Object	$localobject		Social contribution
      * @return	void
-     * 
+     *
      * @depends testChargeSocialesValid
      * The depends says test is run only if previous is ok
      */
@@ -216,10 +218,10 @@ class ChargeSocialesTest extends PHPUnit_Framework_TestCase
 
     /**
      * testChargeSocialesDelete
-     * 
+     *
      * @param	int		$id			Social contribution
      * @return 	void
-     * 
+     *
      * @depends	testChargeSocialesOther
      * The depends says test is run only if previous is ok
      */

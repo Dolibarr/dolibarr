@@ -1005,7 +1005,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 		else
 		{
-			print '<input size="40" type="text" name="skype" value="'.GETPOST('skype').'">';
+			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype').'">';
 		}
 		print '</td></tr>';
 	}
@@ -1499,7 +1499,7 @@ else
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			print dol_print_date($object->dateemployment);
+			print dol_print_date($object->dateemployment, 'day');
 			print '</td>';
 			print "</tr>\n";
 
@@ -1823,7 +1823,7 @@ else
 								if ($caneditgroup)
 								{
 									print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
-									print img_delete($langs->trans("RemoveFromGroup"));
+									print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 									print '</a>';
 								}
 								else

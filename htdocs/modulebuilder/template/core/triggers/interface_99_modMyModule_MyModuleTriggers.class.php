@@ -181,6 +181,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		    //case 'LINEORDER_SUPPLIER_DISPATCH':
 		    //case 'LINEORDER_SUPPLIER_CREATE':
 		    //case 'LINEORDER_SUPPLIER_UPDATE':
+		    //case 'LINEORDER_SUPPLIER_DELETE':
 
 		    // Proposals
 		    //case 'PROPAL_CREATE':

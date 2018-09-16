@@ -49,7 +49,7 @@ class Ticket extends CommonObject
     /**
      * @var int  Does ticketcore support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      */
-    public $ismultientitymanaged = 0;
+    public $ismultientitymanaged = 1;
     /**
      * @var int  Does ticketcore support extrafields ? 0=No, 1=Yes
      */

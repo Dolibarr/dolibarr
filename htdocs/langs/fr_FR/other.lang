@@ -188,6 +188,7 @@ NumberOfUnitsSupplierInvoices=Quantités présentes dans les factures fournisseu
 EMailTextInterventionAddedContact=Une nouvelle intervention %s vous a été assignée
 EMailTextInterventionValidated=La fiche intervention %s vous concernant a été validée.
 EMailTextInvoiceValidated=La facture %s vous concernant a été validée.
+EMailTextInvoicePayed=La facture %s a été payée.
 EMailTextProposalValidated=La proposition commerciale %s vous concernant a été validée.
 EMailTextProposalClosedSigned=La proposition %s a été clôturée signée.
 EMailTextOrderValidated=La commande %s vous concernant a été validée.

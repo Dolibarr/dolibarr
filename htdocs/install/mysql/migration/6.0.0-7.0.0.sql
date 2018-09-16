@@ -675,7 +675,7 @@ ALTER TABLE llx_blockedlog MODIFY COLUMN ref_object varchar(255);
 
 -- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8) NOT NULL;
-ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_chargesociales MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN amount_ht double(24,8);
 ALTER TABLE llx_don MODIFY COLUMN amount double(24,8);
