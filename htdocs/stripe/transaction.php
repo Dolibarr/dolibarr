@@ -123,32 +123,6 @@ if (! $rowid) {
 
 	foreach ($txn->data as $txn)
 	{
-		//$charge = $txn;
-		//var_dump($txn);
-		
-		// The metadata FULLTAG is defined by the online payment page
-		/*$FULLTAG=$charge->metadata->FULLTAG;
-		
-		// Save into $tmparray all metadata
-		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
-		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']))
-		{
-			$societestatic->fetch($tmparray['CUS']);
-		}
-		else
-		{
-			$societestatic->id = 0;
-		}
-		if (! empty($tmparray['MEM']))
-		{
-			$memberstatic->fetch($tmparray['MEM']);
-		}
-		else
-		{
-			$memberstatic->id = 0;
-		}*/
-		
 		$societestatic->fetch($charge->metadata->idcustomer);
 		$societestatic->id = $charge->metadata->idcustomer;
 		$societestatic->lastname = $obj->lastname;
@@ -159,7 +133,7 @@ if (! $rowid) {
 		$societestatic->societe_id = $obj->fk_soc;
 
 		print '<tr class="oddeven">';
-		
+
 		// Ref
     if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
     
@@ -171,41 +145,16 @@ if (! $rowid) {
     } else {
     $origin="payments";    
         }
-         
+
 		$url='https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
 			if ($servicestatus)
 			{
-				$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
+		$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
 			}
     if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
     print "<td>".$txn->type."</td>";  
     } else print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";  
 
-		// Stripe customer
-		//print "<td>".$charge->customer."</td>\n";
-		// Link
-		/*print "<td>";
-		if ($societestatic->id > 0)
-		{
-			print $societestatic->getNomUrl(1);
-		}
-		if ($memberstatic->id > 0)
-		{
-			print $memberstatic->getNomUrl(1);
-		}
-		print "</td>\n";*/
-		// Origine
-		//print "<td>";
-		////if ($charge->metadata->dol_type=="order"){
-		//	$object = new Commande($db);
-		//	$object->fetch($charge->metadata->dol_id);
-		//	print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->dol_id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
-		//} elseif ($charge->metadata->dol_type=="invoice"){
-		//	$object = new Facture($db);
-		//	$object->fetch($charge->metadata->dol_id);
-		//	print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
-		//}
-		//print "</td>\n";
 		// Date payment
 		print '<td align="center">' . dol_print_date($txn->created, '%d/%m/%Y %H:%M') . "</td>\n";
 		// Type
