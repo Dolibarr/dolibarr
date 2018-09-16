@@ -1845,28 +1845,28 @@ class Contrat extends CommonObject
 		if ($mode == 0)
 		{
 			if ($statut == 0) { return $langs->trans("ContractStatusDraft"); }
-			if ($statut == 1) { return $langs->trans("ContractStatusValidated"); }
-			if ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
+			elseif ($statut == 1) { return $langs->trans("ContractStatusValidated"); }
+			elseif ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut == 0) { return $langs->trans("ContractStatusDraft"); }
-			if ($statut == 1) { return $langs->trans("ContractStatusValidated"); }
-			if ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
+			elseif ($statut == 1) { return $langs->trans("ContractStatusValidated"); }
+			elseif ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0').' '.$langs->trans("ContractStatusDraft"); }
-			if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4').' '.$langs->trans("ContractStatusValidated"); }
-			if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6').' '.$langs->trans("ContractStatusClosed"); }
+			elseif ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4').' '.$langs->trans("ContractStatusValidated"); }
+			elseif ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6').' '.$langs->trans("ContractStatusClosed"); }
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0'); }
-			if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
-			if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
+			elseif ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
+			elseif ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
 		}
-		if ($mode == 4 || $mode == 6 || $mode == 7)
+		elseif ($mode == 4 || $mode == 6 || $mode == 7)
 		{
 			$text='';
 			if ($mode == 4)
@@ -1888,11 +1888,11 @@ class Contrat extends CommonObject
 			$text.=($mode == 7?'</div>':'');
 			return $text;
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == 0) { return $langs->trans("ContractStatusDraft").' '.img_picto($langs->trans('ContractStatusDraft'),'statut0'); }
-			if ($statut == 1) { return $langs->trans("ContractStatusValidated").' '.img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
-			if ($statut == 2) { return $langs->trans("ContractStatusClosed").' '.img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
+			elseif ($statut == 1) { return $langs->trans("ContractStatusValidated").' '.img_picto($langs->trans('ContractStatusValidated'),'statut4'); }
+			elseif ($statut == 2) { return $langs->trans("ContractStatusClosed").' '.img_picto($langs->trans('ContractStatusClosed'),'statut6'); }
 		}
 	}
 
@@ -2116,7 +2116,7 @@ class Contrat extends CommonObject
 			$sql.= " AND c.rowid = cd.fk_contrat";
 			$sql.= " AND cd.statut = 0";
 		}
-		if ($mode == 'expired')
+		elseif ($mode == 'expired')
 		{
 			$sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
 			$sql.= $this->from;
@@ -2621,50 +2621,50 @@ class ContratLigne extends CommonObjectLine
 		if ($mode == 0)
 		{
 			if ($statut == self::STATUS_INITIAL) { return $langs->trans("ServiceStatusInitial"); }
-			if ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning"); }
-			if ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLate"); }
-			if ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLate"); }
-			if ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed");  }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLate"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLate"); }
+			elseif ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed");  }
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut == self::STATUS_INITIAL) { return $langs->trans("ServiceStatusInitial"); }
-			if ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning"); }
-			if ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLateShort"); }
-			if ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLateShort"); }
-			if ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed");  }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLateShort"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLateShort"); }
+			elseif ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed");  }
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0').' '.$langs->trans("ServiceStatusInitial"); }
-			if ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
-			if ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4').' '.$langs->trans("ServiceStatusNotLateShort"); }
-			if ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLateShort"); }
-			if ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4').' '.$langs->trans("ServiceStatusNotLateShort"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLateShort"); }
+			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0',$moreatt); }
-			if ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4',$moreatt); }
-			if ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4',$moreatt); }
-			if ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3',$moreatt); }
-			if ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6',$moreatt); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4',$moreatt); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4',$moreatt); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3',$moreatt); }
+			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6',$moreatt); }
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == self::STATUS_INITIAL) { return img_picto($langs->trans('ServiceStatusInitial'),'statut0').' '.$langs->trans("ServiceStatusInitial"); }
-			if ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
-			if ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4').' '.$langs->trans("ServiceStatusNotLate"); }
-			if ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLate"); }
-			if ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return img_picto($langs->trans('ServiceStatusRunning'),'statut4').' '.$langs->trans("ServiceStatusRunning"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return img_picto($langs->trans('ServiceStatusNotLate'),'statut4').' '.$langs->trans("ServiceStatusNotLate"); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return img_picto($langs->trans('ServiceStatusLate'),'statut3').' '.$langs->trans("ServiceStatusLate"); }
+			elseif ($statut == self::STATUS_CLOSED) { return img_picto($langs->trans('ServiceStatusClosed'),'statut6') .' '.$langs->trans("ServiceStatusClosed"); }
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == self::STATUS_INITIAL) { return $langs->trans("ServiceStatusInitial").' '.img_picto($langs->trans('ServiceStatusInitial'),'statut0'); }
-			if ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning").' '.img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
-			if ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLateShort").' '.img_picto($langs->trans('ServiceStatusNotLateShort'),'statut4'); }
-			if ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLateShort").' '.img_picto($langs->trans('ServiceStatusLate'),'statut3'); }
-			if ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed").' '.img_picto($langs->trans('ServiceStatusClosed'),'statut6'); }
+			elseif ($statut == self::STATUS_OPEN && $expired == -1) { return $langs->trans("ServiceStatusRunning").' '.img_picto($langs->trans('ServiceStatusRunning'),'statut4'); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 0)  { return $langs->trans("ServiceStatusNotLateShort").' '.img_picto($langs->trans('ServiceStatusNotLateShort'),'statut4'); }
+			elseif ($statut == self::STATUS_OPEN && $expired == 1)  { return $langs->trans("ServiceStatusLateShort").' '.img_picto($langs->trans('ServiceStatusLate'),'statut3'); }
+			elseif ($statut == self::STATUS_CLOSED) { return $langs->trans("ServiceStatusClosed").' '.img_picto($langs->trans('ServiceStatusClosed'),'statut6'); }
 		}
 	}
 
@@ -3004,15 +3004,14 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Call trigger
-	            $result=$this->call_trigger('LINECONTRACT_UPDATE', $user);
-	            if ($result < 0) { $error++; $this->db->rollback(); }
-	            // End call triggers
-			}
+		if (! $error && ! $notrigger) {
+	        // Call trigger
+	        $result=$this->call_trigger('LINECONTRACT_UPDATE', $user);
+	        if ($result < 0) {
+                $error++;
+                $this->db->rollback();
+            }
+	        // End call triggers
 		}
 
 		if (! $error)
