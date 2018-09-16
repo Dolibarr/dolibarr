@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville     <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2017 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García            <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-$langs->load('orders');
-$langs->load('deliveries');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array("orders", "companies", "deliveries"));
 
 if (! $user->rights->fournisseur->facture->creer)
 	accessforbidden();
@@ -105,9 +104,9 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 	if (! empty($conf->projet->enabled))
 		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
-	$langs->load('bills');
-	$langs->load('products');
-	$langs->load('main');
+	// Load translation files required by the page
+    $langs->loadLangs(array("bills", "main", "products"));
+
 	if (isset($_GET['orders_to_invoice'])) {
 		$orders_id = GETPOST('orders_to_invoice','',1);
 		$n = count($orders_id);
