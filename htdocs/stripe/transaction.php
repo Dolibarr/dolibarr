@@ -178,7 +178,7 @@ if (! $rowid) {
 		print "</td>\n";*/
 		// Origine
 
-		//print "<TD>";
+		//print "<td>";
 		////if ($charge->metadata->dol_type=="order"){
 		//	$object = new Commande($db);
 		//	$object->fetch($charge->metadata->dol_id);
@@ -188,7 +188,7 @@ if (! $rowid) {
 		//	$object->fetch($charge->metadata->dol_id);
 		//	print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
 		//}
-		//print "</TD>\n";
+		//print "</td>\n";
 		// Date payment
 		print '<td align="center">' . dol_print_date($txn->created, '%d/%m/%Y %H:%M') . "</td>\n";
 		// Type
