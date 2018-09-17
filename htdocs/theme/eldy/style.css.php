@@ -2719,8 +2719,8 @@ table.paddingtopbottomonly tr td {
 }
 tr.liste_titre_filter td.liste_titre {
 	/* border-bottom: 1px solid #ddd; */
-	padding-top: 2px;
-	padding-bottom: 2px;
+	padding-top: 1px;
+	padding-bottom: 0px;
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
