@@ -2339,7 +2339,7 @@ div.popuptab {
 	padding-right: 5px;
 }
 div.tabsAction {
-    margin: 20px 0em 20px 0em;
+    margin: 20px 0em 30px 0em;
     padding: 0em 0em;
     text-align: right;
 }
