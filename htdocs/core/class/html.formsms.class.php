@@ -101,9 +101,8 @@ class FormSms
 
         if (! is_object($form)) $form=new Form($this->db);
 
-        $langs->load("other");
-        $langs->load("mails");
-        $langs->load("sms");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails', 'sms'));
 
         $soc=new Societe($this->db);
         if (!empty($this->withtosocid) && $this->withtosocid > 0)
