@@ -1417,7 +1417,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
 			$sql.= " WHERE module_name = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 			$sql.= " AND entity = ".$conf->entity;
-			$sql.= " AND test = 1";			// We delete on lines that are not set with a complete test that is '$conf->module->enabled' so when module is disabled, the cron is also removed.
+			$sql.= " AND test = '1'";		// We delete on lines that are not set with a complete test that is '$conf->module->enabled' so when module is disabled, the cron is also removed.
 											// For crons declared with a '$conf->module->enabled', there is no need to delete the line, so we don't loose setup if we reenable module.
 
 			dol_syslog(get_class($this)."::delete_cronjobs", LOG_DEBUG);
