@@ -766,7 +766,13 @@ else
 
 	// Web
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB,'_blank',80) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>';
+	$arrayofurl = preg_split('/\s/', $conf->global->MAIN_INFO_SOCIETE_WEB);
+	foreach($arrayofurl as $urltoshow)
+	{
+		if ($urltoshow) print dol_print_url($urltoshow,'_blank',80);
+	}
+	print '</td></tr>';
 
 	// Barcode
 	if (! empty($conf->barcode->enabled))
