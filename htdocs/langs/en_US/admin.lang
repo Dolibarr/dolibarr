@@ -1042,7 +1042,7 @@ Delays_MAIN_DELAY_MEMBERS=Delay (in days) before alert on delayed membership fee
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Delay (in days) before alert for cheque deposit to do
 Delays_MAIN_DELAY_EXPENSEREPORTS=Delay (in days) before alert for expense reports to approve
 SetupDescription1=Before starting to use Dolibarr some initial parameters must be defined and modules enabled/configured.
-SetupDescription2=The following two sections are compulsory (the two first entries in the Setup menu on the left):
+SetupDescription2=The mandatory setup steps are the 2 first steps in the Setup menu, namely :
 SetupDescription3=<a href="%s">%s -> %s</a><br>Basic parameters used to customize the default behavior of Dolibarr (e.g for country-related features).
 SetupDescription4=<a href="%s">%s -> %s</a><br>Dolibarr ERP/CRM is a collection of many modules/applications, all more or less independent. The modules relevant to your needs must be enabled and configured. New items/options are added to menus with the activation of a module.
 SetupDescription5=Other Setup menu entries manage optional parameters.
