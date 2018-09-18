@@ -523,9 +523,12 @@ if ($num > 0)
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) print '<span class="opacitymedium">';
-			print dol_print_date($datenextrun,'dayhour');
-			if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) print img_warning($langs->trans("MaxRunReached"));
-			elseif ($datenextrun && $datenextrun < $now) print img_warning($langs->trans("Late"));
+			print dol_print_date($datenextrun,'dayhoursec');
+			if ($obj->status == Cronjob::STATUS_ENABLED)
+			{
+				if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) print img_warning($langs->trans("MaxRunReached"));
+				elseif ($datenextrun && $datenextrun < $now) print img_warning($langs->trans("Late"));
+			}
 			if (empty($obj->status)) print '</span>';
 		}
 		print '</td>';
