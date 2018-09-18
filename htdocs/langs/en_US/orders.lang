@@ -140,8 +140,8 @@ OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Phone
 # Documents models
-PDFEinsteinDescription=A complete order model (logo...)(deprecated Template)
-PDFEratostheneDescription=A complete order model (logo...)(recommended Template)
+PDFEinsteinDescription=A complete order model (logo...)
+PDFEratostheneDescription=A complete order model (logo...)
 PDFEdisonDescription=A simple order model
 PDFProformaDescription=A complete proforma invoice (logo…)
 CreateInvoiceForThisCustomer=Bill orders
