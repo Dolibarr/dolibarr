@@ -1804,6 +1804,8 @@ HelpOnTooltip=Help text to show on tooltip
 HelpOnTooltipDesc=Put here a text or a translation key for a text to show on a tooltip when this field appears into a form
 YouCanDeleteFileOnServerWith=You can delete this file on server with Command Line:<br>%s
 ChartLoaded=Chart of account loaded
+SocialNetworkSetup=Setup of module Social Networks
+EnableFeatureFor=Enable features for <strong>%s</strong>
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
