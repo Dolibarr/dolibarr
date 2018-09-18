@@ -2105,8 +2105,8 @@ function pdf_getLinkedObjects($object,$outputlangs)
 		}
 		else if ($objecttype == 'shipping')
 		{
-			$outputlangs->load('orders');
-			$outputlangs->load('sendings');
+			$outputlangs->loadLangs(array("orders", "sendings"));
+
 			foreach($objects as $x => $elementobject)
 			{
 			    $order=null;

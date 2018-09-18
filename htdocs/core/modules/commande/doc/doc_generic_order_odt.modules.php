@@ -38,10 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_order_odt extends ModelePDFCommandes
 {
-	var $emetteur;	// Objet societe qui emet
+	public $emetteur;	// Objet societe qui emet
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+	public $version = 'dolibarr';
 
 
 	/**
@@ -51,7 +51,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("main","companies"));
@@ -213,10 +213,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->commande->dir_output)
 		{
