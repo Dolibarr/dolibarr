@@ -5029,7 +5029,7 @@ dl.dropdown {
 }
 .dropdown dd ul {
     background-color: #FFF;
-    border: 1px solid #888;
+    box-shadow: 1px 1px 10px #aaa;
     display:none;
     <?php echo $right; ?>:0px;						/* pop is align on right */
     padding: 2px 15px 2px 5px;
@@ -5042,7 +5042,7 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
-	padding: 2px;
+	padding: 4px;
 	/* color: rgb(<?php print $colortext; ?>); */
 	color: #000;
 }

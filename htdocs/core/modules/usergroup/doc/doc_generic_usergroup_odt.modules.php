@@ -37,10 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_usergroup_odt extends ModelePDFUserGroup
 {
-	var $emetteur;	// Objet societe qui emet
+	public $emetteur;	// Objet societe qui emet
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+	public $version = 'dolibarr';
 
 
 	/**
@@ -50,10 +50,10 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array('companies', 'main'));
 
 		$this->db = $db;
 		$this->name = "ODT templates";

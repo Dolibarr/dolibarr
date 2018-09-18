@@ -99,7 +99,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("errors","companies"));
+    $langs->loadLangs(array('companies', 'errors'));
 
 		$form = new Form($this->db);
 
