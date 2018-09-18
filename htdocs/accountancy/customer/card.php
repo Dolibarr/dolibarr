@@ -159,5 +159,6 @@ if (! empty($id)) {
 	print "Error ID incorrect";
 }
 
+// End of page
 llxFooter();
 $db->close();

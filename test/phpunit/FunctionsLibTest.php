@@ -63,7 +63,9 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -110,7 +112,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-	/**
+
+    /**
 	 * End phpunit tests
 	 *
 	 * @return	void
@@ -119,7 +122,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     {
         print __METHOD__."\n";
     }
-
 
 
     /**
@@ -390,7 +392,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
         $after=dol_textishtml($input);
         $this->assertFalse($after);
-
     }
 
 
@@ -837,7 +838,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $object->country_code='CA';
         $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
         $this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
-
     }
 
 
@@ -1008,7 +1008,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         // Test RULE 5 (FR-US)
         $vat=get_default_tva($companyfr,$companyus,0);
         $this->assertEquals(0,$vat,'RULE 5 ECOMMERCE_200238EC');
-
     }
 
     /**
@@ -1118,7 +1117,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testDolNl2Br() {
+    public function testDolNl2Br()
+    {
 
 		//String to encode
 		$string = "a\na";
@@ -1209,5 +1209,4 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		return true;
 	}
-
 }

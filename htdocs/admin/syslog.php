@@ -302,6 +302,6 @@ if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enable
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
-
 $db->close();

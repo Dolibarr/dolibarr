@@ -91,7 +91,9 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
 	{
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$projectstatic->fetch($object->fk_project);
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
 
 		if (! empty($projectstatic->socid)) {
 			$projectstatic->fetch_thirdparty();
@@ -292,7 +294,6 @@ else
 	exit;
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

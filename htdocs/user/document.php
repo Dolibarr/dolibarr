@@ -88,9 +88,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
-	$entitytouseforuserdir = $object->entity;
-	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;
-	$upload_dir = $conf->user->multidir_output[$entitytouseforuserdir] . "/" . $object->id ;
+	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
+	// For users, the upload_dir is always $conf->user->entity for the moment
+	$upload_dir = $conf->user->dir_output. "/" . $object->id ;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -141,7 +141,7 @@ if ($object->id)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -178,6 +178,6 @@ else
 	accessforbidden('',0,0);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

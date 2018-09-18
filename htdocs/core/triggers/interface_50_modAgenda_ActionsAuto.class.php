@@ -37,6 +37,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	public $family = 'agenda';
 	public $description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'action';
 
 	/**
@@ -78,9 +82,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// Actions
 		if ($action == 'COMPANY_CREATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("companies");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","companies"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->name);
             $object->actionmsg=$langs->transnoentities("NewCompanyToDolibarr",$object->name);
@@ -91,9 +94,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'COMPANY_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) dol_syslog('Trigger called with property actionmsg2 on object not defined', LOG_ERR);
 
@@ -102,9 +104,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'CONTRACT_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("contracts");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","contracts"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ContractValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("ContractValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -113,9 +114,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'CONTRACT_SENTBYMAIL')
 		{
-			$langs->load("agenda");
-			$langs->load("other");
-			$langs->load("contract");
+			// Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","contracts"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ContractSentByEMail",$object->ref);
 			if (empty($object->actionmsg))
@@ -128,9 +128,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("propal");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -139,9 +138,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'PROPAL_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("propal");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -154,9 +152,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("propal");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
@@ -165,9 +162,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLASSIFY_BILLED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("propal");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClassifiedBilledInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("PropalClassifiedBilledInDolibarr",$object->ref);
@@ -176,9 +172,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("propal");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
@@ -187,8 +182,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -197,9 +192,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CLOSE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderDeliveredInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderDeliveredInDolibarr",$object->ref);
@@ -208,9 +202,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CLASSIFY_BILLED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderBilledInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderBilledInDolibarr",$object->ref);
@@ -219,9 +212,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_CANCEL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderCanceledInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderCanceledInDolibarr",$object->ref);
@@ -230,9 +222,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -245,9 +236,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -256,9 +246,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_UNVALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+           // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
@@ -267,9 +256,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'BILL_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -282,9 +270,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_PAYED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             // Values for this action can't be defined by caller.
             $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
@@ -294,9 +281,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_CANCEL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
@@ -305,9 +291,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_CREATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("interventions");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","interventions"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionCreatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InterventionCreatedInDolibarr",$object->ref);
@@ -318,9 +303,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("interventions");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","interventions"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("InterventionValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -331,9 +315,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_MODIFY')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("interventions");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","interventions"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionModifiedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InterventionModifiedInDolibarr",$object->ref);
@@ -344,9 +327,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'FICHINTER_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("interventions");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","interventions"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -359,9 +341,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'FICHINTER_CLASSIFY_BILLED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("interventions");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","interventions"));
 
            	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionClassifiedBilledInDolibarr",$object->ref);
            	$object->actionmsg=$langs->transnoentities("InterventionClassifiedBilledInDolibarr",$object->ref);
@@ -370,9 +351,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 	    elseif ($action == 'FICHINTER_CLASSIFY_UNBILLED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("interventions");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","interventions"));
 
            	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionClassifiedUnbilledInDolibarr",$object->ref);
            	$object->actionmsg=$langs->transnoentities("InterventionClassifiedUnbilledInDolibarr",$object->ref);
@@ -381,9 +361,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'FICHINTER_DELETE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("interventions");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","interventions"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionDeletedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InterventionDeletedInDolibarr",$object->ref);
@@ -394,9 +373,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'SHIPPING_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("sendings");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","sendings"));
 
         	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ShippingValidated",($object->newref?$object->newref:$object->ref));
         	if (empty($object->actionmsg))
@@ -409,9 +387,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 		elseif ($action == 'SHIPPING_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("sendings");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","sendings"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ShippingSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -424,9 +401,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPOSAL_SUPPLIER_VALIDATE')
 		{
-			$langs->load("agenda");
-			$langs->load("other");
-			$langs->load("propal");
+			// Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
 			$object->actionmsg=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -435,9 +411,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPOSAL_SUPPLIER_SENTBYMAIL')
 		{
-			$langs->load("agenda");
-			$langs->load("other");
-			$langs->load("propal");
+			// Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
 			if (empty($object->actionmsg))
@@ -450,9 +425,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_SIGNED')
 		{
-			$langs->load("agenda");
-			$langs->load("other");
-			$langs->load("propal");
+			// Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
 			$object->actionmsg=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
@@ -461,9 +435,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_REFUSED')
 		{
-			$langs->load("agenda");
-			$langs->load("other");
-			$langs->load("propal");
+			// Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","propal"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
 			$object->actionmsg=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
@@ -472,9 +445,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_CREATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -483,9 +455,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -494,9 +465,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_APPROVE')
 		{
-            $langs->load("agenda");
-		    $langs->load("other");
-			$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderApprovedInDolibarr",$object->ref);
 			$object->actionmsg=$langs->transnoentities("OrderApprovedInDolibarr",$object->ref);
@@ -505,9 +475,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_REFUSE')
 		{
-            $langs->load("agenda");
-		    $langs->load("other");
-			$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderRefusedInDolibarr",$object->ref);
 			$object->actionmsg=$langs->transnoentities("OrderRefusedInDolibarr",$object->ref);
@@ -516,9 +485,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_SUBMIT')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("SupplierOrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -527,9 +495,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_RECEIVE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("SupplierOrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -538,10 +505,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
-            $langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -554,10 +519,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 		elseif ($action == 'ORDER_SUPPLIER_CLASSIFY_BILLED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
-            $langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderClassifiedBilled",$object->ref);
             if (empty($object->actionmsg))
@@ -569,9 +532,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -580,9 +542,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_SUPPLIER_UNVALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
@@ -591,10 +552,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'BILL_SUPPLIER_SENTBYMAIL')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
-            $langs->load("orders");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","orders","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -607,9 +566,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 		elseif ($action == 'BILL_SUPPLIER_PAYED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
@@ -618,9 +576,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_SUPPLIER_CANCELED')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("bills");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
@@ -631,9 +588,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Members
         elseif ($action == 'MEMBER_VALIDATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("members");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","members"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberValidatedInDolibarr",$object->getFullName($langs));
             $object->actionmsg=$langs->transnoentities("MemberValidatedInDolibarr",$object->getFullName($langs));
@@ -644,9 +600,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 		elseif ($action == 'MEMBER_MODIFY')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("members");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","members"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberModifiedInDolibarr",$object->getFullName($langs));
             $object->actionmsg=$langs->transnoentities("MemberModifiedInDolibarr",$object->getFullName($langs));
@@ -657,9 +612,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
         elseif ($action == 'MEMBER_SUBSCRIPTION_CREATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("members");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","members"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref,$object->getFullName($langs));
             $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref,$object->getFullName($langs));
@@ -673,9 +627,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY')
         {
-        	$langs->load("agenda");
-        	$langs->load("other");
-        	$langs->load("members");
+        	// Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","members"));
 
         	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->ref,$object->getFullName($langs));
         	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->ref,$object->getFullName($langs));
@@ -689,9 +642,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION_DELETE')
         {
-        	$langs->load("agenda");
-        	$langs->load("other");
-        	$langs->load("members");
+        	// Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","members"));
 
         	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->ref,$object->getFullName($langs));
         	$object->actionmsg=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->ref,$object->getFullName($langs));
@@ -705,9 +657,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("members");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","members"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberResiliatedInDolibarr",$object->getFullName($langs));
             $object->actionmsg=$langs->transnoentities("MemberResiliatedInDolibarr",$object->getFullName($langs));
@@ -718,9 +669,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
         elseif ($action == 'MEMBER_DELETE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("members");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","members"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberDeletedInDolibarr",$object->getFullName($langs));
             $object->actionmsg=$langs->transnoentities("MemberDeletedInDolibarr",$object->getFullName($langs));
@@ -733,9 +683,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Projects
         elseif ($action == 'PROJECT_CREATE')
         {
-            $langs->load("agenda");
-            $langs->load("other");
-        	$langs->load("projects");
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","projects"));
 
         	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
         	$object->actionmsg=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
@@ -743,10 +692,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
         	$object->sendtoid=0;
         }
-        elseif($action == 'PROJECT_VALIDATE') {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("projects");
+        elseif($action == 'PROJECT_VALIDATE')
+        {
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","projects"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
@@ -754,10 +703,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             $object->sendtoid=0;
         }
-        elseif($action == 'PROJECT_MODIFY') {
-            $langs->load("agenda");
-            $langs->load("other");
-            $langs->load("projects");
+        elseif($action == 'PROJECT_MODIFY')
+        {
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","projects"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
@@ -767,10 +716,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
         }
 
 		// Project tasks
-		elseif($action == 'TASK_CREATE') {
-            $langs->load("agenda");
-		    $langs->load("other");
-			$langs->load("projects");
+		elseif($action == 'TASK_CREATE')
+		{
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","projects"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TaskCreatedInDolibarr",$object->ref);
 			$object->actionmsg=$langs->transnoentities("TaskCreatedInDolibarr",$object->ref);
@@ -779,10 +728,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid=0;
 		}
 
-		elseif($action == 'TASK_MODIFY') {
-            $langs->load("agenda");
-		    $langs->load("other");
-			$langs->load("projects");
+		elseif($action == 'TASK_MODIFY')
+		{
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","projects"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TaskModifiedInDolibarr",$object->ref);
 			$object->actionmsg=$langs->transnoentities("TaskModifieddInDolibarr",$object->ref);
@@ -791,10 +740,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid=0;
 		}
 
-		elseif($action == 'TASK_DELETE') {
-            $langs->load("agenda");
-		    $langs->load("other");
-			$langs->load("projects");
+		elseif($action == 'TASK_DELETE')
+		{
+            // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","projects"));
 
 			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TaskDeletedInDolibarr",$object->ref);
 			$object->actionmsg=$langs->transnoentities("TaskDeletedInDolibarr",$object->ref);
@@ -803,10 +752,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid=0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else {
+		else
+		{
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
-		    $langs->load("agenda");
-		    $langs->load("other");
+		    // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other"));
 
 		    if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities($action."InDolibarr",$object->ref);
 		    if (empty($object->actionmsg))  $object->actionmsg=$langs->transnoentities($action."InDolibarr",$object->ref);
@@ -927,5 +877,4 @@ class InterfaceActionsAuto extends DolibarrTriggers
             return -1;
 		}
     }
-
 }

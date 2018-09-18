@@ -139,17 +139,17 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     }
 
 
-	/**
-	 *  Return next free ref
-	 *
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Return next free ref
+     *
      *  @param	Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Objet livraison
      *  @return string      				Texte descripif
      */
     function livraison_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
-
 }
-

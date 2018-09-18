@@ -107,9 +107,8 @@ else
 	print '</div>';
 }
 
-
-// Page end
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

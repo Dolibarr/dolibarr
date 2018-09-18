@@ -325,6 +325,7 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
@@ -339,6 +340,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	function is_erasable()
 	{
+        // phpcs:enable
 		global $conf;
 
 		// We check if invoice is a temporary number (PROVxxxx)
@@ -449,6 +451,7 @@ abstract class CommonInvoice extends CommonObject
 		return $this->LibStatut($this->paye, $this->statut, $mode, $alreadypaid, $this->type);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of a status
 	 *
@@ -461,6 +464,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	function LibStatut($paye, $status, $mode=0, $alreadypaid=-1, $type=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load('bills');
 
@@ -483,7 +487,7 @@ abstract class CommonInvoice extends CommonObject
 				else return $langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			$prefix='Short';
 			if (! $paye)
@@ -501,7 +505,7 @@ abstract class CommonInvoice extends CommonObject
 				else return $langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			$prefix='Short';
 			if (! $paye)
@@ -519,7 +523,7 @@ abstract class CommonInvoice extends CommonObject
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPaid');
 			}
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			$prefix='Short';
 			if (! $paye)
@@ -537,7 +541,7 @@ abstract class CommonInvoice extends CommonObject
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6');
 			}
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			$prefix='';
 			if (! $paye)
@@ -555,7 +559,7 @@ abstract class CommonInvoice extends CommonObject
 				else return img_picto($langs->trans('BillStatusPaid'),'statut6').' '.$langs->trans('BillStatusPaid');
 			}
 		}
-		if ($mode == 5 || $mode == 6)
+		elseif ($mode == 5 || $mode == 6)
 		{
 			$prefix='';
 			if ($mode == 5) $prefix='Short';
@@ -580,15 +584,17 @@ abstract class CommonInvoice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi une date limite de reglement de facture en fonction des
 	 *	conditions de reglements de la facture et date de facturation
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *	@return     date     			       	Date limite de reglement si ok, <0 si ko
+	 *  @return     date     			       	Date limite de reglement si ok, <0 si ko
 	 */
 	function calculate_date_lim_reglement($cond_reglement=0)
 	{
+        // phpcs:enable
 		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
 		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
 
@@ -776,4 +782,3 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 		$this->db = $db;
 	}
 }
-

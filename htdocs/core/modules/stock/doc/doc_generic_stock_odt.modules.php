@@ -51,8 +51,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -96,8 +96,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 	{
 		global $conf,$langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
 
 		$form = new Form($this->db);
 
@@ -191,6 +191,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -204,6 +205,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $stock,$langs,$conf,$mysoc,$hookmanager,$user;
 
 		if (empty($srctemplatepath))
@@ -499,6 +501,4 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 		return -1;
 	}
-
 }
-

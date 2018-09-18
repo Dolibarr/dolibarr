@@ -184,6 +184,6 @@ if ($action == 'display' || $action == 'delete') {
 	print "</table>";
 }
 
+// End of page
 llxFooter();
-
 $db->close();

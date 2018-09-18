@@ -33,7 +33,10 @@ class mod_project_simple extends ModeleNumRefProjects
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PJ';
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom = "Simple";
 	var $name = "Simple";
 
@@ -140,8 +143,9 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * 	Return next reference not yet used as a reference
+     *  Return next reference not yet used as a reference
      *
      *  @param	Societe	$objsoc     Object third party
      *  @param  Project	$project	Object project
@@ -149,7 +153,7 @@ class mod_project_simple extends ModeleNumRefProjects
      */
     function project_get_num($objsoc=0,$project='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$project);
     }
 }
-

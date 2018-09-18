@@ -21,10 +21,10 @@
 
 
 /**
- *	    \class      ModeleProductCode
- *		\brief  	Parent class for product code generators
+ *      \class      ModeleProductCode
+ *      \brief      Parent class for product code generators
  */
- 
+
 /**
  *  \file       htdocs/core/modules/contract/modules_contract.php
  *  \ingroup    contract
@@ -32,32 +32,36 @@
  */
 
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
- 
+
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFProductBatch extends CommonDocGenerator
 {
-	var $error='';
-
-
 	/**
-	 *	Return list of active generation modules
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
+     *  @param  DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+     */
+    static function liste_modeles($db, $maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='product_batch';
-		$liste=array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
-		return $liste;
+		$list = getListOfModels($db, $type, $maxfilenamelength);
+		return $list;
 	}
 }
-

@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -35,12 +35,25 @@ require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
  */
 class ActionsTicket
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
+
     public $dao;
 
     public $mesg;
-    public $error;
-    public $errors = array();
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
+
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
     //! Numero de l'erreur
     public $errno = 0;
 
@@ -48,9 +61,17 @@ class ActionsTicket
     public $template;
 
     public $label;
-    public $description;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
 
     public $fk_statut;
+
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
 
     /**
@@ -579,6 +600,7 @@ class ActionsTicket
      *
      * @param User $user        User for action
      * @param string $action    Action string
+     * @return int
      */
     private function newMessage($user, &$action)
     {
@@ -792,6 +814,7 @@ class ActionsTicket
      *
      * @param User $user        User for action
      * @param string $action    Action string
+     * @return void
      */
     private function newMessagePublic($user, &$action)
     {
@@ -949,7 +972,7 @@ class ActionsTicket
      * Print statut
      *
      * @param		int		$mode		Display mode
-     * @return 		void
+     * @return 		string				Label of status
      */
     public function getLibStatut($mode = 0)
     {
@@ -962,6 +985,7 @@ class ActionsTicket
      * Get ticket info
      *
      * @param  int $id    Object id
+     * @return void
      */
     public function getInfo($id)
     {
@@ -975,7 +999,8 @@ class ActionsTicket
     /**
      * Get action title
      *
-     * @param string $action    Type of action
+     * @param string 	$action    	Type of action
+     * @return string			Title of action
      */
     public function getTitle($action = '')
     {
@@ -998,10 +1023,11 @@ class ActionsTicket
      * View html list of logs
      *
      * @param boolean $show_user Show user who make action
+     * @return void
      */
     public function viewTicketLogs($show_user = true)
     {
-        global $conf, $langs, $bc;
+        global $conf, $langs;
 
         // Load logs in cache
         $ret = $this->dao->loadCacheLogsTicket();
@@ -1021,11 +1047,8 @@ class ActionsTicket
                 print '</th>';
             }
 
-            $var = true;
-
             foreach ($this->dao->cache_logs_ticket as $id => $arraylogs) {
-                $var = !$var;
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td><strong>';
                 print dol_print_date($arraylogs['datec'], 'dayhour');
                 print '</strong></td>';
@@ -1042,7 +1065,7 @@ class ActionsTicket
                     print '</td>';
                 }
                 print '</tr>';
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td colspan="2">';
                 print dol_nl2br($arraylogs['message']);
 
@@ -1061,10 +1084,11 @@ class ActionsTicket
      *
      * @param 	boolean 	$show_user 	Show user who make action
      * @param	Ticket	$object		Object
+     * @return void
      */
     public function viewTimelineTicketLogs($show_user = true, $object = true)
     {
-    	global $conf, $langs, $bc;
+    	global $conf, $langs;
 
     	// Load logs in cache
     	$ret = $object->loadCacheLogsTicket();
@@ -1168,10 +1192,11 @@ class ActionsTicket
      *
      * @param boolean $show_private Show private messages
      * @param boolean $show_user    Show user who make action
+     * @return void
      */
     public function viewTicketMessages($show_private, $show_user = true)
     {
-        global $conf, $langs, $user, $bc;
+        global $conf, $langs, $user;
 		global $object;
 
         // Load logs in cache
@@ -1202,8 +1227,7 @@ class ActionsTicket
                     || ($arraymsgs['private'] == "1" && $show_private)
                 ) {
                     //print '<tr>';
-                    $var = !$var;
-                    print "<tr " . $bc[$var] . ">";
+                    print '<tr class="oddeven">';
                     print '<td><strong>';
                     print dol_print_date($arraymsgs['datec'], 'dayhour');
                     print '<strong></td>';
@@ -1221,7 +1245,7 @@ class ActionsTicket
                         print '</td>';
                     }
                     print '</td>';
-                    print "<tr " . $bc[$var] . ">";
+                    print '<tr class="oddeven">';
                     print '<td colspan="2">';
                     print $arraymsgs['message'];
                     print '</td>';
@@ -1241,10 +1265,11 @@ class ActionsTicket
      * @param 	boolean 	$show_private Show private messages
      * @param 	boolean 	$show_user    Show user who make action
      * @param	Ticket	$object		 Object ticket
+     * @return void
      */
     public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
     {
-    	global $conf, $langs, $user, $bc;
+    	global $conf, $langs, $user;
 
     	// Load logs in cache
     	$ret = $object->loadCacheMsgsTicket();
@@ -1292,6 +1317,7 @@ class ActionsTicket
     	}
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * load_previous_next_ref
      *
@@ -1301,6 +1327,7 @@ class ActionsTicket
      */
     function load_previous_next_ref($filter, $fieldid)
     {
+        // phpcs:enable
         $this->getInstanceDao();
         return $object->load_previous_next_ref($filter, $fieldid);
     }
@@ -1312,6 +1339,7 @@ class ActionsTicket
      * @param string $message          Email message
      * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
      * @param array  $array_receiver   Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+     * @return void
      */
     public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array())
     {

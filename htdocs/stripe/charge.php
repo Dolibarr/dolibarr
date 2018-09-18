@@ -62,14 +62,16 @@ llxHeader('', $langs->trans("StripeChargeList"));
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
+  $servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
-	$service = 'StripeLive';
+  $service = 'StripeLive';
+  $servicestatus = '1';
 }
 
-$stripeaccount = $stripe->getStripeAccount($service);
+$stripeacc = $stripe->getStripeAccount($service);
 /*if (empty($stripeaccount))
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
@@ -87,7 +89,7 @@ if (!$rowid)
     print '<INPUT type="hidden" name="page" value="'.$page.'">';
 
     $title=$langs->trans("StripeChargeList");
-    $title.=($stripeaccount?' (Stripe connection with Stripe OAuth Connect account '.$stripeaccount.')':' (Stripe connection with keys from Stripe module setup)');
+    $title.=($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
@@ -107,9 +109,9 @@ if (!$rowid)
 
 	print "</TR>\n";
 
-	if ($stripeaccount)
+	if ($stripeacc)
 	{
-		$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeaccount));
+		$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 	}
 	else
 	{
@@ -125,15 +127,19 @@ if (!$rowid)
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']))
+		if (! empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
 		{
 			$societestatic->fetch($tmparray['CUS']);
+		}
+		elseif (! empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
+		{
+			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 		}
 		else
 		{
 			$societestatic->id = 0;
 		}
-		if (! empty($tmparray['MEM']))
+		if (! empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
 		{
 			$memberstatic->fetch($tmparray['MEM']);
 		}
@@ -142,34 +148,55 @@ if (!$rowid)
 			$memberstatic->id = 0;
 		}
 
-	    print '<TR class="oddeven">';
-	    // Ref
-		print "<TD><A href='".DOL_URL_ROOT."/stripe/charge.php?rowid=".$charge->id."'>".$charge->id."</A></TD>\n";
+		print '<TR class="oddeven">';
+    
+    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+    
+		// Ref
+		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
+			}
+		print "<TD><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a></TD>\n";
 		// Stripe customer
-		print "<TD>".$charge->customer."</TD>\n";
+		print "<TD>";
+
+    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+		$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
+		if ($servicestatus)
+		{
+    $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
+		}
+		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+  
+    print "</TD>\n";
 		// Link
 		print "<TD>";
 		if ($societestatic->id > 0)
 		{
 			print $societestatic->getNomUrl(1);
 		}
-		if ($memberstatic->id > 0)
+		elseif ($memberstatic->id > 0)
 		{
 			print $memberstatic->getNomUrl(1);
 		}
 		print "</TD>\n";
 		// Origine
 		print "<TD>";
-		print $FULLTAG;
-		if ($charge->metadata->source=="order"){
+		if ($charge->metadata->dol_type=="order"){
 			$object = new Commande($db);
-			$object->fetch($charge->metadata->idsource);
-			print "<A href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->idsource."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
-		} elseif ($charge->metadata->source=="invoice"){
+			$object->fetch($charge->metadata->dol_id);
+      if ($object->id > 0) {
+			print "<A href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
+      } else print $FULLTAG;
+		} elseif ($charge->metadata->dol_type=="invoice"){
 			$object = new Facture($db);
-			$object->fetch($charge->metadata->idsource);
-		    print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->idsource."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
-		}
+			$object->fetch($charge->metadata->dol_id);
+      if ($object->id > 0) {
+		  print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
+      } else print $FULLTAG;
+		} else print $FULLTAG;
 	    print "</TD>\n";
 		// Date payment
 	    print '<TD align="center">'.dol_print_date($charge->created,'%d/%m/%Y %H:%M')."</TD>\n";
@@ -186,18 +213,20 @@ if (!$rowid)
 		}
 	    print '</TD>';
 	    // Amount
-	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100)."</TD>";
+	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</TD>";
 	    // Status
 	    print '<TD align="right">';
 	    if ($charge->refunded=='1'){
-	    	print $langs->trans("refunded");
+	    	print img_picto($langs->trans("refunded"),'statut6');
 	    } elseif ($charge->paid=='1'){
-	    	print $langs->trans("".$charge->status."");
+
+        print img_picto($langs->trans("".$charge->status.""),'statut4');
+             
 	    } else {
 	    	$label="Message: ".$charge->failure_message."<br>";
 	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
 	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-	    	print $form->textwithpicto($langs->trans("".$charge->status.""),$label,1);
+	    	print $form->textwithpicto(img_picto($langs->trans("".$charge->status.""),'statut8'),$label,1);
 	    }
 	    print "</TD>\n";
 
@@ -207,5 +236,6 @@ if (!$rowid)
 
 }
 
+// End of page
 llxFooter();
 $db->close();

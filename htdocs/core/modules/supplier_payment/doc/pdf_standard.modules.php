@@ -42,17 +42,17 @@ class pdf_standard extends ModelePDFSuppliersPayments
      * @var DoliDb Database handler
      */
     public $db;
-    
+
 	/**
      * @var string model name
      */
     public $name;
-    
+
 	/**
      * @var string model description (short text)
      */
     public $description;
-    
+
 	/**
      * @var string document type
      */
@@ -62,54 +62,54 @@ class pdf_standard extends ModelePDFSuppliersPayments
      * @var array() Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 4); 
-	
+	public $phpmin = array(5, 4);
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
      */
 	public $version = 'dolibarr';
-	
+
 	/**
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
 	public $marge_basse;
-    
+
 	/**
 	 * Issuer
 	 * @var Societe
 	 */
-	public $emetteur;	 
+	public $emetteur;
 
 
 	/**
@@ -120,7 +120,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
 
@@ -176,7 +176,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		PaiementFourn		$object				Id of object to generate
@@ -186,9 +187,10 @@ class pdf_standard extends ModelePDFSuppliersPayments
      *  @param		int					$hidedesc			Do not show desc
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
-	 */
+     */
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -512,6 +514,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -523,6 +526,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -567,7 +571,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		// Date
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
 		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', 1);
-
 	}
 
 
@@ -613,7 +616,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Output Rect
 		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
-
 	}
 
 
@@ -812,6 +814,4 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

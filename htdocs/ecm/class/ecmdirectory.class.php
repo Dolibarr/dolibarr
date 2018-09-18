@@ -27,32 +27,66 @@
  */
 class EcmDirectory // extends CommonObject
 {
-	public $element='ecm_directories';			//!< Id that identify managed objects
-	//public $table_element='ecm_directories';	//!< Name of table without prefix where object is stored
-	var $picto = 'dir';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='ecm_directories';
 
-	var $id;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	//public $table_element='ecm_directories';
 
-	var $label;
-	var $fk_parent;
-	var $description;
-	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
-	var $date_c;
-	var $date_m;
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'dir';
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+     * @var string ECM directories label
+     */
+    public $label;
+
+	public $fk_parent;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	public $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
+	public $date_c;
+	public $date_m;
 	public $fk_user_m;
 	public $fk_user_c;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
 
-	var $cats=array();
-	var $motherof=array();
+	public $cats=array();
+	public $motherof=array();
 
-	var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
-	var $forbiddencharsdir = array('<','>',':','?','*','|','"');
+	public $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+	public $forbiddencharsdir = array('<','>',':','?','*','|','"');
 
 	public $full_arbo_loaded;
 
+	/**
+	 * @var string Error code (or message)
+	 */
 	public $error;
-	public $errors;
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -490,6 +524,7 @@ class EcmDirectory // extends CommonObject
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
 	 *
@@ -497,6 +532,7 @@ class EcmDirectory // extends CommonObject
 	 */
 	function load_motherof()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$this->motherof=array();
@@ -537,6 +573,7 @@ class EcmDirectory // extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -546,11 +583,13 @@ class EcmDirectory // extends CommonObject
 	 */
 	static function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		return '';
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau à partir de la base de donnée
 	 *	Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
@@ -572,6 +611,7 @@ class EcmDirectory // extends CommonObject
 	 */
 	function get_full_arbo($force=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (empty($force) && ! empty($this->full_arbo_loaded))
@@ -651,6 +691,7 @@ class EcmDirectory // extends CommonObject
 		return $this->cats;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its childs.
 	 *  Separator between directories is always '/', whatever is OS.
@@ -661,6 +702,7 @@ class EcmDirectory // extends CommonObject
 	 */
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
+        // phpcs:enable
 		// Define fullpath
 		if (! empty($this->cats[$id_categ]['id_mere']))
 		{
@@ -735,6 +777,7 @@ class EcmDirectory // extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      * Call trigger based on this instance
      *
@@ -748,6 +791,7 @@ class EcmDirectory // extends CommonObject
      */
     function call_trigger($trigger_name, $user)
     {
+        // phpcs:enable
         global $langs,$conf;
 
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -764,8 +808,5 @@ class EcmDirectory // extends CommonObject
             }
         }
         return $result;
-
     }
-
-
 }

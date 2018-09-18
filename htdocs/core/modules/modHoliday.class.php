@@ -28,7 +28,7 @@
  *    \ingroup    holiday
  *    \brief      Description and activation file for module holiday
  */
-include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php";
 
 
 /**
@@ -118,7 +118,8 @@ class modHoliday extends DolibarrModules
 		$r++;
 		
 		// Array to add new pages in new tabs
-		$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');  					// To add a new tab identified by code tabname1
+		//$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');	// We avoid to get one tab for each module. RH data are already in RH tab.
+		$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

@@ -313,6 +313,6 @@ if (count($companystatic->SupplierCategories))
 //print "</td></tr></table>\n";
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -39,6 +39,9 @@ if (!class_exists('FormCompany')) {
  */
 class FormTicket
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     public $track_id;
@@ -80,7 +83,10 @@ class FormTicket
     public $substit = array();
     public $param = array();
 
-    public $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
 
     /**
@@ -120,9 +126,8 @@ class FormTicket
     {
         global $conf, $langs, $user, $hookmanager;
 
-        $langs->load("other");
-        $langs->load("mails");
-        $langs->load("ticket");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails', 'ticket'));
 
         $form = new Form($this->db);
         $formcompany = new FormCompany($this->db);
@@ -239,9 +244,9 @@ class FormTicket
 
                 // Contact and type
                 print '<tr><td>' . $langs->trans("Contact") . '</td><td>';
-                // If no socid, set to first one (id=1) to avoid full contacts list
-                $selectedCompany = $this->withfromsocid > 0 ? $this->withfromsocid : 1;
-                $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid',  0, '', '', 0, 'minwidth200');
+                // If no socid, set to -1 to avoid full contacts list
+                $selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
+                $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
                 $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
                 print '</td></tr>';
             } else {
@@ -722,8 +727,8 @@ class FormTicket
     {
         global $conf, $langs, $user, $mysoc;
 
-        $langs->load("other");
-        $langs->load("mails");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails'));
 
         $addfileaction = 'addfile';
 

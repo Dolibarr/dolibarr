@@ -319,6 +319,6 @@ if ($conf->product->enabled || $conf->product->service)
 print '</form>';
 print '<br>';
 
+// End of page
 llxFooter();
-
 $db->close();

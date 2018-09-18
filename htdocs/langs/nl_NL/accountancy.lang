@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=STAP %s: Maak rekeningschema aan vanuit menu %s
 AccountancyAreaDescChart=STAP %s: Aanmaken of controleren van het rekeningschema menu %s
 
 AccountancyAreaDescVat=STAP %s: Vastleggen grootboekrekeningen voor BTW registratie. Gebruik hiervoor menukeuze %s. 
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STAP %s: Vastleggen grootboekrekeningen voor elke soort kostenoverzicht. Gebruik hiervoor menukeuze %s.
 AccountancyAreaDescSal=STAP %s: Vastleggen grootboekrekeningen voor salarisbetalingen. Gebruik hiervoor menukeuze %s.
 AccountancyAreaDescContrib=STAP %s: Vastleggen grootboekrekeningen bij overige kosten (diverse belastingen). Gebruik hiervoor menukeuze %s;
@@ -127,10 +128,11 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding don
 
 ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set value to 6 here, the account '706' will appear like '706000' on screen)
+ACCOUNTING_LENGTH_GACCOUNT=Lengte grootboekrekeningnummer (indien lengte op 6 is gezet, zal rekeningnummer 706 op het scherm worden weergegeven als 706000)
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
 ACCOUNTING_MANAGE_ZERO=Sta toe om het aantal nullen aan het einde van een account te beheren. Dit is nodig in sommige landen (zoals Zwitserland). Bij optie uit (standaard), kunt u de volgende 2 parameters instellen om te vragen of de applicatie virtuele nul toevoegt.
 BANK_DISABLE_DIRECT_INPUT=Rechtstreeks boeken van transactie in bankboek uitzetten
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Verkoopboek
 ACCOUNTING_PURCHASE_JOURNAL=Inkoopboek

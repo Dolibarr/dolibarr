@@ -28,9 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("website");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other","website"));
 
 if (! $user->admin) accessforbidden();
 
@@ -456,9 +455,6 @@ if ($action == 'editcontent')
 
 print "</div>\n</form>\n";
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();

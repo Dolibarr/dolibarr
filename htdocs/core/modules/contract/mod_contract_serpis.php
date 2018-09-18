@@ -30,7 +30,10 @@ class mod_contract_serpis extends ModelNumRefContracts
 {
 	var $version='dolibarr';
 	var $prefix='CT';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Serpis';
 	var $code_auto=1;
 
@@ -132,16 +135,17 @@ class mod_contract_serpis extends ModelNumRefContracts
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$objforref	contract object
+	 *	@param	Object		$objforref  contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
 	function contract_get_num($objsoc,$objforref)
 	{
+        // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

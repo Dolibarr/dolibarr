@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ if ($cancel)
 if ($action == 'add')
 {
 	if (empty($ref) || empty($value)) {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
 
 		$objectval->fk_product_attribute = $object->id;
@@ -66,11 +67,11 @@ if ($action == 'add')
 		$objectval->value = $value;
 
 		if ($objectval->create($user) > 0) {
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 			exit();
 		} else {
-			setEventMessage($langs->trans('ErrorCreatingProductAttributeValue'), 'errors');
+			setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), $objectval->errors, 'errors');
 		}
 	}
 }
@@ -117,7 +118,7 @@ print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-print_fiche_titre($langs->trans('NewProductAttributeValue'));
+print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 
 dol_fiche_head();
 
@@ -144,5 +145,6 @@ print '</div>';
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

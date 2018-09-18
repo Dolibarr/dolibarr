@@ -1030,7 +1030,7 @@ if ($resql)
 	        print '<td>'.'<a href="'
 								.DOL_URL_ROOT.'/product/stock/mouvement.php'
 								.'?id='.$objp->entrepot_id
-								.'&amp;search_inventorycode='.$objp->inventorycode							   
+								.'&amp;search_inventorycode='.$objp->inventorycode
 							    .'&amp;search_type_mouvement='.$objp->type_mouvement
 						.'">'
 							.$objp->inventorycode
@@ -1173,7 +1173,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
 }
 */
 
+// End of page
 llxFooter();
-
 $db->close();
-

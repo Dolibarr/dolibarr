@@ -32,19 +32,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ExportExcel extends ModeleExports
 {
-	var $id;
-	var $label;
-	var $extension;
-	var $version;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $label_lib;
-	var $version_lib;
+    /**
+     * @var string Export Excel label
+     */
+    public $label;
 
-	var $workbook;      // Handle fichier
-	var $worksheet;     // Handle onglet
-	var $row;
-	var $col;
-    var $file;          // To save filename
+	public $extension;
+	public $version;
+
+	public $label_lib;
+	public $version_lib;
+
+	public $workbook;      // Handle file
+	public $worksheet;     // Handle sheet
+	public $row;
+	public $col;
+    public $file;          // To save filename
 
 
 	/**
@@ -65,7 +73,7 @@ class ExportExcel extends ModeleExports
 		$this->version='1.30';             // Driver version
 
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
-		
+
 		if (empty($this->disabled))
 		{
     		// If driver use an external library, put its name here
@@ -160,6 +168,7 @@ class ExportExcel extends ModeleExports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Open output file
 	 *
@@ -169,6 +178,7 @@ class ExportExcel extends ModeleExports
 	 */
 	function open_file($file,$outputlangs)
 	{
+        // phpcs:enable
 		global $user,$conf,$langs;
 
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -229,20 +239,23 @@ class ExportExcel extends ModeleExports
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Write header
+	 *  Write header
 	 *
-     *	@param      Translate	$outputlangs        Object lang to translate values
+     *  @param      Translate	$outputlangs        Object lang to translate values
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
 	function write_header($outputlangs)
 	{
+        // phpcs:enable
 		//$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
 
 		return 0;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *  Output title line into file
      *
@@ -254,6 +267,7 @@ class ExportExcel extends ModeleExports
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
+        // phpcs:enable
 		global $conf;
 
 		// Create a format for the column headings
@@ -298,6 +312,7 @@ class ExportExcel extends ModeleExports
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *  Output record line into file
      *
@@ -309,6 +324,7 @@ class ExportExcel extends ModeleExports
 	 */
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
+        // phpcs:enable
 		global $conf;
 
 		// Create a format for the column headings
@@ -329,14 +345,14 @@ class ExportExcel extends ModeleExports
 
 			$newvalue=$this->excel_clean($newvalue);
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
-			
+
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
 				$array = unserialize($typefield);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
 			}
-			
+
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
@@ -416,6 +432,7 @@ class ExportExcel extends ModeleExports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *	Write footer
      *
@@ -424,17 +441,20 @@ class ExportExcel extends ModeleExports
      */
 	function write_footer($outputlangs)
 	{
+        // phpcs:enable
 		return 0;
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *	Close Excel file
      *
 	 * 	@return		int							<0 if KO, >0 if OK
      */
 	function close_file()
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -453,7 +473,8 @@ class ExportExcel extends ModeleExports
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      * Clean a cell to respect rules of Excel file cells
      *
      * @param 	string	$newvalue	String to clean
@@ -461,6 +482,7 @@ class ExportExcel extends ModeleExports
      */
     function excel_clean($newvalue)
     {
+        // phpcs:enable
 		// Rule Dolibarr: No HTML
     	$newvalue=dol_string_nohtmltag($newvalue);
 
@@ -490,4 +512,3 @@ class ExportExcel extends ModeleExports
     	return $letter;
     }
 }
-

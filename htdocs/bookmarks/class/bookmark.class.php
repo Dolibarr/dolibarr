@@ -28,21 +28,44 @@
  */
 class Bookmark extends CommonObject
 {
-    public $element='bookmark';
+    /**
+	   * @var string ID to identify managed object
+	   */
+	  public $element='bookmark';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element='bookmark';
+
     public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    public $picto = 'bookmark';
 
-    var $db;
+    /**
+	   * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	   */
+	  public $picto = 'bookmark';
 
-    var $id;
-    var $fk_user;
-    var $datec;
-    var $url;
-    var $target;	// 0=replace, 1=new window
-    var $title;
-    var $position;
-    var $favicon;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    /**
+	   * @var int User ID
+	   */
+	  public $fk_user;
+
+    public $datec;
+    public $url;
+    public $target;	// 0=replace, 1=new window
+    public $title;
+    public $position;
+    public $favicon;
 
 
     /**
@@ -211,7 +234,6 @@ class Bookmark extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -241,5 +263,4 @@ class Bookmark extends CommonObject
 	{
 	    return '';
 	}
-
 }

@@ -40,7 +40,7 @@ $transkey=GETPOST('transkey','alpha');
 $transvalue=GETPOST('transvalue','alpha');
 
 
-$mode = GETPOST('mode')?GETPOST('mode'):'overwrite';
+$mode = GETPOST('mode','aZ09')?GETPOST('mode','aZ09'):'overwrite';
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -584,6 +584,6 @@ if (! empty($langcode))
 	dol_set_focus('#transvalue');
 }
 
+// End of page
 llxFooter();
-
 $db->close();

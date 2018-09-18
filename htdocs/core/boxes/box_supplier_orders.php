@@ -36,7 +36,11 @@ class box_supplier_orders extends ModeleBoxes
     var $boxlabel="BoxLatestSupplierOrders";
     var $depends = array("fournisseur");
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $param;
     var $info_box_head = array();
     var $info_box_contents = array();
@@ -184,6 +188,5 @@ class box_supplier_orders extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

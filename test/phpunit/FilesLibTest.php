@@ -61,6 +61,8 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -502,5 +504,4 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         $user->rights->facture->lire = $savpermlire;
         $user->rights->facture->creer = $savpermcreer;
     }
-
 }

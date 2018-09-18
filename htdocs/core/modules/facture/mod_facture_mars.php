@@ -35,7 +35,10 @@ class mod_facture_mars extends ModeleNumRefFactures
 	var $prefixreplacement='FR';
 	var $prefixdeposit='AC';
 	var $prefixcreditnote='AV';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -216,6 +219,5 @@ class mod_facture_mars extends ModeleNumRefFactures
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
-
 }
 

@@ -51,6 +51,8 @@ create table llx_societe
   url                      varchar(255),                        		--
   email                    varchar(128),                        		--
   skype                    varchar(255),                        		--
+  twitter                  varchar(255),                        		--
+  facebook                 varchar(255),                        		--
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status

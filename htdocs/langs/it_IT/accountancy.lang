@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=STEP %s: Crea un modello di piano dei conti dal me
 AccountancyAreaDescChart=STEP %s: Crea o seleziona il tuo piano dei conti dal menu %s
 
 AccountancyAreaDescVat=STEP %s: Definisci le voci del piano dei conti per ogni IVA/tassa. Per fare ciò usa il menu %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=STEP %s: Definisci le voci del piano dei conti per gli stipendi. Per fare ciò usa il menu %s.
 AccountancyAreaDescContrib=STEP %s: Definisci le voci del piano dei conti per le note spese (o altre tasse). Per fare ciò usa il menu %s;
@@ -131,6 +132,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Lunghezza generale del piano dei conti (se imposti co
 ACCOUNTING_LENGTH_AACCOUNT=Lunghezza del piano dei conti dei soggetti terzi (se è impostato a 6, il piano '401' apparirà come '401000')
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zero at the end of an accounting account. Needed by some countries (like switzerland). If keep to off (default), you can set the 2 following parameters to ask application to add virtual zero.
 BANK_DISABLE_DIRECT_INPUT=Disabilita la registrazione diretta della transazione sul conto banca
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Giornale Vendite
 ACCOUNTING_PURCHASE_JOURNAL=Giornale Acquisti

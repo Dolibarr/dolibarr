@@ -46,8 +46,8 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
     {
     	global $conf,$langs;
 
-		$langs->load("bills");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","admin"));
 
 		$form = new Form($this->db);
 
@@ -127,6 +127,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoie la reference de commande suivante non utilisee
      *
@@ -136,7 +137,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
     function commande_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
 }
-

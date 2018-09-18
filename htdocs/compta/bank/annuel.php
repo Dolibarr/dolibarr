@@ -24,7 +24,7 @@
  *		\brief       Page to report input-output of a bank account
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -494,5 +494,6 @@ else
 
 print "\n</div><br>\n";
 
+// End of page
 llxFooter();
 $db->close();

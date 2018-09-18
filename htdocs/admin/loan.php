@@ -122,5 +122,6 @@ print "</table>\n";
 
 print '<br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
+// End of page
 llxFooter();
 $db->close();
