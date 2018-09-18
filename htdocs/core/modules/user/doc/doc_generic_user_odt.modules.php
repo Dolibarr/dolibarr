@@ -93,10 +93,10 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	function info($langs)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array('companies', 'errors'));
 
 		$form = new Form($this->db);
 
