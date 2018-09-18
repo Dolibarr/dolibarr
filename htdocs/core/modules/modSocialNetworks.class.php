@@ -41,7 +41,7 @@ class modSocialNetworks extends DolibarrModules
     	global $langs,$conf;
 
         $this->db = $db;
-        $this->numero = 3300;
+        $this->numero = 3400;
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
