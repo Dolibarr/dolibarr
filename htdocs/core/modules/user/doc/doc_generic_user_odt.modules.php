@@ -48,10 +48,10 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main","companies"));
+        $langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -205,7 +205,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
         // phpcs:enable
-		global $user,$langs,$conf,$mysoc,$hookmanager;
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
 		{
@@ -226,10 +226,8 @@ class doc_generic_user_odt extends ModelePDFUser
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "companies", "bills", "dict"));
 
 		if ($conf->user->dir_output)
 		{
