@@ -54,10 +54,10 @@ if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
  */
 class doc_generic_task_odt extends ModelePDFTask
 {
-	var $emetteur;	// Objet societe qui emet
+	public $emetteur;	// Objet societe qui emet
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+	public $version = 'dolibarr';
 
 
 	/**
@@ -432,10 +432,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("projects");
+		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
 		{
