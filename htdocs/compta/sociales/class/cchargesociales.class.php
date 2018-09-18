@@ -77,31 +77,18 @@ class Cchargesociales
 
 		$error = 0;
 
-		// Clean parameters
-
-		if (isset($this->libelle)) {
-			 $this->libelle = trim($this->libelle);
-		}
-		if (isset($this->deductible)) {
-			 $this->deductible = trim($this->deductible);
-		}
-		if (isset($this->active)) {
-			 $this->active = trim($this->active);
-		}
-		if (isset($this->code)) {
-			 $this->code = trim($this->code);
-		}
-		if (isset($this->fk_pays)) {
-			 $this->fk_pays = trim($this->fk_pays);
-		}
-		if (isset($this->module)) {
-			 $this->module = trim($this->module);
-		}
-		if (isset($this->accountancy_code)) {
-			 $this->accountancy_code = trim($this->accountancy_code);
-		}
-
-
+        // Clean parameters
+        $this->trimParameters(
+            array(
+                'libelle',
+                'deductible',
+                'active',
+                'code',
+                'fk_pays',
+                'module',
+                'accountancy_code',
+            )
+        );
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -243,28 +230,17 @@ class Cchargesociales
 
 		// Clean parameters
 
-		if (isset($this->libelle)) {
-			 $this->libelle = trim($this->libelle);
-		}
-		if (isset($this->deductible)) {
-			 $this->deductible = trim($this->deductible);
-		}
-		if (isset($this->active)) {
-			 $this->active = trim($this->active);
-		}
-		if (isset($this->code)) {
-			 $this->code = trim($this->code);
-		}
-		if (isset($this->fk_pays)) {
-			 $this->fk_pays = trim($this->fk_pays);
-		}
-		if (isset($this->module)) {
-			 $this->module = trim($this->module);
-		}
-		if (isset($this->accountancy_code)) {
-			 $this->accountancy_code = trim($this->accountancy_code);
-		}
-
+        $this->trimParameters(
+            array(
+                'libelle',
+                'deductible',
+                'active',
+                'code',
+                'fk_pays',
+                'module',
+                'accountancy_code',
+            )
+        );
 
 
 		// Check parameters
