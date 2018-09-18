@@ -127,6 +127,7 @@ class FormProjets
 	 * @param  int     $nooutput           No print output. Return it only.
 	 * @param  int     $forceaddid         Force to add project id in list, event if not qualified
 	 * @param  int     $htmlid             Html id to use instead of htmlname
+	 * @param  string  $morecss            More CSS
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
 	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='', $morecss='maxwidth500')
@@ -307,7 +308,7 @@ class FormProjets
 	 *  @param	string	$morecss        More css added to the select component
 	 *	@return int         			Nbr of project if OK, <0 if KO
 	 */
-	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500',$projectsListId = false)
+	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500', $projectsListId='', $showproject='all')
 	{
 		global $user,$conf,$langs;
 
