@@ -212,6 +212,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->facture->dir_output)
