@@ -120,17 +120,26 @@ if ($action == 'specimen')
     $commande->initAsSpecimen();
 
     // Search template files
+	// NB an additional module (mymodule) may be located in :
+	// - dolibarr/htdocs/mymodule
+	// - dolibarr/htdocs/custom/mymodule
+	// so we must check the two locations
     $file=''; $classname=''; $filefound=0;
     $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
     foreach($dirmodels as $reldir)
     {
-        $file=dol_buildpath($reldir."core/modules/paymentorders/doc/pdf_".$modele.".modules.php",0);
-        if (file_exists($file))
-        {
-            $filefound=1;
-            $classname = "pdf_".$modele;
-            break;
-        }
+		$files = array(dol_buildpath($reldir."core/modules/paymentorders/doc/pdf_".$modele.".modules.php",0),dol_buildpath("/custom".$reldir."core/modules/paymentorders/pdf_".$modele.".modules.php",0));
+		foreach($files as $file)
+		{
+			dol_syslog("admin/prelevement.php PDF model : ".$file, LOG_DEBUG);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname = "pdf_".$modele;
+				break;
+			}
+		}
+		if ($filefound == 1) break;
     }
 
     if ($filefound)
