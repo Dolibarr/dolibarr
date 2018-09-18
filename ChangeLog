@@ -2,6 +2,41 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 8.0.2 compared to 8.0.1 *****
+FIX: #8452
+FIX: #9043
+FIX: #9316 Error when listing invoices
+FIX: #9317
+FIX: #9353 Bug: html error - div inside span on graphs
+FIX: #9355
+FIX: #9393 inconsistency behaviour. option FACTURE_ENABLE_NEGATIVE_LINES
+FIX: #9394
+FIX: #9396
+FIX: #9403
+FIX: #9412
+FIX: #9497
+FIX: Add paypal error message in alert email when online payment fails.
+FIX: better compatibility with multicompany
+FIX: capital must be empty and not 0 if undefined
+FIX: character making error on bill list
+FIX: Entering negative price on order.
+FIX: Expedition not showing extrafields on creation.
+FIX: Homepage links were using wrong topmenus
+FIX: inconsistency behaviour on option FACTURE_ENABLE_NEGATIVE_LINES
+FIX: invert mime type and name.
+FIX: invoice popup hide localtax2 and 3 if not defined.
+FIX: Lose filter on payment type or category after a sort on invoice list.
+FIX: Maxi debug to allow to load chart of account with multicompany.
+FIX: Missing translation in predefined email to membership renewal.
+FIX: Mixing tickets of different thirdparties.
+FIX: "Other ..." link so the "Back to" link works.
+FIX: PDF address: handle when contact thirdparty is different from thirdparty of document
+FIX: Problems with permissions of module to record payment of salaries
+FIX: remove debug
+FIX: Several fixes on the management of minimal amount for orders
+FIX: wrong var name
+
 ***** ChangeLog for 8.0.1 compared to 8.0.0 *****
 FIX: #9258
 FIX: #9328
