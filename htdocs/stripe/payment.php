@@ -808,20 +808,24 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 $i = 0;
                 //print '<tr><td colspan="3">';
                 print '<br>';
-                 print_barre_liste($langs->trans('StripeInvoiceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
+                print_barre_liste($langs->trans('StripeInvoiceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
                 print '<td align="center">'.$langs->trans('Date').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$multicurrencyalreadypayedlabel.'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$multicurrencyremaindertopay.'</td>';
+                if (!empty($conf->multicurrency->enabled)) {
+                    print '<td>'.$langs->trans('Currency').'</td>';
+                    print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
+                    print '<td align="right">'.$multicurrencyalreadypayedlabel.'</td>';
+                    print '<td align="right">'.$multicurrencyremaindertopay.'</td>';
+                }
                 print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
                 print '<td align="right">'.$alreadypayedlabel.'</td>';
                 print '<td align="right">'.$remaindertopay.'</td>';
                 print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
+                if (!empty($conf->multicurrency->enabled)) {
+                    print '<td align="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
+                }
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
@@ -980,17 +984,21 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     // Print total
                     print '<tr class="liste_total">';
                     print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
+					if (!empty($conf->multicurrency->enabled)) {
+                        print '<td></td>';
+					    print '<td></td>';
+					    print '<td></td>';
+                    }
 					print '<td align="right"><b>'.price($sign * $total_ttc).'</b></td>';
                     print '<td align="right"><b>'.price($sign * $totalrecu);
                     if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
                     if ($totalrecudeposits) print '+'.price($totalrecudeposits);
                     print '</b></td>';
-                   print '<td align="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
+                    print '<td align="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
                     print '<td align="right" id="result" style="font-weight: bold;"></td>';
-					if (!empty($conf->multicurrency->enabled)) {print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';}
+					if (!empty($conf->multicurrency->enabled)) {
+                        print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
+                    }
                     print "</tr>\n";
                 }
                 print "</table>";

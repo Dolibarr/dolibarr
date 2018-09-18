@@ -46,11 +46,8 @@ if (! empty($conf->contrat->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcontract.class.php';
 }
 
-
-$langs->load('bills');
-$langs->load('compta');
-$langs->load('admin');
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array("interventions","admin","compta","bills"));
 
 // Security check
 $id=(GETPOST('fichinterid', 'int')?GETPOST('fichinterid', 'int'):GETPOST('id', 'int'));

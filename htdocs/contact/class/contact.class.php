@@ -100,7 +100,7 @@ class Contact extends CommonObject
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
 
-    	public $poste;                 // Position
+    public $poste;                 // Position
 
 	public $socid;					// fk_soc
 	public $statut;				// 0=inactif, 1=actif
@@ -493,8 +493,8 @@ class Contact extends CommonObject
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
-		if ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
-		if ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+		elseif ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
+		elseif ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
 		return $dn;
 	}
 
@@ -508,12 +508,12 @@ class Contact extends CommonObject
 	function _load_ldap_info()
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs;
 
         $info = array();
 
         // Object classes
-		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"]=explode(',', $conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		$this->fullname=$this->getFullName($langs);
 
@@ -887,9 +887,9 @@ class Contact extends CommonObject
 				if ($obj->nb)
 				{
 					if ($obj->element=='facture')  $this->ref_facturation = $obj->nb;
-					if ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
-					if ($obj->element=='commande') $this->ref_commande = $obj->nb;
-					if ($obj->element=='propal')   $this->ref_propal = $obj->nb;
+					elseif ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
+					elseif ($obj->element=='commande') $this->ref_commande = $obj->nb;
+					elseif ($obj->element=='propal')   $this->ref_propal = $obj->nb;
 				}
 			}
 			$this->db->free($resql);
@@ -914,8 +914,8 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_lastname       = $obj->lastname;
-		$this->old_firstname      = $obj->firstname;
+		$this->old_lastname = $obj->lastname;
+		$this->old_firstname = $obj->firstname;
 
 		$this->db->begin();
 
@@ -1035,7 +1035,7 @@ class Contact extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                = $obj->rowid;
+				$this->id = $obj->rowid;
 
 				if ($obj->fk_user_creat) {
 					$cuser = new User($this->db);

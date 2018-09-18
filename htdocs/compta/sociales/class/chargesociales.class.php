@@ -430,8 +430,9 @@ class ChargeSociales extends CommonObject
     {
         // phpcs:enable
         global $langs;
-        $langs->load('customers');
-        $langs->load('bills');
+
+        // Load translation files required by the page
+        $langs->loadLangs(array("customers","bills"));
 
         if ($mode == 0 || $mode == 1)
         {
