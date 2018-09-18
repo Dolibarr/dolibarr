@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      charlene Benke       <charlie@patas-monkey.com>
@@ -1853,7 +1853,7 @@ class User extends CommonObject
 	function send_password($user, $password='', $changelater=0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs;
 		global $dolibarr_main_url_root;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -1874,10 +1874,8 @@ class User extends CommonObject
 			$outputlangs=$langs;
 		}
 
-		$outputlangs->load("main");
-		$outputlangs->load("errors");
-		$outputlangs->load("users");
-		$outputlangs->load("other");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "errors", "users", "other"));
 
 		$appli=constant('DOL_APPLICATION_TITLE');
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
