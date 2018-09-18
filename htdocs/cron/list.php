@@ -520,12 +520,13 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datenextrun)) {
+		if (!empty($obj->datenextrun)) {
+			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) print '<span class="opacitymedium">';
-			print dol_print_date($db->jdate($obj->datenextrun),'dayhour');
-			if (empty($obj->status)) print '</span>';
+			print dol_print_date($datenextrun,'dayhour');
 			if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) print img_warning($langs->trans("MaxRunReached"));
-			elseif ($obj->datenextrun && $obj->datenextrun < $now) print img_warning($langs->trans("Late"));
+			elseif ($datenextrun && $datenextrun < $now) print img_warning($langs->trans("Late"));
+			if (empty($obj->status)) print '</span>';
 		}
 		print '</td>';
 
