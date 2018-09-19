@@ -1237,7 +1237,7 @@ class Thirdparties extends DolibarrApi
 		
 		if($result->num_rows == 0 ){
 			throw new RestException(404, 'Account not found');
-		}	
+		}
 
 		$i=0;
 		
