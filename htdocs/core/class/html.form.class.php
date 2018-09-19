@@ -6099,7 +6099,7 @@ class Form
 		   }
 		   if ($val['label'])
 		   {
-			   $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($langs->trans($val['label'])).'</li>';
+		   	$lis.='<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 			   $listcheckedstring.=(empty($val['checked'])?'':$key.',');
 		   }
 		}
