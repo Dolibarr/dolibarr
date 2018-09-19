@@ -13,6 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1007,6 +1008,7 @@ class Propal extends CommonObject
                 // Add linked object (deprecated, use ->linkedObjectsIds instead)
                 if (! $error && $this->origin && $this->origin_id)
                 {
+                    dol_syslog('Deprecated use of linked object, use ->linkedObjectsIds instead', LOG_WARNING);
                 	$ret = $this->add_object_linked();
                 	if (! $ret)	dol_print_error($this->db);
                 }
@@ -1077,13 +1079,6 @@ class Propal extends CommonObject
 							$fk_parent_line = $result;
 						}
 					}
-				}
-
-				// Add linked object
-				if (! $error && $this->origin && $this->origin_id)
-				{
-					$ret = $this->add_object_linked();
-					if (! $ret)	dol_print_error($this->db);
 				}
 
 				// Set delivery address
