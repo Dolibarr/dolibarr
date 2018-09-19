@@ -1175,14 +1175,14 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Generate a sepamandate Document
 	 * 
-	 * @param int $socid thirdparty id
-	 * @param int $id companybankid
+	 * @param int $id thirdparty id
+	 * @param int $companybankid companybankid
+	 *
+	 * @return void
 	 * 
-	 * @return array Check success
-	 * 
-	 * @url GET /generateMandat/{socid}
+	 * @url GET {id}/generateMandat/{companybankid}
 	 */
-	public function generateMandat($socid, $id = null){
+	public function generateMandat($id, $companybankid = null){
 
 		$this->langs->load("database");
 		$this->langs->load("main");
@@ -1201,24 +1201,20 @@ class Thirdparties extends DolibarrApi
 
 		$model = "sepamandate";
 		
-		$this->company->fetch($socid);
+		$this->company->fetch($id);
 		
 		$action = 'builddoc';
 		if(! DolibarrApiAccess::$user->rights->societe->creer)
 			throw new RestException(401);
 		
-		
 		// Reload to get all modified line records and be ready for hooks
-		
-		
+				
 		$this->company->setDocModel($user, $model);
 		
 		$this->company->fk_bank = $this->company->fk_account;
 		
 		$outputlangs = $this->langs;
 		$newlang='';
-		
-		
 		
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang=$this->company->thirdparty->default_lang;  // for proposal, order, invoice, ...
@@ -1238,10 +1234,9 @@ class Thirdparties extends DolibarrApi
 		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
-		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." ";
-		if ($id) $sql.= " AND id = ".$id."";
-		
-		
+		if ($id) $sql.= " WHERE fk_soc  = ".$id." ";
+		if ($companybankid) $sql.= " AND id = ".$companybankid."";
+				
 		$result = $this->db->query($sql);
 		
 		if($result->num_rows == 0 ){
@@ -1265,7 +1260,8 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		}
-		else{
+		else
+		{
 			throw new RestException(404, 'Account not found');
 		}
 
@@ -1274,14 +1270,8 @@ class Thirdparties extends DolibarrApi
 			'use_companybankid'=>$accounts[0]->id,
 			'force_dir_output'=>$this->conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName($this->company->id)
 		);
-
-		
-		
 		
 		$result = 0;
-
-		
-
 		
 		$result = $this->company->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		
