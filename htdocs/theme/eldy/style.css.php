@@ -1836,6 +1836,7 @@ foreach($mainmenuusedarray as $val)
     position: absolute;
     height: 100%;
     width: 100%;
+    font-size: 1em;
 }
 .login_center {
 	display: table-cell;
@@ -1884,7 +1885,7 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	border: none;
-	/* border-bottom: solid 1px rgba(180,180,180,.4); */
+	border-bottom: solid 1px rgba(180,180,180,.4);
 	padding: 5px;
 	margin-left: 5px;
 	margin-top: 5px;
@@ -1894,17 +1895,24 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	outline: none !important;
 }
 .login_table .trinputlogin {
+	font-size: 1.4em;
 	margin: 8px;
 }
 .login_table .tdinputlogin {
     background-color: #fff;
-    border: 2px solid #ccc;
+    /* border: 2px solid #ccc; */
     min-width: 220px;
     border-radius: 2px;
 }
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
 	width: 14px;
+}
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password {
+	font-size: 1.1em;
+}
+.login_table .tdinputlogin input#securitycode {
+	font-size: 0.9em;
 }
 .login_main_message {
 	text-align: center;

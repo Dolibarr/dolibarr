@@ -191,9 +191,9 @@ if ($captcha) {
 
 </div>
 
-</div> <!-- end div login-right -->
+</div> <!-- end div login_right -->
 
-</div> <!-- end div login-line1 -->
+</div> <!-- end div login_line1 -->
 
 
 <div id="login_line2" style="clear: both">

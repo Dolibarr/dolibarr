@@ -101,11 +101,11 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Login -->
 <div class="trinputlogin">
-<div class="tagtd center valignmiddle tdinputlogin">
+<div class="tagtd nowrap center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
+<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </div>
 </div>
 
@@ -152,9 +152,9 @@ if (! empty($morelogincontent)) {
 	</div></div>
 <?php } ?>
 
-</table>
+</div>
 
-</div> <!-- end div login right -->
+</div> <!-- end div login_right -->
 
 </div> <!-- end div login_line1 -->
 
