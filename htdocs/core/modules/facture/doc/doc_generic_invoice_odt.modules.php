@@ -38,9 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_invoice_odt extends ModelePDFFactures
 {
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
 	public $emetteur;	// Objet societe qui emet
 
 	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+
 	public $version = 'dolibarr';
 
 
