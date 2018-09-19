@@ -45,6 +45,10 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
 
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
 	public $version = 'dolibarr';
 
 
