@@ -167,9 +167,9 @@ if (! $rowid) {
     if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
 
     if (preg_match('/po_/i', $txn->source)){
-    $origin="payouts"; 
+    $origin="payouts";
     } elseif (preg_match('/fee_/i', $txn->source)) {
-    $origin="connect/application_fees";    
+    $origin="connect/application_fees";
     } else {
     $origin="payments";
     }
@@ -177,13 +177,13 @@ if (! $rowid) {
 		$url='https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
 
 		if ($servicestatus)
-			{ 
+		{
 		$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
-			} 
+		}
 
     if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
     print "<td>".$txn->type."</td>";
-    } else print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";   
+    } else print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";
 		// Stripe customer
 		//print "<td>".$charge->customer."</td>\n";
 		// Link
