@@ -96,10 +96,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 */
 	function info($langs)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array('companies', 'errors'));
+        $langs->loadLangs(array("errors","companies"));
 
 		$form = new Form($this->db);
 
@@ -212,10 +212,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->facture->dir_output)
 		{

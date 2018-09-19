@@ -207,7 +207,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
         // phpcs:enable
-		global $user,$langs,$conf,$mysoc,$hookmanager;
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
 		{
@@ -228,10 +228,8 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "companies", "bills", "dict"));
 
 		if ($conf->user->dir_output)
 		{

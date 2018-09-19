@@ -51,7 +51,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
      */
     public $description;
 
-/**
+    /**
      * @var string document type
      */
     public $type;
@@ -118,9 +118,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		// Translations
+		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
@@ -209,11 +209,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		if ($conf->fournisseur->facture->dir_output)
 		{
@@ -1033,12 +1030,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $langs,$conf,$mysoc;
+		global $langs, $conf, $mysoc;
 
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("orders");
-		$outputlangs->load("companies");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills"));
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Do not add the BACKGROUND as this is for suppliers
