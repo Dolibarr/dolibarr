@@ -3239,9 +3239,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    background: #f8f8f8;
+    /* background: #f8f8f8; */
     border: 1px solid #eee;
-    box-shadow: 1px 1px 8px #ddd;
+    border-left: 3px solid #aaa;
+    box-shadow: 3px 1px 8px #ddd;
     border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
@@ -3288,9 +3289,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     }
 	.thumbstat {
 		flex: 1 1 110px;
+		margin-bottom: 8px;
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
+		margin-bottom: 8px;
 	}
     .dashboardlineindicator {
         float: left;
