@@ -35,9 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_user_odt extends ModelePDFUser
 {
-	public $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+
 	public $version = 'dolibarr';
 
 
