@@ -45,6 +45,10 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
 
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
 	public $version = 'dolibarr';
 
 
