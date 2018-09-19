@@ -3239,10 +3239,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    /* background: #f8f8f8; */
+    background: #fcfcfc;
     border: 1px solid #eee;
-    border-left: 3px solid #aaa;
-    box-shadow: 3px 1px 8px #ddd;
+    /* border-left: 6px solid #ddd; */
+    box-shadow: 1px 1px 8px #ddd;
     border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
