@@ -1174,12 +1174,12 @@ class Thirdparties extends DolibarrApi
 
 	/**
 	 * Generate a Document from a bank account record (like SEPA mandate)
-	 * 
+	 *
 	 * @param int $id thirdparty id
 	 * @param int $companybankid companybankid
 	 * @param string $model model of document to generate
 	 * @return void
-	 * 
+	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
 	 */
 	public function generateBankAccountDocument($id, $companybankid = null, $model = 'sepamandate')
@@ -1216,8 +1216,7 @@ class Thirdparties extends DolibarrApi
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang=$this->company->thirdparty->default_lang;  // for proposal, order, invoice, ...
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->default_lang)) $newlang=$this->company->default_lang;                  // for thirdparty
-		if (! empty($newlang))
-		{
+		if (! empty($newlang)) {
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
@@ -1238,8 +1237,8 @@ class Thirdparties extends DolibarrApi
 		
 		if($result->num_rows == 0 ){
 			throw new RestException(404, 'Account not found');
-		}	
-		
+		}
+
 		$i=0;
 		
 		$accounts =[];
