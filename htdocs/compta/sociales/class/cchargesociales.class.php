@@ -25,7 +25,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+//require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -501,4 +501,20 @@ class Cchargesociales
 		$this->module = '';
 		$this->accountancy_code = '';
 	}
+
+    /**
+     * Trim object parameters
+     * @param string[] $parameters array of parameters to trim
+     *
+     * @return void
+     */
+    private function trimParameters($parameters)
+    {
+        if (!is_array($parameters)) return;
+        foreach ($parameters as $parameter) {
+            if (isset($this->$parameter)) {
+                $this->$parameter = trim($this->$parameter);
+            }
+        }
+    }
 }
