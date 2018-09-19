@@ -54,7 +54,7 @@ $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
 $colortext='0,0,0';
 $colortextlink='0,0,100';
-$fontsize='0.85em';
+$fontsize='0.86em';
 $fontsizesmaller='0.75em';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
@@ -1899,7 +1899,7 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 .login_table .tdinputlogin {
     background-color: #fff;
     border: 2px solid #ccc;
-    min-width: 200px;
+    min-width: 220px;
     border-radius: 2px;
 }
 .login_table .tdinputlogin .fa {

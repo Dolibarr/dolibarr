@@ -55,7 +55,7 @@ $colortexttitlenotab='90,90,90';
 $colortexttitle='20,20,20';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
-$fontsize='13';
+$fontsize='14';
 $fontsizesmaller='11';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
@@ -121,7 +121,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1='13';
+    $conf->global->THEME_ELDY_FONT_SIZE1='14';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 
@@ -1890,7 +1890,7 @@ form#login {
 .login_table .tdinputlogin {
     background-color: #fff;
     border: 2px solid #ccc;
-    min-width: 200px;
+    min-width: 220px;
     border-radius: 2px;
 }
 .login_table .tdinputlogin .fa {
