@@ -1173,17 +1173,17 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Generate a sepamandate Document
+	 * Generate a Document from a bank account record (like SEPA mandate)
 	 * 
 	 * @param int $id thirdparty id
 	 * @param int $companybankid companybankid
-	 *
+	 * @param string $model model of document to generate
 	 * @return void
 	 * 
-	 * @url GET {id}/generateMandat/{companybankid}
+	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
 	 */
-	public function generateMandat($id, $companybankid = null){
-
+	public function generateBankAccountDocument($id, $companybankid = null, $model = 'sepamandate')
+	{
 		$this->langs->load("database");
 		$this->langs->load("main");
 		$this->langs->load("dict");
@@ -1198,9 +1198,6 @@ class Thirdparties extends DolibarrApi
 		$this->langs->load("bills");
 		$this->langs->load("withdrawals");
 
-
-		$model = "sepamandate";
-		
 		$this->company->fetch($id);
 		
 		$action = 'builddoc';
