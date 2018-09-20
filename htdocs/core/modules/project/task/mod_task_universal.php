@@ -41,9 +41,17 @@ class mod_task_universal extends ModeleNumRefTask
      */
     public $error = '';
 
-	public $nom = 'Universal';
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Universal';
 
-	public $name = 'Universal';
+	/**
+	 * @var string name
+	 */
+	public $name='Universal';
 
 
     /**
