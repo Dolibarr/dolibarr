@@ -36,6 +36,9 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'Sand';

@@ -36,7 +36,11 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
+
 	public $name = 'Thyme';
 
 
@@ -47,7 +51,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 

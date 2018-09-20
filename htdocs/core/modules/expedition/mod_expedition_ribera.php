@@ -35,6 +35,9 @@ class mod_expedition_ribera extends ModelNumRefExpedition
      */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'Ribera';
@@ -46,7 +49,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 

@@ -39,7 +39,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-    public $error = '';
+    /**
+	 * @var string Error message
+	 */
+	public $error = '';
 
 
     /**

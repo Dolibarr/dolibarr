@@ -39,6 +39,9 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'Saphir';
@@ -51,7 +54,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 

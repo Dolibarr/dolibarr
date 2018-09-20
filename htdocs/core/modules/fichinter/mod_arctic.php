@@ -38,6 +38,9 @@ class mod_arctic extends ModeleNumRefFicheinter
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'arctic';

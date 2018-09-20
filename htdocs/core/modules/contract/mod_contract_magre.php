@@ -35,6 +35,9 @@ class mod_contract_magre extends ModelNumRefContracts
      */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'Magre';
