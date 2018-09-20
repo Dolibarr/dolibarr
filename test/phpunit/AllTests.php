@@ -195,6 +195,8 @@ class AllTests
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/ExpenseReportTest.php';
         $suite->addTestSuite('ExpenseReportTest');
+        require_once dirname(__FILE__).'/LoadnTest.php';
+        $suite->addTestSuite('LoanTest');
 
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
