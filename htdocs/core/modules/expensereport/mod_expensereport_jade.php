@@ -41,7 +41,17 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 */
 	public $error='';
 
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
 	public $nom='Jade';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Jade';
 
 
     /**

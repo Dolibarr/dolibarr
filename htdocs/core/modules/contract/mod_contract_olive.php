@@ -32,12 +32,24 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_olive extends ModelNumRefContracts
 {
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Olive';
 
+	/**
+	 * @var string model name
+	 */
+	public $name='Olive';
 
-	public $nom='Olive';					// Nom du modele
 	public $code_modifiable = 1;				// Code modifiable
+
 	public $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
+
 	public $code_modifiable_null = 1;			// Code modifiables si il est null
+
 	public $code_null = 1;						// Code facultatif
 
 	/**
