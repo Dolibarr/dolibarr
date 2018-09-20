@@ -36,9 +36,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturef
 */
 class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Tulip';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $error = '';
+
+	public $nom = 'Tulip';
 
 
     /**
@@ -48,7 +54,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("bills","admin"));

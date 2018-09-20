@@ -32,9 +32,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
  */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Orchidee';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $error = '';
+
+	public $nom = 'Orchidee';
 
 
     /**
@@ -44,7 +50,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("bills","admin"));
