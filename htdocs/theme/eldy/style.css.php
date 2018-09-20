@@ -1855,6 +1855,7 @@ form#login {
 	max-width: 530px;
 	color: #eee !important;
 	padding-bottom: 20px;
+	text-shadow: 1px 1px #444;
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1899,7 +1900,7 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	margin: 8px;
 }
 .login_table .tdinputlogin {
-    background-color: #fff;
+    background-color: transparent;
     /* border: 2px solid #ccc; */
     min-width: 220px;
     border-radius: 2px;

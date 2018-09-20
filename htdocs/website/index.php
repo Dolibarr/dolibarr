@@ -2319,6 +2319,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<tr><td class="titlefield">';
 		print $langs->trans("URL");
 		print '</td><td>';
+		print info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, 'warning');
 		print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
 		print '<input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
 		print ' ';
@@ -2327,7 +2328,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto')?GETPOST('grabimagesinto'):'root');
 		print '<br>';
 		print '<input class="button" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
-		print '<br>'.info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, '1');
 		print '</td></tr>';
 		print '</table>';
 
@@ -2347,7 +2347,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '</td></tr>';
 
 		print '<tr><td class="titlefield">';
-		print $langs->trans('WEBSITE_PAGEURL');
+		print $langs->trans('InternalURLOfPage');
 		print '</td><td>';
 		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode($pageid);
 		print '</td></tr>';
@@ -2395,6 +2395,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
 	print '</td></tr>';
 
+	// Type of container
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
