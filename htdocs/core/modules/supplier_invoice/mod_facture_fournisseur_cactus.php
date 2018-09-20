@@ -39,7 +39,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $error = '';
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 	public $nom = 'Cactus';
 

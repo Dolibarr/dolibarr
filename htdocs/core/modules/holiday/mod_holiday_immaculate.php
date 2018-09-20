@@ -36,6 +36,9 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
      */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'Immaculate';

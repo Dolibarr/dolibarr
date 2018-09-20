@@ -37,6 +37,9 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'Saphir';

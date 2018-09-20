@@ -39,7 +39,10 @@ class mod_propale_saphir extends ModeleNumRefPropales
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $error = '';
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 	public $nom = 'Saphir';
 

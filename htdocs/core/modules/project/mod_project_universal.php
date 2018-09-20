@@ -36,7 +36,10 @@ class mod_project_universal extends ModeleNumRefProjects
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $error = '';
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 	public $nom = 'Universal';
 

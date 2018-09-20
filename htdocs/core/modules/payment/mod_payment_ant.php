@@ -36,6 +36,9 @@ class mod_payment_ant extends ModeleNumRefPayments
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	public $nom = 'Ant';
