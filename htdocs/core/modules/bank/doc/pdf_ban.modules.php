@@ -41,7 +41,11 @@ class pdf_ban extends ModeleBankAccountDoc
 	 */
 	public $emetteur;
 
-	var $version = 'development';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'development';
 
 	/**
 	 *	Constructor

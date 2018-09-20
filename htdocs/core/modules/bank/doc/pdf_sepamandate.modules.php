@@ -41,7 +41,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	public $emetteur;
 
-	var $version = 'dolibarr';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 	/**
 	 *	Constructor
@@ -50,7 +54,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
