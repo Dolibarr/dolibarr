@@ -30,9 +30,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expenserepo
  */
 class mod_expensereport_sand extends ModeleNumRefExpenseReport
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Sand';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $error = '';
+
+	public $nom = 'Sand';
 
 
     /**
@@ -42,7 +48,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
