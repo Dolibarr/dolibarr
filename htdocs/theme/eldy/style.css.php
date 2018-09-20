@@ -1853,7 +1853,7 @@ form#login {
 }
 .login_table_title {
 	max-width: 530px;
-	color: #aaa !important;
+	color: #eee !important;
 	padding-bottom: 20px;
 }
 .login_table label {
@@ -1895,7 +1895,7 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	outline: none !important;
 }
 .login_table .trinputlogin {
-	font-size: 1.4em;
+	font-size: 1.2em;
 	margin: 8px;
 }
 .login_table .tdinputlogin {
@@ -1909,10 +1909,10 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	width: 14px;
 }
 .login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password {
-	font-size: 1.1em;
+	font-size: 1em;
 }
 .login_table .tdinputlogin input#securitycode {
-	font-size: 0.9em;
+	font-size: 1em;
 }
 .login_main_message {
 	text-align: center;
