@@ -30,9 +30,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/payment/modules_payment.php';
  */
 class mod_payment_ant extends ModeleNumRefPayments
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Ant';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $error = '';
+
+	public $nom = 'Ant';
 
 
     /**
@@ -42,7 +48,7 @@ class mod_payment_ant extends ModeleNumRefPayments
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
