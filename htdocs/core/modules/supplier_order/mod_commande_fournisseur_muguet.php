@@ -37,7 +37,10 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $error = '';
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 	public $nom = 'Muguet';
 

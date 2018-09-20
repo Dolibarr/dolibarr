@@ -38,7 +38,10 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $error = '';
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 	public $nom = 'Orchidee';
 

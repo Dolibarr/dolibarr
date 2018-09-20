@@ -36,7 +36,10 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $error = '';
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 	public $nom = 'Brodator';
 

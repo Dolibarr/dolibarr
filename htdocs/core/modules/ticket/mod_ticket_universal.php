@@ -35,8 +35,13 @@ class mod_ticket_universal extends ModeleNumRefTicket
      */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+    /**
+     * @var string Error code (or message)
+     */
     public $error = '';
+
     public $nom = 'Universal';
+
     public $name = 'Universal';
 
     /**

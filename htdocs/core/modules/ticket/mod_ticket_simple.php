@@ -37,8 +37,14 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
     public $prefix = 'TS';
+
+    /**
+     * @var string Error code (or message)
+     */
     public $error = '';
+
     public $nom = "Simple";
+
     public $name = "Simple";
 
     /**

@@ -39,7 +39,10 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $error = '';
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 	public $nom = 'Saphir';
 

@@ -29,6 +29,9 @@
  */
 abstract class ModeleNumRefTicket
 {
+    /**
+     * @var string Error code (or message)
+     */
     public $error = '';
 
     /**
