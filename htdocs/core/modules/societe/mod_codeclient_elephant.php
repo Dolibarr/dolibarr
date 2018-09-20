@@ -34,18 +34,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_elephant extends ModeleThirdPartyCode
 {
-	var $nom='Elephant';				// Nom du modele
-	var $name='Elephant';				// Nom du modele
-	var $code_modifiable;				// Code modifiable
-	var $code_modifiable_invalide;		// Code modifiable si il est invalide
-	var $code_modifiable_null;			// Code modifiables si il est null
-	var $code_null;						// Code facultatif
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
-	var $code_auto;                     // Numerotation automatique
+	public $nom='Elephant';				// Nom du modele
 
-	var $searchcode; // String de recherche
-	var $numbitcounter; // Nombre de chiffres du compteur
-	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	public $name='Elephant';				// Nom du modele
+
+	public $code_modifiable;				// Code modifiable
+
+	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null;			// Code modifiables si il est null
+
+	public $code_null;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto;                     // Numerotation automatique
+
+	public $searchcode; // String de recherche
+
+	public $numbitcounter; // Nombre de chiffres du compteur
+
+	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
 	/**

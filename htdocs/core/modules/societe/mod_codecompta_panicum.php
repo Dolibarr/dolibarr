@@ -30,9 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codecompta_panicum extends ModeleAccountancyCode
 {
-	var $nom='Panicum';
-	var $name='Panicum';
-	var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+	public $nom='Panicum';
+
+	public $name='Panicum';
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
 
 	/**
