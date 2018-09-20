@@ -1899,7 +1899,7 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	margin: 8px;
 }
 .login_table .tdinputlogin {
-    background-color: #fff;
+    background-color: transparent;
     /* border: 2px solid #ccc; */
     min-width: 220px;
     border-radius: 2px;
