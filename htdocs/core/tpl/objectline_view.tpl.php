@@ -66,7 +66,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
-<tr  id="row-<?php echo $line->id?> class="drag drop oddeven" <?php echo $domData; ?> >
+<tr  id="row-<?php echo $line->id?>" class="drag drop oddeven" <?php echo $domData; ?> >
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
