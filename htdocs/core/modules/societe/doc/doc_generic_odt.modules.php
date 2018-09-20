@@ -36,7 +36,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 {
 	var $emetteur;	// Objet societe qui emet
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
 
 
 	/**
@@ -46,7 +50,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("main","companies"));
