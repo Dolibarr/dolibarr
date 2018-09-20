@@ -29,9 +29,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expedition/modules_expedition.php
  */
 class mod_expedition_ribera extends ModelNumRefExpedition
 {
-	var $version='dolibarr';
-	var $error = '';
-	var $nom = 'Ribera';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	public $error = '';
+
+	public $nom = 'Ribera';
 
 	/**
 	 *	Return default description of numbering model

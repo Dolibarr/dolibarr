@@ -34,13 +34,19 @@ class mod_contract_olive extends ModelNumRefContracts
 {
 
 
-	var $nom='Olive';					// Nom du modele
-	var $code_modifiable = 1;				// Code modifiable
-	var $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
-	var $code_modifiable_null = 1;			// Code modifiables si il est null
-	var $code_null = 1;						// Code facultatif
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
-	var $code_auto = 0; 	                // Numerotation automatique
+	public $nom='Olive';					// Nom du modele
+	public $code_modifiable = 1;				// Code modifiable
+	public $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
+	public $code_modifiable_null = 1;			// Code modifiables si il est null
+	public $code_null = 1;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto = 0; 	                // Numerotation automatique
 
 
 	/**

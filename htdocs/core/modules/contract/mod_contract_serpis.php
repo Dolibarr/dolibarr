@@ -28,14 +28,22 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_serpis extends ModelNumRefContracts
 {
-	var $version='dolibarr';
-	var $prefix='CT';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	public $prefix='CT';
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $nom='Serpis';
-	var $code_auto=1;
+
+	public $nom='Serpis';
+
+	public $code_auto=1;
 
 
 	/**

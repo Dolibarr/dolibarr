@@ -29,10 +29,17 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_magre extends ModelNumRefContracts
 {
-	var $version='dolibarr';
-	var $error = '';
-	var $nom = 'Magre';
-	var $code_auto=1;
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	public $error = '';
+
+	public $nom = 'Magre';
+
+	public $code_auto=1;
 
 	/**
 	 *	Return default description of numbering model
