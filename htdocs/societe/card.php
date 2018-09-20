@@ -535,12 +535,13 @@ if (empty($reshook))
 					}
 
 					// Links with users
-					$salesreps = GETPOST('commercial', 'array');
-					$result = $object->setSalesRep($salesreps);
-					if ($result < 0)
-					{
-						$error++;
-						setEventMessages($object->error, $object->errors, 'errors');
+					if (!empty($user->rights->societe->client->voir)) {
+						$salesreps = GETPOST('commercial', 'array');
+						$result = $object->setSalesRep($salesreps);
+						if ($result < 0) {
+							$error++;
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
 					}
 
 					// Customer categories association
