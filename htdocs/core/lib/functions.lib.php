@@ -4137,13 +4137,13 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	int		$id					To force an id on html objects
+ * 	@param	string	$id					To force an id on html objects
  *  @param  string  $morecssontable     More css on table
  *	@param	string	$morehtmlcenter		Added message to show on center
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='', $morehtmlcenter='')
+function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id='', $morecssontable='', $morehtmlcenter='')
 {
 	global $conf;
 
@@ -4153,7 +4153,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle" id="pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
