@@ -34,9 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
  */
 class mod_codeproduct_elephant extends ModeleProductCode
 {
-	public $nom='Elephant';				// Nom du modele
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Elephant';
 
-	public $name='Elephant';				// Nom du modele
+	/**
+	 * @var string model name
+	 */
+	public $name='Elephant';
 
 	public $code_modifiable;				// Code modifiable
 

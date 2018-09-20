@@ -42,7 +42,17 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	 */
 	public $error = '';
 
-	public $nom = 'Saphir';
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -52,7 +62,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      */
 	function info()
 	{
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 

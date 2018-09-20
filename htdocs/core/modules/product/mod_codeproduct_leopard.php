@@ -39,9 +39,17 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
 	 */
 
-	public $nom='Leopard';					// Nom du modele
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Leopard';
 
-	public $name='Leopard';					// Nom du modele
+	/**
+	 * @var string model name
+	 */
+	public $name='Leopard';
 
 	public $code_modifiable;				// Code modifiable
 
