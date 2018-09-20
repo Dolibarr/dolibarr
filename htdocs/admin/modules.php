@@ -846,6 +846,8 @@ if ($mode == 'common')
 
     dol_fiche_end();
 
+    print '<br>';
+
     // Show warning about external users
     print info_admin(showModulesExludedForExternal($modules))."\n";
 
