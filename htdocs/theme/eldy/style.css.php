@@ -1855,6 +1855,7 @@ form#login {
 	max-width: 530px;
 	color: #eee !important;
 	padding-bottom: 20px;
+	text-shadow: 1px 1px #444;
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
