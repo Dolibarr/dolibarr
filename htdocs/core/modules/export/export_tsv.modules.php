@@ -50,6 +50,7 @@ class ExportTsv extends ModeleExports
 	public $version = 'dolibarr';
 
     public $label_lib;
+
     public $version_lib;
 
     public $separator="\t";

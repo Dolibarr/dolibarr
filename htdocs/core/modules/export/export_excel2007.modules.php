@@ -52,12 +52,17 @@ class ExportExcel2007 extends ExportExcel
 	public $version = 'dolibarr';
 
 	public $label_lib;
+
 	public $version_lib;
 
 	public $workbook;      // Handle fichier
+
 	public $worksheet;     // Handle onglet
+
 	public $row;
+
 	public $col;
+
     public $file;          // To save filename
 
 	/**

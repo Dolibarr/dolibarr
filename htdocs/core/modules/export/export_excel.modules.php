@@ -51,12 +51,17 @@ class ExportExcel extends ModeleExports
 	public $version = 'dolibarr';
 
 	public $label_lib;
+
 	public $version_lib;
 
 	public $workbook;      // Handle file
+
 	public $worksheet;     // Handle sheet
+
 	public $row;
+
 	public $col;
+
     public $file;          // To save filename
 
 

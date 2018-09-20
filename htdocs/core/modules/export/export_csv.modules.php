@@ -49,6 +49,7 @@ class ExportCsv extends ModeleExports
 	public $version = 'dolibarr';
 
 	public $label_lib;
+
 	public $version_lib;
 
 	public $separator;
@@ -63,7 +64,7 @@ class ExportCsv extends ModeleExports
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 		$this->db = $db;
 
 		$this->separator=',';

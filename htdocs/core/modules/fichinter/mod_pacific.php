@@ -43,7 +43,17 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 */
 	public $error='';
 
-	public $nom = 'pacific';
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='pacific';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='pacific';
 
 
 	/**
