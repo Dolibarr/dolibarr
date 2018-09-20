@@ -38,7 +38,13 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	var $code_modifiable_invalide;		// Modified code if it is invalid
 	var $code_modifiable_null;			// Modified code if it is null
 	var $code_null;						// Optional code
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
 	var $code_auto;                     // Automatic Numbering
 
 	var $searchcode; // Search string

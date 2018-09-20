@@ -30,9 +30,14 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php
  */
 class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $name = 'Thyme';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $error = '';
+	public $name = 'Thyme';
 
 
     /**
