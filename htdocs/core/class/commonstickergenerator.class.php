@@ -61,9 +61,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
  */
 abstract class CommonStickerGenerator
 {
-
 	public $code;   // Code of format
-	public $format;	// Array with informations
+
+	/**
+     * @var array format Array with informations
+     */
+    public $format;
 
 	// protected
 	var $_Avery_Name	= '';	// Nom du format de l'etiquette
