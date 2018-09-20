@@ -68,7 +68,11 @@ class pdf_standard extends ModelePDFProduct
      */
 	public $version = 'dolibarr';
 
+    /**
+     * @var int page_largeur
+     */
     public $page_largeur;
+
     public $page_hauteur;
     public $format;
 	public $marge_gauche;

@@ -69,7 +69,11 @@ class pdf_stdmovement extends ModelePDFMovement
      */
 	public $version = 'dolibarr';
 
+    /**
+     * @var int page_largeur
+     */
     public $page_largeur;
+
     public $page_hauteur;
     public $format;
 	public $marge_gauche;
