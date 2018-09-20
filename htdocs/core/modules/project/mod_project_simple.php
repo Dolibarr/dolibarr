@@ -31,14 +31,22 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/modules_project.php';
  */
 class mod_project_simple extends ModeleNumRefProjects
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PJ';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='PJ';
+
     /**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $nom = "Simple";
-	var $name = "Simple";
+
+	public $nom = "Simple";
+
+	public $name = "Simple";
 
 
     /**

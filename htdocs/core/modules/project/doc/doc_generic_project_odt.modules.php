@@ -65,7 +65,11 @@ class doc_generic_project_odt extends ModelePDFProjects
      */
 	public $phpmin = array(5, 4);
 
-	var $version = 'dolibarr';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 
 	/**

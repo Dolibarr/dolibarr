@@ -30,10 +30,17 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/modules_project.php';
  */
 class mod_project_universal extends ModeleNumRefProjects
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Universal';
-	var $name = 'Universal';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $error = '';
+
+	public $nom = 'Universal';
+
+	public $name = 'Universal';
 
 
     /**
@@ -43,7 +50,7 @@ class mod_project_universal extends ModeleNumRefProjects
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("projects","admin"));
