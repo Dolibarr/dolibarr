@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012    Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010        Laurent Destailleur    <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012   Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010        Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,17 @@ class mod_ticket_simple extends ModeleNumRefTicket
      */
     public $error = '';
 
-    public $nom = "Simple";
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Simple';
 
-    public $name = "Simple";
+	/**
+	 * @var string model name
+	 */
+	public $name='Simple';
 
     /**
      *  Return description of numbering module
