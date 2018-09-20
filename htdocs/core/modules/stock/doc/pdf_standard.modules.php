@@ -73,7 +73,11 @@ class pdf_standard extends ModelePDFStock
      */
     public $page_largeur;
 
+    /**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+
     public $format;
 	public $marge_gauche;
 	public $marge_droite;
