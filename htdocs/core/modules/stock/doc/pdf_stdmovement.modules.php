@@ -94,7 +94,11 @@ class pdf_stdmovement extends ModelePDFMovement
      */
 	public $marge_droite;
 
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+
 	public $marge_basse;
 
     /**

@@ -93,7 +93,11 @@ class pdf_standard extends ModelePDFStock
      */
 	public $marge_droite;
 
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+
 	public $marge_basse;
 
     /**
