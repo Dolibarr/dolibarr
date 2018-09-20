@@ -122,11 +122,12 @@ class FormFile
 			if (preg_match('/g$/i',$maxphp)) $maxphp=$maxphp*1024*1024;
 			if (preg_match('/t$/i',$maxphp)) $maxphp=$maxphp*1024*1024*1024;
 			// Now $max and $maxphp are in Kb
-			if ($maxphp > 0) $max=min($max,$maxphp);
+			$maxmin = $max;
+			if ($maxphp > 0) $maxmin=min($max,$maxphp);
 
-			if ($max > 0)
+			if ($maxmin > 0)
 			{
-				$out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
+				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
 			}
 
 			$out .= '<input class="flat minwidth400" type="file"';
