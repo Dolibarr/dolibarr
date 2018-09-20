@@ -39,6 +39,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 	public $family = 'core';
 	public $description = "Triggers of this module allows to manage workflows";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
 
 	/**
