@@ -2,7 +2,8 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
-  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Philippe Grand      <philippe.grand@atoo-net.com>
 
 *
 * This program is free software; you can redistribute it and/or modify
@@ -45,7 +46,11 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 	 */
 	public $emetteur;
 
-	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
