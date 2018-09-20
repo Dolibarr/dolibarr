@@ -29,13 +29,20 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier
  */
 class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='SPAY';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='SPAY';
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $nom='Bronan';
+
+	public $nom='Bronan';
 
 
     /**

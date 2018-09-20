@@ -30,9 +30,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier
  */
 class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Brodator';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $error = '';
+
+	public $nom = 'Brodator';
 
 
     /**
@@ -42,7 +48,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
