@@ -42,7 +42,17 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 */
 	public $error='';
 
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
 	public $nom='Madonna';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Madonna';
 
 	public $code_auto=1;
 

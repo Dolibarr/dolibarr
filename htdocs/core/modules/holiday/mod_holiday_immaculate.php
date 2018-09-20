@@ -41,7 +41,17 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 */
 	public $error = '';
 
-	public $nom = 'Immaculate';
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Immaculate';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Immaculate';
 
 	public $code_auto=1;
 

@@ -69,18 +69,23 @@ class ImportXlsx extends ModeleImports
 	public $version = 'dolibarr';
 
 	public $label_lib;    // Label of external lib used by driver
+
 	public $version_lib;  // Version of external lib used by driver
 
 	public $separator;
 
     public $file;      // Path of file
+
 	public $handle;    // Handle fichier
 
 	public $cacheconvert=array();      // Array to cache list of value found after a convertion
+
 	public $cachefieldtable=array();   // Array to cache list of value found into fields@tables
 
 	public $workbook; // temporary import file
+
 	public $record; // current record
+
 	public $headers;
 
 
