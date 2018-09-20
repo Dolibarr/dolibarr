@@ -98,6 +98,9 @@ class pdf_standard extends ModelePDFProduct
      */
 	public $marge_haute;
 
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
     /**
