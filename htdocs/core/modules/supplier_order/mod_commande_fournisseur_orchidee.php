@@ -43,7 +43,17 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
     public $error = '';
 
-	public $nom = 'Orchidee';
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Orchidee';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Orchidee';
 
 
     /**

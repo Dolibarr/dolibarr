@@ -41,7 +41,17 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
      */
     public $error = '';
 
-	public $nom = 'Brodator';
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Brodator';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Brodator';
 
 
     /**
