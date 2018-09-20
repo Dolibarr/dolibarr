@@ -1184,6 +1184,8 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function generateBankAccountDocument($id, $companybankid = null, $model = 'sepamandate')
 	{
+		global $conf;
+
 		$this->langs->load("database");
 		$this->langs->load("main");
 		$this->langs->load("dict");
@@ -1199,20 +1201,18 @@ class Thirdparties extends DolibarrApi
 		$this->langs->load("withdrawals");
 
 		$this->company->fetch($id);
-		
+
 		$action = 'builddoc';
 		if(! DolibarrApiAccess::$user->rights->societe->creer)
 			throw new RestException(401);
-		
-		// Reload to get all modified line records and be ready for hooks
-				
-		$this->company->setDocModel($user, $model);
-		
+
+		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
+
 		$this->company->fk_bank = $this->company->fk_account;
-		
+
 		$outputlangs = $this->langs;
 		$newlang='';
-		
+
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang=$this->company->thirdparty->default_lang;  // for proposal, order, invoice, ...
 		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->default_lang)) $newlang=$this->company->default_lang;                  // for thirdparty
@@ -1220,37 +1220,38 @@ class Thirdparties extends DolibarrApi
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		
+
 		// To be sure vars is defined
+		$hidedetails = $hidedesc = $hideref = 0;
+		$moreparams=null;
 		if (empty($hidedetails)) $hidedetails=0;
 		if (empty($hidedesc)) $hidedesc=0;
 		if (empty($hideref)) $hideref=0;
 		if (empty($moreparams)) $moreparams=null;
-		
-		
+
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) $sql.= " WHERE fk_soc  = ".$id." ";
 		if ($companybankid) $sql.= " AND id = ".$companybankid."";
-				
-		$result = $this->db->query($sql);
-		
-		if($result->num_rows == 0 ){
-			throw new RestException(404, 'Account not found');
-		}
 
 		$i=0;
-		
-		$accounts =[];
-		
+		$accounts=array();
+
+		$result = $this->db->query($sql);
 		if ($result)
 		{
+			if ($result->num_rows == 0) {
+				throw new RestException(404, 'Bank account not found');
+			}
+
 			$num = $this->db->num_rows($result);
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
+
 				$account = new CompanyBankAccount($this->db);
-				if($account->fetchFromApi($obj->rowid)) {
+				if ($account->fetch($obj->rowid)) {
 					$accounts[] = $account;
 				}
 				$i++;
@@ -1258,19 +1259,18 @@ class Thirdparties extends DolibarrApi
 		}
 		else
 		{
-			throw new RestException(404, 'Account not found');
+			throw new RestException(404, 'Bank account not found');
 		}
 
-		
 		$moreparams = array(
 			'use_companybankid'=>$accounts[0]->id,
 			'force_dir_output'=>$this->conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName($this->company->id)
 		);
-		
+
 		$result = 0;
-		
+
 		$result = $this->company->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		
+
 		if ($result > 0)
 		{
 			return array("success" => $result);
