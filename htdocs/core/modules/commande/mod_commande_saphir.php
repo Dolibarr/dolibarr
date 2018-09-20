@@ -44,7 +44,17 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 */
 	public $error = '';
 
-	public $nom = 'Saphir';
+	/**
+	 * @var string nom
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Saphir';
 
 
     /**
