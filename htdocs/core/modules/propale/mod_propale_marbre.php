@@ -44,7 +44,17 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	 */
 	public $error='';
 
-	public $nom = "Marbre";
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Marbre';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Marbre';
 
 
     /**

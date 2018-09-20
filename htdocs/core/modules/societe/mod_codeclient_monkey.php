@@ -32,9 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
-	public $nom='Monkey';					// Nom du modele
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Monkey';
 
-	public $name='Monkey';					// Nom du modele
+	/**
+	 * @var string model name
+	 */
+	public $name='Monkey';
 
 	public $code_modifiable;				// Code modifiable
 

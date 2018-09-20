@@ -31,8 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
 	public $nom='Aquarium';
 
+	/**
+	 * @var string model name
+	 */
 	public $name='Aquarium';
 
 	/**
