@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net> 
+/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -227,7 +227,7 @@ elseif ($txn->status=='failed')
 	print "</table>";
 	print '</div>';
 	print '</form>';
-} else {}
+}
 
 llxFooter();
 $db->close();
