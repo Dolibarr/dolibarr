@@ -161,25 +161,27 @@ if (! $rowid) {
 		print '<tr class="oddeven">';
 		
 		// Ref
-    if (!empty($stripeacc)) $connect=$stripeacc.'/';
+        if (!empty($stripeacc)) $connect=$stripeacc.'/';
     
 		// Ref
-    if (preg_match('/po_/i', $txn->source)){
-    $origin="payouts";
-    } elseif (preg_match('/fee_/i', $txn->source)) {
-    $origin="connect/application_fees";
-    } else {
-    $origin="payments";
-    }
+        if (preg_match('/po_/i', $txn->source)){
+            $origin="payouts";
+        } elseif (preg_match('/fee_/i', $txn->source)) {
+            $origin="connect/application_fees";
+        } else {
+            $origin="payments";
+        }
 
 		$url='https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
-			if ($servicestatus)
-			{
-				$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
-			}
-    if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
-    print "<td>".$txn->type."</td>";  
-    } else print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";  
+		if ($servicestatus)
+		{
+			$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
+		}
+        if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
+            print "<td>".$txn->type."</td>";
+        } else {
+            print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";
+        }
 
 		// Stripe customer
 		//print "<td>".$charge->customer."</td>\n";
@@ -216,11 +218,11 @@ if (! $rowid) {
 		// Status
 		print "<td align='right'>";
 		if ($txn->status=='available')
- 		{print img_picto($langs->trans("".$txn->status.""),'statut4');} 
+ 		{print img_picto($langs->trans("".$txn->status.""),'statut4');}
 		elseif ($txn->status=='pending')
 		{print img_picto($langs->trans("".$txn->status.""),'statut7');}
 		elseif ($txn->status=='failed')
-		{print img_picto($langs->trans("".$txn->status.""),'statut8');}        
+		{print img_picto($langs->trans("".$txn->status.""),'statut8');}
 		print '</td>';
 		print "</tr>\n";
 	}
