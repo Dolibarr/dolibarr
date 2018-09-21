@@ -30,7 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
  */
 class mod_ticket_simple extends ModeleNumRefTicket
 {
-    public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+    /**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+
     public $prefix = 'TS';
     public $error = '';
     public $nom = "Simple";

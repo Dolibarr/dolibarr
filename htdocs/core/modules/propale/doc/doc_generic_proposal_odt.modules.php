@@ -37,9 +37,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
 	public $emetteur;	// Objet societe qui emet
 
 	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
 	public $version = 'dolibarr';
 
 
