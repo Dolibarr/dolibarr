@@ -669,14 +669,14 @@ textarea.centpercent {
 }
 .badge {
 	display: inline-block;
-    	position: absolute;
-    	top: -10px;
-    	right: -5px;
-    	text-align: right;
+	position: absolute;
+	top: -10px;
+	right: -5px;
+    text-align: right;
 	
 	min-width: 10px;
 	padding: 5px 5px;
-	font-size: 10px;
+	font-size: 0.8em;
 	font-weight: 700;
 	line-height: 1em;
 	color: #fff;
@@ -687,6 +687,14 @@ textarea.centpercent {
 	border-radius: 10px;
 }
 
+.popuptab .badge{
+	position: relative;
+	top: auto;
+	text-align: left;
+	min-width: 5px;
+	padding: 3px 3px;
+	line-height: 0.9em;
+}
 
 .tab .badge{
 	font-size: 9px;
