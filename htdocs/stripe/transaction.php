@@ -159,10 +159,10 @@ if (! $rowid) {
 		$societestatic->societe_id = $obj->fk_soc;
 
 		print '<tr class="oddeven">';
-		
+
 		// Ref
     if (!empty($stripeacc)) $connect=$stripeacc.'/';
-    
+
 		// Ref
     if (preg_match('/po_/i', $txn->source)){
     $origin="payouts";
@@ -178,8 +178,8 @@ if (! $rowid) {
 				$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
 			}
     if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
-    print "<td>".$txn->type."</td>";  
-    } else print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";  
+    print "<td>".$txn->type."</td>";
+    } else print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";
 
 		// Stripe customer
 		//print "<td>".$charge->customer."</td>\n";
@@ -216,11 +216,11 @@ if (! $rowid) {
 		// Status
 		print "<td align='right'>";
 		if ($txn->status=='available')
- 		{print img_picto($langs->trans("".$txn->status.""),'statut4');} 
+ 		{print img_picto($langs->trans("".$txn->status.""),'statut4');}
 		elseif ($txn->status=='pending')
 		{print img_picto($langs->trans("".$txn->status.""),'statut7');}
 		elseif ($txn->status=='failed')
-		{print img_picto($langs->trans("".$txn->status.""),'statut8');}        
+		{print img_picto($langs->trans("".$txn->status.""),'statut8');}
 		print '</td>';
 		print "</tr>\n";
 	}
