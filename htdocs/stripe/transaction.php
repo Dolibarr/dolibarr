@@ -125,10 +125,10 @@ if (! $rowid) {
 	{
 		//$charge = $txn;
 		//var_dump($txn);
-		
+
 		// The metadata FULLTAG is defined by the online payment page
 		/*$FULLTAG=$charge->metadata->FULLTAG;
-		
+
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 		// Load origin object according to metadata
@@ -148,7 +148,7 @@ if (! $rowid) {
 		{
 			$memberstatic->id = 0;
 		}*/
-		
+
 		$societestatic->fetch($charge->metadata->idcustomer);
 		$societestatic->id = $charge->metadata->idcustomer;
 		$societestatic->lastname = $obj->lastname;
@@ -167,11 +167,11 @@ if (! $rowid) {
     if (preg_match('/po_/i', $txn->source)){
     $origin="payouts";
     } elseif (preg_match('/fee_/i', $txn->source)) {
-    $origin="connect/application_fees";    
+    $origin="connect/application_fees";
     } else {
-    $origin="payments";    
-        }
-         
+    $origin="payments";
+    }
+
 		$url='https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
 			if ($servicestatus)
 			{
@@ -229,5 +229,6 @@ elseif ($txn->status=='failed')
 	print '</form>';
 }
 
+// End of page
 llxFooter();
 $db->close();
