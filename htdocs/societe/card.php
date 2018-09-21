@@ -1377,16 +1377,13 @@ else
             print '</tr>';
         }
 
-        if ($user->rights->societe->client->voir)
-        {
-            // Assign a Name
-            print '<tr>';
-            print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
-            print '<td colspan="3" class="maxwidthonsmartphone">';
-			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-            print $form->multiselectarray('commercial', $userlist, GETPOST('commercial', 'array'), null, null, null, null, "90%");
-            print '</td></tr>';
-        }
+		// Assign a Name
+		print '<tr>';
+		print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
+		print '<td colspan="3" class="maxwidthonsmartphone">';
+		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+		print $form->multiselectarray('commercial', $userlist, (count(GETPOST('commercial', 'array')) > 0?GETPOST('commercial', 'array'):(empty($user->rights->societe->client->voir)?array($user->id):array())), null, null, null, null, "90%");
+		print '</td></tr>';
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
