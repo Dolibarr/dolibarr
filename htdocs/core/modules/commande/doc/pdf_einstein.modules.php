@@ -1239,7 +1239,7 @@ class pdf_einstein extends ModelePDFCommandes
 	{
 		global $conf,$langs,$hookmanager;
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

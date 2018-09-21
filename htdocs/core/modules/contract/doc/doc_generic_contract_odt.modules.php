@@ -216,6 +216,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->contrat->dir_output)
