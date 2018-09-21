@@ -38,7 +38,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
     /**
      * @var string Error code (or message)
      */
-    public $error = '';
+  public $error = '';
 
     /**
 	 * @var string Nom du modele
