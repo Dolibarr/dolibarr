@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018 	PtibogXIV        <support@ptibogxiv.net>
+/* Copyright (C) 2018 	Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,13 +62,13 @@ llxHeader('', $langs->trans("StripeChargeList"));
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
-  $servicestatus = '0';
+	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 else
 {
-  $service = 'StripeLive';
-  $servicestatus = '1';
+	$service = 'StripeLive';
+	$servicestatus = '1';
 }
 
 $stripeacc = $stripe->getStripeAccount($service);
@@ -150,7 +150,7 @@ if (!$rowid)
 
 		print '<tr class="oddeven">';
     
-    if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+    if (!empty($stripeacc)) $connect=$stripeacc.'/';
     
 		// Ref
 		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
