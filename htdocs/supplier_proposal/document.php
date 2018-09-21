@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
-
-$langs->load('compta');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'other'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
@@ -88,7 +87,7 @@ if ($object->id > 0)
 	$head = supplier_proposal_prepare_head($object);
 	dol_fiche_head($head, 'document', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -171,5 +170,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+// End of page
 llxFooter();
 $db->close();

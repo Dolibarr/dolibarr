@@ -27,17 +27,33 @@
  */
 class Ctypent // extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
 
-    var $id;
-	var $code;
-	var $libelle;
-	var $active;
-	var $module;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $code;
+	public $libelle;
+	public $active;
+	public $module;
 
 
 
@@ -50,7 +66,6 @@ class Ctypent // extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -317,5 +332,4 @@ class Ctypent // extends CommonObject
 			return 1;
 		}
 	}
-
 }

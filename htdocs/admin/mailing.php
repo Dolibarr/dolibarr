@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "mails"));
 
 if (!$user->admin) accessforbidden();
@@ -152,6 +152,6 @@ print '<div align="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

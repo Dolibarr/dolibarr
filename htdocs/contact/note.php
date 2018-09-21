@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $action = GETPOST('action','aZ09');
 
+// Load translation files required by the page
 $langs->load("companies");
 
 // Security check

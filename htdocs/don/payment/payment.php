@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +175,7 @@ if (GETPOST('action','aZ09') == 'create')
 	print '<input type="hidden" name="rowid" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
-	
+
     dol_fiche_head();
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
@@ -205,7 +206,7 @@ if (GETPOST('action','aZ09') == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
-	$form->select_date($datepayment,'','','','',"add_payment",1,1);
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -249,15 +250,12 @@ if (GETPOST('action','aZ09') == 'create')
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	$total=0;
 	$totalrecu=0;
 
 	while ($i < $num)
 	{
 		$objp = $don;
-
-		
 
 		print '<tr class="oddeven">';
 
@@ -288,7 +286,7 @@ if (GETPOST('action','aZ09') == 'create')
 	if ($i > 1)
 	{
 		// Print total
-		print "<tr ".$bc[!$var].">";
+		print '<tr class="oddeven">';
 		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";

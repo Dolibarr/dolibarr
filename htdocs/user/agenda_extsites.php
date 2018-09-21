@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-$langs->load("agenda");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('agenda', 'admin', 'other'));
 
 $def = array();
 $actiontest=GETPOST('test','alpha');
@@ -219,7 +218,6 @@ print "</div>";
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

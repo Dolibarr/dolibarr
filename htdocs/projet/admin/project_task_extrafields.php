@@ -30,8 +30,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("project");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('project', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -112,6 +112,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

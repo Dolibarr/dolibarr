@@ -25,11 +25,12 @@
 
 
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
-$langs->loadLangs(array("admin","cron","bills"));
+// Load translation files required by the page
+$langs->loadLangs(array("admin","cron","bills","members"));
 
 if (!$user->rights->cron->read) accessforbidden();
 
@@ -241,6 +242,7 @@ $sql.= " t.status,";
 $sql.= " t.fk_user_author,";
 $sql.= " t.fk_user_mod,";
 $sql.= " t.note,";
+$sql.= " t.maxrun,";
 $sql.= " t.nbrun,";
 $sql.= " t.libname,";
 $sql.= " t.test";
@@ -251,12 +253,12 @@ if ($search_status == 2) $sql.= " AND t.status = 2";
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
-		$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+		$sql.= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
 	}
 }
 $sqlwhere = array();
 if (!empty($module_name)) {
-	$sqlwhere[]='(t.module_name='.$module_name.')';
+	$sqlwhere[]='(t.module_name='.$db->escape($module_name).')';
 }
 if (count($sqlwhere)>0) {
 	$sql.= " WHERE ".implode(' AND ',$sqlwhere);
@@ -340,13 +342,13 @@ print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 $newcardbutton='';
 if ($user->rights->cron->create)
 {
-	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob");
+	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create"><span class="valignmiddle">'.$langs->trans("CronCreateJob").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
 else
 {
-	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob");
+	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle">'.$langs->trans("CronCreateJob").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -354,7 +356,7 @@ else
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
 
 
-print $langs->trans('CronInfo').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('CronInfo').'</span><br>';
 
 $text =$langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
@@ -418,7 +420,6 @@ if ($num > 0)
 	$style='pair';
 	$now = dol_now();
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
@@ -519,7 +520,17 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datenextrun)) {print dol_print_date($db->jdate($obj->datenextrun),'dayhour');}
+		if (!empty($obj->datenextrun)) {
+			$datenextrun = $db->jdate($obj->datenextrun);
+			if (empty($obj->status)) print '<span class="opacitymedium">';
+			print dol_print_date($datenextrun,'dayhoursec');
+			if ($obj->status == Cronjob::STATUS_ENABLED)
+			{
+				if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) print img_warning($langs->trans("MaxRunReached"));
+				elseif ($datenextrun && $datenextrun < $now) print img_warning($langs->trans("Late"));
+			}
+			if (empty($obj->status)) print '</span>';
+		}
 		print '</td>';
 
 		// Status
@@ -528,13 +539,17 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td align="right" class="nowraponall">';
+
+		$backtourl = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:''));
 		if ($user->rights->cron->create)
 		{
-			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:''))."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
+			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param;
+			print "&backtourl=".$backtourl."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{
-			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'),'delete')."</a> &nbsp;";
+			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param;
+			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'),'delete')."</a> &nbsp;";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete')."</a> &nbsp; ";
 		}

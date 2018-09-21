@@ -54,11 +54,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load('orders');
-$langs->load('companies');
-$langs->load('other');
-$langs->load('suppliers');
-$langs->load('supplier_proposal');
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
 
 
 /*
@@ -347,7 +344,6 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

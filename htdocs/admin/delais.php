@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (! $user->admin) accessforbidden();
@@ -121,6 +122,13 @@ $modules=array(
 		),
 );
 
+$labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
+
+
+/*
+ * Actions
+ */
+
 if ($action == 'update')
 {
 	foreach($modules as $module => $delays)
@@ -200,9 +208,10 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=false;
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
+	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (empty($conf->global->MAIN_DISABLE_METEO)?0:$conf->global->MAIN_DISABLE_METEO));
+	print '</td></tr>';
 
 	print '</table>';
 }
@@ -240,7 +249,9 @@ else
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
+	print $labelmeteo[$conf->global->MAIN_DISABLE_METEO];
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -414,5 +425,6 @@ if($action == 'edit') {
 
 }
 
+// End of page
 llxFooter();
 $db->close();

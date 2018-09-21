@@ -29,10 +29,13 @@ class TaskStats extends Stats
 	public $socid;
 	public $year;
 
+    /**
+     * Constructor of the class
+     *
+     * @param   DoliDb  $db     Database handler
+     */
 	function __construct($db)
 	{
-		global $conf, $user;
-
 		$this->db = $db;
 
 		require_once 'task.class.php';
@@ -138,8 +141,9 @@ class TaskStats extends Stats
 
 		if (! empty($this->userid))
 			$sqlwhere[] = ' t.fk_user_resp=' . $this->userid;
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (! empty($this->socid))
-			$sqlwhere[] = ' t.fk_soc=' . $this->socid;
+			$sqlwhere[] = ' p.fk_soc=' . $this->socid;		// Link on thirdparty is on project, not on task
 		if (! empty($this->year) && empty($this->yearmonth))
 			$sqlwhere[] = " date_format(t.datec,'%Y')='" . $this->db->escape($this->year) . "'";
 		if (! empty($this->yearmonth))

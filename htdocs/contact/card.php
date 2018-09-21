@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,10 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
-$langs->load("commercial");
+
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg=''; $error=0; $errors=array();
 
@@ -705,11 +705,11 @@ else
             $form=new Form($db);
             if ($object->birthday)
             {
-                print $form->select_date($object->birthday,'birthday',0,0,0,"perso", 1, 0, 1);
+                print $form->selectDate($object->birthday, 'birthday', 0, 0, 0, "perso", 1, 0);
             }
             else
             {
-                print $form->select_date('','birthday',0,0,1,"perso", 1, 0, 1);
+                print $form->selectDate('', 'birthday', 0, 0, 1, "perso", 1, 0);
             }
             print '</td>';
 

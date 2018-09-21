@@ -34,6 +34,7 @@ $action = GETPOST('action','aZ09');
 $object = new Loan($db);
 $object->fetch($loanid);
 
+// Load translation files required by the page
 $langs->loadLangs(array("loan"));
 
 if ($action == 'createecheancier') {
@@ -209,6 +210,7 @@ print '</br>';
 print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();
 

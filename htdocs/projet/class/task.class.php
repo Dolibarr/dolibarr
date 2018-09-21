@@ -31,15 +31,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Task extends CommonObject
 {
-	public $element='project_task';		//!< Id that identify managed objects
-	public $table_element='projet_task';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='project_task';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='projet_task';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_task';
+
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
-	var $fk_task_parent;
-	var $label;
-	var $description;
+    public $fk_task_parent;
+
+    /**
+     * @var string Label of task
+     */
+    public $label;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $duration_effective;		// total of time spent on this task
 	var $planned_workload;
 	var $date_c;
@@ -194,7 +215,7 @@ class Task extends CommonObject
 	 */
 	function fetch($id, $ref='', $loadparentdata=0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -267,7 +288,6 @@ class Task extends CommonObject
 				}
 
 				// Retreive all extrafield
-				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 			}
 
@@ -687,13 +707,13 @@ class Task extends CommonObject
 	 * @param	int		$socid				Third party id
 	 * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
 	 * @param	string	$filteronproj    	Filter on project ref or label
-	 * @param	string	$filteronprojstatus	Filter on project status
+	 * @param	string	$filteronprojstatus	Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
 	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
 	 * @return 	array						Array of tasks
 	 */
-	function getTasksArray($usert=null, $userp=null, $projectid=0, $socid=0, $mode=0, $filteronproj='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
+	function getTasksArray($usert=null, $userp=null, $projectid=0, $socid=0, $mode=0, $filteronproj='', $filteronprojstatus='-1', $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
 	{
 		global $conf;
 
@@ -769,7 +789,7 @@ class Task extends CommonObject
 		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 		if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
 		if ($filteronproj) $sql.= natural_search(array("p.ref", "p.title"), $filteronproj);
-		if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut IN (".$filteronprojstatus.")";
+		if ($filteronprojstatus && $filteronprojstatus != '-1') $sql.= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql.=$morewherefilter;
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
@@ -1699,6 +1719,7 @@ class Task extends CommonObject
 		return $this->LibStatut($this->fk_statut, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return status label for an object
 	 *
@@ -1708,6 +1729,7 @@ class Task extends CommonObject
 	 */
 	function LibStatut($statut, $mode=0)
 	{
+        // phpcs:enable
 		// list of Statut of the task
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='ToDo';
@@ -1726,59 +1748,59 @@ class Task extends CommonObject
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
-			if ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			/*if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
-			if ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
-			if ($statut==3) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
+			elseif ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			elseif ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			elseif ($statut==3) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 			*/
-			//return $this->progress.' %';
+			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			/*if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
-			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
-			if ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==4) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==5) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
+			elseif ($statut==1) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			elseif ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			elseif ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==4) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==5) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 			*/
-			//return $this->progress.' %';
+			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
 	}
@@ -1816,6 +1838,7 @@ class Task extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1824,14 +1847,15 @@ class Task extends CommonObject
 	 */
 	function load_board($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		// For external user, no check is done on company because readability is managed by public status of project and assignement.
 		//$socid=$user->societe_id;
-		
+
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
-		
+
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 		$sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
@@ -1850,7 +1874,7 @@ class Task extends CommonObject
 		if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-		
+
 		//print $sql;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1889,6 +1913,7 @@ class Task extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
@@ -1896,6 +1921,7 @@ class Task extends CommonObject
 	 */
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $user;
 
 		$mine=0; $socid=$user->societe_id;

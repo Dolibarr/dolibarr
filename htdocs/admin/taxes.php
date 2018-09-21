@@ -29,10 +29,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load('admin');
-$langs->load('objects');
-$langs->load("companies");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'objects', 'companies', 'products'));
 
 if (!$user->admin) accessforbidden();
 
@@ -275,6 +273,6 @@ if (! empty($conf->accounting->enabled))
 	print '<br><br><span class="opacitymedium">'.$langs->trans("AccountingAccountForSalesTaxAreDefinedInto", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup")).'</span>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

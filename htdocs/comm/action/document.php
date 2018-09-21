@@ -36,10 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("other");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'commercial', 'other', 'bills'));
 
 $id = GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
@@ -241,7 +239,7 @@ if ($object->id > 0)
 
 	print '<table class="border" width="100%">';
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -270,7 +268,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

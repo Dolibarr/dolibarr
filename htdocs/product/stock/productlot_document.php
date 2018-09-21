@@ -29,22 +29,16 @@
  *       \brief      Page des documents joints sur les lots produits
  */
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';					// to work if your module directory is into dolibarr root htdocs directory
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';			// to work if your module directory is into a subdir of root htdocs directory
-if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
-if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
-if (! $res) die("Include of main fails");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-dol_include_once('/product/stock/class/productlot.class.php');
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
-$langs->load("other");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'products'));
 
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
@@ -128,7 +122,7 @@ if ($object->id)
     print $hookmanager->resPrint;
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 	$totalsize=0;

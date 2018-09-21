@@ -39,6 +39,7 @@ if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global-
 	accessforbidden();
 }
 
+// Load translation files required by page
 $langs->load("users");
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
@@ -141,7 +142,7 @@ if ($resql)
     $newcardbutton='';
     if ($caneditperms)
     {
-    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=">'.$langs->trans('NewGroup');
+    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu="><span class="valignmiddle">'.$langs->trans('NewGroup').'</span>';
     	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     	$newcardbutton.= '</a>';
     }
@@ -161,13 +162,7 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
-    }
-
-    if ($sall)
-    {
-        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
     $moreforfilter='';
@@ -232,6 +227,6 @@ else
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

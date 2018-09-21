@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","salaries","bills","hrm"));
 
 // Security check
@@ -139,7 +140,6 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
     $total = 0 ;
-	$var=true;
 
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -148,9 +148,9 @@ if ($result)
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
 	$newcardbutton='';
-	if ($user->rights->salaries->payment->write)
+	if (! empty($user->rights->salaries->write))
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create">'.$langs->trans('NewSalaryPayment');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewSalaryPayment').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -294,6 +294,6 @@ else
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

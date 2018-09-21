@@ -43,7 +43,6 @@ PasswordChangeRequest=Pedido para alterar a senha para <b> %s </b>
 PasswordChangeRequestSent=Solicitação para alterar a senha para <b>%s</b> enviada a <b>%s</b>.
 ConfirmPasswordReset=Confirmar restauração da senha
 MenuUsersAndGroups=Usuários e Grupos
-LastGroupsCreated=Últimos %s grupos criados
 LastUsersCreated=Últimos %s usuários criados
 ShowGroup=Visualizar grupo
 ShowUser=Visualizar usuário

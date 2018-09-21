@@ -33,7 +33,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 	var $prefixinvoice='FA';
 	var $prefixcreditnote='AV';
 	var $prefixdeposit='AC';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -232,6 +235,5 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
-
 }
 

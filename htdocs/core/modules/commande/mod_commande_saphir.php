@@ -132,17 +132,17 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
+	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
     function commande_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

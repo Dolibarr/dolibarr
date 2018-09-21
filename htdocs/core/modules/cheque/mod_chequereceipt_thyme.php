@@ -124,6 +124,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -133,8 +134,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      */
     function chequereceipt_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

@@ -31,7 +31,7 @@ global $conf;
 
 if (!$user->admin) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin","other"));
 
 $error=0;
@@ -302,6 +302,6 @@ if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enable
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
-
 $db->close();

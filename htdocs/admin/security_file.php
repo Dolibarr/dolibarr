@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'admin', 'other'));
 
 if (! $user->admin)
 	accessforbidden();
@@ -179,7 +178,6 @@ print '<div class="center"><input type="submit" class="button" name="button" val
 print '</form>';
 
 
-
 // Form to test upload
 print '<br>';
 $formfile=new FormFile($db);
@@ -189,5 +187,6 @@ $formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestF
 $filearray=dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);
 $formfile->list_of_documents($filearray, null, 'admin_temp', '');
 
+// End of page
 llxFooter();
 $db->close();

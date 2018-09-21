@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- * \file        htdocs/admin/oauthlogintoken.php
+ * \file        htdocs/admin/oauthlogintokens.php
  * \ingroup     oauth
  * \brief       Setup page to configure oauth access to login information
  */
@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 use OAuth\Common\Storage\DoliStorage;
 
-$langs->load("admin");
-$langs->load("printing");
-$langs->load("oauth");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (! $user->admin) accessforbidden();
 
@@ -343,7 +342,7 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        if (count($printer->getlist_available_printers())) {
+        if (count($printer->getlistAvailablePrinters())) {
             if ($printer->listAvailablePrinters()==0) {
                 print $printer->resprint;
             } else {
@@ -395,6 +394,6 @@ if ($mode == 'userconf' && $user->admin)
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

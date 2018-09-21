@@ -29,13 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("errors");
-$langs->load("mails");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
 
 // Security check
 if (!$user->admin)
@@ -277,7 +272,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

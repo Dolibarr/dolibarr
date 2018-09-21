@@ -30,25 +30,49 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class PaymentVarious extends CommonObject
 {
-	public $element='variouspayment';		//!< Id that identify managed objects
-	public $table_element='payment_various';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='variouspayment';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_various';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'bill';
 
-	var $id;
-	var $ref;
-	var $tms;
-	var $datep;
-	var $datev;
-	var $sens;
-	var $amount;
-	var $type_payment;
-	var $num_payment;
-	var $label;
-	var $accountancy_code;
-	var $fk_project;
-	var $fk_bank;
-	var $fk_user_author;
-	var $fk_user_modif;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
+	public $tms;
+	public $datep;
+	public $datev;
+	public $sens;
+	public $amount;
+	public $type_payment;
+	public $num_payment;
+
+	/**
+     * @var string various payments label
+     */
+    public $label;
+
+	public $accountancy_code;
+	public $fk_project;
+	public $fk_bank;
+	public $fk_user_author;
+	public $fk_user_modif;
 
 
 	/**
@@ -61,14 +85,13 @@ class PaymentVarious extends CommonObject
 		$this->db = $db;
 		$this->element = 'payment_various';
 		$this->table_element = 'payment_various';
-		return 1;
 	}
 
 	/**
 	 * Update database
 	 *
 	 * @param   User	$user        	User that modify
-	 * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
+	 * @param   int		$notrigger      0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
 	function update($user=null, $notrigger=0)
@@ -363,13 +386,14 @@ class PaymentVarious extends CommonObject
 
 					// Insert payment into llx_bank
 					// Add link 'payment_various' in bank_url between payment and bank transaction
-					if ($this->sens == '0') $sign='-';
+					$sign=1;
+					if ($this->sens == '0') $sign=-1;
 
 					$bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,
-						$sign.abs($this->amount),
+						$sign * abs($this->amount),
 						$this->num_payment,
 						'',
 						$user
@@ -434,6 +458,7 @@ class PaymentVarious extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update link between payment various and line generate into llx_bank
 	 *
@@ -442,6 +467,7 @@ class PaymentVarious extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_various SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
@@ -468,6 +494,7 @@ class PaymentVarious extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -477,35 +504,36 @@ class PaymentVarious extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
 			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
@@ -517,11 +545,13 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Send name clicable (with possibly the picto)
 	 *
-	 *	@param  int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param  string	$option			link option
-	 *	@return string					Chaine with URL
+	 *	@param  int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param  string	$option						link option
+	 *  @param  int     $save_lastsearch_value	 	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param	int  	$notooltip		 			1=Disable tooltip
+	 *	@return string								String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $save_lastsearch_value=-1, $notooltip=0)
 	{
 		global $langs;
 
@@ -532,8 +562,8 @@ class PaymentVarious extends CommonObject
 		$linkend='</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
 		$result .= $linkend;
 
 		return $result;
@@ -582,5 +612,4 @@ class PaymentVarious extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
 }

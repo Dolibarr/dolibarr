@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
 if (! $user->admin)
@@ -507,5 +507,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -33,10 +33,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("companies");
-$langs->load('stocks');
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -221,7 +219,6 @@ if (!empty($object->id))
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
 }
 
-
-
+// End of page
 llxFooter();
 $db->close();

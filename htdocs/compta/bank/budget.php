@@ -24,11 +24,11 @@
  *		\brief      Page de budget
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -70,7 +70,6 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0; $total = 0; $totalnb = 0;
 
-	$var=true;
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
@@ -97,5 +96,6 @@ else
 }
 print "</table>";
 
+// End of page
 llxFooter();
 $db->close();

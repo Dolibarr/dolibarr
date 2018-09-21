@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin","companies","bills","other","banks"));
 
 if (!$user->admin)
@@ -420,7 +420,7 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
     print '</a>';
     print '</td>';
 }
-else 
+else
 {
     print '<td align="center">' . "\n";
     print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setreportlastnumreleve">' . img_picto($langs->trans("Disabled"),
@@ -432,6 +432,6 @@ print "</tr>\n";
 print '</table>';
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

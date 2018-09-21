@@ -6,6 +6,7 @@
  * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,36 +36,50 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Paiement extends CommonObject
 {
-    public $element='payment';
-    public $table_element='paiement';
-    public $picto = 'payment';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment';
 
-	var $facid;
-	var $datepaye;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='paiement';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
+
+	public $facid;
+	public $datepaye;
+
 	/**
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-    var $total;
+    public $total;
+
 	/**
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-	var $montant;
-	var $amount;            // Total amount of payment
-	var $amounts=array();   // Array of amounts
-	var $multicurrency_amounts=array();   // Array of amounts
-	var $author;
-	var $paiementid;	// Type de paiement. Stocke dans fk_paiement
+	public $montant;
+
+	public $amount;            // Total amount of payment
+	public $amounts=array();   // Array of amounts
+	public $multicurrency_amounts=array();   // Array of amounts
+	public $author;
+	public $paiementid;	// Type de paiement. Stocke dans fk_paiement
 	// de llx_paiement qui est lie aux types de
 	//paiement de llx_c_paiement
-	var $num_paiement;	// Numero du CHQ, VIR, etc...
-	var $num_payment;	// Numero du CHQ, VIR, etc...
-	var $bank_account;	// Id compte bancaire du paiement
-	var $bank_line;     // Id de la ligne d'ecriture bancaire
+	public $num_paiement;	// Numero du CHQ, VIR, etc...
+	public $num_payment;	// Numero du CHQ, VIR, etc...
+	public $bank_account;	// Id compte bancaire du paiement
+	public $bank_line;     // Id de la ligne d'ecriture bancaire
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
-    var $fk_paiement;    // Type of paiment
+    public $fk_paiement;    // Type of paiment
 
 
 	/**
@@ -292,39 +307,40 @@ class Paiement extends CommonObject
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
 
-                                    // Loop on each vat rate
-                                    $i = 0;
-                                    foreach ($invoice->lines as $line)
-                                    {
-                                        if ($line->total_ht!=0)
-                                        { 	// no need to create discount if amount is null
-                                            $amount_ht[$line->tva_tx] += $line->total_ht;
-                                            $amount_tva[$line->tva_tx] += $line->total_tva;
-                                            $amount_ttc[$line->tva_tx] += $line->total_ttc;
-                                            $i ++;
-                                        }
-                                    }
+									// Insert one discount by VAT rate category
+									$discount = new DiscountAbsolute($this->db);
+									$discount->fetch('',$invoice->id);
+									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 
-                                    // Insert one discount by VAT rate category
-                                    $discount = new DiscountAbsolute($this->db);
-                                    $discount->description = '(DEPOSIT)';
-                                    $discount->fk_soc = $invoice->socid;
-                                    $discount->fk_facture_source = $invoice->id;
 
-                                    foreach ($amount_ht as $tva_tx => $xxx)
-                                    {
-                                        $discount->amount_ht = abs($amount_ht[$tva_tx]);
-                                        $discount->amount_tva = abs($amount_tva[$tva_tx]);
-                                        $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-                                        $discount->tva_tx = abs($tva_tx);
+										$discount->description = '(DEPOSIT)';
+										$discount->fk_soc = $invoice->socid;
+										$discount->fk_facture_source = $invoice->id;
 
-                                        $result = $discount->create($user);
-                                        if ($result < 0)
-                                        {
-                                            $error++;
-                                            break;
-                                        }
-                                    }
+										// Loop on each vat rate
+										$i = 0;
+										foreach ($invoice->lines as $line) {
+											if ($line->total_ht != 0) {    // no need to create discount if amount is null
+												$amount_ht[$line->tva_tx] += $line->total_ht;
+												$amount_tva[$line->tva_tx] += $line->total_tva;
+												$amount_ttc[$line->tva_tx] += $line->total_ttc;
+												$i++;
+											}
+										}
+
+										foreach ($amount_ht as $tva_tx => $xxx) {
+											$discount->amount_ht = abs($amount_ht[$tva_tx]);
+											$discount->amount_tva = abs($amount_tva[$tva_tx]);
+											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+											$discount->tva_tx = abs($tva_tx);
+
+											$result = $discount->create($user);
+											if ($result < 0) {
+												$error++;
+												break;
+											}
+										}
+									}
 
                                     if ($error)
                                     {
@@ -543,7 +559,7 @@ class Paiement extends CommonObject
 
         	$this->fk_account=$accountid;
 
-        	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+        	include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             dol_syslog("$user->id,$mode,$label,$this->fk_account,$emetteur_nom,$emetteur_banque");
 
@@ -692,6 +708,7 @@ class Paiement extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *
@@ -700,6 +717,7 @@ class Paiement extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 
@@ -717,6 +735,7 @@ class Paiement extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Updates the payment date
      *
@@ -725,6 +744,7 @@ class Paiement extends CommonObject
      */
     function update_date($date)
     {
+        // phpcs:enable
         if (!empty($date) && $this->statut!=1)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -748,6 +768,7 @@ class Paiement extends CommonObject
         return -1; //no date given or already validated
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Updates the payment number
      *
@@ -756,6 +777,7 @@ class Paiement extends CommonObject
      */
     function update_num($num)
     {
+        // phpcs:enable
     	if(!empty($num) && $this->statut!=1)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -1062,7 +1084,7 @@ class Paiement extends CommonObject
             $arraybill = $this->getBillsArray();
             if (is_array($arraybill) && count($arraybill) > 0)
             {
-            	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+            	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             	$facturestatic=new Facture($this->db);
             	foreach ($arraybill as $billid)
             	{
@@ -1110,6 +1132,7 @@ class Paiement extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -1119,6 +1142,7 @@ class Paiement extends CommonObject
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
@@ -1160,15 +1184,17 @@ class Paiement extends CommonObject
 		return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *    	Load the third party of object, from id into this->thirdparty
+	 *  Load the third party of object, from id into this->thirdparty
 	 *
-	 *		@param		int		$force_thirdparty_id	Force thirdparty id
-	 *		@return		int								<0 if KO, >0 if OK
+	 *	@param		int		$force_thirdparty_id	Force thirdparty id
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	function fetch_thirdparty($force_thirdparty_id=0)
 	{
-		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+        // phpcs:enable
+		include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 		if (empty($force_thirdparty_id))
 		{

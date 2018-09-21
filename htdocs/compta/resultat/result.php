@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2016-2017		Jamal Elbaz			<jamelbaz@gmail.com>
- * Copyright (C) 2016 	    	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2018 	    	Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2016-2017  Jamal Elbaz             <jamelbaz@gmail.com>
+ * Copyright (C) 2016       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Laurent Destailleur     <eldy@destailleur.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries','accountancy'));
 
 $error = 0;
@@ -170,7 +172,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.'&modecompta=BOOKKEEPING">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesResultDue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
@@ -178,25 +180,24 @@ if ($modecompta=="CREANCES-DETTES")
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="RECETTES-DEPENSES") {
+elseif ($modecompta=="RECETTES-DEPENSES") {
 	$name=$langs->trans("AnnualByAccountInputOutputMode");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=CREANCES-DETTES">','</a>').')';
 	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">','</a>').')';
-	//$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',1,1,0,'',1,0,1);
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesResultInOut");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPersonalizedAccountGroups");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$arraylist=array('no'=>$langs->trans("No"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
 	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink = $textprevyear . $textnextyear ;
@@ -246,12 +247,12 @@ if ($modecompta == 'CREANCES-DETTES')
 	//if (! empty($date_start) && ! empty($date_end))
 	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	//if (! empty($date_start) && ! empty($date_end))
 	//	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 
 	// Get array of all report groups that are active
@@ -536,5 +537,6 @@ else if ($modecompta=="BOOKKEEPING")
 print "</table>";
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

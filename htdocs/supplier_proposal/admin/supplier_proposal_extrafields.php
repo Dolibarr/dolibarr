@@ -22,9 +22,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load('supplier_proposal');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'admin', 'supplier_proposal'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -144,6 +143,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

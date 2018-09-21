@@ -38,10 +38,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("other");
-$langs->load("fichinter");
-$langs->load("companies");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'fichinter', 'companies', 'interventions'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -96,7 +94,7 @@ if ($object->id)
 	dol_fiche_head($head, 'documents',  $langs->trans("InterventionCard"), -1, 'intervention');
 
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)

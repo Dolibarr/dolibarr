@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -57,6 +57,7 @@ $page = GETPOST("page",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page ;
 
 // Load sale and categ filters
@@ -134,7 +135,7 @@ if (dol_strlen($type))
         $sql.= " AND p.fk_product_type <> '1'";
     }
 }
-if ($sref)     $sql.= natural_search('p.ref', $ref);
+if ($sref)     $sql.= natural_search('p.ref', $sref);
 if ($search_barcode) $sql.= natural_search('p.barcode', $search_barcode);
 if ($snom)     $sql.= natural_search('p.label', $snom);
 if (! empty($tosell)) $sql.= " AND p.tosell = ".$tosell;
@@ -247,6 +248,8 @@ if ($resql)
 	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
 	if ($snom)		$param.="&snom=".$snom;
 	if ($sref)		$param.="&sref=".$sref;
+	if ($toolowstock)		$param.="&toolowstock=".$toolowstock;
+	if ($search_categ)		$param.="&search_categ=".$search_categ;
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
@@ -316,11 +319,12 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 
-		print '<tr>';
-		print '<td class="nowrap">';
 		$product=new Product($db);
 		$product->fetch($objp->rowid);
 		$product->load_stock();
+
+		print '<tr>';
+		print '<td class="nowrap">';
 		print $product->getNomUrl(1,'',16);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
@@ -357,15 +361,13 @@ if ($resql)
 			}
 		}
 
-
-
 		// Virtual stock
 		if ($virtualdiffersfromphysical)
 		{
-	    		print '<td align="right">';
+			print '<td align="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-	    		print $product->stock_theorique;
-	    		print '</td>';
+			print $product->stock_theorique;
+			print '</td>';
 		}
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';
@@ -388,6 +390,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

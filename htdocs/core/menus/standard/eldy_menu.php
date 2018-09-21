@@ -27,7 +27,11 @@
  */
 class MenuManager
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $type_user;									// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // To store default target to use onto links
 	var $name="eldy";
@@ -111,7 +115,8 @@ class MenuManager
 
 
     /**
-     *  Show menu
+     *  Show menu.
+     *  Module defined in sql tables are stored into this->tabMenu BEFORE this is called.
      *
      *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
      *  @param	array	$moredata		An array with more data to output
@@ -330,6 +335,5 @@ class MenuManager
         //print 'xx'.$mode;
         return 0;
     }
-
 }
 

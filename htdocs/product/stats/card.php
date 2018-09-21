@@ -36,11 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("bills");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
 $id		= GETPOST('id','int');         // For this page, id can also be 'all'
 $ref	= GETPOST('ref');
@@ -436,6 +433,6 @@ if (! $id)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_stdmouvement extends ModelePDFMouvement
+class pdf_stdmovement extends ModelePDFMovement
 {
     /**
      * @var DoliDb Database handler
@@ -59,9 +59,9 @@ class pdf_stdmouvement extends ModelePDFMouvement
 
 	/**
      * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2);
+	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
@@ -77,7 +77,11 @@ class pdf_stdmouvement extends ModelePDFMouvement
 	public $marge_haute;
 	public $marge_basse;
 
-    public $emetteur;	// Objet societe qui emet
+    /**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 
 	/**
@@ -89,8 +93,8 @@ class pdf_stdmouvement extends ModelePDFMouvement
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "stdmouvement";
@@ -149,6 +153,7 @@ class pdf_stdmouvement extends ModelePDFMouvement
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -162,19 +167,15 @@ class pdf_stdmouvement extends ModelePDFMouvement
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("stocks");
-		$outputlangs->load("orders");
-		$outputlangs->load("deliveries");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
 	/**
 	 * TODO: get from object
@@ -905,7 +906,6 @@ class pdf_stdmouvement extends ModelePDFMouvement
 		$pdf->SetLineStyle(array('dash'=>'0','color'=>array(220,26,26)));
 		$pdf->line($this->marge_gauche, $tab_top+11, $this->page_largeur-$this->marge_droite, $tab_top+11);
 		$pdf->SetLineStyle(array('dash'=>0));
-
 	}
 
 	/**
@@ -922,12 +922,9 @@ class pdf_stdmouvement extends ModelePDFMouvement
 	{
 	    global $conf,$langs,$db,$hookmanager;
 
-	    $outputlangs->load("main");
-	    $outputlangs->load("bills");
-	    $outputlangs->load("propal");
-	    $outputlangs->load("companies");
-	    $outputlangs->load("orders");
-	    $outputlangs->load("stocks");
+	    // Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
+
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 
 	    if ($object->type == 1) $titlekey='ServiceSheet';
@@ -1155,6 +1152,4 @@ class pdf_stdmouvement extends ModelePDFMouvement
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 	    return pdf_pagefoot($pdf,$outputlangs,'PRODUCT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

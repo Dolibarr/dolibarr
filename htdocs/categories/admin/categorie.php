@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 if (!$user->admin)
 accessforbidden();
 
+// Load translation files required by the page
 $langs->load("categories");
 
 $action=GETPOST('action','aZ09');
@@ -121,5 +122,6 @@ print '</td></tr>';
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

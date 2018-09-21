@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
  * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT . '/loan/class/paymentloan.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("companies","other","compta","banks","bills","donations","loan","accountancy","trips","salaries","hrm"));
 
 // Multi journal
@@ -146,6 +147,7 @@ $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $paymentloanstatic = new PaymentLoan($db);
+$accountLinestatic=new AccountLine($db);
 
 // Get code of finance journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -369,7 +371,8 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
 					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
+                                        $accountLinestatic->fetch($links[$key]['url_id']);
+					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- ' .$accountLinestatic ->getNomUrl(1);
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
 					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
 					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);
@@ -843,13 +846,14 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
+	$nom = $langs->trans("FinanceJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
 	$builddate=dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices=array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+    $period = $form->selectDate($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0);
+    $period .= ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 
@@ -881,7 +885,7 @@ if (empty($action) || $action == 'view') {
 
 
 	print '<div class="tabsAction tabsActionNoBottom">';
-	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	else print '<a class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	print '</div>';

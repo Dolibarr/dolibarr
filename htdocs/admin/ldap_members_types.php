@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("admin");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors'));
 
 if (!$user->admin)
 	accessforbidden();
@@ -241,5 +241,6 @@ if (function_exists("ldap_connect"))
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

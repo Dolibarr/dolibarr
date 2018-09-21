@@ -142,16 +142,17 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free ref
 	 *
-     *  @param	Societe		$objsoc      	Object thirdparty
+     *  @param  Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Object livraison
-     *  @return string      				Texte descripif
+     *  @return string      				Texte descriptif
      */
     function livraison_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
-
 }

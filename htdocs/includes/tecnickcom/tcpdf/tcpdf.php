@@ -17783,7 +17783,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 											// justify block
 											if (!TCPDF_STATIC::empty_string($this->lispacer)) {
 												$this->lispacer = '';
-												continue;
+												break;
 											}
 											preg_match('/([0-9\.\+\-]*)[\s]([0-9\.\+\-]*)[\s]([0-9\.\+\-]*)[\s]('.$strpiece[1][0].')[\s](re)([\s]*)/x', $pmid, $xmatches);
 											if (!isset($xmatches[1])) {

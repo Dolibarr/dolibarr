@@ -7,6 +7,7 @@
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -40,10 +41,8 @@ INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES 
 
 -- Description of chart of account FR PCG99-ABREGE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-ABREGE', 'The simple accountancy french plan', 1);
-
 -- Description of chart of account FR PCG99-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-BASE', 'The base accountancy french plan', 1);
-
 -- Description of chart of account FR PCG14-DEV
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
 
@@ -52,6 +51,10 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account ES PCG08-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME', 'The PYME accountancy spanish plan', 1);
+
+-- Description of chart of account DE SKR03
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR03', 'Standardkontenrahmen SKR 03', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR04', 'Standardkontenrahmen SKR 04', 1);
 
 -- Description of chart of account CH PCG_SUISSE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'PCG_SUISSE', 'Switzerland plan', 1);
@@ -73,6 +76,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account MA PCG
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 12, 'PCG', 'The Moroccan chart of accounts', 1);
+
+--DELETE FROM llx_accounting_system WHERE pcg_version = 'SYSCOHADA';
 
 -- Description of chart of account BJ SYSCOHADA
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA-BJ', 'Plan comptable Ouest-Africain', 1);
@@ -122,3 +127,5 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account RO RO-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  188, 'RO-BASE', 'Plan de conturi romanesc', 1);
 
+-- Description of chart of account DZ NSCF
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  13, 'NSCF', 'Nouveau système comptable financier', 1);

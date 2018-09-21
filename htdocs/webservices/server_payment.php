@@ -27,7 +27,7 @@
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';                // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';

@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin","trips","errors","other","dict"));
 
 if (!$user->admin) accessforbidden();
@@ -179,6 +179,7 @@ echo '</table>';
 echo '</form>';
 
 dol_fiche_end();
-llxFooter();
 
+// End of page
+llxFooter();
 $db->close();

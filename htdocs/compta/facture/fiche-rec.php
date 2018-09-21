@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2016      Meziane Sof		<virtualsof@yahoo.fr>
- * Copyright (C) 2017       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
+ * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-	//require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	//include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
-$langs->load('bills');
-$langs->load('compta');
-$langs->load('admin');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'products'));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -548,7 +546,7 @@ if (empty($reshook))
 			}
 			elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			{
-				require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+				include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 				$prodcustprice = new Productcustomerprice($db);
 
@@ -1115,7 +1113,7 @@ if ($action == 'create')
 		// Date next run
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
+		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
@@ -1515,7 +1513,7 @@ else
 		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
 		if (! $object->isMaxNbGenReached())
 		{
-			if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
+			if (! $object->suspended && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
 		}
 		else
 		{
@@ -1736,6 +1734,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin          <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
- * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
- * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry    <jfefe@aternatik.fr>
- * Copyright (C) 2016	   Ferran Marcet		  <fmarcet@2byte.es>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("orders",'sendings','deliveries','companies','compta','bills'));
 
 $action=GETPOST('action','aZ09');
@@ -77,6 +78,9 @@ $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
+$search_project_ref=GETPOST('search_project_ref','alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
@@ -90,7 +94,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -420,7 +424,7 @@ if ($resql)
 	if ($search_project_ref >= 0) $param.="&search_project_ref=".urlencode($search_project_ref);
 	if ($search_town != '')       $param.='&search_town='.urlencode($search_town);
 	if ($search_zip != '')        $param.='&search_zip='.urlencode($search_zip);
-	if ($search_state != '')      $param.='&search_state='.urlencode$search_state);
+	if ($search_state != '')      $param.='&search_state='.urlencode($search_state);
 	if ($search_country != '')    $param.='&search_country='.urlencode($search_country);
 	if ($search_type_thirdparty != '')  $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	if ($search_product_category != '') $param.='&search_product_category='.urlencode($search_product_category);
@@ -447,7 +451,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($contextpage == 'orderlist' && $user->rights->commande->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/commande/card.php?action=create">'.$langs->trans('NewOrder');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/commande/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewOrder').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -483,7 +487,7 @@ if ($resql)
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->select_date('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', '', '', '', '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -508,7 +512,7 @@ if ($resql)
 		{
 			print $form->selectyesno('valdate_invoices', 0, 1);
 		}
-		if (! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
+		if (! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
 		else print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetOrderBilledNotEnabled").'</span>';
 		print '</td>';
 		print '</tr>';
@@ -525,7 +529,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter='';
@@ -1159,5 +1163,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

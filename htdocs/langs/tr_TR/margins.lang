@@ -28,10 +28,10 @@ UseDiscountAsService=Hizmet olarak
 UseDiscountOnTotal=Ara toplamla
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, kar oranı hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
 MARGIN_TYPE=Kar oranı hesaplaması için varsayılan olarak önerilen Satınalma/Maliyet fiyatı
-MargeType1=En iyi tedarikçi fiyatı kar oranı
+MargeType1=Margin on Best vendor price
 MargeType2=Ağırlıklı Ortalama Fiyatta Kar Oranı (AOF)
 MargeType3=Maliyet Fiyatı karı
-MarginTypeDesc=* En iyi alış fiyatı karı _ Satış fiyatı - Ürün kartında tanımlı en iyi tedarikçi fiyatı<br>* Ortalama Ağırlıklı Fiyat (OAF) Karı = Satış fiyatı - Ürün Ortalama Ağırlıklı Fiyatı (OAF) veya eğer OAF henüz tanımlanmadıysa en iyi tedarikçi fiyatı<br>* Maliyet fiyatındaki Kar = Satış fiyatı - Ürün kartında tanımlı maliyet fiyatı veya OAF eğer maliyet fiyatı tanımlanmadıysa veya OAF tanımlanmadıysa en iyi tedarikçi fiyatı
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar

@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","users","salaries","hrm"));
 
 $id=GETPOST('id','int');
@@ -78,6 +79,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

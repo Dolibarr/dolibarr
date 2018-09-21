@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
+/* Copyright (C) 2004-2014  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2017-2018  Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,9 +69,9 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
      * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2);
+	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
@@ -78,14 +79,45 @@ class pdf_einstein extends ModelePDFCommandes
      */
 	public $version = 'dolibarr';
 
+	/**
+     * @var int page_largeur
+     */
     public $page_largeur;
+
+    /**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+
+    /**
+     * @var array format
+     */
     public $format;
+
+    /**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
     public $emetteur;	// Objet societe qui emet
 
 
@@ -171,7 +203,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->atleastonediscount=0;
 	}
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		Object		$object				Object to generate
@@ -184,6 +217,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
+        // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -319,7 +353,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
-						$tab_top = $nexY+6+$height_incoterms;
+						$tab_top = $nexY+6;
 					}
 				}
 
@@ -353,7 +387,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetDrawColor(192,192,192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
-					$tab_top = $nexY+6+$height_note;
+					$tab_top = $nexY+6;
 				}
 
 				$iniY = $tab_top + 7;
@@ -612,6 +646,7 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show payments table
      *
@@ -623,10 +658,11 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
+        // phpcs:enable
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -638,6 +674,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -813,6 +850,7 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -825,6 +863,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+        // phpcs:enable
 	    global $conf,$mysoc;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -849,7 +888,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (! empty($object->remise)?$object->remise:0), 0, $outputlangs), 0, 'R', 1);
 
@@ -1410,6 +1449,4 @@ class pdf_einstein extends ModelePDFCommandes
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

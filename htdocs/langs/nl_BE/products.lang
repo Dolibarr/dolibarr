@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - products
 Reference=Artikelcode
+LastModifiedProductsAndServices=Laatste %s aangepaste producten / services
 OnSell=Te koop
 OnBuy=Te koop
 NotOnSell=Niet meer beschikbaar

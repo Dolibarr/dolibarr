@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("admin");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors'));
 
 if (!$user->admin)
   accessforbidden();
@@ -80,9 +80,9 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION', GETPOST("fieldendlastsubscription"),'chaine',0,'',$conf->entity)) $error++;
 
 	// Subscriptions
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE',  GETPOST("fieldfirstsubscriptiondate"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE', GETPOST("fieldfirstsubscriptiondate"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT',GETPOST("fieldfirstsubscriptionamount"),'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE',   GETPOST("fieldlastsubscriptiondate"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE', GETPOST("fieldlastsubscriptiondate"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT', GETPOST("fieldlastsubscriptionamount"),'chaine',0,'',$conf->entity)) $error++;
 
 	// This one must be after the others
@@ -442,7 +442,6 @@ if (function_exists("ldap_connect"))
 
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

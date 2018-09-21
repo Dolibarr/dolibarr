@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$langs->loadLangs(array("companies","commercial","banks","bills",'paypal','stripe'));
+$langs->loadLangs(array("companies","commercial","banks","bills",'paypal','stripe','withdrawals'));
 
 
 // Security check
@@ -550,13 +550,17 @@ if (empty($reshook))
 
 			$db->begin();
 
+                if (empty($newcu)) {
+                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+                } else {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
 			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
 			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-
+                }
+     
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
-			if (empty($num))
+			if (empty($num) && !empty($newcu))
 			{
 				$societeaccount = new SocieteAccount($db);
 				$societeaccount->fk_soc = $object->id;
@@ -760,10 +764,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 		if ($stripecu && $action != 'editkey_account')
 		{
-			$url='https://dashboard.stripe.com/test/customers/'.$stripecu;
+			if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+			$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
 			if ($servicestatus)
 			{
-				$url='https://dashboard.stripe.com/customers/'.$stripecu;
+				$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
 			}
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 		}
@@ -796,7 +801,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
 		$listofsources = array();
 		if (is_object($stripe))
@@ -826,7 +831,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<td></td>';
 		print '<td align="center">'.$langs->trans('Default').'</td>';
 		print '<td>'.$langs->trans('Note').'</td>';
-		print "<td></td></tr>\n";
+		print '<td>'.$langs->trans('DateModification').'</td>';
+		print "<td></td>";
+		print "</tr>\n";
 
 		$nbremote = 0;
 		$nblocal = 0;
@@ -906,6 +913,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td>';
 							if (empty($companypaymentmodetemp->stripe_card_ref)) print $langs->trans("Local");
 							else print $langs->trans("LocalAndRemote");
+							print '</td>';
+							print '<td>';
+							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
 							print '</td>';
 							print '<td align="right" class="nowraponall">';
 							if ($user->rights->societe->creer)
@@ -1018,6 +1028,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				print '<td>';
 				print $langs->trans("Remote");
+				//if ($src->cvc_check == 'fail') print ' - CVC check fail';
+				print '</td>';
+				print '<td>';
+				//var_dump($src);
+				print '';
 				print '</td>';
 				print '<td align="right" class="nowraponall">';
 				if ($user->rights->societe->creer)
@@ -1184,7 +1199,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$formadmin=new FormAdmin($db);
 					$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
 					$morecss='maxwidth150';
-					if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+					if ($conf->browser->layout == 'phone') $morecss='maxwidth100';
 					$out.= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
 				}
 				// Button
@@ -1610,7 +1625,6 @@ if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights-
 	print '</form>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

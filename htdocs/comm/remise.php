@@ -26,9 +26,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$langs->load("companies");
-$langs->load("orders");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'orders', 'bills'));
 
 $id=GETPOST("id",'int');
 
@@ -130,8 +129,9 @@ if ($socid > 0)
 
     	print '</form>';
 
-    	llxFooter();
-    	$db->close();
+    	// End of page
+        llxFooter();
+        $db->close();
     	exit;
     }
 
@@ -325,5 +325,6 @@ if ($socid > 0)
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

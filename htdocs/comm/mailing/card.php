@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->load("mails");
 
 if (! $user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->societe_id > 0)) accessforbidden();
@@ -1357,5 +1358,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

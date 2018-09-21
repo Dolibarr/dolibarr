@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+// Load translation files required by page
 $langs->load("users");
 
 // Security check
@@ -92,6 +93,6 @@ print '</div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
 $db->close();

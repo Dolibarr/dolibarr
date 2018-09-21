@@ -26,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
+// Load translation files required by the page
 $langs->load("propal");
 
 
@@ -274,6 +275,6 @@ if ($resql)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

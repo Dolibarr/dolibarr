@@ -5,13 +5,14 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador      	<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,7 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array('orders','sendings','companies','bills','propal','deliveries','products','other'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
@@ -358,8 +360,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
-																																	  // trigger used
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) // For avoid conflicts if trigger used
 								{
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_options = $lines[$i]->array_options;
@@ -368,7 +369,12 @@ if (empty($reshook))
 								$tva_tx = $lines[$i]->tva_tx;
 								if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid);
+								$result = $object->addline(
+									$desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product,
+									$lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type,
+									$lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+									$lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid
+								);
 
 								if ($result < 0) {
 									$error++;
@@ -674,7 +680,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && (! ($price_ht_devise >= 0) || $price_ht_devise == '')) 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && $price_ht == '' && $price_ht_devise == '') 	// Unit price can be 0 but not ''. Also price can be negative for order.
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
@@ -695,8 +701,10 @@ if (empty($reshook))
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+				}
+				else
+				{
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -1572,7 +1580,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 	// Date
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td>';
-	$form->select_date('', 're', '', '', '', "crea_commande", 1, 1);			// Always autofill date with current date
+	print $form->selectDate('', 're', '', '', '', "crea_commande", 1, 1);			// Always autofill date with current date
 	print '</td></tr>';
 
 	// Delivery date planed
@@ -1582,7 +1590,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE_DELIVERY)?-1:'';
 	}
-	$form->select_date($datedelivery, 'liv_', '', '', '', "crea_commande", 1, 1);
+	print $form->selectDate($datedelivery, 'liv_', '', '', '', "crea_commande", 1, 1);
 	print "</td></tr>";
 
 	// Conditions de reglement
@@ -1853,13 +1861,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
+				$forcecombo=0;
+				if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value'
-									// => 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"),
-									// 'value' => 1),
-									array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockDecrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockDecrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse','int')?GETPOST('idwarehouse','int'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+				);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
@@ -1885,13 +1894,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
+				$forcecombo=0;
+				if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value'
-									// => 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"),
-									// 'value' => 1),
-									array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+				);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
@@ -1926,13 +1936,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
+				$forcecombo=0;
+				if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value'
-									// => 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"),
-									// 'value' => 1),
-									array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+				);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Cancel'), $text, 'confirm_cancel', $formquestion, 0, 1);
@@ -1954,16 +1965,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 								// => 1),
 								array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=3)')));
-			// Paiement incomplet. On demande si motif = escompte ou autre
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneOrder'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
-		if (! $formconfirm) {
-			$parameters = array('lineid' => $lineid);
-			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-		}
+		// Call Hook formConfirm
+		$parameters = array('lineid' => $lineid);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 		// Print form confirm
 		print $formconfirm;
@@ -1980,7 +1989,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -2078,7 +2087,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<form name="setdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdate">';
-			$form->select_date($object->date, 'order_', '', '', '', "setdate");
+			print $form->selectDate($object->date, 'order_', '', '', '', "setdate");
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
@@ -2103,7 +2112,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<form name="setdate_livraison" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			$form->select_date($object->date_livraison ? $object->date_livraison : - 1, 'liv_', '', '', '', "setdate_livraison");
+			print $form->selectDate($object->date_livraison ? $object->date_livraison : - 1, 'liv_', '', '', '', "setdate_livraison");
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
@@ -2380,7 +2389,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Total HT
 		$alert = '';
-		if($object->total_ht < $object->thirdparty->order_min_amount) {
+		if (! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT) && $object->total_ht < $object->thirdparty->order_min_amount) {
 			$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->order_min_amount));
 		}
 		print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
@@ -2669,5 +2678,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

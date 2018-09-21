@@ -147,6 +147,7 @@ if (! empty($source) && in_array($ref, array('member_ref', 'contractline_ref', '
 {
     $langs->load("errors");
     dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
+    // End of page
     llxFooter();
     $db->close();
     exit;
@@ -179,11 +180,11 @@ else if (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONL
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$width=96;
 }
 // Output html code for logo

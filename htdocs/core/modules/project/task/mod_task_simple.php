@@ -33,7 +33,10 @@ class mod_task_simple extends ModeleNumRefTask
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='TK';
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom = "Simple";
 	var $name = "Simple";
 
@@ -140,16 +143,16 @@ class mod_task_simple extends ModeleNumRefTask
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * 	Return next reference not yet used as a reference
+     *  Return next reference not yet used as a reference
      *
-     *  @param	Societe	$objsoc     Object third party
-     *  @param  Task	$object		Object task
-     *  @return string      		Next not used reference
+     *  @param  Societe	$objsoc     Object third party
+     *  @param  Task	$object     Object task
+     *  @return string              Next not used reference
      */
     function task_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 }
-

@@ -38,10 +38,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_order_odt extends ModelePDFCommandes
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -51,10 +60,10 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -98,8 +107,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	{
 		global $conf,$langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
 
 		$form = new Form($this->db);
 
@@ -177,6 +186,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -190,6 +200,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -211,10 +222,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->commande->dir_output)
 		{
@@ -494,6 +502,4 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 		return -1;
 	}
-
 }
-

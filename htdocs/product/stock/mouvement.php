@@ -42,8 +42,8 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 // Security check
@@ -733,7 +733,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
     $moreforfilter='';
@@ -1025,29 +1025,23 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-			{
-				print '<td>'.'<a href="'
-									.DOL_URL_ROOT.'/product/stock/mouvement.php'
-									.'?id='.$objp->entrepot_id
-									.'&amp;search_inventorycode='.$objp->inventorycode							   
-									.'&amp;search_type_mouvement='.$objp->type_mouvement
-							.'">'
-								.$objp->inventorycode
-							.'</a>'
-						.'</td>';
-			}
-			else
-			{
-				print '<td>'.$objp->inventorycode.'</td>';
-			}
+	        print '<td>';
+          print '<a href="'
+								.DOL_URL_ROOT.'/product/stock/mouvement.php'
+								.'?id='.urlencode($objp->entrepot_id)
+								.'&amp;search_inventorycode='.urlencode($objp->inventorycode)
+							  .'&amp;search_type_mouvement='.urlencode($objp->type_mouvement)
+						    .'">'
+							  .$objp->inventorycode
+						   .'</a>';
+					print '</td>';
         }
         if (! empty($arrayfields['m.label']['checked']))
         {
             // Label of movement
         	print '<td class="tdoverflowmax100aaa">'.$objp->label.'</td>';
         }
-		if (! empty($arrayfields['m.type_mouvement']['checked']))
+		    if (! empty($arrayfields['m.type_mouvement']['checked']))
         {
             // Type of movement
         	print '<td align="center">'.$objp->type_mouvement.'</td>';
@@ -1180,7 +1174,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();
-

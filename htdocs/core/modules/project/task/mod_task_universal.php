@@ -45,8 +45,8 @@ class mod_task_universal extends ModeleNumRefTask
     {
     	global $conf,$langs;
 
-		$langs->load("projects");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("projects","admin"));
 
 		$form = new Form($this->db);
 
@@ -127,6 +127,7 @@ class mod_task_universal extends ModeleNumRefTask
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -136,7 +137,7 @@ class mod_task_universal extends ModeleNumRefTask
      */
     function project_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$object);
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
     }
 }
-

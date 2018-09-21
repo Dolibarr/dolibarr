@@ -37,9 +37,21 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='contact';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='socpeople';
+
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'contact';
 
 
@@ -88,7 +100,7 @@ class Contact extends CommonObject
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
 
-    	public $poste;                 // Position
+    public $poste;                 // Position
 
 	public $socid;					// fk_soc
 	public $statut;				// 0=inactif, 1=actif
@@ -123,9 +135,6 @@ class Contact extends CommonObject
 	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 
-
-
-
 	/**
 	 *	Constructor
 	 *
@@ -137,6 +146,7 @@ class Contact extends CommonObject
 		$this->statut = 1;	// By default, status is enabled
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
@@ -144,6 +154,7 @@ class Contact extends CommonObject
 	 */
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $user;
 
 		$this->nb=array();
@@ -204,7 +215,7 @@ class Contact extends CommonObject
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
-		$entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
@@ -228,7 +239,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->db->escape($this->priv).",";
 		$sql.= " ".$this->db->escape($this->statut).",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$this->db->escape($entity).",";
+        $sql.= " ".$this->db->escape($this->entity).",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -307,6 +318,8 @@ class Contact extends CommonObject
 
 		$this->id = $id;
 
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+
 		// Clean parameters
 		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname);
@@ -354,6 +367,7 @@ class Contact extends CommonObject
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->db->escape($this->no_email)."'":"0");
+		$sql .= ", entity = " . $this->db->escape($this->entity);
 		$sql .= " WHERE rowid=".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -368,15 +382,12 @@ class Contact extends CommonObject
 		    $action='update';
 
 		    // Actions on extra fields
-		    if (! $error)
+		    if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 		    {
-		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		    	$result=$this->insertExtraFields();
+		    	if ($result < 0)
 		    	{
-		    		$result=$this->insertExtraFields();
-		    		if ($result < 0)
-		    		{
-		    			$error++;
-		    		}
+		    		$error++;
 		    	}
 		    }
 
@@ -466,6 +477,7 @@ class Contact extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -477,15 +489,17 @@ class Contact extends CommonObject
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
-		if ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
-		if ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+		elseif ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
+		elseif ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
 		return $dn;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
@@ -493,12 +507,13 @@ class Contact extends CommonObject
 	 */
 	function _load_ldap_info()
 	{
-		global $conf,$langs;
+        // phpcs:enable
+		global $conf, $langs;
 
         $info = array();
 
         // Object classes
-		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"]=explode(',', $conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		$this->fullname=$this->getFullName($langs);
 
@@ -559,6 +574,7 @@ class Contact extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update field alert birthday
 	 *
@@ -569,6 +585,7 @@ class Contact extends CommonObject
 	 */
 	function update_perso($id, $user=null, $notrigger=0)
 	{
+        // phpcs:enable
 	    $error=0;
 	    $result=false;
 
@@ -677,6 +694,7 @@ class Contact extends CommonObject
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
+		$sql.= " c.datec as date_creation, c.tms as date_modification,";
 		$sql.= " co.label as country, co.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
@@ -710,6 +728,9 @@ class Contact extends CommonObject
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
+
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
 
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
@@ -836,6 +857,7 @@ class Contact extends CommonObject
     	}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
@@ -847,6 +869,7 @@ class Contact extends CommonObject
 	 */
 	function load_ref_elements()
 	{
+        // phpcs:enable
 		// Compte les elements pour lesquels il est contact
 		$sql ="SELECT tc.element, count(ec.rowid) as nb";
 		$sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -864,9 +887,9 @@ class Contact extends CommonObject
 				if ($obj->nb)
 				{
 					if ($obj->element=='facture')  $this->ref_facturation = $obj->nb;
-					if ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
-					if ($obj->element=='commande') $this->ref_commande = $obj->nb;
-					if ($obj->element=='propal')   $this->ref_propal = $obj->nb;
+					elseif ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
+					elseif ($obj->element=='commande') $this->ref_commande = $obj->nb;
+					elseif ($obj->element=='propal')   $this->ref_propal = $obj->nb;
 				}
 			}
 			$this->db->free($resql);
@@ -891,8 +914,8 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_lastname       = $obj->lastname;
-		$this->old_firstname      = $obj->firstname;
+		$this->old_lastname = $obj->lastname;
+		$this->old_firstname = $obj->firstname;
 
 		$this->db->begin();
 
@@ -1012,7 +1035,7 @@ class Contact extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                = $obj->rowid;
+				$this->id = $obj->rowid;
 
 				if ($obj->fk_user_creat) {
 					$cuser = new User($this->db);
@@ -1050,10 +1073,7 @@ class Contact extends CommonObject
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 
-		dol_syslog(get_class($this)."::getNbOfEMailings", LOG_DEBUG);
-
 		$resql=$this->db->query($sql);
-
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
@@ -1111,7 +1131,6 @@ class Contact extends CommonObject
 
         $url .= $moreparam;
 
-        $linkstart = '<a href="'.$url.'"';
         $linkclose="";
 		if (empty($notooltip)) {
 	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -1121,20 +1140,17 @@ class Contact extends CommonObject
         	}
 	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
     	   	$linkclose.= ' class="classfortooltip"';
-		}
-		$linkclose.='>';
 
-		/*if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
+    	   	/*
+    	   	 $hookmanager->initHooks(array('contactdao'));
+    	   	 $parameters=array('id'=>$this->id);
+    	   	 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+    	   	 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+    	   	 */
 		}
-		$hookmanager->initHooks(array('contactdao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;*/
 
-		$linkstart.=$linkclose;
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
 		if ($option == 'xxx')
@@ -1149,11 +1165,6 @@ class Contact extends CommonObject
 		$result.=$linkend;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('contactdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1189,6 +1200,7 @@ class Contact extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -1198,6 +1210,7 @@ class Contact extends CommonObject
 	 */
 	function LibStatut($statut,$mode)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
@@ -1234,6 +1247,7 @@ class Contact extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return translated label of Public or Private
 	 *
@@ -1242,6 +1256,7 @@ class Contact extends CommonObject
 	 */
 	function LibPubPriv($statut)
 	{
+        // phpcs:enable
 		global $langs;
 		if ($statut=='1') return $langs->trans('ContactPrivate');
 		else return $langs->trans('ContactPublic');
@@ -1346,6 +1361,7 @@ class Contact extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{

@@ -24,13 +24,12 @@
  * 	\brief      Page liste des bons de prelevements
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("widthdrawals");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -109,7 +108,7 @@ if ($result)
   $newcardbutton='';
   if ($user->rights->prelevement->bons->creer)
   {
-  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php">'.$langs->trans('NewStandingOrder');
+  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle">'.$langs->trans('NewStandingOrder').'</span>';
   	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
   	$newcardbutton.= '</a>';
   }
@@ -184,7 +183,6 @@ else
   dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

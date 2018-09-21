@@ -26,12 +26,12 @@
  *      \brief      Page ajout de categories bancaires
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 $action=GETPOST('action','aZ09');
 
@@ -144,4 +144,6 @@ if ($action != 'edit')
 
 print '</table></form>';
 
+// End of page
 llxFooter();
+$db->close();

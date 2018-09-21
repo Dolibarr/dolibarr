@@ -22,12 +22,13 @@
  *      \brief      Monthly report of leave requests.
  */
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("holiday"));
 
 // Security check
@@ -80,7 +81,7 @@ print '</form>';
 
 $sql = "SELECT cp.rowid, cp.fk_user, cp.date_debut, cp.date_fin, ct.label, cp.description, cp.halfday";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
-$sql .= " LEFT JOIN llx_user u ON cp.fk_user = u.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
 $sql .= " AND cp.statut = 3";		// Approved
@@ -193,6 +194,6 @@ else
 print '</table>';
 print '</div>';
 
-// Fin de page
-$db->close();
+// End of page
 llxFooter();
+$db->close();

@@ -23,7 +23,7 @@
  *	\brief      Gantt diagramm of a project
  */
 
-require ("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -42,14 +42,15 @@ $mine = ($mode == 'mine' ? 1 : 0);
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 // Security check
 $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$langs->load("users");
-$langs->load("projects");
+// Load translation files required by the page
+$langs->loadlangs(array('users', 'projects'));
 
 
 /*
@@ -364,7 +365,6 @@ else
 	print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

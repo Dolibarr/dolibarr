@@ -24,15 +24,15 @@
  *      \brief      Fiche de notes sur un contrat
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("companies");
-$langs->load("contracts");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'contracts'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');

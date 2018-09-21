@@ -28,7 +28,7 @@
  */
 
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php');
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -36,6 +36,7 @@ if (! empty($conf->projet->enabled)) {
 
 $action = GETPOST('action','aZ09');
 
+// Load translation files required by the page
 $langs->loadLangs(array("loan"));
 
 // Security check
@@ -128,6 +129,7 @@ if ($id > 0)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();
 

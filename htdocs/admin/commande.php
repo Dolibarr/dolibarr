@@ -36,10 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("orders");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'orders', 'other'));
 
 if (! $user->admin) accessforbidden();
 
@@ -681,7 +679,6 @@ print "</td></tr>\n";
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

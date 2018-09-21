@@ -35,7 +35,10 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class PropaleStats extends Stats
 {
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
     var $socid;
     var $userid;

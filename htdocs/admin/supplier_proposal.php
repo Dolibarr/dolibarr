@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "other", "supplier_proposal"));
 
 if (! $user->admin) accessforbidden();
@@ -582,6 +582,7 @@ print "</tr>\n";
 print "<tr class=\"oddeven\">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
+// End of page
 llxFooter();
 $db->close();
 

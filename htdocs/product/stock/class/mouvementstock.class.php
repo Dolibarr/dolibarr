@@ -34,6 +34,7 @@ class MouvementStock extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'stockmouvement';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -119,9 +120,15 @@ class MouvementStock extends CommonObject
 
 		// Set properties of movement
 		$this->product_id = $fk_product;
-		$this->entrepot_id = $entrepot_id;
+		$this->entrepot_id = $entrepot_id; // deprecated
+		$this->warehouse_id = $entrepot_id;
 		$this->qty = $qty;
 		$this->type = $type;
+		$this->price = $price;
+		$this->label = $label;
+		$this->inventorycode = $inventorycode;
+		$this->datem = $now;
+		$this->batch = $batch;
 
 		$mvid = 0;
 
@@ -771,8 +778,8 @@ class MouvementStock extends CommonObject
 	 * Create or update batch record (update table llx_product_batch). No check is done here, done by parent.
 	 *
 	 * @param	array|int	$dluo	      Could be either
-	 *                                     - int if row id of product_batch table
-	 *                                     - or complete array('fk_product_stock'=>, 'batchnumber'=>)
+	 *                                    - int if row id of product_batch table
+	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
 	 * @return 	int   				      <0 if KO, else return productbatch id
 	 */
@@ -851,6 +858,7 @@ class MouvementStock extends CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return Url link of origin object
 	 *
@@ -860,6 +868,7 @@ class MouvementStock extends CommonObject
 	 */
 	function get_origin($fk_origin, $origintype)
 	{
+        // phpcs:enable
 	    $origin='';
 
 		switch ($origintype) {
@@ -1004,6 +1013,7 @@ class MouvementStock extends CommonObject
 		return $this->LibStatut($mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -1012,31 +1022,60 @@ class MouvementStock extends CommonObject
 	 */
 	function LibStatut($mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
+		if ($mode == 0 || $mode == 1)
 		{
 			return $langs->trans('StatusNotApplicable');
 		}
-		if ($mode == 1)
-		{
-			return $langs->trans('StatusNotApplicable');
-		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'),'statut9');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
 		}
+	}
+
+	/**
+	 *	Create object on disk
+	 *
+	 *	@param     string		$modele			force le modele a utiliser ('' to not force)
+	 * 	@param     Translate	$outputlangs	Object langs to use for output
+	 *  @param     int			$hidedetails    Hide details of lines
+	 *  @param     int			$hidedesc       Hide description
+	 *  @param     int			$hideref        Hide ref
+	 *  @return    int             				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	{
+		global $conf,$user,$langs;
+
+		$langs->load("stocks");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'stdmovement';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->MOUVEMENT_ADDON_PDF)) {
+				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/stock/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 }

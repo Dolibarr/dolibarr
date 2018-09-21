@@ -35,10 +35,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_user_odt extends ModelePDFUser
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -48,10 +57,10 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -93,10 +102,10 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	function info($langs)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array('companies', 'errors'));
 
 		$form = new Form($this->db);
 
@@ -190,6 +199,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -203,7 +213,8 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc,$hookmanager;
+        // phpcs:enable
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
 		{
@@ -224,10 +235,8 @@ class doc_generic_user_odt extends ModelePDFUser
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "companies", "bills", "dict"));
 
 		if ($conf->user->dir_output)
 		{
@@ -409,7 +418,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else
@@ -422,8 +431,19 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
-	function get_substitutionarray_object($object,$outputlangs,$array_key='object') {
-		$array_other=array();
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     * get substitution array for object
+     *
+     * @param User          $object         user
+     * @param Translate     $outputlangs    translation object
+     * @param string        $array_key      key for array
+     * @return array                        array of substitutions
+     */
+    function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+    {
+        // phpcs:enable
+		$array_other = array();
 		foreach($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;
@@ -431,6 +451,4 @@ class doc_generic_user_odt extends ModelePDFUser
 		}
 		return $array_other;
 	}
-
 }
-

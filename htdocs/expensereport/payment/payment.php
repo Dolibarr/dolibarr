@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("bills");
-$langs->load("banks");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'trips'));
 
 $id=GETPOST("id",'int');
 $ref=GETPOST('ref','alpha');
@@ -236,7 +236,7 @@ if ($action == 'create' || empty($action))
     print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
-	$form->select_date($datepayment,'','','','',"add_payment",1,1);
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -283,7 +283,6 @@ if ($action == 'create' || empty($action))
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	$total=0;
 	$totalrecu=0;
 
@@ -338,5 +337,6 @@ if ($action == 'create' || empty($action))
 	print "</form>\n";
 }
 
+// End of page
 llxFooter();
 $db->close();

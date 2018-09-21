@@ -35,7 +35,7 @@ class lettering extends BookKeeping
 	 * lettrageTiers
 	 *
 	 * @param int $socid Thirdparty id
-	 * @return void
+	 * @return int 1 OK, <0 error
 	 */
 	public function lettrageTiers($socid)
 	{

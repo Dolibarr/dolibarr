@@ -25,6 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","other","agenda"));
 
 if (!$user->admin)
@@ -34,7 +35,10 @@ if (!$user->admin)
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$arrayofparameters=array('DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200'));
+$arrayofparameters=array(
+	'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
+);
 
 
 /*
@@ -75,6 +79,8 @@ if ($action == 'edit')
 
 	foreach($arrayofparameters as $key => $val)
 	{
+		if (isset($val['enabled']) && empty($val['enabled'])) continue;
+
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
@@ -137,6 +143,6 @@ $message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'Web
 $message.='<br>';
 print $message;
 
-
+// End of page
 llxFooter();
 $db->close();

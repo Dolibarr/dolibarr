@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","accountancy","trips","productbatch"));
 
 $account_parent = GETPOST('account_parent','int');
@@ -101,10 +102,10 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 	}
 
-	$db->begin();
-
 	if (! $error)
 	{
+		$db->begin();
+
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
 		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
 		$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
@@ -348,6 +349,6 @@ if ($result) {
 	print $db->lasterror();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

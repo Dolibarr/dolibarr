@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("bills","compta","accountancy","other"));
 
 // Filter
@@ -71,7 +71,22 @@ if ($result) {
 $y = $year_current;
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width=150>' . $langs->trans("Label") . '</td><td align="center">' . $langs->trans("JanuaryMin") . '</td><td align="center">' . $langs->trans("FebruaryMin") . '</td><td align="center">' . $langs->trans("MarchMin") . '</td><td align="center">' . $langs->trans("AprilMin") . '</td><td align="center">' . $langs->trans("MayMin") . '</td><td align="center">' . $langs->trans("JuneMin") . '</td><td align="center">' . $langs->trans("JulyMin") . '</td><td align="center">' . $langs->trans("AugustMin") . '</td><td align="center">' . $langs->trans("SeptemberMin") . '</td><td align="center">' . $langs->trans("OctoberMin") . '</td><td align="center">' . $langs->trans("NovemberMin") . '</td><td align="center">' . $langs->trans("DecemberMin") . '</td><td align="center"><b>Total</b></td></tr>';
+print '<tr class="liste_titre">';
+print '<td width=150>' . $langs->trans("Label") . '</td>';
+print '<td align="center">' . $langs->trans("JanuaryMin") . '</td>';
+print '<td align="center">' . $langs->trans("FebruaryMin") . '</td>';
+print '<td align="center">' . $langs->trans("MarchMin") . '</td>';
+print '<td align="center">' . $langs->trans("AprilMin") . '</td>';
+print '<td align="center">' . $langs->trans("MayMin") . '</td>';
+print '<td align="center">' . $langs->trans("JuneMin") . '</td>';
+print '<td align="center">' . $langs->trans("JulyMin") . '</td>';
+print '<td align="center">' . $langs->trans("AugustMin") . '</td>';
+print '<td align="center">' . $langs->trans("SeptemberMin") . '</td>';
+print '<td align="center">' . $langs->trans("OctoberMin") . '</td>';
+print '<td align="center">' . $langs->trans("NovemberMin") . '</td>';
+print '<td align="center">' . $langs->trans("DecemberMin") . '</td>';
+print '<td align="center"><b>Total</b></td>';
+print '</tr>';
 
 $sql = "SELECT bk.numero_compte AS 'compte',";
 $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=1,bk.montant,0)),2) AS 'Janvier',";
@@ -125,5 +140,6 @@ if ($resql) {
 }
 print "</table>\n";
 
+// End of page
 llxFooter();
 $db->close();

@@ -78,7 +78,6 @@ if ($permission) {
 
 	<?php
 
-	$var=true;
 	if (empty($hideaddcontactforuser))
 	{
 
@@ -129,7 +128,7 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', '', 0, 'minwidth100imp'); ?>
+			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 0, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
@@ -157,8 +156,6 @@ if ($permission) {
 		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
-	<?php $var=true; ?>
-
 	<?php
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
@@ -171,10 +168,9 @@ if ($permission) {
 
 		$i = 0;
 		while ($i < $num) {
-			$var = !$var;
 	?>
 
-	<form class="tagtr <?php echo $var?"pair":"impair"; ?>">
+	<form class="tagtr oddeven">
 		<div class="tagtd" align="left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>

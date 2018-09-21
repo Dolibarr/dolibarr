@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("companies");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
@@ -300,12 +298,11 @@ else
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
-			if (! $formconfirm) {
-			    $parameters = array();
-			    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-			    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-			}
+			// Call Hook formConfirm
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 			// Print form confirm
 			print $formconfirm;
@@ -709,7 +706,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

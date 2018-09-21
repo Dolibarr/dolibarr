@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
  *	\brief      List of bank transactions
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -48,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks","bills","categories","companies","margins","salaries","loan","donations","trips","members","compta","accountancy"));
 
 $id = GETPOST('id','int');
@@ -102,7 +104,7 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder='ASC';
+if (! $sortorder) $sortorder='desc,desc,desc';
 if (! $sortfield) $sortfield='b.datev,b.dateo,b.rowid';
 
 $mode_balance_ok=false;
@@ -112,7 +114,6 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
     $sortfield = 'b.datev,b.dateo,b.rowid';
     if ($id > 0 || ! empty($ref) || $search_account > 0) $mode_balance_ok = true;
 }
-if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
 
 $object = new Account($db);
 if ($id > 0 || ! empty($ref))
@@ -444,7 +445,7 @@ $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappr
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
-$sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -525,8 +526,8 @@ if (! empty($debit)) $mode_balance_ok=false;
 if (! empty($credit)) $mode_balance_ok=false;
 if (! empty($thirdparty)) $mode_balance_ok=false;
 
-$sql.= $db->plimit($limit+1,$offset);
-
+$sql.= $db->plimit($limit+1, $offset);
+//print $sql;
 dol_syslog('compta/bank/bankentries_list.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
@@ -666,7 +667,7 @@ if ($resql)
 		}
 		print '</td>';
 		print '<td class="nowrap">';
-		$form->select_date(empty($dateop)?-1:$dateop,'op',0,0,0,'transaction');
+		print $form->selectDate(empty($dateop)?-1:$dateop, 'op', 0, 0, 0, 'transaction');
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="nowrap">';
@@ -731,7 +732,7 @@ if ($resql)
 			if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
-					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$search_account).'">'.$langs->trans("AddBankRecord");
+					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)).'"><span class="valignmiddle">'.$langs->trans("AddBankRecord").'</span>';
 					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 					$newcardbutton.= '</a>';
 				} else {
@@ -787,17 +788,17 @@ if ($resql)
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateOperationShort').' : ';
 	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
-	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateValueShort').' : ';
 	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('From') . ' ';
-	$moreforfilter .= $form->select_date($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->select_date($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
+	$moreforfilter .= '<div class="nowrap'.($conf->browser->layout=='phone'?' centpercent':'').' inline-block">'.$langs->trans('to') . ' ' . $form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
 	$moreforfilter .= '</div>';
 
 	if (! empty($conf->categorie->enabled))
@@ -949,7 +950,8 @@ if ($resql)
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
-    $balance = 0;    // For balance
+	$balance = 0;    // For balance
+	$balancebefore = 0;    // For balance
 	$balancecalculated = false;
 	$posconciliatecol = 0;
 
@@ -973,7 +975,7 @@ if ($resql)
             // Loop on each record before
             $sign = 1;
             $i = 0;
-            $sqlforbalance='SELECT SUM(b.amount) as balance';
+            $sqlforbalance='SELECT SUM(b.amount) as previoustotal';
             $sqlforbalance.= " FROM ";
             $sqlforbalance.= " ".MAIN_DB_PREFIX."bank_account as ba,";
             $sqlforbalance.= " ".MAIN_DB_PREFIX."bank as b";
@@ -988,7 +990,16 @@ if ($resql)
                 $objforbalance = $db->fetch_object($resqlforbalance);
                 if ($objforbalance)
                 {
-                    $balance = $objforbalance->balance;
+                	// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
+                	if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
+                	{
+                		$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
+                	}
+                	// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
+                	else
+                	{
+                		$balance = $objforbalance->previoustotal;
+                	}
                 }
             }
             else dol_print_error($db);
@@ -1064,7 +1075,17 @@ if ($resql)
             }
         }
 
-        $balance = price2num($balance + ($sign * $objp->amount),'MT');
+
+        if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
+        {
+        	$balance = price2num($balancebefore, 'MT');		// balance = balancebefore of previous line (sort is desc)
+        	$balancebefore = price2num($balancebefore - ($sign * $objp->amount),'MT');
+        }
+		else
+		{
+			$balancebefore = price2num($balance, 'MT');		// balancebefore = balance of previous line (sort is asc)
+			$balance = price2num($balance + ($sign * $objp->amount),'MT');
+		}
 
         if (empty($cachebankaccount[$objp->bankid]))
         {
@@ -1284,6 +1305,7 @@ if ($resql)
 				$companystatic->name=$objp->nom;
 				$companystatic->name_alias=$objp->name_alias;
 				$companystatic->client=$objp->client;
+				$companystatic->email=$objp->email;
 				$companystatic->fournisseur=$objp->fournisseur;
 				$companystatic->code_client=$objp->code_client;
 				$companystatic->code_fournisseur=$objp->code_fournisseur;
@@ -1341,7 +1363,6 @@ if ($resql)
     	{
     		if ($mode_balance_ok)
     		{
-    			$balancebefore = price2num($balance - ($sign * $objp->amount),'MT');
     			if ($balancebefore >= 0)
     			{
     				print '<td align="right" class="nowrap">&nbsp;'.price($balancebefore).'</td>';
@@ -1403,14 +1424,14 @@ if ($resql)
 
         if (! empty($arrayfields['b.conciliated']['checked']))
     	{
-            print '<td class="nowrap" align="center">';
+            print '<td class="nowraponall" align="center">';
             print $objp->conciliated?$langs->trans("Yes"):$langs->trans("No");
         	print '</td>';
             if (! $i) $totalarray['nbfield']++;
     	}
 
     	// Action edit/delete
-    	print '<td class="nowrap" align="center">';
+    	print '<td class="nowraponall" align="center">';
     	// Transaction reconciliated or edit link
     	if ($objp->conciliated && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
@@ -1509,6 +1530,6 @@ if ($_POST["action"] == "search" && ! $num)
 	print '<div class="opacitymedium">'.$langs->trans("NoRecordFound").'</div>';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

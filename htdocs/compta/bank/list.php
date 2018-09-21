@@ -27,7 +27,7 @@ use Stripe\BankAccount;
  *       \brief      Home page of bank module
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -35,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("accountancy");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -231,7 +229,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->banque->configurer)
 {
-	$newcardbutton.='<a class="butActionNew" href="card.php?action=create">'.$langs->trans("NewFinancialAccount");
+	$newcardbutton.='<a class="butActionNew" href="card.php?action=create"><span class="valignmiddle">'.$langs->trans("NewFinancialAccount").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -259,7 +257,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';
@@ -404,7 +402,7 @@ print "</tr>\n";
 
 
 $total = array(); $found = 0; $i=0; $lastcurrencycode='';
-$var=true;
+
 foreach ($accounts as $key=>$type)
 {
 	if ($i >= $limit) break;
@@ -414,7 +412,6 @@ foreach ($accounts as $key=>$type)
 	$obj = new Account($db);
 	$obj->fetch($key);
 
-	$var = !$var;
 	$solde = $obj->solde(1);
 
 	if (! empty($lastcurrencycode) && $lastcurrencycode != $obj->currency_code)
@@ -556,7 +553,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['balance']['checked']))
     {
 		print '<td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, 0, -1, $obj->currency_code).'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];
@@ -607,7 +604,6 @@ print "</div>";
 
 print "</form>";
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("projects");
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -64,6 +64,7 @@ if ($id > 0 || ! empty($ref))
 	$ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$id=$object->id;
 	}
 }
@@ -568,12 +569,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
+	print $form->selectDate(($date_start?$date_start:''), 'projectstart', 0, 0, 0, '', 1, 0);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
+	print $form->selectDate(($date_end?$date_end:-1), 'projectend', 0, 0, 0, '', 1, 0);
 	print '</td></tr>';
 
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -821,7 +822,7 @@ elseif ($object->id > 0)
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
+		print $form->selectDate($object->date_start?$object->date_start:-1, 'projectstart', 0, 0, 0, '', 1, 0);
 		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
 		if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -829,7 +830,7 @@ elseif ($object->id > 0)
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print $form->select_date($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
+		print $form->selectDate($object->date_end?$object->date_end:-1, 'projectend', 0, 0, 0, '', 1, 0);
 		print '</td></tr>';
 
 		// Budget
@@ -1288,6 +1289,6 @@ else
 	print $langs->trans("RecordNotFound");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018        Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin","accountancy"));
 
 $modecompta = GETPOST('modecompta','alpha');
@@ -151,7 +153,7 @@ if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear=$year_start; $prevquarter=$q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -189,13 +191,15 @@ $namesup=$namecust;
 
 
 
+// TODO Report from bookkeeping not yet available, so we switch on report on business events
+if ($modecompta=="BOOKKEEPING") $modecompta="CREANCES-DETTES";
+if ($modecompta=="BOOKKEEPINGCOLLECTED") $modecompta="RECETTES-DEPENSES";
 
 // Show report header
-$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByVatRate");
-
 if ($modecompta=="CREANCES-DETTES") {
+	$name=$langs->trans("Turnover").', '.$langs->trans("ByVatRate");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -205,16 +209,29 @@ if ($modecompta=="CREANCES-DETTES") {
 	}
 
 	$builddate=dol_now();
-} else {
+}
+else if ($modecompta=="RECETTES-DEPENSES")
+{
+	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByVatRate");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 
 	$builddate=dol_now();
 }
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+else if ($modecompta=="BOOKKEEPING")
+{
+
+
+}
+else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+{
+
+
+}
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
@@ -398,7 +415,6 @@ print "</table>\n";
 	print '<br>'.$langs->trans("TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant") . '<br>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

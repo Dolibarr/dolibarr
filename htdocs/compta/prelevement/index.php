@@ -26,16 +26,15 @@
  */
 
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("withdrawals");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -222,6 +221,6 @@ else
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

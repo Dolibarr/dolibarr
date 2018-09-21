@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $action=GETPOST('action','aZ09');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'admincompany';   // To manage different context of search
 
-$langs->load("admin");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'companies'));
 
 if (! $user->admin) accessforbidden();
 
@@ -49,6 +49,7 @@ $error=0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admincompany','globaladmin'));
+
 
 /*
  * Actions
@@ -188,7 +189,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		{
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1','aZ09'),'chaine',0,'',$conf->entity);
 		}
-		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC1",  GETPOST("clt1",'aZ09'),'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC1", GETPOST("clt1",'aZ09'),'chaine',0,'',$conf->entity);
 	}
 	if($_POST["optionlocaltax2"]=="localtax2on")
 	{
@@ -200,7 +201,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		{
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2','aZ09'),'chaine',0,'',$conf->entity);
 		}
-		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2",  GETPOST("clt2",'aZ09'),'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2",'aZ09'),'chaine',0,'',$conf->entity);
 	}
 
 	if ($action != 'updateedit' && ! $error)
@@ -300,7 +301,7 @@ $head = company_admin_prepare_head();
 
 dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
 
-print $langs->trans("CompanyFundationDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Modify"), $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit' || $action == 'updateedit')
@@ -397,7 +398,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
 			print ' &nbsp; ';
-			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 		}
 	} else {
 		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -765,7 +766,13 @@ else
 
 	// Web
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB,'_blank',80) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>';
+	$arrayofurl = preg_split('/\s/', $conf->global->MAIN_INFO_SOCIETE_WEB);
+	foreach($arrayofurl as $urltoshow)
+	{
+		if ($urltoshow) print dol_print_url($urltoshow,'_blank',80);
+	}
+	print '</td></tr>';
 
 	// Barcode
 	if (! empty($conf->barcode->enabled))
@@ -791,7 +798,7 @@ else
 	}
 	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
-		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 	}
 	else
 	{
@@ -1153,7 +1160,6 @@ else
 	print '</div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

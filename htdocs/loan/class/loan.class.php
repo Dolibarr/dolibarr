@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Loan extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='loan';
+
 	public $table='loan';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='loan';
 
 	public $picto = 'bill';
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
 	public $datestart;
 	public $dateend;
 	public $label;
@@ -63,7 +75,6 @@ class Loan extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
@@ -278,7 +289,6 @@ class Loan extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 
@@ -326,6 +336,7 @@ class Loan extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Tag loan as payed completely
 	 *
@@ -334,6 +345,7 @@ class Loan extends CommonObject
 	 */
 	function set_paid($user)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql.= " paid = 1";
 		$sql.= " WHERE rowid = ".$this->id;
@@ -358,6 +370,7 @@ class Loan extends CommonObject
 		return $this->LibStatut($this->paid,$mode,$alreadypaid);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return label for given status
 	 *
@@ -368,51 +381,47 @@ class Loan extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0,$alreadypaid=-1)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->loadLangs(array("customers","bills"));
 
-		if ($mode == 0)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($statut ==  0) return $langs->trans("Unpaid");
-			if ($statut ==  1) return $langs->trans("Paid");
+			elseif ($statut ==  1) return $langs->trans("Paid");
 		}
-		if ($mode == 1)
-		{
-			if ($statut ==  0) return $langs->trans("Unpaid");
-			if ($statut ==  1) return $langs->trans("Paid");
-		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+			elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+			elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
-			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
+			elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+			elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+			elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-			if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+			elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-			if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+			elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
 		}
 
-		return "Error, mode/status not found";
+		else return "Error, mode/status not found";
 	}
 
 
@@ -444,6 +453,36 @@ class Loan extends CommonObject
 		$result .= $linkend;
 
 		return $result;
+	}
+	
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 * 	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	function initAsSpecimen()
+	{
+	    global $user, $langs, $conf;
+	    
+	    $now=dol_now();
+	    
+	    // Initialise parameters
+	    $this->id = 0;
+	    $this->fk_bank = 1;
+	    $this->label = 'SPECIMEN';
+	    $this->specimen = 1;
+	    $this->socid = 1;
+	    $this->account_capital = 16;
+	    $this->account_insurance = 616;
+	    $this->account_interest = 518;
+	    $this->datestart = $now;
+	    $this->dateend = $now + (3600 * 24 * 365);
+	    $this->note_public = 'SPECIMEN';
+	    $this->capital = 20000;
+	    $this->nbterm = 48;
+	    $this->rate = 4.3;
 	}
 
 	/**

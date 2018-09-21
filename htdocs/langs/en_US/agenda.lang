@@ -35,7 +35,7 @@ AgendaAutoActionDesc= Define here events for which you want Dolibarr to create a
 AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
 ActionsEvents=Events for which Dolibarr will create an action in agenda automatically
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
 ContractValidatedInDolibarr=Contract %s validated
@@ -100,7 +100,7 @@ AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy

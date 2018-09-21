@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 $sortfield=GETPOST('sortfield', 'alpha');
@@ -175,6 +176,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

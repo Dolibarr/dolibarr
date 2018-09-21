@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014-2018 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -45,9 +45,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 }
 
-$langs->load("products");
-$langs->load("bills");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
 $mesg=''; $error=0; $errors=array();
 
@@ -466,7 +465,7 @@ if (empty($reshook))
 
 			$result = $db->query($sql);
 		} else {
-			setEventMessage('delete_price_by_qty Missing Ids','errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}
 
@@ -479,7 +478,7 @@ if (empty($reshook))
 
 		$result = $db->query($sql);
 		} else {
-			setEventMessage('delete_all_price_by_qty Missing Ids','errors');
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}
 
@@ -945,6 +944,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 					}
 
 					print '</table>';
+					print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable_price_by_qty&level='.$i.'">(' . $langs->trans("DisablePriceByQty").')</a>';
 				} else {
 					print $langs->trans("No");
 					print '&nbsp; <a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=' . $i . '">(' . $langs->trans("Activate") . ')</a>';
@@ -1443,7 +1443,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
     		//$object->updatePrice($object->price, $object->price_base_type, $user, $newprice_min);
             if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-                $object->updatePrice($object->multiprices[1], $object->multiprices_base_type[1], $user, $object->multiprices_tva_tx[1], $object->multiprices_min[1], 1);
+            	$object->updatePrice($object->multiprices[1], $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1])?0:$object->multiprices_tva_tx[1]), $object->multiprices_min[1], 1);
             } else {
                 $object->updatePrice($object->price, $object->price_base_type, $user, $object->tva_tx, $object->price_min);
             }
@@ -2193,6 +2193,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

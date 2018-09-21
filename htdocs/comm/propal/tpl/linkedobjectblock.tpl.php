@@ -41,15 +41,15 @@ global $user;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
+// Load translation files required by the page
 $langs->load("propal");
 
 $total=0; $ilink=0;
-$var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass=($var?'pair':'impair');
+    $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
     <tr class="<?php echo $trclass; ?>"  data-element="<?php echo $objectlink->element; ?>"  data-id="<?php echo $objectlink->id; ?>" >
@@ -57,7 +57,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)
             {
                 $url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
-                print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';  
+                print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
             }
         ?>
         </td>

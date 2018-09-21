@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("other","trips","companies","interventions"));
 
 $id = GETPOST('id','int');
@@ -102,7 +103,7 @@ if ($object->id)
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -138,6 +139,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

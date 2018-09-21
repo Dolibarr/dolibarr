@@ -26,15 +26,26 @@
  */
 
 /**
- *      \class      AntiVir
- *      \brief      Class to scan for virus
+ *      Class to scan for virus
  */
 class AntiVir
 {
-	var $error;
-	var $errors;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 	var $output;
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
 	 *  Constructor
@@ -46,6 +57,7 @@ class AntiVir
 		$this->db=$db;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
@@ -56,13 +68,14 @@ class AntiVir
 	 */
 	function dol_avscan_file($file)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$return = 0;
 
 		if (preg_match('/\.virus$/i', $file))
 		{
-		    $this->errors='File has an extension saying file is a virus';
+		    $this->errors[] = 'File has an extension saying file is a virus';
 		    return -97;
 		}
 
@@ -168,6 +181,4 @@ class AntiVir
 
 		return $ret;
 	}
-
 }
-

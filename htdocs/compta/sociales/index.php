@@ -28,7 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 
-$langs->loadLangs(array("compta","banks","bills"));
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'banks', 'bills'));
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -136,7 +137,6 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$var=true;
 
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -304,5 +304,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();
