@@ -54,9 +54,18 @@ if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
  */
 class doc_generic_task_odt extends ModelePDFTask
 {
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
 	public $emetteur;	// Objet societe qui emet
 
 	public $phpmin = array(5,4,0);	// Minimum version of PHP required by module
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
 	public $version = 'dolibarr';
 
 
