@@ -1014,6 +1014,9 @@ if ($resql)
             $facturestatic->ref=$obj->ref;
             $facturestatic->type=$obj->type;
             $facturestatic->statut=$obj->fk_statut;
+			$facturestatic->total_ttc=$obj->total_ttc;
+            $facturestatic->paye=$obj->paye;
+            $facturestatic->fk_soc=$obj->fk_soc;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
             $facturestatic->note_public=$obj->note_public;
             $facturestatic->note_private=$obj->note_private;
@@ -1022,7 +1025,13 @@ if ($resql)
             $totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
             $totaldeposits = $facturestatic->getSumDepositsUsed();
             $totalpay = $paiement + $totalcreditnotes + $totaldeposits;
-            $remaintopay = $obj->total_ttc - $totalpay;
+            $remaintopay = $facturestatic->total_ttc - $totalpay;
+			if($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {
+				$discount = new DiscountAbsolute($db);
+				$remaincreditnote = $discount->getAvailableDiscounts($obj->fk_soc, '', 'rc.fk_facture_source='.$facturestatic->id);
+				$remaintopay = -$remaincreditnote;
+				$totalpay = $facturestatic->total_ttc - $remaintopay;
+			}
 
             print '<tr class="oddeven">';
     		if (! empty($arrayfields['f.facnumber']['checked']))
