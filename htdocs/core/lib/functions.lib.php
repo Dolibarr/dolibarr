@@ -4745,7 +4745,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	}
 
 	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if($seller_country_code === 'FR' && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
+	if(!empty($conf->global->MAIN_USE_PRODUCT_TVA_WHEN_FRENCH_SELLER_AND_INDIVIDUAL_CUSTOMER) && $seller_country_code === 'FR' && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
 		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
 	}
 
