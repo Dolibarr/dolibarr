@@ -32,6 +32,11 @@ class InterfaceNotification extends DolibarrTriggers
 {
 	public $family = 'notification';
 	public $description = "Triggers of this module send email notifications according to Notification module setup.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
 
 	/**

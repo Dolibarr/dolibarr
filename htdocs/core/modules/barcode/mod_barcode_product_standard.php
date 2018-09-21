@@ -33,17 +33,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php'
  */
 class mod_barcode_product_standard extends ModeleNumRefBarCode
 {
-	var $name='Standard';				// Model Name
-	var $code_modifiable;				// Editable code
-	var $code_modifiable_invalide;		// Modified code if it is invalid
-	var $code_modifiable_null;			// Modified code if it is null
-	var $code_null;						// Optional code
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
-	var $code_auto;                     // Automatic Numbering
+	public $name='Standard';				// Model Name
 
-	var $searchcode; // Search string
-	var $numbitcounter; // Number of digits the counter
-	var $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
+	public $code_modifiable;				// Editable code
+
+	public $code_modifiable_invalide;		// Modified code if it is invalid
+
+	public $code_modifiable_null;			// Modified code if it is null
+
+	public $code_null;						// Optional code
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto;                     // Automatic Numbering
+
+	public $searchcode; // Search string
+
+	public $numbitcounter; // Number of digits the counter
+
+	public $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
 
 
 	/**

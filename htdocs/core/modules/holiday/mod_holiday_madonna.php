@@ -29,14 +29,32 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/holiday/modules_holiday.php';
  */
 class mod_holiday_madonna extends ModelNumRefHolidays
 {
-	var $version='dolibarr';
-	var $prefix='HL';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	public $prefix='HL';
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $nom='Madonna';
-	var $code_auto=1;
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Madonna';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Madonna';
+
+	public $code_auto=1;
 
 
 	/**

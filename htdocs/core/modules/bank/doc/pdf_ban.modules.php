@@ -35,8 +35,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 class pdf_ban extends ModeleBankAccountDoc
 {
-	var $emetteur;	// Objet societe qui emet
-	var $version = 'development';
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'development';
 
 	/**
 	 *	Constructor

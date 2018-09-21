@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -921,8 +922,8 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		/* Commande non trouvee */
-		print "Commande inexistante";
+		/* Order not found */
+		setEventMessages($langs->trans("NonExistentOrder"), null, 'errors');
 	}
 }
 

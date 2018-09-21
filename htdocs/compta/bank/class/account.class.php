@@ -1716,7 +1716,11 @@ class AccountLine extends CommonObject
 	public $fk_account;            // Id of bank account
 	public $bank_account_label;    // Label of bank account
 
-    public $emetteur;
+    /**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 	/**
 	 *  Constructor

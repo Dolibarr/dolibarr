@@ -1,11 +1,11 @@
 <?php
-/* Copyright (c) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014		Alexis Algoud		<alexis@atm-consulting.fr>
- * Copyright (C) 2018           Nicolas ZABOURI		<info@inovea-conseil.com>
+/* Copyright (c) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ class UserGroup extends CommonObject
 	public $table_element='usergroup';
 
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
     public $picto='group';
 
 	/**
@@ -53,16 +54,26 @@ class UserGroup extends CommonObject
 	 */
 	public $entity;
 
-	public $name;			// Name of group
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see name
 	 */
-	public $nom;			// Name of group
+	public $nom;
+
+	/**
+	 * @var string name
+	 */
+	public $name;			// Name of group
+
 	public $globalgroup;	// Global group
+
 	public $datec;			// Creation date of group
+
 	public $datem;			// Modification date of group
+
 	public $note;			// Description
+
 	public $members=array();	// Array of users
 
 	public $nb_rights;					// Number of rights granted to the user
