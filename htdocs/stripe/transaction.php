@@ -159,7 +159,7 @@ if (! $rowid) {
 		$societestatic->societe_id = $obj->fk_soc;
 
 		print '<tr class="oddeven">';
-		
+
 		// Ref
         if (!empty($stripeacc)) $connect=$stripeacc.'/';
     
@@ -173,8 +173,7 @@ if (! $rowid) {
         }
 
 		$url='https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
-		if ($servicestatus)
-		{
+		if ($servicestatus) {
 			$url='https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
 		}
         if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
