@@ -46,6 +46,9 @@ class BlockedLog
 	 */
 	public $entity;
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
 
 	/**

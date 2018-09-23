@@ -36,6 +36,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 {
 	public $family = 'agenda';
 	public $description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
 
 	/**

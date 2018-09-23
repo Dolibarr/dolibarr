@@ -37,7 +37,10 @@ class ModeleImports
 
     public $datatoimport;
 
-    public $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**
 	 * @var int id of driver
@@ -50,17 +53,26 @@ class ModeleImports
     public $label;
 
 	public $extension;    // Extension of files imported by driver
-	public $version;      // Version of driver
+
+	/**
+     * Dolibarr version of driver
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 	public $label_lib;    // Label of external lib used by driver
+
 	public $version_lib;  // Version of external lib used by driver
 
 	// Array of all drivers
 	public $driverlabel=array();
+
 	public $driverdesc=array();
+
 	public $driverversion=array();
 
 	public $liblabel=array();
+
 	public $libversion=array();
 
 

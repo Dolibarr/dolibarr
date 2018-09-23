@@ -34,11 +34,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = "Jade";
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-    var $prefix='BL';
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Jade';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Jade';
+
+    public $prefix='BL';
 
 
 	/**
