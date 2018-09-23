@@ -115,9 +115,9 @@ class pdf_einstein extends ModelePDFCommandes
 	public $marge_basse;
 
 	/**
-	* Issuer
-	* @var Societe
-	*/
+	 * Issuer
+	 * @var Societe
+	 */
     public $emetteur;	// Objet societe qui emet
 
 
