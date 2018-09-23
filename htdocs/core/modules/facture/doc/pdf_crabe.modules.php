@@ -1742,88 +1742,88 @@ class pdf_crabe extends ModelePDFFactures
 			$top_shift = $pdf->getY() - $current_y;
 		}
 
-		if ($showaddress)
-		{
-			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
-
-			// Show sender
-			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
-			$posy+=$top_shift;
-			$posx=$this->marge_gauche;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
-
-			$hautcadre=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
-			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
-
-
-			// Show sender frame
+			// Show recipient  frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0,0,60);
+      // If BILLING contact defined on invoice, we use it
+      $usecontact=false;
+      $arrayidcontact=$object->getIdContact('external','BILLING');
+      if (count($arrayidcontact) > 0)
+      {
+        $usecontact=true;
+        $result=$object->fetch_contact($arrayidcontact[0]);
+      }
 
-			// Show sender name
+      //Recipient name
+      // On peut utiliser le nom de la societe du contact
+      if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+        $thirdparty = $object->contact;
+      } else {
+        $thirdparty = $object->thirdparty;
+      }
+
+      $carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
+
+      $carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target',$object);
+
+      // Show recipient
+      $widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
+      if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
+      $posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+      $posy+=$top_shift;
+      $posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
+      if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+
+
+			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
 			$pdf->MultiCell($widthrecbox-2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 			$posy=$pdf->getY();
 
-			// Show sender information
-			$pdf->SetXY($posx+2,$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox-2, 4, $carac_emetteur, 0, 'L');
 
 
+      if ($showaddress)
+  		{
+  			// Sender properties
+  			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
-			// If BILLING contact defined on invoice, we use it
-			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external','BILLING');
-			if (count($arrayidcontact) > 0)
-			{
-				$usecontact=true;
-				$result=$object->fetch_contact($arrayidcontact[0]);
-			}
+  			// Show sender
+  			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+  			$posy+=$top_shift;
+  			$posx=$this->marge_gauche;
+  			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
-				$thirdparty = $object->contact;
-			} else {
-				$thirdparty = $object->thirdparty;
-			}
+  			$hautcadre=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
+  			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
 
-			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
+        // Show sender information
+  			$pdf->SetXY($posx+2,$posy);
+  			$pdf->SetFont('','', $default_font_size - 1);
+  			$pdf->MultiCell($widthrecbox-2, 4, $carac_emetteur, 0, 'L');
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target',$object);
 
-			// Show recipient
-			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
-			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
-			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
-			$posy+=$top_shift;
-			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
-
-			// Show recipient frame
+			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
 			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":",0,'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
-			// Show recipient name
+			// Show Sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+			$pdf->MultiCell($widthrecbox-2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 			$posy = $pdf->getY();
 
-			// Show recipient information
+			// Show Sender information
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
