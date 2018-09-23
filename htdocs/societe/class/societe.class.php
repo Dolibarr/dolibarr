@@ -108,6 +108,11 @@ class Societe extends CommonObject
 	public $nom;
 
 	/**
+	 * @var string name
+	 */
+	public $name;
+
+	/**
 	 * Alias names (commercial, trademark or alias names)
 	 * @var string
 	 */

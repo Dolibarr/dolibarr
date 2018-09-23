@@ -31,14 +31,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/task/modules_task.php';
  */
 class mod_task_simple extends ModeleNumRefTask
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='TK';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='TK';
+
     /**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $nom = "Simple";
-	var $name = "Simple";
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Simple';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Simple';
 
 
     /**

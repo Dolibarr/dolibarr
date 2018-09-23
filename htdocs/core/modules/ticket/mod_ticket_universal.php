@@ -35,9 +35,22 @@ class mod_ticket_universal extends ModeleNumRefTicket
      */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-    public $error = '';
-    public $nom = 'Universal';
-    public $name = 'Universal';
+    /**
+     * @var string Error code (or message)
+     */
+  public $error = '';
+
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Universal';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Universal';
 
     /**
      *  Renvoi la description du modele de numerotation

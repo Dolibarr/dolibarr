@@ -29,10 +29,18 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefixinvoice='FA';
-	var $prefixcreditnote='AV';
-	var $prefixdeposit='AC';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefixinvoice='FA';
+
+	public $prefixcreditnote='AV';
+
+	public $prefixdeposit='AC';
+
 	/**
 	 * @var string Error code (or message)
 	 */
