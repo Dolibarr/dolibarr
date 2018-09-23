@@ -169,16 +169,22 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-
+		$email->id = $obj->rowid;
+		$email->ref = $obj->rowid;
 
 		print "<tr>";
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$obj->rowid.'">';
-		print img_object($langs->trans("ShowEMail"),"email").' '.stripslashes($obj->rowid).'</a></td>';
+
+		print '<td>';
+		print $email->getNomUrl(1);
+		print '</td>';
+
 		print '<td>'.$obj->titre.'</td>';
 		// Date creation
+
 		print '<td align="center">';
 		print dol_print_date($db->jdate($obj->datec),'day');
 		print '</td>';
+
 		// Nb of email
 		if (! $filteremail)
 		{
@@ -196,9 +202,11 @@ if ($result)
 			print $nbemail;
 			print '</td>';
 		}
+
 		// Last send
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_envoi),'day').'</td>';
 		print '</td>';
+
 		// Status
 		print '<td align="right" class="nowrap">';
 		if ($filteremail)
@@ -210,7 +218,9 @@ if ($result)
 			print $email->LibStatut($obj->statut,5);
 		}
 		print '</td>';
+
 		print '<td></td>';
+
 		print "</tr>\n";
 		$i++;
 	}
