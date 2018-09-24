@@ -1396,11 +1396,12 @@ else
             print '</tr>';
         }
 
-		// Assign a Name
+		// Assign a sale representative
 		print '<tr>';
 		print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
 		print $form->multiselectarray('commercial', $userlist, (count(GETPOST('commercial', 'array')) > 0?GETPOST('commercial', 'array'):(empty($user->rights->societe->client->voir)?array($user->id):array())), null, null, null, null, "90%");
 		print '</td></tr>';
 
