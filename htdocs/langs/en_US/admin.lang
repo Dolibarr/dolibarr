@@ -1766,6 +1766,7 @@ MAIN_PDF_MARGIN_TOP=Top margin on PDF
 MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 SetToYesIfGroupIsComputationOfOtherGroups=Set this to yes if this group is a computation of other groups
 EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous field was set to Yes (For example 'CODEGRP1+CODEGRP2')
+NothingToSetup=There is no specific setup to do for this module.
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
