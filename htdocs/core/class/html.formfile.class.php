@@ -180,7 +180,7 @@ class FormFile
 
 			if ($linkfiles)
 			{
-				$out .= "\n<!-- Start form attach new link -->\n";
+				$out .= "\n<!-- Start form link new url -->\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
@@ -208,19 +208,18 @@ class FormFile
 				$out .= '</div>';
 				$out .= '<div class="clearboth"></div>';
 				$out .= '</form><br>';
-				$parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
-				$res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
 
-				$out .= "\n<!-- End form attach new file -->\n";
+				$out .= "\n<!-- End form link new url -->\n";
 			}
 
+			$parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''), 'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
+			$res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
 			if (empty($res))
 			{
 				print '<div class="attacharea attacharea'.$htmlname.'">';
 				print $out;
 				print '</div>';
 			}
-
 			print $hookmanager->resPrint;
 
 			return 1;
