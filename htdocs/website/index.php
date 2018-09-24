@@ -109,15 +109,30 @@ if ($websitekey)
 }
 $website = $object;
 
+// Define pageid if pageif and pageref not received as parameter
+if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createcontainer')
+{
+	$pageid = $object->fk_default_home;
+	if (empty($pageid))
+	{
+		$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
+		if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+		$atleastonepage=(is_array($array) && count($array) > 0);
+
+		$firstpageid=0;$homepageid=0;
+		foreach($array as $key => $valpage)
+		{
+			if (empty($firstpageid)) $firstpageid=$valpage->id;
+			if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid=$valpage->id;
+		}
+		$pageid=($homepageid?$homepageid:$firstpageid);   // We choose home page and if not defined yet, we take first page
+	}
+}
+
 if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
-	//var_dump($res);exit;
-	//if ($res == 0)		// Page ref not found, we check in alias
-	//{
-	//	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
-	//}
 
 	// Check if pageid is inside the new website, if not we reset param pageid
 	if ($object->id > 0 && ($objectpage->fk_website != $object->id))
@@ -1566,7 +1581,7 @@ if (! GETPOST('hide_websitemenu'))
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
 
-if (count($object->records) > 0)
+if (count($object->records) > 0)	// There is at least one web site
 {
 	// ***** Part for web sites
 
@@ -2508,31 +2523,34 @@ if ($action == 'editmenu')
 
 if ($action == 'editsource')
 {
-	/*
-	 * Editing with source editor
-	 */
+	// Editing with source editor
 
 	$contentforedit = '';
-	/*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-	 $contentforedit.=$csscontent;
-	 $contentforedit.='</style>'."\n";*/
+	//$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+	//$contentforedit.=$csscontent;
+	//$contentforedit.='</style>'."\n";
 	$contentforedit .= $objectpage->content;
-
+	//var_dump($_SESSION["dol_screenheight"]);
+	$maxheightwin=480;
+	if (isset($_SESSION["dol_screenheight"]))
+	{
+		if ($_SESSION["dol_screenheight"] > 680) $maxheightwin = $_SESSION["dol_screenheight"]-400;
+		if ($_SESSION["dol_screenheight"] > 800) $maxheightwin = $_SESSION["dol_screenheight"]-490;
+	}
+	//var_dump($_SESSION["dol_screenheight"]);
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,'ace',ROWS_5,'90%');
+	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',$maxheightwin,'Full','',true,true,'ace',ROWS_5,'40%');
 	$doleditor->Create(0, '', false, 'HTML Source', 'php');
 }
 
-if ($action == 'editcontent')
+/*if ($action == 'editcontent')
 {
-	/*
-     * Editing with default ckeditor
-     */
+	// Editing with default ckeditor
 
 	$contentforedit = '';
-	/*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-    $contentforedit.=$csscontent;
-    $contentforedit.='</style>'."\n";*/
+	//$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+    //$contentforedit.=$csscontent;
+    //$contentforedit.='</style>'."\n";
 	$contentforedit .= $objectpage->content;
 
 	$contentforedit = preg_replace('/(<img.*src=")(?!http)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $contentforedit, -1, $nbrep);
@@ -2540,7 +2558,7 @@ if ($action == 'editcontent')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,ROWS_5,'90%');
 	$doleditor->Create(0, '', false);
-}
+}*/
 
 print "</div>\n</form>\n";
 
@@ -2562,10 +2580,15 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// Include a html so we can benefit of the header of page.
 		// Note: We can't use iframe as it can be used to include another external html file
 		// Note: We can't use frame as it is deprecated.
+		/*if ($includepageintoaframeoradiv == 'iframe')
+		{
+			$out .= "<iframe><body></html>";
+		}*/
 		$out.="\n<html><head>\n";
 		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
 		$out.="</head>\n";
 		$out.="\n<body>";
+
 
 		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
 
@@ -2603,24 +2626,29 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
 		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
 
-		// TODO Add the contenteditable="true" when mode Edit Inline is on
 		$newcontent = $objectpage->content;
+
+		// If mode WEBSITE_SUBCONTAINERSINLINE is on
+		if (! empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
+		{
+			define('USEDOLIBARRSERVER', 1);
+			//var_dump($filetpl);
+			$filephp = $filetpl;
+			ob_start();
+			include $filephp;
+			$newcontent = ob_get_contents();
+			ob_end_clean();
+		}
+
+		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
 		if (empty($conf->global->WEBSITE_EDITINLINE))
 		{
 			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		}
 		else
 		{
-
+			// TODO Add the contenteditable="true" when mode Edit Inline is on
 		}
-
-		/*
-		$filephp = $objectpage->
-		ob_start();
-		include $filephp;
-		$newcontent = ob_get_contents();
-		ob_end_clean();
-		*/
 
 		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
 
@@ -2635,9 +2663,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out .= "\n</body></html>\n";
 
 		$out.= "\n".'<!-- End page content '.$filetpl.' -->'."\n\n";
-
-		// For jqueryscoped (does not work as expected)
-		//$out.="<script>$.scoped();</script>";
 
 		print $out;
 
