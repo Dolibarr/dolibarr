@@ -195,6 +195,7 @@ if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfil
 if ($action == 'seteditinline')
 {
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
+	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
 	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0);	// Force disable of show included containers
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
 	exit;
@@ -2457,7 +2458,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	$htmlhelp.=dol_htmlentitiesbr($htmlheadercontentdefault);
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
-	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '180', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
 
