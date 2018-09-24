@@ -699,8 +699,8 @@ foreach ($listofreferent as $key => $value)
 	$urlnew=$value['urlnew'];
 	$buttonnew=$value['buttonnew'];
     $testnew=$value['testnew'];
-	$project_field=$value['project_field'];
-	$exclude_select_element=array('payment_various',$value['exclude_select_element']);
+	$exclude_select_element = array('payment_various');
+	if (!empty($value['exclude_select_element'])) $exclude_select_element[] = $value['exclude_select_element'];
 
 	
 	if ($qualified)
