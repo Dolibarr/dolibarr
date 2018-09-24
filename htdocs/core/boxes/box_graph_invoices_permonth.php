@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_graph_invoices_permonth.php
- *	\ingroup    factures
- *	\brief      Box to show graph of invoices per month
+ *  \file       htdocs/core/boxes/box_graph_invoices_permonth.php
+ *  \ingroup    factures
+ *  \brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
@@ -60,8 +61,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
-	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @param  int     $max        Maximum number of records to load
+     *  @return void
 	 */
 	function loadBox($max=5)
 	{
@@ -76,24 +77,28 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$text = $langs->trans("BoxCustomersInvoicesPerMonth",$max);
 		$this->info_box_head = array(
-				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
-				'target'=>'none'	// Set '' to get target="_blank"
+			'text' => $text,
+			'limit'=> dol_strlen($text),
+			'graph'=> 1,
+			'sublink'=>'',
+			'subtext'=>$langs->trans("Filter"),
+			'subpicto'=>'filter.png',
+			'subclass'=>'linkobject boxfilter',
+			'target'=>'none'	// Set '' to get target="_blank"
 		);
 
 		$dir=''; 	// We don't need a path because image file will not be saved into disk
 		$prefix='';
 		$socid=0;
-		if ($user->societe_id) $socid=$user->societe_id;
-		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
+		if ($user->societe_id) {
+            $socid=$user->societe_id;
+        }
+		if (! $user->rights->societe->client->voir || $socid) {
+            // If user has no permission to see all, output dir is specific to user
+            $prefix.='private-'.$user->id.'-';
+        }
 
-		if ($user->rights->facture->lire)
-		{
+		if ($user->rights->facture->lire) {
 			$mesg = '';
 
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -101,24 +106,27 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$param_showtot='DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
-			{
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray)) {
 				$endyear=GETPOST($param_year,'int');
 				$shownb=GETPOST($param_shownb,'alpha');
 				$showtot=GETPOST($param_showtot,'alpha');
-			}
-			else
-			{
+			} else {
 				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 				$endyear=$tmparray['year'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
-			if (empty($shownb) && empty($showtot))  { $shownb=1; $showtot=1; }
+			if (empty($shownb) && empty($showtot)) {
+                $shownb=1;
+                $showtot=1;
+            }
 			$nowarray=dol_getdate(dol_now(),true);
-			if (empty($endyear)) $endyear=$nowarray['year'];
+			if (empty($endyear)) {
+                $endyear=$nowarray['year'];
+            }
 			$startyear=$endyear-1;
 			$mode='customer';
 			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
@@ -127,8 +135,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($shownb)
-			{
+			if ($shownb) {
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 
 				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
@@ -137,16 +144,15 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
-				if (! $mesg)
-				{
+				if (! $mesg) {
 				    $langs->load("bills");
 
 				    $px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
-					$i=$startyear;$legend=array();
-					while ($i <= $endyear)
-					{
+                    $i=$startyear;
+                    $legend=array();
+					while ($i <= $endyear) {
 						$legend[]=$i;
 						$i++;
 					}
@@ -167,8 +173,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			}
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showtot)
-			{
+			if ($showtot) {
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 
 				$filenamenb = $dir."/".$prefix."invoicesamountinyear-".$endyear.".png";
@@ -177,16 +182,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
-				if (! $mesg)
-				{
+				if (! $mesg) {
 				    $langs->load("bills");
 
 					$px2->SetData($data2);
 					unset($data2);
 					$px2->SetPrecisionY(0);
 					$i=$startyear;$legend=array();
-					while ($i <= $endyear)
-					{
+					while ($i <= $endyear) {
 						$legend[]=$i;
 						$i++;
 					}
@@ -206,14 +209,12 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				}
 			}
 
-			if (empty($conf->use_javascript_ajax))
-			{
+			if (empty($conf->use_javascript_ajax)) {
 				$langs->load("errors");
-				$mesg=$langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
+				$mesg = $langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
 			}
 
-			if (! $mesg)
-			{
+			if (! $mesg) {
 				$stringtoshow='';
 				$stringtoshow.='<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
@@ -252,15 +253,23 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array(
+                    'tr'=>'class="oddeven nohover"',
+                    'td' => 'align="center" class="nohover"',
+                    'textnoformat'=>$stringtoshow,
+                );
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="left" class="nohover"', 'maxlength'=>500, 'text' => $mesg);
+				$this->info_box_contents[0][0] = array(
+                    'tr'=>'class="oddeven nohover"',
+                    'td' => 'align="left" class="nohover"',
+                    'maxlength' => 500,
+                    'text' => $mesg,
+                );
 			}
 
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'align="left" class="nohover opacitymedium"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
@@ -281,4 +290,3 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

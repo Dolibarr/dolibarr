@@ -97,10 +97,10 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  */
 
 $third = array(
-		'customer' => 0,
-		'prospect' => 0,
-		'supplier' => 0,
-		'other' =>0
+    'customer' => 0,
+    'prospect' => 0,
+    'supplier' => 0,
+    'other' => 0,
 );
 $total=0;
 
@@ -121,7 +121,10 @@ if ($result)
         if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
         if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
         if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) { $found=1; $third['supplier']++; }
-        if (! empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) { $found=1; $third['other']++; }
+        if (! empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) {
+            $found=1;
+            $third['other']++;
+        }
         if ($found) $total++;
     }
 }
@@ -130,23 +133,50 @@ else dol_print_error($db);
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
-{
+if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2)) {
     print '<tr><td align="center" colspan="2">';
-    $dataseries=array();
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))     $dataseries[]=array($langs->trans("Prospects"), round($third['prospect']));
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))     $dataseries[]=array($langs->trans("Customers"), round($third['customer']));
-    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array($langs->trans("Suppliers"), round($third['supplier']));
-    if (! empty($conf->societe->enabled)) $dataseries[]=array($langs->trans("Others"), round($third['other']));
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-	$dolgraph->SetData($dataseries);
-	$dolgraph->setShowLegend(1);
-	$dolgraph->setShowPercent(1);
-	$dolgraph->SetType(array('pie'));
-	$dolgraph->setWidth('100%');
-	$dolgraph->draw('idgraphthirdparties');
-	print $dolgraph->show();
+    $dataseries = array();
+    $labels = array();
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
+        $labels[] = $langs->trans("Prospects");
+        $dataseries[] = round($third['prospect']);
+    }
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+        $labels[] = $langs->trans("Customers");
+        $dataseries[] = round($third['customer']);
+    }
+    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
+        $labels[] = $langs->trans("Suppliers");
+        $dataseries[] = round($third['supplier']);
+    }
+    if (! empty($conf->societe->enabled)) {
+        $labels[] = $langs->trans("Others");
+        $dataseries[] = round($third['other']);
+    }
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+    $dolchartjs = new DolChartJs();
+    $dolchartjs->element('idgraphthirdparties')
+        ->setType('pie')
+        ->setLabels($labels)
+        ->setDatasets(
+            array(
+                array(
+                    'backgroundColor' => $dolchartjs->datacolor,
+                    'borderColor' => $dolchartjs->bgdatacolor,
+                    'data' => $dataseries,
+                ),
+            )
+        )
+        ->setSize(['width' => '50', 'height' => '20'])
+        ->setOptions([
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'legend' => array(
+                'position' => 'right',
+            ),
+        ]
+    );
+    print $dolchartjs->renderChart();
     print '</td></tr>'."\n";
 }
 else

@@ -5,7 +5,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
 	$sql.= " WHERE p.entity IN (".getEntity('project').")";
 	$sql.= " AND p.fk_opp_status = cls.rowid";
-	$sql.= " AND p.fk_statut = 1";     // Opend projects only
+	$sql.= " AND p.fk_statut = 1";     // Opened projects only
 	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	$sql.= " GROUP BY p.fk_opp_status, cls.code";
