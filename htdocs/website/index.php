@@ -109,7 +109,35 @@ if ($websitekey)
 }
 $website = $object;
 
-// Define pageid if pageif and pageref not received as parameter
+// Check pageid received as aprameter
+if ($pageid < 0) $pageid = 0;
+if (($pageid > 0 || $pageref) && $action != 'addcontainer')
+{
+	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+
+	// Check if pageid is inside the new website, if not we reset param pageid
+	if ($res >= 0 && $object->id > 0)
+	{
+		if ($objectpage->fk_website != $object->id)	// We have a bad page.
+		{
+			$res = $objectpage->fetch(0, $object->id, '');	// We search first page of web site
+			if ($res == 0)	// Page was not found, we reset it
+			{
+				$objectpage=new WebsitePage($db);
+			}
+			else			// We found a page, we set pageid to it.
+			{
+				$pageid = $objectpage->id;
+			}
+		}
+		else	// We have a valid page. We force pageid for the case we got the page with a fetch on ref.
+		{
+			$pageid = $objectpage->id;
+		}
+	}
+}
+
+// Define pageid if pageid and pageref not received as parameter or was wrong
 if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createcontainer')
 {
 	$pageid = $object->fk_default_home;
@@ -129,22 +157,6 @@ if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createco
 	}
 }
 
-if ($pageid < 0) $pageid = 0;
-if (($pageid > 0 || $pageref) && $action != 'addcontainer')
-{
-	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
-
-	// Check if pageid is inside the new website, if not we reset param pageid
-	if ($object->id > 0 && ($objectpage->fk_website != $object->id))
-	{
-		$res = $objectpage->fetch(0, $object->id, '');;
-		if ($res == 0)	// Page was not found, we reset it
-		{
-			$objectpage=new WebsitePage($db);
-		}
-	}
-	$pageid = $objectpage->id;
-}
 
 global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/website/'.$websitekey;
@@ -836,7 +848,7 @@ if ($action == 'updatecss')
 		/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
 	    $htmlheadercontent.= "<?php // BEGIN PHP\n";
 	    $htmlheadercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
 	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	    $htmlheadercontent.= "ob_start();\n";
@@ -859,7 +871,7 @@ if ($action == 'updatecss')
 
 		$csscontent.= "<?php // BEGIN PHP\n";
 		$csscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-		$csscontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+		$csscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
 		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$csscontent.= "ob_start();\n";
@@ -891,7 +903,7 @@ if ($action == 'updatecss')
 
 		$jscontent.= "<?php // BEGIN PHP\n";
 		$jscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-		$jscontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+		$jscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
 		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$jscontent.= "ob_start();\n";
@@ -923,7 +935,7 @@ if ($action == 'updatecss')
 
 		/*$robotcontent.= "<?php // BEGIN PHP\n";
 	    $robotcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
 	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	    $robotcontent.= "ob_start();\n";
@@ -955,7 +967,7 @@ if ($action == 'updatecss')
 
 		/*$robotcontent.= "<?php // BEGIN PHP\n";
     	 $robotcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-    	 $robotcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+    	 $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
     	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     	 $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     	 $robotcontent.= "ob_start();\n";
@@ -2632,7 +2644,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
 		if (! empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 		{
-			define('USEDOLIBARRSERVER', 1);
+			define('USEDOLIBARREDITOR', 1);
 			//var_dump($filetpl);
 			$filephp = $filetpl;
 			ob_start();

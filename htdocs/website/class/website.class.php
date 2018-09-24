@@ -639,10 +639,11 @@ class Website extends CommonObject
 		    if (! $error)
 		    {
 		    	$filetpl=$pathofwebsitenew.'/page'.$newidforhome.'.tpl.php';
+		    	$filewrapper=$pathofwebsitenew.'/wrapper.php';
 
 		    	// Generate the index.php page to be the home page
 		    	//-------------------------------------------------
-		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl);
+		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 		    }
 		}
 
