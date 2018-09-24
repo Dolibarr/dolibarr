@@ -953,6 +953,8 @@ if (empty($reshook))
 
 							if($facture_source->type == Facture::TYPE_SITUATION)
 							{
+							    
+							    $line->fk_prev_id  = $line->id;
 
 							    if(!empty($facture_source->tab_previous_situation_invoice))
 							    {
