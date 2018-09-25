@@ -107,7 +107,8 @@ function dolWebsiteOutput($content)
 	{
 		// We remove the <head> part of content
 		$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
-
+		$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
+		$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
 	}
 	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
