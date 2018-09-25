@@ -388,7 +388,7 @@ if ($action == 'addcontainer')
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
-				preg_match('/<head>(.*)<\/head>/is', $tmp['content'], $reg);
+				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $reg);
 				$head = $reg[1];
 
 				$objectpage->type_container = 'page';
@@ -1327,7 +1327,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			$objectpage->content = GETPOST('PAGE_CONTENT','none');
 
 			// Clean data. We remove all the head section.
-			$objectpage->content = preg_replace('/<head>.*<\/head>/s', '', $objectpage->content);
+			$objectpage->content = preg_replace('/<head>.*<\/head>/ims', '', $objectpage->content);
 			/* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
 
 
@@ -1690,7 +1690,8 @@ if (count($object->records) > 0)	// There is at least one web site
 	print '</div>';
 
 
-	// Toolbar for website
+	// Toolbar for websites
+
 	print '<div class="websitetools">';
 
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
@@ -1790,7 +1791,7 @@ if (count($object->records) > 0)	// There is at least one web site
 					$out.='<option value="'.$key.'"';
 					if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
 					$out.='>';
-					$out.='['.$valpage->type_container.' '.$valpage->id.'] ';
+					$out.='['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).'] ';
 					$out.=$valpage->pageurl.' - '.$valpage->title;
 					if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
 					$out.='</option>';
@@ -2665,8 +2666,8 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
-		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
-		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
+		//$out.='<div id="divbodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
+		$out.='<div id="divbodywebsite" class="bodywebsite">'."\n";
 
 		$newcontent = $objectpage->content;
 

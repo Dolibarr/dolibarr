@@ -1,10 +1,9 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +157,7 @@ class Website extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'fk_user_create,';
+		$sql.= 'fk_user_creat,';
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
 		$sql .= ') VALUES (';
@@ -168,7 +167,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->status)?'1':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
-		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
+		$sql .= ' '.(! isset($this->fk_user_creat)?$user->id:$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
 		$sql .= ')';
@@ -227,7 +226,7 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
-		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -253,7 +252,7 @@ class Website extends CommonObject
 				$this->status = $obj->status;
 				$this->fk_default_home = $obj->fk_default_home;
 				$this->virtualhost = $obj->virtualhost;
-				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -317,7 +316,7 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
-		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -357,7 +356,7 @@ class Website extends CommonObject
 				$line->status = $obj->status;
 				$line->fk_default_home = $obj->fk_default_home;
 				$line->virtualhost = $obj->virtualhost;
-				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
@@ -770,7 +769,7 @@ class Website extends CommonObject
 		$this->status = '';
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
-		$this->fk_user_create = $user->id;
+		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
 		$this->date_creation = dol_now();
 		$this->tms = dol_now();

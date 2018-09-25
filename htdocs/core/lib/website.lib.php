@@ -103,12 +103,13 @@ function dolWebsiteOutput($content)
 	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	// Note: This seems never called when page is output inside the website editor (search 'REPLACEMENT OF LINKS When page called by website editor')
-	if (defined('USEDOLIBARREDITOR'))
+	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor
 	{
-		// Do nothing
+		// We remove the <head> part of content
+		$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
+
 	}
-	elseif (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
+	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
 		global $website;
 
@@ -142,7 +143,7 @@ function dolWebsiteOutput($content)
 		// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
 		$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
 	}
-	else								// REPLACEMENT OF LINKS When page called from virtual host
+	else									// REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists=1;
 
