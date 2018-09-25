@@ -953,8 +953,8 @@ if (empty($reshook))
 
 							if($facture_source->type == Facture::TYPE_SITUATION)
 							{
-							    
-							    $line->fk_prev_id  = $line->id;
+							    $source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id 
+							    $line->fk_prev_id  = $line->id; // Credit note line need to be linked to the situation invoice it is create from
 
 							    if(!empty($facture_source->tab_previous_situation_invoice))
 							    {
@@ -978,7 +978,7 @@ if (empty($reshook))
 							        $maxPrevSituationPercent = 0;
 							        foreach($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
 							        {
-							            if($prevLine->id == $line->fk_prev_id)
+							            if($prevLine->id == $source_fk_prev_id)
 							            {
 							                $maxPrevSituationPercent = max($maxPrevSituationPercent,$prevLine->situation_percent);
 

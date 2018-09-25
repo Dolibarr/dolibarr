@@ -4828,6 +4828,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      Invoice id
+	 * @param  bool    $include_credit_note
 	 * @return int                     >= 0
 	 */
 	function get_prev_progress($invoiceid, $include_credit_note = true)
