@@ -497,6 +497,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 }
 
 hr { border: 0; border-top: 1px solid #ccc; }
+.tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
 	margin-bottom: 0;
