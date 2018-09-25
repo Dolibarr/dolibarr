@@ -1231,6 +1231,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 	if ($action == 'confirm_createfromclone')
 	{
+		$db->begin();
+
 		$objectnew = new Website($db);
 		$result = $objectnew->createFromClone($user, GETPOST('id','int'), GETPOST('siteref','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''));
 		if ($result < 0)
@@ -1238,6 +1240,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			$error++;
 			setEventMessages($objectnew->error, $objectnew->errors, 'errors');
 			$action='preview';
+
+			$db->rollback();
 		}
 		else
 		{
@@ -1245,6 +1249,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			$id = $object->id;
 			$pageid = $object->fk_default_home;
 			$websitekey = GETPOST('siteref','aZ09');
+
+			$db->commit();
 		}
 	}
 
@@ -1263,17 +1269,51 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 		if (! $error)
 		{
+			$db->begin();
+
+			$newwebsiteid = GETPOST('newwebsite','int');
+			$pathofwebsitenew = $pathofwebsite;
+
+			$tmpwebsite=new Website($db);
+			if ($newwebsiteid > 0 && $newwebsiteid != $object->id)
+			{
+				$tmpwebsite->fetch($newwebsiteid);
+				$pathofwebsitenew = $dolibarr_main_data_root.'/website/'.$tmpwebsite->ref;
+			}
+			else
+			{
+				$tmpwebsite = $object;
+			}
+
 			$objectpage = new WebsitePage($db);
-			$result = $objectpage->createFromClone($user, $pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation, GETPOST('newwebsite','int'));
-			if ($result < 0)
+			$resultpage = $objectpage->createFromClone($user, $pageid, GETPOST('pageurl','aZ09'), (GETPOST('newlang','aZ09')?GETPOST('newlang','aZ09'):''), $istranslation, $newwebsiteid);
+			if ($resultpage < 0)
 			{
 				$error++;
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 				$action='createpagefromclone';
+
+				$db->rollback();
 			}
 			else
 			{
-				// TODO Switch on the new page ?
+				$fileindex=$pathofwebsitenew.'/index.php';
+				$filetpl=$pathofwebsitenew.'/page'.$resultpage->id.'.tpl.php';
+				$filewrapper=$pathofwebsitenew.'/wrapper.php';
+
+				//var_dump($pathofwebsitenew);
+				//var_dump($filetpl);
+				//exit;
+
+				dolSavePageContent($filetpl, $tmpwebsite, $resultpage);
+
+				// Switch on the new page if web site of new page/container is same
+				if (empty($newwebsiteid) || $newwebsiteid == $object->id)
+				{
+					$pageid = $resultpage->id;
+				}
+
+				$db->commit();
 			}
 		}
 	}
