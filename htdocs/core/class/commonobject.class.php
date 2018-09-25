@@ -4294,6 +4294,7 @@ abstract class CommonObject
     			return -1;
     		}
 		}
+		else return $reshook;
 	}
 
 	/**
