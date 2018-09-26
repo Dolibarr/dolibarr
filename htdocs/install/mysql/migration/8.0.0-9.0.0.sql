@@ -74,14 +74,14 @@ ALTER TABLE llx_societe ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN facebook varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN instagram  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN snapchat  varchar(255) after skype;
-ALTER TABLE llx_societe ADD COLUMN google+  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN googleplus  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN youtube  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN whatsapp  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN facebook varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN instagram  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN snapchat  varchar(255) after skype;
-ALTER TABLE llx_socpeople ADD COLUMN google+  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN googleplus  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN youtube  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN whatsapp  varchar(255) after skype;
 
