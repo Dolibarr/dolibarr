@@ -408,7 +408,7 @@ class CMailFile
 
 			// Give the message a subject
 			try {
-				$this->message->setSubject($this->encodetorfc2822($subject));
+				$this->message->setSubject($subject);
 			} catch (Exception $e) {
 				$this->error =  $e->getMessage();
 			}
