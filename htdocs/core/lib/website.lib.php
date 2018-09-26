@@ -52,6 +52,11 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/src="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
+	$replacewith='href="php';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
+	//$replacewith='<span class="phptag">...php...</span>';
 	$replacewith='<span class="phptag">...php...</span>';
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
@@ -89,7 +94,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
  *
  * @param   string  $content    Content string
  * @return  void
- * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice editor context
+ * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
 function dolWebsiteOutput($content)
 {
