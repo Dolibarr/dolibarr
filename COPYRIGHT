@@ -2,7 +2,7 @@
 License
 -------
 
-Dolibarr is released under the terms of the GNU General Public License as 
+Dolibarr is released under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 3 of the License,
 or (at your option) any later version (GPL-3+).
 More information: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -34,6 +34,7 @@ Swift Mailer           5.4.2-DEV     MIT license                 Yes            
 Stripe                 4.7.0         MIT licence                 Yes             Library for Stripe module
 
 JS libraries:
+Chartjs                2.7.2         MIT License                 Yes             JS library to draw chart
 jQuery                 3.1.1         MIT License                 Yes             JS library
 jQuery UI              1.12.1        GPL and MIT License         Yes             JS library plugin UI
 jQuery select2         4.0.5         GPL and Apache License      Yes             JS library plugin for sexier multiselect
@@ -51,7 +52,7 @@ jQuery Timepicker      1.1.0         GPL and MIT License         Yes            
 jsGanttImproved        1.7.5.4       BSD License                 Yes             JS library (to build Gantt reports)
 JsTimezoneDetect       1.0.6         MIT License                 Yes             JS library to detect user timezone
 SwaggerUI			   2.0.24		 GPL-2+                      Yes             JS library to offer the REST API explorer
-Ace                    1.2.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.    
+Ace                    1.2.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
 
 For licenses compatibility informations:
 http://www.gnu.org/licenses/licenses.en.html
