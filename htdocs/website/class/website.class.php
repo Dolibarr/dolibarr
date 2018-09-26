@@ -1013,6 +1013,7 @@ class Website extends CommonObject
 
 		$this->db->begin();
 
+		// Search the $maxrowid because we need it later
 		$sqlgetrowid='SELECT MAX(rowid) as max from '.MAIN_DB_PREFIX.'website_page';
 		$resql=$this->db->query($sqlgetrowid);
 		if ($resql)
@@ -1021,7 +1022,8 @@ class Website extends CommonObject
 			$maxrowid=$obj->max;
 		}
 
-		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);
+		// Load sql record
+		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);	// The maxrowid of table is searched into this function two
 		if ($runsql <= 0)
 		{
 			$this->errors[]='Failed to load sql file '.$sqlfile;
@@ -1044,13 +1046,19 @@ class Website extends CommonObject
 					$newid = ($reg[2] + $maxrowid);
 					$aliasesarray = explode(',', $reg[3]);
 
+					$objectpagestatic->fetch($newid);
+
 					dol_syslog("Found ID ".$oldid." to replace with ID ".$newid." and shortcut aliases to create: ".$reg[3]);
 
 					dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
 
+					// The move is not enough, so we regenerate page
+					$filetpl=$conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
+					dolSavePageContent($filetpl, $object, $objectpagestatic);
+
+					// Regenerate alternative aliases pages
 					foreach($aliasesarray as $aliasshortcuttocreate)
 					{
-						$objectpagestatic->id = $newid;
 						$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.$aliasshortcuttocreate.'.php';
 						dolSavePageAlias($filealias, $object, $objectpagestatic);
 					}
