@@ -936,8 +936,8 @@ class Societe extends CommonObject
 			$sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
 			$sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
-      $sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
-      $sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
+			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
+			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -1259,8 +1259,8 @@ class Societe extends CommonObject
 
 				$this->email = $obj->email;
 				$this->skype = $obj->skype;
-        $this->facebook = $obj->facebook;
-        $this->twitter = $obj->twitter;
+				$this->facebook = $obj->facebook;
+				$this->twitter = $obj->twitter;
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
 				$this->fax = $obj->fax;
