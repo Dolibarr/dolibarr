@@ -139,28 +139,41 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			if ($shownb) {
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 
-				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
+                $filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
 
                 $labels1 = array();
                 $datas1 = array();
+                $datacolor=array();
+                $bgdatacolor=array();
+                $px1 = new DolChartJs();
                 foreach ($data1 as $data) {
                     $labels1[] = $data[0];
-                    $datas1[] = $data[1];
+                    $datacolor[0][] = $px1->datacolor[0];
+                    $datacolor[1][] = $px1->datacolor[1];
+                    $bgdatacolor[0][] = $px1->bgdatacolor[0];
+                    $bgdatacolor[1][] = $px1->bgdatacolor[1];
+                    $datas1[0][] = $data[1];
+                    $datas1[1][] = $data[2];
                 }
 
-                $px1 = new DolChartJs();
                 $px1->element('idboxgraphboxnbinvoicespermonth')
                     ->setType('bar')
                     ->setLabels($labels1)
                     ->setDatasets(
                         array(
                             array(
-                                'label' => $langs->trans("NumberOfBills"),
-                                'backgroundColor' => $px1->datacolor,
-                                'borderColor' => $px1->bgdatacolor,
-                                'data' => $datas1,
+                                'label' => $langs->trans("NumberOfBills").' '.$startyear,
+                                'backgroundColor' => $datacolor[0],
+                                'borderColor' => $bgdatacolor[0],
+                                'data' => $datas1[0],
+                            ),
+                            array(
+                                'label' => $langs->trans("NumberOfBills").' '.$endyear,
+                                'backgroundColor' => $datacolor[1],
+                                'borderColor' => $bgdatacolor[1],
+                                'data' => $datas1[1],
                             ),
                         )
                     )
@@ -217,24 +230,39 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$endyear.'.png';
 
+
                 $labels2 = array();
                 $datas2 = array();
-                foreach ($data2 as $data) {
-                    $labels2[] = $data[0];
-                    $datas2[] = $data[1];
-                }
+                $datacolor=array();
+                $bgdatacolor=array();
 
                 $px2 = new DolChartJs();
+
+                foreach ($data2 as $data) {
+                    $labels2[] = $data[0];
+                    $datacolor[0][] = $px1->datacolor[0];
+                    $datacolor[1][] = $px1->datacolor[1];
+                    $bgdatacolor[0][] = $px1->bgdatacolor[0];
+                    $bgdatacolor[1][] = $px1->bgdatacolor[1];
+                    $datas2[0][] = $data[1];
+                    $datas2[1][] = $data[2];
+                }
                 $px2->element('idboxgraphboxamountinvoicespermonth')
                     ->setType('bar')
                     ->setLabels($labels2)
                     ->setDatasets(
                         array(
                             array(
-                                'label' => $langs->trans("AmountOfBillsHT"),
-                                'backgroundColor' => $px2->datacolor,
-                                'borderColor' => $px2->bgdatacolor,
-                                'data' => $datas2,
+                                'label' => $langs->trans("AmountOfBillsHT").' '.$startyear,
+                                'backgroundColor' => $datacolor[0],
+                                'borderColor' => $bgdatacolor[0],
+                                'data' => $datas2[0],
+                            ),
+                            array(
+                                'label' => $langs->trans("AmountOfBillsHT").' '.$endyear,
+                                'backgroundColor' => $datacolor[1],
+                                'borderColor' => $bgdatacolor[1],
+                                'data' => $datas2[1],
                             ),
                         )
                     )
