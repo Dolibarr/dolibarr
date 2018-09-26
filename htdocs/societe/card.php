@@ -1244,7 +1244,7 @@ else
             print '</td></tr>';
         }
 
-        // Email web
+        // Email / Web
         print '<tr><td>'.fieldLabel('EMail','email',$conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
@@ -1256,19 +1256,19 @@ else
         	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
         	{
         		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	        	print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
+        		print '<td colspan="3"><input type="text" name="skype" class="minwidth100" maxlength="80" id="skype" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
         	}
         	// Twitter
         	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
         	{
         		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
-        		print '<td colspan="3"><input type="text" name="twitter" id="twitter" value="'.$object->twitter.'"></td></tr>';
+        		print '<td colspan="3"><input type="text" name="twitter" class="minwidth100" maxlength="80" id="twitter" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
         	}
         	// Facebook
         	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
         	{
 	        	print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
-	        	print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
+	        	print '<td colspan="3"><input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
         	}
         }
 

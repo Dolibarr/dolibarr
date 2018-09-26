@@ -354,6 +354,8 @@ class Contact extends CommonObject
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
+		$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
+		$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -439,6 +441,16 @@ class Contact extends CommonObject
 				if ($tmpobj->skype != $this->skype)
 				{
 					$tmpobj->skype = $this->skype;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->twitter != $this->twitter)
+				{
+					$tmpobj->twitter = $this->twitter;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->facebook != $this->facebook)
+				{
+					$tmpobj->facebook = $this->facebook;
 					$usermustbemodified++;
 				}
 				if ($usermustbemodified)
@@ -690,7 +702,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
@@ -756,6 +768,8 @@ class Contact extends CommonObject
 				$this->email				= $obj->email;
 				$this->jabberid			= $obj->jabberid;
 				$this->skype				= $obj->skype;
+				$this->twitter				= $obj->twitter;
+				$this->facebook				= $obj->facebook;
 				$this->photo				= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
