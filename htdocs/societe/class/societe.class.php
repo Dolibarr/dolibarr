@@ -182,10 +182,12 @@ class Societe extends CommonObject
 	 */
 	public $email;
 	/**
-	 * Skype username
+	 * Social value
 	 * @var string
 	 */
 	public $skype;
+	public $facebook;
+	public $twitter;
 	/**
 	 * Webpage
 	 * @var string
@@ -934,6 +936,8 @@ class Societe extends CommonObject
 			$sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
 			$sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
+			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
+			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -1162,7 +1166,7 @@ class Societe extends CommonObject
 		$sql .= ', s.status';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
-		$sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
+		$sql .= ', s.phone, s.fax, s.email, s.skype, s.facebook, s.twitter, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
 		$sql .= ', s.capital, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
@@ -1255,6 +1259,8 @@ class Societe extends CommonObject
 
 				$this->email = $obj->email;
 				$this->skype = $obj->skype;
+				$this->facebook = $obj->facebook;
+				$this->twitter = $obj->twitter;
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
 				$this->fax = $obj->fax;
