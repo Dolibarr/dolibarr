@@ -138,7 +138,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$userid=0;	// No filter on user creation
 
 		$width = ($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-		$height = '20';
+		$height = '25';
 
 		if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire)) {
 

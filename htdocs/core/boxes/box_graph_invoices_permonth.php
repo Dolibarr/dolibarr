@@ -105,7 +105,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$param_shownb='DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot='DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			//include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
@@ -129,10 +129,11 @@ class box_graph_invoices_permonth extends ModeleBoxes
             }
 			$startyear=$endyear-1;
 			$mode='customer';
-			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
-			$HEIGHT='192';
+			$width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
+			$height = '25';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
+            $langs->load("bills");
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
@@ -142,34 +143,70 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
 
-				$px1 = new DolGraph();
-				$mesg = $px1->isGraphKo();
-				if (! $mesg) {
-				    $langs->load("bills");
+                $labels1 = array();
+                $datas1 = array();
+                foreach ($data1 as $data) {
+                    $labels1[] = $data[0];
+                    $datas1[] = $data[1];
+                }
 
-				    $px1->SetData($data1);
-					unset($data1);
-					$px1->SetPrecisionY(0);
-                    $i=$startyear;
-                    $legend=array();
-					while ($i <= $endyear) {
-						$legend[]=$i;
-						$i++;
-					}
-					$px1->SetLegend($legend);
-					$px1->SetMaxValue($px1->GetCeilMaxValue());
-					$px1->SetWidth($WIDTH);
-					$px1->SetHeight($HEIGHT);
-					$px1->SetYLabel($langs->trans("NumberOfBills"));
-					$px1->SetShading(3);
-					$px1->SetHorizTickIncrement(1);
-					$px1->SetPrecisionY(0);
-					$px1->SetCssPrefix("cssboxes");
-					$px1->mode='depth';
-					$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
+                $px1 = new DolChartJs();
+                $px1->element('idboxgraphboxnbinvoicespermonth')
+                    ->setType('bar')
+                    ->setLabels($labels1)
+                    ->setDatasets(
+                        array(
+                            array(
+                                'label' => $langs->trans("NumberOfBills"),
+                                'backgroundColor' => $px1->datacolor,
+                                'borderColor' => $px1->bgdatacolor,
+                                'data' => $datas1,
+                            ),
+                        )
+                    )
+                    ->setSize(array('width' => $width, 'height' => $height))
+                    ->setOptions(array(
+                        'responsive' => true,
+                        'maintainAspectRatio' => false,
+                        'legend' => array(
+                            'display' => false,
+                            'position' => 'right',
+                        ),
+                        'title' => array(
+                            'display' => true,
+                            'text' => $langs->transnoentitiesnoconv("NumberOfBillsByMonth"),
+                        )
+                    )
+                );
 
-					$px1->draw($filenamenb,$fileurlnb);
-				}
+                // $px1 = new DolGraph();
+				// $mesg = $px1->isGraphKo();
+				// if (! $mesg) {
+				//     $langs->load("bills");
+
+				//     $px1->SetData($data1);
+				// 	unset($data1);
+				// 	$px1->SetPrecisionY(0);
+                //     $i=$startyear;
+                //     $legend=array();
+				// 	while ($i <= $endyear) {
+				// 		$legend[]=$i;
+				// 		$i++;
+				// 	}
+				// 	$px1->SetLegend($legend);
+				// 	$px1->SetMaxValue($px1->GetCeilMaxValue());
+				// 	$px1->SetWidth($WIDTH);
+				// 	$px1->SetHeight($HEIGHT);
+				// 	$px1->SetYLabel($langs->trans("NumberOfBills"));
+				// 	$px1->SetShading(3);
+				// 	$px1->SetHorizTickIncrement(1);
+				// 	$px1->SetPrecisionY(0);
+				// 	$px1->SetCssPrefix("cssboxes");
+				// 	$px1->mode='depth';
+				// 	$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
+
+				// 	$px1->draw($filenamenb,$fileurlnb);
+				// }
 			}
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
@@ -180,33 +217,68 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$endyear.'.png';
 
-				$px2 = new DolGraph();
-				$mesg = $px2->isGraphKo();
-				if (! $mesg) {
-				    $langs->load("bills");
+                $labels2 = array();
+                $datas2 = array();
+                foreach ($data2 as $data) {
+                    $labels2[] = $data[0];
+                    $datas2[] = $data[1];
+                }
 
-					$px2->SetData($data2);
-					unset($data2);
-					$px2->SetPrecisionY(0);
-					$i=$startyear;$legend=array();
-					while ($i <= $endyear) {
-						$legend[]=$i;
-						$i++;
-					}
-					$px2->SetLegend($legend);
-					$px2->SetMaxValue($px2->GetCeilMaxValue());
-					$px2->SetWidth($WIDTH);
-					$px2->SetHeight($HEIGHT);
-					$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
-					$px2->SetShading(3);
-					$px2->SetHorizTickIncrement(1);
-					$px2->SetPrecisionY(0);
-					$px2->SetCssPrefix("cssboxes");
-					$px2->mode='depth';
-					$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
+                $px2 = new DolChartJs();
+                $px2->element('idboxgraphboxamountinvoicespermonth')
+                    ->setType('bar')
+                    ->setLabels($labels2)
+                    ->setDatasets(
+                        array(
+                            array(
+                                'label' => $langs->trans("AmountOfBillsHT"),
+                                'backgroundColor' => $px2->datacolor,
+                                'borderColor' => $px2->bgdatacolor,
+                                'data' => $datas2,
+                            ),
+                        )
+                    )
+                    ->setSize(array('width' => $width, 'height' => $height))
+                    ->setOptions(array(
+                        'responsive' => true,
+                        'maintainAspectRatio' => false,
+                        'legend' => array(
+                            'display' => false,
+                            'position' => 'right',
+                        ),
+                        'title' => array(
+                            'display' => true,
+                            'text' => $langs->transnoentitiesnoconv("AmountOfBillsByMonthHT"),
+                        )
+                    )
+                );
+				// $px2 = new DolGraph();
+				// $mesg = $px2->isGraphKo();
+				// if (! $mesg) {
+				//     $langs->load("bills");
 
-					$px2->draw($filenamenb,$fileurlnb);
-				}
+				// 	$px2->SetData($data2);
+				// 	unset($data2);
+				// 	$px2->SetPrecisionY(0);
+				// 	$i=$startyear;$legend=array();
+				// 	while ($i <= $endyear) {
+				// 		$legend[]=$i;
+				// 		$i++;
+				// 	}
+				// 	$px2->SetLegend($legend);
+				// 	$px2->SetMaxValue($px2->GetCeilMaxValue());
+				// 	$px2->SetWidth($WIDTH);
+				// 	$px2->SetHeight($HEIGHT);
+				// 	$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
+				// 	$px2->SetShading(3);
+				// 	$px2->SetHorizTickIncrement(1);
+				// 	$px2->SetPrecisionY(0);
+				// 	$px2->SetCssPrefix("cssboxes");
+				// 	$px2->mode='depth';
+				// 	$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
+
+				// 	$px2->draw($filenamenb,$fileurlnb);
+				// }
 			}
 
 			if (empty($conf->use_javascript_ajax)) {
@@ -241,13 +313,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$stringtoshow.='<div class="fichecenter">';
 					$stringtoshow.='<div class="fichehalfleft">';
 				}
-				if ($shownb) $stringtoshow.=$px1->show();
+				if ($shownb) $stringtoshow.=$px1->renderChart();
 				if ($shownb && $showtot)
 				{
 					$stringtoshow.='</div>';
 					$stringtoshow.='<div class="fichehalfright">';
 				}
-				if ($showtot) $stringtoshow.=$px2->show();
+				if ($showtot) $stringtoshow.=$px2->renderChart();
 				if ($shownb && $showtot)
 				{
 					$stringtoshow.='</div>';
