@@ -93,8 +93,8 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
         while ($obj = $db->fetch_object($resql))
         {
-            $langs->load("agenda");
-            $langs->load("commercial");
+            // Load translation files required by the page
+            $langs->loadLangs(array('agenda', 'commercial'));
 
             $actionmod->fetch($obj->id);
 

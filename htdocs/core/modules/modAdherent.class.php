@@ -347,6 +347,8 @@ class modAdherent extends DolibarrModules
 		);
 
         // Cronjobs
+        $arraydate=dol_getdate(dol_now());
+        $datestart=dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
         $this->cronjobs = array(
 			0=>array(
 				'label'=>'SendReminderForExpiredSubscriptionTitle',
@@ -360,9 +362,9 @@ class modAdherent extends DolibarrModules
 				'priority'=>50,
 				'status'=>0,
 				'test'=>true,
+				'datestart'=>$datestart
 			),
         );
-
     }
 
 

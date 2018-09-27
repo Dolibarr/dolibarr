@@ -65,6 +65,7 @@ class Import
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load description int this->array_import_module, this->array_import_fields, ... of an importable dataset
 	 *
@@ -74,6 +75,7 @@ class Import
 	 */
 	function load_arrays($user,$filter='')
 	{
+        // phpcs:enable
 		global $langs,$conf;
 
 		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
@@ -183,6 +185,7 @@ class Import
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Build an import example file.
 	 *  Arrays this->array_export_xxx are already loaded for required datatoexport
@@ -195,6 +198,7 @@ class Import
 	 */
 	function build_example_file($model, $headerlinefields, $contentlinevalues,$datatoimport)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$indice=0;
@@ -356,5 +360,4 @@ class Import
 			return 1;
 		}
 	}
-
 }

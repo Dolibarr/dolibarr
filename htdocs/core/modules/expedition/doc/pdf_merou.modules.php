@@ -142,6 +142,7 @@ class pdf_merou extends ModelePdfExpedition
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
@@ -155,6 +156,7 @@ class pdf_merou extends ModelePdfExpedition
 	 */
 	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$hookmanager;
 
 		$object->fetch_thirdparty();

@@ -49,10 +49,8 @@ $endyear=$year;
 
 $object_status=GETPOST('object_status');
 
-$langs->load('interventions');
-$langs->load('companies');
-$langs->load('other');
-$langs->load('suppliers');
+// Load translation files required by the page
+$langs->loadLangs(array("interventions","suppliers","companies","other"));
 
 
 /*

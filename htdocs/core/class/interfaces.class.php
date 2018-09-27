@@ -35,9 +35,9 @@ class Interfaces
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $dir;				// Directory with all core and external triggers files
-	
+
     /**
 	 * @var string[] Error codes (or messages)
 	 */
@@ -53,6 +53,7 @@ class Interfaces
         $this->db = $db;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *   Function called when a Dolibarr business event occurs
      *   This function call all qualified triggers.
@@ -66,6 +67,7 @@ class Interfaces
      */
     function run_triggers($action,$object,$user,$langs,$conf)
     {
+        // phpcs:enable
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
@@ -368,5 +370,4 @@ class Interfaces
         }
         return $triggers;
     }
-
 }

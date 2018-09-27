@@ -73,7 +73,7 @@ if (preg_match('/del_(.*)/', $action, $reg)) {
     }
 }
 
- 
+
 /*
  * 	View
  */
@@ -87,73 +87,78 @@ if (GETPOST('withtab', 'alpha')) {
     $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php') . '">' . $langs->trans("BackToModuleList") . '</a>';
 }
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="update">';
+
 print load_fiche_titre($langs->trans("ModuleSetup") . ' ' . $langs->trans('Modulebuilder'), $linkback);
 
 if (GETPOST('withtab', 'alpha')) {
     dol_fiche_head($head, 'modulebuilder', '', -1);
 }
 
-
 print '<span class="opacitymedium">' . $langs->trans("ModuleBuilderDesc") . "</span><br>\n";
 
 print '<br>';
 
 print '<table class="noborder" width="100%">';
+
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("Key") . '</td>';
 print '<td>' . $langs->trans("Value") . '</td>';
 print "</tr>\n";
 
-print '<tr class="oddeven">';
-print '<td>' . $langs->trans("UseAboutPage") . '</td>';
-print '<td align="center">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
-} else {
-    if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
-        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_ABOUT">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
-    } else {
-        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_ABOUT">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-    }
+
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+	// What is use cas of this 2 options ?
+
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("UseAboutPage") . '</td>';
+	print '<td align="center">';
+	if ($conf->use_javascript_ajax) {
+	    print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
+	} else {
+	    if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
+	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_ABOUT">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+	    } else {
+	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_ABOUT">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
+	    }
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("UseDocFolder") . '</td>';
+	print '<td align="center">';
+	if ($conf->use_javascript_ajax) {
+	    print ajax_constantonoff('MODULEBUILDER_USE_DOCFOLDER');
+	} else {
+	    if (empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)) {
+	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+	    } else {
+	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
+	    }
+	}
+	print '</td></tr>';
 }
-print '</td></tr>';
-
-
 
 print '<tr class="oddeven">';
-print '<td>' . $langs->trans("UseDocFolder") . '</td>';
-print '<td align="center">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('MODULEBUILDER_USE_DOCFOLDER');
-} else {
-    if (empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)) {
-        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
-    } else {
-        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-    }
-}
-print '</td></tr>';
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="update">';
-
-print '<tr class="oddeven">';
-print '<td>' . $langs->trans("UseSpecificReadme") . '</td>';
-print '<td align="center">';
-print '<textarea cols="100" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.$conf->global->MODULEBUILDER_SPECIFIC_README.'</textarea>';
-print '</td></tr>';
-print '<tr class="oddeven">';
-print '<td colspan="2"><center>';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-print '</center></td></tr>';
+print '<td class="tdtop">' . $langs->trans("UseSpecificReadme") . '</td>';
+print '<td>';
+print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.$conf->global->MODULEBUILDER_SPECIFIC_README.'</textarea>';
+print '</td>';
+print '</tr>';
 print '</table>';
+
+print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';
 
 if (GETPOST('withtab', 'alpha')) {
     dol_fiche_end();
 }
 
-print '<br><br>';
+print '<br>';
+
+print '</form>';
 
 // End of page
 llxFooter();

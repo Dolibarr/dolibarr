@@ -37,12 +37,12 @@ class ExpenseReport extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='expensereport';
-	
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='expensereport';
-	
+
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
@@ -147,9 +147,7 @@ class ExpenseReport extends CommonObject
         // List of language codes for status
         $this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
         $this->statuts = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
-        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut8');
-
-        return 1;
+        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut5');
     }
 
     /**
@@ -547,6 +545,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Classify the expense report as paid
      *
@@ -557,6 +556,7 @@ class ExpenseReport extends CommonObject
      */
     function set_paid($id, $fuser, $notrigger = 0)
     {
+        // phpcs:enable
 		$error = 0;
 		$this->db->begin();
 
@@ -618,6 +618,7 @@ class ExpenseReport extends CommonObject
         return $this->LibStatut($this->status,$mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Returns the label of a statut
      *
@@ -627,27 +628,28 @@ class ExpenseReport extends CommonObject
      */
     function LibStatut($status,$mode=0)
     {
+        // phpcs:enable
         global $langs;
 
         if ($mode == 0)
             return $langs->transnoentities($this->statuts[$status]);
 
-        if ($mode == 1)
+        elseif ($mode == 1)
             return $langs->transnoentities($this->statuts_short[$status]);
 
-        if ($mode == 2)
+        elseif ($mode == 2)
             return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts_short[$status]);
 
-        if ($mode == 3)
+        elseif ($mode == 3)
             return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
 
-        if ($mode == 4)
+        elseif ($mode == 4)
             return img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts[$status]);
 
-        if ($mode == 5)
+        elseif ($mode == 5)
             return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
 
-        if ($mode == 6)
+        elseif ($mode == 6)
             return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
     }
 
@@ -792,6 +794,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * fetch_line_by_project
      *
@@ -801,6 +804,7 @@ class ExpenseReport extends CommonObject
      */
     function fetch_line_by_project($projectid,$user='')
     {
+        // phpcs:enable
         global $conf,$db,$langs;
 
         $langs->load('trips');
@@ -895,7 +899,6 @@ class ExpenseReport extends CommonObject
                 return -1;
             }
         }
-
     }
 
     /**
@@ -949,6 +952,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * fetch_lines
      *
@@ -956,6 +960,7 @@ class ExpenseReport extends CommonObject
      */
     function fetch_lines()
     {
+        // phpcs:enable
         $this->lines=array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
@@ -1192,6 +1197,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * set_save_from_refuse
      *
@@ -1200,6 +1206,7 @@ class ExpenseReport extends CommonObject
      */
     function set_save_from_refuse($fuser)
     {
+        // phpcs:enable
         global $conf,$langs;
 
         // Sélection de la date de début de la NDF
@@ -1364,6 +1371,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * set_unpaid
      *
@@ -1373,6 +1381,7 @@ class ExpenseReport extends CommonObject
      */
     function set_unpaid($fuser, $notrigger = 0)
     {
+        // phpcs:enable
 		$error = 0;
 
         if ($this->fk_c_deplacement_statuts != 5)
@@ -1423,6 +1432,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * set_cancel
      *
@@ -1433,6 +1443,7 @@ class ExpenseReport extends CommonObject
      */
     function set_cancel($fuser,$detail, $notrigger=0)
     {
+        // phpcs:enable
 		$error = 0;
         $this->date_cancel = $this->db->idate(gmmktime());
         if ($this->fk_statut != 4)
@@ -1607,6 +1618,7 @@ class ExpenseReport extends CommonObject
         return $result;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Update total of an expense report when you add a line.
      *
@@ -1616,6 +1628,7 @@ class ExpenseReport extends CommonObject
      */
     function update_totaux_add($ligne_total_ht,$ligne_total_tva)
     {
+        // phpcs:enable
         $this->total_ht = $this->total_ht + $ligne_total_ht;
         $this->total_tva = $this->total_tva + $ligne_total_tva;
         $this->total_ttc = $this->total_ht + $this->total_tva;
@@ -1635,6 +1648,7 @@ class ExpenseReport extends CommonObject
         endif;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Update total of an expense report when you delete a line.
      *
@@ -1644,6 +1658,7 @@ class ExpenseReport extends CommonObject
      */
     function update_totaux_del($ligne_total_ht,$ligne_total_tva)
     {
+        // phpcs:enable
         $this->total_ht = $this->total_ht - $ligne_total_ht;
         $this->total_tva = $this->total_tva - $ligne_total_tva;
         $this->total_ttc = $this->total_ht + $this->total_tva;
@@ -1756,8 +1771,6 @@ class ExpenseReport extends CommonObject
 			$this->error = 'ErrorExpenseNotDraft';
             return -3;
         }
-
-
 	}
 
 	/**
@@ -2052,6 +2065,7 @@ class ExpenseReport extends CommonObject
         return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * periode_existe
      *
@@ -2062,6 +2076,7 @@ class ExpenseReport extends CommonObject
      */
     function periode_existe($fuser, $date_debut, $date_fin)
     {
+        // phpcs:enable
         $sql = "SELECT rowid, date_debut, date_fin";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE fk_user_author = '{$fuser->id}'";
@@ -2108,6 +2123,7 @@ class ExpenseReport extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Return list of people with permission to validate expense reports.
      * Search for permission "approve expense report"
@@ -2116,6 +2132,7 @@ class ExpenseReport extends CommonObject
      */
     function fetch_users_approver_expensereport()
     {
+        // phpcs:enable
         $users_validator=array();
 
         $sql = "SELECT DISTINCT ur.fk_user";
@@ -2214,13 +2231,15 @@ class ExpenseReport extends CommonObject
         return $ret;
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *      Charge indicateurs this->nb pour le tableau de bord
      *
      *      @return     int         <0 if KO, >0 if OK
      */
     function load_state_board()
     {
+        // phpcs:enable
         global $conf;
 
         $this->nb=array();
@@ -2248,6 +2267,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -2257,6 +2277,7 @@ class ExpenseReport extends CommonObject
      */
     function load_board($user, $option='topay')
     {
+        // phpcs:enable
         global $conf, $langs;
 
         if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -2377,7 +2398,6 @@ class ExpenseReport extends CommonObject
     	}
     	return 0;
     }
-
 }
 
 
@@ -2390,7 +2410,7 @@ class ExpenseReportLine
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -2687,6 +2707,7 @@ class ExpenseReportLine
 }
 
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *    Retourne la liste deroulante des differents etats d'une note de frais.
  *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
@@ -2699,6 +2720,7 @@ class ExpenseReportLine
  */
 function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempty=1, $useshortlabel=0)
 {
+    // phpcs:enable
     global $db, $langs;
 
     $tmpep=new ExpenseReport($db);
@@ -2723,6 +2745,7 @@ function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempt
     print '</select>';
 }
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Return list of types of notes with select value = id
  *
@@ -2734,6 +2757,7 @@ function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempt
  */
 function select_type_fees_id($selected='',$htmlname='type',$showempty=0, $active=1)
 {
+    // phpcs:enable
     global $db,$langs,$user;
     $langs->load("trips");
 

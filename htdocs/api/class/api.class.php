@@ -271,6 +271,7 @@ class DolibarrApi
 	    return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Function to forge a SQL criteria
 	 *
@@ -279,6 +280,7 @@ class DolibarrApi
 	 */
 	static function _forge_criteria_callback($matches)
 	{
+        // phpcs:enable
 	    global $db;
 
 	    //dol_syslog("Convert matches ".$matches[1]);

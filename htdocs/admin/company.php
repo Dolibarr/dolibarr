@@ -50,6 +50,7 @@ $error=0;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admincompany','globaladmin'));
 
+
 /*
  * Actions
  */
@@ -397,7 +398,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
 			print ' &nbsp; ';
-			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 		}
 	} else {
 		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -765,7 +766,13 @@ else
 
 	// Web
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB,'_blank',80) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>';
+	$arrayofurl = preg_split('/\s/', $conf->global->MAIN_INFO_SOCIETE_WEB);
+	foreach($arrayofurl as $urltoshow)
+	{
+		if ($urltoshow) print dol_print_url($urltoshow,'_blank',80);
+	}
+	print '</td></tr>';
 
 	// Barcode
 	if (! empty($conf->barcode->enabled))
@@ -791,7 +798,7 @@ else
 	}
 	else if ($mysoc->logo_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 	{
-		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
+		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
 	}
 	else
 	{

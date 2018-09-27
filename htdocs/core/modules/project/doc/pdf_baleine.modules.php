@@ -107,9 +107,9 @@ class pdf_baleine extends ModelePDFProjects
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 	/**
 	 *	Constructor
@@ -165,8 +165,9 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Fonction generant le projet sur le disque
+	 *  Fonction generant le projet sur le disque
 	 *
 	 *	@param	Project		$object   		Object project a generer
 	 *	@param	Translate	$outputlangs	Lang output object
@@ -174,6 +175,7 @@ class pdf_baleine extends ModelePDFProjects
 	 */
 	function write_file($object,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -671,5 +673,4 @@ class pdf_baleine extends ModelePDFProjects
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

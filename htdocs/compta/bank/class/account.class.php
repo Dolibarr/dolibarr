@@ -40,12 +40,15 @@ class Account extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'bank_account';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'bank_account';
-	
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'account';
 
 	/**
@@ -294,6 +297,7 @@ class Account extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Add a link between bank line record and its source
 	 *
@@ -306,6 +310,7 @@ class Account extends CommonObject
 	 */
 	function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
+        // phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
 		$sql.= "fk_bank";
 		$sql.= ", url_id";
@@ -333,6 +338,7 @@ class Account extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 		TODO Move this into AccountLine
 	 *      Return array with links from llx_bank_url
@@ -340,10 +346,11 @@ class Account extends CommonObject
 	 *      @param  int         $fk_bank    To search using bank transaction id
 	 *      @param  int         $url_id     To search using link to
 	 *      @param  string      $type       To search using type
-	 *      @return array|-1                Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
+	 *      @return array|int               Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
 	function get_url($fk_bank='', $url_id='', $type='')
 	{
+        // phpcs:enable
 		$lines = array();
 
 		// Check parameters
@@ -782,14 +789,16 @@ class Account extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *    	Update BBAN (RIB) account fields
+	 *  Update BBAN (RIB) account fields
 	 *
-	 *    	@param	User	$user       Object user making update
-	 *		@return	int					<0 if KO, >0 if OK
+	 *  @param	User	$user       Object user making update
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function update_bban(User $user = null)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		// Clean parameters
@@ -1068,6 +1077,7 @@ class Account extends CommonObject
 		return $this->LibStatut($this->clos,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return label of given object status
 	 *
@@ -1077,6 +1087,7 @@ class Account extends CommonObject
 	 */
 	function LibStatut($statut, $mode = 0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load('banks');
 
@@ -1105,6 +1116,7 @@ class Account extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Renvoi si un compte peut etre supprimer ou non (sans mouvements)
 	 *
@@ -1112,6 +1124,7 @@ class Account extends CommonObject
 	 */
 	function can_be_deleted()
 	{
+        // phpcs:enable
 		$can_be_deleted=false;
 
 		$sql = "SELECT COUNT(rowid) as nb";
@@ -1170,9 +1183,9 @@ class Account extends CommonObject
 		}
 
 		return $solde;
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1182,6 +1195,7 @@ class Account extends CommonObject
 	 */
 	function load_board(User $user, $filteraccountid = 0)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -1228,6 +1242,7 @@ class Account extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *		@param		int			$filteraccountid	To get info for a particular account id
@@ -1235,6 +1250,7 @@ class Account extends CommonObject
 	 */
 	function load_state_board($filteraccountid = 0)
 	{
+        // phpcs:enable
 		global $user;
 
 		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
@@ -1513,7 +1529,6 @@ class Account extends CommonObject
 	 */
 	function info($id)
 	{
-
 	}
 
 	/**
@@ -1558,7 +1573,6 @@ class Account extends CommonObject
 
 		//Get the order the properties are shown
 		return $fieldarray;
-
 	}
 
 	/**
@@ -1632,7 +1646,6 @@ class Account extends CommonObject
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
 	}
-
 }
 
 
@@ -1645,57 +1658,68 @@ class AccountLine extends CommonObject
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
-	/**
+
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element='bank';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='bank';
-	
-	var $picto = 'generic';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'generic';
 
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $ref;
-	var $datec;
-	var $dateo;
+
+    /**
+     * @var string Ref
+     */
+    public $ref;
+
+	public $datec;
+	public $dateo;
 
 	/**
 	 * Value date
 	 */
-	var $datev;
-	var $amount;
-	
-	/**
-     * @var string proper name for given parameter
+	public $datev;
+	public $amount;
+
+    /**
+     * @var string bank transaction lines label
      */
     public $label;
-    
-	var $note;
-	var $fk_user_author;
-	var $fk_user_rappro;
-	var $fk_type;
-	var $rappro;        // Is it conciliated
-	var $num_releve;    // If conciliated, what is bank statement
-	var $num_chq;       // Num of cheque
-	var $bank_chq;      // Bank of cheque
-	var $fk_bordereau;  // Id of cheque receipt
 
-	var $fk_account;            // Id of bank account
-	var $bank_account_label;    // Label of bank account
+    public $note;
+	public $fk_user_author;
+	public $fk_user_rappro;
+	public $fk_type;
+	public $rappro;        // Is it conciliated
+	public $num_releve;    // If conciliated, what is bank statement
+	public $num_chq;       // Num of cheque
+	public $bank_chq;      // Bank of cheque
+	public $fk_bordereau;  // Id of cheque receipt
 
+	public $fk_account;            // Id of bank account
+	public $bank_account_label;    // Label of bank account
+
+    /**
+	 * Issuer
+	 * @var Societe
+	 */
 	public $emetteur;
 
 	/**
@@ -1881,6 +1905,7 @@ class AccountLine extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Delete bank line records
 	 *
@@ -1889,6 +1914,7 @@ class AccountLine extends CommonObject
 	 */
 	function delete_urls(User $user = null)
 	{
+        // phpcs:enable
 		$nbko=0;
 
 		if ($this->rappro)
@@ -1951,15 +1977,17 @@ class AccountLine extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *		Update conciliation field
+	 *	Update conciliation field
 	 *
-	 *		@param	User	$user		Objet user making update
-	 *		@param 	int		$cat		Category id
-	 *		@return	int					<0 if KO, >0 if OK
+	 *	@param	User	$user		Objet user making update
+	 *	@param 	int		$cat		Category id
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function update_conciliation(User $user, $cat)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$this->db->begin();
@@ -2013,6 +2041,7 @@ class AccountLine extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Increase/decrease value date of a rowid
 	 *
@@ -2022,6 +2051,7 @@ class AccountLine extends CommonObject
 	 */
 	function datev_change($rowid,$sign=1)
 	{
+        // phpcs:enable
 		$sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2051,6 +2081,7 @@ class AccountLine extends CommonObject
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Increase value date of a rowid
 	 *
@@ -2059,9 +2090,11 @@ class AccountLine extends CommonObject
 	 */
 	function datev_next($id)
 	{
+        // phpcs:enable
 		return $this->datev_change($id,1);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Decrease value date of a rowid
 	 *
@@ -2070,10 +2103,12 @@ class AccountLine extends CommonObject
 	 */
 	function datev_previous($id)
 	{
+        // phpcs:enable
 		return $this->datev_change($id,-1);
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Increase/decrease operation date of a rowid
 	 *
@@ -2083,6 +2118,7 @@ class AccountLine extends CommonObject
 	 */
 	function dateo_change($rowid,$sign=1)
 	{
+        // phpcs:enable
 		$sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2112,6 +2148,7 @@ class AccountLine extends CommonObject
 		return 0;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Increase operation date of a rowid
 	 *
@@ -2120,9 +2157,11 @@ class AccountLine extends CommonObject
 	 */
 	function dateo_next($id)
 	{
+        // phpcs:enable
 		return $this->dateo_change($id,1);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Decrease operation date of a rowid
 	 *
@@ -2131,6 +2170,7 @@ class AccountLine extends CommonObject
 	 */
 	function dateo_previous($id)
 	{
+        // phpcs:enable
 		return $this->dateo_change($id,-1);
 	}
 
@@ -2237,6 +2277,7 @@ class AccountLine extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -2246,6 +2287,7 @@ class AccountLine extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		//$langs->load('companies');
 		/*
@@ -2315,5 +2357,4 @@ class AccountLine extends CommonObject
 		}
 		return 0;
 	}
-
 }

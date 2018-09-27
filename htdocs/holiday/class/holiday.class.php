@@ -36,12 +36,12 @@ class Holiday extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='holiday';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='holiday';
-	
+
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	var $fk_element = 'fk_holiday';
 	public $picto = 'holiday';
@@ -52,9 +52,18 @@ class Holiday extends CommonObject
 	 */
 	var $rowid;
 
-	var $fk_user;
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
 	var $date_create='';
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $date_debut='';			// Date start in PHP server TZ
 	var $date_fin='';			// Date end in PHP server TZ
 	var $date_debut_gmt='';		// Date start in GMT
@@ -921,6 +930,7 @@ class Holiday extends CommonObject
 		return $this->LibStatut($this->statut, $mode, $this->date_debut);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns the label of a statut
 	 *
@@ -931,58 +941,59 @@ class Holiday extends CommonObject
 	 */
 	function LibStatut($statut, $mode=0, $startdate='')
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			if ($statut == 1) return $langs->trans('DraftCP');
-			if ($statut == 2) return $langs->trans('ToReviewCP');
-			if ($statut == 3) return $langs->trans('ApprovedCP');
-			if ($statut == 4) return $langs->trans('CancelCP');
-			if ($statut == 5) return $langs->trans('RefuseCP');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP');
+			elseif ($statut == 3) return $langs->trans('ApprovedCP');
+			elseif ($statut == 4) return $langs->trans('CancelCP');
+			elseif ($statut == 5) return $langs->trans('RefuseCP');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
 
-		return $statut;
+		else return $statut;
 	}
 
 
@@ -1018,7 +1029,6 @@ class Holiday extends CommonObject
 
 		$statut.= '</select>'."\n";
 		print $statut;
-
 	}
 
 	/**
@@ -1248,7 +1258,6 @@ class Holiday extends CommonObject
 				return -1;
 			}
 		}
-
 	}
 
 	/**
@@ -1326,7 +1335,6 @@ class Holiday extends CommonObject
 		$sql.= " WHERE fk_user = '".$user_id."'";
 
 		$this->db->query($sql);
-
 	}
 
 
@@ -1582,6 +1590,7 @@ class Holiday extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"
@@ -1590,6 +1599,7 @@ class Holiday extends CommonObject
 	 */
 	function fetch_users_approver_holiday()
 	{
+        // phpcs:enable
 		$users_validator=array();
 
 		$sql = "SELECT DISTINCT ur.fk_user";
@@ -1881,5 +1891,4 @@ class Holiday extends CommonObject
 		$this->halfday=0;
 		$this->fk_type=1;
 	}
-
 }

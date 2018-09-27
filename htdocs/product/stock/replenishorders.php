@@ -1,7 +1,8 @@
 <?php
 /*
- * Copyright (C) 2013	Cédric Salvador	<csalvador@gpcsolutions.fr>
- * Copyright (C) 2014	Regis Houssin	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,10 +196,10 @@ if ($resql)
          '<input type="text" class="flat" name="search_ttc" value="' . dol_escape_htmltag($sttc) . '">'.
          '</td>'.
          '<td class="liste_titre">'.
-         $form->select_date($search_date, 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
+         $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
-         $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
     print '</tr>';

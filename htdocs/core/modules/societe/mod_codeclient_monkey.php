@@ -32,18 +32,39 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codeclient_monkey extends ModeleThirdPartyCode
 {
-	var $nom='Monkey';					// Nom du modele
-	var $name='Monkey';					// Nom du modele
-	var $code_modifiable;				// Code modifiable
-	var $code_modifiable_invalide;		// Code modifiable si il est invalide
-	var $code_modifiable_null;			// Code modifiables si il est null
-	var $code_null;						// Code facultatif
-	var $version='dolibarr';	    	// 'development', 'experimental', 'dolibarr'
-	var $code_auto;                     // Numerotation automatique
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Monkey';
 
-	var $prefixcustomer='CU';
-	var $prefixsupplier='SU';
-	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
+	/**
+	 * @var string model name
+	 */
+	public $name='Monkey';
+
+	public $code_modifiable;				// Code modifiable
+
+	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null;			// Code modifiables si il est null
+
+	public $code_null;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';	    	// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto;                     // Numerotation automatique
+
+	public $prefixcustomer='CU';
+
+	public $prefixsupplier='SU';
+
+	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
 	/**
@@ -210,6 +231,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -221,6 +243,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function verif_dispo($db, $code, $soc, $type=0)
 	{
+        // phpcs:enable
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -249,6 +272,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi si un code respecte la syntaxe
 	 *
@@ -257,6 +281,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	function verif_syntax($code)
 	{
+        // phpcs:enable
 		$res = 0;
 
 		if (dol_strlen($code) < 11)
@@ -269,6 +294,4 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		return $res;
 	}
-
 }
-

@@ -31,19 +31,22 @@ class Menubase
     /**
      * @var DoliDB Database handler.
      */
-    public $db;	
-    
-    /**
-	 * @var string Error code (or message)
-	 */
-	public $error;
-	
-    /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+    public $db;
 
-    public $id;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
     public $menu_handler;
     public $module;
@@ -694,6 +697,4 @@ class Menubase
             }
         }
    }
-
 }
-

@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -443,7 +444,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            $form->select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
+            print $form->selectDate($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
             $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'],'paiementid');

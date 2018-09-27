@@ -32,16 +32,25 @@ class Link extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'link';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'links';
 
-    public $entity;
+    /**
+	 * @var int Entity
+	 */
+	public $entity;
+
     public $datea;
     public $url;
+
+    /**
+     * @var string Links label
+     */
     public $label;
+
     public $objecttype;
     public $objectid;
 
@@ -53,11 +62,7 @@ class Link extends CommonObject
      */
     public function __construct($db)
     {
-        global $conf;
-
         $this->db = $db;
-
-        return 1;
     }
 
 
@@ -385,7 +390,5 @@ class Link extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
     }
-
 }

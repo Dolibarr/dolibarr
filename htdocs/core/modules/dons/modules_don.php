@@ -39,15 +39,17 @@ abstract class ModeleDon extends CommonDocGenerator
 	 */
 	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of active generation modules
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @param	DoliDB  $db     			Database handler
+     *  @param  integer $maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
     static function liste_modeles($db,$maxfilenamelength=0)
     {
+        // phpcs:enable
         global $conf;
 
         $type='donation';
@@ -144,4 +146,3 @@ abstract class ModeleNumRefDons
         return $langs->trans("NotAvailable");
     }
 }
-

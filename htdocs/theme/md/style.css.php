@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ $colortexttitlenotab='90,90,90';
 $colortexttitle='20,20,20';
 $colortext='0,0,0';
 $colortextlink='0,0,120';
-$fontsize='13';
+$fontsize='14';
 $fontsizesmaller='11';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
@@ -108,6 +109,7 @@ if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_
 if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
 if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
@@ -119,7 +121,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1='13';
+    $conf->global->THEME_ELDY_FONT_SIZE1='14';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 
@@ -145,9 +147,11 @@ $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 
 // Hover color
 $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
@@ -193,6 +197,7 @@ $colorbacklineimpair2=join(',',colorStringToArray($colorbacklineimpair2));
 $colorbacklinepair1=join(',',colorStringToArray($colorbacklinepair1));
 $colorbacklinepair2=join(',',colorStringToArray($colorbacklinepair2));
 if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',',colorStringToArray($colorbacklinepairhover));
+if ($colorbacklinepairchecked != '') $colorbacklinepairchecked=join(',',colorStringToArray($colorbacklinepairchecked));
 $colorbackbody=join(',',colorStringToArray($colorbackbody));
 $colortexttitlenotab=join(',',colorStringToArray($colortexttitlenotab));
 $colortexttitle=join(',',colorStringToArray($colortexttitle));
@@ -211,6 +216,7 @@ print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
 print 'colorbacklinepair1='.$colorbacklinepair1."\n";
 print 'colorbacklinepair2='.$colorbacklinepair2."\n";
 print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
+print 'colorbacklinepairchecked='.$colorbacklinepairchecked."\n";
 print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
@@ -734,6 +740,9 @@ select.flat.selectlimit {
 }
 .marginleftonly {
 	margin-left: 10px !important;
+}
+.marginleftonlyshort {
+	margin-left: 4px !important;
 }
 .nomarginleft {
 	margin-left: 0px !important;
@@ -1363,7 +1372,7 @@ table.noborder tr.liste_titre td {
 	margin : 0px auto;
 }
 
-#pictotitle {
+.pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
@@ -1866,17 +1875,29 @@ form#login {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode{
 	border: none;
-	border-bottom: solid 1px rgba(180,180,180,.4);
+	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
 	margin-left: 18px;
 	margin-top: 5px;
+	margin-bottom: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
 	outline: none !important;
-	/* box-shadow: none;
-	-webkit-box-shadow: 0 0 0 50px #FFF inset;
-	box-shadow: 0 0 0 50px #FFF inset;*/
 }
+.login_table .trinputlogin {
+	margin: 8px;
+}
+.login_table .tdinputlogin {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    min-width: 220px;
+    border-radius: 2px;
+}
+.login_table .tdinputlogin .fa {
+	padding-left: 10px;
+	width: 14px;
+}
+
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -2664,6 +2685,8 @@ table.paddingtopbottomonly tr td {
 }
 tr.liste_titre_filter td.liste_titre {
     border-bottom: 1px solid #FDFFFF;
+	padding-top: 4px;
+	padding-bottom: 3px;
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
@@ -2695,7 +2718,7 @@ table.liste td, table.noborder td, div.noborder form div {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
-	padding: 2px 1px 2px 0px;			/* t r b l */
+	padding: 2px 1px 2px 6px;			/* t r b l */
 }
 
 table.nobordernopadding {
@@ -2906,6 +2929,12 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 <?php } ?>
 }
+
+<?php if ($colorbacklinepairchecked) { ?>
+.highlight {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
+}
+<?php } ?>
 
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {
@@ -3370,7 +3399,7 @@ div.warning {
     background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
-	color: rgb(<?php echo $colortext; ?>);
+	color: rgb(<?php echo $colortextlink; ?>);
 }
 
 /* Error message */
@@ -4745,7 +4774,81 @@ span.noborderoncategories {
 
 
 /* ============================================================================== */
-/*  Multiselect with checkbox                                                     */
+/*  External lib multiselect with checkbox                                        */
+/* ============================================================================== */
+
+.multi-select-container {
+  display: inline-block;
+  position: relative;
+}
+
+.multi-select-menu {
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  float: left;
+  min-width: 100%;
+  background: #fff;
+  margin: 1em 0;
+  padding: 0.4em 0;
+  border: 1px solid #aaa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.multi-select-menu input {
+  margin-right: 0.3em;
+  vertical-align: 0.1em;
+}
+
+.multi-select-button {
+  display: inline-block;
+  max-width: 20em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  background-color: #fff;
+  cursor: default;
+
+  border: none;
+  border-bottom: solid 1px rgba(0,0,0,.2);
+  padding: 5px;
+  padding-left: 2px;
+  height: 17px;
+}
+.multi-select-button:focus {
+  outline: none;
+  border-bottom: 1px solid #666;
+}
+
+.multi-select-button:after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0.5em 0.23em 0em 0.23em;
+  border-color: #444 transparent transparent transparent;
+  margin-left: 0.4em;
+}
+
+.multi-select-container--open .multi-select-menu { display: block; }
+
+.multi-select-container--open .multi-select-button:after {
+  border-width: 0 0.4em 0.4em 0.4em;
+  border-color: transparent transparent #999 transparent;
+}
+
+.multi-select-menuitem {
+    clear: both;
+    float: left;
+    padding-left: 5px
+}
+
+
+/* ============================================================================== */
+/*  Native multiselect with checkbox                                              */
 /* ============================================================================== */
 
 ul.ulselectedfields {
@@ -4756,7 +4859,7 @@ dl.dropdown {
     padding:0px;
 	margin-left: 2px;
     margin-right: 2px;
-    vertical-align: text-bottom;
+    vertical-align: middle;
     display: inline-block;
 }
 .dropdown dd, .dropdown dt {
@@ -4785,7 +4888,7 @@ dl.dropdown {
 }
 .dropdown dd ul {
     background-color: #FFF;
-    border: 1px solid #888;
+    box-shadow: 1px 1px 10px #aaa;
     display:none;
     right:0px;						/* pop is align on right */
     padding: 2px 15px 2px 5px;
@@ -4798,7 +4901,7 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
-	padding: 2px;
+	padding: 4px;
 	color: #000;
 }
 .dropdown dd ul li input[type="checkbox"] {

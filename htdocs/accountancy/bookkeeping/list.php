@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2017  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2016-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -465,11 +466,11 @@ if (! empty($arrayfields['t.doc_date']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
@@ -556,11 +557,11 @@ if (! empty($arrayfields['t.date_creation']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_creation_start, 'date_creation_start', 0, 0, 1);
+	print $form->selectDate($search_date_creation_start, 'date_creation_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_creation_end, 'date_creation_end', 0, 0, 1);
+	print $form->selectDate($search_date_creation_end, 'date_creation_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
@@ -570,11 +571,11 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_modification_start, 'date_modification_start', 0, 0, 1);
+	print $form->selectDate($search_date_modification_start, 'date_modification_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_modification_end, 'date_modification_end', 0, 0, 1);
+	print $form->selectDate($search_date_modification_end, 'date_modification_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }

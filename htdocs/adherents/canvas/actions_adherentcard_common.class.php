@@ -31,7 +31,7 @@ abstract class ActionsAdherentCardCommon
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $dirmodule;
     var $targetmodule;
     var $canvas;
@@ -41,11 +41,11 @@ abstract class ActionsAdherentCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';	
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -75,7 +75,8 @@ abstract class ActionsAdherentCardCommon
     	//}
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Set content of ->tpl array, to use into template
      *
      *  @param	string		$action    Type of action
@@ -84,6 +85,7 @@ abstract class ActionsAdherentCardCommon
      */
     function assign_values(&$action, $id)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
@@ -232,6 +234,7 @@ abstract class ActionsAdherentCardCommon
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Assign POST values into object
      *
@@ -239,6 +242,7 @@ abstract class ActionsAdherentCardCommon
      */
     private function assign_post()
     {
+        // phpcs:enable
         global $langs, $mysoc;
 
         $this->object->old_name 			= 	$_POST["old_name"];
@@ -277,5 +281,4 @@ abstract class ActionsAdherentCardCommon
             }
         }
     }
-
 }

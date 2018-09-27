@@ -37,30 +37,30 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $length;
-	var $length2; // didn't overright display
-	var $NbMaj;
-	var $NbNum;
-	var $NbSpe;
-	var $NbRepeat;
-	var $WithoutAmbi;
+
+	public $length;
+	public $length2; // didn't overright display
+	public $NbMaj;
+	public $NbNum;
+	public $NbSpe;
+	public $NbRepeat;
+	public $WithoutAmbi;
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $conf;
-	var $lang;
-	var $user;
 
-	var $Maj;
-	var $Min;
-	var $Nb;
-	var $Spe;
-	var $Ambi;
-	var $All;
+	public $conf;
+	public $lang;
+	public $user;
+
+	public $Maj;
+	public $Min;
+	public $Nb;
+	public $Spe;
+	public $Ambi;
+	public $All;
 
 	/**
 	 *	Constructor
@@ -113,7 +113,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
 		//$this->All = $this->Maj. $this->Min. $this->Nb. $this->Spe;
 		//$this->All =  $this->Spe;
-
 	}
 
 	/**

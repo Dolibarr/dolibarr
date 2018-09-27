@@ -137,7 +137,7 @@ $var = false;
 
 llxHeader('', $title);
 
-//print_fiche_titre($title);
+//print load_fiche_titre($title);
 
 $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
@@ -243,7 +243,7 @@ if ($action == 'edit') { ?>
 
 	<?php
 
-	print_fiche_titre($langs->trans("PossibleValues"));
+	print load_fiche_titre($langs->trans("PossibleValues"));
 
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

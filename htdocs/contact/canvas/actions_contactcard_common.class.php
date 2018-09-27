@@ -31,7 +31,7 @@ abstract class ActionsContactCardCommon
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     var $dirmodule;
     var $targetmodule;
     var $canvas;
@@ -41,12 +41,12 @@ abstract class ActionsContactCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -76,7 +76,8 @@ abstract class ActionsContactCardCommon
     	//}
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Set content of ->tpl array, to use into template
      *
      *  @param	string		$action    Type of action
@@ -85,6 +86,7 @@ abstract class ActionsContactCardCommon
      */
     function assign_values(&$action, $id)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
@@ -265,6 +267,7 @@ abstract class ActionsContactCardCommon
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Assign POST values into object
      *
@@ -272,31 +275,32 @@ abstract class ActionsContactCardCommon
      */
     private function assign_post()
     {
+        // phpcs:enable
         global $langs, $mysoc;
 
-        $this->object->old_name 			= 	$_POST["old_name"];
-        $this->object->old_firstname 		= 	$_POST["old_firstname"];
+        $this->object->old_name 		= $_POST["old_name"];
+        $this->object->old_firstname 	= $_POST["old_firstname"];
 
-        $this->object->socid				=	$_POST["socid"];
-        $this->object->lastname				=	$_POST["name"];
-        $this->object->firstname			= 	$_POST["firstname"];
-        $this->object->civility_id			= 	$_POST["civility_id"];
-        $this->object->poste				= 	$_POST["poste"];
-        $this->object->address				=	$_POST["address"];
-        $this->object->zip					=	$_POST["zipcode"];
-        $this->object->town					=	$_POST["town"];
-        $this->object->fk_departement		=	$_POST["state_id"];
-        $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-        $this->object->state_id        		=	$_POST["state_id"];
-        $this->object->phone_pro			= 	$_POST["phone_pro"];
-        $this->object->phone_perso			= 	$_POST["phone_perso"];
-        $this->object->phone_mobile			= 	$_POST["phone_mobile"];
-        $this->object->fax					=	$_POST["fax"];
-        $this->object->email				=	$_POST["email"];
-        $this->object->jabberid				= 	$_POST["jabberid"];
-        $this->object->priv					= 	$_POST["priv"];
-        $this->object->note					=	$_POST["note"];
-        $this->object->canvas				=	$_POST["canvas"];
+        $this->object->socid			= $_POST["socid"];
+        $this->object->lastname			= $_POST["name"];
+        $this->object->firstname		= $_POST["firstname"];
+        $this->object->civility_id		= $_POST["civility_id"];
+        $this->object->poste			= $_POST["poste"];
+        $this->object->address			= $_POST["address"];
+        $this->object->zip				= $_POST["zipcode"];
+        $this->object->town				= $_POST["town"];
+        $this->object->fk_departement	= $_POST["state_id"];
+        $this->object->country_id		= $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $this->object->state_id        	= $_POST["state_id"];
+        $this->object->phone_pro		= $_POST["phone_pro"];
+        $this->object->phone_perso		= $_POST["phone_perso"];
+        $this->object->phone_mobile		= $_POST["phone_mobile"];
+        $this->object->fax				= $_POST["fax"];
+        $this->object->email			= $_POST["email"];
+        $this->object->jabberid			= $_POST["jabberid"];
+        $this->object->priv				= $_POST["priv"];
+        $this->object->note				= $_POST["note"];
+        $this->object->canvas			= $_POST["canvas"];
 
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
@@ -316,6 +320,4 @@ abstract class ActionsContactCardCommon
             $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
         }
     }
-
 }
-

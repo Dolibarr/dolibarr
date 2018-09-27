@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013   Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014   Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +17,18 @@
  */
 
 /**
- * 	\defgroup   Skype   Module skype
- *  \brief      Add a skype button.
- *  \file       htdocs/core/modules/modSkype.class.php
- *  \ingroup    Skype
- *  \brief      Description and activation file for module skype
+ * 	\defgroup   SocialNetworks   Module SocialNetworks
+ *  \brief      Add a SocialNetworks button.
+ *  \file       htdocs/core/modules/modSocialNetworks.class.php
+ *  \ingroup    socialnetworks
+ *  \brief      Description and activation file for module SocialNetworks
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a Skype module
+ *	Class to describe a SocialNetworks module
  */
-class modSkype extends DolibarrModules
+class modSocialNetworks extends DolibarrModules
 {
 
     /**
@@ -40,29 +41,29 @@ class modSkype extends DolibarrModules
     	global $langs,$conf;
 
         $this->db = $db;
-        $this->numero = 3100;
+        $this->numero = 3400;
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "interface";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable Skype links into contacts";
+        $this->description = "Enable Social Networks fields into third parties and addresses (skype, twitter, facebook, ...)";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
-        $this->picto='skype';
+        $this->picto='generic';
 
         // Data directories to create when module is enabled
         $this->dirs = array();
 
         // Config pages
-        $this->config_page_url = array();
+        $this->config_page_url = array("socialnetworks.php");
 
         // Dependencies
-        $this->hidden = ! empty($conf->global->MODULE_SKYPE_DISABLED);	// A condition to hide module
+        $this->hidden = ! empty($conf->global->MODULE_SOCIALNETWORKS_DISABLED);	// A condition to hide module
 		$this->depends = array('modSociete');	// List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with

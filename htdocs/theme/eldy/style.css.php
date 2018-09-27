@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
 $colortext='0,0,0';
 $colortextlink='0,0,100';
-$fontsize='0.85em';
+$fontsize='0.86em';
 $fontsizesmaller='0.75em';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
@@ -107,6 +108,7 @@ if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_
 if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
 if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
@@ -143,9 +145,11 @@ $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 
 // Hover color
 $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
 	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 //$colortopbordertitle1=$colorbackhmenu1;
@@ -177,7 +181,7 @@ $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));    // Norma
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[0]) ? $tmppart[0] : 0)+(! empty($tmppart[1]) ? $tmppart[1] : 0)+(! empty($tmppart[2]) ? $tmppart[2] : 0);
 if ($tmpval <= 460) { $colortextbacktab='FFFFFF'; }
-else { $colortextbacktab='111111'; }
+else { $colortextbacktab='000000'; }
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
@@ -191,6 +195,7 @@ $colorbacklineimpair2=join(',',colorStringToArray($colorbacklineimpair2));
 $colorbacklinepair1=join(',',colorStringToArray($colorbacklinepair1));
 $colorbacklinepair2=join(',',colorStringToArray($colorbacklinepair2));
 if ($colorbacklinepairhover != '') $colorbacklinepairhover=join(',',colorStringToArray($colorbacklinepairhover));
+if ($colorbacklinepairchecked != '') $colorbacklinepairchecked=join(',',colorStringToArray($colorbacklinepairchecked));
 $colorbackbody=join(',',colorStringToArray($colorbackbody));
 $colortexttitlenotab=join(',',colorStringToArray($colortexttitlenotab));
 $colortexttitle=join(',',colorStringToArray($colortexttitle));
@@ -218,6 +223,7 @@ print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
 print 'colorbacklinepair1='.$colorbacklinepair1."\n";
 print 'colorbacklinepair2='.$colorbacklinepair2."\n";
 print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
+print 'colorbacklinepairchecked='.$colorbacklinepairchecked."\n";
 print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
@@ -491,6 +497,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 }
 
 hr { border: 0; border-top: 1px solid #ccc; }
+.tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
 	margin-bottom: 0;
@@ -747,6 +754,9 @@ select.flat.selectlimit {
 }
 .marginleftonly {
 	margin-left: 10px !important;
+}
+.marginleftonlyshort {
+	margin-left: 4px !important;
 }
 .nomarginleft {
 	margin-left: 0px !important;
@@ -1369,7 +1379,7 @@ div.nopadding {
 	margin : 0px auto;
 }
 
-#pictotitle {
+.pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
@@ -1827,6 +1837,7 @@ foreach($mainmenuusedarray as $val)
     position: absolute;
     height: 100%;
     width: 100%;
+    font-size: 1em;
 }
 .login_center {
 	display: table-cell;
@@ -1843,8 +1854,9 @@ form#login {
 }
 .login_table_title {
 	max-width: 530px;
-	color: #aaa !important;
+	color: #eee !important;
 	padding-bottom: 20px;
+	text-shadow: 1px 1px #444;
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1879,12 +1891,30 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	padding: 5px;
 	margin-left: 5px;
 	margin-top: 5px;
+	margin-bottom: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
 	outline: none !important;
-	/* box-shadow: none;
-	-webkit-box-shadow: 0 0 0 50px #FFF inset;
-	box-shadow: 0 0 0 50px #FFF inset;*/
+}
+.login_table .trinputlogin {
+	font-size: 1.2em;
+	margin: 8px;
+}
+.login_table .tdinputlogin {
+    background-color: transparent;
+    /* border: 2px solid #ccc; */
+    min-width: 220px;
+    border-radius: 2px;
+}
+.login_table .tdinputlogin .fa {
+	padding-left: 10px;
+	width: 14px;
+}
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password {
+	font-size: 1em;
+}
+.login_table .tdinputlogin input#securitycode {
+	font-size: 1em;
 }
 .login_main_message {
 	text-align: center;
@@ -2319,7 +2349,7 @@ div.popuptab {
 	padding-right: 5px;
 }
 div.tabsAction {
-    margin: 20px 0em 20px 0em;
+    margin: 20px 0em 30px 0em;
     padding: 0em 0em;
     text-align: right;
 }
@@ -2460,20 +2490,23 @@ span.butAction, span.butActionDelete {
     cursor: pointer;
     /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
-    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);*/
+    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
-
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;*/
 }
 a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
 a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
 
-.butAction:hover, .butActionNew:hover   {
+.butAction:hover   {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+}
+.butActionNew:hover   {
+  text-decoration: underline;
+  box-shadow: unset !important;
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
@@ -2695,7 +2728,9 @@ table.paddingtopbottomonly tr td {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
 tr.liste_titre_filter td.liste_titre {
-/*    border-bottom: 1px solid #ddd; */
+	/* border-bottom: 1px solid #ddd; */
+	padding-top: 1px;
+	padding-bottom: 0px;
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
@@ -2931,6 +2966,12 @@ div.pagination li.paginationafterarrows {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
 <?php } ?>
 }
+<?php if ($colorbacklinepairchecked) { ?>
+.highlight {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
+}
+<?php } ?>
+
 .nohover:hover {
 	background: unset;
 }
@@ -3208,8 +3249,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    background: #f8f8f8;
+    background: #fcfcfc;
     border: 1px solid #eee;
+    /* border-left: 6px solid #ddd; */
     box-shadow: 1px 1px 8px #ddd;
     border-radius: 0px;
 }
@@ -3257,9 +3299,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     }
 	.thumbstat {
 		flex: 1 1 110px;
+		margin-bottom: 8px;
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
+		margin-bottom: 8px;
 	}
     .dashboardlineindicator {
         float: left;
@@ -3453,7 +3497,7 @@ div.warning {
     background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
-	color: rgb(<?php echo $colortext; ?>);
+	color: rgb(<?php echo $colortextlink; ?>);
 }
 
 /* Error message */
@@ -3874,6 +3918,13 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
     vertical-align: middle;
     float: right;
     padding-top: 8px;
+}
+.websiteselectionsection {
+	border-left: 1px solid #bbb;
+	border-right: 1px solid #bbb;
+	margin-left: 0px;
+	padding-left: 8px;
+	margin-right: 5px;
 }
 
 
@@ -4380,7 +4431,7 @@ td.gminorheading {
 .ecmfiletree {
 	width: 99%;
 	height: 99%;
-	background: #FFF;
+	/* background: #FFF; */
 	padding-left: 2px;
 	font-weight: normal;
 }
@@ -4877,7 +4928,81 @@ span.noborderoncategories {
 
 
 /* ============================================================================== */
-/*  Multiselect with checkbox                                                     */
+/*  External lib multiselect with checkbox                                        */
+/* ============================================================================== */
+
+.multi-select-container {
+  display: inline-block;
+  position: relative;
+}
+
+.multi-select-menu {
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  float: left;
+  min-width: 100%;
+  background: #fff;
+  margin: 1em 0;
+  padding: 0.4em 0;
+  border: 1px solid #aaa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.multi-select-menu input {
+  margin-right: 0.3em;
+  vertical-align: 0.1em;
+}
+
+.multi-select-button {
+  display: inline-block;
+  max-width: 20em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  background-color: #fff;
+  cursor: default;
+
+  border: none;
+  border-bottom: solid 1px rgba(0,0,0,.2);
+  padding: 5px;
+  padding-left: 2px;
+  height: 17px;
+}
+.multi-select-button:focus {
+  outline: none;
+  border-bottom: 1px solid #666;
+}
+
+.multi-select-button:after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0.5em 0.23em 0em 0.23em;
+  border-color: #444 transparent transparent transparent;
+  margin-left: 0.4em;
+}
+
+.multi-select-container--open .multi-select-menu { display: block; }
+
+.multi-select-container--open .multi-select-button:after {
+  border-width: 0 0.4em 0.4em 0.4em;
+  border-color: transparent transparent #999 transparent;
+}
+
+.multi-select-menuitem {
+    clear: both;
+    float: left;
+    padding-left: 5px
+}
+
+
+/* ============================================================================== */
+/*  Native multiselect with checkbox                                              */
 /* ============================================================================== */
 
 ul.ulselectedfields {
@@ -4917,10 +5042,10 @@ dl.dropdown {
 }
 .dropdown dd ul {
     background-color: #FFF;
-    border: 1px solid #888;
+    box-shadow: 1px 1px 10px #aaa;
     display:none;
     <?php echo $right; ?>:0px;						/* pop is align on right */
-    padding: 2px 15px 2px 5px;
+    padding: 0 0 0 0;
     position:absolute;
     top:2px;
     list-style:none;
@@ -4930,9 +5055,12 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
-	padding: 2px;
+	padding: 4px 8px 4px 8px;
 	/* color: rgb(<?php print $colortext; ?>); */
 	color: #000;
+}
+.dropdown dd ul li:hover {
+	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-<?php echo $right; ?>: 3px;

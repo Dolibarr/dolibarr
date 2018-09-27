@@ -43,40 +43,51 @@ class FactureRec extends CommonInvoice
 	 * @var string ID to identify managed object
 	 */
 	public $element='facturerec';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='facture_rec';
-	
+
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line='facturedet_rec';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_facture';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='bill';
 
-	var $entity;
-	var $number;
-	var $date;
-	var $amount;
-	var $remise;
-	var $tva;
-	var $total;
-	var $db_table;
-	var $propalid;
+	public $entity;
+	public $number;
+	public $date;
+	public $amount;
+	public $remise;
+	public $tva;
+	public $total;
+	public $db_table;
+	public $propalid;
 
-	var $date_last_gen;
-	var $date_when;
-	var $nb_gen_done;
-	var $nb_gen_max;
+	public $date_last_gen;
+	public $date_when;
+	public $nb_gen_done;
+	public $nb_gen_max;
 
-	var $frequency;
-	var $unit_frequency;
+	public $frequency;
+	public $unit_frequency;
 
-	var $rang;
-	var $special_code;
+	public $rang;
+	public $special_code;
 
-	var $usenewprice=0;
+	public $usenewprice=0;
 
-	var $suspended;			// status
+	public $suspended;			// status
 
 	const STATUS_NOTSUSPENDED = 0;
 	const STATUS_SUSPENDED = 1;
@@ -440,13 +451,15 @@ class FactureRec extends CommonInvoice
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
-	 *	@return     int         1 if OK, < 0 if KO
- 	 */
+	 *  @return     int         1 if OK, < 0 if KO
+     */
 	function fetch_lines()
 	{
+        // phpcs:enable
 		$this->lines=array();
 
 		// Retreive all extrafield for line
@@ -991,8 +1004,8 @@ class FactureRec extends CommonInvoice
 
 		$error=0;
 
-		$langs->load("bills");
-		$langs->load('main');
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","bills"));
 
 		$nb_create=0;
 
@@ -1181,6 +1194,7 @@ class FactureRec extends CommonInvoice
 		return $this->LibStatut($this->frequency?1:0, $this->suspended, $mode, $alreadypaid, empty($this->type)?0:$this->type);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of a status
 	 *
@@ -1193,6 +1207,7 @@ class FactureRec extends CommonInvoice
 	 */
 	function LibStatut($recur, $status, $mode=0, $alreadypaid=-1, $type=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->load('bills');
 
@@ -1211,7 +1226,7 @@ class FactureRec extends CommonInvoice
 				else return $langs->trans("Draft");
 			}
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			$prefix='Short';
 			if ($recur)
@@ -1225,7 +1240,7 @@ class FactureRec extends CommonInvoice
 				else return $langs->trans("Draft");
 			}
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($recur)
 			{
@@ -1238,7 +1253,7 @@ class FactureRec extends CommonInvoice
 				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
 			}
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($recur)
 			{
@@ -1252,7 +1267,7 @@ class FactureRec extends CommonInvoice
 				else return img_picto($langs->trans('Draft'),'statut0');
 			}
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			$prefix='';
 			if ($recur)
@@ -1266,7 +1281,7 @@ class FactureRec extends CommonInvoice
 				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
 			}
 		}
-		if ($mode == 5 || $mode == 6)
+		elseif ($mode == 5 || $mode == 6)
 		{
 			$prefix='';
 			if ($mode == 5) $prefix='Short';
@@ -1651,7 +1666,7 @@ class FactureLigneRec extends CommonInvoiceLine
 	 * @var string ID to identify managed object
 	 */
 	public $element='facturedetrec';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -1858,7 +1873,5 @@ class FactureLigneRec extends CommonInvoiceLine
     		$this->db->rollback();
     		return -2;
     	}
-
     }
-
 }

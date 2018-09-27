@@ -18,7 +18,7 @@
 
 /**
  * \file        class/companypaymentmode.class.php
- * \ingroup     monmodule
+ * \ingroup     company
  * \brief       This file is a CRUD class file for CompanyPaymentMode (Create/Read/Update/Delete)
  */
 
@@ -36,22 +36,22 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'companypaymentmode';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_rib';
-	
+
 	/**
 	 * @var int  Does companypaymentmode support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 2;
-	
+
 	/**
 	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
-	
+
 	/**
 	 * @var string String with name of icon for companypaymentmode. Must be the part after the 'object_' into object_companypaymentmode.png
 	 */
@@ -118,8 +118,17 @@ class CompanyPaymentMode extends CommonObject
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
 	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+  public $fk_soc;
+
 	public $label;
 	public $bank;
 	public $code_banque;
@@ -452,6 +461,7 @@ class CompanyPaymentMode extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -461,40 +471,35 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	static function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			if ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
@@ -565,5 +570,4 @@ class CompanyPaymentMode extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }

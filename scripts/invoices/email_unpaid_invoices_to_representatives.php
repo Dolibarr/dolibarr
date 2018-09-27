@@ -131,8 +131,9 @@ if ($resql)
             // Define line content
             $outputlangs=new Translate('',$conf);
             $outputlangs->setDefaultLang(empty($obj->lang)?$langs->defaultlang:$obj->lang);	// By default language of sale representative
-            $outputlangs->load("bills");
-            $outputlangs->load("main");
+
+            // Load translation files required by the page
+            $outputlangs->loadLangs(array("main", "bills"));
 
             if (dol_strlen($obj->email))
             {

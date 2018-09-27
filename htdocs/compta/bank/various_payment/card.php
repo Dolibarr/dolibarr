@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,7 +221,7 @@ if (empty($reshook))
 llxHeader("",$langs->trans("VariousPayment"));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
 if ($id)
@@ -255,13 +256,13 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print fieldLabel('DatePayment','datep',1).'</td><td>';
-	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+	print $form->selectDate((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print fieldLabel('DateValue','datev',0).'</td><td>';
-	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+	print $form->selectDate((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Label

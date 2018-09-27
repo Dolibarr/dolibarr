@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
- * Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,7 +190,7 @@ if ($result)
 	// Date
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $form->select_date($search_date, 'date_doc', 0, 0, 1);
+	print $form->selectDate($search_date, 'date_doc', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 

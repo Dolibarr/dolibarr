@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       note.php
+ *  \file       htdocs/asset/note.php
  *  \ingroup    asset
  *  \brief      Card with notes on Asset
  */

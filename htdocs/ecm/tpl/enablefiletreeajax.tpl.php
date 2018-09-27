@@ -27,7 +27,7 @@ if (empty($conf) || ! is_object($conf))
 ?>
 
 <!-- BEGIN PHP TEMPLATE ecm/tpl/enablefiletreeajax.tpl.php -->
-<!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
+<!-- Doc of fileTree plugin at https://www.abeautifulsite.net/jquery-file-tree:  http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
 
 <script type="text/javascript">
 

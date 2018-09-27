@@ -32,7 +32,7 @@ class Canvas
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -43,15 +43,15 @@ class Canvas
 	 */
 	public $errors = array();
 
-	var $actiontype;
+	public $actiontype;
 
-    var $dirmodule;			// Module directory
-    var $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
-    var $canvas;            // Name of canvas (ex: company, individual, product, service, ...)
-    var $card;              // Tab (sub-canvas)
+    public $dirmodule;			// Module directory
+    public $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
+    public $canvas;            // Name of canvas (ex: company, individual, product, service, ...)
+    public $card;              // Tab (sub-canvas)
 
-    var $template_dir;			// Initialized by getCanvas with templates directory
-    var $control;           	// Initialized by getCanvas with controller instance
+    public $template_dir;		// Initialized by getCanvas with templates directory
+    public $control;           	// Initialized by getCanvas with controller instance
 
 
    /**
@@ -133,6 +133,7 @@ class Canvas
         //print ' => template_dir='.$this->template_dir.'<br>';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
 	 * 	Shared method for canvas to assign values for templates
 	 *
@@ -143,6 +144,7 @@ class Canvas
 	 */
 	function assign_values(&$action='view', $id=0, $ref='')
 	{
+        // phpcs:enable
 		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id, $ref);
 	}
 
@@ -160,6 +162,7 @@ class Canvas
         else return 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Display a canvas page. This will include the template for output.
 	 *	Variables used by templates may have been defined or loaded before into the assign_values function.
@@ -169,6 +172,7 @@ class Canvas
 	 */
 	function display_canvas($action)
 	{
+        // phpcs:enable
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
@@ -208,5 +212,4 @@ class Canvas
 			return $ret;
 		}
 	}
-
 }

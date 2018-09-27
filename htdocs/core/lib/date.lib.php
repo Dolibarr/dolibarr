@@ -439,7 +439,6 @@ function dol_get_next_week($day, $week, $month, $year)
 	$tmparray=dol_getdate($time,true);
 
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
-
 }
 
 /**	Return GMT time for first day of a month or year

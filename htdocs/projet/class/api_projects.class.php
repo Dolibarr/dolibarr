@@ -483,7 +483,6 @@ class Projects extends DolibarrApi
                 'message' => 'Project deleted'
             )
         );
-
     }
 
     /**

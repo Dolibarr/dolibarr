@@ -337,7 +337,13 @@ if (! $error && $xml)
                 $i++;
                 $out.='<tr class="oddeven">';
                 $out.='<td>'.$i.'</td>' . "\n";
-                $out.='<td>'.$file['filename'].'</td>' . "\n";
+                $out.='<td>'.$file['filename'];
+                $out.=PHP_OS;
+                if (! preg_match('/^win/i',PHP_OS)) {
+                	$htmltext=$langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                	$out.=' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm');
+                }
+                $out.='</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
                 $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
@@ -422,7 +428,7 @@ if (! $error && $xml)
     	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
 
-    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
     print $langs->trans("ExpectedChecksum").' = '. $outexpectedchecksum .'<br>';
     print $langs->trans("CurrentChecksum").' = '. $outcurrentchecksum;
 
@@ -438,4 +444,3 @@ llxFooter();
 $db->close();
 
 exit($error);
-

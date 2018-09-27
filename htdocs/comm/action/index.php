@@ -83,7 +83,7 @@ $resourceid=GETPOST("resourceid","int");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
-$day=GETPOST("day","int")?GETPOST("day","int"):0;
+$day=GETPOST("day","int")?GETPOST("day","int"):date("d");
 $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status",'aZ09');		// status may be 0, 50, 100, 'todo'
 $type=GETPOST("type",'az09');
@@ -101,20 +101,23 @@ else
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
-if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
-if ($action == 'default')
+
+$defaultview = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+$defaultview = (empty($user->conf->AGENDA_DEFAULT_VIEW) ? $defaultview : $user->conf->AGENDA_DEFAULT_VIEW);
+if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=$defaultview;
+if ($action == 'default')	// When action is default, we want a calendar view and not the list
 {
-	$action = ((! empty($conf->global->AGENDA_DEFAULT_VIEW) && $conf->global->AGENDA_DEFAULT_VIEW!='show_list') ? $conf->global->AGENDA_DEFAULT_VIEW : 'show_month');
+	$action = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week')  {
+if (GETPOST('viewcal','none') && GETPOST('action','alpha') != 'show_day' && GETPOST('action','alpha') != 'show_week')  {
     $action='show_month'; $day='';
-}                                                   // View by month
-if (GETPOST('viewweek') || $action == 'show_week') {
+} // View by month
+if (GETPOST('viewweek','none') || GETPOST('action','alpha') == 'show_week') {
     $action='show_week'; $week=($week?$week:date("W")); $day=($day?$day:date("d"));
-}  // View by week
-if (GETPOST('viewday') || $action == 'show_day')  {
+} // View by week
+if (GETPOST('viewday','none') || GETPOST('action','alpha') == 'show_day')  {
     $action='show_day'; $day=($day?$day:date("d"));
-}                                  // View by day
+} // View by day
 
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'other', 'commercial'));

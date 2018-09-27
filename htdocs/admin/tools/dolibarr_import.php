@@ -24,8 +24,8 @@
 
 require '../../main.inc.php';
 
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("other","admin"));
 
 if (! $user->admin)
 	accessforbidden();

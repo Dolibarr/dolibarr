@@ -39,21 +39,21 @@ class ActionsTicket
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     public $dao;
 
     public $mesg;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
 	public $error;
-	
+
     /**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
     //! Numero de l'erreur
     public $errno = 0;
 
@@ -61,9 +61,17 @@ class ActionsTicket
     public $template;
 
     public $label;
-    public $description;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
 
     public $fk_statut;
+
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
 
     /**
@@ -1309,6 +1317,7 @@ class ActionsTicket
     	}
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * load_previous_next_ref
      *
@@ -1318,6 +1327,7 @@ class ActionsTicket
      */
     function load_previous_next_ref($filter, $fieldid)
     {
+        // phpcs:enable
         $this->getInstanceDao();
         return $object->load_previous_next_ref($filter, $fieldid);
     }

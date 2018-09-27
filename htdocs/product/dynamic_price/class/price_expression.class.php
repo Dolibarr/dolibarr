@@ -33,7 +33,7 @@ class PriceExpression
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -43,19 +43,19 @@ class PriceExpression
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
     /**
 	 * @var int ID
 	 */
 	public $id;
-	
-    var $title;
-	var $expression;
-	
+
+    public $title;
+    public $expression;
+
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = "c_price_expression";
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = "c_price_expression";
 
     /**
      *  Constructor
@@ -65,7 +65,6 @@ class PriceExpression
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -147,7 +146,7 @@ class PriceExpression
             $this->error='ErrorWrongParameters';
             return -1;
         }
-        
+
         $sql = "SELECT title, expression";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
@@ -176,6 +175,7 @@ class PriceExpression
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    List all price expressions
      *
@@ -183,6 +183,7 @@ class PriceExpression
      */
     function list_price_expression()
     {
+        // phpcs:enable
         $sql = "SELECT rowid, title, expression";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " ORDER BY title";
@@ -213,6 +214,7 @@ class PriceExpression
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Returns any existing rowid with specified title
      *
@@ -221,6 +223,7 @@ class PriceExpression
      */
     function find_title($title)
     {
+        // phpcs:enable
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE title = '".$this->db->escape($title)."'";
@@ -319,7 +322,7 @@ class PriceExpression
 		$error=0;
 
 		$rowid = $this->id;
-		
+
 		$this->db->begin();
 
 		if (! $error)

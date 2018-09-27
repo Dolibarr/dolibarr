@@ -1,8 +1,7 @@
 <?php
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2015      Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018		Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("holiday");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "errors", "holiday"));
 
 if (!$user->admin) accessforbidden();
 
@@ -341,7 +339,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -379,7 +376,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
@@ -474,7 +470,6 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
-$var=true;
 
 $substitutionarray=pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
@@ -482,7 +477,6 @@ $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
-$var=! $var;
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnHolidays"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
 print '<br>';

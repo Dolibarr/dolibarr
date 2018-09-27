@@ -114,13 +114,12 @@ class InterfaceStripe
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Put here code you want to execute when a Dolibarr business events occurs.
+		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
-		$langs->load("members");
-		$langs->load("users");
-		$langs->load("mails");
-		$langs->load('other');
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("members","other","users","mails"));
 
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
@@ -137,7 +136,7 @@ class InterfaceStripe
 			$servicestatus = 1;
 		}
 
-		// If customer is linked to Strip, we update/delete Stripe too
+		// If customer is linked to Stripe, we update/delete Stripe too
 		if ($action == 'COMPANY_MODIFY') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
@@ -173,12 +172,17 @@ class InterfaceStripe
 			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
 
 			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
-			if ($customer) {
+			if ($customer)
+			{
 				$customer->delete();
 			}
+
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
+			$sql.= " WHERE site='stripe' AND fk_soc = " . $object->id;
+			$this->db->query($sql);
 		}
 
-		// If payment mode is linked to Strip, we update/delete Stripe too
+		// If payment mode is linked to Stripee, we update/delete Stripe too
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 
 			// For creation of credit card, we do not create in Stripe automatically

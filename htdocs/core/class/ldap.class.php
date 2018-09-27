@@ -35,9 +35,15 @@ class Ldap
 	public $error='';
 
 	/**
+	 * @var string[]	Array of error strings
+	 */
+	public $errors = array();
+
+	/**
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
 	var $server=array();
+
 	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
 	 */
@@ -143,6 +149,7 @@ class Ldap
 
 	// Connection handling methods -------------------------------------------
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Connect and bind
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
@@ -152,6 +159,7 @@ class Ldap
 	 */
 	function connect_bind()
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$connected=0;
@@ -648,6 +656,7 @@ class Ldap
 		return -1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Build a LDAP message
 	 *
@@ -657,6 +666,7 @@ class Ldap
 	 */
 	function dump_content($dn, $info)
 	{
+        // phpcs:enable
 		$content='';
 
 		// Create file content
@@ -1428,6 +1438,7 @@ class Ldap
 		return($retval);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Convertit le temps ActiveDirectory en Unix timestamp
 	 *
@@ -1436,6 +1447,7 @@ class Ldap
 	 */
 	function convert_time($value)
 	{
+        // phpcs:enable
 		$dateLargeInt=$value; // nano secondes depuis 1601 !!!!
 		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
 		$ADToUnixConvertor=((1970-1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes

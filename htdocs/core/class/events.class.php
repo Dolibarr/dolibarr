@@ -30,7 +30,7 @@
 
 
 /**
- *	Events class
+ *  Events class
  */
 class Events // extends CommonObject
 {
@@ -38,18 +38,18 @@ class Events // extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='events';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='events';	
+	public $table_element='events';
 
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
-	/**
+
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -63,13 +63,17 @@ class Events // extends CommonObject
 	var $type;
 	var $entity;
 	var $dateevent;
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
 
 	// List of all Audit/Security events supported by triggers
 	var $eventstolog=array(
-		array('id'=>'USER_LOGIN',             'test'=>1),
+		/*array('id'=>'USER_LOGIN',             'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
-	    array('id'=>'USER_LOGOUT',            'test'=>1),
+	    array('id'=>'USER_LOGOUT',            'test'=>1),*/
 		array('id'=>'USER_CREATE',            'test'=>1),
 		array('id'=>'USER_MODIFY',            'test'=>1),
 		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
@@ -113,7 +117,6 @@ class Events // extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 
@@ -297,5 +300,4 @@ class Events // extends CommonObject
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
 	}
-
 }

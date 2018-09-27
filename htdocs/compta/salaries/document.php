@@ -44,8 +44,9 @@ $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
 // Security check
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', $id, '');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 
 // Get parameters

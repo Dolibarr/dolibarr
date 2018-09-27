@@ -25,11 +25,18 @@ if (!defined('NOCSRFCHECK'))   define('NOCSRFCHECK', '1');
 if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
 if (!defined("NOLOGIN"))       define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// TODO This should be useless. Because entity must be retreive from object ref and not from url.
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
@@ -64,5 +71,8 @@ if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 }
 
 // End of page
-llxFooter();
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
+
+llxFooter('', 'public');
+
 $db->close();

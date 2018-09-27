@@ -124,9 +124,10 @@ function versiondolibarrarray()
  *	@param 		string	$okerror			Family of errors we accept ('default', 'none')
  *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
  *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
+ *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
  * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $linelengthlimit=32768, $nocommentremoval=0)
+function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $linelengthlimit=32768, $nocommentremoval=0, $offsetforchartofaccount=0)
 {
     global $db, $conf, $langs, $user;
 
@@ -264,6 +265,18 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
             dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
             $arraysql[$i]=$newsql;
+        }
+
+        if ($offsetforchartofaccount > 0)
+        {
+        	// Replace lines
+        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
+        	// with
+        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401 + 200100000, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
+        	$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
+        	$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
+        	//var_dump($newsql);
+        	$arraysql[$i] = $newsql;
         }
     }
 
@@ -1718,7 +1731,7 @@ function email_admin_prepare_head()
 	}
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-	$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+	$head[$h][1] = $langs->trans("EMailTemplates");
 	$head[$h][2] = 'templates';
 	$h++;
 

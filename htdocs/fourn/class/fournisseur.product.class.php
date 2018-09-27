@@ -41,52 +41,52 @@ class ProductFournisseur extends Product
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
      * @var string Error code (or message)
      */
     public $error='';
 
-    var $product_fourn_price_id;  // id of ligne product-supplier
+    public $product_fourn_price_id;  // id of ligne product-supplier
 
     /**
      * @var int ID
      */
     public $id;
-	
+
     /**
      * @deprecated
      * @see ref_supplier
      */
-    var $fourn_ref;
-    var $delivery_time_days;
-    var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
-    var $desc_supplier;
-    var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
+    public $fourn_ref;
+    public $delivery_time_days;
+    public $ref_supplier;			  // ref supplier (can be set by get_buyprice)
+    public $desc_supplier;
+    public $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
 
-    var $fourn_id;                //supplier id
-    var $fourn_qty;               // quantity for price (can be set by get_buyprice)
-    var $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
+    public $fourn_id;                //supplier id
+    public $fourn_qty;               // quantity for price (can be set by get_buyprice)
+    public $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
 
-    var $fourn_price;             // price for quantity
-    var $fourn_remise_percent;    // discount for quantity (percent)
-    var $fourn_remise;            // discount for quantity (amount)
-    var $product_fourn_id;        // supplier id
-    var $fk_availability;         // availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
-    var $fourn_unitprice;
-    var $fourn_tva_tx;
-    var $fourn_tva_npr;
+    public $fourn_price;             // price for quantity
+    public $fourn_remise_percent;    // discount for quantity (percent)
+    public $fourn_remise;            // discount for quantity (amount)
+    public $product_fourn_id;        // supplier id
+    public $fk_availability;         // availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
+    public $fourn_unitprice;
+    public $fourn_tva_tx;
+    public $fourn_tva_npr;
 
-    var $fk_supplier_price_expression;
-    var $supplier_reputation;     // reputation of supplier
-    var $reputations=array();     // list of available supplier reputations
+    public $fk_supplier_price_expression;
+    public $supplier_reputation;     // reputation of supplier
+    public $reputations=array();     // list of available supplier reputations
 
     // Multicurreny
-    var $fourn_multicurrency_id;
-    var $fourn_multicurrency_code;
-    var $fourn_multicurrency_tx;
-    var $fourn_multicurrency_price;
-    var $fourn_multicurrency_unitprice;
+    public $fourn_multicurrency_id;
+    public $fourn_multicurrency_code;
+    public $fourn_multicurrency_tx;
+    public $fourn_multicurrency_price;
+    public $fourn_multicurrency_unitprice;
 
     /**
      *	Constructor
@@ -104,6 +104,7 @@ class ProductFournisseur extends Product
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Remove all prices for this couple supplier-product
      *
@@ -112,6 +113,7 @@ class ProductFournisseur extends Product
      */
     function remove_fournisseur($id_fourn)
     {
+        // phpcs:enable
         $ok=1;
 
         $this->db->begin();
@@ -140,6 +142,7 @@ class ProductFournisseur extends Product
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Remove a price for a couple supplier-product
      *
@@ -148,6 +151,7 @@ class ProductFournisseur extends Product
      */
     function remove_product_fournisseur_price($rowid)
     {
+        // phpcs:enable
         global $conf, $user;
 
         $error=0;
@@ -174,17 +178,17 @@ class ProductFournisseur extends Product
             }
         }
 
-        if (empty($error)){
+        if (empty($error)) {
             $this->db->commit();
             return 1;
-        }else{
+        } else {
             $this->db->rollback();
             return -1;
         }
-
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Modify the purchase price for a supplier
      *
@@ -213,6 +217,7 @@ class ProductFournisseur extends Product
      */
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $localtaxes_array=array(), $newdefaultvatcode='', $multicurrency_buyprice=0, $multicurrency_price_base_type='HT',$multicurrency_tx=1,$multicurrency_code='', $desc_fourn='')
     {
+        // phpcs:enable
         global $conf, $langs;
         //global $mysoc;
 
@@ -439,6 +444,7 @@ class ProductFournisseur extends Product
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Loads the price information of a provider
      *
@@ -448,6 +454,7 @@ class ProductFournisseur extends Product
      */
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
+        // phpcs:enable
         global $conf;
 
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.info_bits as fourn_tva_npr, pfp.fk_availability,";
@@ -526,6 +533,7 @@ class ProductFournisseur extends Product
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    List all supplier prices of a product
      *
@@ -538,6 +546,7 @@ class ProductFournisseur extends Product
      */
     function list_product_fournisseur_price($prodid, $sortfield='', $sortorder='', $limit=0, $offset=0)
     {
+        // phpcs:enable
         global $conf;
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
@@ -626,6 +635,7 @@ class ProductFournisseur extends Product
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Load properties for minimum price
      *
@@ -636,6 +646,7 @@ class ProductFournisseur extends Product
      */
     function find_min_price_product_fournisseur($prodid, $qty=0, $socid=0)
     {
+        // phpcs:enable
         global $conf;
 
         if (empty($prodid))
@@ -813,6 +824,7 @@ class ProductFournisseur extends Product
         return $thirdparty->getNomUrl($withpicto,$option,$maxlen,$notooltip);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Display price of product
      *
@@ -826,6 +838,7 @@ class ProductFournisseur extends Product
      */
     function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0, $productFournList=array())
     {
+        // phpcs:enable
         global $langs;
 
         $out = '';
@@ -865,5 +878,4 @@ class ProductFournisseur extends Product
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }

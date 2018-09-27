@@ -70,7 +70,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_all=GETPOST('search_all', 'alphanohtml');
+$search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");

@@ -193,7 +193,8 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->atleastonediscount=0;
 	}
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		Object		$object				Object to generate
@@ -206,6 +207,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -375,7 +377,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				{
 					$tab_top -= 2;
 
-          $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+                    $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 
@@ -696,6 +698,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show payments table
 	 *
@@ -707,10 +710,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
+        // phpcs:enable
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -722,6 +726,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -877,6 +882,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -889,6 +895,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1494,5 +1501,4 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_PROPOSAL_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

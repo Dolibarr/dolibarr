@@ -85,7 +85,7 @@ if (empty($pageid))
     $objectpage=new WebsitePage($db);
     $array=$objectpage->fetchAll($object->id);
 
-    if (count($array) > 0)
+    if (is_array($array) && count($array) > 0)
     {
         $firstrep=reset($array);
         $pageid=$firstrep->id;

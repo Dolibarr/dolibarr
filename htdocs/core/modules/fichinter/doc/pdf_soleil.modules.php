@@ -107,9 +107,9 @@ class pdf_soleil extends ModelePDFFicheinter
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 	/**
 	 *	Constructor
@@ -151,6 +151,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->posxdesc=$this->marge_gauche+1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Function to build pdf onto disk
 	 *
@@ -164,6 +165,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -730,5 +732,4 @@ class pdf_soleil extends ModelePDFFicheinter
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'FICHINTER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

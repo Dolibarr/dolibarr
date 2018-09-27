@@ -84,10 +84,9 @@ class FormSms
         $this->withtoreadonly=0;
         $this->withtopicreadonly=0;
         $this->withbodyreadonly=0;
-
-        return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Show the form to input an sms.
      *
@@ -97,13 +96,13 @@ class FormSms
      */
     function show_form($morecss='titlefield', $showform=1)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $form;
 
         if (! is_object($form)) $form=new Form($this->db);
 
-        $langs->load("other");
-        $langs->load("mails");
-        $langs->load("sms");
+        // Load translation files required by the page
+        $langs->loadLangs(array('other', 'mails', 'sms'));
 
         $soc=new Societe($this->db);
         if (!empty($this->withtosocid) && $this->withtosocid > 0)
@@ -360,6 +359,4 @@ function limitChars(textarea, limit, infodiv)
 
         print "<!-- End form SMS -->\n";
     }
-
 }
-

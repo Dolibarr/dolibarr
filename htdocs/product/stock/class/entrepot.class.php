@@ -37,12 +37,12 @@ class Entrepot extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='stock';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='entrepot';
-	
+
 	public $picto='stock';
 
 	/**
@@ -61,7 +61,12 @@ class Entrepot extends CommonObject
 	const STATUS_OPEN_INTERNAL = 2;
 
 	var $libelle;
-	var $description;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
 	var $statut;
 	var $lieu;
 	var $address;
@@ -93,7 +98,6 @@ class Entrepot extends CommonObject
 		{
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
 		}
-
 	}
 
 	/**
@@ -167,7 +171,6 @@ class Entrepot extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -301,7 +304,6 @@ class Entrepot extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 
@@ -418,6 +420,7 @@ class Entrepot extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of all warehouses
 	 *
@@ -426,6 +429,7 @@ class Entrepot extends CommonObject
 	 */
 	function list_array($status=1)
 	{
+        // phpcs:enable
 		$liste = array();
 
 		$sql = "SELECT rowid, ref as label";
@@ -449,6 +453,7 @@ class Entrepot extends CommonObject
 		return $liste;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
@@ -456,6 +461,7 @@ class Entrepot extends CommonObject
 	 */
 	function nb_different_products()
 	{
+        // phpcs:enable
 		$ret=array();
 
 		$sql = "SELECT count(distinct p.rowid) as nb";
@@ -481,6 +487,7 @@ class Entrepot extends CommonObject
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return stock and value of warehosue
 	 *
@@ -488,6 +495,7 @@ class Entrepot extends CommonObject
 	 */
 	function nb_products()
 	{
+        // phpcs:enable
 		$ret=array();
 
 		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
@@ -525,6 +533,7 @@ class Entrepot extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of a given status
 	 *
@@ -534,6 +543,7 @@ class Entrepot extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->load('stocks');
@@ -651,6 +661,7 @@ class Entrepot extends CommonObject
         $this->country_code='FR';
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return full path to current warehouse
 	 *
@@ -658,6 +669,7 @@ class Entrepot extends CommonObject
 	 */
 	function get_full_arbo()
 	{
+        // phpcs:enable
         global $user,$langs,$conf;
 
         $TArbo = array(empty($this->label)?$this->libelle:$this->label);
@@ -691,15 +703,17 @@ class Entrepot extends CommonObject
         return implode(' >> ', array_reverse($TArbo));
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
 	 * @param	int		$id					id parent warehouse
-	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
-	 * @return	array()	$TChildWarehouses	array which will contain all children
+	 * @param	array	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return	array	$TChildWarehouses	array which will contain all children
 	 */
     function get_children_warehouses($id, &$TChildWarehouses)
     {
+        // phpcs:enable
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot
@@ -714,7 +728,6 @@ class Entrepot extends CommonObject
 		}
 
 		return $TChildWarehouses;
-
 	}
 
 	/**
@@ -748,5 +761,4 @@ class Entrepot extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
-
 }

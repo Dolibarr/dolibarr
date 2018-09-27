@@ -67,7 +67,9 @@ class PricesTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -351,5 +353,4 @@ class PricesTest extends PHPUnit_Framework_TestCase
         //$this->assertEquals(0.25,$newlocalobject->total_tva);
         //$this->assertEquals(2.73,$newlocalobject->total_ttc);
     }
-
 }

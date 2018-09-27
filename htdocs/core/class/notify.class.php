@@ -34,12 +34,12 @@ class Notify
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -51,7 +51,12 @@ class Notify
 	public $errors = array();
 
 	var $author;
-	var $ref;
+
+	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
 	var $date;
 	var $duree;
 	var $note;
@@ -731,6 +736,5 @@ class Notify
 		if (! $error) return $num;
 		else return -1 * $error;
 	}
-
 }
 
