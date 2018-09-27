@@ -62,7 +62,7 @@ class User extends CommonObject
 	public $birth;
 	public $email;
 	public $skype;
-	public $job;
+	public $job;			// job position
 	public $signature;
 	public $address;
 	public $zip;
