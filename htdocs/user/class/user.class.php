@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      charlene Benke       <charlie@patas-monkey.com>
@@ -62,7 +62,7 @@ class User extends CommonObject
 	public $birth;
 	public $email;
 	public $skype;
-	public $job;
+	public $job;			// job position
 	public $signature;
 	public $address;
 	public $zip;
@@ -1853,7 +1853,7 @@ class User extends CommonObject
 	function send_password($user, $password='', $changelater=0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs;
 		global $dolibarr_main_url_root;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -1874,10 +1874,8 @@ class User extends CommonObject
 			$outputlangs=$langs;
 		}
 
-		$outputlangs->load("main");
-		$outputlangs->load("errors");
-		$outputlangs->load("users");
-		$outputlangs->load("other");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "errors", "users", "other"));
 
 		$appli=constant('DOL_APPLICATION_TITLE');
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -2169,9 +2167,7 @@ class User extends CommonObject
 	 */
 	function getPhotoUrl($width, $height, $cssclass='', $imagesize='')
 	{
-		$result='';
-
-		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+		$result ='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass, $imagesize);
 		$result.='</a>';
 
@@ -2199,7 +2195,7 @@ class User extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-                if(!$user->rights->user->user->lire && $user->id !=$this->id) $option='nolink';
+        if(!$user->rights->user->user->lire && $user->id !=$this->id) $option='nolink';
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
@@ -2348,7 +2344,7 @@ class User extends CommonObject
 			$linkend='</a>';
 		}
 
-                if ($option == 'nolink')
+        if ($option == 'nolink')
 		{
 			$linkstart = '';
 			$linkend='';
@@ -2388,34 +2384,33 @@ class User extends CommonObject
 
 		if ($mode == 0)
 		{
-			$prefix='';
 			if ($statut == 1) return $langs->trans('Enabled');
-			if ($statut == 0) return $langs->trans('Disabled');
+			elseif ($statut == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut == 1) return $langs->trans('Enabled');
-			if ($statut == 0) return $langs->trans('Disabled');
+			elseif ($statut == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
-			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
-			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
-			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
-			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+			elseif ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
 		}
 	}
 
@@ -2436,8 +2431,8 @@ class User extends CommonObject
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS].",".$conf->global->LDAP_USER_DN;
-		if ($mode==1) $dn=$conf->global->LDAP_USER_DN;
-		if ($mode==2) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS];
+		elseif ($mode==1) $dn=$conf->global->LDAP_USER_DN;
+		elseif ($mode==2) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS];
 		return $dn;
 	}
 
@@ -2511,7 +2506,7 @@ class User extends CommonObject
 			if (! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		}
 		// Set LDAP password if possible
-		else if ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
+		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 		{
 			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{
@@ -2524,7 +2519,7 @@ class User extends CommonObject
 				}
 			}
 			// Use $this->pass_indatabase value if exists
-			else if (! empty($this->pass_indatabase))
+			elseif (! empty($this->pass_indatabase))
 			{
 				if (! empty($conf->global->LDAP_FIELD_PASSWORD))				$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass_indatabase;	// $this->pass_indatabase = mot de passe non crypte
 				if (! empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED))		$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 4); // md5 for OpenLdap TODO add type of encryption
@@ -3020,7 +3015,7 @@ class User extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'user'
+			'user',
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
@@ -3077,7 +3072,7 @@ class User extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
-		global $conf,$user,$langs;
+		global $conf, $user, $langs;
 
 		$langs->load("user");
 

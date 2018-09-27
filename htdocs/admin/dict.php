@@ -951,7 +951,6 @@ if (empty($id))
     print $langs->trans("DictionaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 }
-print "<br>\n";
 
 
 $param = '&id='.urlencode($id);
@@ -1015,6 +1014,13 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
+
+    if ($id == 10 && empty($conf->global->FACTURE_TVAOPTION))
+    {
+    	print info_admin($langs->trans("VATIsUsedIsOff", $langs->transnoentities("Setup"), $langs->transnoentities("CompanyFoundation")));
+    }
+
+    print "<br>\n";
 
     // Form to add a new line
     if ($tabname[$id])

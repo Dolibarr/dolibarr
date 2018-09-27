@@ -48,7 +48,6 @@ class FormBarCode
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 

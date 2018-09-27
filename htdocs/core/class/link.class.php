@@ -62,11 +62,7 @@ class Link extends CommonObject
      */
     public function __construct($db)
     {
-        global $conf;
-
         $this->db = $db;
-
-        return 1;
     }
 
 

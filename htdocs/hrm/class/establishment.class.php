@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,8 +94,6 @@ class Establishment extends CommonObject
 
 		$this->statuts_short = array(0 => 'Closed', 1 => 'Opened');
         $this->statuts = array(0 => 'Closed', 1 => 'Opened');
-
-		return 1;
 	}
 
 	/**
@@ -312,22 +311,22 @@ class Establishment extends CommonObject
 		elseif ($mode == 2)
 		{
 			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'statut5').' '.$langs->trans($this->statuts_short[$status]);
-			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts_short[$status]);
+			elseif ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts_short[$status]);
 		}
 		elseif ($mode == 3)
 		{
 			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut5');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4');
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4');
 		}
 		elseif ($mode == 4)
 		{
 			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut5').' '.$langs->trans($this->statuts[$status]);
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts[$status]);
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts[$status]);
 		}
 		elseif ($mode == 5)
 		{
 			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
+			elseif ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
 		}
 	}
 
@@ -353,7 +352,7 @@ class Establishment extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				if ($obj->fk_user_author)
 				{
 					$cuser = new User($this->db);

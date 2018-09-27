@@ -66,7 +66,7 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.5), rgb(240,240,240));"':'' ?>>
+<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"':'' ?>>
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
@@ -97,17 +97,17 @@ if ($disablenofollow) echo '</a>';
 
 <div id="login_right">
 
-<table summary="Login pass" class="centpercent">
+<div class="tagtable centpercent" title="Login pass" >
 
 <!-- Login -->
-<tr>
-<td valign="bottom" class="nowrap center">
+<div class="trinputlogin">
+<div class="tagtd nowrap center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
-</td>
-</tr>
+<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
+</div>
+</div>
 
 <?php
 if (! empty($morelogincontent)) {
@@ -134,10 +134,11 @@ if (! empty($morelogincontent)) {
 		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
 	?>
 	<!-- Captcha -->
-	<tr>
-	<td class="tdtop nowrap none center">
+	<div class="trinputlogin">
+	<div class="tdinputlogin nowrap none center valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent"><tr class="valignmiddle">
+	<table class="login_table_securitycode centpercent">
+	<tr class="valignmiddle">
 	<td>
 	<!-- <span class="span-icon-security"> -->
 	<span class="nofa">
@@ -148,12 +149,12 @@ if (! empty($morelogincontent)) {
 	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
-	</td></tr>
+	</div></div>
 <?php } ?>
 
-</table>
+</div>
 
-</div> <!-- end div login right -->
+</div> <!-- end div login_right -->
 
 </div> <!-- end div login_line1 -->
 

@@ -31,10 +31,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Muguet';
-	var $prefix='CF';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Muguet';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Muguet';
+
+	public $prefix='CF';
 
 
 	/**

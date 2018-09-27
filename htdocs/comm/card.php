@@ -666,6 +666,8 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
+		$langs->load("propal");
+
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
         $sql.= ", p.tva as total_tva";
         $sql.= ", p.total as total_ttc";
@@ -674,7 +676,7 @@ if ($object->id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql.= " AND s.rowid = ".$object->id;
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " AND p.entity IN (".getEntity('propal').")";
 		$sql.= " ORDER BY p.datep DESC";
 
 		$resql=$db->query($sql);

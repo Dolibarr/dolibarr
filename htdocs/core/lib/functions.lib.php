@@ -3152,7 +3152,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow')
 			)) {
 			$fakey = $pictowithoutext;
@@ -3865,8 +3865,8 @@ function dol_print_error($db='',$error='',$errors=null)
 		$langs = new Translate('', $conf);
 		$langs->load("main");
 	}
-	$langs->load("main");
-	$langs->load("errors");
+	// Load translation files required by the page
+    $langs->loadLangs(array('main', 'errors'));
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
@@ -4175,13 +4175,13 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	int		$id					To force an id on html objects
+ * 	@param	string	$id					To force an id on html objects
  *  @param  string  $morecssontable     More css on table
  *	@param	string	$morehtmlcenter		Added message to show on center
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='', $morehtmlcenter='')
+function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id='', $morecssontable='', $morehtmlcenter='')
 {
 	global $conf;
 
@@ -4191,7 +4191,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle" id="pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -5213,6 +5213,11 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
+	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	if (! empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
+		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
+	}
+
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
 	//print 'VATRULE 5';
@@ -6110,7 +6115,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 				$paymenturl=$url;
 			}
 
-			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$outputlangs->trans("PredefinedMailContentLink", $paymenturl):'');
+			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)):'');
 			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
 		}
 	}
@@ -6154,12 +6159,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 		$substitutionarray=array_merge($substitutionarray, array(
 			'__DAY__' => (string) $tmp['mday'],
-			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']),
-			'__DAY_TEXT_SHORT__' => $outputlangs->trans('Short'.$tmp['weekday']),
-			'__DAY_TEXT_MIN__' => $outputlangs->trans($tmp['weekday'].'Min'),
+			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']),					// Monday
+			'__DAY_TEXT_SHORT__' => $outputlangs->trans($tmp['weekday'].'Min'),			// Mon
+			'__DAY_TEXT_MIN__' => $outputlangs->trans('Short'.$tmp['weekday']),			// M
 			'__MONTH__' => (string) $tmp['mon'],
-			'__MONTH_TEXT__' => $outputlangs->trans($tmp['month']),
-			'__MONTH_TEXT_MIN__' => $outputlangs->trans($tmp['month'].'Min'),
+			'__MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort'.sprintf("%02d", $tmp['mon'])),
 			'__YEAR__' => (string) $tmp['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],

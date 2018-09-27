@@ -45,17 +45,23 @@ class CommActionRapport
 	 */
 	public $description;
 
-	var $date_edition;
-	var $year;
-	var $month;
+	public $date_edition;
 
-	var $title;
-	var $subject;
+	public $year;
 
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	public $month;
+
+	public $title;
+
+	public $subject;
+
+	public $marge_gauche;
+
+	public	$marge_droite;
+
+	public	$marge_haute;
+
+	public	$marge_basse;
 
 
 	/**
@@ -67,7 +73,7 @@ class CommActionRapport
 	 */
 	function __construct($db, $month, $year)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("commercial","projects"));

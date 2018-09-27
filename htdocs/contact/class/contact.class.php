@@ -100,7 +100,7 @@ class Contact extends CommonObject
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
 
-    	public $poste;                 // Position
+    public $poste;                 // Position
 
 	public $socid;					// fk_soc
 	public $statut;				// 0=inactif, 1=actif
@@ -354,6 +354,8 @@ class Contact extends CommonObject
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
+		$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
+		$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -441,6 +443,16 @@ class Contact extends CommonObject
 					$tmpobj->skype = $this->skype;
 					$usermustbemodified++;
 				}
+				if ($tmpobj->twitter != $this->twitter)
+				{
+					$tmpobj->twitter = $this->twitter;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->facebook != $this->facebook)
+				{
+					$tmpobj->facebook = $this->facebook;
+					$usermustbemodified++;
+				}
 				if ($usermustbemodified)
 				{
 					$result=$tmpobj->update($user, 0, 1, 1, 1);
@@ -493,8 +505,8 @@ class Contact extends CommonObject
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
-		if ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
-		if ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+		elseif ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
+		elseif ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
 		return $dn;
 	}
 
@@ -508,12 +520,12 @@ class Contact extends CommonObject
 	function _load_ldap_info()
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs;
 
         $info = array();
 
         // Object classes
-		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"]=explode(',', $conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		$this->fullname=$this->getFullName($langs);
 
@@ -690,7 +702,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
@@ -756,6 +768,8 @@ class Contact extends CommonObject
 				$this->email				= $obj->email;
 				$this->jabberid			= $obj->jabberid;
 				$this->skype				= $obj->skype;
+				$this->twitter				= $obj->twitter;
+				$this->facebook				= $obj->facebook;
 				$this->photo				= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
@@ -887,9 +901,9 @@ class Contact extends CommonObject
 				if ($obj->nb)
 				{
 					if ($obj->element=='facture')  $this->ref_facturation = $obj->nb;
-					if ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
-					if ($obj->element=='commande') $this->ref_commande = $obj->nb;
-					if ($obj->element=='propal')   $this->ref_propal = $obj->nb;
+					elseif ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
+					elseif ($obj->element=='commande') $this->ref_commande = $obj->nb;
+					elseif ($obj->element=='propal')   $this->ref_propal = $obj->nb;
 				}
 			}
 			$this->db->free($resql);
@@ -914,8 +928,8 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_lastname       = $obj->lastname;
-		$this->old_firstname      = $obj->firstname;
+		$this->old_lastname = $obj->lastname;
+		$this->old_firstname = $obj->firstname;
 
 		$this->db->begin();
 
@@ -1035,7 +1049,7 @@ class Contact extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                = $obj->rowid;
+				$this->id = $obj->rowid;
 
 				if ($obj->fk_user_creat) {
 					$cuser = new User($this->db);
@@ -1069,9 +1083,9 @@ class Contact extends CommonObject
 	function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+		$sql.= " WHERE mc.fk_mailing=m.rowid AND mc.email = '".$this->db->escape($this->email)."' ";
+		$sql.= " AND m.entity IN (".getEntity($this->element).") AND mc.statut NOT IN (-1,0)";      // -1 error, 0 not sent, 1 sent with success
 
 		$resql=$this->db->query($sql);
 		if ($resql)

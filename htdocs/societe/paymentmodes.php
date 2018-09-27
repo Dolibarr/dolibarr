@@ -764,10 +764,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 		if ($stripecu && $action != 'editkey_account')
 		{
-			$url='https://dashboard.stripe.com/test/customers/'.$stripecu;
+			if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+			$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
 			if ($servicestatus)
 			{
-				$url='https://dashboard.stripe.com/customers/'.$stripecu;
+				$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
 			}
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 		}

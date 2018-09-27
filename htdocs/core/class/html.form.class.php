@@ -1108,8 +1108,8 @@ class Form
 		else if (!is_array($selected)) $selected = array($selected);
 
 		// Clean $filter that may contains sql conditions so sql code
-		if (function_exists('test_sql_and_script_inject')) {
-			if (test_sql_and_script_inject($filter, 3)>0) {
+		if (function_exists('testSqlAndScriptInject')) {
+			if (testSqlAndScriptInject($filter, 3)>0) {
 				$filter ='';
 			}
 		}
@@ -4829,6 +4829,10 @@ class Form
 				$tmpthirdparty=new Societe($this->db);
 				$defaulttx=get_default_tva($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
 				$defaultnpr=get_default_npr($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
+		        if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
+			        $defaultcode=$reg[1];
+			        $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
+		        }
 				if (empty($defaulttx)) $defaultnpr=0;
 			}
 
@@ -4928,18 +4932,17 @@ class Form
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
-	 *  @return	string|null						Nothing or string if nooutput is 1
+	 *  @return	string|null					Nothing or string if nooutput is 1
      *  @deprecated
 	 *  @see    form_date, select_month, select_year, select_dayofweek
 	 */
     function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
     {
         // phpcs:enable
-        $retstring = $this->selectDate($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $disabled=0, $fullday='', $addplusone='', $adddateof='');
+        $retstring = $this->selectDate($set_time, $prefix, $h, $m, $empty, $form_name, $d, $addnowlink, $disabled, $fullday, $addplusone, $adddateof);
         if (! empty($nooutput)) {
             return $retstring;
         }
-
         print $retstring;
         return;
     }
@@ -5730,7 +5733,7 @@ class Form
 	 *  @param	string	$morecss				Add more class to css styles
 	 *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 *  @param  string  $placeholder            String to use as placeholder
-	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
 	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
 	 */
@@ -5832,7 +5835,7 @@ class Form
 	 *  @param	string	$morecss				Add more class to css styles
 	 *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 *  @param  string  $placeholder            String to use as placeholder
-	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
 	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
 	 */
@@ -5949,55 +5952,76 @@ class Form
 	 *  @param	int		$width			Force width of select box. May be used only when using jquery couch. Example: 250, 95%
 	 *  @param	string	$moreattrib		Add more options on select component. Example: 'disabled'
 	 *  @param	string	$elemtype		Type of element we show ('category', ...)
+	 *  @param	string	$placeholder	String to use as placeholder
+	 *  @param	int		$addjscombo		Add js combo
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray
 	 */
-	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
+	static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='', $elemtype='', $placeholder='', $addjscombo=1)
 	{
 		global $conf, $langs;
 
 		$out = '';
 
+
 		// Add code for jquery to use multiselect
 		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-   			$out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-    			<script type="text/javascript">
-	    			function formatResult(record) {'."\n";
-						if ($elemtype == 'category')
-						{
-							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
-						}
-						else
-						{
-							$out.='return record.text;';
-						}
-			$out.= '	};
-    				function formatSelection(record) {'."\n";
-						if ($elemtype == 'category')
-						{
-							$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
-						}
-						else
-						{
-							$out.='return record.text;';
-						}
-			$out.= '	};
-	    			$(document).ready(function () {
-    					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
-    						dir: \'ltr\',
-							// Specify format function for dropdown item
-							formatResult: formatResult,
-    					 	templateResult: formatResult,		/* For 4.0 */
-							// Specify format function for selected item
-							formatSelection: formatSelection,
-    					 	templateResult: formatSelection		/* For 4.0 */
-    					});
-    				});
-    			</script>';
+			$out.="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+						<script type="text/javascript">'."\n";
+			if ($addjscombo == 1)
+			{
+				$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$out.=	'function formatResult(record) {'."\n";
+				if ($elemtype == 'category')
+				{
+					$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+				}
+				else
+				{
+					$out.='return record.text;';
+				}
+				$out.=	'};'."\n";
+				$out.=	'function formatSelection(record) {'."\n";
+				if ($elemtype == 'category')
+				{
+					$out.='	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+				}
+				else
+				{
+					$out.='return record.text;';
+				}
+				$out.=	'};'."\n";
+				$out.=	'$(document).ready(function () {
+							$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+								dir: \'ltr\',
+								// Specify format function for dropdown item
+								formatResult: formatResult,
+							 	templateResult: formatResult,		/* For 4.0 */
+								// Specify format function for selected item
+								formatSelection: formatSelection,
+							 	templateResult: formatSelection		/* For 4.0 */
+							});
+						});'."\n";
+			}
+			elseif ($addjscombo == 2)
+			{
+				// Add other js lib
+				// ...
+				$out.= '$(document).ready(function () {
+							$(\'#'.$htmlname.'\').multiSelect({
+								containerHTML: \'<div class="multi-select-container">\',
+								menuHTML: \'<div class="multi-select-menu">\',
+								buttonHTML: \'<span class="multi-select-button '.$morecss.'">\',
+								menuItemHTML: \'<label class="multi-select-menuitem">\',
+								activeClass: \'multi-select-container--open\',
+								noneText: \''.$placeholder.'\'
+							});
+						})';
+			}
+			$out.=	'</script>';
 		}
 
 		// Try also magic suggest
@@ -6075,7 +6099,7 @@ class Form
 		   }
 		   if ($val['label'])
 		   {
-			   $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($langs->trans($val['label'])).'</li>';
+		   	$lis.='<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 			   $listcheckedstring.=(empty($val['checked'])?'':$key.',');
 		   }
 		}
@@ -6346,6 +6370,7 @@ class Form
 				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal').')'),
 				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande').')'),
 				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.facnumber as ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture').')'),
+				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture').')'),
 				'contrat'=>array('enabled'=>$conf->contrat->enabled , 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('contract').')'),
 				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('intervention').')'),
 				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled , 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('supplier_proposal').')'),
@@ -6408,8 +6433,7 @@ class Form
 					{
 						$objp = $this->db->fetch_object($resqllist);
 
-						$var = ! $var;
-						print '<tr ' . $bc [$var] . '>';
+						print '<tr class="oddeven">';
 						print '<td aling="left">';
 						print '<input type="radio" name="idtolinkto" value=' . $objp->rowid . '>';
 						print '</td>';

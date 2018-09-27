@@ -33,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_mercure extends ModeleNumRefFactures
 {
-    var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-    var $error = '';
+    /**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+    /**
+	 * @var string Error message
+	 */
+	public $error = '';
 
 
     /**
@@ -44,7 +52,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
      */
     function info()
     {
-        global $conf,$langs;
+        global $conf, $langs;
 
         $langs->load("bills");
 

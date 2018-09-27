@@ -33,7 +33,11 @@
  */
 abstract class CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
 	protected $db;
 
 
@@ -491,11 +495,11 @@ abstract class CommonDocGenerator
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$line				Array of lines
+	 *	@param  Object			$line				Object line
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_lines($line,$outputlangs)
+	function get_substitutionarray_lines($line, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;

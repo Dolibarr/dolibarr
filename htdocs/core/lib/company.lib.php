@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es>
@@ -1244,12 +1244,12 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			print "</tr>\n";
 		}
 	}
-	else
-	{
+	//else
+	//{
 		//print '<tr class="oddeven">';
 		//print '<td>'.$langs->trans("NoAddressYetDefined").'</td>';
 		//print "</tr>\n";
-	}
+	//}
 	print "\n</table>\n";
 
 	print "<br>\n";
@@ -1323,30 +1323,30 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
         $sql.= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
-        if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
-        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
-        if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-        if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
-        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
-        if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
-        if (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        if (is_object($filterobj) && get_class($filterobj) == 'Adherent')
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
         {
             $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
             if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
         {
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-        if (is_object($filterobj) && get_class($filterobj) == 'Product')
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
         {
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
@@ -1362,7 +1362,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 else
                 {
                     if ($actioncode == 'AC_OTH') $sql.= " AND c.type != 'systemauto'";
-                    if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
+                    elseif ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
                 }
             }
             else
@@ -1373,7 +1373,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             }
         }
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-        if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+        elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
         $sql.= $db->order($sortfield, $sortorder);
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
@@ -1388,7 +1388,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 $obj = $db->fetch_object($resql);
 
                 //if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-                //if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+                //elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
                 $tododone='';
                 if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone='todo';
 
@@ -1583,7 +1583,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='</td>';
 
             // Author of event
-            $out.='<td>';
+            $out.='<td class="tdoverflowmax100">';
             //$userstatic->id=$histo[$key]['userid'];
             //$userstatic->login=$histo[$key]['login'];
             //$out.=$userstatic->getLoginUrl(1);

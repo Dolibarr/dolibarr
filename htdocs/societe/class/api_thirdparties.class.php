@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1059,7 +1060,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 
-		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id'];
+		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum'];
 
 		$returnAccounts = [];
 
@@ -1172,6 +1173,115 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
+	 * Generate a Document from a bank account record (like SEPA mandate)
+	 *
+	 * @param int $id thirdparty id
+	 * @param int $companybankid companybankid
+	 * @param string $model model of document to generate
+	 * @return void
+	 *
+	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
+	 */
+	public function generateBankAccountDocument($id, $companybankid = null, $model = 'sepamandate')
+	{
+		global $conf;
+
+		$this->langs->load("database");
+		$this->langs->load("main");
+		$this->langs->load("dict");
+		$this->langs->load("agenda");
+		$this->langs->load("margins");
+		$this->langs->load("resource");
+		$this->langs->load("commercial");
+		$this->langs->load("ecm");
+		$this->langs->load("products");
+		$this->langs->load("companies");
+		$this->langs->load("banks");
+		$this->langs->load("bills");
+		$this->langs->load("withdrawals");
+
+		$this->company->fetch($id);
+
+		$action = 'builddoc';
+		if(! DolibarrApiAccess::$user->rights->societe->creer)
+			throw new RestException(401);
+
+		$this->company->setDocModel(DolibarrApiAccess::$user, $model);
+
+		$this->company->fk_bank = $this->company->fk_account;
+
+		$outputlangs = $this->langs;
+		$newlang='';
+
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang=$this->company->thirdparty->default_lang;  // for proposal, order, invoice, ...
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->default_lang)) $newlang=$this->company->default_lang;                  // for thirdparty
+		if (! empty($newlang)) {
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+
+		// To be sure vars is defined
+		$hidedetails = $hidedesc = $hideref = 0;
+		$moreparams=null;
+		if (empty($hidedetails)) $hidedetails=0;
+		if (empty($hidedesc)) $hidedesc=0;
+		if (empty($hideref)) $hideref=0;
+		if (empty($moreparams)) $moreparams=null;
+
+
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		if ($id) $sql.= " WHERE fk_soc  = ".$id." ";
+		if ($companybankid) $sql.= " AND id = ".$companybankid."";
+
+		$i=0;
+		$accounts=array();
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			if ($result->num_rows == 0) {
+				throw new RestException(404, 'Bank account not found');
+			}
+
+			$num = $this->db->num_rows($result);
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+
+				$account = new CompanyBankAccount($this->db);
+				if ($account->fetch($obj->rowid)) {
+					$accounts[] = $account;
+				}
+				$i++;
+			}
+		}
+		else
+		{
+			throw new RestException(404, 'Bank account not found');
+		}
+
+		$moreparams = array(
+			'use_companybankid'=>$accounts[0]->id,
+			'force_dir_output'=>$this->conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName($this->company->id)
+		);
+
+		$result = 0;
+
+		$result = $this->company->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+
+		if ($result > 0)
+		{
+			return array("success" => $result);
+		}
+		else
+		{
+			throw new RestException(500);
+		}
+    }
+
+  /**
 	 * Get a specific gateway attached to a thirdparty (by specifying the site key)
 	 *
 	 * @param int $id ID of thirdparty

@@ -1329,11 +1329,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$comment = isset($this->cronjobs[$key]['comment'])?$this->cronjobs[$key]['comment']:'';
 				$frequency = isset($this->cronjobs[$key]['frequency'])?$this->cronjobs[$key]['frequency']:'';
 				$unitfrequency = isset($this->cronjobs[$key]['unitfrequency'])?$this->cronjobs[$key]['unitfrequency']:'';
-				$status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
 				$priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
-				$test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';                              // Line must be visible
 				$datestart = isset($this->cronjobs[$key]['datestart'])?$this->cronjobs[$key]['datestart']:'';
 				$dateend = isset($this->cronjobs[$key]['dateend'])?$this->cronjobs[$key]['dateend']:'';
+				$status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
+				$test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';					// Line must be enabled or not (so visible or not)
 
 				// Search if cron entry already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
@@ -1430,6 +1430,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
 			$sql.= " WHERE module_name = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND test = '1'";		// We delete on lines that are not set with a complete test that is '$conf->module->enabled' so when module is disabled, the cron is also removed.
+											// For crons declared with a '$conf->module->enabled', there is no need to delete the line, so we don't loose setup if we reenable module.
 
 			dol_syslog(get_class($this)."::delete_cronjobs", LOG_DEBUG);
 			$resql=$this->db->query($sql);

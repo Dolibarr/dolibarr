@@ -37,10 +37,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Company object that emits
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+   * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+   */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -50,7 +63,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("main","companies"));
@@ -243,10 +256,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->propal->multidir_output[$conf->entity])
 		{

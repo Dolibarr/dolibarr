@@ -114,7 +114,7 @@ class InterfaceStripe
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Put here code you want to execute when a Dolibarr business events occurs.
+		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
 

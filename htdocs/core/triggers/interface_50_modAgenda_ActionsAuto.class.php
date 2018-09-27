@@ -36,6 +36,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 {
 	public $family = 'agenda';
 	public $description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
 
 	/**
@@ -246,8 +251,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		elseif ($action == 'BILL_UNVALIDATE')
         {
-            // Load translation files required by the page
-            $langs->loadLangs(array("agenda","other","bills"));;
+           // Load translation files required by the page
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoiceBackToDraftInDolibarr",$object->ref);
@@ -533,7 +538,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
             // Load translation files required by the page
-            $langs->loadLangs(array("agenda","other","bills"));;
+            $langs->loadLangs(array("agenda","other","bills"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
             $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
@@ -752,7 +757,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid=0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else {
+		else
+		{
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
 		    // Load translation files required by the page
             $langs->loadLangs(array("agenda","other"));

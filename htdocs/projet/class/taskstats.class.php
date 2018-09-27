@@ -36,8 +36,6 @@ class TaskStats extends Stats
      */
 	function __construct($db)
 	{
-		global $conf, $user;
-
 		$this->db = $db;
 
 		require_once 'task.class.php';

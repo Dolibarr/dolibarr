@@ -53,8 +53,6 @@ class FormOther
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 
@@ -1151,8 +1149,8 @@ class FormOther
 
         if ($nbboxactivated)
         {
-        	$langs->load("boxes");
-			$langs->load("projects");
+        	// Load translation files required by the page
+            $langs->loadLangs(array("boxes","projects"));
 
         	$emptybox=new ModeleBoxes($db);
 

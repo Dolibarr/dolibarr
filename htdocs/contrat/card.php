@@ -1318,8 +1318,10 @@ else
 	{
 		$object->fetch_thirdparty();
 
-		$result=$object->fetch_lines();	// This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
-		if ($result < 0) dol_print_error($db,$object->error);
+		$result=$object->fetch_lines(); // This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
+		if ($result < 0) {
+            dol_print_error($db,$object->error);
+        }
 
 		$nbofservices=count($object->lines);
 
@@ -1334,56 +1336,54 @@ else
 
 		$head = contract_prepare_head($object);
 
-		$hselected = 0;
+        $hselected = 0;
+        $formconfirm = '';
 
-		dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
+        dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
 
-		/*
-         * Confirmation de la suppression du contrat
-         */
-		if ($action == 'delete')
-		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
+        if ($action == 'delete') {
+            //Confirmation de la suppression du contrat
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
+        } elseif ($action == 'valid') {
+            //Confirmation de la validation
+            $ref = substr($object->ref, 1, 4);
+            if ($ref == 'PROV' && !empty($modCodeContract->code_auto)) {
+                $numref = $object->getNextNumRef($object->thirdparty);
+            } else {
+                $numref = $object->ref;
+            }
+            $text = $langs->trans('ConfirmValidateContract',$numref);
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
+        } elseif ($action == 'close') {
+            // Confirmation de la fermeture
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
+        } elseif ($action == 'activate') {
+            $formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ActivateAllOnContract"),$langs->trans("ConfirmActivateAllOnContract"),"confirm_activate",'',0,1);
+        } elseif ($action == 'clone') {
+            // Clone confirmation
+            $formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+        }
 
-		}
 
-		/*
-         * Confirmation de la validation
-         */
-		if ($action == 'valid')
-		{
-			$ref = substr($object->ref, 1, 4);
-			if ($ref == 'PROV' && !empty($modCodeContract->code_auto))
-			{
-				$numref = $object->getNextNumRef($object->thirdparty);
-			}
-			else
-			{
-				$numref = $object->ref;
-			}
+        // Call Hook formConfirm
+        $parameters = array(
+            'id' => $id,
+            //'lineid' => $lineid,
+        );
+        // Note that $action and $object may have been modified by hook
+        $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
+        if (empty($reshook)) {
+            $formconfirm .= $hookmanager->resPrint;
+        } elseif ($reshook > 0) {
+            $formconfirm = $hookmanager->resPrint;
+        }
 
-			$text=$langs->trans('ConfirmValidateContract',$numref);
+        // Print form confirm
+        print $formconfirm;
 
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
-
-		}
-
-		/*
-         * Confirmation de la fermeture
-         */
-		if ($action == 'close')
-		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
-
-		}
-		if ($action == 'activate')
-		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ActivateAllOnContract"),$langs->trans("ConfirmActivateAllOnContract"),"confirm_activate",'',0,1);
-
-		}
-
-		/*
+        /*
          *   Contrat
          */
 		if (! empty($object->brouillon) && $user->rights->contrat->creer)
@@ -1391,12 +1391,6 @@ else
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setremise">';
-		}
-
-		// Clone confirmation
-		if ($action == 'clone') {
-			$formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
-			print $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
 		// Contract card
@@ -1422,6 +1416,7 @@ else
 		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->contrat->creer, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -1516,7 +1511,7 @@ else
 		}
 
 
-		$colorb='666666';
+		$colorb = '666666';
 
 		$arrayothercontracts=$object->getListOfContracts('others');
 

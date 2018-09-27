@@ -79,9 +79,9 @@ class Societe extends CommonObject
 	 */
 	public $fields=array(
 		'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'nom'           =>array('type'=>'varchar(128)', 'label'=>'Name',            'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'Name',            'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+		'nom'           =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1,  'notnull'=>1,  'index'=>1, 'position'=>20),
 		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
@@ -106,6 +106,11 @@ class Societe extends CommonObject
 	 * @see name
 	 */
 	public $nom;
+
+	/**
+	 * @var string name
+	 */
+	public $name;
 
 	/**
 	 * Alias names (commercial, trademark or alias names)
@@ -181,6 +186,16 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $skype;
+	/**
+	 * Twitter username
+	 * @var string
+	 */
+	public $twitter;
+	/**
+	 * Facebook username
+	 * @var string
+	 */
+	public $facebook;
 	/**
 	 * Webpage
 	 * @var string
@@ -529,7 +544,7 @@ class Societe extends CommonObject
 					$this->add_commercial($user, $this->commercial_id);
 				}
 				// si un commercial cree un client il lui est affecte automatiquement
-				else if (empty($user->rights->societe->client->voir))
+				elseif (empty($user->rights->societe->client->voir))
 				{
 					$this->add_commercial($user, $user->id);
 				}
@@ -652,15 +667,15 @@ class Societe extends CommonObject
 				{
 					$this->errors[] = 'ErrorBadCustomerCodeSyntax';
 				}
-				if ($rescode == -2)
+				elseif ($rescode == -2)
 				{
 					$this->errors[] = 'ErrorCustomerCodeRequired';
 				}
-				if ($rescode == -3)
+				elseif ($rescode == -3)
 				{
 					$this->errors[] = 'ErrorCustomerCodeAlreadyUsed';
 				}
-				if ($rescode == -4)
+				elseif ($rescode == -4)
 				{
 					$this->errors[] = 'ErrorPrefixRequired';
 				}
@@ -677,15 +692,15 @@ class Societe extends CommonObject
 				{
 					$this->errors[] = 'ErrorBadSupplierCodeSyntax';
 				}
-				if ($rescode == -2)
+				elseif ($rescode == -2)
 				{
 					$this->errors[] = 'ErrorSupplierCodeRequired';
 				}
-				if ($rescode == -3)
+				elseif ($rescode == -3)
 				{
 					$this->errors[] = 'ErrorSupplierCodeAlreadyUsed';
 				}
-				if ($rescode == -5)
+				elseif ($rescode == -5)
 				{
 					$this->errors[] = 'ErrorprefixRequired';
 				}
@@ -806,6 +821,8 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\./","",$this->fax);
 		$this->email		= trim($this->email);
 		$this->skype		= trim($this->skype);
+		$this->twitter		= trim($this->twitter);
+		$this->facebook		= trim($this->facebook);
 		$this->url			= $this->url?clean_url($this->url,0):'';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
@@ -929,6 +946,8 @@ class Societe extends CommonObject
 			$sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
 			$sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
+			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
+			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -1054,6 +1073,8 @@ class Societe extends CommonObject
 							$lmember->address=$this->address;
 							$lmember->email=$this->email;
 							$lmember->skype=$this->skype;
+							$lmember->twitter=$this->twitter;
+							$lmember->facebook=$this->facebook;
 							$lmember->phone=$this->phone;
 
 							$result=$lmember->update($user,0,1,1,1);	// Use nosync to 1 to avoid cyclic updates
@@ -1064,7 +1085,7 @@ class Societe extends CommonObject
 								$error++;
 							}
 						}
-						else if ($result < 0)
+						elseif ($result < 0)
 						{
 							$this->error=$lmember->error;
 							$error++;
@@ -1157,7 +1178,7 @@ class Societe extends CommonObject
 		$sql .= ', s.status';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
-		$sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
+		$sql .= ', s.phone, s.fax, s.email, s.skype, s.twitter, s.facebook, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
 		$sql .= ', s.capital, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
@@ -1250,6 +1271,8 @@ class Societe extends CommonObject
 
 				$this->email = $obj->email;
 				$this->skype = $obj->skype;
+				$this->twitter = $obj->twitter;
+				$this->facebook = $obj->facebook;
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
 				$this->fax = $obj->fax;
@@ -1960,37 +1983,37 @@ class Societe extends CommonObject
 		   $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
 		   $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		}
-		else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+		elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
 			$label.= '<u>' . $langs->trans("ShowProspect") . '</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		}
-		else if ($option == 'supplier')
+		elseif ($option == 'supplier')
 		{
 			$label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		}
-		else if ($option == 'agenda')
+		elseif ($option == 'agenda')
 		{
 			$label.= '<u>' . $langs->trans("ShowAgenda") . '</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		}
-		else if ($option == 'project')
+		elseif ($option == 'project')
 		{
 			$label.= '<u>' . $langs->trans("ShowProject") . '</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		}
-		else if ($option == 'margin')
+		elseif ($option == 'margin')
 		{
 			$label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		}
-		else if ($option == 'contact')
+		elseif ($option == 'contact')
 		{
 			$label.= '<u>' . $langs->trans("ShowContacts") . '</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		}
-		else if ($option == 'ban')
+		elseif ($option == 'ban')
 		{
 			$label.= '<u>' . $langs->trans("ShowBan") . '</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
@@ -2103,37 +2126,37 @@ class Societe extends CommonObject
 		if ($mode == 0)
 		{
 			if ($statut==0) return $langs->trans("ActivityCeased");
-			if ($statut==1) return $langs->trans("InActivity");
+			elseif ($statut==1) return $langs->trans("InActivity");
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut==0) return $langs->trans("ActivityCeased");
-			if ($statut==1) return $langs->trans("InActivity");
+			elseif ($statut==1) return $langs->trans("InActivity");
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-			if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+			elseif ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-			if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+			elseif ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-			if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+			elseif ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
 		}
 	}
 
@@ -3216,6 +3239,8 @@ class Societe extends CommonObject
 		$this->phone=$member->phone;       // Prof phone
 		$this->email=$member->email;
 		$this->skype=$member->skype;
+		$this->twitter=$member->twitter;
+		$this->facebook=$member->facebook;
 
 		$this->client = 1;				// A member is a customer by default
 		$this->code_client = -1;
@@ -3355,6 +3380,8 @@ class Societe extends CommonObject
 		$this->country_code='FR';
 		$this->email='specimen@specimen.com';
 		$this->skype='tom.hanson';
+		$this->twitter='tomhanson';
+		$this->facebook='tomhanson';
 		$this->url='http://www.specimen.com';
 
 		$this->phone='0909090901';

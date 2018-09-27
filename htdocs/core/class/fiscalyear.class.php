@@ -79,9 +79,7 @@ class Fiscalyear extends CommonObject
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
-        $this->statuts = array(0 => 'Opened', 1 => 'Closed');
-
-		return 1;
+		$this->statuts = array(0 => 'Opened', 1 => 'Closed');
 	}
 
 	/**

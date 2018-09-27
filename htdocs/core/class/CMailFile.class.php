@@ -59,7 +59,11 @@ class CMailFile
 
 	var $eol;
 	var $eol2;
-	var $error='';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $smtps;			// Contains SMTPs object (if this method is used)
 	var $phpmailer;		// Contains PHPMailer object (if this method is used)
@@ -1027,7 +1031,7 @@ class CMailFile
 		$mimedone=0;
 		$out = "";
 
-		if ($filename_list)
+		if (is_array($filename_list))
 		{
 			$filename_list_size=count($filename_list);
 			for($i=0;$i < $filename_list_size;$i++)
@@ -1199,7 +1203,7 @@ class CMailFile
 	/**
 	 * Attach an image to email (mode = 'mail')
 	 *
-	 * @param	array	$images_list	Tableau
+	 * @param	array	$images_list	Array of array image
 	 * @return	string					Chaine images encodees
 	 */
 	function write_images($images_list)
@@ -1207,7 +1211,7 @@ class CMailFile
         // phpcs:enable
 		$out = '';
 
-		if ($images_list)
+		if (is_array($images_list))
 		{
 			foreach ($images_list as $img)
 			{

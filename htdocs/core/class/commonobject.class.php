@@ -1164,8 +1164,8 @@ abstract class CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$id;
 		$sql.= " AND ec.fk_socpeople = c.rowid";
-		if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
-		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('socpeople').")";
+		if ($source == 'internal') $sql.= " AND c.entity IN (".getEntity('user').")";
+		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe').")";
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
@@ -2899,6 +2899,7 @@ abstract class CommonObject
 		// Special case
 		if ($origin == 'order') $origin='commande';
 		if ($origin == 'invoice') $origin='facture';
+		if ($origin == 'invoice_template') $origin='facturerec';
 
 		$this->db->begin();
 
@@ -3824,6 +3825,7 @@ abstract class CommonObject
 
 			print '<tr class="liste_titre nodrag nodrop">';
 
+			// Adds a line numbering column
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
 
 			// Description
@@ -4911,6 +4913,9 @@ abstract class CommonObject
 			   		}
 			   	}
 
+				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
+				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
 			   	switch ($attributeType)
 			   	{
 			   		case 'int':
@@ -4924,6 +4929,21 @@ abstract class CommonObject
 			   				$new_array_options[$key] = null;
 			   			}
 			 			break;
+					case 'double':
+						$value = price2num($value);
+						if (!is_numeric($value) && $value!='')
+						{
+							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+							$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
+							return -1;
+						}
+						elseif ($value=='')
+						{
+							$new_array_options[$key] = null;
+						}
+						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+						$new_array_options[$key] = $value;
+						break;
 			 		/*case 'select':	// Not required, we chosed value='0' for undefined values
              			if ($value=='-1')
              			{
@@ -5118,6 +5138,9 @@ abstract class CommonObject
 			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
 
+			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
+			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
 			switch ($attributeType)
 			{
 				case 'int':
@@ -5130,6 +5153,21 @@ abstract class CommonObject
 					{
 						$this->array_options["options_".$key] = null;
 					}
+					break;
+				case 'double':
+					$value = price2num($value);
+					if (!is_numeric($value) && $value!='')
+					{
+						dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+						$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
+						return -1;
+					}
+					elseif ($value=='')
+					{
+						$this->array_options["options_".$key] = null;
+					}
+					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+					$this->array_options["options_".$key] = $value;
 					break;
 			 	/*case 'select':	// Not required, we chosed value='0' for undefined values
              		if ($value=='-1')
@@ -5329,7 +5367,7 @@ abstract class CommonObject
 			if (!$required && $value == '') $value = '-1';
 
 			// TODO Must also support $moreparam
-			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 1, 0);
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 		}
 		elseif (in_array($type,array('int','integer')))
 		{
@@ -7288,7 +7326,7 @@ abstract class CommonObject
 		$comment = new Comment($this->db);
 		$result=$comment->fetchAllFor($this->element, $this->id);
 		if ($result<0) {
-			$this->errors=array_merge($this->errors,$comment->errors);
+			$this->errors=array_merge($this->errors, $comment->errors);
 			return -1;
 		} else {
 			$this->comments = $comment->comments;
@@ -7305,4 +7343,20 @@ abstract class CommonObject
 	{
 		return count($this->comments);
 	}
+
+    /**
+     * Trim object parameters
+     * @param string[] $parameters array of parameters to trim
+     *
+     * @return void
+     */
+    public function trimParameters($parameters)
+    {
+        if (!is_array($parameters)) return;
+        foreach ($parameters as $parameter) {
+            if (isset($this->$parameter)) {
+                $this->$parameter = trim($this->$parameter);
+            }
+        }
+    }
 }

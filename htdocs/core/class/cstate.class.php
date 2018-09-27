@@ -56,7 +56,19 @@ class Cstate // extends CommonObject
 	public $id;
 
 	public $code_departement;
-	public $nom;
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='';
+
+	/**
+	 * @var string name
+	 */
+	public $name='';
+
 	public $active;
 
 
@@ -70,7 +82,6 @@ class Cstate // extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 

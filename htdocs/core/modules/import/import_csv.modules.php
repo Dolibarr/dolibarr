@@ -38,7 +38,7 @@ class ImportCsv extends ModeleImports
      */
     public $db;
 
-    var $datatoimport;
+    public $datatoimport;
 
 	/**
 	 * @var string Error code (or message)
@@ -61,20 +61,29 @@ class ImportCsv extends ModeleImports
     public $label;
 
 	public $extension;    // Extension of files imported by driver
-	public $version;      // Version of driver
+
+	/**
+     * Dolibarr version of driver
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 	public $label_lib;    // Label of external lib used by driver
+
 	public $version_lib;  // Version of external lib used by driver
 
 	public $separator;
 
 	public $file;      // Path of file
+
 	public $handle;    // Handle fichier
 
 	public $cacheconvert=array();      // Array to cache list of value found after a convertion
+
 	public $cachefieldtable=array();   // Array to cache list of value found into fields@tables
 
 	public $nbinsert = 0; // # of insert done during the import
+
 	public $nbupdate = 0; // # of update done during the import
 
 
@@ -86,7 +95,7 @@ class ImportCsv extends ModeleImports
 	 */
 	function __construct($db,$datatoimport)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 		$this->db = $db;
 
 		$this->separator=(GETPOST('separator')?GETPOST('separator'):(empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)?',':$conf->global->IMPORT_CSV_SEPARATOR_TO_USE));

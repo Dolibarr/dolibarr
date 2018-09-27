@@ -62,7 +62,6 @@ class Propalmergepdfproduct extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 

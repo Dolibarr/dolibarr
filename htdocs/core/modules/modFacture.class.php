@@ -118,7 +118,7 @@ class modFacture extends DolibarrModules
 		$arraydate=dol_getdate(dol_now());
 		$datestart=dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
-			0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>1, 'test'=>true, 'datestart'=>$datestart),
+			0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>1, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
 		);
 
 		// Permissions

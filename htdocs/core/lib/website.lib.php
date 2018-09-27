@@ -52,6 +52,11 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/src="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
+	$replacewith='href="php';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
+	//$replacewith='<span class="phptag">...php...</span>';
 	$replacewith='<span class="phptag">...php...</span>';
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
@@ -89,23 +94,28 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
  *
  * @param   string  $content    Content string
  * @return  void
- * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice editor context
+ * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
 function dolWebsiteOutput($content)
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (mode=".(defined('USEDOLIBARRSERVER')?'USEDOLIBARRSERVER':'').')');
+	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." (USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	// Note: This seems never called when page is output inside the website editor (search 'REPLACEMENT OF LINKS When page called by website editor')
-
-	if (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
+	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor
+	{
+		// We remove the <head> part of content
+		$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
+		$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
+		$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
+	}
+	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
 		global $website;
 
@@ -139,7 +149,7 @@ function dolWebsiteOutput($content)
 		// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
 		$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
 	}
-	else								// REPLACEMENT OF LINKS When page called from virtual host
+	else									// REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists=1;
 
@@ -536,7 +546,7 @@ function dolSaveMasterFile($filemaster)
 
 	$mastercontent = '<?php'."\n";
 	$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-	$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
 	$mastercontent.= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
 	if (! empty($conf->global->MAIN_UMASK))
@@ -598,7 +608,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent ='';
 	$tplcontent.= "<?php // BEGIN PHP\n";
 	$tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	$tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	$tplcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent.= "ob_start();\n";
@@ -663,7 +673,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	$indexcontent = '<?php'."\n";
 	$indexcontent.= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
 	$indexcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	$indexcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+	$indexcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
 	$indexcontent.= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
 	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
@@ -679,7 +689,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	$wrappercontent = '<?php'."\n";
 	$wrappercontent.= "// BEGIN PHP File generated to provide a wrapper.php - DO NOT MODIFY - It is just a generated wrapper.\n";
 	$wrappercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	$wrappercontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+	$wrappercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
 	$wrappercontent.= '$original_file=str_replace("../","/", GETPOST("file","alpha"));'."\n";
 	$wrappercontent.= 'if ($_GET["modulepart"] == "mycompany" && preg_match(\'/^\/?logos\//\', $original_file)) readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));'."\n";
 	$wrappercontent.= "else print 'Bad value for modulepart or file';\n";
