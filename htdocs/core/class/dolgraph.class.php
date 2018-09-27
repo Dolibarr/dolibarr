@@ -39,46 +39,46 @@
  */
 class DolGraph
 {
-	var $type=array();			// Array with type of each series. Example: array('bars', 'lines', ...)
-	var $mode='side';		    // Mode bars graph: side, depth
+	public $type=array();			// Array with type of each series. Example: array('bars', 'lines', ...)
+	public $mode='side';		    // Mode bars graph: side, depth
 	private $_library='jflot';	// Graphic library to use (jflot, artichow)
 
 	//! Array of data
-	var $data;				// Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
-	var $title;				// Title of graph
-	var $cssprefix='';		// To add into css styles
-	var $width=380;
-	var $height=200;
-	var $MaxValue=0;
-	var $MinValue=0;
-	var $SetShading=0;
+	public $data;				// Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
+	public $title;				// Title of graph
+	public $cssprefix='';		// To add into css styles
+	public $width=380;
+	public $height=200;
+	public $MaxValue=0;
+	public $MinValue=0;
+	public $SetShading=0;
 
-	var $PrecisionY=-1;
+	public $PrecisionY=-1;
 
-	var $horizTickIncrement=-1;
-	var $SetNumXTicks=-1;
-	var $labelInterval=-1;
+	public $horizTickIncrement=-1;
+	public $SetNumXTicks=-1;
+	public $labelInterval=-1;
 
-	var $hideXGrid=false;
-	var $hideYGrid=false;
+	public $hideXGrid=false;
+	public $hideYGrid=false;
 
-	var $Legend=array();
-	var $LegendWidthMin=0;
-	var $showlegend=1;
-	var $showpointvalue=1;
-	var $showpercent=0;
-	var $combine=0;				// 0.05 if you want to combine records < 5% into "other"
-	var $graph;     			// Objet Graph (Artichow, Phplot...)
+	public $Legend=array();
+	public $LegendWidthMin=0;
+	public $showlegend=1;
+	public $showpointvalue=1;
+	public $showpercent=0;
+	public $combine=0;				// 0.05 if you want to combine records < 5% into "other"
+	public $graph;     			// Objet Graph (Artichow, Phplot...)
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
 
-	var $bordercolor;			// array(R,G,B)
-	var $bgcolor;				// array(R,G,B)
-	var $bgcolorgrid=array(255,255,255);			// array(R,G,B)
-	var $datacolor;				// array(array(R,G,B),...)
+	public $bordercolor;			// array(R,G,B)
+	public $bgcolor;				// array(R,G,B)
+	public $bgcolorgrid=array(255,255,255);			// array(R,G,B)
+	public $datacolor;				// array(array(R,G,B),...)
 
 	private $stringtoshow;      // To store string to output graph into HTML page
 
