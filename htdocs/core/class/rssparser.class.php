@@ -742,7 +742,7 @@ function xml2php($xml)
         }
 
         //Let see if the new child is not in the array
-        if($tab==false && in_array($key,array_keys($array)))
+        if($tab === false && in_array($key,array_keys($array)))
         {
             //If this element is already in the array we will create an indexed array
             $tmp = $array[$key];
@@ -751,7 +751,7 @@ function xml2php($xml)
             $array[$key][] = $child;
             $tab = true;
         }
-        elseif($tab == true)
+        elseif($tab === true)
         {
             //Add an element in an existing array
             $array[$key][] = $child;
