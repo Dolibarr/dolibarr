@@ -56,9 +56,9 @@ class doc_generic_task_odt extends ModelePDFTask
 {
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 	/**
    * @var array() Minimum version of PHP required by module.
