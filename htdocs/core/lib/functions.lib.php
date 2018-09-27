@@ -430,7 +430,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 						}
 						elseif (isset($user->default_values[$relativepathstring]['filters']))
 						{
-							foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)
+							foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)	// $defkey is a querystring like 'a=b&c=d', $defval is key of user
 							{
 								$qualified = 0;
 								if ($defkey != '_noquery_')
@@ -586,7 +586,6 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
 	if (empty($method) || $method == 3 || $method == 4)
 	{
-		//if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield", 'smonth', 'syear', 'month', 'year')))
 		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder','sortfield')))
 		{
 			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
@@ -595,8 +594,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 			// - posted value not empty, or
 			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
 
-			//if (! empty($out) || ! empty($user->default_values[$relativepathstring]['filters'][$paramname]))
-			if ($out != '')		// $out = '0' like 'abc' is a search criteria to keep
+			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
 			{
 				$user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
 			}

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,8 +17,13 @@
  */
 
 /**
- *       \file       htdocs/admin/defaultvalues.php
- *       \brief      Page to set default values used used in a create form
+ *       \file      htdocs/admin/defaultvalues.php
+ *       \brief     Page to set default values used used in a create form
+ *       			Default values are stored into $user->default_values[url]['createform']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default filters are stored into $user->default_values[url]['filters']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default sort order are stored into $user->default_values[url]['sortorder']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default focus are stored into $user->default_values[url]['focus']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Mandatory fields are stored into $user->default_values[url]['mandatory']['querystring'|'_noquery_'][paramkey]=paramvalue
  */
 
 require '../main.inc.php';
@@ -234,6 +239,10 @@ if ($mode == 'focus')
 {
     print info_admin($langs->trans("FeatureNotYetAvailable")).'<br>';
 }
+if ($mode == 'mandatory')
+{
+	print info_admin($langs->trans("FeatureNotYetAvailable")).'<br>';
+}
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
@@ -261,7 +270,7 @@ else
 }
 print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'param','',$param,'',$sortfield,$sortorder);
 // Value
-if ($mode != 'focus')
+if ($mode != 'focus' && $mode != 'mandatory')
 {
     if ($mode != 'sortorder')
     {
@@ -301,7 +310,7 @@ print '<td>';
 print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="">';
 print '</td>';
 // Value
-if ($mode != 'focus')
+if ($mode != 'focus' && $mode != 'mandatory')
 {
     print '<td>';
     print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="">';
@@ -313,13 +322,14 @@ if (! empty($conf->multicompany->enabled) && !$user->entity)
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
-	print '<td align="center">';
 }
 else
 {
 	print '<td align="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+	print '</td>';
 }
+print '<td align="center">';
 $disabled='';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) $disabled=' disabled="disabled"';
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
@@ -363,7 +373,7 @@ if ($result)
 		print '</td>'."\n";
 
 		// Value
-		if ($mode != 'focus')
+		if ($mode != 'focus' && $mode != 'mandatory')
 		{
     		print '<td>';
     		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
@@ -375,6 +385,9 @@ if ($result)
     		else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
     		print '</td>';
 		}
+
+		// Multicompany
+		print '<td></td>';
 
 		// Actions
 		print '<td align="center">';

@@ -1437,6 +1437,7 @@ DefaultCreateForm=Default values (on forms to create)
 DefaultSearchFilters=Default search filters
 DefaultSortOrder=Default sort orders
 DefaultFocus=Default focus fields
+DefaultMandatory=Mandatory form fields
 ##### Products #####
 ProductSetup=Products module setup
 ServiceSetup=Services module setup

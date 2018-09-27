@@ -729,6 +729,11 @@ function defaultvalues_prepare_head()
     $head[$h][2] = 'focus';
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=mandatory";
+    $head[$h][1] = $langs->trans("DefaultMandatory");
+    $head[$h][2] = 'mandatory';
+    $h++;
+
     /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
     $head[$h][1] = $langs->trans("TranslationKeySearch");
     $head[$h][2] = 'searchkey';
