@@ -31,6 +31,8 @@ create table llx_paiement
   fk_paiement      integer NOT NULL,
   num_paiement     varchar(50),
   note             text,
+  key_charge       varchar(128),        -- key of external charge
+  site             varchar(128),				-- name of external paymentmode
   fk_bank          integer NOT NULL DEFAULT 0,
   fk_user_creat    integer,								-- utilisateur qui a cree l'info
   fk_user_modif    integer,								-- utilisateur qui a modifie l'info
