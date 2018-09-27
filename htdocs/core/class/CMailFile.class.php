@@ -409,18 +409,44 @@ class CMailFile
 			// TODO if (! empty($moreinheader)) ...
 
 			// Give the message a subject
-			$this->message->setSubject($this->encodetorfc2822($subject));
+			try {
+				$this->message->setSubject($subject);
+			} catch (Exception $e) {
+				$this->error =  $e->getMessage();
+			}
 
 			// Set the From address with an associative array
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
-			if (! empty($from)) $this->message->setFrom($this->getArrayAddress($from));
+			if (! empty($from)) {
+				try {
+					$result = $this->message->setFrom($this->getArrayAddress($from));
+				} catch (Exception $e) {
+					$this->error =  $e->getMessage();
+				}
+			}
 
 			// Set the To addresses with an associative array
-			if (! empty($to)) $this->message->setTo($this->getArrayAddress($to));
+			if (! empty($to)) {
+				try {
+					$result = $this->message->setTo($this->getArrayAddress($to));
+				} catch (Exception $e) {
+					$this->error =  $e->getMessage();
+				}
+			}
 
-			if (! empty($from)) $this->message->SetReplyTo($this->getArrayAddress($from));
+			if (! empty($from)) {
+				try {
+					$result = $this->message->SetReplyTo($this->getArrayAddress($from));
+				} catch (Exception $e) {
+					$this->error =  $e->getMessage();
+				}
+			}
 
-			$this->message->setCharSet($conf->file->character_set_client);
+			try {
+				$result = $this->message->setCharSet($conf->file->character_set_client);
+			} catch (Exception $e) {
+				$this->error =  $e->getMessage();
+			}
 
 			if (! empty($this->html))
 			{
