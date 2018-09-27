@@ -235,13 +235,9 @@ if ($mode == 'sortorder')
 {
     print info_admin($langs->trans("WarningSettingSortOrder")).'<br>';
 }
-if ($mode == 'focus')
-{
-    print info_admin($langs->trans("FeatureNotYetAvailable")).'<br>';
-}
 if ($mode == 'mandatory')
 {
-	print info_admin($langs->trans("FeatureNotYetAvailable")).'<br>';
+	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
 }
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -303,11 +299,11 @@ print "\n";
 print '<tr class="oddeven">';
 // Page
 print '<td>';
-print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="">';
+print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="'.dol_escape_htmltag(GETPOST('defaulturl','alphanohtml')).'">';
 print '</td>'."\n";
 // Field
 print '<td>';
-print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="">';
+print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag(GETPOST('defaultkey','alphanohtml')).'">';
 print '</td>';
 // Value
 if ($mode != 'focus' && $mode != 'mandatory')
@@ -320,7 +316,7 @@ if ($mode != 'focus' && $mode != 'mandatory')
 if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
 	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
+	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">';	// We see environment, but to change it we must switch on other entity
 	print '</td>';
 }
 else

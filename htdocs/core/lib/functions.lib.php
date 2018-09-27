@@ -7023,7 +7023,8 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  */
 function printCommonFooter($zone='private')
 {
-	global $conf, $hookmanager;
+	global $conf, $hookmanager, $user;
+	global $action;
 	global $micro_start_time;
 
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
@@ -7056,7 +7057,71 @@ function printCommonFooter($zone='private')
 				print '});'."\n";
 			}
 
-			// Google Analytics (need Google module)
+			// Management of focus and mandatory for fields
+			if ($action == 'create' || $action == 'edit')
+			{
+				print '/* Code js to manage focus and mandatory form fields */'."\n";
+				$relativepathstring = $_SERVER["PHP_SELF"];
+				// Clean $relativepathstring
+				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+				$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+				foreach($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
+				{
+					$qualified = 0;
+					if ($defkey != '_noquery_')
+					{
+						$tmpqueryarraytohave=explode('&', $defkey);
+						$foundintru=0;
+						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						{
+							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+						}
+						if (! $foundintru) $qualified=1;
+						//var_dump($defkey.'-'.$qualified);
+					}
+					else $qualified = 1;
+
+					if ($qualified)
+					{
+						foreach($defval as $paramkey => $paramval)
+						{
+							// Add property 'required' on input
+							print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
+						}
+					}
+				}
+				foreach($user->default_values[$relativepathstring]['mandatory'] as $defkey => $defval)
+				{
+					$qualified = 0;
+					if ($defkey != '_noquery_')
+					{
+						$tmpqueryarraytohave=explode('&', $defkey);
+						$foundintru=0;
+						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						{
+							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+						}
+						if (! $foundintru) $qualified=1;
+						//var_dump($defkey.'-'.$qualified);
+					}
+					else $qualified = 1;
+
+					if ($qualified)
+					{
+						foreach($defval as $paramkey => $paramval)
+						{
+							// Add property 'required' on input
+							print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+							print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";		// required on a select works only if key is "", this does not happen in Dolibarr
+						}
+					}
+				}
+			}
+
+			// Google Analytics
+			// TODO Add a hook here
 			if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 			{
 				if (($conf->dol_use_jmobile != 4))
