@@ -953,6 +953,8 @@ if (empty($reshook))
 
 							if($facture_source->type == Facture::TYPE_SITUATION)
 							{
+							    $source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id 
+							    $line->fk_prev_id  = $line->id; // Credit note line need to be linked to the situation invoice it is create from
 
 							    if(!empty($facture_source->tab_previous_situation_invoice))
 							    {
@@ -976,7 +978,7 @@ if (empty($reshook))
 							        $maxPrevSituationPercent = 0;
 							        foreach($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
 							        {
-							            if($prevLine->id == $line->fk_prev_id)
+							            if($prevLine->id == $source_fk_prev_id)
 							            {
 							                $maxPrevSituationPercent = max($maxPrevSituationPercent,$prevLine->situation_percent);
 
@@ -1534,7 +1536,8 @@ if (empty($reshook))
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
 						$line->fetch_optionals($line->id);
-
+						$line->situation_percent =  $line->get_prev_progress($object->id); // get good progress including credit note 
+						
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
 						if ($line->fk_remise_except)
 						{
