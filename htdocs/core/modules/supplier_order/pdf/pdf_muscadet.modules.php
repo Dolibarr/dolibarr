@@ -110,7 +110,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 	/**
 	 * Issuer
-	 * @var Objet societe qui emet
+	 * @var Company object that emits
 	 */
 	public $emetteur;
 

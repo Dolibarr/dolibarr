@@ -117,9 +117,9 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 	/**
 	 * @var bool Situation invoice type

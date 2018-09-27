@@ -497,6 +497,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 }
 
 hr { border: 0; border-top: 1px solid #ccc; }
+.tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
 	margin-bottom: 0;
@@ -4430,7 +4431,7 @@ td.gminorheading {
 .ecmfiletree {
 	width: 99%;
 	height: 99%;
-	background: #FFF;
+	/* background: #FFF; */
 	padding-left: 2px;
 	font-weight: normal;
 }

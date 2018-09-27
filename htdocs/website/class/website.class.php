@@ -1,10 +1,9 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +157,7 @@ class Website extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'fk_user_create,';
+		$sql.= 'fk_user_creat,';
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
 		$sql .= ') VALUES (';
@@ -168,7 +167,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->status)?'1':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
-		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
+		$sql .= ' '.(! isset($this->fk_user_creat)?$user->id:$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
 		$sql .= ')';
@@ -227,7 +226,7 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
-		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -253,7 +252,7 @@ class Website extends CommonObject
 				$this->status = $obj->status;
 				$this->fk_default_home = $obj->fk_default_home;
 				$this->virtualhost = $obj->virtualhost;
-				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -317,7 +316,7 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
-		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -357,7 +356,7 @@ class Website extends CommonObject
 				$line->status = $obj->status;
 				$line->fk_default_home = $obj->fk_default_home;
 				$line->virtualhost = $obj->virtualhost;
-				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
@@ -639,10 +638,11 @@ class Website extends CommonObject
 		    if (! $error)
 		    {
 		    	$filetpl=$pathofwebsitenew.'/page'.$newidforhome.'.tpl.php';
+		    	$filewrapper=$pathofwebsitenew.'/wrapper.php';
 
 		    	// Generate the index.php page to be the home page
 		    	//-------------------------------------------------
-		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl);
+		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 		    }
 		}
 
@@ -769,7 +769,7 @@ class Website extends CommonObject
 		$this->status = '';
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
-		$this->fk_user_create = $user->id;
+		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
 		$this->date_creation = dol_now();
 		$this->tms = dol_now();
@@ -783,7 +783,7 @@ class Website extends CommonObject
 	 */
 	function exportWebSite()
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$website = $this;
 
@@ -904,6 +904,9 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 			$line.= "'".$this->db->escape(str_replace(array("\r\n","\r","\n"), "__N__", $stringtoexport))."', ";	// Replace \r \n to have record on 1 line
 
 			$stringtoexport = $objectpageold->content;
@@ -912,6 +915,9 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 			$line.= "'".$this->db->escape($stringtoexport)."'";		// Replace \r \n to have record on 1 line
 			$line.= ");";
 			$line.= "\n";
@@ -951,7 +957,7 @@ class Website extends CommonObject
 	 */
 	function importWebSite($pathtofile)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$error = 0;
 
@@ -1000,10 +1006,14 @@ class Website extends CommonObject
 		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
 		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
 		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
+		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
+		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
+		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
 		$this->db->begin();
 
+		// Search the $maxrowid because we need it later
 		$sqlgetrowid='SELECT MAX(rowid) as max from '.MAIN_DB_PREFIX.'website_page';
 		$resql=$this->db->query($sqlgetrowid);
 		if ($resql)
@@ -1012,7 +1022,8 @@ class Website extends CommonObject
 			$maxrowid=$obj->max;
 		}
 
-		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);
+		// Load sql record
+		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);	// The maxrowid of table is searched into this function two
 		if ($runsql <= 0)
 		{
 			$this->errors[]='Failed to load sql file '.$sqlfile;
@@ -1035,13 +1046,19 @@ class Website extends CommonObject
 					$newid = ($reg[2] + $maxrowid);
 					$aliasesarray = explode(',', $reg[3]);
 
+					$objectpagestatic->fetch($newid);
+
 					dol_syslog("Found ID ".$oldid." to replace with ID ".$newid." and shortcut aliases to create: ".$reg[3]);
 
 					dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
 
+					// The move is not enough, so we regenerate page
+					$filetpl=$conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
+					dolSavePageContent($filetpl, $object, $objectpagestatic);
+
+					// Regenerate alternative aliases pages
 					foreach($aliasesarray as $aliasshortcuttocreate)
 					{
-						$objectpagestatic->id = $newid;
 						$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.$aliasshortcuttocreate.'.php';
 						dolSavePageAlias($filealias, $object, $objectpagestatic);
 					}

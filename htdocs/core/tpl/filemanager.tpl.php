@@ -38,15 +38,18 @@ if (empty($module)) $module='ecm';
 
 $permtoadd = 0;
 $permtoupload = 0;
+$showroot = 0;
 if ($module == 'ecm')
 {
 	$permtoadd = $user->rights->ecm->setup;
 	$permtoupload = $user->rights->ecm->upload;
+	$showroot = 0;
 }
 if ($module == 'medias')
 {
 	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
 	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$showroot = 1;
 }
 
 
@@ -69,29 +72,25 @@ if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->us
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-//if (preg_match('/\/ecm/', $_SERVER['PHP_SELF'])) {
-//if ($module == 'ecm') {
-
-	if ($permtoadd)
-	{
-		print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($websitekey?'&website='.$websitekey:'').($pageid?'&pageid='.$pageid:'').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-	    print '</a>';
-	}
-	else
-	{
-	    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-	    print '</a>';
-	}
-	if ($module == 'ecm')
-	{
-		$tmpurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-		print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-		print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
-		print '</a>';
-	}
-//}
+if ($permtoadd)
+{
+	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($websitekey?'&website='.$websitekey:'').($pageid?'&pageid='.$pageid:'').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+    print '</a>';
+}
+else
+{
+    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
+    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+    print '</a>';
+}
+if ($module == 'ecm')
+{
+	$tmpurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
+	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
+	print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+	print '</a>';
+}
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';
@@ -148,7 +147,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left" colspan="6">';
+    print '<th class="liste_titre" align="left">';
     print '&nbsp;'.$langs->trans("ECMSections");
 	print '</th></tr>';
 
@@ -159,9 +158,17 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
     if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
-        print '<tr><td colspan="6">';
+    	// Show the link to "Root"
+    	if ($showroot)
+    	{
+    		print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">'.$langs->trans("Root").'</a></div></td></tr>';
+    	}
 
-    	// Show filemanager tree (will be filled by call of ajax enablefiletreeajax.tpl.php that execute ajaxdirtree.php)
+
+
+    	print '<tr><td>';
+
+    	// Show filemanager tree (will be filled by call of ajax /ecm/tpl/enablefiletreeajax.tpl.php that execute ajaxdirtree.php)
 	    print '<div id="filetree" class="ecmfiletree"></div>';
 
 	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
@@ -170,7 +177,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
     }
     else
     {
-        print '<tr><td colspan="6" style="padding-left: 20px">';
+        print '<tr><td style="padding-left: 20px">';
 
         $_POST['modulepart'] = $module;
         $_POST['openeddir'] = GETPOST('openeddir');

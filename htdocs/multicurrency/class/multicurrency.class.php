@@ -20,15 +20,14 @@
  */
 
 /**
- * \file    dev/skeletons/skeleton_class.class.php
- * \ingroup mymodule othermodule1 othermodule2
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \file    htdocs/multicurrency/class/multicurrency.class.php
+ * \ingroup multicurrency
+ * \brief   This file is a CRUD class file (Create/Read/Update/Delete) for multicurrency
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 /**
  * Class Currency

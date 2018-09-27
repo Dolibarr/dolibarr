@@ -1982,7 +1982,8 @@ class Facture extends CommonInvoice
 
 							if (! dol_delete_file($file,0,0,0,$this)) // For triggers
 							{
-								$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+								$langs->load("errors");
+								$this->error=$langs->trans("ErrorFailToDeleteFile",$file);
 								$this->db->rollback();
 								return 0;
 							}
@@ -1991,7 +1992,8 @@ class Facture extends CommonInvoice
 						{
 							if (! dol_delete_dir_recursive($dir)) // For remove dir and meta
 							{
-								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+								$langs->load("errors");
+								$this->error=$langs->trans("ErrorFailToDeleteDir",$dir);
 								$this->db->rollback();
 								return 0;
 							}

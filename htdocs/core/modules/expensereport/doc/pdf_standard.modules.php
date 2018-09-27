@@ -107,9 +107,9 @@ class pdf_standard extends ModeleExpenseReport
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 
 	/**

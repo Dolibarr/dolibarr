@@ -27,9 +27,9 @@ CREATE TABLE llx_website
 	status		  integer DEFAULT 1,
 	fk_default_home integer, 
 	virtualhost   varchar(255), 
-    fk_user_create integer,
-    fk_user_modif  integer,
-    date_creation  datetime,
-	tms            timestamp,
-    import_key     varchar(14)      -- import key	
+    fk_user_creat integer,
+    fk_user_modif integer,
+    date_creation datetime,
+	tms           timestamp,
+    import_key    varchar(14)      -- import key	
 ) ENGINE=innodb;
