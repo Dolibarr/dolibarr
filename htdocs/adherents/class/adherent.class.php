@@ -2628,6 +2628,7 @@ class Adherent extends CommonObject
 					// Send reminder email
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+					// Load traductions files requiredby by page
 					$outputlangs->loadLangs(array("main", "members"));
 					dol_syslog("sendReminderForExpiredSubscription Language set to ".$outputlangs->defaultlang);
 
