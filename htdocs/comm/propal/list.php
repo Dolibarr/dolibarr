@@ -83,12 +83,14 @@ $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $search_day=GETPOST("search_day","int");
 $search_month=GETPOST("search_month","int");
 $search_year=GETPOST("search_year","int");
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -384,6 +386,7 @@ if ($resql)
 	if ($search_zip)		 $param.='&search_zip='.urlencode($search_zip);
 	if ($socid > 0)          $param.='&socid='.urlencode($socid);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+	if ($search_product_category != '')                     $param.='&search_product_category='.$search_product_category;
 
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)

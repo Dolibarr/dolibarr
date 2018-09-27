@@ -4524,7 +4524,7 @@ abstract class CommonObject
 			{
 				if (is_array($params) && count($params)>0) {
 					if (array_key_exists('colspan',$params)) {
-						$colspan=$params['colspan'];
+						$colspan=$params['colspan'] - 1;
 					}
 				}else {
 					$colspan='3';
@@ -4580,6 +4580,12 @@ abstract class CommonObject
 					}
 					if($extrafields->attribute_required[$key])
 						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$label.'</span>';
+
+					if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+					{
+						$out .= '<td>&nbsp;</td>';
+						$colspan--;
+					}
 
 					$out .= '<td>'.$langs->trans($label).'</td>';
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';

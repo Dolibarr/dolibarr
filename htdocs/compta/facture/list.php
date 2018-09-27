@@ -93,6 +93,8 @@ $year	= GETPOST('year','int');
 $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $option = GETPOST('option');
 if ($option == 'late') {
@@ -104,7 +106,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == 1) $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (! $sortorder) $sortorder='DESC';
@@ -563,6 +565,9 @@ if ($resql)
     if ($show_files)         $param.='&show_files=' .$show_files;
 	if ($option)             $param.="&option=".$option;
 	if ($optioncss != '')    $param.='&optioncss='.$optioncss;
+	if ($search_town)$param .= '&search_town='.urlencode($search_town);
+	if ($search_zip)$param .= '&search_zip='.urlencode($search_zip);
+
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
@@ -1009,6 +1014,9 @@ if ($resql)
             $facturestatic->ref=$obj->ref;
             $facturestatic->type=$obj->type;
             $facturestatic->statut=$obj->fk_statut;
+			$facturestatic->total_ttc=$obj->total_ttc;
+            $facturestatic->paye=$obj->paye;
+            $facturestatic->fk_soc=$obj->fk_soc;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
             $facturestatic->note_public=$obj->note_public;
             $facturestatic->note_private=$obj->note_private;
@@ -1017,7 +1025,13 @@ if ($resql)
             $totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
             $totaldeposits = $facturestatic->getSumDepositsUsed();
             $totalpay = $paiement + $totalcreditnotes + $totaldeposits;
-            $remaintopay = $obj->total_ttc - $totalpay;
+            $remaintopay = $facturestatic->total_ttc - $totalpay;
+			if($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {
+				$discount = new DiscountAbsolute($db);
+				$remaincreditnote = $discount->getAvailableDiscounts($obj->fk_soc, '', 'rc.fk_facture_source='.$facturestatic->id);
+				$remaintopay = -$remaincreditnote;
+				$totalpay = $facturestatic->total_ttc - $remaintopay;
+			}
 
             print '<tr class="oddeven">';
     		if (! empty($arrayfields['f.facnumber']['checked']))

@@ -51,6 +51,7 @@ $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_billed=GETPOST("search_billed",'int');
 $sall = GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
+$search_ref_customer=GETPOST("search_ref_customer");
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -141,6 +142,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_billed='';
     $viewstatut='';
     $search_array_options=array();
+	$search_ref_customer='';
 }
 
 if (empty($reshook))
@@ -267,6 +269,10 @@ if ($resql)
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
 	if ($search_company) $param.= "&amp;search_company=".$search_company;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+	if ($search_town)$param .= '&search_town='.urlencode($search_town);
+	if ($search_zip)$param .= '&search_zip='.urlencode($search_zip);
+	if ($search_ref_customer)$param .= '&search_ref_customer='.$search_ref_customer;
+	if ($viewstatut != '')$param .= '&viewstatut='.$viewstatut;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{

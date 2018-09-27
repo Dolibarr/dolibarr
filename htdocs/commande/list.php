@@ -74,6 +74,8 @@ $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
@@ -86,7 +88,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -627,6 +629,13 @@ if ($resql)
     if ($show_files)            $param.='&show_files=' .$show_files;
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($billed != '')			$param.='&billed='.$billed;
+	if ($search_town != '')$param .= '&search_town='.$search_town;
+	if ($search_zip != '')$param .= '&search_zip='.$search_zip;
+	if ($search_state != '')$param .= '&search_state='.$search_state;
+	if ($search_country != '')$param .= '&search_country='.$search_country;
+	if ($search_type_thirdparty != '')$param .= '&search_type_thirdparty='.$search_type_thirdparty;
+	if ($search_product_category != '')$param .= '&search_product_category='.$search_product_category;
+
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{

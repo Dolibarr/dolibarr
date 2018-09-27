@@ -401,7 +401,7 @@ if (empty($reshook))
 	    			$localtax2_tx,
 	    			$idprod,
 	    			$productsupplier->product_fourn_price_id,
-	    			$productsupplier->fourn_ref,
+	    			$productsupplier->ref_supplier,
 	    			$remise_percent,
 	    			'HT',
 	    			$pu_ttc,
@@ -1341,6 +1341,8 @@ if ($action=='create')
 	print load_fiche_titre($langs->trans('NewOrder'));
 
 	dol_htmloutput_events();
+
+	$currency_code = $conf->currency;
 
 	$societe='';
 	if ($socid>0)

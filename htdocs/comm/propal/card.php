@@ -79,6 +79,7 @@ $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid','int');
+$projectid = GETPOST('projectid','int');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -1320,7 +1321,7 @@ if ($action == 'create')
 			}
 			$objectsrc->fetch_thirdparty();
 
-			$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 			$ref_int = (! empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
 
@@ -1450,7 +1451,7 @@ if ($action == 'create')
     // Bank Account
     if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && ! empty($conf->banque->enabled)) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td>';
-        $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+        $form->select_comptes($soc->fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
     }
 
@@ -1488,9 +1489,6 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0)
 	{
-		$projectid = GETPOST('projectid')?GETPOST('projectid'):0;
-		if ($origin == 'project') $projectid = ($originid ? $originid : 0);
-
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td>';
