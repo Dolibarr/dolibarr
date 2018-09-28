@@ -2930,7 +2930,9 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
+	 *	Fetch array of objects linked to current object (object of enabled modules only). Links are loaded into
+	 *		this->linkedObjectsIds array and
+	 *		this->linkedObjects array if $loadalsoobjects = 1
 	 *  Possible usage for parameters:
 	 *  - all parameters empty -> we look all link to current object (current object can be source or target)
 	 *  - source id+type -> will get target list linked to source
@@ -2938,17 +2940,18 @@ abstract class CommonObject
 	 *  - source id+type + target type -> will get target list of the type
 	 *  - target id+type + target source -> will get source list of the type
 	 *
-	 *	@param	int		$sourceid		Object source id (if not defined, id of object)
-	 *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
-	 *	@param  int		$targetid		Object target id (if not defined, id of object)
-	 *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
-	 *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
-	 *  @param  int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
-	 *  @param  string	$orderby		SQL 'ORDER BY' clause
-	 *	@return int						<0 if KO, >0 if OK
+	 *	@param	int		$sourceid			Object source id (if not defined, id of object)
+	 *	@param  string	$sourcetype			Object source type (if not defined, element name of object)
+	 *	@param  int		$targetid			Object target id (if not defined, id of object)
+	 *	@param  string	$targettype			Object target type (if not defined, elemennt name of object)
+	 *	@param  string	$clause				'OR' or 'AND' clause used when both source id and target id are provided
+	 *  @param  int		$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
+	 *  @param  string	$orderby			SQL 'ORDER BY' clause
+	 *  @param	int		$loadalsoobjects	Load also array this->linkedObjects (Use 0 to increase performances)
+	 *	@return int							<0 if KO, >0 if OK
 	 *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
 	 */
-	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1,$orderby='sourcetype')
+	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1,$orderby='sourcetype',$loadalsoobjects=1)
 	{
 		global $conf;
 
@@ -2977,10 +2980,10 @@ abstract class CommonObject
 		$targettype = (! empty($targettype) ? $targettype : $this->element);
 
 		/*if (empty($sourceid) && empty($targetid))
-        {
-        	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
-        	return -1;
-        }*/
+		 {
+		 dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
+		 return -1;
+		 }*/
 
 		// Links between objects are stored in table element_element
 		$sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
@@ -3042,7 +3045,8 @@ abstract class CommonObject
 
 			if (! empty($this->linkedObjectsIds))
 			{
-				foreach($this->linkedObjectsIds as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
+				$tmparray = $this->linkedObjectsIds;
+				foreach($tmparray as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
 					$module = $element = $subelement = $objecttype;
@@ -3108,20 +3112,27 @@ abstract class CommonObject
 					// Here $module, $classfile and $classname are set
 					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
 					{
-						dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-						//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
-						if (class_exists($classname))
+						if ($loadalsoobjects)
 						{
-							foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
+							dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+							//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
+							if (class_exists($classname))
 							{
-								$object = new $classname($this->db);
-								$ret = $object->fetch($objectid);
-								if ($ret >= 0)
+								foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
 								{
-									$this->linkedObjects[$objecttype][$i] = $object;
+									$object = new $classname($this->db);
+									$ret = $object->fetch($objectid);
+									if ($ret >= 0)
+									{
+										$this->linkedObjects[$objecttype][$i] = $object;
+									}
 								}
 							}
 						}
+					}
+					else
+					{
+						unset($this->linkedObjectsIds[$objecttype]);
 					}
 				}
 			}
