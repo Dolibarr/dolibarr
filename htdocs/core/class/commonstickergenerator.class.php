@@ -219,7 +219,7 @@ abstract class CommonStickerGenerator
 	}
 
 	/**
-	 * protected Convert units (in to mm, mm to in)
+	 * Convert units (in to mm, mm to in)
 	 * $src and $dest must be 'in' or 'mm'
 	 *
 	 * @param int       $value  value
