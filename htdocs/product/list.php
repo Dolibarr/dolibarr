@@ -711,7 +711,8 @@ if ($resql)
 		if (! empty($arrayfields['p.ref']['checked']))
 		{
 			print '<td class="tdoverflowmax200">';
-			print $product_static->getNomUrl(1);
+			$pagination = 'page='.$page.'&limit='.$limit.'&contextpage='.$contextpage.'&type='.$type.'&search_type='.$search_type.'&sortfield='.$sortfield.'&sortorder='.$sortorder;
+			print $product_static->getNomUrl(1,'',0,-1,$pagination);
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 		}
