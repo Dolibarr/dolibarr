@@ -1212,7 +1212,7 @@ if (empty($reshook))
     	}
     }
 
-    if ($action == "updateligne" && $user->rights->expensereport->creer)
+    if ($action == "updateline" && $user->rights->expensereport->creer)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
@@ -1964,7 +1964,7 @@ else
 
 				print '<div style="clear: both;"></div>';
 
-				$actiontouse='updateligne';
+				$actiontouse='updateline';
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline') $actiontouse='addline';
 
 				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" method="post">';

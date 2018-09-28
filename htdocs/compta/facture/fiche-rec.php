@@ -744,7 +744,7 @@ if (empty($reshook))
 		}
 	}
 
-	elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('cancel','alpha'))
+	elseif ($action == 'updateline' && $user->rights->facture->creer && ! GETPOST('cancel','alpha'))
 	{
 		if (! $object->fetch($id) > 0)	dol_print_error($db);
 		$object->fetch_thirdparty();
@@ -1626,7 +1626,7 @@ else
 		// Lines
 		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
         	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
-        	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
+        	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
         	<input type="hidden" name="mode" value="">
         	<input type="hidden" name="id" value="' . $object->id . '">
         	';

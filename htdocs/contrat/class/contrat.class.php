@@ -1710,7 +1710,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::updateligne Erreur -2");
+				dol_syslog(get_class($this)."::updateline Erreur -2");
 				return -2;
 			}
 		}
@@ -1718,7 +1718,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::updateligne Erreur -1");
+			dol_syslog(get_class($this)."::updateline Erreur -1");
 			return -1;
 		}
 	}
