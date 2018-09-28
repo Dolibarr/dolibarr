@@ -50,7 +50,12 @@ class MouvementStock extends CommonObject
 	public $datem = '';
 	public $price;
 	public $fk_user_author;
-	public $label;
+
+	/**
+     * @var string stock movements label
+     */
+    public $label;
+
 	public $fk_origin;
 	public $origintype;
 	public $inventorycode;

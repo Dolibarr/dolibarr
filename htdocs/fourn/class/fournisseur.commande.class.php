@@ -3159,7 +3159,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
     // From llx_commande_fournisseurdet
     public $fk_parent_line;
     public $fk_facture;
+
+    /**
+     * @var string supplier order line label
+     */
     public $label;
+
     public $rang = 0;
     public $special_code = 0;
 
