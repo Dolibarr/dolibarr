@@ -3622,7 +3622,7 @@ class Product extends CommonObject
      *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1)
+	function getNomUrl($withpicto=0, $option='', $maxlength=0, $save_lastsearch_value=-1, $pagination='')
 	{
 		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -3713,6 +3713,11 @@ class Product extends CommonObject
         	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
+		
+		if($pagination != '')
+		{
+			$url.='&'.$pagination;
+		}
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
