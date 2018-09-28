@@ -20,8 +20,6 @@
  * \file    test/functional/TakePosFunctionalTest.php
  * \ingroup takepos
  * \brief   Example Selenium test.
- *
- * Put detailed description here.
  */
 
 namespace test\functional;
@@ -99,6 +97,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Global test setup
+	 *
+	 * @return	void
 	 */
 	public static function setUpBeforeClass()
 	{
@@ -106,6 +106,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Unit test setup
+	 *
+	 * @return	void
 	 */
 	public function setUp()
 	{
@@ -115,6 +117,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Verify pre conditions
+	 *
+	 * @return	void
 	 */
 	protected function assertPreConditions()
 	{
@@ -122,6 +126,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Handle Dolibarr authentication
+	 *
+	 * @return	void
 	 */
 	private function authenticate()
 	{
@@ -142,6 +148,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Test enabling developer mode
+	 *
+	 * @return	void
 	 */
 	public function testEnableDeveloperMode()
 	{
@@ -154,11 +162,13 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		$this->byName('update')->click();
 		// Page reloaded, we need a new XPath
 		$main_features_level = $this->byXPath($main_features_level_path);
-		return $this->assertEquals('2', $main_features_level->value(), "MAIN_FEATURES_LEVEL value is 2");
+		$this->assertEquals('2', $main_features_level->value(), "MAIN_FEATURES_LEVEL value is 2");
 	}
 
 	/**
 	 * Test enabling the module
+	 *
+	 * @return	void
 	 *
 	 * @depends testEnableDeveloperMode
 	 */
@@ -179,11 +189,13 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		}
 		// Page reloaded, we need a new Xpath
 		$module_status_image = $this->byXPath($module_status_image_path);
-		return $this->assertContains('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
+		$this->assertContains('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
 	}
 
 	/**
 	 * Test access to the configuration page
+	 *
+	 * @return	void
 	 *
 	 * @depends testModuleEnabled
 	 */
@@ -191,11 +203,13 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/takepos/admin/setup.php');
 		$this->authenticate();
-		return $this->assertContains('takepos/admin/setup.php', $this->url(), 'Configuration page');
+		$this->assertContains('takepos/admin/setup.php', $this->url(), 'Configuration page');
 	}
 
 	/**
 	 * Test access to the about page
+	 *
+	 * @return	void
 	 *
 	 * @depends testConfigurationPage
 	 */
@@ -203,11 +217,13 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/takepos/admin/about.php');
 		$this->authenticate();
-		return $this->assertContains('takepos/admin/about.php', $this->url(), 'About page');
+		$this->assertContains('takepos/admin/about.php', $this->url(), 'About page');
 	}
 
 	/**
 	 * Test about page is rendering Markdown
+	 *
+	 * @return	void
 	 *
 	 * @depends testAboutPage
 	 */
@@ -215,7 +231,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/takepos/admin/about.php');
 		$this->authenticate();
-		return $this->assertEquals(
+		$this->assertEquals(
 			'Dolibarr Module Template (aka My Module)',
 			$this->byTag('h1')->text(),
 			"Readme title"
@@ -225,17 +241,21 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	/**
 	 * Test box is properly declared
 	 *
+	 * @return	void
+	 *
 	 * @depends testModuleEnabled
 	 */
 	public function testBoxDeclared()
 	{
 		$this->url('/admin/boxes.php');
 		$this->authenticate();
-		return $this->assertContains('takeposwidget1', $this->source(), "Box enabled");
+		$this->assertContains('takeposwidget1', $this->source(), "Box enabled");
 	}
 
 	/**
 	 * Test trigger is properly enabled
+	 *
+	 * @return	void
 	 *
 	 * @depends testModuleEnabled
 	 */
@@ -243,7 +263,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		return $this->assertContains(
+		$this->assertContains(
 			'interface_99_modTakePos_TakePosTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
@@ -253,13 +273,15 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	/**
 	 * Test trigger is properly declared
 	 *
+	 * @return	void
+	 *
 	 * @depends testTriggerDeclared
 	 */
 	public function testTriggerEnabled()
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		return $this->assertContains(
+		$this->assertContains(
 			'tick.png',
 			$this->byXPath('//td[text()="interface_99_modTakePos_MyTrigger.class.php"]/following::img')->attribute('src'),
 			"Trigger enabled"
@@ -268,6 +290,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Verify post conditions
+	 *
+	 * @return	void
 	 */
 	protected function assertPostConditions()
 	{
@@ -275,6 +299,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Unit test teardown
+	 *
+	 * @return	void
 	 */
 	public function tearDown()
 	{
@@ -282,6 +308,8 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Global test teardown
+	 *
+	 * @return	void
 	 */
 	public static function tearDownAfterClass()
 	{
