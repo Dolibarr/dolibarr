@@ -101,7 +101,7 @@ class modTakePos extends DolibarrModules
 		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'always'=>'modCategorie', 'FR'=>'modBlockedLog');			// List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->langfiles = array("takepos@takepos");
+		$this->langfiles = array("cashdesk");
 		$this->phpmin = array(5,43);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4,0);	// Minimum version of Dolibarr required by module
 		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -230,7 +230,7 @@ class modTakePos extends DolibarrModules
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
 								'url'=>'/takepos/takepos.php',
-								'langs'=>'takepos@takepos',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'$conf->takepos->enabled',	// Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
@@ -246,7 +246,7 @@ class modTakePos extends DolibarrModules
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'takepos_myobject_list',
 								'url'=>'/takepos/myobject_list.php',
-								'langs'=>'takepos@takepos',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'$conf->takepos->enabled',  // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
@@ -258,7 +258,7 @@ class modTakePos extends DolibarrModules
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'takepos_myobject_new',
 								'url'=>'/takepos/myobject_page.php?action=create',
-								'langs'=>'takepos@takepos',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'$conf->takepos->enabled',  // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
@@ -272,7 +272,7 @@ class modTakePos extends DolibarrModules
 
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
-		$langs->load("takepos@takepos");
+		$langs->load("cashdesk");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='myobject@takepos';
@@ -300,16 +300,6 @@ class modTakePos extends DolibarrModules
 	public function init($options='')
 	{
 		$this->_load_tables('/takepos/sql/');
-
-		// Create extrafields
-		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
-
-		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'takepos@takepos', '$conf->takepos->enabled');
-		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'takepos@takepos', '$conf->takepos->enabled');
-		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'takepos@takepos', '$conf->takepos->enabled');
-		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1 '', 0, 0, '', '', 'takepos@takepos', '$conf->takepos->enabled');
-		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'takepos@takepos', '$conf->takepos->enabled');
 
 		$sql = array();
 

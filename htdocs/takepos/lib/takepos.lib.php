@@ -30,7 +30,7 @@ function takeposAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("takepos@takepos");
+	$langs->load("cashdesk");
 
 	$h = 0;
 	$head = array();

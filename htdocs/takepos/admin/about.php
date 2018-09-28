@@ -28,9 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once '../lib/takepos.lib.php';
 
 // Translations
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("takepos@takepos");
+$langs->loadLangs(array("errors","admin","cashdesk"));
 
 // Access control
 if (! $user->admin) {
