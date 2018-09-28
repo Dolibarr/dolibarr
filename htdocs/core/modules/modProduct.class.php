@@ -132,8 +132,8 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
         $r++;
-		
-		$this->rights[$r][0] = 39;	
+
+		$this->rights[$r][0] = 39;
 		$this->rights[$r][1] = 'Ignore minimum price';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
