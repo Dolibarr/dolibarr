@@ -76,6 +76,19 @@ $duration_value = GETPOST('duration_value');
 $duration_unit = GETPOST('duration_unit');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (! $sortfield) $sortfield="p.ref";
+if (! $sortorder) $sortorder="ASC";
+
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'productservicelist';
+if ((string) $type == '1') { $contextpage='servicelist'; if ($search_type=='') $search_type='1'; }
+if ((string) $type == '0') { $contextpage='productlist'; if ($search_type=='') $search_type='0'; }
+
 $object = new Product($db);
 $object->type = $type;	// so test later to fill $usercancxxx is correct
 $extrafields = new ExtraFields($db);
@@ -1596,8 +1609,10 @@ else
             $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 
             dol_fiche_head($head, 'card', $titre, -1, $picto);
+			
+			$pagination = 'page='.$page.'&limit='.$limit.'&contextpage='.$contextpage.'&type='.$type.'&search_type='.$search_type.'&sortfield='.$sortfield.'&sortorder='.$sortorder;
 
-            $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+            $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'&'.$pagination.'">'.$langs->trans("BackToList").'</a>';
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
