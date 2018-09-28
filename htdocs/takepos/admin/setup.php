@@ -248,7 +248,7 @@ print '</tr>';
 print "<tr class=\"oddeven\">\n";
 $url='http://www.takepos.com';
 print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
-print '<td>TakePOS official developers</td>';
+print '<td>TakePOS original developers</td>';
 print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';
 
