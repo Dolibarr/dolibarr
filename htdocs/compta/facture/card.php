@@ -4566,9 +4566,20 @@ else if ($id > 0 || ! empty($ref))
 
 		// Retained warranty : usualy use on construction industry
 		if(!empty($object->situation_final) && !empty($object->retained_warranty) && $displayWarranty){
+		    
 		    // Billed - retained warranty
-		    $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
-		    $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty ;
+		    if($object->type == Facture::TYPE_SITUATION)
+		    {
+		        $retainedWarranty = $total_global_ttc * $object->retained_warranty / 100;
+		        $billedWithRetainedWarranty = $total_global_ttc - $retainedWarranty ;
+		    }
+		    else
+		    {
+		        // Because one day retained warranty could be used on standard invoices
+		        $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
+		        $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty ;
+		    }   
+		    
 		    print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')) . ' :</td><td align="right">' . price($billedWithRetainedWarranty) . '</td><td>&nbsp;</td></tr>';
 		    
 		    // retained warranty
