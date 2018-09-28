@@ -62,6 +62,7 @@ if (GETPOST('action','alpha') == 'set')
 	$res = dolibarr_set_const($db,"TAKEPOS_BAR_RESTAURANT", GETPOST('TAKEPOS_BAR_RESTAURANT','alpha'),'chaine',0,'',$conf->entity);
     $res = dolibarr_set_const($db,"TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER','alpha'),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"TAKEPOS_FLOORS", GETPOST('TAKEPOS_FLOORS','alpha'),'chaine',0,'',$conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level','alpha'));
 
@@ -176,14 +177,14 @@ if (! empty($conf->service->enabled))
 // Use Takepos printing
 $var=! $var;
 print '<tr class="oddeven"><td>';
-print $langs->trans("DolibarrReceiptPrinter").' TakeBOX (<a href="http://en.takepos.com/takebox">'.$langs->trans("TakeboxNecesary").'</a>)';
+print $langs->trans("DirectPrint").' (<a href="http://www.jposbox.org">'.$langs->trans("TakeboxNecesary").'</a>)';
 print '<td colspan="2">';
 print $form->selectyesno("TAKEBOX",$conf->global->TAKEBOX,1);
 print "</td></tr>\n";
 
 if ($conf->global->TAKEBOX){
     print '<tr class="oddeven value"><td>';
-    print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/takebox">'.$langs->trans("TakeboxNecesary").'</a>)';
+    print $langs->trans("IPAddress").' (<a href="http://www.jposbox.org">'.$langs->trans("TakeboxNecesary").'</a>)';
     print '<td colspan="2">';
     print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
     print '</td></tr>';
@@ -197,7 +198,15 @@ print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_BAR_RESTAURANT",$conf->global->TAKEPOS_BAR_RESTAURANT,1);
 print "</td></tr>\n";
 
-if ($conf->global->TAKEPOS_BAR_RESTAURANT and $conf->global->TAKEBOX){
+if ($conf->global->TAKEPOS_BAR_RESTAURANT){
+	print '<tr class="oddeven value"><td>';
+    print $langs->trans("Floors");
+    print '<td colspan="2">';
+    print '<input type="text" size="20" id="TAKEPOS_FLOORS" name="TAKEPOS_FLOORS" value="';
+	if ($conf->global->TAKEPOS_FLOORS=="") print "Main,Terrace"; else print $conf->global->TAKEPOS_FLOORS;
+	print '">';
+    print '</td></tr>';
+	
     print '<tr class="oddeven value"><td>';
     print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
     print '<td colspan="2">';
@@ -219,13 +228,6 @@ print "<br><table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">
 print "<tr class=\"liste_titre\">\n";
 print '<td colspan="2">TakePOS Marketplace</td>';
 print '<td>'.$langs->trans("URL").'</td>';
-print '</tr>';
-
-print "<tr class=\"oddeven\">\n";
-$url='https://www.dolistore.com/en/modules/980-TakePOS-7-mobile.html';
-print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/marketplace/takeposmobile.jpg"></a></td>';
-print '<td>TakePOS for mobile devices</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 print '</tr>';
 
 print "<tr class=\"oddeven\">\n";
