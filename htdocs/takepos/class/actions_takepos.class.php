@@ -217,7 +217,4 @@ class ActionsTakePos
 
 		return $ret;
 	}
-
-	/* Add here any other hooked methods... */
-
 }

@@ -85,7 +85,8 @@ if ($query=="cat")
 }
 else if ($query=="pro")
 {
-	require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+
 	$objProd = new Product($db);
 	$objProd->fetch($id);
 
