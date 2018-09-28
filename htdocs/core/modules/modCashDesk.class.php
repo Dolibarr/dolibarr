@@ -81,7 +81,6 @@ class modCashDesk extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'cashdesk';
 		$r=0;
 
 		$r++;
