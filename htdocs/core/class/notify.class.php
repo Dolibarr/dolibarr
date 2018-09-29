@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,33 +31,13 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
  */
 class Notify
 {
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+	var $id;
+	var $db;
+	var $error;
+	var $errors=array();
 
 	var $author;
-
-	/**
-	 * @var string Ref
-	 */
-	public $ref;
-
+	var $ref;
 	var $date;
 	var $duree;
 	var $note;
@@ -339,7 +320,12 @@ class Notify
 
 		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
-
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		if (! empty($object->fk_project))
+		{
+			$proj = new Project($this->db);
+			$proj->fetch($object->fk_project);
+		}
 		// Check notification per third party
 		$sql = "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
@@ -390,7 +376,7 @@ class Notify
 							$outputlangs->setDefaultLang($obj->default_lang);
 						}
 
-						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+						$subject = '['.$mysoc->name.']['.$proj->title.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
@@ -572,7 +558,7 @@ class Notify
 				$link = '';
 				$num++;
 
-				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+				$subject = '['.$mysoc->name.'] ['.$proj->title.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':
@@ -734,5 +720,5 @@ class Notify
 		if (! $error) return $num;
 		else return -1 * $error;
 	}
-}
 
+}
