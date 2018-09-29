@@ -53,7 +53,12 @@ class Notify
     public $errors = array();
 
 	var $author;
-	var $ref;
+	
+     /**
+      * @var string Ref
+      */
+    public $ref;
+	
 	var $date;
 	var $duree;
 	var $note;
