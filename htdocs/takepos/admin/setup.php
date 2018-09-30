@@ -94,7 +94,6 @@ print '<br>';
 
 
 // Mode
-$var=true;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
@@ -165,7 +164,6 @@ if (! empty($conf->stock->enabled))
 
 if (! empty($conf->service->enabled))
 {
-    $var=! $var;
     print '<tr class="oddeven"><td>';
     print $langs->trans("CashdeskShowServices");
     print '<td colspan="2">';
@@ -174,7 +172,6 @@ if (! empty($conf->service->enabled))
 }
 
 // Use Takepos printing
-$var=! $var;
 print '<tr class="oddeven"><td>';
 print $langs->trans("DolibarrReceiptPrinter").' TakeBOX (<a href="http://en.takepos.com/takebox">'.$langs->trans("TakeboxNecesary").'</a>)';
 print '<td colspan="2">';
@@ -190,7 +187,6 @@ if ($conf->global->TAKEBOX){
 }
 
 // Bar Restaurant mode
-$var=! $var;
 print '<tr class="oddeven"><td>';
 print 'Bar Restaurant';
 print '<td colspan="2">';
