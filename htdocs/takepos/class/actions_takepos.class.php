@@ -113,8 +113,7 @@ class ActionsTakePos
 	    if (in_array($parameters['currentcontext'], array('invoicecard')))		// do something only for the context 'somecontext1' or 'somecontext2'
 	    {
 
-			if (file_exists("../../takepos/receipt.php")) $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
-			if (file_exists("../../custom/takepos/receipt.php")) $receipt_url=DOL_URL_ROOT."/custom/takepos/receipt.php";
+			$receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
 	        print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('Ticket') .'</a></div>';
 	    }
 
