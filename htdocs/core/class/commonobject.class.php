@@ -976,7 +976,7 @@ abstract class CommonObject
 	 *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-	 *    @return	array		            Array of contacts
+	 *    @return	array|int		        Array of contacts, -1 if error
 	 */
 	function liste_contact($statut=-1,$source='external',$list=0,$code='')
 	{
@@ -5271,37 +5271,34 @@ abstract class CommonObject
 		$val=$this->fields[$key];
 
 		$out='';
-                $type='';
-                $param['options']=array();
-                $size =$this->fields[$key]['size'];
-                // Because we work on extrafields
-                if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
-                    $param['options']=array($reg[1].':'.$reg[2]=>'N');
-                    $type ='link';
-                }else if(preg_match('/^link:(.*):(.*)/i', $val['type'], $reg)){
-                    $param['options']=array($reg[1].':'.$reg[2]=>'N');
-                    $type ='link';
-                }else if(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)){
-
-                    $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
-                    $type ='sellist';
-                }else if(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)){
-
-                    $param['options']=array();
-                    $type ='varchar';
-                    $size=$reg[1];
-                }else if(preg_match('/varchar/', $val['type'])){
-
-                    $param['options']=array();
-                    $type ='varchar';
-                }else if(is_array($this->fields[$key]['arrayofkeyval'])){
-
-                    $param['options']=$this->fields[$key]['arrayofkeyval'];
-                    $type ='select';
-                }else {
-                    $param['options']=array();
-                    $type =$this->fields[$key]['type'];
-                }
+        $type='';
+        $param = array();
+        $param['options']=array();
+        $size =$this->fields[$key]['size'];
+        // Because we work on extrafields
+        if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
+            $param['options']=array($reg[1].':'.$reg[2]=>'N');
+            $type ='link';
+        } elseif(preg_match('/^link:(.*):(.*)/i', $val['type'], $reg)) {
+            $param['options']=array($reg[1].':'.$reg[2]=>'N');
+            $type ='link';
+        } elseif(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+            $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
+            $type ='sellist';
+        } elseif(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)) {
+            $param['options']=array();
+            $type ='varchar';
+            $size=$reg[1];
+        } elseif(preg_match('/varchar/', $val['type'])) {
+            $param['options']=array();
+            $type ='varchar';
+        } elseif(is_array($this->fields[$key]['arrayofkeyval'])) {
+            $param['options']=$this->fields[$key]['arrayofkeyval'];
+            $type ='select';
+        } else {
+            $param['options']=array();
+            $type =$this->fields[$key]['type'];
+        }
 
 		$label=$this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
