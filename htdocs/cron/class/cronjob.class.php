@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 /**
- *	Crob Job class
+ *	Cron Job class
  */
 class Cronjob extends CommonObject
 {
@@ -53,7 +53,12 @@ class Cronjob extends CommonObject
     public $jobtype;
 	public $tms='';
 	public $datec='';
-	public $label;
+
+	/**
+     * @var string Cron Job label
+     */
+    public $label;
+
 	public $command;
 	public $classesname;
 	public $objectname;
@@ -1351,7 +1356,12 @@ class Cronjobline
 
 	public $tms='';
 	public $datec='';
-	public $label;
+
+	/**
+     * @var string Cron Job Line label
+     */
+    public $label;
+
 	public $jobtype;
 	public $command;
 	public $classesname;

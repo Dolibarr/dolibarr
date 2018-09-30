@@ -59,7 +59,7 @@ class Account extends CommonObject
 	public $rowid;
 
 	/**
-	 * Label
+	 * Account Label
 	 * @var string
 	 */
 	public $label;
