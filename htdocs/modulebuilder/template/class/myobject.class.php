@@ -116,7 +116,11 @@ class MyObject extends CommonObject
 	 */
 	public $entity;
 
-	public $label;
+	/**
+     * @var string label
+     */
+    public $label;
+
 	public $amount;
 	public $status;
 	public $date_creation;

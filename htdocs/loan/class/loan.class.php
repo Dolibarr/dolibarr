@@ -50,7 +50,12 @@ class Loan extends CommonObject
 
 	public $datestart;
 	public $dateend;
-	public $label;
+
+	/**
+     * @var string Loan label
+     */
+    public $label;
+
 	public $capital;
 	public $nbterm;
 	public $rate;
@@ -454,7 +459,7 @@ class Loan extends CommonObject
 
 		return $result;
 	}
-	
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
@@ -465,9 +470,9 @@ class Loan extends CommonObject
 	function initAsSpecimen()
 	{
 	    global $user, $langs, $conf;
-	    
+
 	    $now=dol_now();
-	    
+
 	    // Initialise parameters
 	    $this->id = 0;
 	    $this->fk_bank = 1;

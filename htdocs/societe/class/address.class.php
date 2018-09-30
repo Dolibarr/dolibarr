@@ -39,7 +39,12 @@ class Address
 	public $id;
 
 	public $type;
-	public $label;
+
+	/**
+     * @var string Address label
+     */
+    public $label;
+
 	public $socid;
 	public $name;
 	public $address;
@@ -510,7 +515,12 @@ class AddressLine
 
 	public $date_creation;
 	public $date_modification;
-	public $label;
+
+	/**
+     * @var string stock movements label
+     */
+    public $label;
+
 	public $name;
 	public $address;
 	public $zip;
