@@ -338,6 +338,12 @@ class Societe extends CommonObject
 	 */
 	public $code_compta;
 
+    /**
+     * Accounting code for client
+     * @var string
+     */
+    public $code_compta_client;
+
 	/**
 	 * Accounting code for suppliers
 	 * @var string
