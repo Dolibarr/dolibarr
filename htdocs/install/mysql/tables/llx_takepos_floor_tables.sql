@@ -15,12 +15,12 @@
 
 
 CREATE TABLE llx_takepos_floor_tables(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
-	entity INTEGER DEFAULT 1 NOT NULL,
-	label VARCHAR(255),
+    -- BEGIN MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    entity integer DEFAULT 1 NOT NULL,
+    label varchar(255),
     leftpos float,
-    toppos	float,
-    floor int(3)
-	-- END MODULEBUILDER FIELDS
+    toppos float,
+    floor smallint
+    -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

@@ -90,11 +90,11 @@ ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;
 
 
 CREATE TABLE llx_takepos_floor_tables(
-	rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
-	entity INTEGER DEFAULT 1 NOT NULL,
-	label VARCHAR(255),
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    entity integer DEFAULT 1 NOT NULL,
+    label varchar(255),
     leftpos float,
-    toppos	float,
-    floor int(3)
+    toppos float,
+    floor smallint
 ) ENGINE=innodb;
 
