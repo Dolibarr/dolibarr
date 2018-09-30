@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-$place = GETPOST('place');
+$place = GETPOST('place','int');
 if ($place=="") $place="0";
-$action = GETPOST('action');
+$action = GETPOST('action','alpha');
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk"));
 

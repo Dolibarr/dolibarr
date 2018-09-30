@@ -33,9 +33,9 @@ if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$category = GETPOST('category');
-$action = GETPOST('action');
-$term = GETPOST('term');
+$category = GETPOST('category','alpha');
+$action = GETPOST('action','alpha');
+$term = GETPOST('term','alpha');
 
 
 /*

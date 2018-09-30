@@ -42,9 +42,9 @@ if (! $user->rights->categorie->lire) accessforbidden();
 $id=GETPOST('id','int');
 $type=(GETPOST('type','aZ09') ? GETPOST('type','aZ09') : Categorie::TYPE_PRODUCT);
 $catname=GETPOST('catname','alpha');
-$action=GETPOST('action');
-$printer1=GETPOST('printer1');
-$printer2=GETPOST('printer2');
+$action=GETPOST('action','alpha');
+$printer1=GETPOST('printer1','alpha');
+$printer2=GETPOST('printer2','alpha');
 
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 

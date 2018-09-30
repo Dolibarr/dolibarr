@@ -30,7 +30,7 @@ $_GET['theme']="md"; // Force theme. MD theme provides better look and feel to T
 require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-$place = GETPOST('place');
+$place = GETPOST('place','int');
 
 
 /*

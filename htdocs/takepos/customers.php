@@ -37,16 +37,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories"));
+$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
-$idcustomer = GETPOST('idcustomer');
-$place = GETPOST('place');
+$idcustomer = GETPOST('idcustomer','int');
+$place = GETPOST('place','int');
+
 $_GET['optioncss'] = 'print';
+
+
+/*
+ * Actions
+ */
 
 if ($action=="change") {
     $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where facnumber='(PROV-POS-".$place.")'";

@@ -32,13 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 $langs->load("bills");
 $langs->load("cashdesk");
 
-$id = GETPOST('id');
-$action = GETPOST('action');
-$idproduct = GETPOST('idproduct');
-$place = GETPOST('place');
+$id = GETPOST('id','int');
+$action = GETPOST('action','alpha');
+$idproduct = GETPOST('idproduct','int');
+$place = GETPOST('place','int');
 $number = GETPOST('number');
 $idline = GETPOST('idline');
-$desc = GETPOST('desc');
+$desc = GETPOST('desc','alpha');
 $pay = GETPOST('pay');
 
 $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$place.")'";

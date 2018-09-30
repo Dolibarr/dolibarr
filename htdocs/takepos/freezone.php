@@ -29,7 +29,8 @@ require '../main.inc.php';	// Load $user and permissions
 
 $langs->load("bills");
 $langs->load("cashdesk");
-$place = GETPOST('place');
+
+$place = GETPOST('place','int');
 
 
 /*

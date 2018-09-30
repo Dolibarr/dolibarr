@@ -29,15 +29,15 @@ $_GET['theme']="md"; // Force theme. MD theme provides better look and feel to T
 
 require '../main.inc.php';	// Load $user and permissions
 
-$floor=GETPOST('floor');
+$floor=GETPOST('floor','alpha');
 if ($floor=="") $floor=1;
-$id = GETPOST('id');
-$action = GETPOST('action');
-$left = GETPOST('left');
-$top = GETPOST('top');
-$place = GETPOST('place');
+$id = GETPOST('id','int');
+$action = GETPOST('action','alpha');
+$left = GETPOST('left','alpha');
+$top = GETPOST('top','alpha');
+$place = GETPOST('place','int');
 $newname = GETPOST('newname');
-$mode = GETPOST('mode');
+$mode = GETPOST('mode','alpha');
 
 if ($action=="getTables"){
     $sql="SELECT * from ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
