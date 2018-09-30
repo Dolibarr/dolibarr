@@ -53,7 +53,7 @@ class modTakePos extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "portal";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = 90;
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -78,16 +78,16 @@ class modTakePos extends DolibarrModules
 		// for specific path of parts (eg: /takepos/core/modules/barcode)
 		// for specific css file (eg: /takepos/css/takepos.css.php)
 		$this->module_parts = array(
-		                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
-									'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
-									'substitutions' => 1,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
-									'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
-									'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
-									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
-									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
-									'hooks' => array('data'=>array('invoicecard'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-		                        );
+		    'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
+			'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
+			'substitutions' => 1,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
+			'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
+			'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
+		    'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
+			'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
+			'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
+			'hooks' => array('data'=>array('invoicecard'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+		);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/takepos/temp","/takepos/subdir");
