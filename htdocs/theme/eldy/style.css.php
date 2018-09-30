@@ -264,7 +264,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-.thumbstat, a.tab { font-weight: bold !important; }
+.thumbstat { font-weight: bold !important; }
 th a { font-weight: <?php echo ($useboldtitle?'bold':'normal'); ?> !important; }
 a.tab { font-weight: bold !important; }
 
@@ -5060,7 +5060,7 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
-	padding: 4px 8px 4px 8px;
+	padding: 7px 8px 7px 8px;
 	/* color: rgb(<?php print $colortext; ?>); */
 	color: #000;
 }
@@ -5078,7 +5078,7 @@ dl.dropdown {
 	color: #888;
 }
 .dropdown dd ul li a:hover {
-    background-color:#fff;
+    background-color:#eee;
 }
 
 

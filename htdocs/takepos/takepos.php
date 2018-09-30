@@ -36,10 +36,7 @@ $place = GETPOST('place');
 if ($place=="") $place="0";
 $action = GETPOST('action');
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("commercial");
+$langs->loadLangs(array("bills","orders","commercial","cashdesk"));
 
 
 /*

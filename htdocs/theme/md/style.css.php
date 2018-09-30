@@ -100,7 +100,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //$user->conf->THEME_ELDY_ENABLE_PERSONALIZED=0;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
-$useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
+$useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:0);
 $borderwidth=2;
 
 // Case of option always editable
@@ -257,7 +257,8 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-th a, .thumbstat, a.tab { font-weight: bold !important; }
+.thumbstat { font-weight: bold !important; }
+th a { font-weight: <?php echo ($useboldtitle?'bold':'normal'); ?> !important; }
 a.tab { font-weight: bold !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
@@ -4895,7 +4896,7 @@ dl.dropdown {
     box-shadow: 1px 1px 10px #aaa;
     display:none;
     right:0px;						/* pop is align on right */
-    padding: 2px 15px 2px 5px;
+    padding: 0 0 0 0;
     position:absolute;
     top:2px;
     list-style:none;
@@ -4905,8 +4906,11 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
-	padding: 4px;
+	padding: 7px 8px 7px 8px;
 	color: #000;
+}
+.dropdown dd ul li:hover {
+	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-right: 3px;
@@ -4919,7 +4923,7 @@ dl.dropdown {
 	color: #888;
 }
 .dropdown dd ul li a:hover {
-    background-color:#fff;
+    background-color: #eee;
 }
 
 
