@@ -3150,8 +3150,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow')
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow')
 			)) {
 			$fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
@@ -3195,6 +3195,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
 				$fakey = 'fa-arrows';
 			}
+			elseif ($pictowithoutext == 'listlight') {
+				$fakey = 'fa-download';
+				$facolor = '#999';
+				$marginleftonlyshort=1;
+			}
 			elseif ($pictowithoutext == 'printer') {
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
@@ -3203,6 +3208,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'resize') {
 				$fakey = 'fa-crop';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'note') {
+				$fakey = 'fa-sticky-note-o';
+				$facolor = '#999';
+				$marginleftonlyshort=1;
 			}
 			elseif ($pictowithoutext == 'uparrow') {
 				$fakey = 'fa-mail-forward';
