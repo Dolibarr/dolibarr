@@ -35,30 +35,30 @@ class Notify
      * @var int ID
      */
     public $id;
-	
+
     /**
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
     /**
      * @var string 	Error string
      * @see             errors
      */
     public $error;
-	
+
     /**
      * @var string[] Error codes (or messages)
      */
     public $errors = array();
 
 	var $author;
-	
+
      /**
       * @var string Ref
       */
     public $ref;
-	
+
 	var $date;
 	var $duree;
 	var $note;
@@ -397,7 +397,8 @@ class Notify
 							$outputlangs->setDefaultLang($obj->default_lang);
 						}
 
-						$subject = '['.$mysoc->name.']['.$proj->title.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+						$projtitle=(empty($proj->title)?'':$proj->title);
+						$subject = '['.$mysoc->name.']['.$projtitle.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
