@@ -56,7 +56,10 @@ foreach($object->fields as $key => $val)
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
-	print $object->showOutputField($val, $key, $value, '', '', '', 0);
+    if($val['fk_table']=='entity') $classpath='/multicompany/admin/multicompany.php';
+    elseif($val['fk_table']=='hrdirectory_hr_department') $classpath='/hrdirectory/hr_department_card.php';
+    print $object->showOutputFieldWithLinks($val,$key,(empty($val['is_id'])?$object->$key:$object),$classpath);
+//	print $object->showOutputFieldWithLinks($val, $key, $value);
 	//print dol_escape_htmltag($object->$key, 1, 1);
 	print '</td>';
 	print '</tr>';
