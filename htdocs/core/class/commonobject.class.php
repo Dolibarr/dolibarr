@@ -5866,38 +5866,37 @@ abstract class CommonObject
 	 */
 
     function showOutputFieldWithLinks($object,$key,$val,$obj,$linkpath='') {
-    if(!empty($val['fk_table'])&&!empty($obj->$key)){
-        $sql = "SELECT ".$val['show_field'];
-        $sql .= " FROM " . MAIN_DB_PREFIX .$val['fk_table'];
-        $sql .= " WHERE rowid=";
-        if(!empty($val['is_id']))$sql .= $obj->$key;
-        else $sql .= $obj->rowid;
+	    if(!empty($val['fk_table'])&&!empty($obj->$key)){
+		$sql = "SELECT ".$val['show_field'];
+		$sql .= " FROM " . MAIN_DB_PREFIX .$val['fk_table'];
+		$sql .= " WHERE rowid=";
+		if(!empty($val['is_id']))$sql .= $obj->$key;
+		else $sql .= $obj->rowid;
 
-        $resql = $this->db->query($sql);
-        if($resql){
-            $obj1 = $this->db->fetch_object($resql);
-            $value2show=$val['show_field'];
-            if(empty($linkpath)) {
-                $urlpath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/'.$val['fk_table'].'_card.php',1);
-                $syspath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/card.php');
-            }
-            else {
-                $urlpath=dol_buildpath($linkpath,1);
-                $syspath=dol_buildpath($linkpath);
-            }
-            if(file_exists($syspath)) {
-                $lien = '<a href="' . $urlpath . '?id='.(empty($val['is_id'])?$obj->rowid:$obj->$key).'" target="_blank">'.$obj1->$value2show.'</a>';
-                return $object->showOutputField($val, $key,$lien , '');
-            }
-            else {
-                return $object->showOutputField($val, $key, $obj1->$value2show, '');
-            }
-        }
-    }
-    else return $object->showOutputField($val, $key, $obj->$key, '');
-}
+		$resql = $this->db->query($sql);
+		if($resql){
+		    $obj1 = $this->db->fetch_object($resql);
+		    $value2show=$val['show_field'];
+		    if(empty($linkpath)) {
+			$urlpath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/'.$val['fk_table'].'_card.php',1);
+			$syspath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/card.php');
+		    }
+		    else {
+			$urlpath=dol_buildpath($linkpath,1);
+			$syspath=dol_buildpath($linkpath);
+		    }
+		    if(file_exists($syspath)) {
+			$lien = '<a href="' . $urlpath . '?id='.(empty($val['is_id'])?$obj->rowid:$obj->$key).'" target="_blank">'.$obj1->$value2show.'</a>';
+			return $object->showOutputField($val, $key,$lien , '');
+		    }
+		    else {
+			return $object->showOutputField($val, $key, $obj1->$value2show, '');
+		    }
+		}
+	    }
+	    else return $object->showOutputField($val, $key, $obj->$key, '');
+	}
 
->>>>>>> 037e83ac8b... New:show Output Field With Links with showOutputFieldWithLinks
 	/**
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
