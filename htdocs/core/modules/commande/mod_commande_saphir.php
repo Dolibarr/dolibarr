@@ -33,9 +33,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
  */
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string nom
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -45,7 +64,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -132,17 +151,17 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
+	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
     function commande_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

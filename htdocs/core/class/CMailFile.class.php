@@ -59,7 +59,11 @@ class CMailFile
 
 	var $eol;
 	var $eol2;
-	var $error='';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $smtps;			// Contains SMTPs object (if this method is used)
 	var $phpmailer;		// Contains PHPMailer object (if this method is used)
@@ -385,13 +389,17 @@ class CMailFile
 			// TODO if (! empty($moreinheader)) ...
 
 			// Give the message a subject
-			$this->message->setSubject($this->encodetorfc2822($subject));
+			try {
+				$result = $this->message->setSubject($subject);
+			} catch (Exception $e) {
+				$this->errors[] =  $e->getMessage();
+			}
 
 			// Set the From address with an associative array
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
 			if (! empty($from)) {
                 try {
-                    $this->message->setFrom($this->getArrayAddress($from));
+                	$result = $this->message->setFrom($this->getArrayAddress($from));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -400,7 +408,7 @@ class CMailFile
 			// Set the To addresses with an associative array
 			if (! empty($to)) {
                 try {
-                    $this->message->setTo($this->getArrayAddress($to));
+                	$result = $this->message->setTo($this->getArrayAddress($to));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -408,13 +416,17 @@ class CMailFile
 
 			if (! empty($replyto)) {
                 try {
-                    $this->message->SetReplyTo($this->getArrayAddress($replyto));
+                	$result = $this->message->SetReplyTo($this->getArrayAddress($replyto));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
             }
 
-			$this->message->setCharSet($conf->file->character_set_client);
+			try {
+				$result = $this->message->setCharSet($conf->file->character_set_client);
+			} catch (Exception $e) {
+				$this->errors[] =  $e->getMessage();
+			}
 
 			if (! empty($this->html))
 			{
@@ -471,7 +483,6 @@ class CMailFile
 			// --------------------------------------
 			$this->error = 'Bad value for sendmode';
 		}
-
 	}
 
 
@@ -628,6 +639,7 @@ class CMailFile
 
 					if (! $res)
 					{
+						$langs->load("errors");
 						$this->error="Failed to send mail with php mail";
 						$linuxlike=1;
 						if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
@@ -827,6 +839,7 @@ class CMailFile
 		return '=?'.$conf->file->character_set_client.'?B?'.base64_encode($stringtoencode).'?=';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
@@ -835,6 +848,7 @@ class CMailFile
 	 */
 	function _encode_file($sourcefile)
 	{
+        // phpcs:enable
 		$newsourcefile=dol_osencode($sourcefile);
 
 		if (is_readable($newsourcefile))
@@ -852,6 +866,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
 	 *  Used for debugging.
@@ -861,6 +876,7 @@ class CMailFile
 	 */
 	function dump_mail()
 	{
+        // phpcs:enable
 		global $conf,$dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
@@ -945,6 +961,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create SMTP headers (mode = 'mail')
 	 *
@@ -952,6 +969,7 @@ class CMailFile
 	 */
 	function write_smtpheaders()
 	{
+        // phpcs:enable
 		global $conf;
 		$out = "";
 
@@ -1007,6 +1025,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
@@ -1016,10 +1035,11 @@ class CMailFile
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
+        // phpcs:enable
 		$mimedone=0;
 		$out = "";
 
-		if ($filename_list)
+		if (is_array($filename_list))
 		{
 			$filename_list_size=count($filename_list);
 			for($i=0;$i < $filename_list_size;$i++)
@@ -1036,6 +1056,7 @@ class CMailFile
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return email content (mode = 'mail')
 	 *
@@ -1044,6 +1065,7 @@ class CMailFile
 	 */
 	function write_body($msgtext)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$out='';
@@ -1136,6 +1158,7 @@ class CMailFile
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attach file to email (mode = 'mail')
 	 *
@@ -1146,6 +1169,7 @@ class CMailFile
 	 */
 	function write_files($filename_list,$mimetype_list,$mimefilename_list)
 	{
+        // phpcs:enable
 		$out = '';
 
 		$filename_list_size=count($filename_list);
@@ -1183,17 +1207,19 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attach an image to email (mode = 'mail')
 	 *
-	 * @param	array	$images_list	Tableau
+	 * @param	array	$images_list	Array of array image
 	 * @return	string					Chaine images encodees
 	 */
 	function write_images($images_list)
 	{
+        // phpcs:enable
 		$out = '';
 
-		if ($images_list)
+		if (is_array($images_list))
 		{
 			foreach ($images_list as $img)
 			{
@@ -1214,6 +1240,7 @@ class CMailFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Try to create a socket connection
 	 *
@@ -1223,6 +1250,7 @@ class CMailFile
 	 */
 	function check_server_port($host,$port)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$_retVal=0;
@@ -1277,6 +1305,7 @@ class CMailFile
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions.
@@ -1287,6 +1316,7 @@ class CMailFile
 	 */
 	function server_parse($socket, $response)
 	{
+        // phpcs:enable
 		$_retVal = true;	// Indicates if Object was created or not
 		$server_response = '';
 
@@ -1511,4 +1541,3 @@ class CMailFile
 		return $ret;
 	}
 }
-

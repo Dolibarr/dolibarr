@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
 
 $action=GETPOST('action','alpha');
 
@@ -157,7 +156,8 @@ $i=0;
 foreach($_SESSION as $key => $val)
 {
 	if ($i > 0) print ', ';
-	print $key.' => '.$val;
+	if (is_array($val)) print $key.' => array(...)';
+	else print $key.' => '.dol_escape_htmltag($val);
 	$i++;
 }
 print '</td></tr>'."\n";
@@ -453,7 +453,6 @@ if ($resql)
 print '</table>';
 print '</div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -37,13 +37,6 @@ if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 
-// For bittorent link, we don't need to load/check we are into a login session
-if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'bittorrent')
-{
-	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
-	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]))
 {
@@ -64,13 +57,17 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

@@ -36,7 +36,11 @@ class FormFile
 {
 	private $db;
 
+	/**
+	 * @var string Error code (or message)
+	 */
 	public $error;
+
 	public $numoffiles;
 	public $infofiles;			// Used to return informations by function getDocumentsLink
 
@@ -50,10 +54,10 @@ class FormFile
 	{
 		$this->db = $db;
 		$this->numoffiles=0;
-		return 1;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show form to upload a new file.
 	 *
@@ -75,6 +79,7 @@ class FormFile
 	 */
 	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile', $accept='', $sectiondir='')
 	{
+        // phpcs:enable
 		global $conf,$langs, $hookmanager;
 		$hookmanager->initHooks(array('formfile'));
 
@@ -122,11 +127,12 @@ class FormFile
 			if (preg_match('/g$/i',$maxphp)) $maxphp=$maxphp*1024*1024;
 			if (preg_match('/t$/i',$maxphp)) $maxphp=$maxphp*1024*1024*1024;
 			// Now $max and $maxphp are in Kb
-			if ($maxphp > 0) $max=min($max,$maxphp);
+			$maxmin = $max;
+			if ($maxphp > 0) $maxmin=min($max,$maxphp);
 
-			if ($max > 0)
+			if ($maxmin > 0)
 			{
-				$out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
+				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
 			}
 
 			$out .= '<input class="flat minwidth400" type="file"';
@@ -179,7 +185,7 @@ class FormFile
 
 			if ($linkfiles)
 			{
-				$out .= "\n<!-- Start form attach new link -->\n";
+				$out .= "\n<!-- Start form link new url -->\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
@@ -207,25 +213,25 @@ class FormFile
 				$out .= '</div>';
 				$out .= '<div class="clearboth"></div>';
 				$out .= '</form><br>';
-				$parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
-				$res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
 
-				$out .= "\n<!-- End form attach new file -->\n";
+				$out .= "\n<!-- End form link new url -->\n";
 			}
 
+			$parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''), 'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
+			$res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
 			if (empty($res))
 			{
 				print '<div class="attacharea attacharea'.$htmlname.'">';
 				print $out;
 				print '</div>';
 			}
-
 			print $hookmanager->resPrint;
 
 			return 1;
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Show the box with list of available documents for object
 	 *
@@ -250,6 +256,7 @@ class FormFile
 	 */
 	function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$notused=0,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
 	{
+        // phpcs:enable
 		$this->numoffiles=0;
 		print $this->showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$notused,$noform,$param,$title,$buttonlabel,$codelang);
 		return $this->numoffiles;
@@ -672,7 +679,7 @@ class FormFile
 				$formadmin=new FormAdmin($this->db);
 				$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
 				$morecss='maxwidth150';
-				if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+				if ($conf->browser->layout == 'phone') $morecss='maxwidth100';
 				$out.= $formadmin->select_language($defaultlang, 'lang_id', 0, 0, 0, 0, 0, $morecss);
 			}
 			else
@@ -778,7 +785,8 @@ class FormFile
 						$out.= '<td class="right nowraponall">';
 						if ($delallowed)
 						{
-							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
+							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
+							$out.= '<a href="'.$tmpurlsource.(strpos($tmpurlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
 							$out.= ($param?'&amp;'.$param:'');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
@@ -814,7 +822,7 @@ class FormFile
 
 				$this->numoffiles++;
 			}
-			// Loop on each file found
+			// Loop on each link found
 			if (is_array($link_list))
 			{
 				$colspan=2;
@@ -907,7 +915,7 @@ class FormFile
 		if (! empty($file_list))
 		{
 			$out='<dl class="dropdown inline-block">
-    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignbottom').'</a></dt>
+    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignmiddle').'</a></dt>
     			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
 			$tmpout='';
 
@@ -974,6 +982,7 @@ class FormFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show list of documents in $filearray (may be they are all in same directory but may not)
 	 *  This also sync database if $upload_dir is defined.
@@ -1005,6 +1014,7 @@ class FormFile
 	 */
 	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1, $addfilterfields=0)
 	{
+        // phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
 		global $sortfield, $sortorder, $maxheightmini;
 		global $dolibarr_main_url_root;
@@ -1304,14 +1314,13 @@ class FormFile
 							if (! empty($conf->dol_use_jmobile)) $useajax=0;
 							if (empty($conf->use_javascript_ajax)) $useajax=0;
 							if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
-
-							print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.(($useinecm && $useajax)?'#':($url.'?action=delete&urlfile='.urlencode($filepath).$param)).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
 						if (empty($disablemove))
 						{
-							if ($nboffiles > 1 && empty($conf->browser->phone)) {
+							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td align="center" class="linecolmove tdlineupdown">';
 								if ($i > 0) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">'.img_up('default',0,'imgupforline').'</a>';
@@ -1322,7 +1331,7 @@ class FormFile
 								print '</td>';
 							}
 							else {
-							   	print '<td align="center"'.((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
+							   	print '<td align="center"'.(($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
 							   	print '</td>';
 							}
 					   }
@@ -1372,6 +1381,7 @@ class FormFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show list of documents in a directory
 	 *
@@ -1392,6 +1402,7 @@ class FormFile
 	 */
 	function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload=0, $relativepath='', $permtodelete=1, $useinecm=0, $textifempty='', $maxlength=0, $url='', $addfilterfields=0)
 	{
+        // phpcs:enable
 		global $user, $conf, $langs, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
@@ -1654,7 +1665,6 @@ class FormFile
 
 		// Include template
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
-
 	}
 
 	/**
@@ -1826,6 +1836,4 @@ class FormFile
 		}
 		return $out;
 	}
-
 }
-

@@ -354,5 +354,6 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

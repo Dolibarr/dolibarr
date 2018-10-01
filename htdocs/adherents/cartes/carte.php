@@ -310,6 +310,6 @@ print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc"
 print '</form>';
 print '<br>';
 
+// End of page
 llxFooter();
-
 $db->close();

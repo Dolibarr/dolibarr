@@ -30,12 +30,24 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_mars extends ModeleNumRefFactures
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefixinvoice='FA';
-	var $prefixreplacement='FR';
-	var $prefixdeposit='AC';
-	var $prefixcreditnote='AV';
-	var $error='';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefixinvoice='FA';
+
+	public $prefixreplacement='FR';
+
+	public $prefixdeposit='AC';
+
+	public $prefixcreditnote='AV';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -216,6 +228,5 @@ class mod_facture_mars extends ModeleNumRefFactures
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
-
 }
 

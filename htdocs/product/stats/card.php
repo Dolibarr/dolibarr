@@ -75,9 +75,9 @@ if (empty($search_year)) $search_year=$currentyear;
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-
 $object = new Product($db);
-if (! $id)
+
+if (! $id && empty($ref))
 {
     llxHeader("",$langs->trans("ProductStatistics"));
 
@@ -433,6 +433,6 @@ if (! $id)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

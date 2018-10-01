@@ -23,18 +23,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModeleExpenseReport extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
-	 *
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
+     */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='expensereport';
@@ -45,9 +50,9 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 
 		return $liste;
 	}
-
 }
 
+// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  * expensereport_pdf_create
  *
@@ -63,6 +68,7 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
  */
 function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+    // phpcs:enable
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 
@@ -73,7 +79,10 @@ function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $
 
 abstract class ModeleNumRefExpenseReport
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not
@@ -134,7 +143,7 @@ abstract class ModeleNumRefExpenseReport
 	/**
 	 *	Renvoie version du module numerotation
 	 *
-	 *	@return     string      Valeur
+	 *  @return     string      Valeur
 	 */
 	function getVersion()
 	{

@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@
  *
  * Parent class for module descriptor class files
  */
-class DolibarrModules           // Can not be abstract, because we need to instantiate it into unActivateModule to be able to disable a module whose files were removed.
+class DolibarrModules // Can not be abstract, because we need to instantiate it into unActivateModule to be able to disable a module whose files were removed.
 {
 	/**
 	 * @var DoliDb Database handler
@@ -337,7 +338,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
 	 */
 	public $phpmin;
 
@@ -377,8 +378,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @param   array  		$array_sql  SQL requests to be executed when enabling module
 	 * @param   string      $options    String with options when disabling module:
-	 *                                    'noboxes' = Do not insert boxes
-	 *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+	 *                                  - 'noboxes' = Do not insert boxes
+	 *                                  - 'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
 	 *
 	 * @return  int                         1 if OK, 0 if KO
 	 */
@@ -464,11 +465,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 	/**
-	 * Disable function. Deletes the module constant and boxes from the database.
+	 * Disable function. Deletes the module constants and boxes from the database.
 	 *
 	 * @param   string[]    $array_sql  SQL requests to be executed when module is disabled
 	 * @param   string      $options	Options when disabling module:
-	 *                                    'newboxdefonly|noboxes' = We don't remove boxes.
+	 *                                  - 'newboxdefonly|noboxes' = We don't remove boxes.
 	 *
 	 * @return  int                     1 if OK, 0 if KO
 	 */
@@ -553,7 +554,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		}
 		else
 		{
-			// If module name translation using it's unique id does not exists, we try to use its name to find translation
+			// If module name translation using it's unique id does not exist, we try to use its name to find translation
 			if (is_array($this->langfiles))
 			{
 				foreach($this->langfiles as $val)
@@ -613,9 +614,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * Gives the long description of a module. First check README-la_LA.md then README.md
-	 * If not markdown files found, it return translated value of the key ->descriptionlong.
+	 * If no markdown files found, it returns translated value of the key ->descriptionlong.
 	 *
-	 * @return  string                  Long description of a module from README.md of from property.
+	 * @return  string     Long description of a module from README.md of from property.
 	 */
 	function getDescLong()
 	{
@@ -953,7 +954,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
 		$sql.= " AND entity IN (0, ".$entity.")";
 
-		dol_syslog(get_class($this)."::_active delect activation constant", LOG_DEBUG);
+		dol_syslog(get_class($this)."::_active delete activation constant", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql) $err++;
 
@@ -998,6 +999,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create tables and keys required by module.
 	 * Files module.sql and module.key.sql with create table and create keys
@@ -1009,6 +1011,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function _load_tables($reldir)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$error=0;
@@ -1116,6 +1119,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds boxes
 	 *
@@ -1125,6 +1129,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_boxes($option='')
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 
 		global $conf;
@@ -1215,6 +1220,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes boxes
 	 *
@@ -1222,6 +1228,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_boxes()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -1290,6 +1297,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds cronjobs
 	 *
@@ -1297,6 +1305,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_cronjobs()
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 
 		global $conf;
@@ -1320,13 +1329,15 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				$comment = isset($this->cronjobs[$key]['comment'])?$this->cronjobs[$key]['comment']:'';
 				$frequency = isset($this->cronjobs[$key]['frequency'])?$this->cronjobs[$key]['frequency']:'';
 				$unitfrequency = isset($this->cronjobs[$key]['unitfrequency'])?$this->cronjobs[$key]['unitfrequency']:'';
-				$status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
 				$priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
-				$test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';                              // Line must be visible
+				$datestart = isset($this->cronjobs[$key]['datestart'])?$this->cronjobs[$key]['datestart']:'';
+				$dateend = isset($this->cronjobs[$key]['dateend'])?$this->cronjobs[$key]['dateend']:'';
+				$status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
+				$test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';					// Line must be enabled or not (so visible or not)
 
-				// Search if boxes def already present
+				// Search if cron entry already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
-				$sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
+				$sql.= " WHERE module_name = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 				if ($class) $sql.= " AND classesname = '".$this->db->escape($class)."'";
 				if ($objectname) $sql.= " AND objectname = '".$this->db->escape($objectname)."'";
 				if ($method) $sql.= " AND methodename = '".$this->db->escape($method)."'";
@@ -1345,16 +1356,17 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 						if (! $err)
 						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note,";
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
 							if(is_int($frequency)){ $sql.= ' frequency,'; }
 							if(is_int($unitfrequency)){ $sql.= ' unitfrequency,'; }
 							if(is_int($priority)){ $sql.= ' priority,'; }
 							if(is_int($status)){ $sql.= ' status,'; }
 							$sql.= " entity, test)";
 							$sql.= " VALUES (";
-							$sql.= "'".$this->db->escape($this->rights_class)."', ";
+							$sql.= "'".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."', ";
 							$sql.= "'".$this->db->idate($now)."', ";
-							$sql.= "'".$this->db->idate($now)."', ";
+							$sql.= ($datestart ? "'".$this->db->idate($datestart)."'" : "NULL").", ";
+							$sql.= ($dateend   ? "'".$this->db->idate($dateend)."'"   : "NULL").", ";
 							$sql.= "'".$this->db->escape($label)."', ";
 							$sql.= "'".$this->db->escape($jobtype)."', ";
 							$sql.= ($class?"'".$this->db->escape($class)."'":"null").",";
@@ -1389,7 +1401,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					// else box already registered into database
 				}
 				else
-			  {
+				{
 					$this->error=$this->db->lasterror();
 					$err++;
 				}
@@ -1400,6 +1412,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes boxes
 	 *
@@ -1407,6 +1420,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_cronjobs()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -1414,8 +1428,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		if (is_array($this->cronjobs))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
-			$sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
+			$sql.= " WHERE module_name = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND test = '1'";		// We delete on lines that are not set with a complete test that is '$conf->module->enabled' so when module is disabled, the cron is also removed.
+											// For crons declared with a '$conf->module->enabled', there is no need to delete the line, so we don't loose setup if we reenable module.
 
 			dol_syslog(get_class($this)."::delete_cronjobs", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -1429,6 +1445,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes tabs
 	 *
@@ -1436,6 +1453,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_tabs()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -1454,6 +1472,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds tabs
 	 *
@@ -1461,6 +1480,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_tabs()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -1521,6 +1541,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds constants
 	 *
@@ -1528,6 +1549,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_const()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -1590,6 +1612,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes constants tagged 'deleteonunactive'
 	 *
@@ -1597,6 +1620,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_const()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -1625,6 +1649,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds access rights
 	 *
@@ -1635,6 +1660,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_permissions($reinitadminperms=0, $force_entity=null, $notrigger=0)
 	{
+        // phpcs:enable
 		global $conf,$user;
 
 		$err=0;
@@ -1671,54 +1697,57 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
 					$sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
-					$resqlselect=$this->db->query($sql);
 
-					$obj = $this->db->fetch_object($resqlselect);
-					if ($obj->nb == 0)
+					$resqlselect=$this->db->query($sql);
+					if ($resqlselect)
 					{
-						if (dol_strlen($r_perms) )
+						$objcount = $this->db->fetch_object($resqlselect);
+						if ($objcount && $objcount->nb == 0)
 						{
-							if (dol_strlen($r_subperms) )
+							if (dol_strlen($r_perms) )
 							{
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-								$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-								$sql.= " VALUES ";
-								$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+								if (dol_strlen($r_subperms) )
+								{
+									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+									$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+									$sql.= " VALUES ";
+									$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+								}
+								else
+								{
+									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+									$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+									$sql.= " VALUES ";
+									$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+								}
 							}
 							else
 							{
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-								$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
-								$sql.= " VALUES ";
-								$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+								$sql .= " (id, entity, libelle, module, type, bydefault)";
+								$sql .= " VALUES ";
+								$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
 							}
-						}
-						else
-						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-							$sql .= " (id, entity, libelle, module, type, bydefault)";
-							$sql .= " VALUES ";
-							$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
-						}
 
-						$resqlinsert=$this->db->query($sql,1);
+							$resqlinsert=$this->db->query($sql,1);
 
-						if (! $resqlinsert)
-						{
-							if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+							if (! $resqlinsert)
 							{
-								$this->error=$this->db->lasterror();
-								$err++;
-								break;
-							}
-							else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+								if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+								{
+									$this->error=$this->db->lasterror();
+									$err++;
+									break;
+								}
+								else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
 
+							}
+
+							$this->db->free($resqlinsert);
 						}
 
-						$this->db->free($resqlinsert);
+						$this->db->free($resqlselect);
 					}
-
-					$this->db->free($resqlselect);
 
 					// If we want to init permissions on admin users
 					if ($reinitadminperms)
@@ -1737,23 +1766,33 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							{
 								$obj2=$this->db->fetch_object($resqlseladmin);
 								dol_syslog(get_class($this)."::insert_permissions Add permission to user id=".$obj2->rowid);
+
 								$tmpuser=new User($this->db);
-								$tmpuser->fetch($obj2->rowid);
-								if (!empty($tmpuser->id)) {
+								$result = $tmpuser->fetch($obj2->rowid);
+								if ($result > 0) {
 									$tmpuser->addrights($r_id, '', '', 0, 1);
+								}
+								else
+								{
+									dol_syslog(get_class($this)."::insert_permissions Failed to add the permission to user because fetch return an error", LOG_ERR);
 								}
 								$i++;
 							}
-							if (! empty($user->admin))  // Reload permission for current user if defined
-							{
-								// We reload permissions
-								$user->clearrights();
-								$user->getrights();
-							}
 						}
-						else dol_print_error($this->db);
+						else
+						{
+							dol_print_error($this->db);
+						}
 					}
 				}
+
+				if ($reinitadminperms && ! empty($user->admin))  // Reload permission for current user if defined
+				{
+					// We reload permissions
+					$user->clearrights();
+					$user->getrights();
+				}
+
 			}
 			$this->db->free($resql);
 		}
@@ -1767,6 +1806,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes access rights
 	 *
@@ -1774,12 +1814,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_permissions()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
-		$sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
+		$sql.= " WHERE module = '".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."'";
 		$sql.= " AND entity = ".$conf->entity;
 		dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
 		if (! $this->db->query($sql))
@@ -1792,6 +1833,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds menu entries
 	 *
@@ -1799,6 +1841,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_menus()
 	{
+        // phpcs:enable
 		global $user;
 
 		if (! is_array($this->menu) || empty($this->menu)) return 0;
@@ -1817,7 +1860,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			$menu->menu_handler='all';
 
 			//$menu->module=strtolower($this->name);	TODO When right_class will be same than module name
-			$menu->module=$this->rights_class;
+			$menu->module=empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
 			if (! $this->menu[$key]['fk_menu'])
 			{
@@ -1901,6 +1944,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes menu entries
 	 *
@@ -1908,12 +1952,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_menus()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
 
 		//$module=strtolower($this->name);		TODO When right_class will be same than module name
-		$module=$this->rights_class;
+		$module=empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql.= " WHERE module = '".$this->db->escape($module)."'";
@@ -1930,6 +1975,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Creates directories
 	 *
@@ -1937,6 +1983,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function create_dirs()
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		$err=0;
@@ -1988,6 +2035,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds directories definitions
 	 *
@@ -1998,6 +2046,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_dirs($name,$dir)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -2032,6 +2081,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes directories
 	 *
@@ -2039,6 +2089,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_dirs()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;
@@ -2057,6 +2108,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $err;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Adds generic parts
 	 *
@@ -2064,6 +2116,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function insert_module_parts()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$error=0;
@@ -2135,6 +2188,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		return $error;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Removes generic parts
 	 *
@@ -2142,6 +2196,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function delete_module_parts()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$err=0;

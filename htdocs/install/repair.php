@@ -549,11 +549,11 @@ if ($ok && GETPOST('clean_menus','alpha'))
 								dol_print_error($db);
 							}
 							else
-								print ' - <font class="warning">Cleaned</font>';
+								print ' - <span class="warning">Cleaned</span>';
 						}
 						else
 						{
-							print ' - <font class="warning">Canceled (test mode)</font>';
+							print ' - <span class="warning">Canceled (test mode)</span>';
 						}
 					}
 					else
@@ -648,7 +648,6 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
             $object_instance=new ChargeSociales($db);
         }
 
-        $var=true;
         foreach($filearray as $key => $file)
         {
             if (!is_dir($file['name'])
@@ -983,11 +982,11 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 	                                    dol_print_error($db);
 	                                }
 	                                else
-	                                    print ' - <font class="warning">Cleaned</font>';
+	                                    print ' - <span class="warning">Cleaned</span>';
 	                            }
 	                            else
 	                            {
-	                                print ' - <font class="warning">Canceled (test mode)</font>';
+	                                print ' - <span class="warning">Canceled (test mode)</span>';
 	                            }
 	                        }
 	                        else
@@ -1079,21 +1078,42 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 
     if ($db->type == "mysql" || $db->type == "mysqli")
     {
-        $listoftables = $db->DDLListTables($db->database_name);
+    	$force_utf8_on_tables = GETPOST('force_utf8_on_tables','alpha');
+
+    	$listoftables = $db->DDLListTables($db->database_name);
+
+        // Disable foreign key checking for avoid errors
+    	if ($force_utf8_on_tables == 'confirmed')
+    	{
+    		$sql='SET FOREIGN_KEY_CHECKS=0';
+    		print '<!-- '.$sql.' -->';
+    		$resql = $db->query($sql);
+    	}
 
         foreach($listoftables as $table)
         {
+        	// do not convert llx_const if mysql encrypt/decrypt is used
+        	if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) continue;
+
             print '<tr><td colspan="2">';
             print $table;
             $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
             print '<!-- '.$sql.' -->';
-            if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
+            if ($force_utf8_on_tables == 'confirmed')
             {
             	$resql = $db->query($sql);
             	print ' - Done ('.($resql?'OK':'KO').')';
             }
             else print ' - Disabled';
             print '</td></tr>';
+        }
+
+        // Enable foreign key checking
+        if ($force_utf8_on_tables == 'confirmed')
+        {
+        	$sql='SET FOREIGN_KEY_CHECKS=1';
+        	print '<!-- '.$sql.' -->';
+        	$resql = $db->query($sql);
         }
     }
     else

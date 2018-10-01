@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("companies");
-$langs->load("members");
-$langs->load("ldap");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","ldap","admin"));
 
 $rowid = GETPOST('id','int');
 $action = GETPOST('action','aZ09');
@@ -75,7 +73,7 @@ if ($action == 'dolibarr2ldap')
 		setEventMessages($langs->trans("MemberSynchronized"), null, 'mesgs');
 	}
 	else {
-		setEventMessages($ldap->errors, $ldap->error, 'errors');
+		setEventMessages($ldap->error, $ldap->errors, 'errors');
 	}
 }
 
@@ -221,5 +219,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

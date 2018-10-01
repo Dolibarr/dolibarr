@@ -35,10 +35,16 @@ class Conf
 	/** \public */
 	//! To store properties found in conf file
 	var $file;
-	//! Object with database handler
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
 	//! To store properties found into database
 	var $global;
+	//! To store browser info
+	var $browser;
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
@@ -176,7 +182,7 @@ class Conf
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
 							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
-							else if (in_array($partname,array('sms'))) $value = $modulename;
+							else if (in_array($partname,array('sms'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
 						}
@@ -506,7 +512,7 @@ class Conf
 		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
 
 		// Default max file size for upload
-		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
+		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// By default, we propagate contacts
 		if (! isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) $this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN='*';  // Can be also '*' or '^(BILLING|SHIPPING|CUSTOMER|.*)$' (regex not yet implemented)
@@ -516,6 +522,9 @@ class Conf
 
 		// By default, we open card if one found
 		if (! isset($this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE)) $this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=1;
+
+		// By default, we show state code in combo list
+		if (! isset($this->global->MAIN_SHOW_STATE_CODE)) $this->global->MAIN_SHOW_STATE_CODE=1;
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
@@ -660,7 +669,6 @@ class Conf
 				$this->loghandlers[$handler] = $loghandlerinstance;
 			}
 		}
-
 	}
 }
 

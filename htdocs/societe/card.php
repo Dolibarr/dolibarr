@@ -145,7 +145,7 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
@@ -376,19 +376,19 @@ if (empty($reshook))
 
         if (! $error)
         {
-        		if ($action == 'update')
+        	if ($action == 'update')
 	        {
-	        		$ret=$object->fetch($socid);
+	        	$ret=$object->fetch($socid);
 				$object->oldcopy = clone $object;
 	        }
 			else $object->canvas=$canvas;
 
 	        if (GETPOST("private") == 1)	// Ask to create a contact
 	        {
-	            $object->particulier			= GETPOST("private");
+	            $object->particulier		= GETPOST("private");
 
 	            $object->name				= dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
-	            $object->civility_id			= GETPOST('civility_id');	// Note: civility id is a code, not an int
+	            $object->civility_id		= GETPOST('civility_id');	// Note: civility id is a code, not an int
 	            // Add non official properties
 	            $object->name_bis			= GETPOST('name','alpha');
 	            $object->firstname			= GETPOST('firstname','alpha');
@@ -399,54 +399,56 @@ if (empty($reshook))
 	        }
 	        $object->entity					= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
 	        $object->name_alias				= GETPOST('name_alias');
-	        $object->address					= GETPOST('address');
-	        $object->zip						= GETPOST('zipcode', 'alpha');
+	        $object->address				= GETPOST('address');
+	        $object->zip					= GETPOST('zipcode', 'alpha');
 	        $object->town					= GETPOST('town', 'alpha');
 	        $object->country_id				= GETPOST('country_id', 'int');
 	        $object->state_id				= GETPOST('state_id', 'int');
 	        $object->skype					= GETPOST('skype', 'alpha');
+	        $object->twitter				= GETPOST('twitter', 'alpha');
+	        $object->facebook				= GETPOST('facebook', 'alpha');
 	        $object->phone					= GETPOST('phone', 'alpha');
-	        $object->fax						= GETPOST('fax','alpha');
+	        $object->fax					= GETPOST('fax','alpha');
 	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
-	        $object->url						= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
-	        $object->idprof1					= trim(GETPOST('idprof1', 'alpha'));
-	        $object->idprof2					= trim(GETPOST('idprof2', 'alpha'));
-	        $object->idprof3					= trim(GETPOST('idprof3', 'alpha'));
-	        $object->idprof4					= trim(GETPOST('idprof4', 'alpha'));
-	        $object->idprof5					= trim(GETPOST('idprof5', 'alpha'));
-	        $object->idprof6					= trim(GETPOST('idprof6', 'alpha'));
-	        $object->prefix_comm				= GETPOST('prefix_comm', 'alpha');
-	        $object->code_client				= GETPOST('code_client', 'alpha');
+	        $object->url					= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+	        $object->idprof1				= trim(GETPOST('idprof1', 'alpha'));
+	        $object->idprof2				= trim(GETPOST('idprof2', 'alpha'));
+	        $object->idprof3				= trim(GETPOST('idprof3', 'alpha'));
+	        $object->idprof4				= trim(GETPOST('idprof4', 'alpha'));
+	        $object->idprof5				= trim(GETPOST('idprof5', 'alpha'));
+	        $object->idprof6				= trim(GETPOST('idprof6', 'alpha'));
+	        $object->prefix_comm			= GETPOST('prefix_comm', 'alpha');
+	        $object->code_client			= GETPOST('code_client', 'alpha');
 	        $object->code_fournisseur		= GETPOST('code_fournisseur', 'alpha');
-	        $object->capital					= GETPOST('capital', 'alpha');
-	        $object->barcode					= GETPOST('barcode', 'alpha');
+	        $object->capital				= GETPOST('capital', 'alpha');
+	        $object->barcode				= GETPOST('barcode', 'alpha');
 
 	        $object->tva_intra				= GETPOST('tva_intra', 'alpha');
 	        $object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
 	        $object->status					= GETPOST('status', 'alpha');
 
 	        // Local Taxes
-	        $object->localtax1_assuj			= GETPOST('localtax1assuj_value', 'alpha');
-	        $object->localtax2_assuj			= GETPOST('localtax2assuj_value', 'alpha');
+	        $object->localtax1_assuj		= GETPOST('localtax1assuj_value', 'alpha');
+	        $object->localtax2_assuj		= GETPOST('localtax2assuj_value', 'alpha');
 
-	        $object->localtax1_value			= GETPOST('lt1', 'alpha');
-	        $object->localtax2_value			= GETPOST('lt2', 'alpha');
+	        $object->localtax1_value		= GETPOST('lt1', 'alpha');
+	        $object->localtax2_value		= GETPOST('lt2', 'alpha');
 
 	        $object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
-	        $object->effectif_id				= GETPOST('effectif_id', 'int');
+	        $object->effectif_id			= GETPOST('effectif_id', 'int');
 	        $object->typent_id				= GETPOST('typent_id','int');
 
-	        $object->typent_code				= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
+	        $object->typent_code			= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
 
 	        $object->client					= GETPOST('client', 'int');
-	        $object->fournisseur				= GETPOST('fournisseur', 'int');
+	        $object->fournisseur			= GETPOST('fournisseur', 'int');
 
 	        $object->commercial_id			= GETPOST('commercial_id', 'int');
 	        $object->default_lang			= GETPOST('default_lang');
 
 	        // Webservices url/key
-	        $object->webservices_url			= GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
-	        $object->webservices_key			= GETPOST('webservices_key', 'san_alpha');
+	        $object->webservices_url		= GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+	        $object->webservices_key		= GETPOST('webservices_key', 'san_alpha');
 
 			// Incoterms
 			if (!empty($conf->incoterm->enabled))
@@ -484,11 +486,6 @@ if (empty($reshook))
 	            {
 	                $langs->load("errors");
 	                setEventMessages('', $langs->trans("ErrorBadUrl",$object->url), 'errors');
-	            }
-	            if ($object->fournisseur && ! $conf->fournisseur->enabled)
-	            {
-	                $langs->load("errors");
-	                setEventMessages('', $langs->trans("ErrorSupplierModuleNotEnabled"), 'errors');
 	            }
 	            if (! empty($object->webservices_url)) {
 	                //Check if has transport, without any the soap client will give error
@@ -964,6 +961,8 @@ else
         $object->town				= GETPOST('town', 'alpha');
         $object->state_id			= GETPOST('state_id', 'int');
         $object->skype				= GETPOST('skype', 'alpha');
+        $object->twitter			= GETPOST('twitter', 'alpha');
+        $object->facebook			= GETPOST('facebook', 'alpha');
         $object->phone				= GETPOST('phone', 'alpha');
         $object->fax				= GETPOST('fax', 'alpha');
         $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1166,7 +1165,8 @@ else
         print '</td></tr></table>';
         print '</td></tr>';
 
-        if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+        if ((! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+        	|| (! empty($conf->supplier_proposal->enabled) && ! empty($user->rights->supplier_proposal->lire)))
         {
             // Supplier
             print '<tr>';
@@ -1175,15 +1175,23 @@ else
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
             print $form->selectyesno("fournisseur", (GETPOST('fournisseur','int')!=''?GETPOST('fournisseur','int'):(GETPOST("type",'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type",'alpha') == '' ? 1 : 0));
             print '</td>';
-            print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
-            print '<table class="nobordernopadding"><tr><td>';
-            $tmpcode=$object->code_fournisseur;
-            if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-            print '<input type="text" name="code_fournisseur" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+            print '<td>';
+            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            {
+            	print fieldLabel('SupplierCode','supplier_code');
+            }
             print '</td><td>';
-            $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-            print $form->textwithpicto('',$s,1);
-            print '</td></tr></table>';
+            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            {
+	            print '<table class="nobordernopadding"><tr><td>';
+	            $tmpcode=$object->code_fournisseur;
+	            if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
+	            print '<input type="text" name="code_fournisseur" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+	            print '</td><td>';
+	            $s=$modCodeFournisseur->getToolTip($langs,$object,1);
+	            print $form->textwithpicto('',$s,1);
+	            print '</td></tr></table>';
+            }
             print '</td></tr>';
         }
 
@@ -1236,17 +1244,32 @@ else
             print '</td></tr>';
         }
 
-        // Email web
+        // Email / Web
         print '<tr><td>'.fieldLabel('EMail','email',$conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
-        // Skype
-        if (! empty($conf->skype->enabled))
+        if (! empty($conf->socialnetworks->enabled))
         {
-            print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	        print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
+        	// Skype
+        	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+        	{
+        		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
+        		print '<td colspan="3"><input type="text" name="skype" class="minwidth100" maxlength="80" id="skype" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+        	}
+        	// Twitter
+        	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+        	{
+        		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
+        		print '<td colspan="3"><input type="text" name="twitter" class="minwidth100" maxlength="80" id="twitter" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
+        	}
+        	// Facebook
+        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+        	{
+	        	print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
+	        	print '<td colspan="3"><input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
+        	}
         }
 
         // Phone / Fax
@@ -1373,16 +1396,14 @@ else
             print '</tr>';
         }
 
-        if ($user->rights->societe->client->voir)
-        {
-            // Assign a Name
-            print '<tr>';
-            print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
-            print '<td colspan="3" class="maxwidthonsmartphone">';
-			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-            print $form->multiselectarray('commercial', $userlist, GETPOST('commercial', 'array'), null, null, null, null, "90%");
-            print '</td></tr>';
-        }
+		// Assign a sale representative
+		print '<tr>';
+		print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
+		print '<td colspan="3" class="maxwidthonsmartphone">';
+		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
+		print $form->multiselectarray('commercial', $userlist, (count(GETPOST('commercial', 'array')) > 0?GETPOST('commercial', 'array'):(empty($user->rights->societe->client->voir)?array($user->id):array())), null, null, null, null, "90%");
+		print '</td></tr>';
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
@@ -1534,6 +1555,8 @@ else
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id', 'int'):$mysoc->country_id;
                 $object->state_id				= GETPOST('state_id', 'int');
                 $object->skype					= GETPOST('skype', 'alpha');
+                $object->twitter				= GETPOST('twitter', 'alpha');
+                $object->facebook				= GETPOST('facebook', 'alpha');
                 $object->phone					= GETPOST('phone', 'alpha');
                 $object->fax					= GETPOST('fax', 'alpha');
                 $object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1721,36 +1744,43 @@ else
             print '</td></tr>';
 
             // Supplier
-            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            if ((! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            	|| (! empty($conf->supplier_proposal->enabled) && ! empty($user->rights->supplier_proposal->lire)))
             {
                 print '<tr>';
                 print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td class="maxwidthonsmartphone">';
                 print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
-                print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
-
-                print '<table class="nobordernopadding"><tr><td>';
-                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
+                print '<td>';
+                if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
                 {
-                    $tmpcode=$object->code_fournisseur;
-                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
-                }
-                else if ($object->codefournisseur_modifiable())
-                {
-                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
-                }
-                else
-              {
-                    print $object->code_fournisseur;
-                    print '<input type="hidden" name="code_fournisseur" value="'.$object->code_fournisseur.'">';
+                	print fieldLabel('SupplierCode','supplier_code');
                 }
                 print '</td><td>';
-                $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-                print $form->textwithpicto('',$s,1);
-                print '</td></tr></table>';
-
+                if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+                {
+	                print '<table class="nobordernopadding"><tr><td>';
+	                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
+	                {
+	                    $tmpcode=$object->code_fournisseur;
+	                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
+	                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
+	                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+	                }
+	                else if ($object->codefournisseur_modifiable())
+	                {
+	                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+	                }
+	                else
+	              {
+	                    print $object->code_fournisseur;
+	                    print '<input type="hidden" name="code_fournisseur" value="'.$object->code_fournisseur.'">';
+	                }
+	                print '</td><td>';
+	                $s=$modCodeFournisseur->getToolTip($langs,$object,1);
+	                print $form->textwithpicto('',$s,1);
+	                print '</td></tr></table>';
+                }
                 print '</td></tr>';
             }
 
@@ -1808,12 +1838,27 @@ else
             print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
 
-            // Skype
-            if (! empty($conf->skype->enabled))
-            {
-                print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	            print '<td colspan="3"><input type="text" name="skype" id="skype" size="32" value="'.$object->skype.'"></td></tr>';
-            }
+	        if (! empty($conf->socialnetworks->enabled))
+	        {
+	        	// Skype
+	        	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
+	        		print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
+	        	}
+	        	// Twitter
+	        	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
+	        		print '<td colspan="3"><input type="text" name="twitter" id="twitter" value="'.$object->twitter.'"></td></tr>';
+	        	}
+	        	// Facebook
+	        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
+	        		print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
+	        	}
+	        }
 
             // Phone / Fax
             print '<tr><td>'.fieldLabel('Phone','phone').'</td>';
@@ -1951,7 +1996,7 @@ else
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
 	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-	        print dol_escape_htmltag(price($object->capital));
+	        print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
 	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
 			// Assign a Name
@@ -2129,7 +2174,7 @@ else
     	print '</td></tr>';
 
     	// Supplier
-    	if (! empty($conf->fournisseur->enabled))
+   		if (! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
     	{
     		print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
     		print yn($object->fournisseur);
@@ -2638,7 +2683,6 @@ else
 
     }
 }
-
 
 // End of page
 llxFooter();

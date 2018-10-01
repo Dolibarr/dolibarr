@@ -33,7 +33,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -108,13 +108,9 @@ if (! empty($newlangid))
 		$outputlangs->setDefaultLang($newlangid);
 	}
 }
-$outputlangs->load("main");
-$outputlangs->load("bills");
-$outputlangs->load("companies");
-$outputlangs->load("banks");
-$outputlangs->load("members");
-$outputlangs->load("compta");
 
+// Load translation files required by the page
+$outputlangs->loadLangs(array("main", "companies", "bills", "banks", "members", "compta"));
 
 $acct=new Account($db);
 $result=$acct->fetch('',$bankref);

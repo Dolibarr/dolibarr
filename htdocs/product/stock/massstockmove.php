@@ -334,8 +334,6 @@ $buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
 print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'</span><br>';
 print '<br>'."\n";
 
-$var=true;
-
 // Form to add a line
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
@@ -402,8 +400,6 @@ print '</tr>';
 
 foreach($listofdata as $key => $val)
 {
-
-
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
@@ -466,7 +462,6 @@ print '<div class="center"><input class="button" type="submit" name="valid" valu
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

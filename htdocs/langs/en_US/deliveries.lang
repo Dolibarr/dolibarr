@@ -28,3 +28,4 @@ ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Non-existent order

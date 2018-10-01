@@ -7,6 +7,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +29,12 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
+$langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
 if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->don->enabled)) $langs->load("donations");
 if (! empty($conf->loan->enabled)) $langs->load("loan");
@@ -98,8 +99,10 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     	{
         	dol_print_error($db);
     	}
-	} else {
-		setEventMessage('Missing ids','errors');
+	}
+	else
+	{
+		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}
 }
 
@@ -495,7 +498,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print $form->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
+            print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';
@@ -519,7 +522,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print $form->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
+            print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';
@@ -686,6 +689,6 @@ if ($result)
 }
 else dol_print_error($db);
 
+// End of page
 llxFooter();
-
 $db->close();

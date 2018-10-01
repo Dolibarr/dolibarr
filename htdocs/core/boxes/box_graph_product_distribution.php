@@ -33,7 +33,11 @@ class box_graph_product_distribution extends ModeleBoxes
 	var $boxlabel="BoxProductDistribution";
 	var $depends = array("product|service","facture|propal|commande");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -397,7 +401,6 @@ class box_graph_product_distribution extends ModeleBoxes
 				'text' => $mesg
 			);
 		}
-
 	}
 
 	/**
@@ -412,6 +415,5 @@ class box_graph_product_distribution extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

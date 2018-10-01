@@ -29,9 +29,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expedition/modules_expedition.php
  */
 class mod_expedition_ribera extends ModelNumRefExpedition
 {
-	var $version='dolibarr';
-	var $error = '';
-	var $nom = 'Ribera';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Ribera';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Ribera';
 
 	/**
 	 *	Return default description of numbering model
@@ -40,7 +59,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -121,6 +140,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		return  $numFinal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -130,8 +150,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
     function expedition_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-
