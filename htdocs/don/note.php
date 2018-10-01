@@ -36,7 +36,7 @@ if (! empty($conf->projet->enabled))
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills","donations","companies"));
+$langs->loadLangs(array("companies","bills","donations"));
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');

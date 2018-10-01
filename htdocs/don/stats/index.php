@@ -48,7 +48,7 @@ $startyear=$year-1;
 $endyear=$year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings","other","companies"));
+$langs->loadLangs(array("companies","other","sendings"));
 
 
 /*

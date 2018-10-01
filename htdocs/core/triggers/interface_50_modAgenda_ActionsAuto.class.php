@@ -511,7 +511,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
         {
             // Load translation files required by the page
-            $langs->loadLangs(array("agenda","other","orders","bills"));
+            $langs->loadLangs(array("agenda","other","bills","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderSentByEMail",$object->ref);
             if (empty($object->actionmsg))
@@ -525,7 +525,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		elseif ($action == 'ORDER_SUPPLIER_CLASSIFY_BILLED')
         {
             // Load translation files required by the page
-            $langs->loadLangs(array("agenda","other","orders","bills"));
+            $langs->loadLangs(array("agenda","other","bills","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierOrderClassifiedBilled",$object->ref);
             if (empty($object->actionmsg))
@@ -558,7 +558,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         elseif ($action == 'BILL_SUPPLIER_SENTBYMAIL')
         {
             // Load translation files required by the page
-            $langs->loadLangs(array("agenda","other","orders","bills"));
+            $langs->loadLangs(array("agenda","other","bills","orders"));
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("SupplierInvoiceSentByEMail",$object->ref);
             if (empty($object->actionmsg))

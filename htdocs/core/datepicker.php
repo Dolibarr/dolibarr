@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL by the main.inc.php
 
 // Load translation files required by the page
-$langs->loadLangs(array("agenda","main"));
+$langs->loadLangs(array("main","agenda"));
 
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
