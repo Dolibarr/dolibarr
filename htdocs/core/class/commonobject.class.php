@@ -5850,54 +5850,60 @@ abstract class CommonObject
 		return $out;
 	}
 
-	/**
-	 * Return HTML string to show a field into a page
-	 * similar to showOutputField but shows objects links instead of id numbers
+    /**
+     * Return HTML string to show a field into a page
+     * similar to showOutputField but shows objects links instead of id numbers
      * To do so, it uses the following attributes in object fields :
      * is_id        : Indicates if the fields is an id of a linked object
      * fk_table     : Linked object table
-	 * show_field   : Content text in link
+     * show_field   : Content text in link
      *
-	 * @param  array   $val		       Array of properties of field to show
-	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  $linkpath       Relative path of the script to use to show object card on id
-	 * @return string
-	 */
+     * @param  array   $val		       Array of properties of field to show
+     * @param  string  $key            Key of attribute
+     * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+     * @param  string  $linkpath       Relative path of the script to use to show object card on id
+     * @return string
+     */
 
-    function showOutputFieldWithLinks($object,$key,$val,$obj,$linkpath='') {
-    if(!empty($val['fk_table'])&&!empty($obj->$key)){
-        $sql = "SELECT ".$val['show_field'];
-        $sql .= " FROM " . MAIN_DB_PREFIX .$val['fk_table'];
-        $sql .= " WHERE rowid=";
-        if(!empty($val['is_id']))$sql .= $obj->$key;
-        else $sql .= $obj->rowid;
+    function showOutputFieldWithLinks($val,$key,$obj,$linkpath='') {
+        if(!empty($val['fk_table'])&& is_object($obj)){
+            $sql = "SELECT ".$val['show_field'];
+            $sql .= " FROM " . MAIN_DB_PREFIX .$val['fk_table'];
+            $sql .= " WHERE rowid=";
+            if(!empty($val['is_id']))$sql .= $obj->$key;
+            else $sql .= $obj->rowid;
 
-        $resql = $this->db->query($sql);
-        if($resql){
-            $obj1 = $this->db->fetch_object($resql);
-            $value2show=$val['show_field'];
-            if(empty($linkpath)) {
-                $urlpath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/'.$val['fk_table'].'_card.php',1);
-                $syspath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/card.php');
+            $resql = $this->db->query($sql);
+            if($resql){
+                $obj1 = $this->db->fetch_object($resql);
+                $value2show=$val['show_field'];
+                if(empty($linkpath)) {
+                    $urlpath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/'.$val['fk_table'].'_card.php',1);
+                    $syspath=dol_buildpath('/'.$val['fk_table'].'/class/'.$val['fk_table'].'/card.php');
+                }
+                else {
+                    $urlpath=dol_buildpath($linkpath,1);
+                    $syspath=dol_buildpath($linkpath);
+                }
+                if(file_exists($syspath)) {
+                    $lien = '<a href="' . $urlpath . '?id='.(empty($val['is_id'])?$obj->rowid:$obj->$key).'" target="_blank">'.$obj1->$value2show.'</a>';
+                    return $this->showOutputField($val, $key,$lien , '');
+                }
+                else {
+                    return $this->showOutputField($val, $key, $obj1->$value2show, '');
+                }
             }
-            else {
-                $urlpath=dol_buildpath($linkpath,1);
-                $syspath=dol_buildpath($linkpath);
+            return '';
+        }
+        else {
+            if((is_object($obj))) {
+                if(!empty($obj->$key))return $this->showOutputField($val, $key, $obj->$key) ;
+                else return $this->showOutputField($val, $key, '');
             }
-            if(file_exists($syspath)) {
-                $lien = '<a href="' . $urlpath . '?id='.(empty($val['is_id'])?$obj->rowid:$obj->$key).'" target="_blank">'.$obj1->$value2show.'</a>';
-                return $object->showOutputField($val, $key,$lien , '');
-            }
-            else {
-                return $object->showOutputField($val, $key, $obj1->$value2show, '');
-            }
+            elseif(empty($obj))return $this->showOutputField($val, $key, '');
+            else return $this->showOutputField($val, $key, $obj);
         }
     }
-    else return $object->showOutputField($val, $key, $obj->$key, '');
-}
-
->>>>>>> 037e83ac8b... New:show Output Field With Links with showOutputFieldWithLinks
 	/**
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
