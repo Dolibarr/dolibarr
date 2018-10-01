@@ -36,8 +36,7 @@ $err=0;
 $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):(isset($_GET["lang"])?$_GET["lang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
-$langs->load("install");
-$langs->load("errors");
+$langs->loadLangs(array("install", "errors"));
 
 dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 

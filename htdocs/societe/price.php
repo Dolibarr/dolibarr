@@ -38,9 +38,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 }
 
-$langs->load("products");
-$langs->load("companies");
-$langs->load("bills");
+$langs->loadLangs(array("products", "companies", "bills"));
 
 $action = GETPOST('action', 'alpha');
 $search_prod = GETPOST('search_prod','alpha');
