@@ -651,8 +651,8 @@ if ($action == 'create')
 					print "</tr>\n";
 				}
 
-				$total_debit = price2num($total_debit);
-				$total_credit = price2num($total_credit);
+				$total_debit = price2num($total_debit, 2);
+				$total_credit = price2num($total_credit, 2);
 
 				if ($total_debit != $total_credit)
 				{
