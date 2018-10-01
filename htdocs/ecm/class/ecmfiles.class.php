@@ -56,7 +56,12 @@ class EcmFiles extends CommonObject
 	 */
 	public $ref;
 
-	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
+	/**
+	 * hash of file content (md5_file(dol_osencode($destfull))
+     * @var string Ecm Files label
+     */
+    public $label;
+
 	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 
 	/**
@@ -848,7 +853,10 @@ class EcmFiles extends CommonObject
 
 class EcmfilesLine
 {
-	public $label;
+	/**
+     * @var string ECM files line label
+     */
+    public $label;
 
 	/**
 	 * @var int Entity

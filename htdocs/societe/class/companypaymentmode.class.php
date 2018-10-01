@@ -129,7 +129,11 @@ class CompanyPaymentMode extends CommonObject
 	 */
   public $fk_soc;
 
-	public $label;
+	/**
+     * @var string company payment mode label
+     */
+    public $label;
+
 	public $bank;
 	public $code_banque;
 	public $code_guichet;

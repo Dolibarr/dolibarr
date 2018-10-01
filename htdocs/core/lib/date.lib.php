@@ -923,41 +923,41 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
  *  This replace old function monthArrayOrSelected.
  *
  *	@param	Translate	$outputlangs	Object langs
- *  @param	int			$short			1=Return short label
+ *  @param	int			$short			0=Return long label, 1=Return short label
  *	@return array						Month string or array if selected < 0
  */
 function monthArray($outputlangs,$short=0)
 {
 	$montharray = array (
-	    1  => $outputlangs->trans("January"),
-	    2  => $outputlangs->trans("February"),
-	    3  => $outputlangs->trans("March"),
-	    4  => $outputlangs->trans("April"),
-	    5  => $outputlangs->trans("May"),
-	    6  => $outputlangs->trans("June"),
-	    7  => $outputlangs->trans("July"),
-	    8  => $outputlangs->trans("August"),
-	    9  => $outputlangs->trans("September"),
-	    10 => $outputlangs->trans("October"),
-	    11 => $outputlangs->trans("November"),
-	    12 => $outputlangs->trans("December")
+	    1  => $outputlangs->trans("Month01"),
+	    2  => $outputlangs->trans("Month02"),
+	    3  => $outputlangs->trans("Month03"),
+	    4  => $outputlangs->trans("Month04"),
+	    5  => $outputlangs->trans("Month05"),
+	    6  => $outputlangs->trans("Month06"),
+	    7  => $outputlangs->trans("Month07"),
+	    8  => $outputlangs->trans("Month08"),
+	    9  => $outputlangs->trans("Month09"),
+	    10 => $outputlangs->trans("Month10"),
+	    11 => $outputlangs->trans("Month11"),
+	    12 => $outputlangs->trans("Month12")
     );
 
 	if (! empty($short))
 	{
 		$montharray = array (
-		    1  => $outputlangs->trans("JanuaryMin"),
-		    2  => $outputlangs->trans("FebruaryMin"),
-		    3  => $outputlangs->trans("MarchMin"),
-		    4  => $outputlangs->trans("AprilMin"),
-		    5  => $outputlangs->trans("MayMin"),
-		    6  => $outputlangs->trans("JuneMin"),
-		    7  => $outputlangs->trans("JulyMin"),
-		    8  => $outputlangs->trans("AugustMin"),
-		    9  => $outputlangs->trans("SeptemberMin"),
-		    10 => $outputlangs->trans("OctoberMin"),
-		    11 => $outputlangs->trans("NovemberMin"),
-		    12 => $outputlangs->trans("DecemberMin")
+		    1  => $outputlangs->trans("MonthShort01"),
+		    2  => $outputlangs->trans("MonthShort02"),
+		    3  => $outputlangs->trans("MonthShort03"),
+		    4  => $outputlangs->trans("MonthShort04"),
+		    5  => $outputlangs->trans("MonthShort05"),
+		    6  => $outputlangs->trans("MonthShort06"),
+		    7  => $outputlangs->trans("MonthShort07"),
+		    8  => $outputlangs->trans("MonthShort08"),
+		    9  => $outputlangs->trans("MonthShort09"),
+		    10 => $outputlangs->trans("MonthShort10"),
+		    11 => $outputlangs->trans("MonthShort11"),
+		    12 => $outputlangs->trans("MonthShort12")
 			);
 	}
 

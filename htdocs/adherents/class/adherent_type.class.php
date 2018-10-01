@@ -56,8 +56,10 @@ class AdherentType extends CommonObject
 	 */
 	public $libelle;
 
-	/** @var string Label */
-	public $label;
+	/**
+     * @var string Adherent type label
+     */
+    public $label;
 
 	/**
 	 * @var int Subsription required (0 or 1)

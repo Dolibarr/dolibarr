@@ -904,7 +904,7 @@ if ($resql)
 
 	$projectstatic=new Project($db);
 	$discount = new DiscountAbsolute($db);
-	
+
 	if ($num > 0)
 	{
 		$i=0;
@@ -914,6 +914,7 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			$datelimit=$db->jdate($obj->datelimite);
+
 			$facturestatic->id=$obj->id;
 			$facturestatic->ref=$obj->ref;
 			$facturestatic->type=$obj->type;
@@ -957,12 +958,10 @@ if ($resql)
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
-				print '<td class="nobordernopadding nowrap">';
+				print '<td class="nobordernopadding nowraponall">';
 				print $facturestatic->getNomUrl(1,'',200,0,'',0,1);
 				print empty($obj->increment)?'':' ('.$obj->increment.')';
-				print '</td>';
 
-				print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->id;

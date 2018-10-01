@@ -8,9 +8,12 @@ For Users:
 NEW: Stable module: Website
 NEW: Stable module: WebDAV
 NEW: Stable module: Module Builder
-NEW: Stable module "Skype" has been replaced with module "Social Networks" to support more tools. 
+NEW: Stable module "Skype" has been replaced with module "Social Networks" to support more tools.
+NEW: Experimental module "TakePos"
 NEW: Dolibarr can provide information in page title when multicompany is enabled of not, making
      Android application like DoliDroid able to provide native features for multicompany module.
+NEW: Compatibility with PHP 7.3
+
 
 For developers:
 * Code changes to be more compatible with PSR2

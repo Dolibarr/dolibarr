@@ -72,9 +72,29 @@ ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
 
 ALTER TABLE llx_societe ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN facebook varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN instagram  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN snapchat  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN googleplus  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN youtube  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN whatsapp  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN facebook varchar(255) after skype;
-
+ALTER TABLE llx_socpeople ADD COLUMN instagram  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN snapchat  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN googleplus  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN youtube  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN whatsapp  varchar(255) after skype;
 
 ALTER TABLE llx_website CHANGE COLUMN fk_user_create fk_user_creat integer;
 ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;
+
+
+CREATE TABLE llx_takepos_floor_tables(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    entity integer DEFAULT 1 NOT NULL,
+    label varchar(255),
+    leftpos float,
+    toppos float,
+    floor smallint
+) ENGINE=innodb;
+
