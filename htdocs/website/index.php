@@ -92,7 +92,7 @@ if (empty($action)) $action='preview';
 $object=new Website($db);
 $objectpage=new WebsitePage($db);
 
-$object->fetchAll();    // Init $object->records
+$object->fetchAll();    // Init $object->records with list of websites
 
 // If website not defined, we take first found
 if (empty($websitekey))
@@ -118,16 +118,24 @@ if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 	// Check if pageid is inside the new website, if not we reset param pageid
 	if ($res >= 0 && $object->id > 0)
 	{
-		if ($objectpage->fk_website != $object->id)	// We have a bad page.
+		if ($objectpage->fk_website != $object->id)	// We have a bad page that does not belong to web site
 		{
-			$res = $objectpage->fetch(0, $object->id, '');	// We search first page of web site
-			if ($res == 0)	// Page was not found, we reset it
+			if ($object->fk_default_home > 0)
 			{
-				$objectpage=new WebsitePage($db);
+				$res = $objectpage->fetch($object->fk_default_home, $object->id, '');	// We search first page of web site
+				if ($res > 0) $pageid = $object->fk_default_home;
 			}
-			else			// We found a page, we set pageid to it.
+			else
 			{
-				$pageid = $objectpage->id;
+				$res = $objectpage->fetch(0, $object->id, '');	// We search first page of web site
+				if ($res == 0)	// Page was not found, we reset it
+				{
+					$objectpage=new WebsitePage($db);
+				}
+				else			// We found a page, we set pageid to it.
+				{
+					$pageid = $objectpage->id;
+				}
 			}
 		}
 		else	// We have a valid page. We force pageid for the case we got the page with a fetch on ref.
