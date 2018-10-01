@@ -4506,21 +4506,23 @@ class Form
 	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param  int     $nooutput       No print output. Return it only.
 	 *  @return	void
 	 */
-	function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array())
+	function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $nooutput=0)
 	{
         // phpcs:enable
 		global $langs;
 
+		$out = '';
 		if ($htmlname != "none")
 		{
-			print '<form method="post" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="set_thirdparty">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
-			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+			$out.='<form method="post" action="'.$page.'">';
+			$out.= '<input type="hidden" name="action" value="set_thirdparty">';
+			$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			$out.= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
+			$out.= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$out.= '</form>';
 		}
 		else
 		{
@@ -4529,13 +4531,16 @@ class Form
 				require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 				$soc = new Societe($this->db);
 				$soc->fetch($selected);
-				print $soc->getNomUrl($langs);
+				$out.= $soc->getNomUrl($langs);
 			}
 			else
 			{
-				print "&nbsp;";
+				$out.= "&nbsp;";
 			}
 		}
+
+		if ($nooutput) return $out;
+		else print $out;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
