@@ -31,34 +31,13 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
  */
 class Notify
 {
-    /**
-     * @var int ID
-     */
-    public $id;
-
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-    /**
-     * @var string 	Error string
-     * @see             errors
-     */
-    public $error;
-
-    /**
-     * @var string[] Error codes (or messages)
-     */
-    public $errors = array();
+	var $id;
+	var $db;
+	var $error;
+	var $errors=array();
 
 	var $author;
-
-     /**
-      * @var string Ref
-      */
-    public $ref;
-
+	var $ref;
 	var $date;
 	var $duree;
 	var $note;
@@ -341,12 +320,7 @@ class Notify
 
 		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-		if (! empty($object->fk_project))
-		{
-			$proj = new Project($this->db);
-			$proj->fetch($object->fk_project);
-		}
+
 		// Check notification per third party
 		$sql = "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
@@ -376,6 +350,13 @@ class Notify
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			if (! empty($object->fk_project))
+			{
+				$proj = new Project($this->db);
+				$proj->fetch($object->fk_project);
+			}
+			$projtitle=(empty($proj->title)?'':'['.$proj->title.']');
 
 			if ($num > 0)
 			{
@@ -397,8 +378,7 @@ class Notify
 							$outputlangs->setDefaultLang($obj->default_lang);
 						}
 
-						$projtitle=(empty($proj->title)?'':$proj->title);
-						$subject = '['.$mysoc->name.']['.$projtitle.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+						$subject = '['.$mysoc->name.']'.$projtitle.' '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
@@ -580,7 +560,7 @@ class Notify
 				$link = '';
 				$num++;
 
-				$subject = '['.$mysoc->name.'] ['.$proj->title.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+				$subject = '['.$mysoc->name.'] '.$projtitle.' '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':
@@ -744,3 +724,4 @@ class Notify
 	}
 
 }
+
