@@ -5865,7 +5865,7 @@ abstract class CommonObject
 	 * @return string
 	 */
 
-    function showOutputFieldWithLinks($object,$key,$val,$obj,$linkpath='') {
+    function showOutputFieldWithLinks($key,$val,$obj,$linkpath='') {
 	    if(!empty($val['fk_table'])&&!empty($obj->$key)){
 		$sql = "SELECT ".$val['show_field'];
 		$sql .= " FROM " . MAIN_DB_PREFIX .$val['fk_table'];
@@ -5887,14 +5887,15 @@ abstract class CommonObject
 		    }
 		    if(file_exists($syspath)) {
 			$lien = '<a href="' . $urlpath . '?id='.(empty($val['is_id'])?$obj->rowid:$obj->$key).'" target="_blank">'.$obj1->$value2show.'</a>';
-			return $object->showOutputField($val, $key,$lien , '');
+			return $this->showOutputField($val, $key,$lien , '');
 		    }
 		    else {
-			return $object->showOutputField($val, $key, $obj1->$value2show, '');
+			return $this->showOutputField($val, $key, $obj1->$value2show, '');
 		    }
 		}
+		else return -1;
 	    }
-	    else return $object->showOutputField($val, $key, $obj->$key, '');
+	    else return $this->showOutputField($val, $key, $obj->$key, '');
 	}
 
 	/**
