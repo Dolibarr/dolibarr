@@ -60,9 +60,9 @@ class FormSms
     var $param=array();
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     /**
@@ -90,13 +90,13 @@ class FormSms
     /**
      *	Show the form to input an sms.
      *
-     *	@param	string	$morecss        Class on first column td
-     *  @param  int     $showform       Show form tags and submit button (recommanded is to use with value 0)
+     *	@param	string	$morecss Class on first column td
+     *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
     function show_form($morecss='titlefield', $showform=1)
     {
-        // phpcs:enable
+     // phpcs:enable
         global $conf, $langs, $user, $form;
 
         if (! is_object($form)) $form=new Form($this->db);
