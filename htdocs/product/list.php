@@ -657,6 +657,8 @@ if ($resql)
 
 	$product_static=new Product($db);
 	$product_fourn =new ProductFournisseur($db);
+	
+	$pagination = 'page='.$page.'&limit='.$limit.'&contextpage='.$contextpage.'&type='.$type.'&search_type='.$search_type.'&sortfield='.$sortfield.'&sortorder='.$sortorder;
 
 	$i = 0;
 	$totalarray=array();
@@ -711,7 +713,6 @@ if ($resql)
 		if (! empty($arrayfields['p.ref']['checked']))
 		{
 			print '<td class="tdoverflowmax200">';
-			$pagination = 'page='.$page.'&limit='.$limit.'&contextpage='.$contextpage.'&type='.$type.'&search_type='.$search_type.'&sortfield='.$sortfield.'&sortorder='.$sortorder;
 			print $product_static->getNomUrl(1,'',0,-1,$pagination);
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
