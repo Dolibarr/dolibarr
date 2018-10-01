@@ -312,10 +312,10 @@ class Contrat extends CommonObject
 
 		$this->db->begin();
 
+		$error=0;
+
 		// Load lines
 		$this->fetch_lines();
-
-		$error=0;
 
 		foreach($this->lines as $contratline)
 		{
