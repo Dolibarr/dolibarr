@@ -644,9 +644,8 @@ class Expedition extends CommonObject
 		{
 			$numref = $this->getNextNumRef($soc);
 		}
-		else
-		{
-			$numref = "EXP".$this->id;
+		else {
+			$numref = $this->ref;
 		}
 		$this->newref = $numref;
 
@@ -2256,6 +2255,138 @@ class Expedition extends CommonObject
 			return -1;
 		}
 	}
+
+	
+	 /**
+     *	Set draft status
+     *
+     *	@param	User	$user			Object user that modify
+     *	@return	int						<0 if KO, >0 if OK
+     */
+    function set_draft($user)
+    {
+        global $conf,$langs;
+
+        $error=0;
+
+        // Protection
+        if ($this->statut <= self::STATUS_DRAFT)
+        {
+            return 0;
+        }
+
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate))))
+        {
+            $this->error='Permission denied';
+            return -1;
+        }
+
+        $this->db->begin();
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
+        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
+        $sql.= " WHERE rowid = ".$this->id;
+
+        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            // If stock increment is done on closing
+			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+				$langs->load("agenda");
+
+				// Loop on each product line to add a stock movement
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+				$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+				$sql.= " WHERE ed.fk_expedition = ".$this->id;
+				$sql.= " AND cd.rowid = ed.fk_origin_line";
+
+				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$cpt = $this->db->num_rows($resql);
+					for ($i = 0; $i < $cpt; $i++)
+					{
+						$obj = $this->db->fetch_object($resql);
+						if (empty($obj->edbrowid))
+						{
+							$qty = $obj->qty;
+						}
+						else
+						{
+							$qty = $obj->edbqty;
+						}
+						if ($qty <= 0) continue;
+						dol_syslog(get_class($this)."::reopen expedition movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						//var_dump($this->lines[$i]);
+						$mouvS = new MouvementStock($this->db);
+						$mouvS->origin = &$this;
+
+						if (empty($obj->edbrowid))
+						{
+							// line without batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentBackToDraftInDolibarr",$this->ref));
+							if ($result < 0) {
+							    $this->error = $mouvS->error;
+							    $this->errors = $mouvS->errors;
+								$error++; break;
+							}
+						}
+						else
+						{
+							// line with batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentBackToDraftInDolibarr",$this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							if ($result < 0) {
+							    $this->error = $mouvS->error;
+							    $this->errors = $mouvS->errors;
+							    $error++; break;
+							}
+						}
+					}
+				}
+				else
+				{
+					$this->error=$this->db->lasterror();
+					$error++;
+				}
+			}
+
+            if (!$error) {
+            	// Call trigger
+            	$result=$this->call_trigger('SHIPPING_UNVALIDATE',$user);
+            	if ($result < 0) $error++;
+            }
+
+            if (!$error) {
+           		$this->statut=self::STATUS_DRAFT;
+            	$this->db->commit();
+            	return 1;
+            }else {
+            	$this->db->rollback();
+            	return -1;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            $this->db->rollback();
+            return -1;
+        }
+    }
 
 	/**
 	 *  Create a document onto disk according to template module.

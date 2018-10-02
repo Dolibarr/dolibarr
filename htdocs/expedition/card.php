@@ -137,6 +137,30 @@ if (empty($reshook))
 	    $result = $object->reOpen();
 	}
 
+// Confirm back to draft status
+	if ($action == 'modif' && $user->rights->expedition->creer)
+	{
+		$result = $object->set_draft($user);
+		if ($result >= 0)
+		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+	}
+
 	// Set incoterm
 	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 	{
@@ -2472,6 +2496,10 @@ else if ($id || $ref)
 				{
 					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
+			}
+
+			if ($object->statut == Expedition::STATUS_VALIDATED && $user->rights->expedition->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 			}
 
 			// TODO add alternative status

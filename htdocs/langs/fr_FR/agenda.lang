@@ -59,6 +59,7 @@ MemberSubscriptionDeletedInDolibarr=Abonnement %s pour l'adhérent %s supprimé
 ShipmentValidatedInDolibarr=Expédition %s validée
 ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
 ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
+ShipmentBackToDraftInDolibarr=Expédition %s repassée en brouillon
 ShipmentDeletedInDolibarr=Expédition %s supprimée
 OrderCreatedInDolibarr=Commande %s créée
 OrderValidatedInDolibarr=Commande %s validée
