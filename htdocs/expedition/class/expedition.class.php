@@ -2284,6 +2284,13 @@ class Expedition extends CommonObject
             	$result=$this->call_trigger('SHIPPING_UNVALIDATE',$user);
             	if ($result < 0) $error++;
             }
+			if($this->origin == 'commande'){
+				$commande = new Commande($this->db);
+				$commande->fetch($this->origin_id);
+				$commande->statut = Commande::STATUS_VALIDATED;
+				$commande->update();
+			}
+			
 
             if (!$error) {
            		$this->statut=self::STATUS_DRAFT;
