@@ -2382,11 +2382,17 @@ a.tabTitle {
 }
 
 a.tabunactive {
-    color: #333 !important;
+    color: #666 !important;
+  -webkit-transition : border 500ms ease-out;
+  -moz-transition : border 500ms ease-out;
+  -o-transition : border 500ms ease-out;
+  transition : border 500ms ease-out;
 }
-a.tabunactive:hover {
+a.tabunactive:hover, a.tabunactive:focus {
     color: rgb(<?php print $colortextlink; ?>) !important;
 	border-top: 1px solid rgb(<?php print $colorbackhmenu1 ; ?>) !important;
+	border-left: 1px solid #CCC !important;
+	border-right: 1px solid #CCC !important;
 }
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
@@ -2429,7 +2435,7 @@ a.tab:hover
 	background: rgba(<?php echo $colorbacktabcard1; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 	color: #<?php echo $colortextbacktab; ?>;
 	*/
-	text-decoration: none;
+	text-decoration: underline;
 }
 a.tabimage {
     color: #434956;
