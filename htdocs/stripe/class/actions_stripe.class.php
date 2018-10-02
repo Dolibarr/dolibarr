@@ -36,8 +36,10 @@ $langs->load("stripe@stripe");
  */
 class ActionsStripeconnect
 {
-	/** @var DoliDB */
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	private $config=array();
 
@@ -234,5 +236,4 @@ class ActionsStripeconnect
 		}
 		return 0;
 	}
-
 }

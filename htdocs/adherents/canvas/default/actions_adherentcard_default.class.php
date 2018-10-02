@@ -67,6 +67,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Assign custom values for canvas
 	 *
@@ -76,6 +77,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	function assign_values(&$action, $id)
 	{
+        // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
@@ -117,10 +119,10 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -132,6 +134,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
         //$this->getFieldList();
@@ -139,4 +142,3 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
         $this->list_datas = array();
 	}
 }
-

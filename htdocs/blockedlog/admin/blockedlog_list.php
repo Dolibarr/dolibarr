@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur     <eldy@destailleur.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +132,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			// Make the first fetch to get first line
 			$obj = $db->fetch_object($res);
-			if ($obj) 
+			if ($obj)
 			{
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
@@ -372,10 +373,10 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 print '<td class="liste_titre">';
 //print $langs->trans("from").': ';
-$form->select_date($search_start,'search_start');
+print $form->selectDate($search_start,'search_start');
 //print '<br>';
 //print $langs->trans("to").': ';
-$form->select_date($search_end,'search_end');
+print $form->selectDate($search_end,'search_end');
 print '</td>';
 
 // User

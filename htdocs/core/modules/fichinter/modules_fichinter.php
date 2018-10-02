@@ -40,6 +40,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -49,6 +50,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='ficheinter';
@@ -147,6 +149,7 @@ abstract class ModeleNumRefFicheinter
 }
 
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *
@@ -161,6 +164,7 @@ abstract class ModeleNumRefFicheinter
  */
 function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+    // phpcs:enable
 	global $conf,$langs,$user;
 	$langs->load("ficheinter");
 
@@ -244,4 +248,3 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 		return 0;
 	}
 }
-

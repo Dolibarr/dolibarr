@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2003        Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004             Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2013        Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2007, 2015  Yannick Warnier      <ywarnier@beeznest.org>
- * Copyright (C) 2014	          Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015  Yannick Warnier         <ywarnier@beeznest.org>
+ * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,18 +136,21 @@ if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear=$year_start; $prevquarter=$q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {
-	$prevquarter=4; $prevyear--;
+    $prevquarter=4;
+    $prevyear--;
 }
-$nextyear=$year_start; $nextquarter=$q;
+$nextyear=$year_start;
+$nextquarter=$q;
 if ($nextquarter < 4) {
 	$nextquarter++;
 } else {
-	$nextquarter=1; $nextyear++;
+    $nextquarter=1;
+    $nextyear++;
 }
 $description.=$fsearch;
 $builddate=dol_now();

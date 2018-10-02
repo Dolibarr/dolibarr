@@ -1,15 +1,46 @@
 <?php
+/*
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
+
 /**
  * 	Class to manage comment
  */
 class Comment extends CommonObject
 {
-	public $element='comment';		//!< Id that identify managed objects
-	public $table_element='comment';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='comment';
 
-	public $fk_element;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='comment';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element ='';
+
 	public $element_type;
 
+	/**
+	 * @var string description
+	 */
 	public $description;
 
 	public $tms;
@@ -18,6 +49,9 @@ class Comment extends CommonObject
 
 	public $fk_user_author;
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	public $import_key;

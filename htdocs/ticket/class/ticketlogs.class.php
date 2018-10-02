@@ -32,13 +32,35 @@ require_once DOL_DOCUMENT_ROOT . "/core/class/commonobject.class.php";
  */
 class Ticketlogs// extends CommonObject
 {
-    public $db; //!< To store db handler
-    public $error; //!< To return error code (or message)
-    public $errors = array(); //!< To return several error codes (or messages)
-    public $element = 'ticketlogs'; //!< Id that identify managed objects
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element = 'ticketlogs';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element = 'ticketlogs'; //!< Name of table without prefix where object is stored
 
-    public $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
     public $fk_track_id;
     public $fk_user_create;
@@ -53,7 +75,6 @@ class Ticketlogs// extends CommonObject
     public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
     /**

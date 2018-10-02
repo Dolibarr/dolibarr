@@ -42,6 +42,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -51,6 +52,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='propal';

@@ -25,7 +25,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","install","users","other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -39,10 +40,6 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
-
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -99,7 +96,7 @@ $usefilter=0;
 $listofsessions=listOfSessions();
 $num=count($listofsessions);
 
-print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'', $num, ($num?$num:''),'setup');		// Do not show numer (0) if no session found (it means we can't know)
 
 $savehandler=ini_get("session.save_handler");
 $savepath=ini_get("session.save_path");

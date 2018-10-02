@@ -31,7 +31,15 @@
 class AccountingAccount extends CommonObject
 {
 	public $element='accounting_account';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='accounting_account';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'billr';
 
 	/**
@@ -39,39 +47,63 @@ class AccountingAccount extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
 	public $restrictiononfksoc = 1;
 
-	var $db;
-	
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
-	var $id;
-	var $rowid;
-	var $datec; // Creation date
-	var $fk_pcg_version;
-	var $pcg_type;
-	var $pcg_subtype;
-	var $account_number;
-	var $account_parent;
-	var $account_category;
-	var $label;
-	var $fk_user_author;
-	var $fk_user_modif;
-	var $active;       // duplicate with status
-	var $status;
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	public $datec; // Creation date
+	public $fk_pcg_version;
+	public $pcg_type;
+	public $pcg_subtype;
+	public $account_number;
+	public $account_parent;
+	public $account_category;
+	public $status;
+
+    /**
+     * @var string Label of account
+     */
+    public $label;
+
+    /**
+     * @var int ID
+     */
+    public $fk_user_author;
+
+    /**
+     * @var int ID
+     */
+    public $fk_user_modif;
+
+    public $active;       // duplicate with status
 
 
 	/**
@@ -405,7 +437,7 @@ class AccountingAccount extends CommonObject
 	 * @param	string  $moretitle					Add more text to title tooltip
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return	string	String with URL
+	 * @return  string	String with URL
 	 */
 	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle='',$notooltip=0, $save_lastsearch_value=-1)
 	{
@@ -503,6 +535,7 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Account deactivated
 	 *
@@ -511,6 +544,7 @@ class AccountingAccount extends CommonObject
 	 */
     function account_desactivate($id)
     {
+        // phpcs:enable
 		$result = $this->checkUsage();
 
 		if ($result > 0) {
@@ -536,6 +570,7 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Account activated
 	 *
@@ -544,6 +579,7 @@ class AccountingAccount extends CommonObject
 	 */
     function account_activate($id)
     {
+        // phpcs:enable
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
@@ -574,6 +610,7 @@ class AccountingAccount extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -583,6 +620,7 @@ class AccountingAccount extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$langs->loadLangs(array("users"));
 
@@ -592,27 +630,27 @@ class AccountingAccount extends CommonObject
 			if ($statut == 1) return $langs->trans('Enabled');
 			if ($statut == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($statut == 1) return $langs->trans('Enabled');
 			if ($statut == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4');
 			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');

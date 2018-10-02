@@ -37,7 +37,11 @@ class box_clients extends ModeleBoxes
 	var $boxlabel="BoxLastCustomers";
 	var $depends = array("societe");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $enabled = 1;
 
 	var $info_box_head = array();
@@ -159,7 +163,6 @@ class box_clients extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
-
 	}
 
 	/**
@@ -174,6 +177,5 @@ class box_clients extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

@@ -32,22 +32,38 @@
  */
 class Ccountry // extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	//var $element='ccountry';			//!< Id that identify managed objects
 	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
 
-    var $id;
-	var $code;
-	var $code_iso;
-	var $label;
-	var $active;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+	public $code;
+	public $code_iso;
+
+	/**
+     * @var string Countries label
+     */
+    public $label;
+
+	public $active;
 
 
 
@@ -60,7 +76,6 @@ class Ccountry // extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -317,5 +332,4 @@ class Ccountry // extends CommonObject
 			return 1;
 		}
 	}
-
 }

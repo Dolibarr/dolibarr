@@ -66,11 +66,11 @@ if ($action == 'update')
 
     if (! $error)
     {
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",   $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT",    $_POST["MAIN_MAX_DECIMALS_TOT"],'chaine',0,'',$conf->entity);
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN",  $_POST["MAIN_MAX_DECIMALS_SHOWN"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT", $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT", $_POST["MAIN_MAX_DECIMALS_TOT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN", $_POST["MAIN_MAX_DECIMALS_SHOWN"],'chaine',0,'',$conf->entity);
 
-        dolibarr_set_const($db, "MAIN_ROUNDING_RULE_TOT",   $_POST["MAIN_ROUNDING_RULE_TOT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_ROUNDING_RULE_TOT", $_POST["MAIN_ROUNDING_RULE_TOT"],'chaine',0,'',$conf->entity);
 
         header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
         exit;

@@ -548,8 +548,8 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" value="'.$format.'" name="format">';
 	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
 	print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
-	print '<input type="hidden" value="'.$separator.'" name="separator">';
-	print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 
 	print '<span class="opacitymedium">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</span><br><br>';
@@ -648,7 +648,8 @@ if ($step == 4 && $datatoimport)
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db,$datatoimport);
-	if ($model == 'csv') {
+	if ($model == 'csv')
+	{
 	    $obj->separator = $separator;
 	    $obj->enclosure = $enclosure;
 	}
@@ -796,9 +797,9 @@ if ($step == 4 && $datatoimport)
 		print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 		print '<input type="hidden" value="'.$filetoimport.'" name="filetoimport">';
 		print $langs->trans("Separator").' : ';
-		print '<input type="text" size="1" name="separator" value="'.htmlentities($separator).'"/>';
+		print '<input type="text" size="1" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-		print '<input type="text" size="1" name="enclosure" value="'.htmlentities($enclosure).'"/>';
+		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/>';
 		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button" />';
 		print '</form>';
 		print '</td></tr>';
@@ -833,8 +834,8 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
     print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
     print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
-    print '<input type="hidden" name="separator" value="'.$separator.'">';
-	print '<input type="hidden" name="enclosure" value="'.$enclosure.'">';
+    print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
+    print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
     print '<table><tr><td colspan="2" class="opacitymedium">';
     print $langs->trans("SelectImportFields",img_picto('','grip_title','')).' ';
     $htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
@@ -1116,8 +1117,8 @@ if ($step == 4 && $datatoimport)
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
     	print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
     	print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
-    	print '<input type="hidden" value="'.$separator.'" name="separator">';
-		print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
+    	print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
+    	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 
 		print '<table summary="selectofimportprofil" class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -1262,10 +1263,8 @@ if ($step == 5 && $datatoimport)
 	if ($model == 'csv') {
 	    print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 	    print '<td>';
-	    print $langs->trans("Separator").' : ';
-	    print htmlentities($separator);
-	    print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-	    print htmlentities($enclosure);
+	    print $langs->trans("Separator").' : '.dol_escape_htmltag($separator);
+	    print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : '.dol_escape_htmltag($enclosure);
 	    print '</td></tr>';
 	}
 

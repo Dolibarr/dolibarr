@@ -174,7 +174,6 @@ class modTax extends DolibarrModules
 		$this->import_examplevalues_array[$r]=array('t.label'=>"VAT Payment 1st quarter 2016",'t.fk_typepayment'=>"CHQ (must be id or code found into dictionary)",
 		    't.datep'=>"2016-04-02", 't.datev'=>"2016-03-31", 't.amount'=>1000, 't.num_payment'=>'123456'
 		);
-
 	}
 
 

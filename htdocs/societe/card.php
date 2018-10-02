@@ -145,7 +145,7 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
@@ -405,6 +405,8 @@ if (empty($reshook))
 	        $object->country_id				= GETPOST('country_id', 'int');
 	        $object->state_id				= GETPOST('state_id', 'int');
 	        $object->skype					= GETPOST('skype', 'alpha');
+	        $object->twitter				= GETPOST('twitter', 'alpha');
+	        $object->facebook				= GETPOST('facebook', 'alpha');
 	        $object->phone					= GETPOST('phone', 'alpha');
 	        $object->fax					= GETPOST('fax','alpha');
 	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
@@ -959,6 +961,8 @@ else
         $object->town				= GETPOST('town', 'alpha');
         $object->state_id			= GETPOST('state_id', 'int');
         $object->skype				= GETPOST('skype', 'alpha');
+        $object->twitter			= GETPOST('twitter', 'alpha');
+        $object->facebook			= GETPOST('facebook', 'alpha');
         $object->phone				= GETPOST('phone', 'alpha');
         $object->fax				= GETPOST('fax', 'alpha');
         $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1240,17 +1244,32 @@ else
             print '</td></tr>';
         }
 
-        // Email web
+        // Email / Web
         print '<tr><td>'.fieldLabel('EMail','email',$conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
-        // Skype
-        if (! empty($conf->skype->enabled))
+        if (! empty($conf->socialnetworks->enabled))
         {
-            print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	        print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
+        	// Skype
+        	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+        	{
+        		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
+        		print '<td colspan="3"><input type="text" name="skype" class="minwidth100" maxlength="80" id="skype" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+        	}
+        	// Twitter
+        	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+        	{
+        		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
+        		print '<td colspan="3"><input type="text" name="twitter" class="minwidth100" maxlength="80" id="twitter" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
+        	}
+        	// Facebook
+        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+        	{
+	        	print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
+	        	print '<td colspan="3"><input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
+        	}
         }
 
         // Phone / Fax
@@ -1377,16 +1396,14 @@ else
             print '</tr>';
         }
 
-        if ($user->rights->societe->client->voir)
-        {
-            // Assign a Name
-            print '<tr>';
-            print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
-            print '<td colspan="3" class="maxwidthonsmartphone">';
-			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-            print $form->multiselectarray('commercial', $userlist, GETPOST('commercial', 'array'), null, null, null, null, "90%");
-            print '</td></tr>';
-        }
+		// Assign a sale representative
+		print '<tr>';
+		print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
+		print '<td colspan="3" class="maxwidthonsmartphone">';
+		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
+		print $form->multiselectarray('commercial', $userlist, (count(GETPOST('commercial', 'array')) > 0?GETPOST('commercial', 'array'):(empty($user->rights->societe->client->voir)?array($user->id):array())), null, null, null, null, "90%");
+		print '</td></tr>';
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
@@ -1538,6 +1555,8 @@ else
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id', 'int'):$mysoc->country_id;
                 $object->state_id				= GETPOST('state_id', 'int');
                 $object->skype					= GETPOST('skype', 'alpha');
+                $object->twitter				= GETPOST('twitter', 'alpha');
+                $object->facebook				= GETPOST('facebook', 'alpha');
                 $object->phone					= GETPOST('phone', 'alpha');
                 $object->fax					= GETPOST('fax', 'alpha');
                 $object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1819,12 +1838,27 @@ else
             print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
 
-            // Skype
-            if (! empty($conf->skype->enabled))
-            {
-                print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	            print '<td colspan="3"><input type="text" name="skype" id="skype" size="32" value="'.$object->skype.'"></td></tr>';
-            }
+	        if (! empty($conf->socialnetworks->enabled))
+	        {
+	        	// Skype
+	        	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
+	        		print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
+	        	}
+	        	// Twitter
+	        	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
+	        		print '<td colspan="3"><input type="text" name="twitter" id="twitter" value="'.$object->twitter.'"></td></tr>';
+	        	}
+	        	// Facebook
+	        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
+	        		print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
+	        	}
+	        }
 
             // Phone / Fax
             print '<tr><td>'.fieldLabel('Phone','phone').'</td>';
@@ -1962,7 +1996,7 @@ else
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
 	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
-	        print dol_escape_htmltag(price($object->capital));
+	        print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
 	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
 			// Assign a Name

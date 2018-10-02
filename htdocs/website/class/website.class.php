@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,47 +39,57 @@ class Website extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'website';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website';
+
 	/**
 	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'globe';
 
 	/**
-	 * @var int
+	 * @var int Entity
 	 */
 	public $entity;
+
 	/**
-	 * @var string
+	 * @var string Ref
 	 */
 	public $ref;
+
 	/**
-	 * @var string
+	 * @var string description
 	 */
 	public $description;
+
 	/**
-	 * @var int
+	 * @var int Status
 	 */
 	public $status;
+
 	/**
 	 * @var mixed
 	 */
 	public $date_creation;
+
 	/**
 	 * @var mixed
 	 */
 	public $tms = '';
+
 	/**
 	 * @var integer
 	 */
 	public $fk_default_home;
+
 	/**
 	 * @var string
 	 */
@@ -127,11 +137,17 @@ class Website extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-		if (empty($this->date_creation)) $this->date_creation = $now;
-		if (empty($this->date_modification)) $this->date_modification = $now;
+		if (empty($this->date_creation)) {
+            $this->date_creation = $now;
+        }
+		if (empty($this->date_modification)) {
+            $this->date_modification = $now;
+        }
 
 		// Check parameters
-		if (empty($this->entity)) { $this->entity = $conf->entity; }
+		if (empty($this->entity)) {
+            $this->entity = $conf->entity;
+        }
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
@@ -141,17 +157,17 @@ class Website extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'fk_default_home,';
 		$sql.= 'virtualhost,';
-		$sql.= 'fk_user_create,';
+		$sql.= 'fk_user_creat,';
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((empty($this->entity) && $this->entity != '0')?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
-		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
+		$sql .= ' '.(! isset($this->status)?'1':$this->status).',';
 		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
 		$sql .= ' '.(! isset($this->virtualhost)?'NULL':"'".$this->db->escape($this->virtualhost)."'").",";
-		$sql .= ' '.(! isset($this->fk_user_create)?$user->id:$this->fk_user_create).',';
+		$sql .= ' '.(! isset($this->fk_user_creat)?$user->id:$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_creation)."'");
 		$sql .= ')';
@@ -168,16 +184,16 @@ class Website extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
+            // Uncomment this and change MYOBJECT to your own tag if you
+            // want this action to call a trigger.
+            // if (!$notrigger) {
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
-			}
-		}
+            //     // Call triggers
+            //     $result = $this->call_trigger('MYOBJECT_CREATE',$user);
+            //     if ($result < 0) $error++;
+            //     // End call triggers
+            // }
+        }
 
 		// Commit or rollback
 		if ($error) {
@@ -210,7 +226,7 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
-		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -236,7 +252,7 @@ class Website extends CommonObject
 				$this->status = $obj->status;
 				$this->fk_default_home = $obj->fk_default_home;
 				$this->virtualhost = $obj->virtualhost;
-				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -300,7 +316,7 @@ class Website extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.fk_default_home,";
 		$sql .= " t.virtualhost,";
-		$sql .= " t.fk_user_create,";
+		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
@@ -340,7 +356,7 @@ class Website extends CommonObject
 				$line->status = $obj->status;
 				$line->fk_default_home = $obj->fk_default_home;
 				$line->virtualhost = $obj->virtualhost;
-				$this->fk_user_create = $obj->fk_user_create;
+				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
@@ -472,6 +488,14 @@ class Website extends CommonObject
 				$this->errors[] = 'Error ' . $this->db->lasterror();
 				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
+		}
+
+		if (! $error && ! empty($this->ref))
+		{
+			global $dolibarr_main_data_root;
+			$pathofwebsite=$dolibarr_main_data_root.'/website/'.$this->ref;
+
+			dol_delete_dir_recursive($pathofwebsite);
 		}
 
 		// Commit or rollback
@@ -614,10 +638,11 @@ class Website extends CommonObject
 		    if (! $error)
 		    {
 		    	$filetpl=$pathofwebsitenew.'/page'.$newidforhome.'.tpl.php';
+		    	$filewrapper=$pathofwebsitenew.'/wrapper.php';
 
 		    	// Generate the index.php page to be the home page
 		    	//-------------------------------------------------
-		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl);
+		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 		    }
 		}
 
@@ -685,6 +710,7 @@ class Website extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -694,35 +720,30 @@ class Website extends CommonObject
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			if ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
@@ -748,12 +769,10 @@ class Website extends CommonObject
 		$this->status = '';
 		$this->fk_default_home = null;
 		$this->virtualhost = 'http://myvirtualhost';
-		$this->fk_user_create = $user->id;
+		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
 		$this->date_creation = dol_now();
 		$this->tms = dol_now();
-
-
 	}
 
 
@@ -764,7 +783,7 @@ class Website extends CommonObject
 	 */
 	function exportWebSite()
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$website = $this;
 
@@ -856,7 +875,7 @@ class Website extends CommonObject
 			$allaliases = $objectpageold->pageurl;
 			$allaliases.= ($objectpageold->aliasalt ? ','.$objectpageold->aliasalt : '');
 
-			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;';
+			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;';	// newid start at 1, 2...
 			$line.= "\n";
 			fputs($fp, $line);
 
@@ -885,6 +904,9 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 			$line.= "'".$this->db->escape(str_replace(array("\r\n","\r","\n"), "__N__", $stringtoexport))."', ";	// Replace \r \n to have record on 1 line
 
 			$stringtoexport = $objectpageold->content;
@@ -893,10 +915,22 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
 			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
+			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 			$line.= "'".$this->db->escape($stringtoexport)."'";		// Replace \r \n to have record on 1 line
 			$line.= ");";
 			$line.= "\n";
 			fputs($fp, $line);
+
+			// Add line to update home page id during import
+			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
+			if ($this->fk_default_home > 0 && ($objectpageold->id == $this->fk_default_home) && ($objectpageold->newid > 0))	// This is the record with home page
+			{
+				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
+				$line.= "\n";
+				fputs($fp, $line);
+			}
 		}
 
 		fclose($fp);
@@ -923,7 +957,7 @@ class Website extends CommonObject
 	 */
 	function importWebSite($pathtofile)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$error = 0;
 
@@ -954,6 +988,15 @@ class Website extends CommonObject
 
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1);	// Overwrite if exists
 
+		// Now generate the master.inc.php page
+		$filemaster=$conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
+		$result = dolSaveMasterFile($filemaster);
+		if (! $result)
+		{
+			$this->errors[]='Failed to write file '.$filemaster;
+			$error++;
+		}
+
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);	// Medias can be shared, do not overwrite if exists
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey',    $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
 
@@ -963,10 +1006,14 @@ class Website extends CommonObject
 		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
 		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
 		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
+		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
+		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
+		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
 		$this->db->begin();
 
+		// Search the $maxrowid because we need it later
 		$sqlgetrowid='SELECT MAX(rowid) as max from '.MAIN_DB_PREFIX.'website_page';
 		$resql=$this->db->query($sqlgetrowid);
 		if ($resql)
@@ -975,10 +1022,11 @@ class Website extends CommonObject
 			$maxrowid=$obj->max;
 		}
 
-		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);
+		// Load sql record
+		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);	// The maxrowid of table is searched into this function two
 		if ($runsql <= 0)
 		{
-			$this->errors[]='Failed to load sql file '.$sqlfile.'.';
+			$this->errors[]='Failed to load sql file '.$sqlfile;
 			$error++;
 		}
 
@@ -998,13 +1046,19 @@ class Website extends CommonObject
 					$newid = ($reg[2] + $maxrowid);
 					$aliasesarray = explode(',', $reg[3]);
 
+					$objectpagestatic->fetch($newid);
+
 					dol_syslog("Found ID ".$oldid." to replace with ID ".$newid." and shortcut aliases to create: ".$reg[3]);
 
 					dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
 
+					// The move is not enough, so we regenerate page
+					$filetpl=$conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
+					dolSavePageContent($filetpl, $object, $objectpagestatic);
+
+					// Regenerate alternative aliases pages
 					foreach($aliasesarray as $aliasshortcuttocreate)
 					{
-						$objectpagestatic->id = $newid;
 						$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.$aliasshortcuttocreate.'.php';
 						dolSavePageAlias($filealias, $object, $objectpagestatic);
 					}
@@ -1023,6 +1077,4 @@ class Website extends CommonObject
 			return $object->id;
 		}
 	}
-
 }
-

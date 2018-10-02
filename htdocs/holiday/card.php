@@ -4,7 +4,8 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014-2017	Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -909,10 +910,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_debut_')) {
-            $form->select_date(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
+            print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month','int'), GETPOST('date_debut_day','int'), GETPOST('date_debut_year','int'));
-            $form->select_date($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
+            print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday','alpha')?GETPOST('starthalfday','alpha'):'morning'));
@@ -928,10 +929,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_fin_')) {
-            $form->select_date(-1,'date_fin_', 0, 0, 0, '', 1, 1);
+            print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month','int'), GETPOST('date_fin_day','int'), GETPOST('date_fin_year','int'));
-            $form->select_date($tmpdate,'date_fin_', 0, 0, 0, '', 1, 1);
+            print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday','alpha')?GETPOST('endhalfday','alpha'):'afternoon'));
@@ -1104,9 +1105,9 @@ else
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
-                    $form->select_date($object->date_debut,'date_debut_');
-			        print ' &nbsp; &nbsp; ';
-        			print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
+                    print $form->selectDate($object->date_debut, 'date_debut_');
+                    print ' &nbsp; &nbsp; ';
+                    print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
                     print '</td>';
                     print '</tr>';
                 }
@@ -1126,9 +1127,9 @@ else
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
-                    $form->select_date($object->date_fin,'date_fin_');
-			        print ' &nbsp; &nbsp; ';
-        			print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+                    print $form->selectDate($object->date_fin, 'date_fin_');
+                    print ' &nbsp; &nbsp; ';
+                    print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
                     print '</td>';
                     print '</tr>';
                 }

@@ -20,15 +20,14 @@
  */
 
 /**
- * \file    dev/skeletons/skeleton_class.class.php
- * \ingroup mymodule othermodule1 othermodule2
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \file    htdocs/multicurrency/class/multicurrency.class.php
+ * \ingroup multicurrency
+ * \brief   This file is a CRUD class file (Create/Read/Update/Delete) for multicurrency
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 /**
  * Class Currency
@@ -42,10 +41,12 @@ class MultiCurrency extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'multicurrency';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'multicurrency';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -60,26 +61,32 @@ class MultiCurrency extends CommonObject
 	 * @var mixed Sample property 1
 	 */
 	public $id;
+
 	/**
 	 * @var mixed Sample property 1
 	 */
 	public $code;
+
 	/**
 	 * @var mixed Sample property 2
 	 */
 	public $name;
+
 	/**
-	 * @var mixed Sample property 2
+	 * @var int Entity
 	 */
 	public $entity;
+
 	/**
 	 * @var mixed Sample property 2
 	 */
 	public $date_create;
+
 	/**
 	 * @var mixed Sample property 2
 	 */
 	public $fk_user;
+
 	/**
 	 * @var mixed Sample property 2
 	 */
@@ -414,13 +421,14 @@ class MultiCurrency extends CommonObject
 		}
 	 }
 
-	 /**
-	  * Try get label of code in llx_currency then add rate
-	  *
-	  * @param	string	$code	currency code
-	  * @param	double	$rate	new rate
-	  * @return int -1 if KO, 1 if OK, 2 if label found and OK
-	  */
+	/**
+	 * Try get label of code in llx_currency then add rate.
+	 *
+	 * @param	string	$code	currency code
+	 * @param	double	$rate	new rate
+	 *
+	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
+	 */
 	function addRateFromDolibarr($code, $rate)
 	{
 	 	global $db, $user;
@@ -449,7 +457,7 @@ class MultiCurrency extends CommonObject
 		return -1;
 	}
 
-	/**
+	 /**
 	 * Add new entry into llx_multicurrency_rate to historise
 	 *
 	 * @param double	$rate	rate value
@@ -459,7 +467,7 @@ class MultiCurrency extends CommonObject
 	public function updateRate($rate)
 	{
 	 	return $this->addRate($rate);
-	}
+	 }
 
 	/**
 	 * Fetch CurrencyRate object in $this->rate
@@ -479,10 +487,9 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
+	 }
 
-	}
-
-	/**
+	 /**
 	 * Get id of currency from code
 	 *
 	 * @param DoliDB	$db		object db
@@ -500,9 +507,9 @@ class MultiCurrency extends CommonObject
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return $obj->rowid;
 		else return 0;
-	}
+	 }
 
-	/**
+	 /**
 	 * Get id and rate of currency from code
 	 *
 	 * @param DoliDB	$db		object db
@@ -563,29 +570,28 @@ class MultiCurrency extends CommonObject
 		 else return $amount;
 	  }
 
-	  /**
-	   *  Get current invoite rate
-	   *
-	   *  @param	int 	$fk_facture 	id of facture
-	   *  @param 	string 	$table 			facture or facture_fourn
+	/**
+	 *  Get current invoite rate
+	 *
+	 *  @param	int 	$fk_facture 	id of facture
+	 *  @param 	string 	$table 			facture or facture_fourn
      *  @return bool
-	   */
-	   public static function getInvoiceRate($fk_facture, $table='facture')
-	   {
-		 global $db;
+	 */
+	public static function getInvoiceRate($fk_facture, $table='facture')
+	{
+		global $db;
 
-		 $sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
+		$sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
 
-		 dol_syslog(__METHOD__,LOG_DEBUG);
-		 $resql = $db->query($sql);
-		 if ($resql && ($line = $db->fetch_object($resql)))
-		 {
-		 	return $line->multicurrency_tx;
-		 }
+		dol_syslog(__METHOD__,LOG_DEBUG);
+		$resql = $db->query($sql);
+		if ($resql && ($line = $db->fetch_object($resql)))
+		{
+			return $line->multicurrency_tx;
+		}
 
-		 return false;
-	   }
-
+		return false;
+	}
 
 	/**
 	 * With free account we can't set source then recalcul all rates to force another source
@@ -628,13 +634,13 @@ class MultiCurrency extends CommonObject
 		global $db,$conf;
 
 		$ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $response = json_decode($response);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($ch);
+                curl_close($ch);
+                $response = json_decode($response);
 
-        if ($response->success)
-        {
+                if ($response->success)
+                {
 
 			$TRate = $response->quotes;
 			$timestamp = $response->timestamp;
@@ -687,26 +693,32 @@ class CurrencyRate extends CommonObjectLine
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'multicurrency_rate';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'multicurrency_rate';
+
 	/**
 	 * @var int ID
 	 */
 	public $id;
+
 	/**
 	 * @var double Rate
 	 */
 	public $rate;
+
 	/**
 	 * @var date Date synchronisation
 	 */
 	public $date_sync;
+
 	/**
 	 * @var int Id of currency
 	 */
 	public $fk_multicurrency;
+
 	/**
 	 * @var int Id of entity
 	 */
@@ -926,5 +938,4 @@ class CurrencyRate extends CommonObjectLine
 			return 1;
 		}
 	}
-
 }

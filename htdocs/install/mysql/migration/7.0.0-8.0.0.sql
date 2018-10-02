@@ -52,6 +52,7 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, ent
 
 UPDATE llx_const set name = __ENCRYPT('INVOICE_FREE_TEXT')__  where name = __ENCRYPT('FACTURE_FREE_TEXT')__;
 
+ALTER TABLE llx_chargesociales MODIFY COLUMN amount double(24,8);
 
 
 -- drop very old table (bad name)
@@ -59,7 +60,7 @@ DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 
 -- drop old postgresql unique key
--- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key
+-- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key;
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
@@ -283,6 +284,13 @@ CREATE TABLE llx_ticket_extrafields
   import_key       varchar(14)
 )ENGINE=innodb;
 
+create table llx_facture_rec_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
 
 
 -- Create dictionaries tables for ticket

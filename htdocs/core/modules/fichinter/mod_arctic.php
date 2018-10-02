@@ -32,9 +32,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_arctic extends ModeleNumRefFicheinter
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'arctic';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='arctic';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='arctic';
 
 
 	/**
@@ -44,7 +63,7 @@ class mod_arctic extends ModeleNumRefFicheinter
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -137,6 +156,5 @@ class mod_arctic extends ModeleNumRefFicheinter
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
 

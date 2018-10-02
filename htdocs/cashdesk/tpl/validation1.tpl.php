@@ -23,10 +23,8 @@ if (empty($langs) || ! is_object($langs))
 	exit;
 }
 
-
-$langs->load("main");
-$langs->load("bills");
-$langs->load("banks");
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","banks"));
 
 // Object $form must de defined
 

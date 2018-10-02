@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,11 @@
 /**
  *	\file			htdocs/core/website.inc.php
  *  \brief			Common file loaded used by all website pages (after master.inc.php)
- *  			    The global variable $website must be defined.
+ *  			    The global variable $websitekey must be defined.
  */
-
 
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 $website=new Website($db);
 $website->fetch(0,$websitekey);
+
+include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';

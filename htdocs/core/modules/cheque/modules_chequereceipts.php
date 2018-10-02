@@ -118,7 +118,7 @@ abstract class ModeleNumRefChequeReceipts
 
 /**
  *	\class      ModeleChequeReceipts
- *	\brief      Classe mere des modeles de 
+ *	\brief      Classe mere des modeles de
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
@@ -127,6 +127,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 */
 	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -136,6 +137,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='chequereceipt';
@@ -215,4 +217,3 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		return -1;
 	}
 }
-

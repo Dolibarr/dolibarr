@@ -64,10 +64,10 @@ if ($action == 'update' && ! $cancel)
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
-	dolibarr_set_const($db, "MAIN_MENU_STANDARD",        GETPOST('MAIN_MENU_STANDARD','alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",      GETPOST('MAIN_MENU_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD",   GETPOST('MAIN_MENUFRONT_STANDARD','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", GETPOST('MAIN_MENUFRONT_STANDARD','alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE", GETPOST('MAIN_MENUFRONT_SMARTPHONE','alpha'),'chaine',0,'',$conf->entity);
 
 	// Define list of menu handlers to initialize

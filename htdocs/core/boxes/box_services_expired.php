@@ -35,7 +35,11 @@ class box_services_expired extends ModeleBoxes
     var $boxlabel="BoxOldestExpiredServices";
     var $depends = array("contrat");	// conf->propal->enabled
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $param;
 
     var $info_box_head = array();
@@ -180,6 +184,5 @@ class box_services_expired extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
- }
+}
 

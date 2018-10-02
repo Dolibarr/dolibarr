@@ -35,22 +35,46 @@ require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
  */
 class ActionsTicket
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
+
     public $dao;
 
     public $mesg;
-    public $error;
-    public $errors = array();
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
+
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
     //! Numero de l'erreur
     public $errno = 0;
 
     public $template_dir;
     public $template;
 
+    /**
+     * @var string ticket action label
+     */
     public $label;
-    public $description;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
 
     public $fk_statut;
+
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
 
     /**
@@ -951,7 +975,7 @@ class ActionsTicket
      * Print statut
      *
      * @param		int		$mode		Display mode
-     * @return 		void
+     * @return 		string				Label of status
      */
     public function getLibStatut($mode = 0)
     {
@@ -978,8 +1002,8 @@ class ActionsTicket
     /**
      * Get action title
      *
-     * @param string $action    Type of action
-     * @return string
+     * @param string 	$action    	Type of action
+     * @return string			Title of action
      */
     public function getTitle($action = '')
     {
@@ -1296,6 +1320,7 @@ class ActionsTicket
     	}
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * load_previous_next_ref
      *
@@ -1305,6 +1330,7 @@ class ActionsTicket
      */
     function load_previous_next_ref($filter, $fieldid)
     {
+        // phpcs:enable
         $this->getInstanceDao();
         return $object->load_previous_next_ref($filter, $fieldid);
     }

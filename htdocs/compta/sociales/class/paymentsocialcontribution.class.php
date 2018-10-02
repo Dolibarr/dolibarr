@@ -31,26 +31,39 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
  */
 class PaymentSocialContribution extends CommonObject
 {
-	public $element='paiementcharge';			//!< Id that identify managed objects
-	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='paiementcharge';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='paiementcharge';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'payment';
 
-	var $fk_charge;
-	var $datec='';
-	var $tms='';
-	var $datep='';
+	public $fk_charge;
+	public $datec='';
+	public $tms='';
+	public $datep='';
+
 	/**
 	 * @deprecated
 	 * @see amount
 	 */
-	var $total;
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $fk_typepaiement;
-	var $num_paiement;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $total;
+
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+	public $fk_typepaiement;
+	public $num_paiement;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
 
 	/**
 	 *	Constructor
@@ -493,8 +506,6 @@ class PaymentSocialContribution extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 
@@ -594,6 +605,7 @@ class PaymentSocialContribution extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
 	 *
@@ -602,6 +614,7 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
@@ -629,6 +642,7 @@ class PaymentSocialContribution extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -638,6 +652,7 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
@@ -708,5 +723,3 @@ class PaymentSocialContribution extends CommonObject
 		return $result;
 	}
 }
-
-

@@ -35,10 +35,17 @@ class FormAccounting extends Form
 
 	private $options_cache = array();
 
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+   /**
 	* Constructor
 	*
 	* @param		DoliDB		$db      Database handler
@@ -48,6 +55,7 @@ class FormAccounting extends Form
 	    $this->db = $db;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return list of journals with label by nature
 	 *
@@ -64,6 +72,7 @@ class FormAccounting extends Form
 	 */
 	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='', $disabledajaxcombo=0)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$out = '';
@@ -129,6 +138,7 @@ class FormAccounting extends Form
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Return list of accounting category.
      * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
@@ -143,6 +153,7 @@ class FormAccounting extends Form
      */
     function select_accounting_category($selected='',$htmlname='account_category', $useempty=0, $maxlen=0, $help=1, $allcountries=0)
     {
+        // phpcs:enable
         global $db,$langs,$user,$mysoc;
 
         if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries))
@@ -209,6 +220,7 @@ class FormAccounting extends Form
         print $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return select filter with date of transaction
 	 *
@@ -218,6 +230,7 @@ class FormAccounting extends Form
 	 */
     function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
     {
+        // phpcs:enable
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
@@ -240,6 +253,7 @@ class FormAccounting extends Form
 		return Form::selectarray($htmlname, $options, $selectedkey);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
@@ -255,6 +269,7 @@ class FormAccounting extends Form
 	 */
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
@@ -331,6 +346,7 @@ class FormAccounting extends Form
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return list of auxilary thirdparty accounts
 	 *
@@ -342,6 +358,7 @@ class FormAccounting extends Form
 	 */
     function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200')
     {
+        // phpcs:enable
 
 		$aux_account = array();
 
@@ -391,6 +408,7 @@ class FormAccounting extends Form
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return HTML combo list of years existing into book keepping
 	 *
@@ -402,6 +420,7 @@ class FormAccounting extends Form
 	 */
 	function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
+        // phpcs:enable
 	    global $conf;
 
 		$out_array = array();

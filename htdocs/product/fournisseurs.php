@@ -249,14 +249,20 @@ if (empty($reshook))
 				if (isset($_POST['ref_fourn_price_id']))
 					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-                if ($conf->multicurrency->enabled) {
-                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $_POST["multicurrency_price"], $_POST["multicurrency_price_base_type"], $_POST["multicurrency_tx"], $_POST["multicurrency_code"], $supplier_description);
+				$newprice = price2num(GETPOST("price","alpha"));
+
+                if ($conf->multicurrency->enabled)
+                {
+                	$multicurrency_tx = price2num(GETPOST("multicurrency_tx",'alpha'));
+                	$multicurrency_price = price2num(GETPOST("multicurrency_price",'alpha'));
+                	$multicurrency_code = GETPOST("multicurrency_code",'alpha');
+
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description);
                 } else {
-                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description);
                 }
 				if ($ret < 0)
 				{
-
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -566,7 +572,7 @@ if ($id > 0 || $ref)
                     // Currency price qty min
                     print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
                     $pricesupplierincurrencytouse=(GETPOST('multicurrency_price')?GETPOST('multicurrency_price'):(isset($object->fourn_multicurrency_price)?$object->fourn_multicurrency_price:''));
-                    print '<td><input class="flat" name="multicurrency_price" size="8" value="'.$pricesupplierincurrencytouse.'">';
+                    print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
                     print '&nbsp;';
                     print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type')?GETPOST('multicurrency_price_base_type'):'HT'), "multicurrency_price_base_type");  // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
                     print '</td></tr>';
@@ -678,18 +684,18 @@ SCRIPT;
 				{
 				    //WYSIWYG Editor
 				    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				    
+
     				print '<tr>';
     				print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
     				print '<td>';
-    				
+
     				$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
     				$doleditor->Create();
-    				
+
     				print '</td>';
     				print '</tr>';
 				}
-				
+
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$object->id);

@@ -34,7 +34,12 @@ class box_project extends ModeleBoxes
 	var $boximg="object_projectpub";
 	var $boxlabel;
 	//var $depends = array("projet");
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
 	var $param;
 
 	var $info_box_head = array();
@@ -49,8 +54,9 @@ class box_project extends ModeleBoxes
     function __construct($db,$param='')
     {
         global $user, $langs;
-        $langs->load("boxes");
-        $langs->load("projects");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array('boxes', 'projects'));
 
         $this->db = $db;
         $this->boxlabel="Projects";
@@ -179,7 +185,6 @@ class box_project extends ModeleBoxes
             'td' => '',
             'text' => "&nbsp;",
         );
-
 	}
 
 	/**

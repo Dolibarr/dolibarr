@@ -52,6 +52,11 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/src="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
+	$replacewith='href="php';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
+	//$replacewith='<span class="phptag">...php...</span>';
 	$replacewith='<span class="phptag">...php...</span>';
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
@@ -89,23 +94,28 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
  *
  * @param   string  $content    Content string
  * @return  void
- * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice editor context
+ * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
 function dolWebsiteOutput($content)
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 
-	dol_syslog("dolWebsiteOutput start (mode=".(defined('USEDOLIBARRSERVER')?'USEDOLIBARRSERVER':'').')');
+	dol_syslog("dolWebsiteOutput start (USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'')." (USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'').')');
 
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	// Note: This seems never called when page is output inside the website editor (search 'REPLACEMENT OF LINKS When page called by website editor')
-
-	if (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
+	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor
+	{
+		// We remove the <head> part of content
+		$content = preg_replace('/<head>.*<\/head>/ims', '', $content);
+		$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
+		$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
+	}
+	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
 		global $website;
 
@@ -139,7 +149,7 @@ function dolWebsiteOutput($content)
 		// action="newpage.php" => action="dolibarr/website/index.php?website=...&pageref=newpage
 		$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
 	}
-	else								// REPLACEMENT OF LINKS When page called from virtual host
+	else									// REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists=1;
 
@@ -150,9 +160,13 @@ function dolWebsiteOutput($content)
 		$nbrep=0;
 		if (! $symlinktomediaexists)
 		{
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/',  '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+
+			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/',  '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 		}
 		else
 		{
@@ -161,6 +175,8 @@ function dolWebsiteOutput($content)
 			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1medias/\4\5', $content, -1, $nbrep);
 			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1medias/\4\5', $content, -1, $nbrep);
+
+			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 		}
 	}
 
@@ -517,6 +533,31 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 /**
  * Save content of a page on disk
  *
+ * @param	string		$filemaster			Full path of filename master.inc.php for website to generate
+ * @return	boolean							True if OK
+ */
+function dolSaveMasterFile($filemaster)
+{
+	global $conf;
+
+	// Now generate the master.inc.php page
+	dol_syslog("We regenerate the master file");
+	dol_delete_file($filemaster);
+
+	$mastercontent = '<?php'."\n";
+	$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
+	$mastercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent.= '?>'."\n";
+	$result = file_put_contents($filemaster, $mastercontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+
+	return $result;
+}
+
+/**
+ * Save content of a page on disk
+ *
  * @param	string		$filealias			Full path of filename to generate
  * @param	Website		$object				Object website
  * @param	WebsitePage	$objectpage			Object websitepage
@@ -536,10 +577,11 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent.= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
 	$aliascontent.= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+	if (! empty($conf->global->MAIN_UMASK)) {
+        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
+    }
 
-		return ($result?true:false);
+	return ($result?true:false);
 }
 
 
@@ -566,7 +608,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent ='';
 	$tplcontent.= "<?php // BEGIN PHP\n";
 	$tplcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	$tplcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Not already loaded"."\n";
+	$tplcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent.= "ob_start();\n";
@@ -583,9 +625,9 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
-	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
+	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent.= '<!-- Include HTML header from common file -->'."\n";
-	$tplcontent.= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/'.$object->ref.'/htmlheader.html")); ?>'."\n";
+	$tplcontent.= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")); ?>'."\n";
 	$tplcontent.= '<!-- Include HTML header from page header block -->'."\n";
 	$tplcontent.= preg_replace('/<\/?html>/ims', '', $objectpage->htmlheader)."\n";
 	$tplcontent.= '</head>'."\n";
@@ -610,26 +652,28 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 
 
 /**
- * Save content of the index.php page
+ * Save content of the index.php and wrapper.php page
  *
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
  * @param	string		$filetpl				File tpl to index.php page redirect to
+ * @param	string		$filewrapper			Full path of file wrapper.php
  * @return	boolean								True if OK
  */
-function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl)
+function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 {
 	global $conf;
 
-	$result=0;
+	$result1=false;
+	$result2=false;
 
 	dol_mkdir($pathofwebsite);
-	dol_delete_file($fileindex);
 
+	dol_delete_file($fileindex);
 	$indexcontent = '<?php'."\n";
 	$indexcontent.= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
 	$indexcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-	$indexcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+	$indexcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
 	$indexcontent.= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
 	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
@@ -637,11 +681,25 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl)
 	$indexcontent.= "}\n";
 	$indexcontent.= "include_once './".basename($filetpl)."'\n";
 	$indexcontent.= '// END PHP ?>'."\n";
-	$result = file_put_contents($fileindex, $indexcontent);
+	$result1 = file_put_contents($fileindex, $indexcontent);
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 
-	return $result;
+	dol_delete_file($filewrapper);
+	$wrappercontent = '<?php'."\n";
+	$wrappercontent.= "// BEGIN PHP File generated to provide a wrapper.php - DO NOT MODIFY - It is just a generated wrapper.\n";
+	$wrappercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+	$wrappercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+	$wrappercontent.= '$original_file=str_replace("../","/", GETPOST("file","alpha"));'."\n";
+	$wrappercontent.= 'if ($_GET["modulepart"] == "mycompany" && preg_match(\'/^\/?logos\//\', $original_file)) readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));'."\n";
+	$wrappercontent.= "else print 'Bad value for modulepart or file';\n";
+	$wrappercontent.= 'if (is_object($db)) $db->close();'."\n";
+	$wrappercontent.= '// END PHP ?>'."\n";
+	$result2 = file_put_contents($filewrapper, $wrappercontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+
+	return ($result1 && $result2);
 }
 
 
@@ -779,5 +837,3 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 
 		return true;
 }
-
-

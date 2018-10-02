@@ -60,6 +60,8 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -254,7 +256,6 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $localobject=new Entrepot($db);
-
 
         return;
     }

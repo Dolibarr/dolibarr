@@ -32,8 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';    // This is to inc
  */
 class modPhpbarcode extends ModeleBarCode
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -113,7 +117,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
      */
 	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
@@ -154,7 +158,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
 	 */
 	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
@@ -171,6 +175,4 @@ class modPhpbarcode extends ModeleBarCode
 
 		return $result;
 	}
-
 }
-

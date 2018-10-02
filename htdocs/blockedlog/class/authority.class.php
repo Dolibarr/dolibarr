@@ -52,9 +52,7 @@ class BlockedLogAuthority
 	 */
     public function __construct($db)
     {
-
     	$this->db = $db;
-
 	}
 
 	/**
@@ -90,7 +88,6 @@ class BlockedLogAuthority
     {
 
 		return md5($this->signature.$this->blockchain);
-
 	}
 
 	/**
@@ -103,7 +100,6 @@ class BlockedLogAuthority
     {
 
 		return ($hash === $this->getBlockchainHash() );
-
 	}
 
 	/**
@@ -116,7 +112,6 @@ class BlockedLogAuthority
     {
 
 		$this->blockchain.=$block;
-
 	}
 
 	/**
@@ -197,7 +192,6 @@ class BlockedLogAuthority
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -252,7 +246,6 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -291,7 +284,6 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**
@@ -340,5 +332,4 @@ class BlockedLogAuthority
 
 		return 1;
 	}
-
 }

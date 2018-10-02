@@ -35,9 +35,8 @@ if (! empty($conf->projet->enabled))
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("donations");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","bills","donations"));
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');

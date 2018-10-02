@@ -31,19 +31,40 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class PaymentSalary extends CommonObject
 {
-	public $element='payment_salary';			//!< Id that identify managed objects
-	public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_salary';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_salary';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='payment';
 
 	public $tms;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $datep;
 	public $datev;
 	public $amount;
 	public $fk_project;
 	public $type_payment;
 	public $num_payment;
-	public $label;
+
+	/**
+     * @var string salary payments label
+     */
+    public $label;
+
 	public $datesp;
 	public $dateep;
 	public $fk_bank;
@@ -61,7 +82,6 @@ class PaymentSalary extends CommonObject
 		$this->db = $db;
 		$this->element = 'payment_salary';
 		$this->table_element = 'payment_salary';
-		return 1;
 	}
 
 	/**
@@ -473,6 +493,7 @@ class PaymentSalary extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update link between payment salary and line generate into llx_bank
 	 *
@@ -481,6 +502,7 @@ class PaymentSalary extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_salary SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
@@ -570,6 +592,7 @@ class PaymentSalary extends CommonObject
 	    return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -579,6 +602,7 @@ class PaymentSalary extends CommonObject
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 	    $langs->load('compta');
@@ -619,5 +643,4 @@ class PaymentSalary extends CommonObject
 	    }*/
 	    return '';
 	}
-
 }

@@ -31,9 +31,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
  */
 class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -43,7 +62,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      */
 	function info()
 	{
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -139,17 +158,17 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     }
 
 
-	/**
-	 *  Return next free ref
-	 *
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Return next free ref
+     *
      *  @param	Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Objet livraison
      *  @return string      				Texte descripif
      */
     function livraison_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
-
 }
-

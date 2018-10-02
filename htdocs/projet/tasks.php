@@ -480,12 +480,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date(($date_start?$date_start:''),'dateo',1,1,0,'',1,1,1);
+	print $form->selectDate(($date_start?$date_start:''), 'dateo', 1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(($date_end?$date_end:-1),'datee',-1,1,0,'',1,1,1);
+	print $form->selectDate(($date_end?$date_end:-1),'datee', -1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
 	// Planned workload

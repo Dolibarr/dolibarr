@@ -27,7 +27,11 @@
  */
 abstract class ActionsCardCommon
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
     var $dirmodule;
     var $targetmodule;
     var $canvas;
@@ -37,12 +41,12 @@ abstract class ActionsCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -66,6 +70,7 @@ abstract class ActionsCardCommon
     	$this->object = $object;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -76,6 +81,7 @@ abstract class ActionsCardCommon
      */
     function assign_values(&$action, $id=0, $ref='')
     {
+        // phpcs:enable
         global $conf, $langs, $user, $mysoc, $canvas;
         global $form, $formadmin, $formcompany;
 
@@ -365,6 +371,7 @@ abstract class ActionsCardCommon
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Assign POST values into object
      *
@@ -373,6 +380,7 @@ abstract class ActionsCardCommon
      */
     private function assign_post($action)
     {
+        // phpcs:enable
         global $langs, $mysoc;
 
         $this->object->id					=	$_POST["socid"];
@@ -387,7 +395,7 @@ abstract class ActionsCardCommon
         $this->object->town					=	$_POST["town"];
         $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         $this->object->state_id		        =	$_POST["state_id"];
-        $this->object->phone					=	$_POST["tel"];
+        $this->object->phone				=	$_POST["tel"];
         $this->object->fax					=	$_POST["fax"];
         $this->object->email				=	$_POST["email"];
         $this->object->url					=	$_POST["url"];
@@ -418,5 +426,4 @@ abstract class ActionsCardCommon
             $this->object->country_label=	$tmparray['label'];
         }
     }
-
 }

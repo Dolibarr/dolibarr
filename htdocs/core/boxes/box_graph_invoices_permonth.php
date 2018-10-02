@@ -33,7 +33,10 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	var $boxlabel="BoxCustomersInvoicesPerMonth";
 	var $depends = array("facture");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
@@ -277,6 +280,5 @@ class box_graph_invoices_permonth extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

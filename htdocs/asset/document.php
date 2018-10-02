@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       document.php
+ *  \file       htdocs/asset/document.php
  *  \ingroup    asset
  *  \brief      Tab for documents linked to Assets
  */
