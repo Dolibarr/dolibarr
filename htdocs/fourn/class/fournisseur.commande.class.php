@@ -1126,8 +1126,6 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Submit a supplier order to supplier
      *
@@ -1139,7 +1137,6 @@ class CommandeFournisseur extends CommonOrder
      */
     public function commande($user, $date, $methode, $comment='')
     {
-        // phpcs:enable
         global $langs;
         dol_syslog(get_class($this)."::commande");
         $error = 0;
