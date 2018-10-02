@@ -610,46 +610,47 @@ foreach ($dirmodels as $reldir)
 }
 print '</table>';
 
-
-/*
- *  Document templates generators
- */
-print '<br>';
-print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"),'','');
-print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
-print '<table id="default-pdf-modules-by-type-table" class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Type").'</td>';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print "</tr>\n";
-
-$listtype=array(
-    Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
-    Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
-    Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
-    Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
-);
-if (! empty($conf->global->INVOICE_USE_SITUATION))
+if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
 {
-    $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
-}
-
-foreach ($listtype as $type => $trans)
-{
-    $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
-    $current = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
-    print '<tr >';
-    print '<td>'.$trans.'</td>';
-    print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current,0,0, 0).'</td>';
+    /*
+     *  Document templates generators
+     */
+    print '<br>';
+    print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"),'','');
+    print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+    print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
+    print '<table id="default-pdf-modules-by-type-table" class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Type").'</td>';
+    print '<td>'.$langs->trans("Name").'</td>';
+    print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
     print "</tr>\n";
+    
+    $listtype=array(
+        Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
+        Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+        Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+        Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+    );
+    if (! empty($conf->global->INVOICE_USE_SITUATION))
+    {
+        $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
+    }
+    
+    foreach ($listtype as $type => $trans)
+    {
+        $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
+        $current = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+        print '<tr >';
+        print '<td>'.$trans.'</td>';
+        print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current,0,0, 0).'</td>';
+        print "</tr>\n";
+    }
+    
+    print '</table>';
+    print "</form>";
 }
-
-print '</table>';
-print "</form>";
-
 
 /*
  *  Modes de reglement
