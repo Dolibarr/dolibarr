@@ -88,6 +88,9 @@ ALTER TABLE llx_socpeople ADD COLUMN whatsapp  varchar(255) after skype;
 ALTER TABLE llx_website CHANGE COLUMN fk_user_create fk_user_creat integer;
 ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;
 
+ALTER TABLE llx_website ADD COLUMN maincolor varchar(16);
+ALTER TABLE llx_website ADD COLUMN maincolorbis varchar(16);
+
 
 CREATE TABLE llx_takepos_floor_tables(
     rowid integer AUTO_INCREMENT PRIMARY KEY,

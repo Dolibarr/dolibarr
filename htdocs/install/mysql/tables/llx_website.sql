@@ -24,6 +24,8 @@ CREATE TABLE llx_website
 	entity        integer NOT NULL DEFAULT 1,
 	ref	          varchar(128) NOT NULL,
 	description   varchar(255),
+	maincolor     varchar(16),
+	maincolorbis  varchar(16),
 	status		  integer DEFAULT 1,
 	fk_default_home integer, 
 	virtualhost   varchar(255), 
