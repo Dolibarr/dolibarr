@@ -51,7 +51,7 @@ class Reception extends CommonObject
     public $picto = 'reception';
 
 	var $socid;
-	var $ref_customer;
+	var $ref_supplier;
 	var $ref_int;
 	var $brouillon;
 	var $entrepot_id;
@@ -201,7 +201,7 @@ class Reception extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."reception (";
 		$sql.= "ref";
 		$sql.= ", entity";
-		$sql.= ", ref_customer";
+		$sql.= ", ref_supplier";
 		$sql.= ", ref_int";
 		$sql.= ", date_creation";
 		$sql.= ", fk_user_author";
@@ -210,7 +210,7 @@ class Reception extends CommonObject
 		$sql.= ", fk_soc";
 		$sql.= ", fk_projet";
 		$sql.= ", fk_address";
-		$sql.= ", fk_reception_method";
+		$sql.= ", fk_shipping_method";
 		$sql.= ", tracking_number";
 		$sql.= ", weight";
 		$sql.= ", size";
@@ -225,7 +225,7 @@ class Reception extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".($this->ref_customer?"'".$this->db->escape($this->ref_customer)."'":"null");
+		$sql.= ", ".($this->ref_supplier?"'".$this->db->escape($this->ref_supplier)."'":"null");
 		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".$user->id;
@@ -477,10 +477,10 @@ class Reception extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_reception as date_reception, e.model_pdf, e.fk_address, e.date_delivery";
-		$sql.= ", e.fk_reception_method, e.tracking_number";
+		$sql.= ", e.fk_shipping_method, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
         $sql.= ', e.fk_incoterms, e.location_incoterms';
@@ -505,7 +505,7 @@ class Reception extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
-				$this->ref_customer			= $obj->ref_customer;
+				$this->ref_supplier			= $obj->ref_supplier;
 				$this->ref_ext				= $obj->ref_ext;
 				$this->ref_int				= $obj->ref_int;
 				$this->statut               = $obj->fk_statut;
@@ -517,7 +517,7 @@ class Reception extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->reception_method_id	= $obj->fk_reception_method;
+				$this->shipping_method_id	= $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
@@ -1007,7 +1007,7 @@ class Reception extends CommonObject
 
 		if (isset($this->ref)) $this->ref=trim($this->ref);
 		if (isset($this->entity)) $this->entity=trim($this->entity);
-		if (isset($this->ref_customer)) $this->ref_customer=trim($this->ref_customer);
+		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
 		if (isset($this->socid)) $this->socid=trim($this->socid);
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
 		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
@@ -1035,7 +1035,7 @@ class Reception extends CommonObject
 
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
-		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".$this->db->escape($this->ref_customer)."'":"null").",";
+		$sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
 		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
 		$sql.= " date_creation=".(dol_strlen($this->date_creation)!=0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
@@ -1044,7 +1044,7 @@ class Reception extends CommonObject
 		$sql.= " date_reception=".(dol_strlen($this->date_reception)!=0 ? "'".$this->db->idate($this->date_reception)."'" : 'null').",";
 		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql.= " fk_address=".(isset($this->fk_delivery_address)?$this->fk_delivery_address:"null").",";
-		$sql.= " fk_reception_method=".((isset($this->reception_method_id) && $this->reception_method_id > 0)?$this->reception_method_id:"null").",";
+		$sql.= " fk_shipping_method=".((isset($this->reception_method_id) && $this->reception_method_id > 0)?$this->reception_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
 		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
@@ -1498,7 +1498,7 @@ class Reception extends CommonObject
 		$result='';
         $label = '<u>' . $langs->trans("ShowReception") . '</u>';
         $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
-        $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+        $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
 
 		$url = DOL_URL_ROOT.'/reception/card.php?id='.$this->id;
 

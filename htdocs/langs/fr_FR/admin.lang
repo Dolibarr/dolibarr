@@ -1439,11 +1439,9 @@ SendingsAbility=Prise en charge des bons d'expédition pour les livraisons clien
 NoNeedForDeliveryReceipts=Dans le plupart des cas, la fiche expédition est utilisée en tant que bon d'expédition (liste des produits expédiés) et bon de livraison (signée par le client). Le bon de réception est un doublon de fonctionnalité et est rarement utilisé.
 FreeLegalTextOnShippings=Mention complémentaire sur les expéditions
 ##### Reception #####
-ReceptionsSetup=Configuration du module Réception/Livraison
+ReceptionsSetup=Configuration du module Réception
 ReceptionsReceiptModel=Modèles de bordereau de réception
 ReceptionsNumberingModules=Modèles de numérotation des réceptions
-ReceptionsAbility=Prise en charge des bons d'réception pour les livraisons clients
-NoNeedForDeliveryReceipts=Dans le plupart des cas, la fiche réception est utilisée en tant que bon d'réception (liste des produits expédiés) et bon de livraison (signée par le client). Le bon de réception est un doublon de fonctionnalité et est rarement utilisé.
 FreeLegalTextOnShippings=Mention complémentaire sur les réceptions
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Modèle de numérotation des bons de réception client

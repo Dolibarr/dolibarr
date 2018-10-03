@@ -16,7 +16,7 @@
 --
 -- ===================================================================
 
-create table llx_expeditiondet_extrafields
+create table llx_receptiondet_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,

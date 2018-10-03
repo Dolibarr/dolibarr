@@ -18,5 +18,5 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_expedition (fk_expedition);
-ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_expedition FOREIGN KEY (fk_expedition) REFERENCES llx_expedition (rowid);
+ALTER TABLE llx_receptiondet ADD INDEX idx_receptiondet_fk_reception (fk_reception);
+ALTER TABLE llx_receptiondet ADD CONSTRAINT fk_receptiondet_fk_reception FOREIGN KEY (fk_reception) REFERENCES llx_reception (rowid);

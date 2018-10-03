@@ -18,10 +18,10 @@
 --
 -- ===================================================================
 
-create table llx_expeditiondet
+create table llx_receptiondet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  fk_expedition     integer NOT NULL,
+  fk_reception     integer NOT NULL,
   fk_origin_line    integer,           -- Correspondance de la ligne avec le document d'origine (propal, commande)
   fk_entrepot       integer,           -- Entrepot de depart du produit
   qty               real,              -- Quantity

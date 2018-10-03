@@ -19,7 +19,7 @@
 --
 -- ===================================================================
 
-create table llx_expedition
+create table llx_reception
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
@@ -30,7 +30,7 @@ create table llx_expedition
   
   ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
   ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
-  ref_customer          varchar(30),					-- customer number
+  ref_supplier          varchar(30),					-- customer number
   
   date_creation         datetime,						-- date de creation
   fk_user_author        integer,						-- author of creation
@@ -38,8 +38,7 @@ create table llx_expedition
   date_valid            datetime,						-- date de validation
   fk_user_valid         integer,						-- valideur
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
-  date_expedition       datetime,						-- not used (deprecated)
-  fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)
+  date_reception       datetime,						
   fk_shipping_method    integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option

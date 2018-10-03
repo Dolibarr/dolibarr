@@ -17,4 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_expeditiondet_extrafields ADD INDEX idx_expeditiondet_extrafields (fk_object);
+ALTER TABLE llx_receptiondet_extrafields ADD INDEX idx_receptiondet_extrafields (fk_object);
