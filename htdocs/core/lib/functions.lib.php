@@ -2806,7 +2806,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if ($picto == 'off') { $fakey = 'fa-square-o'; $fasize='1.3em'; }
 			if ($picto == 'on')  { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
 			$enabledisablehtml='';
-			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
+			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
 			$enabledisablehtml.='</span>';
 			return $enabledisablehtml;
