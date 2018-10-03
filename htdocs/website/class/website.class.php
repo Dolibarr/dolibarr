@@ -1081,15 +1081,18 @@ class Website extends CommonObject
 	/**
 	 * Component to select language (Full CSS Only)
 	 *
-	 * @param	array	$languagecodes				Language codes
-	 * @param	string	$languagecodeselected		Language code selected
-	 * @param	string	$morecss					More CSS class on component
-	 * @param	string	$htmlname					Suffix for HTML name
+	 * @param	array		$languagecodes			Language codes
+	 * @param	Translate	$weblangs				Language Object
+	 * @param	string		$morecss				More CSS class on component
+	 * @param	string		$htmlname				Suffix for HTML name
 	 * @return 	string								HTML select component
 	 */
-	public function componentSelectLang($languagecodes=array('en_US','fr_FR','de_DE','es_ES'), $languagecodeselected='', $morecss='', $htmlname='')
+	public function componentSelectLang($languagecodes=array('en_US','fr_FR','de_DE','es_ES'), $weblangs, $morecss='', $htmlname='')
 	{
 		$out = '';
+
+		$languagecodeselected = $weblangs->defaultlang;
+		$weblangs->load('languages');
 
 		$url = $_SERVER["REQUEST_URI"];
 		$url = preg_replace('/(\?|&)l=([a-zA-Z_]*)/', '', $url);	// We remove param l from url
@@ -1125,7 +1128,7 @@ class Website extends CommonObject
 		if ($languagecodeselected)
 		{
 			$shortcode = strtolower(substr($languagecodeselected, -2));
-			$out.= '<a href="'.$url.$languagecodeselected.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$languagecodeselected;
+			$out.= '<a href="'.$url.$languagecodeselected.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$weblangs->trans("Language_".$languagecodeselected);
 			$out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
 			$out.= '</li></a>';
 		}
@@ -1134,7 +1137,7 @@ class Website extends CommonObject
 		{
 			if ($languagecode == $languagecodeselected) continue;	// Already output
 			$shortcode = strtolower(substr($languagecode, -2));
-			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$languagecode;
+			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$weblangs->trans("Language_".$languagecode);
 			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
 			$out.= '</li></a>';
 			$i++;
