@@ -242,14 +242,14 @@ print "</tr>\n";
 
 if ($ret)
 {
-	foreach ($object->lines as $ressource)
+	foreach ($object->lines as $resource)
     {
         print '<tr class="oddeven">';
 
         if (! empty($arrayfields['t.ref']['checked']))
         {
         	print '<td>';
-        	print $ressource->getNomUrl(5);
+        	print $resource->getNomUrl(5);
         	print '</td>';
 	        if (! $i) $totalarray['nbfield']++;
         }
@@ -257,20 +257,20 @@ if ($ret)
         if (! empty($arrayfields['ty.label']['checked']))
         {
         	print '<td>';
-        	print $ressource->type_label;
+        	print $resource->type_label;
         	print '</td>';
 	        if (! $i) $totalarray['nbfield']++;
         }
         // Extra fields
-        $obj = (Object) $ressource->array_options;
+        $obj = (Object) $resource->array_options;
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td align="center">';
-        print '<a href="./card.php?action=edit&id='.$ressource->id.'">';
+        print '<a href="./card.php?action=edit&id='.$resource->id.'">';
         print img_edit();
         print '</a>';
         print '&nbsp;';
-        print '<a href="./card.php?action=delete&id='.$ressource->id.'">';
+        print '<a href="./card.php?action=delete&id='.$resource->id.'">';
         print img_delete();
         print '</a>';
         print '</td>';
