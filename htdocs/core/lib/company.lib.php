@@ -1330,9 +1330,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
+        	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
+        	$sql.= " ON er.resource_type = 'dolresource'";
+        	$sql.= " AND er.element_id = a.id";
+        	$sql.= " AND er.resource_id = ".$filterobj->id;
+        }
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
+
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
