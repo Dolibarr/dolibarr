@@ -2256,7 +2256,7 @@ class Expedition extends CommonObject
 		}
 	}
 
-	
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 /**
      *	Set draft status
      *
