@@ -22,11 +22,18 @@
  *  			    The global variable $websitekey must be defined.
  */
 
+// Load website class
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-$website=new Website($db);
-$website->fetch(0,$websitekey);
-
-$weblangs = dol_clone($langs);
+// Define $website and $weblangs
+if (! is_object($website))
+{
+	$website=new Website($db);
+	$website->fetch(0,$websitekey);
+}
+if (! is_object($weblangs))
+{
+	$weblangs = dol_clone($langs);
+}
 if (GETPOST('l','aZ09')) $weblangs->setDefaultLang(GETPOST('l','aZ09'));
-
+// Load websitepage class
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
