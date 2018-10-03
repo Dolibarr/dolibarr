@@ -721,7 +721,7 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
+						$out.= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
 					}
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
 					{
