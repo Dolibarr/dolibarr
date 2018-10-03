@@ -18,12 +18,15 @@
 
 /**
  *	\file			htdocs/core/website.inc.php
- *  \brief			Common file loaded used by all website pages (after master.inc.php)
+ *  \brief			Common file loaded by all website pages (after master.inc.php). It set the new object $weblangs, using parameter 'l'.
  *  			    The global variable $websitekey must be defined.
  */
 
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 $website=new Website($db);
 $website->fetch(0,$websitekey);
+
+$weblangs = dol_clone($langs);
+if (GETPOST('l','aZ09')) $weblangs->setDefaultLang(GETPOST('l','aZ09'));
 
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
