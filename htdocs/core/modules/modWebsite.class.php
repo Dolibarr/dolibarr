@@ -135,4 +135,46 @@ class modWebsite extends DolibarrModules
         $this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('website').')';
         $r++;
     }
+
+
+    /**
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @return     int             	1 if OK, 0 if KO
+     */
+    function init($options='')
+    {
+    	global $conf,$langs;
+
+    	// Remove permissions and default values
+    	$this->remove($options);
+
+    	// Copy flags and octicons directoru
+    	$dirarray=array('common/flags', 'common/octicons');
+    	foreach($dirarray as $dir)
+    	{
+	    	$src=DOL_DOCUMENT_ROOT.'/theme/'.$dir;
+	    	$dest=DOL_DATA_ROOT.'/medias/image/'.$dir;
+
+	    	if (is_dir($src))
+	    	{
+	    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    		dol_mkdir($dest);
+	    		$result=dolCopyDir($src,$dest,0,0);
+	    		if ($result < 0)
+	    		{
+	    			$langs->load("errors");
+	    			$this->error=$langs->trans('ErrorFailToCopyDirectory',$src,$dest);
+	    			return 0;
+	    		}
+	    	}
+    	}
+
+    	$sql = array();
+
+    	return $this->_init($sql, $options);
+    }
 }

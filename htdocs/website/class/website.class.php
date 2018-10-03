@@ -1077,4 +1077,70 @@ class Website extends CommonObject
 			return $object->id;
 		}
 	}
+
+	/**
+	 * Component to select language (Full CSS Only)
+	 *
+	 * @param	array	$languagecodes				Language codes
+	 * @param	string	$languagecodeselected		Language code selected
+	 * @param	string	$morecss					More CSS class on component
+	 * @param	string	$htmlname					Suffix for HTML name
+	 * @return 	string								HTML select component
+	 */
+	public function componentSelectLang($languagecodes=array('en_US','fr_FR','de_DE','es_ES'), $languagecodeselected='', $morecss='', $htmlname='')
+	{
+		$out = '';
+
+		$url = $_SERVER["REQUEST_URI"];
+		$url = preg_replace('/(\?|&)l=([a-zA-Z_]*)/', '', $url);	// We remove param l from url
+		//$url = preg_replace('/(\?|&)lang=([a-zA-Z_]*)/', '', $url);	// We remove param lang from url
+		$url.= (preg_match('/\?/', $url) ? '&' : '?').'l=';
+
+		$HEIGHTOPTION=40;
+		$MAXHEIGHT = 4 * $HEIGHTOPTION;
+		$nboflanguage = count($languagecodes);
+
+		$out.='<!-- componentSelectLang'.$htmlname.' -->'."\n";
+		$out.= '<style>';
+		$out.= '.componentSelectLang'.$htmlname.':hover { height: '.min($MAXHEIGHT, ($HEIGHTOPTION * $nboflanguage)).'px; overflow-x: hidden; overflow-y: '.((($HEIGHTOPTION * $nboflanguage) > $MAXHEIGHT) ? ' scroll' : 'hidden').'; }'."\n";
+		$out.= '.componentSelectLang'.$htmlname.' li { line-height: '.$HEIGHTOPTION.'px; }'."\n";
+		$out.= '.componentSelectLang'.$htmlname.' {
+			display: inline-block;
+			padding: 0;
+			height: '.$HEIGHTOPTION.'px;
+			overflow: hidden;
+			transition: all .3s ease;
+			margin: 0 50px 0 0;
+			vertical-align: top;
+		}
+		.componentSelectLang'.$htmlname.':hover, .componentSelectLang'.$htmlname.':hover a { background-color: #fff; color: #000 !important; }
+		ul.componentSelectLang'.$htmlname.' { width: 150px; }
+		ul.componentSelectLang'.$htmlname.':hover .fa { visibility: hidden; }
+		.componentSelectLang'.$htmlname.' a { text-decoration: none; width: 100%; }
+		.componentSelectLang'.$htmlname.' li { display: block; padding: 0px 20px; }
+		.componentSelectLang'.$htmlname.' li:hover { background-color: #EEE; }
+		';
+		$out.= '</style>';
+		$out.= '<ul class="componentSelectLang'.$htmlname.($morecss?' '.$morecss:'').'">';
+		if ($languagecodeselected)
+		{
+			$shortcode = strtolower(substr($languagecodeselected, -2));
+			$out.= '<a href="'.$url.$languagecodeselected.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$languagecodeselected;
+			$out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+			$out.= '</li></a>';
+		}
+		$i=0;
+		foreach($languagecodes as $languagecode)
+		{
+			if ($languagecode == $languagecodeselected) continue;	// Already output
+			$shortcode = strtolower(substr($languagecode, -2));
+			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$languagecode;
+			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+			$out.= '</li></a>';
+			$i++;
+		}
+		$out.= '</ul>';
+
+		return $out;
+	}
 }
