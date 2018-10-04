@@ -4238,9 +4238,81 @@ class Facture extends CommonInvoice
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 
-		return $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
+		
+		if($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit))
+		{
+		    $totalpaye = $this->getSommePaiement();
+		    $RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
+		    if($totalpaye >= 0 &&  $RetainedWarrantyAmount>= 0)
+		    {
+		        if( ($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay) )
+		        {
+		            $hasDelay = 1;
+		        }
+		        else
+		        {
+		            $hasDelay = 0;
+		        }
+		    }
+		}
+		
+		return $hasDelay;
+		
 	}
 	
+	/**
+	 * @return number or -1 if not available
+	 */
+	function getRetainedWarrantyAmount() {
+	    
+	    if(empty($this->retained_warranty) ){
+	        return -1;
+	    }
+	    
+	    $retainedWarrantyAmount = 0;
+	    
+	    // Billed - retained warranty
+	    if($this->type == Facture::TYPE_SITUATION)
+	    {
+	        $displayWarranty = true;
+	        // Check if this situation invoice is 100% for real
+	        if(!empty($this->lines)){
+	            $displayWarranty = true;
+	            foreach( $this->lines as $i => $line ){
+	                if($line->product_type < 2 && $line->situation_percent < 100){
+	                    $displayWarranty = false;
+	                    break;
+	                }
+	            }
+	        }
+	        
+	        if($displayWarranty && !empty($this->situation_final))
+	        {
+	            $this->fetchPreviousNextSituationInvoice();
+	            $TPreviousIncoice = $this->tab_previous_situation_invoice;
+	            
+	            $total2BillWT = 0;
+	            foreach ($TPreviousIncoice as &$fac){
+	                $total2BillWT += $fac->total_ttc;
+	            }
+	            $total2BillWT += $this->total_ttc;
+	            
+	            $retainedWarrantyAmount = $total2BillWT * $this->retained_warranty / 100;
+	        }
+	        else{
+	            return -1;
+	        }
+	        
+	    }
+	    else
+	    {
+	        // Because one day retained warranty could be used on standard invoices
+	        $retainedWarrantyAmount = $this->total_ttc * $this->retained_warranty / 100;
+	    }
+	    
+	    return $retainedWarrantyAmount;
+	}
 	
 	/**
 	 *  Change the retained warranty
