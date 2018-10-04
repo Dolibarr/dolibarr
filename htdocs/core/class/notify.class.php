@@ -369,13 +369,14 @@ class Notify
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
-			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$projtitle='';
 			if (! empty($object->fk_project))
 			{
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$proj = new Project($this->db);
 				$proj->fetch($object->fk_project);
+				$projtitle='('.$proj->title.')';
 			}
-			$projtitle=(empty($proj->title)?'':'['.$proj->title.']');
 
 			if ($num > 0)
 			{
@@ -397,7 +398,7 @@ class Notify
 							$outputlangs->setDefaultLang($obj->default_lang);
 						}
 
-						$subject = '['.$mysoc->name.']'.$projtitle.' '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
