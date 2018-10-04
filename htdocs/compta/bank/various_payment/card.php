@@ -155,7 +155,8 @@ if (empty($reshook))
 			if ($ret > 0)
 			{
 				$db->commit();
-				header("Location: index.php");
+				$urltogo=($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/index.php');
+				header("Location: ".$urltogo);
 				exit;
 			}
 			else
