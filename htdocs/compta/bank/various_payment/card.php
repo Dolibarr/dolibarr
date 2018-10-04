@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+/* Copyright (C) 2017-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,7 +155,8 @@ if (empty($reshook))
 			if ($ret > 0)
 			{
 				$db->commit();
-				header("Location: index.php");
+				$urltogo=($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/index.php');
+				header("Location: ".$urltogo);
 				exit;
 			}
 			else
@@ -274,8 +275,8 @@ if ($action == 'create')
 	// Sens
 	print '<tr><td>';
 	print fieldLabel('Sens','sens',1).'</td><td>';
-    $sensarray=array( '0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
-    print $form->selectarray('sens',$sensarray,$sens);
+	$sensarray=array( '0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+	print $form->selectarray('sens',$sensarray,$sens);
 	print '</td></tr>';
 
 	// Amount
@@ -313,9 +314,9 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
-        print '<td>';
+		print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
-        print '</td></tr>';
+		print '</td></tr>';
 	}
 	else // For external software
 	{

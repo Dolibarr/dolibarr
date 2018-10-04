@@ -6,9 +6,9 @@
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -295,32 +295,6 @@ if (GETPOST('save') && ! $cancel && $user->rights->banque->modifier)
     {
     	$error++;
     	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
-    }
-    /*if (! empty($conf->accounting->enabled) && (empty($search_accountancy_code) || $search_accountancy_code == '-1'))
-    {
-    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
-    	$error++;
-    }*/
-
-    if (! $error)
-    {
-    	$objecttmp = new Account($db);
-    	$objecttmp->fetch($bankaccountid);
-        $insertid = $objecttmp->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
-        if ($insertid > 0)
-        {
-            setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-            header("Location: ".$_SERVER['PHP_SELF'].($id ? "?id=".$id : ''));
-            exit;
-        }
-        else
-        {
-            setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
-    else
-    {
-        $action='addline';
     }
 }
 
@@ -629,76 +603,6 @@ if ($resql)
 		print '<br><br>';
 	}
 
-	// Form to add a transaction with no invoice
-	if ($user->rights->banque->modifier && $action == 'addline')
-	{
-		print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
-
-		print '<table class="noborder" width="100%">';
-
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Description").'</td>';
-		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>'.$langs->trans("Type").'</td>';
-		print '<td>'.$langs->trans("Numero").'</td>';
-		//if (! $search_account > 0)
-		//{
-			print '<td align=right>'.$langs->trans("BankAccount").'</td>';
-		//}
-		print '<td align=right>'.$langs->trans("Debit").'</td>';
-		print '<td align=right>'.$langs->trans("Credit").'</td>';
-		/*if (! empty($conf->accounting->enabled))
-		{
-			print '<td align="center">';
-			print $langs->trans("AccountAccounting");
-			print '</td>';
-		}*/
-		print '<td align="center">&nbsp;</td>';
-		print '</tr>';
-
-		print '<tr>';
-		print '<td>';
-		print '<input name="label" class="flat minwidth200" type="text" value="'.GETPOST("label","alpha").'">';
-		if (is_array($options) && count($options))
-		{
-			print '<br>'.$langs->trans("Rubrique").': ';
-			print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
-		}
-		print '</td>';
-		print '<td class="nowrap">';
-		print $form->selectDate(empty($dateop)?-1:$dateop, 'op', 0, 0, 0, 'transaction');
-		print '</td>';
-		print '<td>&nbsp;</td>';
-		print '<td class="nowrap">';
-		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
-		print '</td>';
-		print '<td>';
-		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq","alpha").'">';
-		print '</td>';
-		//if (! $search_account > 0)
-		//{
-			print '<td align=right>';
-			$form->select_comptes(GETPOST('add_account','int')?GETPOST('add_account','int'):$search_account,'add_account',0,'',1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''));
-			print '</td>';
-		//}
-		print '<td align="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit","alpha").'"></td>';
-		print '<td align="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit","alpha").'"></td>';
-		/*if (! empty($conf->accounting->enabled))
-		{
-			print '<td align="center">';
-			print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, null, 1, 1, '');
-			print '</td>';
-		}*/
-		print '<td align="center">';
-		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
-
-		print '</table>';
-		print '<br>';
-	}
-
 	/// ajax to adjust value date with plus and less picto
 	print '
     <script type="text/javascript">
@@ -729,29 +633,15 @@ if ($resql)
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
-			if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
-			{
-				if ($user->rights->banque->modifier) {
-					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)).'"><span class="valignmiddle">'.$langs->trans("AddBankRecord").'</span>';
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				} else {
-					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord");
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				}
-			}
-			else													// If direct entries is not done using miscellaneous payments
-			{
-				if ($user->rights->banque->modifier) {
-					$newcardbutton = '<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord");
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				} else {
-					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord");
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				}
+			// If direct entries is done using miscellaneous payments
+			if ($user->rights->banque->modifier) {
+				$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)).'"><span class="valignmiddle">'.$langs->trans("AddBankRecord").'</span>';
+				$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+				$newcardbutton.= '</a>';
+			} else {
+				$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord");
+				$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+				$newcardbutton.= '</a>';
 			}
 		}
 		else
