@@ -72,6 +72,8 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 		$refreshaction='refresh_'.$this->boxcode;
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+		
+		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START-1):0;
 
 		$text = $langs->trans("BoxSuppliersInvoicesPerMonth",$max);
 		$this->info_box_head = array(
@@ -126,7 +128,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicessuppliernbinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
@@ -144,7 +146,13 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 0) {
+							$legend[]=sprintf("%d/%d",$i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px1->SetLegend($legend);
@@ -166,7 +174,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicessupplieramountinyear-".$year.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
@@ -184,7 +192,13 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 0) {
+							$legend[]=sprintf("%d/%d",$i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px2->SetLegend($legend);
