@@ -410,13 +410,13 @@ class Utils
 
 			if ($compression == 'gz' or $compression == 'bz')
 			{
-				$this->backup_tables($outputfiletemp);
+				$this->backupTables($outputfiletemp);
 				dol_compress_file($outputfiletemp, $outputfile, $compression);
 				unlink($outputfiletemp);
 			}
 			else
 			{
-				$this->backup_tables($outputfile);
+				$this->backupTables($outputfile);
 			}
 
 			$this->output = "";
@@ -836,7 +836,7 @@ class Utils
 	 *	@param	string	$tables			Table name or '*' for all
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function backup_tables($outputfile, $tables='*')
+	function backupTables($outputfile, $tables='*')
 	{
 		global $db, $langs;
 		global $errormsg;
