@@ -37,9 +37,7 @@ if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 // Security check
 if (!$user->admin) accessforbidden();
 
-$langs->load("admin");
-$langs->load("cashdesk");
-
+$langs->loadLangs(array("admin", "cashdesk"));
 
 /*
  * Actions

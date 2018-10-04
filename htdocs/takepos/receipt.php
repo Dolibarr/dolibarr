@@ -21,9 +21,7 @@
 require '../main.inc.php';	// Load $user and permissions
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->load("main");
-$langs->load('cashdesk');
-
+$langs->loadLangs(array("main", "cashdesk"));
 
 /*
  * View

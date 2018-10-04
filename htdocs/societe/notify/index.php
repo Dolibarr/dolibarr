@@ -23,8 +23,7 @@
  */
 
 require '../../main.inc.php';
-$langs->load("companies");
-$langs->load("banks");
+$langs->loadLangs(array("companies", "banks"));
 
 // S�curit� acc�s client
 if ($user->societe_id > 0)

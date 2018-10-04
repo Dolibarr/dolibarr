@@ -36,9 +36,7 @@ $action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$a
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("errors");
+$langs->loadLangs(array("admin", "install", "errors"));
 
 // Dolibarr pages directory
 $main_dir = GETPOST('main_dir')?GETPOST('main_dir'):(empty($argv[3])?'':$argv[3]);
