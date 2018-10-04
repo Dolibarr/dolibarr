@@ -101,3 +101,5 @@ CREATE TABLE llx_takepos_floor_tables(
     floor smallint
 ) ENGINE=innodb;
 
+
+UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;

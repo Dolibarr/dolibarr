@@ -524,62 +524,16 @@ if ($id)
 			$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
 			$align="left";
-			if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
-			if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-			if ($fieldlist[$field]=='taux')            {
-				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
-				else $valuetoshow=$langs->trans("Amount");
-				$align='right';
-			}
-			if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 2"; $align="center"; $sortable=0; }
-			if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2";}
-			if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 3"; $align="center"; $sortable=0; }
-			if ($fieldlist[$field]=='localtax2')       { $valuetoshow=$langs->trans("Rate")." 3";}
-			if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
-			if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
-			if ($fieldlist[$field]=='type')            {
-				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"),$langs->trans("TypePaymentDesc"),2,1,img_help(1,''));
-				else $valuetoshow=$langs->trans("Type");
-			}
-			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
 			{
 				$valuetoshow=$langs->trans("Label");
 				if ($id != 25) $valuetoshow.="*";
 			}
-			if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
 			if ($fieldlist[$field]=='country')         {
 				if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
 				$valuetoshow=$langs->trans("Country");
 			}
-			if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
-			if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-			if ($fieldlist[$field]=='type_cdr')        { $valuetoshow=$langs->trans("AtEndOfMonth"); $align="center"; }
-			if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-			if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
-			if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-			if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
-			if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $valuetoshow=''; }
-			if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
-			if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); }
-			if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); }
 			if ($fieldlist[$field]=='pcg_version' || $fieldlist[$field]=='fk_pcg_version') { $valuetoshow=$langs->trans("Pcg_version"); }
-			if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountparent"); }
-			if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
-			if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
-			if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
-			if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
-			if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
-			if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
-			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
-			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
-			if ($fieldlist[$field]=='formula')         { $valuetoshow=$langs->trans("Formula"); }
-
-			if ($id == 2)	// Special cas for state page
-			{
-				if ($fieldlist[$field]=='region_id') { $valuetoshow='&nbsp;'; $showfield=1; }
-				if ($fieldlist[$field]=='region') { $valuetoshow=$langs->trans("Country").'/'.$langs->trans("Region"); $showfield=1; }
-			}
 
 			if ($valuetoshow != '')
 			{
@@ -709,50 +663,13 @@ if ($id)
 			*/
 			$valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
-			if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
-			if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-			if ($fieldlist[$field]=='taux')            {
-				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
-				else $valuetoshow=$langs->trans("Amount");
-				$align='right';
-			}
-			if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 2"; $align="center"; $sortable=0; }
-			if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2"; $sortable=0; }
-			if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 3"; $align="center"; $sortable=0; }
-			if ($fieldlist[$field]=='localtax2')       { $valuetoshow=$langs->trans("Rate")." 3"; $sortable=0; }
-			if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
-			if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
-			if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
-			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
 			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
 			{
 				$valuetoshow=$langs->trans("Label");
 			   	if ($id != 25) $valuetoshow.="*";
 			}
-			if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
 			if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
-			if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=$langs->trans("NPR"); $align="center"; }
-			if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-			if ($fieldlist[$field]=='type_cdr')        { $valuetoshow=$langs->trans("AtEndOfMonth"); $align="center"; }
-			if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-			if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
-			if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-			if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
-			if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
-			if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
-			if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); $sortable=0; }
-			if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); $sortable=0; }
 			if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
-			if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountsparent"); }
-			if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
-			if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
-			if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
-			if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
-			if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
-			if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
-			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
-			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
-			if ($fieldlist[$field]=='formula')         { $valuetoshow=$langs->trans("Formula"); }
 
 			// Affiche nom du champ
 			if ($showfield)
@@ -832,7 +749,7 @@ if ($id)
 									$valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
 								}
 							}
-							else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
+							else if ($fieldlist[$field]=='type_cdr') {
 								if(empty($valuetoshow)) $valuetoshow = $langs->trans('None');
 								elseif($valuetoshow == 1) $valuetoshow = $langs->trans('AtEndOfMonth');
 								elseif($valuetoshow == 2) $valuetoshow = $langs->trans('CurrentNext');
@@ -1055,53 +972,7 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 				print '</td>';
 			}
 		}
-		elseif ($fieldlist[$field] == 'region')
-		{
-			print '<td>';
-			$formcompany->select_region($region_id,'region');
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'region_id')
-		{
-			$region_id = (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:0);
-			print '<td>';
-			print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$region_id.'">';
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'lang')
-		{
-			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
-			print '</td>';
-		}
-		// Le type de template
-		elseif ($fieldlist[$field] == 'type_template')
-		{
-			print '<td>';
-			print $form->selectarray('type_template', $elementList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
-			print '</td>';
-		}
-		// Le type de l'element (pour les type de contact)
-		elseif ($fieldlist[$field] == 'element')
-		{
-			print '<td>';
-			print $form->selectarray('element', $elementList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
-			print '</td>';
-		}
-		// La source de l'element (pour les type de contact)
-		elseif ($fieldlist[$field] == 'source')
-		{
-			print '<td>';
-			print $form->selectarray('source', $sourceList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX."c_actioncomm")
-		{
-			print '<td>';
-			print 'user<input type="hidden" name="type" value="user">';
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
+		elseif ($fieldlist[$field] == 'type_cdr') {
 			if ($fieldlist[$field] == 'type_cdr') print '<td align="center">';
 			else print '<td>';
 			if ($fieldlist[$field] == 'type_cdr') {
@@ -1111,48 +982,8 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 			}
 			print '</td>';
 		}
-		elseif (in_array($fieldlist[$field],array('nbjour','decalage','taux','localtax1','localtax2'))) {
-			$align="left";
-			if (in_array($fieldlist[$field],array('taux','localtax1','localtax2'))) $align="right";	// Fields aligned on right
-			print '<td align="'.$align.'">';
-			print '<input type="text" class="flat" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" size="3" name="'.$fieldlist[$field].'">';
-			print '</td>';
-		}
 		elseif (in_array($fieldlist[$field], array('libelle_facture'))) {
 			print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea></td>';
-		}
-		elseif (in_array($fieldlist[$field], array('content')))
-		{
-			print '<td>';
-			if ($context != 'hide')
-			{
-				//print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
-				$okforextended=true;
-				$doleditor = new DolEditor($fieldlist[$field], (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_5, '90%');
-				print $doleditor->Create(1);
-			}
-			else print '&nbsp;';
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i',$fieldlist[$field])) {
-			print '<td><input type="text" class="flat" value="'.price((! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'')).'" size="8" name="'.$fieldlist[$field].'"></td>';
-		}
-		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
-			print '<td><input type="text" class="flat" value="'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
-		}
-		elseif ($fieldlist[$field] == 'accountancy_code' || $fieldlist[$field] == 'accountancy_code_sell' || $fieldlist[$field] == 'accountancy_code_buy')
-		{
-			print '<td>';
-			if (! empty($conf->accounting->enabled))
-			{
-				$accountancy_account = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
-				print $formaccounting->select_account($accountancy_account, $fieldlist[$field], 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
-			}
-			else
-			{
-				print '<input type="text" size="10" class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
-			}
-			print '</td>';
 		}
 		else
 		{
