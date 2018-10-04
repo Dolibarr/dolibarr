@@ -1305,7 +1305,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 $result = $contactaction->fetchResources();
                 if ($result<0) {
                 	dol_print_error($db);
-                	setEventMessage("company.lib::show_actions_done Error fetch ressource");
+                	setEventMessage("company.lib::show_actions_done Error fetch ressource",'errors');
                 }
 
                 //if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -1630,29 +1630,26 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 $contactstatic->id=$histo[$key]['contact_id'];
                 var_dump($histo[$key]['contact_id']);
                 $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
-            }
-            elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned'])>0)
-            {
-            	$out.='<td>';
-            	foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab)
-            	{
-            		$contact = new Contact($db);
-            		$result = $contact->fetch($cid);
+            } elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
+				$out .= '<td>';
+				foreach ( $histo[$key]['socpeopleassigned'] as $cid => $Tab ) {
+					$contact = new Contact($db);
+					$result = $contact->fetch($cid);
 
-            		if ($result < 0) dol_print_error($db,$contact->error);
+					if ($result < 0)
+						dol_print_error($db, $contact->error);
 
-            		if ($result > 0)
-            		{
-            			$out.= $contact->getNomUrl(1);
-            			if ($object->type_code == 'AC_TEL')
-            			{
-            				if (!empty($contact->phone_pro)) $out.= '('.dol_print_phone($contact->phone_pro).')';
-            			}
-            			$out.= '<div class="paddingright"></div>';
-            		}
-            	}
-            	$out.='</td>';
-            }
+					if ($result > 0) {
+						$out .= $contact->getNomUrl(1);
+						if ($object->type_code == 'AC_TEL') {
+							if (! empty($contact->phone_pro))
+								$out .= '(' . dol_print_phone($contact->phone_pro) . ')';
+						}
+						$out .= '<div class="paddingright"></div>';
+					}
+				}
+				$out .= '</td>';
+			}
             else {
             	$out.='<td>&nbsp;</td>';
             }
