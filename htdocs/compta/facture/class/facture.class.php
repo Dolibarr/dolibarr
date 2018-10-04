@@ -1379,7 +1379,7 @@ class Facture extends CommonInvoice
 			}
 			else
 			{
-				$this->error='Bill with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
+				$this->error='Invoice with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
 				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 				return 0;
 			}
@@ -1485,7 +1485,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-				// TODO Fetch optional like done in fetch line of facture_rec ?
+                                $line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 
@@ -4845,17 +4845,17 @@ class FactureLigne extends CommonInvoiceLine
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
-				
+
 				$returnPercent = floatval($res['situation_percent']);
-				
+
 				if($include_credit_note) {
-				    
+
 				    $sql = 'SELECT fd.situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet fd';
 				    $sql.= ' JOIN ' . MAIN_DB_PREFIX . 'facture f ON (f.rowid = fd.fk_facture) ';
 				    $sql.= ' WHERE fd.fk_prev_id =' . $this->fk_prev_id;
 				    $sql.= ' AND f.situation_cycle_ref = '.$tmpinvoice->situation_cycle_ref; // Prevent cycle outed
 				    $sql.= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
-				    
+
 				    $res = $this->db->query($sql);
 				    if($res) {
 				        while($obj = $this->db->fetch_object($res)) {
@@ -4863,7 +4863,7 @@ class FactureLigne extends CommonInvoiceLine
 				        }
 				    }
 				}
-				
+
 				return $returnPercent;
 			} else {
 				$this->error = $this->db->error();
