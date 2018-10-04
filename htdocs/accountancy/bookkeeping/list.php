@@ -549,7 +549,9 @@ if (! empty($arrayfields['t.credit']['checked']))
 // Code journal
 if (! empty($arrayfields['t.code_journal']['checked']))
 {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+	print '<td class="liste_titre">';
+	print $formaccounting->select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
 }
 // Date creation
 if (! empty($arrayfields['t.date_creation']['checked']))
