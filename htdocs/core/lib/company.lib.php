@@ -1641,7 +1641,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
 					if ($result > 0) {
 						$out .= $contact->getNomUrl(1);
-						if ($object->type_code == 'AC_TEL') {
+						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
 							if (! empty($contact->phone_pro))
 								$out .= '(' . dol_print_phone($contact->phone_pro) . ')';
 						}
