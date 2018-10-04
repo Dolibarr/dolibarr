@@ -46,6 +46,7 @@ $langs->load('bills');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
+$langs->load('receptions');
 if (! empty($conf->productbatch->enabled))
 	$langs->load('productbatch');
 
@@ -738,6 +739,7 @@ if ($id > 0 || ! empty($ref)) {
 	$sql = "SELECT p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.label as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
+	if($conf->reception->enabled)$sql.=" ,cfd.fk_reception";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entrepot as e ON cfd.fk_entrepot = e.rowid";
@@ -759,6 +761,7 @@ if ($id > 0 || ! empty($ref)) {
 			print '<table class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
+			if($conf->reception->enabled)print '<td>' . $langs->trans("Reception") . '</td>';
 			print '<td>' . $langs->trans("Product") . '</td>';
 			if (! empty($conf->productbatch->enabled)) {
 				print '<td>' . $langs->trans("batch_number") . '</td>';
@@ -769,7 +772,7 @@ if ($id > 0 || ! empty($ref)) {
 			print '<td></td>';
 			print '<td>' . $langs->trans("Warehouse") . '</td>';
 			print '<td>' . $langs->trans("Comment") . '</td>';
-			if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
+			if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) || !empty($conf->reception->enabled))
 				print '<td align="center" colspan="2">' . $langs->trans("Status") . '</td>';
 			print "</tr>\n";
 
@@ -777,8 +780,17 @@ if ($id > 0 || ! empty($ref)) {
 
 			while ( $i < $num ) {
 				$objp = $db->fetch_object($resql);
-
+				
+			
+				
 				print "<tr " . $bc[$var] . ">";
+				print '<td>';
+				if(!empty($conf->reception->enabled) && !empty($objp->fk_reception)){
+					$reception = new Reception($db);
+					$reception->fetch($objp->fk_reception);
+					print $reception->getNomUrl();
+				}
+				print "</td>";
 				print '<td>';
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
@@ -805,7 +817,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td class="tdoverflowmax300">' . $objp->comment . '</td>';
 
 				// Status
-				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
 					print '<td align="right">';
 					$supplierorderdispatch->status = (empty($objp->status) ? 0 : $objp->status);
 					// print $supplierorderdispatch->status;
@@ -841,6 +853,15 @@ if ($id > 0 || ! empty($ref)) {
 						}
 					}
 					print '</td>';
+				}else if(!empty($conf->reception->enabled)){
+					print '<td align="right">';
+					if(!empty($reception->rowid)){
+						print $reception->getLibStatut(5);
+					}
+					print '</td>';
+					print '<td align="center">';
+					print '</td>';
+					
 				}
 
 				print "</tr>\n";
