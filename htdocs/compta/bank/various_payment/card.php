@@ -86,7 +86,7 @@ if (empty($reshook))
 	{
 		if ($action != 'addlink')
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/index.php',1);
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/compta/bank/various_payment/list.php',1);
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -155,7 +155,7 @@ if (empty($reshook))
 			if ($ret > 0)
 			{
 				$db->commit();
-				$urltogo=($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/index.php');
+				$urltogo=($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 				header("Location: ".$urltogo);
 				exit;
 			}
@@ -191,7 +191,7 @@ if (empty($reshook))
 				if ($result >= 0)
 				{
 					$db->commit();
-					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/index.php');
+					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 					exit;
 				}
 				else
@@ -405,7 +405,7 @@ if ($id)
 		}
 	}
 	$morehtmlref.='</div>';
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/index.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 

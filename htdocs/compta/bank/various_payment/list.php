@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/compta/bank/various_payment/index.php
+ *  \file       htdocs/compta/bank/various_payment/list.php
  *  \ingroup    bank
  *  \brief      List of various payments
  */
