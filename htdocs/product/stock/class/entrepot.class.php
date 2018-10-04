@@ -60,23 +60,23 @@ class Entrepot extends CommonObject
 	 */
 	const STATUS_OPEN_INTERNAL = 2;
 
-	var $libelle;
+	public $libelle;
 
 	/**
 	 * @var string description
 	 */
 	public $description;
 
-	var $statut;
-	var $lieu;
-	var $address;
+	public $statut;
+	public $lieu;
+	public $address;
 	//! Code Postal
-	var $zip;
-	var $town;
-	var $fk_parent;
+	public $zip;
+	public $town;
+	public $fk_parent;
 
 	// List of short language codes for status
-	var $statuts = array();
+	public $statuts = array();
 
 	/**
 	 *  Constructor
