@@ -43,50 +43,50 @@ class Holiday extends CommonObject
 	public $table_element='holiday';
 
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	var $fk_element = 'fk_holiday';
+	public $fk_element = 'fk_holiday';
 	public $picto = 'holiday';
 
 	/**
 	 * @deprecated
 	 * @see id
 	 */
-	var $rowid;
+	public $rowid;
 
 	/**
 	 * @var int User ID
 	 */
 	public $fk_user;
 
-	var $date_create='';
+	public $date_create='';
 
 	/**
 	 * @var string description
 	 */
 	public $description;
 
-	var $date_debut='';			// Date start in PHP server TZ
-	var $date_fin='';			// Date end in PHP server TZ
-	var $date_debut_gmt='';		// Date start in GMT
-	var $date_fin_gmt='';		// Date end in GMT
-	var $halfday='';			// 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
-	var $statut='';				// 1=draft, 2=validated, 3=approved
-	var $fk_validator;
-	var $date_valid='';
-	var $fk_user_valid;
-	var $date_refuse='';
-	var $fk_user_refuse;
-	var $date_cancel='';
-	var $fk_user_cancel;
-	var $detail_refuse='';
-	var $fk_type;
+	public $date_debut='';			// Date start in PHP server TZ
+	public $date_fin='';			// Date end in PHP server TZ
+	public $date_debut_gmt='';		// Date start in GMT
+	public $date_fin_gmt='';		// Date end in GMT
+	public $halfday='';			// 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	public $statut='';				// 1=draft, 2=validated, 3=approved
+	public $fk_validator;
+	public $date_valid='';
+	public $fk_user_valid;
+	public $date_refuse='';
+	public $fk_user_refuse;
+	public $date_cancel='';
+	public $fk_user_cancel;
+	public $detail_refuse='';
+	public $fk_type;
 
-	var $holiday = array();
-	var $events = array();
-	var $logs = array();
+	public $holiday = array();
+	public $events = array();
+	public $logs = array();
 
-	var $optName = '';
-	var $optValue = '';
-	var $optRowid = '';
+	public $optName = '';
+	public $optValue = '';
+	public $optRowid = '';
 
 	/**
 	 * Draft status
