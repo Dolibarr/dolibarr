@@ -580,7 +580,7 @@ class Notify
 				$link = '';
 				$num++;
 
-				$subject = '['.$mysoc->name.'] '.$projtitle.' '.$langs->transnoentitiesnoconv("DolibarrNotification");
+				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':
