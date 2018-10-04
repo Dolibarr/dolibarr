@@ -38,18 +38,18 @@ class AccountancySystem
 	 */
 	public $error='';
 
-	var $rowid;
-	var $fk_pcg_version;
-	var $pcg_type;
-	var $pcg_subtype;
+	public $rowid;
+	public $fk_pcg_version;
+	public $pcg_type;
+	public $pcg_subtype;
 
     /**
      * @var string Accountancy System label
      */
     public $label;
 
-	var $account_number;
-	var $account_parent;
+	public $account_number;
+	public $account_parent;
 
 	/**
 	 * Constructor

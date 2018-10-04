@@ -61,37 +61,37 @@ class Task extends CommonObject
 	 */
 	public $description;
 
-	var $duration_effective;		// total of time spent on this task
-	var $planned_workload;
-	var $date_c;
-	var $date_start;
-	var $date_end;
-	var $progress;
-	var $fk_statut;
-	var $priority;
-	var $fk_user_creat;
-	var $fk_user_valid;
-	var $rang;
+	public $duration_effective;		// total of time spent on this task
+	public $planned_workload;
+	public $date_c;
+	public $date_start;
+	public $date_end;
+	public $progress;
+	public $fk_statut;
+	public $priority;
+	public $fk_user_creat;
+	public $fk_user_valid;
+	public $rang;
 
-	var $timespent_min_date;
-	var $timespent_max_date;
-	var $timespent_total_duration;
-	var $timespent_total_amount;
-	var $timespent_nblinesnull;
-	var $timespent_nblines;
+	public $timespent_min_date;
+	public $timespent_max_date;
+	public $timespent_total_duration;
+	public $timespent_total_amount;
+	public $timespent_nblinesnull;
+	public $timespent_nblines;
 	// For detail of lines of timespent record, there is the property ->lines in common
 
 	// Var used to call method addTimeSpent(). Bad practice.
-	var $timespent_id;
-	var $timespent_duration;
-	var $timespent_old_duration;
-	var $timespent_date;
-	var $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
-	var $timespent_withhour;		// 1 = we entered also start hours for timesheet line
-	var $timespent_fk_user;
-	var $timespent_note;
+	public $timespent_id;
+	public $timespent_duration;
+	public $timespent_old_duration;
+	public $timespent_date;
+	public $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
+	public $timespent_withhour;		// 1 = we entered also start hours for timesheet line
+	public $timespent_fk_user;
+	public $timespent_note;
 
-	var $comments = array();
+	public $comments = array();
 
 	public $oldcopy;
 
