@@ -1081,13 +1081,13 @@ class Website extends CommonObject
 	/**
 	 * Component to select language (Full CSS Only)
 	 *
-	 * @param	array		$languagecodes			Language codes
+	 * @param	array		$languagecodes			Language codes array. Example: array('en_US','fr_FR','de_DE','es_ES')
 	 * @param	Translate	$weblangs				Language Object
 	 * @param	string		$morecss				More CSS class on component
 	 * @param	string		$htmlname				Suffix for HTML name
 	 * @return 	string								HTML select component
 	 */
-	public function componentSelectLang($languagecodes=array('en_US','fr_FR','de_DE','es_ES'), $weblangs, $morecss='', $htmlname='')
+	public function componentSelectLang($languagecodes, $weblangs, $morecss='', $htmlname='')
 	{
 		if (! is_object($weblangs)) return 'ERROR componentSelectLang called with parameter $weblangs not defined';
 
