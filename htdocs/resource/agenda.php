@@ -23,9 +23,9 @@
  */
 
 /**
- *  \file       htdocs/product/agenda.php
- *  \ingroup    product
- *  \brief      Page of product events
+ *  \file       htdocs/resource/agenda.php
+ *  \ingroup    resource
+ *  \brief      Page of resource events
  */
 
 require '../main.inc.php';
@@ -119,7 +119,7 @@ if ($id > 0 || $ref)
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 	$langs->load("companies");
-
+	$picto = 'resource';
 
 	$object = new Dolresource($db);
 	$result = $object->fetch($id);
