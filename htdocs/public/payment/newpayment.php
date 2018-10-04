@@ -423,8 +423,9 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 
 	try {
 		$metadata = array(
-			'dol_version'=>DOL_VERSION,
-			'dol_entity'=>$conf->entity,
+			'dol_version' => DOL_VERSION,
+			'dol_entity'  => $conf->entity,
+			'dol_company' => $mysoc->name,		// Usefull when using multicompany
 			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
 		);
 
