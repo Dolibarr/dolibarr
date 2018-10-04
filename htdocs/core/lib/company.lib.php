@@ -1285,7 +1285,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Conf		       $conf		   Object conf
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
- * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur
+ * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource
  * 		@param	Contact		       $objcon		   Object contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
