@@ -1,5 +1,5 @@
--- ============================================================================
--- Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
+-- ===================================================================
+-- Copyright (C) 2015      Claudio Aschieri	<c.aschieri@19.coop>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +14,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ============================================================================
+-- ===================================================================
 
-ALTER TABLE llx_receptiondet_batch ADD INDEX idx_fk_receptiondet (fk_receptiondet);
-ALTER TABLE llx_receptiondet_batch ADD CONSTRAINT fk_receptiondet_batch_fk_receptiondet FOREIGN KEY (fk_receptiondet) REFERENCES llx_receptiondet(rowid);
+create table llx_commande_fournisseur_dispatch_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;

@@ -25,7 +25,7 @@
  */
 
 /**
- *      \file       htdocs/admin/receptiondet_extrafields.php
+ *      \file       htdocs/admin/commandefournisseurdispatch_extrafields.php
  *		\ingroup    reception
  *		\brief      Page to setup extra fields of reception
  */
@@ -52,7 +52,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='receptiondet'; //Must be the $table_element of the class that manage extrafield
+$elementtype='commande_fournisseur_dispatch'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 

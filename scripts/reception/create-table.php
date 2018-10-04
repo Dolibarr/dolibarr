@@ -47,7 +47,7 @@ if (is_resource($handle))
 	{
 		if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && !preg_match('/\.key\.sql$/i', $file))
 		{
-			if (strpos($file, 'reception') !== false){
+			if (strpos($file, 'reception') !== false || strpos($file, 'commande_fournisseur_dispatch') !== false){
 				$tablefound++;
 				$tabledata[] = $file;
 			}
@@ -160,7 +160,7 @@ if (is_resource($handle))
 	{
 		if (preg_match('/\.sql$/i', $file) && preg_match('/^llx_/i', $file) && preg_match('/\.key\.sql$/i', $file))
 		{
-			if (strpos($file, 'reception') !== false){
+			if (strpos($file, 'reception') !== false || strpos($file, 'commande_fournisseur_dispatch') !== false){
 				$tablefound++;
 				$tabledata[] = $file;
 			}

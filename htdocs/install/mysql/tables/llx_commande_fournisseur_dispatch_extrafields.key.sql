@@ -1,6 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2008 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2015      Claudio Aschieri	<c.aschieri@19.coop>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,5 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_receptiondet ADD INDEX idx_receptiondet_fk_reception (fk_reception);
-ALTER TABLE llx_receptiondet ADD CONSTRAINT fk_receptiondet_fk_reception FOREIGN KEY (fk_reception) REFERENCES llx_reception (rowid);
+ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);

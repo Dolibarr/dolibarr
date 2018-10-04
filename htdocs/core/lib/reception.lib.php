@@ -85,7 +85,7 @@ function reception_admin_prepare_head()
 	
 	if (! empty($conf->global->MAIN_SUBMODULE_RECEPTION))
 	{
-	$head[$h][0] = DOL_URL_ROOT.'/admin/receptiondet_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/commande_fournisseur_dispatch_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'attributeslines_reception';
 	$h++;
