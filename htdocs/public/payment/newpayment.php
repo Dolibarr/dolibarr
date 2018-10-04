@@ -413,6 +413,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$dol_type=GETPOST('s', 'int');
   	$dol_id=GETPOST('dol_id', 'int');		
   	$vatnumber = GETPOST('vatnumber','alpha');
+	$savesource=GETPOST('savesource', 'int');	
 
 	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
@@ -453,7 +454,9 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
 			// Create Stripe card from Token
+			if (! empty($savesource)) {
 			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+			} else { $card = $stripeToken; }
 
 			if (empty($card))
 			{
