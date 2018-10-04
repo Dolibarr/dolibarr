@@ -370,7 +370,7 @@ $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' f.datec as date_creation, f.tms as date_update,';
 if($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
 {
-    $sql.= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final,';
+    $sql.= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final,f.situation_cycle_ref,f.situation_counter,';
 }
 $sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql.= " typent.code as typent_code,";
@@ -947,6 +947,9 @@ if ($resql)
 			     $facturestatic->retained_warranty=$obj->retained_warranty;
 			     $facturestatic->retained_warranty_date_limit=$obj->retained_warranty_date_limit;
 			     $facturestatic->situation_final=$obj->retained_warranty_date_limit;
+			     $facturestatic->situation_final=$obj->retained_warranty_date_limit;
+			     $facturestatic->situation_cycle_ref=$obj->situation_cycle_ref;
+			     $facturestatic->situation_counter=$obj->situation_counter;
 			}
 			$thirdpartystatic->id=$obj->socid;
 			$thirdpartystatic->name=$obj->name;
