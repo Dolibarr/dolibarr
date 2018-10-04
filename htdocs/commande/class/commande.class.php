@@ -1917,7 +1917,9 @@ class Commande extends CommonOrder
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-				$this->lines[$i] = $line;
+				$line->fetch_optionals();
+
+                $this->lines[$i] = $line;
 
 				$i++;
 			}

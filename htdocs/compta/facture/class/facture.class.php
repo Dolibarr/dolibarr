@@ -1413,7 +1413,7 @@ class Facture extends CommonInvoice
 			}
 			else
 			{
-				$this->error='Bill with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
+				$this->error='Invoice with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
 				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 				return 0;
 			}
@@ -1521,7 +1521,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-				// TODO Fetch optional like done in fetch line of facture_rec ?
+                                $line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 

@@ -1577,7 +1577,7 @@ if ($action == 'create')
 					$srcLine = new OrderLine($db);
 					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
 					$line = new ExpeditionLigne($db);
-					$line->fetch_optionals($line->id);
+					//$line->fetch_optionals($line->id);
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
