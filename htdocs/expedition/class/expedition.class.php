@@ -2256,7 +2256,7 @@ class Expedition extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:enable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 /**
      *	Set draft status
      *
@@ -2265,6 +2265,7 @@ class Expedition extends CommonObject
      */
     function set_draft($user)
     {
+		// phpcs:enable
         global $conf,$langs;
 
         $error=0;
