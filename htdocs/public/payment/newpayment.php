@@ -1544,7 +1544,6 @@ if (preg_match('/^dopayment/',$action))
 		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email','alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id','int').'" />';
-    print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id','int').'" />';
 
 		print '
 	    <table id="dolpaymenttable" summary="Payment form" class="center">
