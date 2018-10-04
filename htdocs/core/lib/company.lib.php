@@ -1213,7 +1213,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
     global $param;
 
-    dol_include_once('/comm/action/class/actioncomm.class.php');
+    include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
     // Check parameters
     if (! is_object($filterobj) && ! is_object($objcon)) dol_print_error('','BadParameter');
