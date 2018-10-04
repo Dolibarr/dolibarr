@@ -4246,7 +4246,11 @@ class Facture extends CommonInvoice
 		    $RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
 		    if($totalpaye >= 0 &&  $RetainedWarrantyAmount>= 0)
 		    {
-		        if( ($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay) )
+		        if( ($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay) )
+		        {
+		            $hasDelay = 1;
+		        }
+		        elseif($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay) )
 		        {
 		            $hasDelay = 1;
 		        }
