@@ -104,8 +104,8 @@ class ExpenseReport extends CommonObject
         END ACTIONS
     */
 
-   /**
-	 * Draft
+    /**
+	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
 
