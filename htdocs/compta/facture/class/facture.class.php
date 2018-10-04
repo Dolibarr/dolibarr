@@ -4282,7 +4282,6 @@ class Facture extends CommonInvoice
 	        $displayWarranty = true;
 	        // Check if this situation invoice is 100% for real
 	        if(!empty($this->lines)){
-	            $displayWarranty = true;
 	            foreach( $this->lines as $i => $line ){
 	                if($line->product_type < 2 && $line->situation_percent < 100){
 	                    $displayWarranty = false;

@@ -370,7 +370,7 @@ $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' f.datec as date_creation, f.tms as date_update,';
 if($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
 {
-    $sql.= ' f.retained_warranty,';
+    $sql.= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final,';
 }
 $sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql.= " typent.code as typent_code,";
@@ -942,7 +942,12 @@ if ($resql)
 			$facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
 			$facturestatic->note_public=$obj->note_public;
 			$facturestatic->note_private=$obj->note_private;
-
+			if($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
+			{
+			     $facturestatic->retained_warranty=$obj->retained_warranty;
+			     $facturestatic->retained_warranty_date_limit=$obj->retained_warranty_date_limit;
+			     $facturestatic->situation_final=$obj->retained_warranty_date_limit;
+			}
 			$thirdpartystatic->id=$obj->socid;
 			$thirdpartystatic->name=$obj->name;
 			$thirdpartystatic->client=$obj->client;
@@ -1018,7 +1023,7 @@ if ($resql)
 				print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
 				if ($facturestatic->hasDelay())
 				{
-					print img_warning($langs->trans('Late'));
+				    print img_warning($langs->trans('Late'));
 				}
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
