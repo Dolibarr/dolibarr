@@ -307,7 +307,7 @@ if (! $error && $xml)
         }
         else
         {
-            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
         $out.='</div>';

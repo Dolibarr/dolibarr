@@ -49,9 +49,7 @@ else{
 
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+$langs->loadLangs(array("main", "bills", "cashdesk"));
 ?>
 <link rel="stylesheet" href="css/pos.css">
 	<script>

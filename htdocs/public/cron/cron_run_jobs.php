@@ -44,8 +44,7 @@ dol_include_once("/cron/class/cronjob.class.php");
 global $langs, $conf;
 
 // Language Management
-$langs->load("admin");
-$langs->load("cron");
+$langs->loadLangs(array("admin", "cron"));
 
 /*
  * View

@@ -52,8 +52,7 @@ if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upg
     }
 }
 
-$langs->load("admin");
-$langs->load("install");
+$langs->loadLangs(array("admin", "install"));
 
 $login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
 $pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);

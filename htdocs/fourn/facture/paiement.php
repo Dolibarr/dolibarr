@@ -38,10 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('compta');
+$langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
 // Security check
 $action		= GETPOST('action','alpha');

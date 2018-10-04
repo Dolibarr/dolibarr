@@ -204,6 +204,7 @@ UnvalidateBill=Unvalidate invoice
 NumberOfBills=No. of invoices
 NumberOfBillsByMonth=No. of invoices per month
 AmountOfBills=Amount of invoices
+AmountOfBillsHT=Amount of invoices (net of tax)
 AmountOfBillsByMonthHT=Amount of invoices by month (net of tax)
 ShowSocialContribution=Show social/fiscal tax
 ShowBill=Show invoice
