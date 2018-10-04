@@ -35,7 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionbatch.class.php';
 
 
 /**
@@ -46,7 +45,7 @@ class Reception extends CommonObject
 	public $element="reception";
 	public $fk_element="fk_reception";
 	public $table_element="reception";
-	public $table_element_line="receptiondet";
+	public $table_element_line="commande_fournisseur_dispatch";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'reception';
 
@@ -267,19 +266,15 @@ class Reception extends CommonObject
 				for ($i = 0; $i < $num; $i++)
 				{
 					if (! isset($this->lines[$i]->detail_batch))
-					{	// no batch management
-						if (! $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->array_options) > 0)
+					{	
+						$this->lines[$i]->fk_reception = $this->id;
+
+						if (! $this->lines[$i]->create() > 0)
 						{
 							$error++;
 						}
 					}
-					else
-					{	// with batch management
-						if (! $this->create_line_batch($this->lines[$i],$this->lines[$i]->array_options) > 0)
-						{
-							$error++;
-						}
-					}
+					
 				}
 
 				if (! $error && $this->id && $this->origin_id)
@@ -357,62 +352,6 @@ class Reception extends CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 * Create a reception line
-	 *
-	 * @param 	int		$entrepot_id		Id of warehouse
-	 * @param 	int		$origin_line_id		Id of source line
-	 * @param 	int		$qty				Quantity
-	 * @param	array	$array_options		extrafields array
-	 * @return	int							<0 if KO, line_id if OK
-	 */
-	function create_line($entrepot_id, $origin_line_id, $qty,$array_options=0)
-	{
-		global $conf;
-		$error = 0;
-		$line_id = 0;
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."receptiondet (";
-		$sql.= "fk_reception";
-		$sql.= ", fk_entrepot";
-		$sql.= ", fk_origin_line";
-		$sql.= ", qty";
-		$sql.= ") VALUES (";
-		$sql.= $this->id;
-		$sql.= ", ".($entrepot_id?$entrepot_id:'null');
-		$sql.= ", ".$origin_line_id;
-		$sql.= ", ".$qty;
-		$sql.= ")";
-
-		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-		    $line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."receptiondet");
-		}
-		else
-		{
-			$error++;
-		}
-
-		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
-		{
-			$receptionline = new ReceptionLigne($this->db);
-			$receptionline->array_options=$array_options;
-			$receptionline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$receptionline->table_element);
-			$result=$receptionline->insertExtraFields();
-			if ($result < 0)
-			{
-				$this->error[]=$receptionline->error;
-				$error++;
-			}
-		}
-
-		if (! $error) return $line_id;
-		else return -1;
-	}
-
 
 	/**
 	 * Create the detail (eat-by date) of the reception line
@@ -854,30 +793,34 @@ class Reception extends CommonObject
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS is set, you can add a reception line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_RECEPTION is not set, you can add a reception line, even if not enough into stock
 	 *
-	 * @param 	int		$entrepot_id		Id of warehouse
-	 * @param 	int		$id					Id of source line (order line)
-	 * @param 	int		$qty				Quantity
-	 * @param	array	$array_options		extrafields array
+	 * @param 	int			$entrepot_id		Id of warehouse
+	 * @param 	int			$id					Id of source line (supplier order line)
+	 * @param 	int			$qty				Quantity
+	 * @param	array		$array_options		extrafields array
+	 * @param	string		$comment				Comment for stock movement
+	 * @param	date		$eatby					eat-by date
+	 * @param	date		$sellby					sell-by date
+	 * @param	string		$batch					Lot number
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function addline($entrepot_id, $id, $qty,$array_options=0)
+	function addline($entrepot_id, $id, $qty, $array_options=0, $comment='', $eatby='', $sellby='', $batch='')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$num = count($this->lines);
-		$line = new ReceptionLigne($this->db);
+		$line = new CommandeFournisseurDispatch($this->db);
 
-		$line->entrepot_id = $entrepot_id;
-		$line->origin_line_id = $id;
+		$line->fk_entrepot = $entrepot_id;
+		$line->fk_commandefourndet = $id;
 		$line->qty = $qty;
 
-		$orderline = new OrderLine($this->db);
-		$orderline->fetch($id);
+		$supplierorderline = new CommandeFournisseurLigne($this->db);
+		$supplierorderline->fetch($id);
 
-		if (! empty($conf->stock->enabled) && ! empty($orderline->fk_product))
+		if (! empty($conf->stock->enabled) && ! empty($supplierorderline->fk_product))
 		{
-			$fk_product = $orderline->fk_product;
-
+			$fk_product = $supplierorderline->fk_product;
+			
 			if (! ($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS))
 			{
 			    $langs->load("errors");
@@ -909,87 +852,23 @@ class Reception extends CommonObject
 			}
 		}
 
-		// If product need a batch number, we should not have called this function but addline_batch instead.
-		if (! empty($conf->productbatch->enabled) && ! empty($orderline->fk_product) && ! empty($orderline->product_tobatch))
-		{
-		    $this->error='ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH';
-		    return -4;
-		}
-
 		// extrafields
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 			$line->array_options = $array_options;
+		
+		$line->fk_product = $fk_product;
+		$line->fk_commande = $supplierorderline->fk_commande ;
+		$line->fk_user = $user->id ;
+		$line->comment = $comment;
+		$line->batch = $batch;
+		$line->eatby = $eatby;
+		$line->sellby = $sellby;
+		$line->status=1;
+		$line->fk_reception=$this->id;
 
 		$this->lines[$num] = $line;
 	}
 
-    /**
-	 * Add a reception line with batch record
-	 *
-	 * @param 	array		$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
-	 * @param	array		$array_options		extrafields array
-	 * @return	int						<0 if KO, >0 if OK
-	 */
-	function addline_batch($dbatch,$array_options=0)
-	{
-		global $conf,$langs;
-
-		$num = count($this->lines);
-		if ($dbatch['qty']>0)
-		{
-			$line = new ReceptionLigne($this->db);
-			$tab=array();
-			foreach ($dbatch['detail'] as $key=>$value)
-			{
-				if ($value['q']>0)
-				{
-					// $value['q']=qty to move
-					// $value['id_batch']=id into llx_product_batch of record to move
-					//var_dump($value);
-
-				    $linebatch = new ReceptionLineBatch($this->db);
-					$ret=$linebatch->fetchFromStock($value['id_batch']);	// load serial, sellby, eatby
-					if ($ret<0)
-					{
-						$this->error=$linebatch->error;
-						return -1;
-					}
-					$linebatch->dluo_qty=$value['q'];
-					$tab[]=$linebatch;
-
-					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_RECEPTION)
-					{
-						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-						$prod_batch = new Productbatch($this->db);
-						$prod_batch->fetch($value['id_batch']);
-
-						if ($prod_batch->qty < $linebatch->dluo_qty)
-						{
-                            $langs->load("errors");
-        				    $this->errors[]=$langs->trans('ErrorStockIsNotEnoughToAddProductOnReception', $prod_batch->fk_product);
-							dol_syslog(get_class($this)."::addline_batch error=Product ".$prod_batch->batch.": ".$this->errorsToString(), LOG_ERR);
-							$this->db->rollback();
-							return -1;
-						}
-					}
-
-					//var_dump($linebatch);
-				}
-			}
-			$line->entrepot_id = $linebatch->entrepot_id;
-			$line->origin_line_id = $dbatch['ix_l'];
-			$line->qty = $dbatch['qty'];
-			$line->detail_batch=$tab;
-
-			// extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
-				$line->array_options = $array_options;
-
-			//var_dump($line);
-			$this->lines[$num] = $line;
-			return 1;
-		}
-	}
 
     /**
      *  Update database
@@ -1706,7 +1585,7 @@ class Reception extends CommonObject
 		$this->meths = array();
 
 		$sql = "SELECT em.rowid, em.code, em.libelle";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_reception_mode as em";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		$sql.= " WHERE em.active = 1";
 		$sql.= " ORDER BY em.libelle ASC";
 

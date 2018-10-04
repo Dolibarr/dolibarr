@@ -2955,12 +2955,12 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql.= ' WHERE';
         if ($filtre_statut >= 0) $sql.= ' cfd.fk_reception = e.rowid AND';
-        $sql.= ' cfd.commandefourndet = cd.rowid';
+        $sql.= ' cfd.fk_commandefourndet = cd.rowid';
         $sql.= ' AND cd.fk_commande =' .$this->id;
         if ($this->fk_product > 0) $sql.= ' AND cd.fk_product = '.$this->fk_product;
         if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
-        //print $sql;
+        
 
         dol_syslog(get_class($this)."::loadReceptions", LOG_DEBUG);
         $result = $this->db->query($sql);
