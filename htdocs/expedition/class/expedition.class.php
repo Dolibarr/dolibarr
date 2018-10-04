@@ -117,9 +117,19 @@ class Expedition extends CommonObject
 	public $meths;
 	public $listmeths;			// List of carriers
 
-
+    /**
+	 * Draft status
+	 */
 	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status
+	 */
 	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Closed status
+	 */
 	const STATUS_CLOSED = 2;
 
 
