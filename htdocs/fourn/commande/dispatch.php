@@ -382,8 +382,8 @@ if ($id > 0 || ! empty($ref)) {
 	            $morehtmlref.=' : ';
 	        	if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	               $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
 	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
@@ -452,9 +452,13 @@ if ($id > 0 || ! empty($ref)) {
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
 
-		print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
+		if(empty($conf->reception->enabled))print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
+        else print  '<form method="post" action="'.dol_buildpath('/reception/card.php',1).'?originid='.$object->id.'&origin=supplierorder">';
+		
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="dispatch">';
+		
+		if(empty($conf->reception->enabled))print '<input type="hidden" name="action" value="dispatch">';
+		else print '<input type="hidden" name="action" value="create">';
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
@@ -703,7 +707,7 @@ if ($id > 0 || ! empty($ref)) {
 
 		if ($nbproduct)
 		{
-            $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($object->statuts[5]));
+          $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($object->statuts[5]));
 
 			print '<br><div class="center">';
             print $langs->trans("Comment") . ' : ';
@@ -712,9 +716,11 @@ if ($id > 0 || ! empty($ref)) {
 			// print ' / '.$object->ref_supplier; // Not yet available
 			print '" class="flat"><br>';
 
-			print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
-
-			print '<br><input type="submit" class="button" value="' . $langs->trans("DispatchVerb") . '"';
+			if(empty($conf->reception->enabled))print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
+			
+			empty($conf->reception->enabled)?$dispatchBt=$langs->trans("DispatchVerb"):$dispatchBt=$langs->trans("Receive");
+			
+			print '<br><input type="submit" class="button" value="' . $dispatchBt. '"';
 			if (count($listwarehouses) <= 0)
 				print ' disabled';
 			print '>';
@@ -784,13 +790,18 @@ if ($id > 0 || ! empty($ref)) {
 			
 				
 				print "<tr " . $bc[$var] . ">";
-				print '<td>';
-				if(!empty($conf->reception->enabled) && !empty($objp->fk_reception)){
-					$reception = new Reception($db);
-					$reception->fetch($objp->fk_reception);
-					print $reception->getNomUrl();
+				
+				if(!empty($conf->reception->enabled) ){
+					print '<td>';
+					if (!empty($objp->fk_reception)){
+						$reception = new Reception($db);
+						$reception->fetch($objp->fk_reception);
+						print $reception->getNomUrl();
+					}
+				
+					print "</td>";
 				}
-				print "</td>";
+				
 				print '<td>';
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
