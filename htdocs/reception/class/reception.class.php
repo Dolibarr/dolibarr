@@ -208,7 +208,6 @@ class Reception extends CommonObject
 		$sql.= ", date_delivery";
 		$sql.= ", fk_soc";
 		$sql.= ", fk_projet";
-		$sql.= ", fk_address";
 		$sql.= ", fk_shipping_method";
 		$sql.= ", tracking_number";
 		$sql.= ", weight";
@@ -232,8 +231,7 @@ class Reception extends CommonObject
 		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".$this->socid;
 		$sql.= ", ".$this->fk_project;
-		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
-		$sql.= ", ".($this->reception_method_id>0?$this->reception_method_id:"null");
+		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
 		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
 		$sql.= ", ".$this->weight;
 		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
@@ -249,7 +247,9 @@ class Reception extends CommonObject
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		
 		$resql=$this->db->query($sql);
+		
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."reception");
@@ -269,7 +269,7 @@ class Reception extends CommonObject
 					{	
 						$this->lines[$i]->fk_reception = $this->id;
 
-						if (! $this->lines[$i]->create() > 0)
+						if (! $this->lines[$i]->create($user) > 0)
 						{
 							$error++;
 						}
@@ -418,7 +418,7 @@ class Reception extends CommonObject
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
-		$sql.= ", e.date_reception as date_reception, e.model_pdf, e.fk_address, e.date_delivery";
+		$sql.= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
@@ -613,8 +613,8 @@ class Reception extends CommonObject
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-			$sql.= " ".MAIN_DB_PREFIX."receptiondet as ed";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."receptiondet_batch as edb on edb.fk_receptiondet = ed.rowid";
+			$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch_batch as edb on edb.fk_commande_fournisseur_dispatch = ed.rowid";
 			$sql.= " WHERE ed.fk_reception = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
@@ -891,7 +891,7 @@ class Reception extends CommonObject
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
 		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
 		if (isset($this->fk_delivery_address)) $this->fk_delivery_address=trim($this->fk_delivery_address);
-		if (isset($this->reception_method_id)) $this->reception_method_id=trim($this->reception_method_id);
+		if (isset($this->shipping_method_id)) $this->shipping_method_id=trim($this->shipping_method_id);
 		if (isset($this->tracking_number)) $this->tracking_number=trim($this->tracking_number);
 		if (isset($this->statut)) $this->statut=(int) $this->statut;
 		if (isset($this->trueDepth)) $this->trueDepth=trim($this->trueDepth);
@@ -922,8 +922,7 @@ class Reception extends CommonObject
 		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
 		$sql.= " date_reception=".(dol_strlen($this->date_reception)!=0 ? "'".$this->db->idate($this->date_reception)."'" : 'null').",";
 		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
-		$sql.= " fk_address=".(isset($this->fk_delivery_address)?$this->fk_delivery_address:"null").",";
-		$sql.= " fk_shipping_method=".((isset($this->reception_method_id) && $this->reception_method_id > 0)?$this->reception_method_id:"null").",";
+		$sql.= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0)?$this->shipping_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
 		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
@@ -1008,9 +1007,9 @@ class Reception extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as receptiondet_id";
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as commande_fournisseur_dispatch_id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-			$sql.= " ".MAIN_DB_PREFIX."receptiondet as ed";
+			$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
 			$sql.= " WHERE ed.fk_reception = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
@@ -1031,7 +1030,7 @@ class Reception extends CommonObject
 					$lotArray = null;
 					if ($conf->productbatch->enabled)
 					{
-						$lotArray = ReceptionLineBatch::fetchAll($this->db,$obj->receptiondet_id);
+						$lotArray = ReceptionLineBatch::fetchAll($this->db,$obj->commande_fournisseur_dispatch_id);
 						if (! is_array($lotArray))
 						{
 							$error++;$this->errors[]="Error ".$this->db->lasterror();
@@ -1082,7 +1081,7 @@ class Reception extends CommonObject
 
 		if (! $error)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."receptiondet";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql.= " WHERE fk_reception = ".$this->id;
 
 			if ( $this->db->query($sql) )
@@ -1190,174 +1189,25 @@ class Reception extends CommonObject
 	 */
 	function fetch_lines()
 	{
-		global $conf, $mysoc;
-		// TODO: recuperer les champs du document associe a part
+		global $db;
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
-		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql.= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql.= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc";
-		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
-		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
-		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
-		$sql.= " FROM (".MAIN_DB_PREFIX."receptiondet as ed,";
-		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
-		$sql.= " WHERE ed.fk_reception = ".$this->id;
-		$sql.= " AND ed.fk_origin_line = cd.rowid";
-		$sql.= " ORDER BY cd.rang, ed.fk_origin_line";
-
-		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			$lineindex = 0;
-			$originline = 0;
-
-			$this->total_ht = 0;
-			$this->total_tva = 0;
-			$this->total_ttc = 0;
-			$this->total_localtax1 = 0;
-			$this->total_localtax2 = 0;
-
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
-
-			    if ($originline == $obj->fk_origin_line) {
-			        $line->entrepot_id       = 0; // entrepod_id in details_entrepot
-				    $line->qty_shipped    	+= $obj->qty_shipped;
-				} else {
-				    $line = new ReceptionLigne($this->db);
-				    $line->entrepot_id    	= $obj->fk_entrepot;
-				    $line->qty_shipped    	= $obj->qty_shipped;
-				}
-
-				$detail_entrepot              = new stdClass;
-				$detail_entrepot->entrepot_id = $obj->fk_entrepot;
-				$detail_entrepot->qty_shipped = $obj->qty_shipped;
-				$line->details_entrepot[]     = $detail_entrepot;
-
-                $line->line_id          = $obj->line_id;
-                $line->rowid            = $obj->line_id;    // TODO deprecated
-                $line->id               = $obj->line_id;
-
-                $line->fk_origin     	= 'orderline';
-                $line->fk_origin_line 	= $obj->fk_origin_line;
-                $line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
-
-				$line->fk_reception    = $this->id;                // id of parent
-
-				$line->product_type     = $obj->product_type;
-				$line->fk_product     	= $obj->fk_product;
-				$line->fk_product_type	= $obj->fk_product_type;
-				$line->ref				= $obj->product_ref;		// TODO deprecated
-                $line->product_ref		= $obj->product_ref;
-                $line->product_label	= $obj->product_label;
-				$line->libelle        	= $obj->product_label;		// TODO deprecated
-				$line->product_tobatch  = $obj->product_tobatch;
-				$line->label			= $obj->custom_label;
-				$line->description    	= $obj->description;
-				$line->qty_asked      	= $obj->qty_asked;
-				$line->weight         	= $obj->weight;
-				$line->weight_units   	= $obj->weight_units;
-				$line->length         	= $obj->length;
-				$line->length_units   	= $obj->length_units;
-				$line->surface        	= $obj->surface;
-				$line->surface_units   	= $obj->surface_units;
-				$line->volume         	= $obj->volume;
-				$line->volume_units   	= $obj->volume_units;
-
-				$line->pa_ht 			= $obj->pa_ht;
-
-				// Local taxes
-				$localtax_array=array(0=>$obj->localtax1_type, 1=>$obj->localtax1_tx, 2=>$obj->localtax2_type, 3=>$obj->localtax2_tx);
-				$localtax1_tx = get_localtax($obj->tva_tx, 1, $this->thirdparty);
-				$localtax2_tx = get_localtax($obj->tva_tx, 2, $this->thirdparty);
-
-				// For invoicing
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type, $mysoc, $localtax_array);	// We force type to 0
-				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
-				$line->qty 				= $line->qty_shipped;
-				$line->total_ht			= $tabprice[0];
-				$line->total_localtax1 	= $tabprice[9];
-				$line->total_localtax2 	= $tabprice[10];
-				$line->total_ttc	 	= $tabprice[2];
-				$line->total_tva	 	= $tabprice[1];
-				$line->vat_src_code	 	= $obj->vat_src_code;
-				$line->tva_tx 		 	= $obj->tva_tx;
-				$line->localtax1_tx 	= $obj->localtax1_tx;
-				$line->localtax2_tx 	= $obj->localtax2_tx;
-				$line->price			= $obj->price;
-				$line->subprice			= $obj->subprice;
-				$line->remise_percent	= $obj->remise_percent;
-
-				$this->total_ht+= $tabprice[0];
-				$this->total_tva+= $tabprice[1];
-				$this->total_ttc+= $tabprice[2];
-				$this->total_localtax1+= $tabprice[9];
-				$this->total_localtax2+= $tabprice[10];
-
-				// Multicurrency
-				$this->fk_multicurrency 		= $obj->fk_multicurrency;
-				$this->multicurrency_code 		= $obj->multicurrency_code;
-				$this->multicurrency_subprice 	= $obj->multicurrency_subprice;
-				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
-				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-
-				if ($originline != $obj->fk_origin_line)
-				{
-					$line->detail_batch = array();
-				}
-				// Eat-by date
-				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0)
-				{
-                    require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionbatch.class.php';
-
-                    $newdetailbatch = ReceptionLineBatch::fetchAll($this->db,$obj->line_id);
-                    if (is_array($newdetailbatch))
-                    {
-	                    if ($originline != $obj->fk_origin_line)
-	                    {
-	                        $line->detail_batch = $newdetailbatch;
-	                    }
-	                    else
-						{
-	                        $line->detail_batch = array_merge($line->detail_batch, $newdetailbatch);
-	                    }
-                    }
-				}
-
-				if ($originline != $obj->fk_origin_line)
-				{
-				    $this->lines[$lineindex] = $line;
-				    $lineindex++;
-				}
-				else
-				{
-				    $line->total_ht			+= $tabprice[0];
-				    $line->total_localtax1 	+= $tabprice[9];
-				    $line->total_localtax2 	+= $tabprice[10];
-				    $line->total_ttc	 	+= $tabprice[2];
-				    $line->total_tva	 	+= $tabprice[1];
-				}
-
-				$i++;
-				$originline = $obj->fk_origin_line;
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
+		$resql = $db->query($sql);
+		if(!empty($resql)){
+			
+			while ($obj = $resql->fetch_object()){
+				$line = new CommandeFournisseurDispatch($db);
+				$line->fetch($obj->rowid);
+				$line->fetch_product();
+				
+				$this->lines[]=$line;
 			}
-			$this->db->free($resql);
+			
 			return 1;
+		}else {
+			return -1;
 		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -3;
-		}
+		
 	}
 
 	/**
@@ -1398,7 +1248,7 @@ class Reception extends CommonObject
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		$picto='reception';
+		$picto='sending';
 
 		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
@@ -1703,11 +1553,11 @@ class Reception extends CommonObject
 	 */
 	function GetUrlTrackingStatus($value='')
 	{
-		if (! empty($this->reception_method_id))
+		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_reception_mode as em";
-			$sql.= " WHERE em.rowid = ".$this->reception_method_id;
+			$sql.= " WHERE em.rowid = ".$this->shipping_method_id;
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -1793,8 +1643,8 @@ class Reception extends CommonObject
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql.= " ".MAIN_DB_PREFIX."receptiondet as ed";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."receptiondet_batch as edb on edb.fk_receptiondet = ed.rowid";
+				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch_batch as edb on edb.fk_commande_fournisseur_dispatch = ed.rowid";
 				$sql.= " WHERE ed.fk_reception = ".$this->id;
 				$sql.= " AND cd.rowid = ed.fk_origin_line";
 
@@ -1958,8 +1808,8 @@ class Reception extends CommonObject
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql.= " ".MAIN_DB_PREFIX."receptiondet as ed";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."receptiondet_batch as edb on edb.fk_receptiondet = ed.rowid";
+				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch_batch as edb on edb.fk_commande_fournisseur_dispatch = ed.rowid";
 				$sql.= " WHERE ed.fk_reception = ".$this->id;
 				$sql.= " AND cd.rowid = ed.fk_origin_line";
 
@@ -2093,8 +1943,8 @@ class Reception extends CommonObject
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
 				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql.= " ".MAIN_DB_PREFIX."receptiondet as ed";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."receptiondet_batch as edb on edb.fk_receptiondet = ed.rowid";
+				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch_batch as edb on edb.fk_commande_fournisseur_dispatch = ed.rowid";
 				$sql.= " WHERE ed.fk_reception = ".$this->id;
 				$sql.= " AND cd.rowid = ed.fk_origin_line";
 
@@ -2235,469 +2085,3 @@ class Reception extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 }
-
-
-/**
- * Classe de gestion des lignes de bons d'reception
- */
-class ReceptionLigne extends CommonObjectLine
-{
-	public $element='receptiondet';
-	public $table_element='receptiondet';
-
-	public $fk_origin_line;
-
-	/**
-	 * Id of reception
-	 * @var int
-	 */
-	public $fk_reception;
-
-	var $db;
-
-	// From llx_receptiondet
-	var $qty;
-	var $qty_shipped;
-	var $fk_product;
-	var $detail_batch;
-	/**
-	 * Id of warehouse
-	 * @var int
-	 */
-	public $entrepot_id;
-
-
-	// From llx_commandedet or llx_propaldet
-	var $qty_asked;
-	public $product_ref;
-	public $product_label;
-	public $product_desc;
-
-
-	// Invoicing
-	var $remise_percent;
-	var $total_ht;			// Total net of tax
-	var $total_ttc;			// Total with tax
-	var $total_tva;			// Total VAT
-	var $total_localtax1;   // Total Local tax 1
-	var $total_localtax2;   // Total Local tax 2
-
-
-
-	// Deprecated
-	/**
-	 * @deprecated
-	 * @see fk_origin_line
-	 */
-	var $origin_line_id;
-	/**
-	 * @deprecated
-	 * @see product_ref
-	 */
-	var $ref;
-	/**
-	 * @deprecated
-	 * @see product_label
-	 */
-	var $libelle;
-
-    /**
-     *	Constructor
-     *
-     *  @param		DoliDB		$db      Database handler
-     */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
-
-	/**
-	 *  Load line reception
-	 *
-	 *  @param  int		$rowid          Id line order
-	 *  @return	int						<0 if KO, >0 if OK
-	 */
-	function fetch($rowid)
-	{
-		$sql = 'SELECT ed.rowid, ed.fk_reception, ed.fk_entrepot, ed.fk_origin_line, ed.qty, ed.rang';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
-		$sql.= ' WHERE ed.rowid = '.$rowid;
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$objp = $this->db->fetch_object($result);
-			$this->id				= $objp->rowid;
-			$this->fk_reception	= $objp->fk_reception;
-			$this->entrepot_id		= $objp->fk_entrepot;
-			$this->fk_origin_line	= $objp->fk_origin_line;
-			$this->qty				= $objp->qty;
-			$this->rang				= $objp->rang;
-
-			$this->db->free($result);
-
-			return 1;
-		}
-		else
-		{
-			$this->errors[] = $this->db->lasterror();
-			$this->error = $this->db->lasterror();
-			return -1;
-		}
-	}
-
-	/**
-	 *	Insert line into database
-	 *
-	 *	@param      User	$user			User that modify
-	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int						<0 if KO, line id >0 if OK
-	 */
-	function insert($user=null, $notrigger=0)
-	{
-		global $langs, $conf;
-
-		$error=0;
-
-		// Check parameters
-		if (empty($this->fk_reception) || empty($this->fk_origin_line) || ! is_numeric($this->qty))
-		{
-			$this->error = 'ErrorMandatoryParametersNotProvided';
-			return -1;
-		}
-		// Clean parameters
-		if (empty($this->entrepot_id)) $this->entrepot_id='null';
-
-		$this->db->begin();
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."receptiondet (";
-		$sql.= "fk_reception";
-		$sql.= ", fk_entrepot";
-		$sql.= ", fk_origin_line";
-		$sql.= ", qty";
-		$sql.= ") VALUES (";
-		$sql.= $this->fk_reception;
-		$sql.= ", ".$this->entrepot_id;
-		$sql.= ", ".$this->fk_origin_line;
-		$sql.= ", ".$this->qty;
-		$sql.= ")";
-
-		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."receptiondet");
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			if (! $error && ! $notrigger)
-			{
-				// Call trigger
-				$result=$this->call_trigger('LINERECEPTION_INSERT',$user);
-				if ($result < 0)
-				{
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (! $error) {
-				$this->db->commit();
-				return $this->id;
-			}
-
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$error++;
-		}
-	}
-
-	/**
-	 * 	Delete reception line.
-	 *
-	 *	@param		User	$user			User that modify
-	 *	@param		int		$notrigger		0=launch triggers after, 1=disable triggers
-	 * 	@return		int		>0 if OK, <0 if KO
-	 */
-	function delete($user = null, $notrigger = 0)
-	{
-		global $conf;
-
-		$error=0;
-
-		$this->db->begin();
-
-		// delete batch reception line
-		if ($conf->productbatch->enabled)
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."receptiondet_batch";
-			$sql.= " WHERE fk_receptiondet = ".$this->id;
-
-			if (!$this->db->query($sql))
-			{
-				$this->errors[]=$this->db->lasterror()." - sql=$sql";
-				$error++;
-			}
-		}
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."receptiondet";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		if (! $error && $this->db->query($sql))
-		{
-			// Remove extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->deleteExtraFields();
-				if ($result < 0)
-				{
-					$this->errors[]=$this->error;
-					$error++;
-				}
-			}
-			if (! $error && ! $notrigger)
-			{
-				// Call trigger
-				$result=$this->call_trigger('LINERECEPTION_DELETE',$user);
-				if ($result < 0)
-				{
-					$this->errors[]=$this->error;
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-		else
-		{
-			$this->errors[]=$this->db->lasterror()." - sql=$sql";
-			$error++;
-		}
-
-		if (! $error) {
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-	}
-
-	/**
-	 *  Update a line in database
-	 *
-	 *	@param		User	$user			User that modify
-	 *	@param		int		$notrigger		1 = disable triggers
-	 *  @return		int					< 0 if KO, > 0 if OK
-	 */
-	function update($user = null, $notrigger = 0)
-	{
-		global $conf;
-
-		$error=0;
-
-		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
-
-		$this->db->begin();
-
-		// Clean parameters
-		if (empty($this->qty)) $this->qty=0;
-		$qty=price2num($this->qty);
-		$remainingQty = 0;
-		$batch = null;
-		$batch_id = null;
-		$reception_batch_id = null;
-		if (is_array($this->detail_batch)) 	// array of ReceptionLineBatch
-		{
-			if (count($this->detail_batch) > 1)
-			{
-				dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
-				$this->errors[]='ErrorBadParameters';
-				$error++;
-			}
-			else
-			{
-				$batch = $this->detail_batch[0]->batch;
-				$batch_id = $this->detail_batch[0]->fk_origin_stock;
-				$reception_batch_id = $this->detail_batch[0]->id;
-				if ($this->entrepot_id != $this->detail_batch[0]->entrepot_id)
-				{
-					dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
-					$this->errors[]='ErrorBadParameters';
-					$error++;
-				}
-				$qty = price2num($this->detail_batch[0]->dluo_qty);
-			}
-		}
-		else if (! empty($this->detail_batch))
-		{
-			$batch = $this->detail_batch->batch;
-			$batch_id = $this->detail_batch->fk_origin_stock;
-			$reception_batch_id = $this->detail_batch->id;
-			if ($this->entrepot_id != $this->detail_batch->entrepot_id)
-			{
-				dol_syslog(get_class($this).'::update only possible for batch of same warehouse', LOG_ERR);
-				$this->errors[]='ErrorBadParameters';
-				$error++;
-			}
-			$qty = price2num($this->detail_batch->dluo_qty);
-		}
-
-		// check parameters
-		if (! isset($this->id) || ! isset($this->entrepot_id))
-		{
-			dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
-			$this->errors[]='ErrorMandatoryParametersNotProvided';
-			$error++;
-			return -1;
-		}
-
-		// update lot
-
-		if (! empty($batch) && $conf->productbatch->enabled)
-		{
-			dol_syslog(get_class($this)."::update reception batch id=$reception_batch_id, batch_id=$batch_id, batch=$batch");
-
-			if (empty($batch_id) || empty($this->fk_product)) {
-				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
-				$this->errors[]='ErrorMandatoryParametersNotProvided';
-				$error++;
-			}
-
-			// fetch remaining lot qty
-			require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionbatch.class.php';
-			if (! $error && ($lotArray = ReceptionLineBatch::fetchAll($this->db, $this->id)) < 0)
-			{
-				$this->errors[]=$this->db->lasterror()." - ReceptionLineBatch::fetchAll";
-				$error++;
-			}
-			else
-			{
-				// caculate new total line qty
-				foreach ($lotArray as $lot)
-				{
-					if ($reception_batch_id != $lot->id)
-					{
-						$remainingQty += $lot->dluo_qty;
-					}
-				}
-				$qty += $remainingQty;
-
-				//fetch lot details
-
-				// fetch from product_lot
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-				$lot = new Productlot($this->db);
-				if ($lot->fetch(0,$this->fk_product,$batch) < 0)
-				{
-					$this->errors[] = $lot->errors;
-					$error++;
-				}
-				if (! $error && ! empty($reception_batch_id))
-				{
-					// delete lot reception line
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."receptiondet_batch";
-					$sql.= " WHERE fk_receptiondet = ".$this->id;
-					$sql.= " AND rowid = ".$reception_batch_id;
-
-					if (!$this->db->query($sql))
-					{
-						$this->errors[]=$this->db->lasterror()." - sql=$sql";
-						$error++;
-					}
-				}
-				if (! $error && $this->detail_batch->dluo_qty > 0)
-				{
-					// create lot reception line
-					if (isset($lot->id))
-					{
-						$receptionLot = new ReceptionLineBatch($this->db);
-						$receptionLot->batch = $lot->batch;
-						$receptionLot->eatby = $lot->eatby;
-						$receptionLot->sellby = $lot->sellby;
-						$receptionLot->entrepot_id = $this->detail_batch->entrepot_id;
-						$receptionLot->dluo_qty = $this->detail_batch->dluo_qty;
-						$receptionLot->fk_origin_stock = $batch_id;
-						if ($receptionLot->create($this->id) < 0)
-						{
-							$this->errors[]=$receptionLot->errors;
-							$error++;
-						}
-					}
-				}
-			}
-		}
-		if (! $error)
-		{
-			// update line
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql.= " fk_entrepot = ".($this->entrepot_id > 0 ? $this->entrepot_id : 'null');
-			$sql.= " , qty = ".$qty;
-			$sql.= " WHERE rowid = ".$this->id;
-
-			if (!$this->db->query($sql))
-			{
-				$this->errors[]=$this->db->lasterror()." - sql=$sql";
-				$error++;
-			}
-			else
-			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$this->errors[]=$this->error;
-						$error++;
-					}
-				}
-			}
-		}
-		if (! $error && ! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('LINERECEPTION_UPDATE',$user);
-			if ($result < 0)
-			{
-				$this->errors[]=$this->error;
-				$error++;
-			}
-			// End call triggers
-		}
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-	}
-}
-

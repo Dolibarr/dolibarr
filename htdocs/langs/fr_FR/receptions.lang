@@ -50,6 +50,7 @@ ActionsOnReception=Événements sur l'réception
 LinkToTrackYourPackage=Lien pour le suivi de votre colis
 ReceptionCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle réception se fait depuis la fiche commande fournisseur.
 ReceptionLine=Ligne d'réception
+RefSupplierOrder=Ref. Commande fournisseur
 ProductQtyInCustomersOrdersRunning=Quantité de produit en commandes client ouvertes
 ProductQtyInSuppliersOrdersRunning=Quantité de produit en commandes fournisseur ouvertes
 ProductQtyInReceptionAlreadySent=Quantité de produit en commande client ouverte déjà expédiée

@@ -90,7 +90,7 @@ class CommandeFournisseurDispatch extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-    	global $conf, $langs;
+    	global $conf, $langs, $hookmanager;
 		$error=0;
 
 		// Clean parameters
@@ -104,7 +104,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		if (isset($this->comment)) $this->comment=trim($this->comment);
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->batch)) $this->batch=trim($this->batch);
-		if(empty($this->datec)) $this->datec == dol_now();
+		if(empty($this->datec)) $this->datec = dol_now();
 
 
 		// Check parameters
@@ -124,7 +124,8 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= "status,";
 		$sql.= "batch,";
 		$sql.= "eatby,";
-		$sql.= "sellby";
+		$sql.= "sellby,";
+		$sql.= "fk_reception";
 
 
         $sql.= ") VALUES (";
@@ -140,7 +141,8 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " ".(! isset($this->status)?'NULL':"'".$this->status."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'")."";
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
+		$sql.= " ".(! isset($this->fk_reception)?'NULL':"'".$this->fk_reception."'")."";
 
 
 		$sql.= ")";
@@ -228,7 +230,8 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " t.tms,";
 		$sql.= " t.batch,";
 		$sql.= " t.eatby,";
-		$sql.= " t.sellby";
+		$sql.= " t.sellby,";
+		$sql.= " t.fk_reception";
 
 
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";

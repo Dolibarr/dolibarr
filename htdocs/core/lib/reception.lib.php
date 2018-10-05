@@ -34,16 +34,44 @@
  */
 function reception_prepare_head(Reception $object)
 {
-	global $langs, $conf, $user;
-	if (! empty($conf->reception->enabled)) $langs->load("receptions");
-	$langs->load("orders");
+	global $db, $langs, $conf, $user;
+
+	$langs->load("sendings");
+	$langs->load("deliveries");
 
 	$h = 0;
 	$head = array();
-	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT."/reception/card.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("ReceptionCard");
+	$head[$h][2] = 'reception';
+	$h++;
+
 	
-	$head[$h][0] = DOL_URL_ROOT."/admin/reception_setup.php";
-	$head[$h][1] = $langs->trans("Setup");
+
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+	    $objectsrc = $object;
+	    if ($object->origin == 'commande' && $object->origin_id > 0)
+	    {
+	        $objectsrc = new Commande($db);
+	        $objectsrc->fetch($object->origin_id);
+	    }
+	    $nbContact = count($objectsrc->liste_contact(-1,'internal')) + count($objectsrc->liste_contact(-1,'external'));
+	    $head[$h][0] = DOL_URL_ROOT."/reception/contact.php?id=".$object->id;
+    	$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+    	$head[$h][2] = 'contact';
+    	$h++;
+	}
+	
+    $nbNote = 0;
+    if (!empty($object->note_private)) $nbNote++;
+    if (!empty($object->note_public)) $nbNote++;
+	$head[$h][0] = DOL_URL_ROOT."/reception/note.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Notes");
+	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+	$head[$h][2] = 'note';
 	$h++;
 	
 	

@@ -391,6 +391,15 @@ class FormFile
                     $modellist=ModelePDFExpedition::liste_modeles($this->db);
                 }
             }
+            elseif ($modulepart == 'reception')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
+					$modellist = ModelePdfReception::liste_modeles($this->db);
+				}
+            }
             elseif ($modulepart == 'livraison')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -572,6 +581,7 @@ class FormFile
                 	$res=include_once $file;
                 }
                 $class='Modele'.ucfirst($modulepart);
+				
                 if (class_exists($class))
                 {
                     $modellist=call_user_func($class.'::liste_modeles',$this->db);

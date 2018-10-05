@@ -794,9 +794,10 @@ if ($id > 0 || ! empty($ref)) {
 				if(!empty($conf->reception->enabled) ){
 					print '<td>';
 					if (!empty($objp->fk_reception)){
+						
 						$reception = new Reception($db);
 						$reception->fetch($objp->fk_reception);
-						print $reception->getNomUrl();
+						print $reception->getNomUrl(1);
 					}
 				
 					print "</td>";
@@ -866,7 +867,8 @@ if ($id > 0 || ! empty($ref)) {
 					print '</td>';
 				}else if(!empty($conf->reception->enabled)){
 					print '<td align="right">';
-					if(!empty($reception->rowid)){
+					if(!empty($reception->id)){
+						
 						print $reception->getLibStatut(5);
 					}
 					print '</td>';

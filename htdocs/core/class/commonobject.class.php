@@ -1150,6 +1150,25 @@ abstract class CommonObject
         $this->project = $project;
         return $result;
     }
+	
+	 /**
+     *		Charge le product d'id $this->fk_product dans this->product
+     *
+     *		@return		int			<0 if KO, >=0 if OK
+     */
+    function fetch_product()
+    {
+    	include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+    	if (empty($this->fk_product) && ! empty($this->fk_product)) $this->fk_product = $this->fk_product;	// For backward compatibility
+        if (empty($this->fk_product)) return 0;
+
+        $product = new Product($this->db);
+        $result = $product->fetch($this->fk_product);
+
+        $this->product = $product;
+        return $result;
+    }
 
     /**
      *		Charge le user d'id userid dans this->user
@@ -2464,6 +2483,7 @@ abstract class CommonObject
     	// Special case
     	if ($origin == 'order') $origin='commande';
     	if ($origin == 'invoice') $origin='facture';
+    	if ($origin == 'supplierorder') $origin='order_supplier';
 
         $this->db->begin();
 
@@ -3097,11 +3117,15 @@ abstract class CommonObject
 	        }
 
             $weight = $line->weight ? $line->weight : 0;
+            ($weight==0 && !empty($line->product->weight))? $weight=$line->product->weight: 0;
             $volume = $line->volume ? $line->volume : 0;
+			($volume==0 && !empty($line->product->volume))? $volume=$line->product->volume: 0;
 
             $weight_units=$line->weight_units;
+			($weight_units==0 && !empty($line->product->weight_units))? $weight_units=$line->product->weight_units: 0;
             $volume_units=$line->volume_units;
-
+			($volume_units==0 && !empty($line->product->volume_units))? $volume_units=$line->product->volume_units: 0;
+			
             $weightUnit=0;
             $volumeUnit=0;
             if (! empty($weight_units)) $weightUnit = $weight_units;
