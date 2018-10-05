@@ -64,7 +64,11 @@ class FactureRec extends CommonInvoice
 	 */
 	public $picto='bill';
 
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $number;
 	public $date;
 	public $amount;

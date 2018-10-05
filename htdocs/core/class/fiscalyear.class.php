@@ -64,6 +64,10 @@ class Fiscalyear extends CommonObject
 	public $date_end;
 	public $datec;
 	public $statut;		// 0=open, 1=closed
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
 
 	public $statuts=array();
