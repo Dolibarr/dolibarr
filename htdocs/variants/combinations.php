@@ -27,7 +27,6 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
 
 $langs->loadLangs(array("products", "other"));
 
-$var = false;
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'int');
 $ref = GETPOST('ref');

@@ -213,7 +213,6 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$var = false;
 
         $cachetime = 900;   // 900 : 15mn
         $cachedir = DOL_DATA_ROOT.'/boxes/temp';
