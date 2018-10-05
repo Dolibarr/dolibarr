@@ -86,6 +86,10 @@ class AccountingAccount extends CommonObject
 	public $account_number;
 	public $account_parent;
 	public $account_category;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
 
     /**

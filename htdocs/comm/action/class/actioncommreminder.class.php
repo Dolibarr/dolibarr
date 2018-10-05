@@ -92,7 +92,12 @@ class ActionCommReminder extends CommonObject
 
 	public $offsetvalue;
 	public $offsetunit;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 

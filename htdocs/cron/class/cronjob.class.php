@@ -76,7 +76,12 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $processing;
 	public $fk_user_author;
 	public $fk_user_mod;
@@ -1379,7 +1384,12 @@ class Cronjobline
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $fk_user_author;
 	public $fk_user_mod;
 	public $note;

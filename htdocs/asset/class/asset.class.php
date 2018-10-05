@@ -135,6 +135,10 @@ class Asset extends CommonObject
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
 
 	// If this object has a subtable with lines
