@@ -126,7 +126,12 @@ class SocieteAccount extends CommonObject
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 

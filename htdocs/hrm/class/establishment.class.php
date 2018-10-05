@@ -71,7 +71,11 @@ class Establishment extends CommonObject
 	public $address;
 	public $zip;
 	public $town;
-	public $status;		// 0=open, 1=closed
+
+	/**
+	 * @var int Status 0=open, 1=closed
+	 */
+	public $status;
 
 	/**
 	 * @var int Entity
