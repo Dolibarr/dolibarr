@@ -665,7 +665,7 @@ if ($ispaymentok)
 						}
 						else
 						{
-							$postactionmessages[] = 'Bank entry of payment created';
+							$postactionmessages[] = 'Bank transaction of payment created';
 							$ispostactionok=1;
 						}
 					}
