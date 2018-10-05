@@ -68,7 +68,12 @@ class Establishment extends CommonObject
 	public $rowid;
 
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 

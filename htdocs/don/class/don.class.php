@@ -59,7 +59,12 @@ class Don extends CommonObject
     public $date;
     public $amount;
     public $societe;
-    public $address;
+
+    /**
+	 * @var string Address
+	 */
+	public $address;
+
     public $zip;
     public $town;
     public $email;

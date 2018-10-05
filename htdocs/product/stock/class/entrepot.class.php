@@ -69,7 +69,12 @@ class Entrepot extends CommonObject
 
 	public $statut;
 	public $lieu;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	//! Code Postal
 	public $zip;
 	public $town;

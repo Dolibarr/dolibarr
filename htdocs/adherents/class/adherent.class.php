@@ -65,8 +65,17 @@ class Adherent extends CommonObject
 	public $pass_indatabase_crypted;
 
 	public $societe;
+
+	/**
+	 * @var Societe $company {@type Societe}
+	 */
 	public $company;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 

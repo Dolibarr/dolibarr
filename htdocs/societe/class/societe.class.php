@@ -119,7 +119,12 @@ class Societe extends CommonObject
 	public $name_alias;
 
 	public $particulier;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 
