@@ -127,7 +127,7 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-  public $fk_soc;
+    public $fk_soc;
 
 	/**
      * @var string company payment mode label
