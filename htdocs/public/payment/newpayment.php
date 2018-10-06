@@ -233,9 +233,7 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 	if (! $valid)
 	{
 		print '<div class="error">Bad value for key.</div>';
-		//prin      <input name="savesource" type="checkbox"> '.$langs->trans("SaveSource").'
-1563
-t 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+		//print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
 		exit;
 	}
 }
@@ -256,7 +254,7 @@ $creditor=$mysoc->name;
 $paramcreditor='ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong='ONLINE_PAYMENT_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditorlong)) $creditor=$conf->global->$paramcreditorlong;
-else if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
+elseif (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 
 
 
