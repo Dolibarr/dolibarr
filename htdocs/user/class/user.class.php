@@ -64,7 +64,12 @@ class User extends CommonObject
 	public $skype;
 	public $job;			// job position
 	public $signature;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $state_id;		// The state/department

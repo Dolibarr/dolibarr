@@ -50,6 +50,9 @@ class Expedition extends CommonObject
 	 */
 	public $element="shipping";
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element="fk_expedition";
 
 	/**
