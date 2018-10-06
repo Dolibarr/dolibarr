@@ -254,7 +254,7 @@ $creditor=$mysoc->name;
 $paramcreditor='ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong='ONLINE_PAYMENT_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditorlong)) $creditor=$conf->global->$paramcreditorlong;
-else if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
+elseif (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 
 
 
