@@ -243,8 +243,8 @@ Class DataPolicies extends Contact
 
 
      	$substitutionarray = array(
-     	'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&c='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
-     	'__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&c='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
+            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&c='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
+            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&c='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
      	);
      	$subject = make_substitutions($subject, $substitutionarray);
      	$message = make_substitutions($message, $substitutionarray);
@@ -252,12 +252,13 @@ Class DataPolicies extends Contact
      	$actiontypecode = 'AC_EMAIL';
      	$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
      	if ($message) {
-     		if ($sendtocc)
-     			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-     			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-     			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-     			$actionmsg = dol_concatdesc($actionmsg, $message);
-     	}
+     		if ($sendtocc) {
+                 $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+             }
+            $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+            $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+            $actionmsg .= dol_concatdesc($actionmsg, $message);
+        }
 
      	// Send mail
      	require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
@@ -307,8 +308,8 @@ Class DataPolicies extends Contact
 
 
     	$substitutionarray = array(
-    	'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&c='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
-    	'__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&c='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
+            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&c='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
+            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&c='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
     	);
     	$subject = make_substitutions($subject, $substitutionarray);
     	$message = make_substitutions($message, $substitutionarray);
@@ -316,11 +317,12 @@ Class DataPolicies extends Contact
     	$actiontypecode = 'AC_EMAIL';
     	$actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
     	if ($message) {
-    		if ($sendtocc)
-    			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-    			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-    			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-    			$actionmsg = dol_concatdesc($actionmsg, $message);
+    		if ($sendtocc) {
+                $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+            }
+            $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+            $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+            $actionmsg .= dol_concatdesc($actionmsg, $message);
     	}
 
 
