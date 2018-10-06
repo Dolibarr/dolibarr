@@ -83,10 +83,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $familyinfo;
 
 	/**
-	 * @var int Module position
-	 * @since 3.9.0
+	 * @var string	Module position on 2 digits
 	 */
-	public $module_position=500;
+	public $module_position='50';
 
 	/**
 	 * @var string Module name

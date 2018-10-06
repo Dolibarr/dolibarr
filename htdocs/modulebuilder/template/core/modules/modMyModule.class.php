@@ -55,7 +55,7 @@ class modMyModule extends DolibarrModules
 		$this->family = "other";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '90';
-		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
+		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleMyModuleName' not found (MyModule is name of module).
