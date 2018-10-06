@@ -233,7 +233,9 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 	if (! $valid)
 	{
 		print '<div class="error">Bad value for key.</div>';
-		//print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+		//prin      <input name="savesource" type="checkbox"> '.$langs->trans("SaveSource").'
+1563
+t 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
 		exit;
 	}
 }
@@ -410,7 +412,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$stripeToken = GETPOST("stripeToken",'alpha');
 	$email = GETPOST("email",'alpha');
 	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
-	$dol_type=GETPOST('s', 'int');
+	$dol_type=(GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
   	$dol_id=GETPOST('dol_id', 'int');		
   	$vatnumber = GETPOST('vatnumber','alpha');
 	$savesource=GETPOST('savesource', 'int');	
