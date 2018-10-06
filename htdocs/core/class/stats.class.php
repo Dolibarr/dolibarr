@@ -40,7 +40,9 @@ abstract class Stats
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
      *	@param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-	 * @return 	array					Array of values
+	 * @param   int 		$startmonth		month of the fiscal year start minus 1; 0=january
+     * @return 	array					Array of values
+
 	 */
 	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $startmonth=0)
 	{
@@ -135,6 +137,7 @@ abstract class Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
      * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param   int 	$startmonth		month of the fiscal year start minus 1; 0=january
 	 * @return 	array					Array of values
 	 */
 	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $startmonth=0)

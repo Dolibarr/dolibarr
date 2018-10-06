@@ -230,8 +230,8 @@ if ($result)
 		$cum_ht[$obj->dm] = !empty($obj->amount) ? $obj->amount : 0;
 		$cum[$obj->dm] = $obj->amount_ttc;
 		if ($previous_dm == "" || ($mois == ($nb_mois_decalage+1))) {
-			$annual_cum_ht[$obj->dm]=$cum_ht[$obj->dm]; 
-			$annual_cum_ttc[$obj->dm]=$cum[$obj->dm]; 
+			$annual_cum_ht[$obj->dm]=$cum_ht[$obj->dm];
+			$annual_cum_ttc[$obj->dm]=$cum[$obj->dm];
 		}
 		else {
 			$annual_cum_ht[$obj->dm]=$annual_cum_ht[$previous_dm] +$cum_ht[$obj->dm] ;
@@ -362,7 +362,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 				$annual_cum_case = $annual_cum_ttc[$case];
 			}
 			if ($modecompta != 'BOOKKEEPING')  {
-				// Valeur CA du mois 
+				// Valeur CA du mois
 				print '<td align="right">';
 				if ($cum_case)
 				{
