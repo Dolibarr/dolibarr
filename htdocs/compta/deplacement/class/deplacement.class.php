@@ -51,7 +51,11 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_element = '';
 
-	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 0;
 
 	public $datec;         // Creation date
 	public $dated;
