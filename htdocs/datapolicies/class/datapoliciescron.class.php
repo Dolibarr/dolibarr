@@ -1,12 +1,43 @@
 <?php
+/* Copyright (C) 2018 SuperAdmin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-class datapoliciesCron {
+/**
+ * \file    datapolicies/class/datapoliciescron.class.php
+ * \ingroup datapolicies
+ * \brief   Example hook overload.
+ */
 
-    public function exec() {
+/**
+ * Class DataPoliciesCron
+ */
+class DataPoliciesCron
+{
+	/**
+	 * Function exec
+	 *
+	 * @return boolean
+	 */
+    public function exec()
+    {
         global $conf, $db, $langs, $user;
 
         $langs->load('datapolicies@datapolicies');
 
+        // FIXME Removed hardcoded values of id
         $arrayofparameters=array(
             'DATAPOLICIES_TIERS_CLIENT' => array(
                 'sql' => "
@@ -415,9 +446,9 @@ class datapoliciesCron {
         );
 
         foreach ($arrayofparameters as $key => $params) {
-            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int)$conf->global->$key > 0) {
+            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
 
-                $sql = sprintf($params['sql'], (int)$conf->entity, (int)$conf->global->$key, (int)$conf->global->$key);
+                $sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
 
                 $resql = $db->query($sql);
 
@@ -466,11 +497,16 @@ class datapoliciesCron {
 
         }
         return true;
-
     }
 
 
-    public function sendMailing() {
+    /**
+     * sendMailing
+     *
+     * @return boolean
+     */
+    public function sendMailing()
+    {
         global $conf, $db, $langs, $user;
 
         $langs->load('datapolicies@datapolicies');
@@ -482,6 +518,5 @@ class datapoliciesCron {
         $contacts->getAllCompaniesNotInformed();
         $contacts->getAllAdherentsNotInformed();
         return true;
-
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2018 SuperAdmin
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,15 +19,13 @@
  * \file    datapolicies/class/actions_datapolicies.class.php
  * \ingroup datapolicies
  * \brief   Example hook overload.
- *
- * Put detailed description here.
  */
 
 /**
- * Class Actionsdatapolicies
+ * Class ActionsDatapolicies
  */
-class Actionsdatapolicies {
-
+class ActionsDatapolicies
+{
     /**
      * @var DoliDB Database handler.
      */
@@ -59,7 +56,8 @@ class Actionsdatapolicies {
      *
      *  @param		DoliDB		$db      Database handler
      */
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
@@ -73,7 +71,8 @@ class Actionsdatapolicies {
      *                           				=0 if OK but we want to process standard actions too,
      *                            				>0 if OK and we want to replace standard actions.
      */
-    function getNomUrl($parameters, &$object, &$action) {
+    function getNomUrl($parameters, &$object, &$action)
+    {
         global $db, $langs, $conf, $user;
         $this->resprints = '';
         return 0;
@@ -88,7 +87,8 @@ class Actionsdatapolicies {
      * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
      * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
      */
-    public function doActions($parameters, &$object, &$action, $hookmanager) {
+    public function doActions($parameters, &$object, &$action, $hookmanager)
+    {
         global $conf, $user, $langs;
         $langs->load('datapolicies@datapolicies');
         $error = 0; // Error counter
@@ -97,6 +97,7 @@ class Actionsdatapolicies {
             $object->fetch(GETPOST('socid'));
         }
 
+        // FIXME Removed had coded id, use codes
         if ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'anonymiser' && ($object->forme_juridique_code == 11 || $object->forme_juridique_code == 12 || $object->forme_juridique_code == 13 || $object->forme_juridique_code == 15 || $object->forme_juridique_code == 17 || $object->forme_juridique_code == 18 || $object->forme_juridique_code == 19 || $object->forme_juridique_code == 35 || $object->forme_juridique_code == 60 || $object->forme_juridique_code == 200 || $object->forme_juridique_code == 311 || $object->forme_juridique_code == 312 || $object->forme_juridique_code == 316 || $object->forme_juridique_code == 401 || $object->forme_juridique_code == 600 || $object->forme_juridique_code == 700 || $object->forme_juridique_code == 1005 || $object->typent_id == 8)) {
             // on verifie si l'objet est utilisé
             if ($object->isObjectUsed(GETPOST('socid'))) {
@@ -237,7 +238,8 @@ class Actionsdatapolicies {
      * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
      * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
      */
-    public function doMassActions($parameters, &$object, &$action, $hookmanager) {
+    public function doMassActions($parameters, &$object, &$action, $hookmanager)
+    {
         global $conf, $user, $langs;
 
         $error = 0; // Error counter
@@ -262,13 +264,14 @@ class Actionsdatapolicies {
     /**
      * Overloading the addMoreMassActions function : replacing the parent's function with the one below
      *
-     * @param   array           $parameter s     Hook metadatas (context, etc...)
+     * @param   array           $parameters		Hook metadatas (context, etc...)
      * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
      * @param   string          $action         Current action (if set). Generally create or edit or null
      * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
      * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
      */
-    public function addMoreMassActions($parameters, &$object, &$action, $hookmanager) {
+    public function addMoreMassActions($parameters, &$object, &$action, $hookmanager)
+    {
         global $conf, $user, $langs;
 
         $error = 0; // Error counter
@@ -296,7 +299,8 @@ class Actionsdatapolicies {
      *                          		=0 if OK but we want to process standard actions too,
      *  	                            >0 if OK and we want to replace standard actions.
      */
-    function beforePDFCreation($parameters, &$object, &$action) {
+    function beforePDFCreation($parameters, &$object, &$action)
+    {
         global $conf, $user, $langs;
         global $hookmanager;
 
@@ -324,7 +328,8 @@ class Actionsdatapolicies {
      *                          		=0 if OK but we want to process standard actions too,
      *  	                            >0 if OK and we want to replace standard actions.
      */
-    function afterPDFCreation($parameters, &$pdfhandler, &$action) {
+    function afterPDFCreation($parameters, &$pdfhandler, &$action)
+    {
         global $conf, $user, $langs;
         global $hookmanager;
 
@@ -342,7 +347,17 @@ class Actionsdatapolicies {
         return $ret;
     }
 
-    function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager) {
+    /**
+     * addMoreActionsButtons
+     *
+     * @param array 		$parameters		array of parameters
+     * @param Object	 	$object			Object
+     * @param string		$action			Actions
+     * @param HookManager	$hookmanager	Hook manager
+     * @return void
+     */
+    function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
+    {
         global $conf, $user, $langs;
         $langs->load('datapolicies@datapolicies');
 
@@ -388,7 +403,17 @@ class Actionsdatapolicies {
         }
     }
 
-    function printCommonFooter($parameters, &$object, &$action, $hookmanager) {
+    /**
+     * printCommonFooter
+     *
+     * @param array 		$parameters		array of parameters
+     * @param Object	 	$object			Object
+     * @param string		$action			Actions
+     * @param HookManager	$hookmanager	Hook manager
+     * @return void
+     */
+    function printCommonFooter($parameters, &$object, &$action, $hookmanager)
+    {
         global $conf, $user, $langs;
 
         $jsscript = '';
@@ -446,5 +471,4 @@ class Actionsdatapolicies {
 
         echo $jsscript;
     }
-
 }
