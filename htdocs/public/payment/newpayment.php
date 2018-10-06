@@ -233,9 +233,7 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 	if (! $valid)
 	{
 		print '<div class="error">Bad value for key.</div>';
-		//prin      <input name="savesource" type="checkbox"> '.$langs->trans("SaveSource").'
-1563
-t 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+		//print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
 		exit;
 	}
 }
@@ -413,9 +411,9 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$email = GETPOST("email",'alpha');
 	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
 	$dol_type=(GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
-  	$dol_id=GETPOST('dol_id', 'int');		
+  	$dol_id=GETPOST('dol_id', 'int');
   	$vatnumber = GETPOST('vatnumber','alpha');
-	$savesource=GETPOST('savesource', 'int');	
+	$savesource=GETPOST('savesource', 'int');
 
 	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
@@ -468,7 +466,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				$action='';
 			}
 			else
-			{ 
+			{
         if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
         if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
         if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
@@ -505,7 +503,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 			));
 			// Return $customer = array('id'=>'cus_XXXX', ...)
-      
+
         if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
         if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
         if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
