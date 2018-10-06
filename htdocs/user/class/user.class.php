@@ -55,7 +55,11 @@ class User extends CommonObject
 	 */
 	public $fk_element='fk_user';
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	public $id=0;
 	public $statut;
