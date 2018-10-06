@@ -42,7 +42,7 @@ class DataPoliciesCron
             'DATAPOLICIES_TIERS_CLIENT' => array(
                 'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique = 19 OR s.fk_forme_juridique = 11 OR s.fk_forme_juridique = 12 OR s.fk_forme_juridique = 13 OR s.fk_forme_juridique = 15 OR s.fk_forme_juridique = 17 OR s.fk_forme_juridique = 18 OR s.fk_forme_juridique = 35 OR s.fk_forme_juridique = 60 OR s.fk_forme_juridique = 312 OR s.fk_forme_juridique = 316 OR s.fk_forme_juridique = 401 OR s.fk_forme_juridique = 600 OR s.fk_forme_juridique = 700 OR s.fk_forme_juridique = 1005 OR s.fk_typent = 8)
+                    WHERE (s.fk_forme_juridique IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
                     AND s.entity = %d
                     AND s.client = 1
                     AND s.fournisseur = 0
@@ -77,7 +77,7 @@ class DataPoliciesCron
             'DATAPOLICIES_TIERS_PROSPECT' => array(
                 'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique = 19 OR s.fk_forme_juridique = 11 OR s.fk_forme_juridique = 12 OR s.fk_forme_juridique = 13 OR s.fk_forme_juridique = 15 OR s.fk_forme_juridique = 17 OR s.fk_forme_juridique = 18 OR s.fk_forme_juridique = 35 OR s.fk_forme_juridique = 60 OR s.fk_forme_juridique = 312 OR s.fk_forme_juridique = 316 OR s.fk_forme_juridique = 401 OR s.fk_forme_juridique = 600 OR s.fk_forme_juridique = 700 OR s.fk_forme_juridique = 1005 OR s.fk_typent = 8)
+                    WHERE (s.fk_forme_juridique IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
                     AND s.entity = %d
                     AND s.client = 2
                     AND s.fournisseur = 0
@@ -112,7 +112,7 @@ class DataPoliciesCron
             'DATAPOLICIES_TIERS_PROSPECT_CLIENT' => array(
                 'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique = 19 OR s.fk_forme_juridique = 11 OR s.fk_forme_juridique = 12 OR s.fk_forme_juridique = 13 OR s.fk_forme_juridique = 15 OR s.fk_forme_juridique = 17 OR s.fk_forme_juridique = 18 OR s.fk_forme_juridique = 35 OR s.fk_forme_juridique = 60 OR s.fk_forme_juridique = 312 OR s.fk_forme_juridique = 316 OR s.fk_forme_juridique = 401 OR s.fk_forme_juridique = 600 OR s.fk_forme_juridique = 700 OR s.fk_forme_juridique = 1005 OR s.fk_typent = 8)
+                    WHERE (s.fk_forme_juridique  IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
                     AND s.entity = %d
                     AND s.client = 3
                     AND s.fournisseur = 0
@@ -147,7 +147,7 @@ class DataPoliciesCron
             'DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT' => array(
                 'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique = 19 OR s.fk_forme_juridique = 11 OR s.fk_forme_juridique = 12 OR s.fk_forme_juridique = 13 OR s.fk_forme_juridique = 15 OR s.fk_forme_juridique = 17 OR s.fk_forme_juridique = 18 OR s.fk_forme_juridique = 35 OR s.fk_forme_juridique = 60 OR s.fk_forme_juridique = 312 OR s.fk_forme_juridique = 316 OR s.fk_forme_juridique = 401 OR s.fk_forme_juridique = 600 OR s.fk_forme_juridique = 700 OR s.fk_forme_juridique = 1005 OR s.fk_typent = 8)
+                    WHERE (s.fk_forme_juridique  IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
                     AND s.entity = %d
                     AND s.client = 0
                     AND s.fournisseur = 0
@@ -182,7 +182,7 @@ class DataPoliciesCron
             'DATAPOLICIES_TIERS_FOURNISSEUR' => array(
                 'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique = 19 OR s.fk_forme_juridique = 11 OR s.fk_forme_juridique = 12 OR s.fk_forme_juridique = 13 OR s.fk_forme_juridique = 15 OR s.fk_forme_juridique = 17 OR s.fk_forme_juridique = 18 OR s.fk_forme_juridique = 35 OR s.fk_forme_juridique = 60 OR s.fk_forme_juridique = 312 OR s.fk_forme_juridique = 316 OR s.fk_forme_juridique = 401 OR s.fk_forme_juridique = 600 OR s.fk_forme_juridique = 700 OR s.fk_forme_juridique = 1005 OR s.fk_typent = 8)
+                    WHERE (s.fk_forme_juridique  IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
                     AND s.entity = %d
                     AND s.fournisseur = 1
                     AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
@@ -511,7 +511,7 @@ class DataPoliciesCron
 
         $langs->load('datapolicies@datapolicies');
 
-        dol_include_once('/datapolicies/class/datapolicies.class.php');
+        require_once DOL_DOCUMENT_ROOT . '/datapolicies/class/datapolicies.class.php';
 
         $contacts = new DataPolicies($db);
         $contacts->getAllContactNotInformed();
