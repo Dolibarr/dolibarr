@@ -58,7 +58,7 @@ class modDataPolicies extends DolibarrModules {
         // It is used to group modules by family in module setup page
         $this->family = "hr";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '90';
+        $this->module_position = '70';
         // Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuledatapoliciesName' not found (MyModue is name of module).
@@ -67,8 +67,6 @@ class modDataPolicies extends DolibarrModules {
         $this->description = "Module to manage Data policies (for compliance with GDPR in Europe or other Data policies rules)";
         // Used only if file README.md and README-LL.md not found.
         $this->descriptionlong = "";
-
-        $this->editor_name = 'Inovea Conseil';
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
         $this->version = 'development';
@@ -136,10 +134,6 @@ class modDataPolicies extends DolibarrModules {
         );
 
         $country = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
-        if ($country[0] == $conf->entity && $country[2] == "France")
-            $this->editor_url = "https://www.inovea-conseil.com (<a target='_blank' href='https://www.dolibiz.com/wp-content/uploads/attestation/attestation-" . $this->name . "-" . $this->version . ".pdf'>Attestation NF525</a>)";
-        else
-            $this->editor_url = 'https://www.inovea-conseil.com';
 
         // Some keys to add into the overwriting translation tables
         /* $this->overwrite_translation = array(

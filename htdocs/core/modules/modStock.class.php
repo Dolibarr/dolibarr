@@ -48,7 +48,7 @@ class modStock extends DolibarrModules
 		$this->numero = 52;
 
 		$this->family = "products";
-		$this->module_position = 40;
+		$this->module_position = '40';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des stocks";
@@ -75,9 +75,9 @@ class modStock extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r=0;
-		
+
 		$this->const[$r] = array('STOCK_ALLOW_NEGATIVE_TRANSFER','chaine','1','',1);
-		
+
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -349,8 +349,8 @@ class modStock extends DolibarrModules
 		    'UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 	}
-	
-	
+
+
 	/**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
