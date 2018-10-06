@@ -259,10 +259,8 @@ Class DataPolicies extends Contact
      			$actionmsg = dol_concatdesc($actionmsg, $message);
      	}
 
-
-
      	// Send mail
-     	require_once(DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php');
+     	require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
      	$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
      	if ($mailfile->error) {
      		$resultmasssend .= '<div class="error">' . $mailfile->error . '</div>';
