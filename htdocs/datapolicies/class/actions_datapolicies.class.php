@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 SuperAdmin
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ class ActionsDatapolicies
     /**
      * Constructor
      *
-     *  @param		DoliDB		$db      Database handler
+     *  @param  DoliDB      $db      Database handler
      */
     public function __construct($db)
     {
@@ -64,10 +65,10 @@ class ActionsDatapolicies
     /**
      * Execute action
      *
-     * @param	array			$parameters		Array of parameters
-     * @param	CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-     * @param	string			$action      	'add', 'update', 'view'
-     * @return	int         					<0 if KO,
+     * @param   array           $parameters		Array of parameters
+     * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+     * @param   string          $action      	'add', 'update', 'view'
+     * @return  int         					<0 if KO,
      *                           				=0 if OK but we want to process standard actions too,
      *                            				>0 if OK and we want to replace standard actions.
      */
@@ -97,8 +98,8 @@ class ActionsDatapolicies
             $object->fetch(GETPOST('socid'));
         }
 
-        // FIXME Removed had coded id, use codes
-        if ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'anonymiser' && ($object->forme_juridique_code == 11 || $object->forme_juridique_code == 12 || $object->forme_juridique_code == 13 || $object->forme_juridique_code == 15 || $object->forme_juridique_code == 17 || $object->forme_juridique_code == 18 || $object->forme_juridique_code == 19 || $object->forme_juridique_code == 35 || $object->forme_juridique_code == 60 || $object->forme_juridique_code == 200 || $object->forme_juridique_code == 311 || $object->forme_juridique_code == 312 || $object->forme_juridique_code == 316 || $object->forme_juridique_code == 401 || $object->forme_juridique_code == 600 || $object->forme_juridique_code == 700 || $object->forme_juridique_code == 1005 || $object->typent_id == 8)) {
+        // FIXME Removed hard coded id, use codes
+        if ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'anonymiser' && (in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8)) {
             // on verifie si l'objet est utilisé
             if ($object->isObjectUsed(GETPOST('socid'))) {
                 $object->name = $langs->trans('ANONYME');
@@ -202,19 +203,19 @@ class ActionsDatapolicies
         } elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicies') {
             $object->fetch(GETPOST('id'));
 
-            dol_include_once('/contact/class/contact.class.php');
-            dol_include_once('/datapolicies/class/datapolicies.class.php');
+            require_once  DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+            require_once  DOL_DOCUMENT_ROOT . '/datapolicies/class/datapolicies.class.php';
             DataPolicies::sendMailDataPoliciesContact($object);
         }
          elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicies') {
              $object->fetch(GETPOST('id'));
-            dol_include_once('/adherents/class/adherent.class.php');
-            dol_include_once('/datapolicies/class/datapolicies.class.php');
+            require_once  DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
+            require_once  DOL_DOCUMENT_ROOT . '/datapolicies/class/datapolicies.class.php';
             DataPolicies::sendMailDataPoliciesAdherent($object);
         } elseif ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'send_datapolicies') {
             $object->fetch(GETPOST('socid'));
-            dol_include_once('/societe/class/societe.class.php');
-            dol_include_once('/datapolicies/class/datapolicies.class.php');
+            require_once  DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+            require_once  DOL_DOCUMENT_ROOT . '/datapolicies/class/datapolicies.class.php';
             DataPolicies::sendMailDataPoliciesCompany($object);
         }
 
@@ -245,11 +246,12 @@ class ActionsDatapolicies
         $error = 0; // Error counter
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
-        if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
-            foreach ($parameters['toselect'] as $objectid) {
-                // Do action on each object id
-            }
-        }
+        //if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {
+        //    // do something only for the context 'somecontext1' or 'somecontext2'
+        //    foreach ($parameters['toselect'] as $objectid) {
+        //        // Do action on each object id
+        //    }
+        //}
 
         if (!$error) {
             $this->results = array('myreturn' => 999);
@@ -292,7 +294,7 @@ class ActionsDatapolicies
     /**
      * Execute action
      *
-     * @param	array	$parameters		Array of parameters
+     * @param   array	$parameters		Array of parameters
      * @param   Object	$object		   	Object output on PDF
      * @param   string	$action     	'add', 'update', 'view'
      * @return  int 		        	<0 if KO,
@@ -387,14 +389,14 @@ class ActionsDatapolicies
                   } );
                   </script>';
         echo $dialog;
-        if ($parameters['currentcontext'] == 'thirdpartycard' && $object->forme_juridique_code == 11 || $object->forme_juridique_code == 12 || $object->forme_juridique_code == 13 || $object->forme_juridique_code == 15 || $object->forme_juridique_code == 17 || $object->forme_juridique_code == 18 || $object->forme_juridique_code == 19 || $object->forme_juridique_code == 35 || $object->forme_juridique_code == 60 || $object->forme_juridique_code == 200 || $object->forme_juridique_code == 311 || $object->forme_juridique_code == 312 || $object->forme_juridique_code == 316 || $object->forme_juridique_code == 401 || $object->forme_juridique_code == 600 || $object->forme_juridique_code == 700 || $object->forme_juridique_code == 1005 || $object->typent_id == 8) {
+        if ($parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
             echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
         } elseif ($parameters['currentcontext'] == 'membercard') {
             echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
         } elseif ($parameters['currentcontext'] == 'contactcard') {
             echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
         }
-        if (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'thirdpartycard' && $object->forme_juridique_code == 11 || $object->forme_juridique_code == 12 || $object->forme_juridique_code == 13 || $object->forme_juridique_code == 15 || $object->forme_juridique_code == 17 || $object->forme_juridique_code == 18 || $object->forme_juridique_code == 19 || $object->forme_juridique_code == 35 || $object->forme_juridique_code == 60 || $object->forme_juridique_code == 200 || $object->forme_juridique_code == 311 || $object->forme_juridique_code == 312 || $object->forme_juridique_code == 316 || $object->forme_juridique_code == 401 || $object->forme_juridique_code == 600 || $object->forme_juridique_code == 700 || $object->forme_juridique_code == 1005 || $object->typent_id == 8) {
+        if (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
             echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
         } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'membercard') {
             echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
@@ -435,7 +437,7 @@ class ActionsDatapolicies
                 $societe = new Societe($this->db);
                 $societe->fetch(GETPOST('socid'));
                 // On vérifie si il est utilisé
-                if (($societe->forme_juridique_code == 11 || $societe->forme_juridique_code == 12 || $societe->forme_juridique_code == 13 || $societe->forme_juridique_code == 15 || $societe->forme_juridique_code == 17 || $societe->forme_juridique_code == 18 || $societe->forme_juridique_code == 19 || $societe->forme_juridique_code == 35 || $societe->forme_juridique_code == 60 || $societe->forme_juridique_code == 200 || $societe->forme_juridique_code == 311 || $societe->forme_juridique_code == 312 || $societe->forme_juridique_code == 316 || $societe->forme_juridique_code == 401 || $societe->forme_juridique_code == 600 || $societe->forme_juridique_code == 700 || $societe->forme_juridique_code == 1005 || $societe->typent_id == 8) && $societe->isObjectUsed(GETPOST('socid'))) {
+                if ((in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $societe->typent_id == 8) && $societe->isObjectUsed(GETPOST('socid'))) {
 
                     require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
                     $form = new Form($this->db);
@@ -448,7 +450,7 @@ class ActionsDatapolicies
                 $societe = new Societe($this->db);
                 $societe->fetch(GETPOST('socid'));
 
-                if ($societe->forme_juridique_code != 11 && $societe->forme_juridique_code != 12 && $societe->forme_juridique_code != 13 && $societe->forme_juridique_code != 15 && $societe->forme_juridique_code != 17 && $societe->forme_juridique_code != 18 && $societe->forme_juridique_code != 19 && $societe->forme_juridique_code != 35 && $societe->forme_juridique_code != 60 && $societe->forme_juridique_code != 200 && $societe->forme_juridique_code != 311 && $societe->forme_juridique_code != 312 && $societe->forme_juridique_code != 316 && $societe->forme_juridique_code != 401 && $societe->forme_juridique_code != 600 && $societe->forme_juridique_code != 700 && $societe->forme_juridique_code != 1005 && $societe->typent_id != 8) {
+                if (!in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) && $societe->typent_id != 8) {
 
                     require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
                     $jsscript .= '<script>';
