@@ -291,12 +291,11 @@ class Utils
 
 			if ($handle)
 			{
-				$execmethod=1;
 				if (! empty($conf->global->MAIN_EXEC_USE_POPEN)) $execmethod=$conf->global->MAIN_EXEC_USE_POPEN;
 				if (empty($execmethod)) $execmethod=1;
 
 				$ok=0;
-				dol_syslog("Run command with method ".$execmethod." with ".$fullcommandcrypted);
+				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_DEBUG);
 
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1)
@@ -319,7 +318,7 @@ class Utils
 						{
 							$i++;   // output line number
 							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
-							fwrite($handle,$read);
+							fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 							if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
 							elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
 						}
