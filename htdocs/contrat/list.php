@@ -364,6 +364,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
+	'generate_doc'=>$langs->trans("Generate"),
 	'presend'=>$langs->trans("SendByMail"),
 	'builddoc'=>$langs->trans("PDFMerge"),
 );

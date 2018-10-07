@@ -466,6 +466,7 @@ if ($resql)
 	// List of mass actions available
 	$arrayofmassactions =  array(
 		'validate'=>$langs->trans("Validate"),
+		'generate_doc'=>$langs->trans("Generate"),
 		//'presend'=>$langs->trans("SendByMail"),
 		//'builddoc'=>$langs->trans("PDFMerge"),
 	);
