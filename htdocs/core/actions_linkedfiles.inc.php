@@ -46,6 +46,13 @@ if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 				}
 			}
+			$file=$_FILES['userfile']['name'][$key];
+            if (!empty($file)){
+                $userstatic=new User($db);
+                $userstatic->fetch($id);
+                $userstatic->photo=$file;
+                $userstatic->update($user);
+            }
 		}
 
 		if (! $error)

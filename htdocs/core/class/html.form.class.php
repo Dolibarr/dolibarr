@@ -6819,8 +6819,8 @@ class Form
 			$dir=$conf->user->dir_output;
 			if (! empty($object->photo))
 			{
-				if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
-				else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
+				if ((string) $imagesize == 'mini') $file=get_exdir($id, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
+				else if ((string) $imagesize == 'small') $file=get_exdir($id, 0, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
 				else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
 				$originalfile=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
 			}

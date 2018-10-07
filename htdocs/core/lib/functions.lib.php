@@ -5391,7 +5391,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// Here, object->id, object->ref and modulepart are required.
 		//var_dump($modulepart);
 		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
-			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
+			'supplier_order','supplier_proposal','shipment','contract','expensereport','user')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
