@@ -7367,4 +7367,40 @@ abstract class CommonObject
             }
         }
     }
+
+    /**
+     *  Return if at least one photo is available
+     *
+     *  @param      string		$sdir       Directory to scan
+     *  @return     boolean     			True if at least one photo is available, False if not
+     */
+    function is_photo_available($sdir)
+    {
+        include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+        include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+
+        global $conf;
+
+        $dir = $sdir;
+        $USE_OLD_PATH_FOR_PHOTO=strtoupper($this->element).'USE_OLD_PATH_FOR_PHOTO';
+        if (! empty($conf->global->$USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2,0,0,$this,$this->element) . $this->id ."/photos/";
+        else $dir .= '/'.get_exdir(0,0,0,0,$this,$this->element).dol_sanitizeFileName($this->ref).'/';
+
+        $nbphoto=0;
+
+        $dir_osencoded=dol_osencode($dir);
+        if (file_exists($dir_osencoded))
+        {
+            $handle=opendir($dir_osencoded);
+            if (is_resource($handle))
+            {
+                while (($file = readdir($handle)) !== false)
+                {
+                    if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
+                    if (dol_is_file($dir.$file) && image_format_supported($file) > 0) return true;
+                }
+            }
+        }
+        return false;
+    }
 }

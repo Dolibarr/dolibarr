@@ -1365,6 +1365,25 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			//}
 		}
 	}
+	elseif ($object->element == 'user')
+	{
+		$width=80; $cssclass='photoref';
+		$showimage=$object->is_photo_available($conf->user->multidir_output[$entity]);
+		$maxvisiblephotos=(isset($conf->global->USER_MAX_VISIBLE_PHOTO)?$conf->global->USER_MAX_VISIBLE_PHOTO:5);
+		if ($conf->browser->phone) $maxvisiblephotos=1;
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('user', $conf->user->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		else
+		{
+			if (!empty($conf->global->USER_NODISPLAYIFNOPHOTO)) {
+				$nophoto='';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			}
+			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+				$nophoto='/public/theme/common/nophoto.png';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			//}
+		}
+	}
 	elseif ($object->element == 'ticket')
 	{
 		$width=80; $cssclass='photoref';
