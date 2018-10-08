@@ -77,16 +77,17 @@ if ($action == 'valid' && $user->rights->facture->creer){
 
 if (($action=="addline" || $action=="freezone") and $placeid==0)
 {
+	// $place is id of POS, $placeid is id of invoice
 	if ($placeid==0) {
 		$invoice = new Facture($db);
 		$invoice->socid=$conf->global->CASHDESK_ID_THIRDPARTY;
 		$invoice->date=dol_now();
 		$invoice->ref="(PROV-POS)";
 		$invoice->module_source = 'takepos';
-		$invoice->pos_source = (string) $place;
+		$invoice->pos_source = (string) (empty($place)?'0':$place);
 
 		$placeid=$invoice->create($user);
-		$sql="UPDATE ".MAIN_DB_PREFIX."facture set facnumber='(PROV-POS-".$placeid.")' where rowid=".$placeid;
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set facnumber='(PROV-POS-".$place.")' where rowid=".$placeid;
 		$db->query($sql);
 	}
 }
