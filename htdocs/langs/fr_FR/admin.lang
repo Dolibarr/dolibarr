@@ -1207,7 +1207,7 @@ WatermarkOnDraft=Filigrane sur les documents brouillons
 JSOnPaimentBill=Activer la fonctionnalité de remplissage automatique des lignes de paiement sur le formulaire de paiement
 CompanyIdProfChecker=Règles sur les Identifiants professionnels
 MustBeUnique=Doit être unique ?
-MustBeMandatory=Obligatoire pour créer des tiers ?
+MustBeMandatory=Obligatoire pour créer des tiers (si num tva ou type de société défini) ?
 MustBeInvoiceMandatory=Obligatoire pour valider des factures ?
 TechnicalServicesProvided=Services techniques fournis
 #####DAV #####

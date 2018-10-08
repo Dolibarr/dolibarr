@@ -1207,7 +1207,7 @@ WatermarkOnDraft=Watermark on draft document
 JSOnPaimentBill=Activate feature to autofill payment lines on payment form
 CompanyIdProfChecker=Rules for Professional IDs
 MustBeUnique=Must be unique?
-MustBeMandatory=Mandatory to create third parties?
+MustBeMandatory=Mandatory to create third parties (if vat number or type of company defined) ?
 MustBeInvoiceMandatory=Mandatory to validate invoices?
 TechnicalServicesProvided=Technical services provided
 #####DAV #####
