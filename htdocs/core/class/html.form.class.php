@@ -6512,7 +6512,7 @@ class Form
 	 *  @param	int      	$useempty		1=Add empty line
 	 *	@return	string						See option
 	 */
-	function selectyesno($htmlname, $value='', $option=0, $disabled=false, $useempty='')
+	function selectyesno($htmlname, $value='', $option=0, $disabled=false, $useempty=0)
 	{
 		global $langs;
 
