@@ -1577,7 +1577,7 @@ if ($action == 'create')
 					$srcLine = new OrderLine($db);
 					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
 					$line = new ExpeditionLigne($db);
-					$line->fetch_optionals($line->id);
+					//$line->fetch_optionals($line->id);
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
@@ -2010,7 +2010,7 @@ else if ($id || $ref)
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		// #
+		// Adds a line numbering column
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
 			print '<td width="5" align="center">&nbsp;</td>';
@@ -2142,7 +2142,7 @@ else if ($id || $ref)
 		    print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
 			print '<tr class="oddeven">';
 
-			// #
+			// Adds a line numbering column
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 			{
 				print '<td align="center">'.($i+1).'</td>';

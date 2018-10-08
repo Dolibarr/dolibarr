@@ -277,8 +277,9 @@ if ($action == 'add')
             	// Set output language
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	// Load traductions files requiredby by page
             	$outputlangs->loadLangs(array("main", "members"));
-            	// Get email content fro mtemplae
+            	// Get email content from template
             	$arraydefaultmessage=null;
             	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
 
@@ -297,7 +298,9 @@ if ($action == 'add')
 
             	if ($subjecttosend && $texttosend)
             	{
-            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1);
+            		$moreinheader='X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
             	}
             	/*if ($result < 0)
             	{

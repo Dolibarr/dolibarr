@@ -35,8 +35,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 class pdf_sepamandate extends ModeleBankAccountDoc
 {
-	var $emetteur;	// Objet societe qui emet
-	var $version = 'dolibarr';
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 	/**
 	 *	Constructor
@@ -45,7 +54,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
@@ -105,7 +114,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "withdrawals", "companies", "projects", "bills"));
 
 		if (! empty($conf->bank->dir_output))

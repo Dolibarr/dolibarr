@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -428,7 +426,7 @@ foreach ($accounts as $key=>$type)
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))
     {
-        print '<td>'.$obj->getNomUrl(1).'</td>';
+        print '<td class="nowrap">'.$obj->getNomUrl(1).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 

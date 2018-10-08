@@ -430,7 +430,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 						}
 						elseif (isset($user->default_values[$relativepathstring]['filters']))
 						{
-							foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)
+							foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)	// $defkey is a querystring like 'a=b&c=d', $defval is key of user
 							{
 								$qualified = 0;
 								if ($defkey != '_noquery_')
@@ -586,7 +586,6 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
 	if (empty($method) || $method == 3 || $method == 4)
 	{
-		//if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield", 'smonth', 'syear', 'month', 'year')))
 		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder','sortfield')))
 		{
 			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
@@ -595,8 +594,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 			// - posted value not empty, or
 			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
 
-			//if (! empty($out) || ! empty($user->default_values[$relativepathstring]['filters'][$paramname]))
-			if ($out != '')		// $out = '0' like 'abc' is a search criteria to keep
+			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
 			{
 				$user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
 			}
@@ -3152,8 +3150,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow')
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow')
 			)) {
 			$fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
@@ -3197,6 +3195,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
 				$fakey = 'fa-arrows';
 			}
+			elseif ($pictowithoutext == 'listlight') {
+				$fakey = 'fa-download';
+				$facolor = '#999';
+				$marginleftonlyshort=1;
+			}
 			elseif ($pictowithoutext == 'printer') {
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
@@ -3205,6 +3208,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'resize') {
 				$fakey = 'fa-crop';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'note') {
+				$fakey = 'fa-sticky-note-o';
+				$facolor = '#999';
+				$marginleftonlyshort=1;
 			}
 			elseif ($pictowithoutext == 'uparrow') {
 				$fakey = 'fa-mail-forward';
@@ -3234,7 +3242,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
 				$morecss.= ($morecss?' ':'').$reg[1];
 			}
-			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?'marginleftonlyshort':'marginleftonly').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'>';
+			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?'marginleftonlyshort':'marginleftonly').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:'').'>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
@@ -3865,8 +3873,8 @@ function dol_print_error($db='',$error='',$errors=null)
 		$langs = new Translate('', $conf);
 		$langs->load("main");
 	}
-	$langs->load("main");
-	$langs->load("errors");
+	// Load translation files required by the page
+    $langs->loadLangs(array('main', 'errors'));
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
@@ -4175,13 +4183,13 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	int		$id					To force an id on html objects
+ * 	@param	string	$id					To force an id on html objects
  *  @param  string  $morecssontable     More css on table
  *	@param	string	$morehtmlcenter		Added message to show on center
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='', $morehtmlcenter='')
+function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id='', $morecssontable='', $morehtmlcenter='')
 {
 	global $conf;
 
@@ -4191,7 +4199,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle" id="pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -4257,7 +4265,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	// Left
 	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding valignmiddle">';
-	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh widthpictotitle" id="pictotitle"', $pictoisfullpath);
+	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh pictotitle widthpictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';
 	print '</div></td>';
@@ -5213,6 +5221,11 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
+	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	if (! empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany()) {
+		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
+	}
+
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
 	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
 	//print 'VATRULE 5';
@@ -5952,7 +5965,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
-			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
+			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
+			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
 
@@ -6110,7 +6124,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 				$paymenturl=$url;
 			}
 
-			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$outputlangs->trans("PredefinedMailContentLink", $paymenturl):'');
+			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)):'');
 			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
 		}
 	}
@@ -6125,11 +6139,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2__']     = is_object($object)?$object->total_localtax1:'';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3__']     = is_object($object)?$object->total_localtax2:'';
 
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency_code):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency_code)):'';
-		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object)?price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object)?price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency)):'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object)?price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object)?price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
 
 		// TODO Add keys for foreign multicurrency
 
@@ -6142,6 +6156,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		}
 	}
 
+	//var_dump($substitutionarray['__AMOUNT_FORMATED__']);
 	if (empty($exclude) || ! in_array('date', $exclude))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -6154,12 +6169,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 		$substitutionarray=array_merge($substitutionarray, array(
 			'__DAY__' => (string) $tmp['mday'],
-			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']),
-			'__DAY_TEXT_SHORT__' => $outputlangs->trans('Short'.$tmp['weekday']),
-			'__DAY_TEXT_MIN__' => $outputlangs->trans($tmp['weekday'].'Min'),
+			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']),					// Monday
+			'__DAY_TEXT_SHORT__' => $outputlangs->trans($tmp['weekday'].'Min'),			// Mon
+			'__DAY_TEXT_MIN__' => $outputlangs->trans('Short'.$tmp['weekday']),			// M
 			'__MONTH__' => (string) $tmp['mon'],
-			'__MONTH_TEXT__' => $outputlangs->trans($tmp['month']),
-			'__MONTH_TEXT_MIN__' => $outputlangs->trans($tmp['month'].'Min'),
+			'__MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp['mon'])),
+			'__MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort'.sprintf("%02d", $tmp['mon'])),
 			'__YEAR__' => (string) $tmp['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],
@@ -7019,7 +7035,8 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  */
 function printCommonFooter($zone='private')
 {
-	global $conf, $hookmanager;
+	global $conf, $hookmanager, $user;
+	global $action;
 	global $micro_start_time;
 
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
@@ -7052,7 +7069,71 @@ function printCommonFooter($zone='private')
 				print '});'."\n";
 			}
 
-			// Google Analytics (need Google module)
+			// Management of focus and mandatory for fields
+			if ($action == 'create' || $action == 'edit')
+			{
+				print '/* Code js to manage focus and mandatory form fields */'."\n";
+				$relativepathstring = $_SERVER["PHP_SELF"];
+				// Clean $relativepathstring
+				if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+				$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+				foreach($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
+				{
+					$qualified = 0;
+					if ($defkey != '_noquery_')
+					{
+						$tmpqueryarraytohave=explode('&', $defkey);
+						$foundintru=0;
+						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						{
+							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+						}
+						if (! $foundintru) $qualified=1;
+						//var_dump($defkey.'-'.$qualified);
+					}
+					else $qualified = 1;
+
+					if ($qualified)
+					{
+						foreach($defval as $paramkey => $paramval)
+						{
+							// Add property 'required' on input
+							print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
+						}
+					}
+				}
+				foreach($user->default_values[$relativepathstring]['mandatory'] as $defkey => $defval)
+				{
+					$qualified = 0;
+					if ($defkey != '_noquery_')
+					{
+						$tmpqueryarraytohave=explode('&', $defkey);
+						$foundintru=0;
+						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						{
+							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+						}
+						if (! $foundintru) $qualified=1;
+						//var_dump($defkey.'-'.$qualified);
+					}
+					else $qualified = 1;
+
+					if ($qualified)
+					{
+						foreach($defval as $paramkey => $paramval)
+						{
+							// Add property 'required' on input
+							print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+							print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";		// required on a select works only if key is "", this does not happen in Dolibarr
+						}
+					}
+				}
+			}
+
+			// Google Analytics
+			// TODO Add a hook here
 			if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 			{
 				if (($conf->dol_use_jmobile != 4))

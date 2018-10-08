@@ -82,7 +82,6 @@ class PaymentSalary extends CommonObject
 		$this->db = $db;
 		$this->element = 'payment_salary';
 		$this->table_element = 'payment_salary';
-		return 1;
 	}
 
 	/**

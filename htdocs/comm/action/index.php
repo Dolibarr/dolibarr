@@ -83,7 +83,7 @@ $resourceid=GETPOST("resourceid","int");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
-$day=GETPOST("day","int")?GETPOST("day","int"):0;
+$day=GETPOST("day","int")?GETPOST("day","int"):date("d");
 $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status",'aZ09');		// status may be 0, 50, 100, 'todo'
 $type=GETPOST("type",'az09');
@@ -109,16 +109,15 @@ if ($action == 'default')	// When action is default, we want a calendar view and
 {
 	$action = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-
-if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week')  {
+if (GETPOST('viewcal','none') && GETPOST('action','alpha') != 'show_day' && GETPOST('action','alpha') != 'show_week')  {
     $action='show_month'; $day='';
-}                                                   // View by month
-if (GETPOST('viewweek') || $action == 'show_week') {
+} // View by month
+if (GETPOST('viewweek','none') || GETPOST('action','alpha') == 'show_week') {
     $action='show_week'; $week=($week?$week:date("W")); $day=($day?$day:date("d"));
-}  // View by week
-if (GETPOST('viewday') || $action == 'show_day')  {
+} // View by week
+if (GETPOST('viewday','none') || GETPOST('action','alpha') == 'show_day')  {
     $action='show_day'; $day=($day?$day:date("d"));
-}                                  // View by day
+} // View by day
 
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'other', 'commercial'));

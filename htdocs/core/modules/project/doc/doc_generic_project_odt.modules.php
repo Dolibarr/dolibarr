@@ -53,10 +53,23 @@ if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
  */
 class doc_generic_project_odt extends ModelePDFProjects
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -66,7 +79,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Load traductions files requiredby by page
 		$langs->loadLangs(array("companies", "main"));

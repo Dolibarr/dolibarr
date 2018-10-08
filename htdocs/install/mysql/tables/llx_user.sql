@@ -54,6 +54,17 @@ create table llx_user
   office_fax        varchar(20),
   user_mobile       varchar(20),
   email             varchar(255),
+  
+  jabberid			varchar(255),
+  skype				varchar(255),
+  twitter			varchar(255),                        		--
+  facebook			varchar(255),                        		--
+  instagram                varchar(255),                        		--
+  snapchat                 varchar(255),                        		--
+  googleplus               varchar(255),                        		--
+  youtube                  varchar(255),                        		--
+  whatsapp                 varchar(255),                        		--
+  
   signature         text DEFAULT NULL,
   admin             smallint DEFAULT 0,
   module_comm       smallint DEFAULT 1,

@@ -107,9 +107,9 @@ class pdf_standard extends ModeleExpenseReport
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 
 	/**
@@ -211,7 +211,7 @@ class pdf_standard extends ModeleExpenseReport
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
 		$nblignes = count($object->lines);
@@ -568,9 +568,9 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf,$langs,$hookmanager;
+		global $conf, $langs, $hookmanager;
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "trips", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

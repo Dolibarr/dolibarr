@@ -976,7 +976,7 @@ abstract class CommonObject
 	 *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-	 *    @return	array		            Array of contacts
+	 *    @return	array|int		        Array of contacts, -1 if error
 	 */
 	function liste_contact($statut=-1,$source='external',$list=0,$code='')
 	{
@@ -1164,8 +1164,8 @@ abstract class CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$id;
 		$sql.= " AND ec.fk_socpeople = c.rowid";
-		if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
-		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('socpeople').")";
+		if ($source == 'internal') $sql.= " AND c.entity IN (".getEntity('user').")";
+		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe').")";
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
@@ -2899,6 +2899,7 @@ abstract class CommonObject
 		// Special case
 		if ($origin == 'order') $origin='commande';
 		if ($origin == 'invoice') $origin='facture';
+		if ($origin == 'invoice_template') $origin='facturerec';
 
 		$this->db->begin();
 
@@ -2929,7 +2930,9 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array and this->linkedObjectsIds
+	 *	Fetch array of objects linked to current object (object of enabled modules only). Links are loaded into
+	 *		this->linkedObjectsIds array and
+	 *		this->linkedObjects array if $loadalsoobjects = 1
 	 *  Possible usage for parameters:
 	 *  - all parameters empty -> we look all link to current object (current object can be source or target)
 	 *  - source id+type -> will get target list linked to source
@@ -2937,17 +2940,18 @@ abstract class CommonObject
 	 *  - source id+type + target type -> will get target list of the type
 	 *  - target id+type + target source -> will get source list of the type
 	 *
-	 *	@param	int		$sourceid		Object source id (if not defined, id of object)
-	 *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
-	 *	@param  int		$targetid		Object target id (if not defined, id of object)
-	 *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
-	 *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
-	 *  @param  int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
-	 *  @param  string	$orderby		SQL 'ORDER BY' clause
-	 *	@return int						<0 if KO, >0 if OK
+	 *	@param	int		$sourceid			Object source id (if not defined, id of object)
+	 *	@param  string	$sourcetype			Object source type (if not defined, element name of object)
+	 *	@param  int		$targetid			Object target id (if not defined, id of object)
+	 *	@param  string	$targettype			Object target type (if not defined, elemennt name of object)
+	 *	@param  string	$clause				'OR' or 'AND' clause used when both source id and target id are provided
+	 *  @param  int		$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
+	 *  @param  string	$orderby			SQL 'ORDER BY' clause
+	 *  @param	int		$loadalsoobjects	Load also array this->linkedObjects (Use 0 to increase performances)
+	 *	@return int							<0 if KO, >0 if OK
 	 *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
 	 */
-	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1,$orderby='sourcetype')
+	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1,$orderby='sourcetype',$loadalsoobjects=1)
 	{
 		global $conf;
 
@@ -2976,10 +2980,10 @@ abstract class CommonObject
 		$targettype = (! empty($targettype) ? $targettype : $this->element);
 
 		/*if (empty($sourceid) && empty($targetid))
-        {
-        	dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
-        	return -1;
-        }*/
+		 {
+		 dol_syslog('Bad usage of function. No source nor target id defined (nor as parameter nor as object id)', LOG_ERR);
+		 return -1;
+		 }*/
 
 		// Links between objects are stored in table element_element
 		$sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
@@ -3041,7 +3045,8 @@ abstract class CommonObject
 
 			if (! empty($this->linkedObjectsIds))
 			{
-				foreach($this->linkedObjectsIds as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
+				$tmparray = $this->linkedObjectsIds;
+				foreach($tmparray as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
 					$module = $element = $subelement = $objecttype;
@@ -3107,20 +3112,27 @@ abstract class CommonObject
 					// Here $module, $classfile and $classname are set
 					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
 					{
-						dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-						//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
-						if (class_exists($classname))
+						if ($loadalsoobjects)
 						{
-							foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
+							dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+							//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
+							if (class_exists($classname))
 							{
-								$object = new $classname($this->db);
-								$ret = $object->fetch($objectid);
-								if ($ret >= 0)
+								foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
 								{
-									$this->linkedObjects[$objecttype][$i] = $object;
+									$object = new $classname($this->db);
+									$ret = $object->fetch($objectid);
+									if ($ret >= 0)
+									{
+										$this->linkedObjects[$objecttype][$i] = $object;
+									}
 								}
 							}
 						}
+					}
+					else
+					{
+						unset($this->linkedObjectsIds[$objecttype]);
 					}
 				}
 			}
@@ -3824,6 +3836,7 @@ abstract class CommonObject
 
 			print '<tr class="liste_titre nodrag nodrop">';
 
+			// Adds a line numbering column
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
 
 			// Description
@@ -4911,6 +4924,9 @@ abstract class CommonObject
 			   		}
 			   	}
 
+				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
+				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
 			   	switch ($attributeType)
 			   	{
 			   		case 'int':
@@ -4924,6 +4940,21 @@ abstract class CommonObject
 			   				$new_array_options[$key] = null;
 			   			}
 			 			break;
+					case 'double':
+						$value = price2num($value);
+						if (!is_numeric($value) && $value!='')
+						{
+							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+							$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
+							return -1;
+						}
+						elseif ($value=='')
+						{
+							$new_array_options[$key] = null;
+						}
+						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+						$new_array_options[$key] = $value;
+						break;
 			 		/*case 'select':	// Not required, we chosed value='0' for undefined values
              			if ($value=='-1')
              			{
@@ -5118,6 +5149,9 @@ abstract class CommonObject
 			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
 
+			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
+			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
 			switch ($attributeType)
 			{
 				case 'int':
@@ -5130,6 +5164,21 @@ abstract class CommonObject
 					{
 						$this->array_options["options_".$key] = null;
 					}
+					break;
+				case 'double':
+					$value = price2num($value);
+					if (!is_numeric($value) && $value!='')
+					{
+						dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+						$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
+						return -1;
+					}
+					elseif ($value=='')
+					{
+						$this->array_options["options_".$key] = null;
+					}
+					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+					$this->array_options["options_".$key] = $value;
 					break;
 			 	/*case 'select':	// Not required, we chosed value='0' for undefined values
              		if ($value=='-1')
@@ -5222,37 +5271,34 @@ abstract class CommonObject
 		$val=$this->fields[$key];
 
 		$out='';
-                $type='';
-                $param['options']=array();
-                $size =$this->fields[$key]['size'];
-                // Because we work on extrafields
-                if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
-                    $param['options']=array($reg[1].':'.$reg[2]=>'N');
-                    $type ='link';
-                }else if(preg_match('/^link:(.*):(.*)/i', $val['type'], $reg)){
-                    $param['options']=array($reg[1].':'.$reg[2]=>'N');
-                    $type ='link';
-                }else if(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)){
-
-                    $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
-                    $type ='sellist';
-                }else if(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)){
-
-                    $param['options']=array();
-                    $type ='varchar';
-                    $size=$reg[1];
-                }else if(preg_match('/varchar/', $val['type'])){
-
-                    $param['options']=array();
-                    $type ='varchar';
-                }else if(is_array($this->fields[$key]['arrayofkeyval'])){
-
-                    $param['options']=$this->fields[$key]['arrayofkeyval'];
-                    $type ='select';
-                }else {
-                    $param['options']=array();
-                    $type =$this->fields[$key]['type'];
-                }
+        $type='';
+        $param = array();
+        $param['options']=array();
+        $size =$this->fields[$key]['size'];
+        // Because we work on extrafields
+        if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
+            $param['options']=array($reg[1].':'.$reg[2]=>'N');
+            $type ='link';
+        } elseif(preg_match('/^link:(.*):(.*)/i', $val['type'], $reg)) {
+            $param['options']=array($reg[1].':'.$reg[2]=>'N');
+            $type ='link';
+        } elseif(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+            $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
+            $type ='sellist';
+        } elseif(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)) {
+            $param['options']=array();
+            $type ='varchar';
+            $size=$reg[1];
+        } elseif(preg_match('/varchar/', $val['type'])) {
+            $param['options']=array();
+            $type ='varchar';
+        } elseif(is_array($this->fields[$key]['arrayofkeyval'])) {
+            $param['options']=$this->fields[$key]['arrayofkeyval'];
+            $type ='select';
+        } else {
+            $param['options']=array();
+            $type =$this->fields[$key]['type'];
+        }
 
 		$label=$this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
@@ -5329,7 +5375,7 @@ abstract class CommonObject
 			if (!$required && $value == '') $value = '-1';
 
 			// TODO Must also support $moreparam
-			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 1, 0);
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 		}
 		elseif (in_array($type,array('int','integer')))
 		{
@@ -7288,7 +7334,7 @@ abstract class CommonObject
 		$comment = new Comment($this->db);
 		$result=$comment->fetchAllFor($this->element, $this->id);
 		if ($result<0) {
-			$this->errors=array_merge($this->errors,$comment->errors);
+			$this->errors=array_merge($this->errors, $comment->errors);
 			return -1;
 		} else {
 			$this->comments = $comment->comments;
@@ -7305,4 +7351,20 @@ abstract class CommonObject
 	{
 		return count($this->comments);
 	}
+
+    /**
+     * Trim object parameters
+     * @param string[] $parameters array of parameters to trim
+     *
+     * @return void
+     */
+    public function trimParameters($parameters)
+    {
+        if (!is_array($parameters)) return;
+        foreach ($parameters as $parameter) {
+            if (isset($this->$parameter)) {
+                $this->$parameter = trim($this->$parameter);
+            }
+        }
+    }
 }

@@ -13,6 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1032,6 +1033,7 @@ class Propal extends CommonObject
                 // Add linked object (deprecated, use ->linkedObjectsIds instead)
                 if (! $error && $this->origin && $this->origin_id)
                 {
+                    dol_syslog('Deprecated use of linked object, use ->linkedObjectsIds instead', LOG_WARNING);
                 	$ret = $this->add_object_linked();
                 	if (! $ret)	dol_print_error($this->db);
                 }
@@ -1102,13 +1104,6 @@ class Propal extends CommonObject
 							$fk_parent_line = $result;
 						}
 					}
-				}
-
-				// Add linked object
-				if (! $error && $this->origin && $this->origin_id)
-				{
-					$ret = $this->add_object_linked();
-					if (! $ret)	dol_print_error($this->db);
 				}
 
 				// Set delivery address
@@ -1625,6 +1620,7 @@ class Propal extends CommonObject
 				$line->product_type     = $objp->product_type;
 				$line->label            = $objp->custom_label;
 				$line->desc             = $objp->description;  // Description ligne
+				$line->description      = $objp->description;  // Description ligne
 				$line->qty              = $objp->qty;
 				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
@@ -3174,18 +3170,18 @@ class Propal extends CommonObject
 
 		$statuttrans='';
 		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
-		if ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
-		if ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
-		if ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
-		if ($statut==self::STATUS_BILLED) $statuttrans='statut6';
+		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
+		elseif ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
+		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
+		elseif ($statut==self::STATUS_BILLED) $statuttrans='statut6';
 
 		if ($mode == 0)	return $this->labelstatut[$statut];
-		if ($mode == 1)	return $this->labelstatut_short[$statut];
-		if ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		if ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		if ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
-		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
-		if ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
+		elseif ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
+		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
+		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
+		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
 	}
 
 
@@ -3555,103 +3551,13 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 * 	Retrieve an array of propal lines
+	 * 	Retrieve an array of proposal lines
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
 	function getLinesArray()
 	{
 		return $this->fetch_lines();
-		/*
-		$this->lines = array();
-
-		$sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
-		$sql.= ' pt.qty, pt.vat_src_code, pt.tva_tx, pt.localtax1_tx, pt.localtax2_tx, pt.localtax1_type, pt.localtax2_type, pt.remise_percent, pt.subprice, pt.info_bits,';
-		$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.total_localtax1, pt.total_localtax2, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code,';
-		$sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
-		$sql.= ' pt.fk_unit,';
-		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.description as product_desc, p.tobatch as product_tobatch,';
-		$sql.= ' p.entity,';
-		$sql.= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-		$sql.= ' WHERE pt.fk_propal = '.$this->id;
-		$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
-
-		dol_syslog(get_class($this).'::getLinesArray', LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
-
-				$this->lines[$i]					= new PropaleLigne($this->db);
-				$this->lines[$i]->id				= $obj->rowid; // for backward compatibility
-				$this->lines[$i]->rowid				= $obj->rowid;
-				$this->lines[$i]->label 			= $obj->custom_label;
-				$this->lines[$i]->desc       		= $obj->description;
-				$this->lines[$i]->description 		= $obj->description;
-				$this->lines[$i]->fk_product		= $obj->fk_product;
-				$this->lines[$i]->ref				= $obj->ref;
-				$this->lines[$i]->product_ref		= $obj->ref;
-				$this->lines[$i]->entity            = $obj->entity;             // Product entity
-				$this->lines[$i]->product_label		= $obj->product_label;
-				$this->lines[$i]->product_desc		= $obj->product_desc;
-				$this->lines[$i]->product_tobatch   = $obj->product_tobatch;
-				$this->lines[$i]->fk_product_type	= $obj->fk_product_type;    // deprecated
-				$this->lines[$i]->product_type		= $obj->product_type;
-				$this->lines[$i]->qty				= $obj->qty;
-				$this->lines[$i]->subprice			= $obj->subprice;
-				$this->lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
-				$this->lines[$i]->remise_percent	= $obj->remise_percent;
-
-				$this->lines[$i]->vat_src_code      = $obj->vat_src_code;
-				$this->lines[$i]->tva_tx			= $obj->tva_tx;
-				$this->lines[$i]->localtax1_tx		= $obj->localtax1_tx;
-				$this->lines[$i]->localtax2_tx		= $obj->localtax2_tx;
-				$this->lines[$i]->localtax1_type	= $obj->localtax1_type;
-				$this->lines[$i]->localtax2_type	= $obj->localtax2_type;
-				$this->lines[$i]->info_bits			= $obj->info_bits;
-				$this->lines[$i]->total_ht			= $obj->total_ht;
-				$this->lines[$i]->total_tva			= $obj->total_tva;
-				$this->lines[$i]->total_ttc			= $obj->total_ttc;
-				$this->lines[$i]->total_localtax1	= $obj->total_localtax1;
-				$this->lines[$i]->total_localtax2	= $obj->total_localtax2;
-				$this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
-				$marginInfos						= getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
-				$this->lines[$i]->pa_ht				= $marginInfos[0];
-				$this->lines[$i]->marge_tx			= $marginInfos[1];
-				$this->lines[$i]->marque_tx			= $marginInfos[2];
-				$this->lines[$i]->fk_parent_line	= $obj->fk_parent_line;
-				$this->lines[$i]->special_code		= $obj->special_code;
-				$this->lines[$i]->rang				= $obj->rang;
-				$this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
-				$this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
-				$this->lines[$i]->fk_unit			= $obj->fk_unit;
-
-				// Multicurrency
-				$this->lines[$i]->fk_multicurrency 			= $obj->fk_multicurrency;
-				$this->lines[$i]->multicurrency_code 		= $obj->multicurrency_code;
-				$this->lines[$i]->multicurrency_subprice 	= $obj->multicurrency_subprice;
-				$this->lines[$i]->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
-				$this->lines[$i]->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-
-				$i++;
-			}
-			$this->db->free($resql);
-
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}*/
 	}
 
 	/**

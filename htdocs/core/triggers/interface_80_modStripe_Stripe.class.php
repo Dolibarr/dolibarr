@@ -114,13 +114,12 @@ class InterfaceStripe
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Put here code you want to execute when a Dolibarr business events occurs.
+		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
-		$langs->load("members");
-		$langs->load("users");
-		$langs->load("mails");
-		$langs->load('other');
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("members","other","users","mails"));
 
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
@@ -141,7 +140,7 @@ class InterfaceStripe
 		if ($action == 'COMPANY_MODIFY') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this. May return '' if no Oauth defined.
 
 			if ($object->client != 0) {
 				$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);	// This make a network request
@@ -170,7 +169,7 @@ class InterfaceStripe
 		if ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this. May return '' if no Oauth defined.
 
 			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if ($customer)
@@ -194,15 +193,10 @@ class InterfaceStripe
 
 			if (! empty($object->stripe_card_ref))
 			{
-				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
+				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this. May return '' if no Oauth defined.
 				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
 
-				if (empty($stripeacc))
-				{
-					$ok = -1;
-					$this->error = "Stripe API keys are not defined into Stripe module setup for mode ".$service;
-				}
-				elseif ($stripecu)
+				if ($stripecu)
 				{
 					// Get customer (required to get a card)
 					if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
@@ -234,14 +228,10 @@ class InterfaceStripe
 
 			if (! empty($object->stripe_card_ref))
 			{
-				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
+				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this. May return '' if no Oauth defined.
 				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
-				if (empty($stripeacc))
-				{
-					$ok = -1;
-					$this->error = "Stripe API keys are not defined into Stripe module setup for mode ".$service;
-				}
-				elseif ($stripecu)
+
+				if ($stripecu)
 				{
 					// Get customer (required to get a card)
 					if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage

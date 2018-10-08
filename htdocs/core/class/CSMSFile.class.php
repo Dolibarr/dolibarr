@@ -34,15 +34,18 @@
  */
 class CSMSFile
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-	var $addr_from;
-	var $addr_to;
-	var $deferred;
-	var $priority;
-	var $class;
-	var $message;
-	var $nostop;
+	public $addr_from;
+	public $addr_to;
+	public $deferred;
+	public $priority;
+	public $class;
+	public $message;
+	public $nostop;
 
 
 	/**

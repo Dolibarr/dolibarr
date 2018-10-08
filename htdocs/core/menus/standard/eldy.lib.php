@@ -75,6 +75,21 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) $titlehome = '&nbsp; <span class="fa fa-home"></span> &nbsp;';
 	$menu->add('/index.php?mainmenu=home&amp;leftmenu=home', $titlehome, 0, $showmode, $atarget, "home", '', 10, $id, $idsel, $classname);
 
+	// Members
+	$tmpentry=array('enabled'=>(! empty($conf->adherent->enabled)),
+	'perms'=>(! empty($user->rights->adherent->lire)),
+	'module'=>'adherent');
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+	{
+		$classname="";
+		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
+		else $classname = 'class="tmenu"';
+		$idsel='members';
+
+		$menu->add('/adherents/index.php?mainmenu=members&amp;leftmenu=', $langs->trans("MenuMembers"), 0, $showmode, $atarget, "members", '', 18, $id, $idsel, $classname);
+	}
+
 	// Third parties
 	$tmpentry=array('enabled'=>(( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
@@ -221,7 +236,21 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		else $classname = 'class="tmenu"';
 		$idsel='project';
 
-		$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=', $langs->trans("Projects"), 0, $showmode, $atarget, "project", '', 70, $id, $idsel, $classname);
+		$title = $langs->trans("LeadsOrProjects");	// Leads and opportunities by default
+		$showmodel = $showmodep = $showmode;
+		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			$title = $langs->trans("Projects");
+			$showmodel = 0;
+		}
+		if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {
+			$title = $langs->trans("Leads");
+			$showmodep = 0;
+		}
+
+		$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=', $title, 0, $showmode, $atarget, "project", '', 70, $id, $idsel, $classname);
+		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=openedopp', $langs->trans("ListLeads"), 0, $showmodel & $conf->global->PROJECT_USE_OPPORTUNITIES, $atarget, "project", '', 70, $id, $idsel, $classname);
+		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=notopenedopp', $langs->trans("ListProjects"), 0, $showmodep, $atarget, "project", '', 70, $id, $idsel, $classname);
 	}
 
 	// HRM
@@ -241,8 +270,6 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$menu->add('/hrm/index.php?mainmenu=hrm&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '', 80, $id, $idsel, $classname);
 	}
 
-
-
 	// Tools
 	$tmpentry=array(
 	'enabled'=>1,
@@ -259,21 +286,6 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$idsel='tools';
 
 		$menu->add('/core/tools.php?mainmenu=tools&amp;leftmenu=', $langs->trans("Tools"), 0, $showmode, $atarget, "tools", '', 90, $id, $idsel, $classname);
-	}
-
-	// Members
-	$tmpentry=array('enabled'=>(! empty($conf->adherent->enabled)),
-	'perms'=>(! empty($user->rights->adherent->lire)),
-	'module'=>'adherent');
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='members';
-
-		$menu->add('/adherents/index.php?mainmenu=members&amp;leftmenu=', $langs->trans("MenuMembers"), 0, $showmode, $atarget, "members", '', 100, $id, $idsel, $classname);
 	}
 
 	// Show personalized menus
@@ -565,8 +577,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("AdminTools"), 0, $user->admin, '', $mainmenu, 'admintools', 0, '', '', '', '<i class="fa fa-server fa-fw paddingright"></i>');
 			if ($usemenuhider || empty($leftmenu) || preg_match('/^admintools/',$leftmenu))
 			{
-				$langs->load("admin");
-				$langs->load("help");
+			    // Load translation files required by the page
+                $langs->loadLangs(array('admin', 'help'));
 
 				$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
@@ -947,12 +959,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// Various payment
-				if (! empty($conf->banque->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
+				if (! empty($conf->banque->enabled) && empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))
 				{
 					$langs->load("banks");
-					$newmenu->add("/compta/bank/various_payment/index.php?leftmenu=tax_various&amp;mainmenu=billing",$langs->trans("MenuVariousPayment"),1,$user->rights->banque->lire, '', $mainmenu, 'tax_various');
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) $newmenu->add("/compta/bank/various_payment/card.php?leftmenu=tax_various&action=create",$langs->trans("MenuNewVariousPayment"), 2, $user->rights->banque->modifier);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) $newmenu->add("/compta/bank/various_payment/index.php?leftmenu=tax_various",$langs->trans("List"),2,$user->rights->banque->lire);
+					$newmenu->add("/compta/bank/various_payment/list.php?leftmenu=tax_various&amp;mainmenu=billing",$langs->trans("MenuVariousPayment"),1,$user->rights->banque->lire, '', $mainmenu, 'tax_various');
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) $newmenu->add("/compta/bank/various_payment/card.php?leftmenu=tax_various&action=create",$langs->trans("New"), 2, $user->rights->banque->modifier);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_various/i',$leftmenu)) $newmenu->add("/compta/bank/various_payment/list.php?leftmenu=tax_various",$langs->trans("List"),2,$user->rights->banque->lire);
 				}
 			}
 		}
@@ -1340,17 +1352,42 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				$search_project_user = GETPOST('search_project_user','int');
 
+				$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
+				'perms'=>(! empty($user->rights->projet->lire)),
+				'module'=>'projet');
+				$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
+
+				$titleboth=$langs->trans("LeadsOrProjects");
+				$titlenew = $langs->trans("NewLeadOrProject");	// Leads and opportunities by default
+				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
+				{
+					$titleboth=$langs->trans("Projects");
+					$titlenew = $langs->trans("NewProject");
+				}
+				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+					$titleboth=$langs->trans("Leads");
+					$titlenew = $langs->trans("NewLead");
+				}
+
 				// Project affected to user
-				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("Projects"), 0, $user->rights->projet->lire, '', $mainmenu, 'projects');
-				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("NewProject"), 1, $user->rights->projet->creer);
-				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user?'&search_project_user='.$search_project_user:'')."&search_status=99", $langs->trans("List"), 1, $user->rights->projet->lire);
+				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user?'&search_project_user='.$search_project_user:''), $titleboth, 0, $user->rights->projet->lire, '', $mainmenu, 'projects');
+				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user?'&search_project_user='.$search_project_user:''), $titlenew, 1, $user->rights->projet->creer);
+
+				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
+				{
+					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user?'&search_project_user='.$search_project_user:'').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+				}
+				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1)
+				{
+					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
+					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
+				}
+				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99', $langs->trans("List"), 2, $showmode);
+				}
 
 				// All project i have permission on
-				/*
-				$newmenu->add("/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire, '', $mainmenu, 'projects');
-				$newmenu->add("/projet/card.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
-				$newmenu->add("/projet/list.php?leftmenu=projects&search_status=99", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
-                */
 				$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
 
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -1362,13 +1399,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				    $newmenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
 
 				    $newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
-
-					// All project i have permission on
-					/*$newmenu->add("/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
-					$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
-					$newmenu->add("/projet/tasks/list.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
-					$newmenu->add("/projet/activity/perweek.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->lire);
-					*/
 				}
 
 				// Categories

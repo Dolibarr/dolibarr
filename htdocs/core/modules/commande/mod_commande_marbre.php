@@ -29,13 +29,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
  */
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='CO';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='CO';
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $nom='Marbre';
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Marbre';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Marbre';
 
 
     /**

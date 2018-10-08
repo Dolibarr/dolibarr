@@ -272,14 +272,13 @@ $dirins_ok=(dol_is_dir($dirins));
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url, '', '', '', $morejs, $morecss, 0, 0);
 
-$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
-$arrayofwarnings=array();    // Array of warning each module want to show when activated
-$arrayofwarningsext=array();    // Array of warning each module want to show when we activate an external module
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-
+$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofwarnings=array();    // Array of warning each module want to show when activated
+$arrayofwarningsext=array();    // Array of warning each module want to show when we activate an external module
 $filename = array();
 $modules = array();
 $orders = array();
@@ -371,10 +370,10 @@ foreach ($modulesdir as $dir)
 		    			            	$familykey = $objMod->family;
 		    			            }
 
-		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'500');
-		    			            if ($moduleposition == 500 && ($objMod->isCoreOrExternalModule() == 'external'))
+		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'50');
+		    			            if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external'))
 		    			            {
-		    			                $moduleposition = 800;
+		    			            	$moduleposition = '80';		// External modules at end by default
 		    			            }
 
 		    			            // Add list of warnings to show into arrayofwarnings and arrayofwarningsext
@@ -847,6 +846,8 @@ if ($mode == 'common')
 
     dol_fiche_end();
 
+    print '<br>';
+
     // Show warning about external users
     print info_admin(showModulesExludedForExternal($modules))."\n";
 
@@ -1063,7 +1064,7 @@ if ($mode == 'develop')
 	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
-	print '<td>'.$langs->trans("TryToUseTheModuleBuilder").'</td>';
+	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
 	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
 	print '</tr>';
 

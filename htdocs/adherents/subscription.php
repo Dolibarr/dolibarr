@@ -359,8 +359,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             	// Set output language
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	// Load traductions files requiredby by page
             	$outputlangs->loadLangs(array("main", "members"));
-            	// Get email content fro mtemplae
+            	// Get email content from template
             	$arraydefaultmessage=null;
             	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
@@ -393,7 +394,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 	$listofmimes=array(dol_mimetype($file));
                 }
 
-                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+                $moreinheader='X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
+
+                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1, '', $moreinheader);
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
@@ -1053,8 +1056,9 @@ if ($rowid > 0)
             // Set output language
             $outputlangs = new Translate('', $conf);
             $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            // Load traductions files requiredby by page
             $outputlangs->loadLangs(array("main", "members"));
-            // Get email content fro mtemplae
+            // Get email content from template
             $arraydefaultmessage=null;
             $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 

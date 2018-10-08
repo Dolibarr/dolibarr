@@ -126,6 +126,10 @@ class Facture extends CommonInvoice
 	public $close_note;
 	//! 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
 	public $paye;
+	//! key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
+	public $module_source;
+	//! id of template invoice when generated from a template invoice
+	public $fk_fac_rec_source;
 	//! id of source invoice if replacement invoice or credit note
 	public $fk_facture_source;
 	public $linked_objects=array();
@@ -216,7 +220,7 @@ class Facture extends CommonInvoice
 	const TYPE_SITUATION = 5;
 
 	/**
-	 * Draft
+	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
 
@@ -443,7 +447,7 @@ class Facture extends CommonInvoice
 		$sql.= ", note_public";
 		$sql.= ", ref_client, ref_int";
         $sql.= ", fk_account";
-		$sql.= ", fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
+		$sql.= ", module_source, fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
 		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
 		$sql.= ", situation_cycle_ref, situation_counter, situation_final";
 		$sql.= ", fk_incoterms, location_incoterms";
@@ -467,6 +471,7 @@ class Facture extends CommonInvoice
 		$sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
 		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
+		$sql.= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql.= ", ".($this->fk_fac_rec_source?"'".$this->db->escape($this->fk_fac_rec_source)."'":"null");
 		$sql.= ", ".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
@@ -1213,7 +1218,7 @@ class Facture extends CommonInvoice
             if (! empty($this->total_tva))
                 $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_localtax1) && $this->total_localtax1 != 0)		// We keep test != 0 because $this->total_localtax1 can be '0.00000000'
-                $label.= '<br><b>eee' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
+                $label.= '<br><b>' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_localtax2) && $this->total_localtax2 != 0)
                 $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
@@ -1253,12 +1258,14 @@ class Facture extends CommonInvoice
 
 		if ($addlinktonotes)
 		{
-		    $txttoshow=($user->societe_id>0?$this->note_public:$this->note_private);
+		    $txttoshow=($user->socid > 0 ? $this->note_public : $this->note_private);
 		    if ($txttoshow)
 		    {
                 $notetoshow=$langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow,1);
     		    $result.=' <span class="note inline-block">';
-    		    $result.='<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">'.img_picto('','object_generic').'</a>';
+    		    $result.='<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+    		    $result.=img_picto('','note');
+    		    $result.='</a>';
     		    //$result.=img_picto($langs->trans("ViewNote"),'object_generic');
     		    //$result.='</a>';
     		    $result.='</span>';
@@ -1411,7 +1418,7 @@ class Facture extends CommonInvoice
 			}
 			else
 			{
-				$this->error='Bill with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
+				$this->error='Invoice with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
 				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 				return 0;
 			}
@@ -1519,7 +1526,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-				// TODO Fetch optional like done in fetch line of facture_rec ?
+                                $line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 
@@ -1982,7 +1989,8 @@ class Facture extends CommonInvoice
 
 							if (! dol_delete_file($file,0,0,0,$this)) // For triggers
 							{
-								$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+								$langs->load("errors");
+								$this->error=$langs->trans("ErrorFailToDeleteFile",$file);
 								$this->db->rollback();
 								return 0;
 							}
@@ -1991,7 +1999,8 @@ class Facture extends CommonInvoice
 						{
 							if (! dol_delete_dir_recursive($dir)) // For remove dir and meta
 							{
-								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+								$langs->load("errors");
+								$this->error=$langs->trans("ErrorFailToDeleteDir",$dir);
 								$this->db->rollback();
 								return 0;
 							}
@@ -4911,9 +4920,10 @@ class FactureLigne extends CommonInvoiceLine
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
 	 * @param  int     $invoiceid      Invoice id
+	 * @param  bool    $include_credit_note		Include credit note or not
 	 * @return int                     >= 0
 	 */
-	function get_prev_progress($invoiceid)
+	function get_prev_progress($invoiceid, $include_credit_note=true)
 	{
         // phpcs:enable
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
@@ -4928,7 +4938,26 @@ class FactureLigne extends CommonInvoiceLine
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
-				return floatval($res['situation_percent']);
+
+				$returnPercent = floatval($res['situation_percent']);
+
+				if($include_credit_note) {
+
+				    $sql = 'SELECT fd.situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet fd';
+				    $sql.= ' JOIN ' . MAIN_DB_PREFIX . 'facture f ON (f.rowid = fd.fk_facture) ';
+				    $sql.= ' WHERE fd.fk_prev_id =' . $this->fk_prev_id;
+				    $sql.= ' AND f.situation_cycle_ref = '.$tmpinvoice->situation_cycle_ref; // Prevent cycle outed
+				    $sql.= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
+
+				    $res = $this->db->query($sql);
+				    if($res) {
+				        while($obj = $this->db->fetch_object($res)) {
+				            $returnPercent = $returnPercent + floatval($obj->situation_percent);
+				        }
+				    }
+				}
+
+				return $returnPercent;
 			} else {
 				$this->error = $this->db->error();
 				dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);

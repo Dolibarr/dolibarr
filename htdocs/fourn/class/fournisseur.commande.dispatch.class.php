@@ -103,8 +103,6 @@ class CommandeFournisseurDispatch extends CommonObject
         $this->statutshort[0] = 'Received';
         $this->statutshort[1] = 'Verified';
         $this->statutshort[2] = 'Denied';
-
-        return 1;
     }
 
 

@@ -65,9 +65,7 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_p
 $form=new Form($db);
 $formpropal=new FormPropal($db);
 
-$langs->load('propal');
-$langs->load('other');
-$langs->load("companies");
+$langs->loadLangs(array('propal', 'other', 'companies'));
 
 if ($mode == 'customer')
 {

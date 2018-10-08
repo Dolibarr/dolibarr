@@ -140,7 +140,7 @@ class Adherent extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *  Function sending an email has the adherent with the text supplied in parameter.
+	 *  Function sending an email to the current member with the text supplied in parameter.
 	 *
 	 *  @param	string	$text				Content of message (not html entities encoded)
 	 *  @param	string	$subject			Subject of message
@@ -152,9 +152,10 @@ class Adherent extends CommonObject
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
 	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$moreinheader		Add more html headers
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
+	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='', $moreinheader='')
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -176,9 +177,11 @@ class Adherent extends CommonObject
 		$from=$conf->email_from;
 		if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
 
+		$trackid = 'mem'.$this->id;
+
 		// Send email (substitutionarray must be done just before this)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
+		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, '', '', $trackid, $moreinheader);
 		if ($mailfile->sendfile())
 		{
 			return 1;
@@ -2019,52 +2022,47 @@ class Adherent extends CommonObject
 		if ($mode == 0)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
 				else                                     return $langs->trans("MemberStatusPaid");
 			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliated");
 		}
 		elseif ($mode == 1)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
 				else                                     return $langs->trans("MemberStatusPaidShort");
 			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
+			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
 		}
 		elseif ($mode == 2)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraftShort");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaidShort");
 			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
+			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
 		}
 		elseif ($mode == 3)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4');
 			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
+			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'),'statut5');
 		}
 		elseif ($mode == 4)
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'),'statut4').' '.$langs->trans("MemberStatusPaid");
@@ -2074,8 +2072,7 @@ class Adherent extends CommonObject
 		elseif ($mode == 5)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
@@ -2085,8 +2082,7 @@ class Adherent extends CommonObject
 		elseif ($mode == 6)
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-			if ($statut >= 1)
-			{
+			if ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActive").' </span>'.img_picto($langs->trans('MemberStatusActive'),'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLate").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaid").' </span>'.img_picto($langs->trans('MemberStatusPaid'),'statut4');
@@ -2107,7 +2103,7 @@ class Adherent extends CommonObject
         // phpcs:enable
 		global $conf;
 
-		$this->nb=array();
+		$this->nb = array();
 
 		$sql = "SELECT count(a.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -2635,6 +2631,7 @@ class Adherent extends CommonObject
 					// Send reminder email
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+					// Load traductions files requiredby by page
 					$outputlangs->loadLangs(array("main", "members"));
 					dol_syslog("sendReminderForExpiredSubscription Language set to ".$outputlangs->defaultlang);
 
@@ -2654,8 +2651,11 @@ class Adherent extends CommonObject
 						$from = $conf->global->ADHERENT_MAIL_FROM;
 						$to = $adherent->email;
 
+						$trackid = 'mem'.$adherent->id;
+						$moreinheader='X-Dolibarr-Info: sendReminderForExpiredSubscription'."\r\n";
+
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
 						$result = $cmail->sendfile();
 						if (! $result)
 						{

@@ -28,8 +28,7 @@
 // Filename to print must be provided into 'file' parameter
 
 // Print file
-if ($action == 'print_file' && $user->rights->printing->read)
-{
+if ($action == 'print_file' && $user->rights->printing->read) {
     $langs->load("printing");
     require_once DOL_DOCUMENT_ROOT . '/core/modules/printing/modules_printing.php';
     $objectprint = new PrintingDriver($db);
@@ -55,7 +54,7 @@ if ($action == 'print_file' && $user->rights->printing->read)
                     $subdir = 'commande';
                 }
                 try {
-                    $ret = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
+                    $ret = $printer->printFile(GETPOST('file', 'alpha'), $module, $subdir);
                     if ($ret > 0) {
                         //print '<pre>'.print_r($printer->errors, true).'</pre>';
                         setEventMessages($printer->error, $printer->errors, 'errors');

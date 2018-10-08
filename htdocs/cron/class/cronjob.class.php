@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 /**
- *	Crob Job class
+ *	Cron Job class
  */
 class Cronjob extends CommonObject
 {
@@ -53,7 +53,12 @@ class Cronjob extends CommonObject
     public $jobtype;
 	public $tms='';
 	public $datec='';
-	public $label;
+
+	/**
+     * @var string Cron Job label
+     */
+    public $label;
+
 	public $command;
 	public $classesname;
 	public $objectname;
@@ -92,7 +97,6 @@ class Cronjob extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -245,8 +249,8 @@ class Cronjob extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."cronjob");
 
-			if (! $notrigger)
-			{
+			//if (! $notrigger)
+			//{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action calls a trigger.
 
@@ -256,7 +260,7 @@ class Cronjob extends CommonObject
 	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
-			}
+			//}
         }
 
         // Commit or rollback
@@ -431,7 +435,7 @@ class Cronjob extends CommonObject
     	$sql.= " WHERE 1 = 1";
     	if ($processing >= 0) $sql.= " AND t.processing = ".(empty($processing)?'0':'1');
     	if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
-    	if ($status == 2) $sql.= " AND t.status = 2";
+    	elseif ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
     		foreach($filter as $key => $value)
@@ -634,10 +638,8 @@ class Cronjob extends CommonObject
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error && ! $notrigger)
+		//{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action calls a trigger.
 
@@ -647,8 +649,7 @@ class Cronjob extends CommonObject
 	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            //// End call triggers
-	    	}
-		}
+		//}
 
         // Commit or rollback
 		if ($error)
@@ -764,11 +765,11 @@ class Cronjob extends CommonObject
 			$error++;
 		}
 
-		if (! $error)
-		{
+		//if (! $error)
+		//{
 
 
-		}
+		//}
 
 		unset($this->context['createfromclone']);
 
@@ -1305,34 +1306,33 @@ class Cronjob extends CommonObject
 
 	    if ($mode == 0)
 	    {
-	        $prefix='';
 	        if ($status == 1) return $langs->trans('Enabled');
-	        if ($status == 0) return $langs->trans('Disabled');
+	        elseif ($status == 0) return $langs->trans('Disabled');
 	    }
-	    if ($mode == 1)
+	    elseif ($mode == 1)
 	    {
 	        if ($status == 1) return $langs->trans('Enabled');
-	        if ($status == 0) return $langs->trans('Disabled');
+	        elseif ($status == 0) return $langs->trans('Disabled');
 	    }
-	    if ($mode == 2)
+	    elseif ($mode == 2)
 	    {
 	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
-	        if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+	        elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
 	    }
-	    if ($mode == 3)
+	    elseif ($mode == 3)
 	    {
 	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
-	        if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+	        elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
 	    }
-	    if ($mode == 4)
+	    elseif ($mode == 4)
 	    {
 	        if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"').' '.$langs->trans('Enabled');
-	        if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
+	        elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"').' '.$langs->trans('Disabled');
 	    }
-	    if ($mode == 5)
+	    elseif ($mode == 5)
 	    {
 	        if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4','class="pictostatus"');
-	        if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
+	        elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5','class="pictostatus"');
 	    }
 	}
 }
@@ -1356,7 +1356,12 @@ class Cronjobline
 
 	public $tms='';
 	public $datec='';
-	public $label;
+
+	/**
+     * @var string Cron Job Line label
+     */
+    public $label;
+
 	public $jobtype;
 	public $command;
 	public $classesname;

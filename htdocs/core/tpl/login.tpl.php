@@ -78,7 +78,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.5), rgb(240,240,240));"':'' ?>>
+<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"':'' ?>>
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -191,9 +191,9 @@ if ($captcha) {
 
 </div>
 
-</div> <!-- end div login-right -->
+</div> <!-- end div login_right -->
 
-</div> <!-- end div login-line1 -->
+</div> <!-- end div login_line1 -->
 
 
 <div id="login_line2" style="clear: both">
@@ -213,7 +213,9 @@ if ($forgetpasslink || $helpcenterlink)
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 15px;">';
 	if ($forgetpasslink) {
-		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">';
+		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
+		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
 		echo '</a>';
 	}

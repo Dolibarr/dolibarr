@@ -132,8 +132,6 @@ class FormMail extends Form
 		$this->withbodyreadonly=0;
 		$this->withdeliveryreceiptreadonly=0;
 		$this->withfckeditor=-1;	// -1 = Auto
-
-		return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -960,7 +958,7 @@ class FormMail extends Form
 				if (count($validpaymentmethod) > 0 && $paymenturl)
 				{
 					$langs->load('other');
-					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=str_replace('\n',"\n",$langs->transnoentities("PredefinedMailContentLink", $paymenturl));
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=str_replace('\n', "\n", $langs->transnoentities("PredefinedMailContentLink", $paymenturl));
 					$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
 				}
 				else

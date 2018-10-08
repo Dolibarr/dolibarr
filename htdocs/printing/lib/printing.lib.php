@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,10 @@
 /**
  *  Define head array for tabs of printing tools setup pages
  *
- *  @param	string	$mode		Mode
- *  @return         			Array of head
+ *  @param  string  $mode       Mode
+ *  @return array               Array of head
  */
-function printingadmin_prepare_head($mode)
+function printingAdminPrepareHead($mode)
 {
     global $langs, $conf;
 
@@ -41,28 +42,26 @@ function printingadmin_prepare_head($mode)
     $head[$h][2] = 'config';
     $h++;
 
-    if ($mode == 'setup')
-    {
-	    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver','alpha');
-	    $head[$h][1] = $langs->trans("SetupDriver");
-	    $head[$h][2] = 'setup';
-	    $h++;
+    if ($mode == 'setup') {
+        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup&driver=".GETPOST('driver','alpha');
+        $head[$h][1] = $langs->trans("SetupDriver");
+        $head[$h][2] = 'setup';
+        $h++;
     }
 
-    if ($mode == 'test')
-    {
-	    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver','alpha');
-	    $head[$h][1] = $langs->trans("TargetedPrinter");
-	    $head[$h][2] = 'test';
-	    $h++;
+    if ($mode == 'test') {
+        $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test&driver=".GETPOST('driver','alpha');
+        $head[$h][1] = $langs->trans("TargetedPrinter");
+        $head[$h][2] = 'test';
+        $h++;
     }
 
-		/** TODO This feature seem to be not ready yet.
-	    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
-	    $head[$h][1] = $langs->trans("UserConf");
-	    $head[$h][2] = 'userconf';
-	    $h++;
-	    */
+    /** TODO This feature seem to be not ready yet.
+    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
+    $head[$h][1] = $langs->trans("UserConf");
+    $head[$h][2] = 'userconf';
+    $h++;
+    */
 
     //$object=new stdClass();
 
@@ -76,4 +75,3 @@ function printingadmin_prepare_head($mode)
 
     return $head;
 }
-

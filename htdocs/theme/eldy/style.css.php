@@ -54,7 +54,7 @@ $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
 $colortext='0,0,0';
 $colortextlink='0,0,100';
-$fontsize='0.85em';
+$fontsize='0.86em';
 $fontsizesmaller='0.75em';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
@@ -264,7 +264,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-.thumbstat, a.tab { font-weight: bold !important; }
+.thumbstat { font-weight: bold !important; }
 th a { font-weight: <?php echo ($useboldtitle?'bold':'normal'); ?> !important; }
 a.tab { font-weight: bold !important; }
 
@@ -497,6 +497,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 }
 
 hr { border: 0; border-top: 1px solid #ccc; }
+.tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
 	margin-bottom: 0;
@@ -552,7 +553,7 @@ form {
     margin:0px;
 }
 form#addproduct {
-    padding-top: 6px;
+    padding-top: 10px;
 }
 div.float
 {
@@ -1168,8 +1169,8 @@ td.showDragHandle {
 	table-layout: fixed;
 }
 #id-right, #id-left {
-	padding-top: 16px;
-	padding-bottom: 16px;
+	padding-top: 20px;
+	padding-bottom: 20px;
 
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
@@ -1274,8 +1275,8 @@ div.fiche {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'30':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'29':'6')); ?>px;
 	<?php if (! empty($dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 	<?php if (! empty($dol_hide_leftmenu)) print 'margin-top: 12px;'."\n"; ?>
 }
@@ -1378,7 +1379,7 @@ div.nopadding {
 	margin : 0px auto;
 }
 
-#pictotitle {
+.pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
@@ -1706,6 +1707,10 @@ div.mainmenu.cashdesk {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png',1) ?>);
 }
 
+div.mainmenu.takepos {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png',1) ?>);
+}
+
 div.mainmenu.companies {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company_over.png',1) ?>);
 }
@@ -1775,7 +1780,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
 $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
@@ -1836,6 +1841,7 @@ foreach($mainmenuusedarray as $val)
     position: absolute;
     height: 100%;
     width: 100%;
+    font-size: 1em;
 }
 .login_center {
 	display: table-cell;
@@ -1852,8 +1858,9 @@ form#login {
 }
 .login_table_title {
 	max-width: 530px;
-	color: #aaa !important;
+	color: #eee !important;
 	padding-bottom: 20px;
+	text-shadow: 1px 1px #444;
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1884,7 +1891,7 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	border: none;
-	/* border-bottom: solid 1px rgba(180,180,180,.4); */
+	border-bottom: solid 1px rgba(180,180,180,.4);
 	padding: 5px;
 	margin-left: 5px;
 	margin-top: 5px;
@@ -1894,17 +1901,24 @@ if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	outline: none !important;
 }
 .login_table .trinputlogin {
+	font-size: 1.2em;
 	margin: 8px;
 }
 .login_table .tdinputlogin {
-    background-color: #fff;
-    border: 2px solid #ccc;
-    min-width: 200px;
+    background-color: transparent;
+    /* border: 2px solid #ccc; */
+    min-width: 220px;
     border-radius: 2px;
 }
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
 	width: 14px;
+}
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password {
+	font-size: 1em;
+}
+.login_table .tdinputlogin input#securitycode {
+	font-size: 1em;
 }
 .login_main_message {
 	text-align: center;
@@ -2325,6 +2339,7 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 .tableforservicepart1 .tdhrthin {
 	height: unset;
+    padding-top: 0 !important;
 }
 
 div.popuptabset {
@@ -2339,7 +2354,7 @@ div.popuptab {
 	padding-right: 5px;
 }
 div.tabsAction {
-    margin: 20px 0em 20px 0em;
+    margin: 20px 0em 30px 0em;
     padding: 0em 0em;
     text-align: right;
 }
@@ -2366,7 +2381,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 9px 13px;
+	padding: 12px 14px 13px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -2718,7 +2733,9 @@ table.paddingtopbottomonly tr td {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
 tr.liste_titre_filter td.liste_titre {
-/*    border-bottom: 1px solid #ddd; */
+	/* border-bottom: 1px solid #ddd; */
+	padding-top: 1px;
+	padding-bottom: 0px;
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
@@ -3237,8 +3254,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    background: #f8f8f8;
+    background: #fcfcfc;
     border: 1px solid #eee;
+    /* border-left: 6px solid #ddd; */
     box-shadow: 1px 1px 8px #ddd;
     border-radius: 0px;
 }
@@ -3286,9 +3304,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     }
 	.thumbstat {
 		flex: 1 1 110px;
+		margin-bottom: 8px;
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
+		margin-bottom: 8px;
 	}
     .dashboardlineindicator {
         float: left;
@@ -3482,7 +3502,7 @@ div.warning {
     background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
-	color: rgb(<?php echo $colortext; ?>);
+	color: rgb(<?php echo $colortextlink; ?>);
 }
 
 /* Error message */
@@ -4416,7 +4436,7 @@ td.gminorheading {
 .ecmfiletree {
 	width: 99%;
 	height: 99%;
-	background: #FFF;
+	/* background: #FFF; */
 	padding-left: 2px;
 	font-weight: normal;
 }
@@ -4913,7 +4933,81 @@ span.noborderoncategories {
 
 
 /* ============================================================================== */
-/*  Multiselect with checkbox                                                     */
+/*  External lib multiselect with checkbox                                        */
+/* ============================================================================== */
+
+.multi-select-container {
+  display: inline-block;
+  position: relative;
+}
+
+.multi-select-menu {
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  float: left;
+  min-width: 100%;
+  background: #fff;
+  margin: 1em 0;
+  padding: 0.4em 0;
+  border: 1px solid #aaa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.multi-select-menu input {
+  margin-right: 0.3em;
+  vertical-align: 0.1em;
+}
+
+.multi-select-button {
+  display: inline-block;
+  max-width: 20em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  background-color: #fff;
+  cursor: default;
+
+  border: none;
+  border-bottom: solid 1px rgba(0,0,0,.2);
+  padding: 5px;
+  padding-left: 2px;
+  height: 17px;
+}
+.multi-select-button:focus {
+  outline: none;
+  border-bottom: 1px solid #666;
+}
+
+.multi-select-button:after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0.5em 0.23em 0em 0.23em;
+  border-color: #444 transparent transparent transparent;
+  margin-left: 0.4em;
+}
+
+.multi-select-container--open .multi-select-menu { display: block; }
+
+.multi-select-container--open .multi-select-button:after {
+  border-width: 0 0.4em 0.4em 0.4em;
+  border-color: transparent transparent #999 transparent;
+}
+
+.multi-select-menuitem {
+    clear: both;
+    float: left;
+    padding-left: 5px
+}
+
+
+/* ============================================================================== */
+/*  Native multiselect with checkbox                                              */
 /* ============================================================================== */
 
 ul.ulselectedfields {
@@ -4953,10 +5047,10 @@ dl.dropdown {
 }
 .dropdown dd ul {
     background-color: #FFF;
-    border: 1px solid #888;
+    box-shadow: 1px 1px 10px #aaa;
     display:none;
     <?php echo $right; ?>:0px;						/* pop is align on right */
-    padding: 2px 15px 2px 5px;
+    padding: 0 0 0 0;
     position:absolute;
     top:2px;
     list-style:none;
@@ -4966,9 +5060,12 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
-	padding: 2px;
+	padding: 7px 8px 7px 8px;
 	/* color: rgb(<?php print $colortext; ?>); */
 	color: #000;
+}
+.dropdown dd ul li:hover {
+	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-<?php echo $right; ?>: 3px;
@@ -4981,7 +5078,7 @@ dl.dropdown {
 	color: #888;
 }
 .dropdown dd ul li a:hover {
-    background-color:#fff;
+    background-color:#eee;
 }
 
 

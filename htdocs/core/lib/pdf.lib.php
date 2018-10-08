@@ -261,9 +261,9 @@ function pdf_getHeightForLogo($logo, $url = false)
 /**
  * Function to try to calculate height of a HTML Content
  *
- * @param TCPDF     $pdf            PDF initialized object
- * @param string    $htmlcontent    HTML Contect
- * @return number
+ * @param 	TCPDF     $pdf				PDF initialized object
+ * @param 	string    $htmlcontent		HTML Contect
+ * @return 	int							Height
  * @see getStringHeight
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
@@ -448,15 +448,15 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     			} else {
     				$companytouseforaddress = $targetcompany;
 
-				// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
-				if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id)
-				{
+					// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
+					if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id)
+					{
 						$targetcontact->fetch_thirdparty();
 						$companytouseforaddress = $targetcontact->thirdparty;
 					}
 
-    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress));
-    			}
+					$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress));
+				}
     			// Country
     			if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
     				$stringaddress.= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
@@ -2105,8 +2105,8 @@ function pdf_getLinkedObjects($object,$outputlangs)
 		}
 		else if ($objecttype == 'shipping')
 		{
-			$outputlangs->load('orders');
-			$outputlangs->load('sendings');
+			$outputlangs->loadLangs(array("orders", "sendings"));
+
 			foreach($objects as $x => $elementobject)
 			{
 			    $order=null;

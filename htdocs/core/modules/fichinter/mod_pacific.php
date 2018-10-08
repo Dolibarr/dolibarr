@@ -30,13 +30,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
-    var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
-	var $prefix='FI';
+    /**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	public $prefix='FI';
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $nom = 'pacific';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='pacific';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='pacific';
 
 
 	/**

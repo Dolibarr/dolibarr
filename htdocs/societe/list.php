@@ -87,8 +87,7 @@ $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_staff=GETPOST("search_staff",'int');
 $search_status=GETPOST("search_status",'int');
 $search_type=GETPOST('search_type','alpha');
-$search_level_from = GETPOST("search_level_from","alpha");
-$search_level_to   = GETPOST("search_level_to","alpha");
+$search_level      = GETPOST("search_level", "array");
 $search_stcomm=GETPOST('search_stcomm','int');
 $search_import_key  = GETPOST("search_import_key","alpha");
 $search_btn=GETPOST('button_search','alpha');
@@ -263,8 +262,7 @@ if (empty($reshook))
 		$search_staff='';
 		$search_status=-1;
 		$search_stcomm='';
-	 	$search_level_from='';
-	 	$search_level_to='';
+	 	$search_level='';
 	 	$search_import_key='';
 	 	$toselect='';
 		$search_array_options=array();
@@ -321,80 +319,22 @@ if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) $title=$la
 if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) $title=$langs->trans("ListOfProspects");
 if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) $title=$langs->trans("ListOfSuppliers");
 
-// If both parameters are set, search for everything BETWEEN them
-if ($search_level_from != '' && $search_level_to != '')
-{
-	// Ensure that these parameters are numbers
-	$search_level_from = (int) $search_level_from;
-	$search_level_to = (int) $search_level_to;
-
-	// If from is greater than to, reverse orders
-	if ($search_level_from > $search_level_to)
-	{
-		$tmp = $search_level_to;
-		$search_level_to = $search_level_from;
-		$search_level_from = $tmp;
-	}
-
-	// Generate the SQL request
-	$sortwhere = '(sortorder BETWEEN '.$search_level_from.' AND '.$search_level_to.') AS is_in_range';
-}
-// If only "from" parameter is set, search for everything GREATER THAN it
-else if ($search_level_from != '')
-{
-	// Ensure that this parameter is a number
-	$search_level_from = (int) $search_level_from;
-
-	// Generate the SQL request
-	$sortwhere = '(sortorder >= '.$search_level_from.') AS is_in_range';
-}
-// If only "to" parameter is set, search for everything LOWER THAN it
-else if ($search_level_to != '')
-{
-	// Ensure that this parameter is a number
-	$search_level_to = (int) $search_level_to;
-
-	// Generate the SQL request
-	$sortwhere = '(sortorder <= '.$search_level_to.') AS is_in_range';
-}
-// If no parameters are set, dont search for anything
-else
-{
-	$sortwhere = '0 as is_in_range';
-}
-
 // Select every potentiels, and note each potentiels which fit in search parameters
-dol_syslog('societe/list.php',LOG_DEBUG);
-$sql = "SELECT code, label, sortorder, ".$sortwhere;
+$tab_level = array();
+$sql = "SELECT code, label, sortorder";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $sql.= " WHERE active > 0";
 $sql.= " ORDER BY sortorder";
-
 $resql = $db->query($sql);
 if ($resql)
 {
-	$tab_level = array();
-	$search_levels = array();
-
 	while ($obj = $db->fetch_object($resql))
 	{
 		// Compute level text
 		$level=$langs->trans($obj->code);
 		if ($level == $obj->code) $level=$langs->trans($obj->label);
-
-		// Put it in the array sorted by sortorder
-		$tab_level[$obj->sortorder] = $level;
-
-		// If this potentiel fit in parameters, add its code to the $search_levels array
-		if ($obj->is_in_range == 1)
-		{
-			$search_levels[] = '"'.preg_replace('[^A-Za-z0-9_-]', '', $obj->code).'"';
-		}
+		$tab_level[$obj->code] = $level;
 	}
-
-	// Implode the $search_levels array so that it can be use in a "IN (...)" where clause.
-	// If no paramters was set, $search_levels will be empty
-	$search_levels = implode(',', $search_levels);
 }
 else dol_print_error($db);
 
@@ -474,12 +414,12 @@ if (strlen($search_vat))     $sql.= natural_search("s.tva_intra",$search_vat);
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
-if ($search_status!='' && $search_status >= 0) $sql .= " AND s.status = ".$db->escape($search_status);
+if ($search_status!='' && $search_status >= 0) $sql .= natural_search("s.status", $search_status, 2);
 if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= natural_search("s.barcode", $search_barcode);
-if ($search_type_thirdparty && $search_type_thirdparty != '-1') $sql.= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
-if (! empty($search_staff) && $search_staff != '-1')            $sql.= " AND s.fk_effectif IN (".$db->escape($search_staff).")";
-if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
-if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
+if ($search_type_thirdparty && $search_type_thirdparty != '-1') $sql.= natural_search("s.fk_typent", $search_type_thirdparty, 2);
+if (! empty($search_staff) && $search_staff != '-1')            $sql.= natural_search("s.fk_effectif", $search_staff, 2);
+if ($search_level)  $sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
+if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm", $search_stcomm, 2);
 if ($search_import_key)    $sql.= natural_search("s.import_key",$search_import_key);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -572,13 +512,12 @@ if ($search_idprof6 != '') $param.= '&search_idprof6='.urlencode($search_idprof6
 if ($search_vat != '')     $param.= '&search_vat='.urlencode($search_vat);
 if ($search_type_thirdparty != '')    $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
 if ($search_type != '')    $param.='&search_type='.urlencode($search_type);
-if ($optioncss != '')      $param.='&optioncss='.urlencode($optioncss);
+if (is_array($search_level) && count($search_level)) foreach($search_level as $slevel) $param.='&search_level[]='.urlencode($slevel);
 if ($search_status != '')  $param.='&search_status='.urlencode($search_status);
 if ($search_stcomm != '')  $param.='&search_stcomm='.urlencode($search_stcomm);
-if ($search_level_from != '') $param.='&search_level_from='.urlencode($search_level_from);
-if ($search_level_to != '')   $param.='&search_level_to='.urlencode($search_level_to);
 if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
 if ($type != '') $param.='&type='.urlencode($type);
+if ($optioncss != '')      $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -595,7 +534,7 @@ $arrayofmassactions =  array(
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+if (GETPOST('nomassaction','int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton='';
@@ -901,37 +840,16 @@ if (! empty($arrayfields['customerorsupplier']['checked']))
 	print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
 	print '</select></td>';
 }
+// Prospect level
 if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
 {
-	// Prospect level
  	print '<td class="liste_titre" align="center">';
- 	$options_from = '<option value="">&nbsp;</option>';	 	// Generate in $options_from the list of each option sorted
- 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
- 	{
- 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected':'').'>';
- 		$options_from .= $langs->trans($tab_level_label);
- 		$options_from .= '</option>';
- 	}
- 	array_reverse($tab_level, true);	// Reverse the list
- 	$options_to = '<option value="">&nbsp;</option>';		// Generate in $options_to the list of each option sorted in the reversed order
- 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
- 	{
- 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected':'').'>';
- 		$options_to .= $langs->trans($tab_level_label);
- 		$options_to .= '</option>';
- 	}
-
-	// Print these two select
- 	print $langs->trans("From").' <select class="flat" name="search_level_from">'.$options_from.'</select>';
- 	print ' ';
- 	print $langs->trans("to").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
-
+ 	print $form->multiselectarray('search_level', $tab_level, $search_level, 0, 0, 'width75', 0, 0, '', '', '', 2);
 	print '</td>';
 }
-
+// Prospect status
 if (! empty($arrayfields['s.fk_stcomm']['checked']))
 {
-	// Prospect status
 	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 	$arraystcomm=array();
 	foreach($prospectstatic->cacheprospectstatus as $key => $val)
@@ -963,7 +881,7 @@ if (! empty($arrayfields['s.tms']['checked']))
 // Status
 if (! empty($arrayfields['s.status']['checked']))
 {
-	print '<td class="liste_titre maxwidthonsmartphone center">';
+	print '<td class="liste_titre center minwidth75imp">';
 	print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')), $search_status, 1);
 	print '</td>';
 }

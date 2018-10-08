@@ -28,7 +28,7 @@
 class FormWebsite
 {
     private $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -43,8 +43,6 @@ class FormWebsite
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 

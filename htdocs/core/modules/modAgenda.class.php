@@ -51,7 +51,7 @@ class modAgenda extends DolibarrModules
 		$this->numero = 2400;
 
 		$this->family = "projects";
-		$this->module_position = 15;
+		$this->module_position = '15';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
@@ -115,7 +115,7 @@ class modAgenda extends DolibarrModules
 		//------------
 		$datestart=dol_now();
 		$this->cronjobs = array(
-			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>10, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'1', 'datestart'=>$datestart),
+			0=>array('label'=>'SendEmailsReminders', 'jobtype'=>'method', 'class'=>'comm/action/class/actioncomm.class.php', 'objectname'=>'ActionComm', 'method'=>'sendEmailsReminder', 'parameters'=>'', 'comment'=>'SendEMailsReminder', 'frequency'=>10, 'unitfrequency'=>60, 'priority'=>10, 'status'=>1, 'test'=>'$conf->agenda->enabled', 'datestart'=>$datestart),
 		);
 
 		// Permissions

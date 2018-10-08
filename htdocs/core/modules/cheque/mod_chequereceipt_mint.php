@@ -29,13 +29,20 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php
  */
 class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='CHK';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='CHK';
+
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $name='Mint';
+
+	public $name='Mint';
 
 
     /**

@@ -302,7 +302,7 @@ if (GETPOST('save') && ! $cancel && $user->rights->banque->modifier)
     	$error++;
     }*/
 
-    if (! $error)
+    if (! $error && ! empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))
     {
     	$objecttmp = new Account($db);
     	$objecttmp->fetch($bankaccountid);
@@ -630,7 +630,7 @@ if ($resql)
 	}
 
 	// Form to add a transaction with no invoice
-	if ($user->rights->banque->modifier && $action == 'addline')
+	if ($user->rights->banque->modifier && $action == 'addline' && ! empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))
 	{
 		print load_fiche_titre($langs->trans("AddBankRecordLong"),'','');
 
@@ -729,7 +729,7 @@ if ($resql)
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
-			if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
+			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
 					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)).'"><span class="valignmiddle">'.$langs->trans("AddBankRecord").'</span>';

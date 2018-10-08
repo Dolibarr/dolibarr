@@ -59,7 +59,11 @@ class CMailFile
 
 	var $eol;
 	var $eol2;
-	var $error='';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $smtps;			// Contains SMTPs object (if this method is used)
 	var $phpmailer;		// Contains PHPMailer object (if this method is used)
@@ -385,13 +389,17 @@ class CMailFile
 			// TODO if (! empty($moreinheader)) ...
 
 			// Give the message a subject
-			$this->message->setSubject($this->encodetorfc2822($subject));
+			try {
+				$result = $this->message->setSubject($subject);
+			} catch (Exception $e) {
+				$this->errors[] =  $e->getMessage();
+			}
 
 			// Set the From address with an associative array
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
 			if (! empty($from)) {
                 try {
-                    $this->message->setFrom($this->getArrayAddress($from));
+                	$result = $this->message->setFrom($this->getArrayAddress($from));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -400,7 +408,7 @@ class CMailFile
 			// Set the To addresses with an associative array
 			if (! empty($to)) {
                 try {
-                    $this->message->setTo($this->getArrayAddress($to));
+                	$result = $this->message->setTo($this->getArrayAddress($to));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -408,13 +416,17 @@ class CMailFile
 
 			if (! empty($replyto)) {
                 try {
-                    $this->message->SetReplyTo($this->getArrayAddress($replyto));
+                	$result = $this->message->SetReplyTo($this->getArrayAddress($replyto));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
             }
 
-			$this->message->setCharSet($conf->file->character_set_client);
+			try {
+				$result = $this->message->setCharSet($conf->file->character_set_client);
+			} catch (Exception $e) {
+				$this->errors[] =  $e->getMessage();
+			}
 
 			if (! empty($this->html))
 			{
@@ -1027,7 +1039,7 @@ class CMailFile
 		$mimedone=0;
 		$out = "";
 
-		if ($filename_list)
+		if (is_array($filename_list))
 		{
 			$filename_list_size=count($filename_list);
 			for($i=0;$i < $filename_list_size;$i++)
@@ -1199,7 +1211,7 @@ class CMailFile
 	/**
 	 * Attach an image to email (mode = 'mail')
 	 *
-	 * @param	array	$images_list	Tableau
+	 * @param	array	$images_list	Array of array image
 	 * @return	string					Chaine images encodees
 	 */
 	function write_images($images_list)
@@ -1207,7 +1219,7 @@ class CMailFile
         // phpcs:enable
 		$out = '';
 
-		if ($images_list)
+		if (is_array($images_list))
 		{
 			foreach ($images_list as $img)
 			{

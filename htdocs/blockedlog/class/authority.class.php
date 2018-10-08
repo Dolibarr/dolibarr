@@ -52,7 +52,6 @@ class BlockedLogAuthority
 	 */
     public function __construct($db)
     {
-
     	$this->db = $db;
 	}
 

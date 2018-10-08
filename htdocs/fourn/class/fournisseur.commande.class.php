@@ -650,46 +650,46 @@ class CommandeFournisseur extends CommonOrder
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
         	return $langs->trans($this->statutshort[$statut]);
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
-            if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
-            if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
         }
-        if ($mode == 5)
+        elseif ($mode == 5)
         {
         	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-        	if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-        	if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-        	if ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-        	if ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-        	if ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
-        	if ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
-        	if ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+        	elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+        	elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	elseif ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+        	elseif ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+        	elseif ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
         }
     }
 
@@ -1126,8 +1126,6 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Submit a supplier order to supplier
      *
@@ -1139,7 +1137,6 @@ class CommandeFournisseur extends CommonOrder
      */
     public function commande($user, $date, $methode, $comment='')
     {
-        // phpcs:enable
         global $langs;
         dol_syslog(get_class($this)."::commande");
         $error = 0;
@@ -3159,7 +3156,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
     // From llx_commande_fournisseurdet
     public $fk_parent_line;
     public $fk_facture;
+
+    /**
+     * @var string supplier order line label
+     */
     public $label;
+
     public $rang = 0;
     public $special_code = 0;
 

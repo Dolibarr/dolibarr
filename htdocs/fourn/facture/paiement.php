@@ -38,10 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('compta');
+$langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
 // Security check
 $action		= GETPOST('action','alpha');
@@ -444,7 +441,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            print $form->selectDate($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
+            print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $object->date);
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
             $form->select_types_paiements(empty($_POST['paiementid'])?$obj->fk_mode_reglement:$_POST['paiementid'],'paiementid');

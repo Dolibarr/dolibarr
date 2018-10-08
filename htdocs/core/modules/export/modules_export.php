@@ -35,11 +35,13 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 */
 	public $error='';
 
-	var $driverlabel=array();
-	var $driverversion=array();
+	public $driverlabel=array();
 
-	var $liblabel=array();
-	var $libversion=array();
+	public $driverversion=array();
+
+	public $liblabel=array();
+
+	public $libversion=array();
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
