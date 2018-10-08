@@ -1190,7 +1190,7 @@ class Reception extends CommonObject
 	function fetch_lines()
 	{
 		global $db;
-
+		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
 		$resql = $db->query($sql);
 		if(!empty($resql)){
@@ -1199,7 +1199,14 @@ class Reception extends CommonObject
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
-				
+				$sql_qtyasked = 'SELECT qty FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
+				$resql_qtyasked = $db->query($sql_qtyasked);
+				if(!empty($resql_qtyasked)){
+					$obj = $db->fetch_object($resql_qtyasked);
+					$line->qty_asked = $obj->qty;
+				}else {
+					$line->qty_asked = 0;
+				}
 				$this->lines[]=$line;
 			}
 			
@@ -1464,7 +1471,7 @@ class Reception extends CommonObject
         $i=0;
 
         $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_reception_mode as em";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
         if ($id!='') $sql.= " WHERE em.rowid=".$id;
 
         $resql = $this->db->query($sql);
@@ -1495,13 +1502,13 @@ class Reception extends CommonObject
     {
         if ($id=='')
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_reception_mode (code, libelle, description, tracking)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
             $sql.=" VALUES ('".$this->update['code']."','".$this->update['libelle']."','".$this->update['description']."','".$this->update['tracking']."')";
             $resql = $this->db->query($sql);
         }
         else
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."c_reception_mode SET";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
             $sql.= " code='".$this->db->escape($this->update['code'])."'";
             $sql.= ",libelle='".$this->db->escape($this->update['libelle'])."'";
             $sql.= ",description='".$this->db->escape($this->update['description'])."'";
@@ -1521,7 +1528,7 @@ class Reception extends CommonObject
      */
     function activ_delivery_method($id)
     {
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_reception_mode SET active=1';
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
         $sql.= ' WHERE rowid='.$id;
 
         $resql = $this->db->query($sql);
@@ -1537,7 +1544,7 @@ class Reception extends CommonObject
      */
     function disable_delivery_method($id)
     {
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_reception_mode SET active=0';
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
         $sql.= ' WHERE rowid='.$id;
 
         $resql = $this->db->query($sql);
@@ -1556,7 +1563,7 @@ class Reception extends CommonObject
 		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_reception_mode as em";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 			$sql.= " WHERE em.rowid = ".$this->shipping_method_id;
 
 			$resql = $this->db->query($sql);

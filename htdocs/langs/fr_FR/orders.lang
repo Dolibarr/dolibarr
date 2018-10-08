@@ -25,6 +25,7 @@ OrdersToBill=Commandes clients à délivrer
 OrdersInProcess=Commandes clients en traitement
 OrdersToProcess=Commandes clients à traiter
 SuppliersOrdersToProcess=Commandes fournisseurs à traiter
+SuppliersOrdersInProcess=Commandes fournisseurs en traitement
 StatusOrderCanceledShort=Annulée
 StatusOrderDraftShort=Brouillon
 StatusOrderValidatedShort=Validée

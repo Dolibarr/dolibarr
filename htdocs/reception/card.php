@@ -1939,7 +1939,7 @@ else if ($id || $ref)
     		$sql.= " AND ed.fk_reception = e.rowid";
     		//if ($filter) $sql.= $filter;
     		$sql.= " ORDER BY obj.fk_product";
-			print $sql;exit;
+			
     		dol_syslog("get list of reception lines", LOG_DEBUG);
     		$resql = $db->query($sql);
     		if ($resql)
@@ -1953,7 +1953,7 @@ else if ($id || $ref)
         		    if ($obj)
         		    {
         		        // $obj->rowid is rowid in $origin."det" table
-        		        $alreadysent[$obj->rowid][$obj->receptionline_id]=array('reception_ref'=>$obj->reception_ref, 'reception_id'=>$obj->reception_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty_shipped, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
+        		        $alreadysent[$obj->rowid][$obj->receptionline_id]=array('reception_ref'=>$obj->reception_ref, 'reception_id'=>$obj->reception_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
         		    }
         		    $i++;
     		    }
@@ -1981,26 +1981,27 @@ else if ($id || $ref)
 				{
 					$prod = new Product($db);
 					$prod->fetch($lines[$i]->fk_product);
-					$label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
+					$label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->product_label;
 				}
 				else
-					$label = (! empty($lines[$i]->label)?$lines[$i]->label:$lines[$i]->product_label);
+					$label = (! empty($lines[$i]->product->label)?$lines[$i]->product->label:$lines[$i]->product->product_label);
 
 				print '<td>';
 
 				// Show product and description
-				$product_static->type=$lines[$i]->fk_product_type;
-				$product_static->id=$lines[$i]->fk_product;
-				$product_static->ref=$lines[$i]->ref;
-				$product_static->status_batch=$lines[$i]->product_tobatch;
+				$product_static->type=$lines[$i]->product->fk_product_type;
+				$product_static->id=$lines[$i]->product->fk_product;
+				$product_static->ref=$lines[$i]->product->ref;
+				$product_static->status_batch=$lines[$i]->product->product_tobatch;
+				
 				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.$label;
-				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
+				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->product->description));
 				print $form->textwithtooltip($text,$description,3,'','',$i);
 				print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
 				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 				{
-					print (! empty($lines[$i]->description) && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
+					print (! empty($lines[$i]->product->description) && $lines[$i]->description!=$lines[$i]->product->description)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
 				}
 				print "</td>\n";
 			}
@@ -2030,7 +2031,7 @@ else if ($id || $ref)
     			print '<td align="center" class="nowrap">';
     			foreach ($alreadysent as $key => $val)
     			{
-    			    if ($lines[$i]->fk_origin_line == $key)
+    			    if ($lines[$i]->fk_commandefourndet == $key)
     			    {
     			        $j = 0;
     			        foreach($val as $receptionline_id=> $receptionline_var)
@@ -2042,6 +2043,7 @@ else if ($id || $ref)
     			            $reception_static->fetch($receptionline_var['reception_id']);
     			            print $reception_static->getNomUrl(1);
     			            print ' - '.$receptionline_var['qty_shipped'];
+							
     			            $htmltext=$langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid'])?$langs->trans("Draft"):dol_print_date($receptionline_var['date_valid'], 'dayhour'));
     			            if (! empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0)
     			            {
@@ -2059,72 +2061,24 @@ else if ($id || $ref)
 			{
 				// edit mode
 				print '<td colspan="'.$editColspan.'" align="center"><table class="nobordernopadding">';
-				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
-				{
-					print '<!-- case edit 1 -->';
-					$line = new CommandeFournisseurDispatch($db);
-					foreach ($lines[$i]->detail_batch as $detail_batch)
-					{
-						print '<tr>';
-						// Qty to ship or shipped
-						print '<td>' . '<input name="qtyl'.$detail_batch->fk_receptiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->dluo_qty.'">' . '</td>';
-						// Batch number managment
-						if ($lines[$i]->entrepot_id == 0)
-						{
-							// only show lot numbers from src warehouse when reception from multiple warehouses
-							$line->fetch($detail_batch->fk_receptiondet);
-						}
-						print '<td>' . $formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_receptiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $line->entrepot_id). '</td>';
-						print '</tr>';
-					}
-					// add a 0 qty lot row to be able to add a lot
-					print '<tr>';
-					// Qty to ship or shipped
-					print '<td>' . '<input name="qtyl'.$line_id.'_0" id="qtyl'.$line_id.'_0" type="text" size="4" value="0">' . '</td>';
-					// Batch number managment
-					print '<td>' . $formproduct->selectLotStock('', 'batchl'.$line_id.'_0', '', 1, 0, $lines[$i]->fk_product). '</td>';
-					print '</tr>';
-				}
-				else if (! empty($conf->stock->enabled))
+				 if (! empty($conf->stock->enabled))
 				{
 					if ($lines[$i]->fk_product > 0)
 					{
-						if ($lines[$i]->entrepot_id > 0)
-						{
-							print '<!-- case edit 2 -->';
+							print '<!-- case edit 1 -->';
 							print '<tr>';
 							// Qty to ship or shipped
 							print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">' . '</td>';
 							// Warehouse source
 							print '<td>' . $formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
-							// Batch number managment
-							print '<td> - ' . $langs->trans("NA") . '</td>';
+							//@TODO Batch number managment
+							if($conf->productbatch->enabled)print '<td> - ' . $langs->trans("NA") . '</td>';
 							print '</tr>';
-						}
-						else if (count($lines[$i]->details_entrepot) > 1)
-						{
-							print '<!-- case edit 3 -->';
-							foreach ($lines[$i]->details_entrepot as $detail_entrepot)
-							{
-								print '<tr>';
-								// Qty to ship or shipped
-								print '<td>' . '<input name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">' . '</td>';
-								// Warehouse source
-								print '<td>' . $formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1) . '</td>';
-								// Batch number managment
-								print '<td> - ' . $langs->trans("NA") . '</td>';
-								print '</tr>';
-							}
-						}
-						else
-						{
-							print '<!-- case edit 4 -->';
-							print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
-						}
+						
 					}
 					else
 					{
-						print '<!-- case edit 5 -->';
+						print '<!-- case edit 2 -->';
 						print '<tr>';
 						// Qty to ship or shipped
 						print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">' . '</td>';
@@ -2140,16 +2094,16 @@ else if ($id || $ref)
 			else
 			{
 				// Qty to ship or shipped
-				print '<td align="center">'.$lines[$i]->qty_shipped.'</td>';
+				print '<td align="center">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
 				if (! empty($conf->stock->enabled))
 				{
 					print '<td align="left">';
-					if ($lines[$i]->entrepot_id > 0)
+					if ($lines[$i]->fk_entrepot > 0)
 					{
 						$entrepot = new Entrepot($db);
-						$entrepot->fetch($lines[$i]->entrepot_id);
+						$entrepot->fetch($lines[$i]->fk_entrepot);
 						print $entrepot->getNomUrl(1);
 					}
 					else if (count($lines[$i]->details_entrepot) > 1)
@@ -2172,21 +2126,20 @@ else if ($id || $ref)
 				// Batch number managment
 				if (! empty($conf->productbatch->enabled))
 				{
-					if (isset($lines[$i]->detail_batch))
+					if (isset($lines[$i]->batch))
 					{
 						print '<!-- Detail of lot -->';
 						print '<td>';
-						if ($lines[$i]->product_tobatch)
+						$detail ='';
+						if ($lines[$i]->product->status_batch)
 						{
-							$detail = '';
-							foreach ($lines[$i]->detail_batch as $dbatch)
-							{
-								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
-								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
-								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
-								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
+								
+								$detail.= $langs->trans("Batch").': '.$lines[$i]->batch;
+								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby,"day");
+								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby,"day");
+								
 								$detail.= '<br>';
-							}
+							
 							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
 						}
 						else
@@ -2202,13 +2155,13 @@ else if ($id || $ref)
 
 			// Weight
 			print '<td align="center">';
-			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units,"weight");
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->weight*$lines[$i]->qty.' '.measuring_units_string($lines[$i]->product->weight_units,"weight");
 			else print '&nbsp;';
 			print '</td>';
 
 			// Volume
 			print '<td align="center">';
-			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume");
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->volume*$lines[$i]->qty.' '.measuring_units_string($lines[$i]->product->volume_units,"volume");
 			else print '&nbsp;';
 			print '</td>';
 
