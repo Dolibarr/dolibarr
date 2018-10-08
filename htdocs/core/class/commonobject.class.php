@@ -962,6 +962,9 @@ abstract class CommonObject
         if($this->element=='shipping' && $this->origin_id != 0) {
             $id=$this->origin_id;
             $element='commande';
+        } else if($this->element=='reception' && $this->origin_id != 0) {
+            $id=$this->origin_id;
+            $element='order_supplier';
         } else {
             $id=$this->id;
             $element=$this->element;
@@ -982,7 +985,7 @@ abstract class CommonObject
         $sql.= " AND tc.code = '".$code."'";
         $sql.= " AND tc.active = 1";
         if ($status) $sql.= " AND ec.statut = ".$status;
-
+		
         dol_syslog(get_class($this)."::getIdContact", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -998,7 +1001,6 @@ abstract class CommonObject
             $this->error=$this->db->error();
             return null;
         }
-
         return $result;
     }
 
@@ -1193,6 +1195,7 @@ abstract class CommonObject
     {
         if ($this->origin == 'shipping') $this->origin = 'expedition';
         if ($this->origin == 'delivery') $this->origin = 'livraison';
+        if ($this->origin == 'order_supplier') $this->origin = 'commandeFournisseur';
 
         $origin = $this->origin;
 
@@ -3105,9 +3108,13 @@ abstract class CommonObject
             {
                 if (empty($totalToShip)) $totalToShip=0;    // Avoid warning because $totalToShip is ''
                 $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            }else if ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
+            {
+                if (empty($totalToShip)) $totalToShip=0;    
+                $totalToShip+=$line->qty;   // defined for reception only
             }
 
-	        // Define qty, weight, volume, weight_units, volume_units
+			// Define qty, weight, volume, weight_units, volume_units
 	        if ($this->element == 'shipping') {
 		        // for shipments
 		        $qty = $line->qty_shipped ? $line->qty_shipped : 0;

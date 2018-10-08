@@ -166,17 +166,17 @@ if (empty($reshook))
 	    $result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 
-	if ($action == 'setref_customer')
+	if ($action == 'setref_supplier')
 	{
         $result = $object->fetch($id);
         if ($result < 0) {
             setEventMessages($object->error, $object->errors, 'errors');
         }
 
-        $result = $object->setValueFrom('ref_customer', GETPOST('ref_customer','alpha'), '', null, 'text', '', $user, 'RECEPTION_MODIFY');
+        $result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier','alpha'), '', null, 'text', '', $user, 'RECEPTION_MODIFY');
         if ($result < 0) {
             setEventMessages($object->error, $object->errors, 'errors');
-            $action = 'editref_customer';
+            $action = 'editref_supplier';
         } else {
             header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
             exit;
@@ -622,202 +622,77 @@ if (empty($reshook))
 	else if ($action == 'updateline' && $user->rights->reception->creer && GETPOST('save'))
 	{
 		// Clean parameters
-		$qty=0;
+		$qty = 0;
 		$entrepot_id = 0;
 		$batch_id = 0;
 
 		$lines = $object->lines;
 		$num_prod = count($lines);
-		for ($i = 0 ; $i < $num_prod ; $i++)
+		for ($i = 0; $i < $num_prod; $i++)
 		{
-			if ($lines[$i]->id == $line_id)		// we have found line to update
+			if ($lines[$i]->id == $line_id)  // we have found line to update
 			{
 				$line = new CommandeFournisseurDispatch($db);
+				$line->fetch($line_id);
 				// Extrafields Lines
 				$extrafieldsline = new ExtraFields($db);
 				$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 				$line->array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
-				// Unset extrafield POST Data
-				if (is_array($extralabelsline)) {
-					foreach ($extralabelsline as $key => $value) {
-						unset($_POST["options_" . $key]);
-					}
-				}
+
+
 				$line->fk_product = $lines[$i]->fk_product;
-				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
+
+				
+
+
+				if ($lines[$i]->fk_product > 0)
 				{
-					// line with lot
-					foreach ($lines[$i]->detail_batch as $detail_batch)
-					{
-						$lotStock = new Productbatch($db);
-						$batch="batchl".$detail_batch->fk_receptiondet."_".$detail_batch->fk_origin_stock;
-						$qty = "qtyl".$detail_batch->fk_receptiondet.'_'.$detail_batch->id;
-						$batch_id = GETPOST($batch,'int');
-						$batch_qty = GETPOST($qty, 'int');
-						if (! empty($batch_id) && ($batch_id != $detail_batch->fk_origin_stock || $batch_qty != $detail_batch->dluo_qty))
-						{
-							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_receptiondet) > 0)	// $line is ReceptionLine
-							{
-								if ($lines[$i]->entrepot_id != 0)
-								{
-									// allow update line entrepot_id if not multi warehouse reception
-									$line->entrepot_id = $lotStock->warehouseid;
-								}
-
-								// detail_batch can be an object with keys, or an array of ReceptionLineBatch
-								if (empty($line->detail_batch)) $line->detail_batch=new stdClass();
-
-								$line->detail_batch->fk_origin_stock = $batch_id;
-								$line->detail_batch->batch = $lotStock->batch;
-								$line->detail_batch->id = $detail_batch->id;
-								$line->detail_batch->entrepot_id = $lotStock->warehouseid;
-								$line->detail_batch->dluo_qty = $batch_qty;
-								if ($line->update($user) < 0) {
-									setEventMessages($line->error, $line->errors, 'errors');
-									$error++;
-								}
-							}
-							else
-							{
-								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
-								$error++;
-							}
-						}
-						unset($_POST[$batch]);
-						unset($_POST[$qty]);
+			
+					// single warehouse reception line
+					$stockLocation = "entl".$line_id;
+					$qty = "qtyl".$line_id;
+					
+					
+					$line->id = $line_id;
+					$line->fk_entrepot = GETPOST($stockLocation, 'int');
+					$line->qty = GETPOST($qty, 'int');
+					
+					if(!empty($conf->productbatch->enabled)){
+						$batch = "batch".$line_id;
+						$dlc = "dlc".$line_id;
+						$dluo = "dluo".$line_id;
+						$eatby = GETPOST($dlc, 'alpha');
+						$eatbydate = str_replace('/','-',$eatby);
+						$sellby = GETPOST($dluo, 'alpha');
+						$sellbydate = str_replace('/','-',$sellby);
+						$line->batch = GETPOST($batch, 'alpha');
+						$line->eatby = strtotime($eatbydate);
+						$line->sellby = strtotime($sellbydate);
 					}
-					// add new batch
-					$lotStock = new Productbatch($db);
-					$batch="batchl".$line_id."_0";
-					$qty = "qtyl".$line_id."_0";
-					$batch_id = GETPOST($batch,'int');
-					$batch_qty = GETPOST($qty, 'int');
-					$lineIdToAddLot = 0;
-					if ($batch_qty > 0 && ! empty($batch_id))
+					
+					
+					
+					if ($line->update($user) < 0)
 					{
-						if ($lotStock->fetch($batch_id) > 0)
-						{
-							// check if lotStock warehouse id is same as line warehouse id
-							if ($lines[$i]->entrepot_id > 0)
-							{
-								// single warehouse reception line
-								if ($lines[i]->entrepot_id == $lotStock->warehouseid)
-								{
-									$lineIdToAddLot = $line_id;
-								}
-							}
-							else if (count($lines[$i]->details_entrepot) > 1)
-							{
-								// multi warehouse reception lines
-								foreach ($lines[$i]->details_entrepot as $detail_entrepot)
-								{
-									if ($detail_entrepot->entrepot_id == $lotStock->warehouseid)
-									{
-										$lineIdToAddLot = $detail_entrepot->line_id;
-									}
-								}
-							}
-							if ($lineIdToAddLot)
-							{
-								// add lot to existing line
-								if ($line->fetch($lineIdToAddLot) > 0)
-								{
-									$line->detail_batch->fk_origin_stock = $batch_id;
-									$line->detail_batch->batch = $lotStock->batch;
-									$line->detail_batch->entrepot_id = $lotStock->warehouseid;
-									$line->detail_batch->dluo_qty = $batch_qty;
-									if ($line->update($user) < 0) {
-										setEventMessages($line->error, $line->errors, 'errors');
-										$error++;
-									}
-								}
-								else
-								{
-									setEventMessages($line->error, $line->errors, 'errors');
-									$error++;
-								}
-							}
-							else
-							{
-								// create new line with new lot
-								$line->origin_line_id = $lines[$i]->origin_line_id;
-								$line->entrepot_id = $lotStock->warehouseid;
-								$line->detail_batch[0] = new ReceptionLineBatch($db);
-								$line->detail_batch[0]->fk_origin_stock = $batch_id;
-								$line->detail_batch[0]->batch = $lotStock->batch;
-								$line->detail_batch[0]->entrepot_id = $lotStock->warehouseid;
-								$line->detail_batch[0]->dluo_qty = $batch_qty;
-								if ($object->create_line_batch($line, $line->array_options) < 0)
-								{
-									setEventMessages($object->error, $object->errors, 'errors');
-									$error++;
-								}
-							}
-						}
-						else
-						{
-							setEventMessages($lotStock->error, $lotStock->errors, 'errors');
-							$error++;
-						}
+						setEventMessages($line->error, $line->errors, 'errors');
+						$error++;
 					}
+				
+					
+					
 				}
-				else
+				else // Product no predefined
 				{
-					if ($lines[$i]->fk_product > 0)
+					$qty = "qtyl".$line_id;
+					$line->id = $line_id;
+					$line->qty = GETPOST($qty, 'int');
+					$line->fk_entrepot = 0;
+					if ($line->update($user) < 0)
 					{
-						// line without lot
-						if ($lines[$i]->entrepot_id > 0)
-						{
-							// single warehouse reception line
-							$stockLocation="entl".$line_id;
-							$qty = "qtyl".$line_id;
-							$line->id = $line_id;
-							$line->entrepot_id = GETPOST($stockLocation,'int');
-							$line->qty = GETPOST($qty, 'int');
-							if ($line->update($user) < 0) {
-								setEventMessages($line->error, $line->errors, 'errors');
-								$error++;
-							}
-							unset($_POST[$stockLocation]);
-							unset($_POST[$qty]);
-						}
-						else if (count($lines[$i]->details_entrepot) > 1)
-						{
-							// multi warehouse reception lines
-							foreach ($lines[$i]->details_entrepot as $detail_entrepot)
-							{
-								if (! $error) {
-									$stockLocation="entl".$detail_entrepot->line_id;
-									$qty = "qtyl".$detail_entrepot->line_id;
-									$warehouse = GETPOST($stockLocation,'int');
-									if (!empty ($warehouse))
-									{
-										$line->id = $detail_entrepot->line_id;
-										$line->entrepot_id = $warehouse;
-										$line->qty = GETPOST($qty, 'int');
-										if ($line->update($user) < 0) {
-											setEventMessages($line->error, $line->errors, 'errors');
-											$error++;
-										}
-									}
-									unset($_POST[$stockLocation]);
-									unset($_POST[$qty]);
-								}
-							}
-						}
+						setEventMessages($line->error, $line->errors, 'errors');
+						$error++;
 					}
-					else	// Product no predefined
-					{
-						$qty = "qtyl".$line_id;
-						$line->id = $line_id;
-						$line->qty = GETPOST($qty, 'int');
-						$line->entrepot_id = 0;
-						if ($line->update($user) < 0) {
-							setEventMessages($line->error, $line->errors, 'errors');
-							$error++;
-						}
-						unset($_POST[$qty]);
-					}
+					unset($_POST[$qty]);
 				}
 			}
 		}
@@ -1953,7 +1828,7 @@ else if ($id || $ref)
         		    if ($obj)
         		    {
         		        // $obj->rowid is rowid in $origin."det" table
-        		        $alreadysent[$obj->rowid][$obj->receptionline_id]=array('reception_ref'=>$obj->reception_ref, 'reception_id'=>$obj->reception_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
+        		        $alreadysent[$obj->rowid][$obj->receptionline_id]=array('reception_ref'=>$obj->reception_ref, 'reception_id'=>$obj->reception_id, 'warehouse'=>$obj->fk_entrepot, 'qty'=>$obj->qty, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
         		    }
         		    $i++;
     		    }
@@ -1981,20 +1856,16 @@ else if ($id || $ref)
 				{
 					$prod = new Product($db);
 					$prod->fetch($lines[$i]->fk_product);
-					$label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->product_label;
+					$label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
 				}
 				else
 					$label = (! empty($lines[$i]->product->label)?$lines[$i]->product->label:$lines[$i]->product->product_label);
 
 				print '<td>';
 
-				// Show product and description
-				$product_static->type=$lines[$i]->product->fk_product_type;
-				$product_static->id=$lines[$i]->product->fk_product;
-				$product_static->ref=$lines[$i]->product->ref;
-				$product_static->status_batch=$lines[$i]->product->product_tobatch;
 				
-				$text=$product_static->getNomUrl(1);
+				
+				$text=$lines[$i]->product->getNomUrl(1);
 				$text.= ' - '.$label;
 				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->product->description));
 				print $form->textwithtooltip($text,$description,3,'','',$i);
@@ -2042,7 +1913,7 @@ else if ($id || $ref)
     			            if ($j > 1) print '<br>';
     			            $reception_static->fetch($receptionline_var['reception_id']);
     			            print $reception_static->getNomUrl(1);
-    			            print ' - '.$receptionline_var['qty_shipped'];
+    			            print ' - '.$receptionline_var['qty'];
 							
     			            $htmltext=$langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid'])?$langs->trans("Draft"):dol_print_date($receptionline_var['date_valid'], 'dayhour'));
     			            if (! empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0)
@@ -2068,11 +1939,18 @@ else if ($id || $ref)
 							print '<!-- case edit 1 -->';
 							print '<tr>';
 							// Qty to ship or shipped
-							print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">' . '</td>';
+							print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">' . '</td>';
 							// Warehouse source
-							print '<td>' . $formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
-							//@TODO Batch number managment
-							if($conf->productbatch->enabled)print '<td> - ' . $langs->trans("NA") . '</td>';
+							print '<td>' . $formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
+							// Batch number managment
+							if($conf->productbatch->enabled){
+								print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
+								print $langs->trans('EatByDate').' : ';
+								print $form->select_date($lines[$i]->eatby,'dlc' .$line_id , '', '', 1, ""). '</br>';
+								print $langs->trans('SellByDate').' : ';
+								print $form->select_date($lines[$i]->sellby,'dluo' .$line_id , '', '', 1, "");
+								print '</td>';
+							}
 							print '</tr>';
 						
 					}
@@ -2081,7 +1959,7 @@ else if ($id || $ref)
 						print '<!-- case edit 2 -->';
 						print '<tr>';
 						// Qty to ship or shipped
-						print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">' . '</td>';
+						print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">' . '</td>';
 						// Warehouse source
 						print '<td>' . '</td>';
 						// Batch number managment
@@ -2196,7 +2074,7 @@ else if ($id || $ref)
 
 			// Display lines extrafields
 			if (is_array($extralabelslines) && count($extralabelslines)>0) {
-				$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
+				$colspan= empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch_optionals($lines[$i]->id,$extralabelslines);
 				print '<tr class="oddeven">';
@@ -2339,7 +2217,7 @@ else if ($id || $ref)
 
 		$genallowed=$user->rights->reception->lire;
 		$delallowed=$user->rights->reception->creer;
-
+		
 		print $formfile->showdocuments('reception',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 
@@ -2359,7 +2237,7 @@ else if ($id || $ref)
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->reception->dir_output . '/reception/' . $ref, preg_quote($ref, '/').'[^\-]+');
+		$fileparams = dol_most_recent_file($conf->reception->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 		$file=$fileparams['fullname'];
 		// Define output language
 		$outputlangs = $langs;

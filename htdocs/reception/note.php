@@ -19,20 +19,21 @@
  */
 
 /**
- *      \file       htdocs/expedition/note.php
- *      \ingroup    expedition
- *      \brief      Note card expedition
+ *      \file       htdocs/reception/nosendingte.php
+ *      \ingroup    receptionsending
+ *      \brief      Note card reception
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
+dol_include_once('/fourn/class/fournisseur.commande.class.php');
 if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("sendings");
+$langs->load("receptions");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
@@ -50,7 +51,7 @@ $socid='';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, $origin, $origin_id);
 
-$object = new Expedition($db);
+$object = new Reception($db);
 if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
@@ -76,7 +77,7 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
-$permissionnote=$user->rights->expedition->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->reception->creer;	// Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -90,31 +91,31 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader();
+llxHeader('','Reception');
 
 $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
 
-	$head=shipping_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
+	$head=reception_prepare_head($object);
+	dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'sending');
 
     
-	// Shipment card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+	// Reception card
+	$linkback = '<a href="'.DOL_URL_ROOT.'/reception/list.php">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
-	// Ref customer shipment
-	$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+	// Ref customer reception
+	$morehtmlref.=$form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
     if (! empty($conf->projet->enabled)) {
         $langs->load("projects");
         $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
-        if (0) {    // Do not change on shipment
+        if (0) {    // Do not change on reception
             if ($action != 'classify') {
                 $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
             }
@@ -130,8 +131,8 @@ if ($id > 0 || ! empty($ref))
                 $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
             }
         } else {
-            // We don't have project on shipment, so we will use the project or source object instead
-            // TODO Add project on shipment
+            // We don't have project on reception, so we will use the project or source object instead
+            // TODO Add project on reception
             $morehtmlref .= ' : ';
             if (! empty($objectsrc->fk_project)) {
                 $proj = new Project($db);
@@ -146,7 +147,7 @@ if ($id > 0 || ! empty($ref))
     }
     $morehtmlref.='</div>';
     
-    
+    $object->picto = 'sending';
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
     
     

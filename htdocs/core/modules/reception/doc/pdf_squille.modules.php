@@ -126,7 +126,7 @@ class pdf_squille extends ModelePdfReception
 		$outputlangs->load("products");
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
-        $outputlangs->load("sendings");
+        $outputlangs->load("receptions");
 		$outputlangs->load("productbatch");
 
 		$nblignes = count($object->lines);
@@ -182,13 +182,13 @@ class pdf_squille extends ModelePdfReception
 			// Definition de $dir et $file
 			if ($object->specimen)
 			{
-				$dir = $conf->reception->dir_output."/sending";
+				$dir = $conf->reception->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->reception->dir_output."/sending/" . $expref;
+				$dir = $conf->reception->dir_output."/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
 
@@ -309,10 +309,10 @@ class pdf_squille extends ModelePdfReception
 							if ($object->reception_method_id > 0)
 							{
 								// Get code using getLabelFromKey
-								$code=$outputlangs->getLabelFromKey($this->db,$object->reception_method_id,'c_shipment_mode','rowid','code');
+								$code=$outputlangs->getLabelFromKey($this->db,$object->shipment_method_id,'c_shipment_mode','rowid','code');
 								$label='';
 								if ($object->tracking_url != $object->tracking_number) $label.=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
-								$label.=$outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
+								$label.=$outputlangs->trans("ReceptionMethod").": ".$outputlangs->trans("ReceptionMethod".strtoupper($code));
 								//var_dump($object->tracking_url != $object->tracking_number);exit;
 								if ($object->tracking_url != $object->tracking_number)
 								{
@@ -405,6 +405,7 @@ class pdf_squille extends ModelePdfReception
 						$pageposafter=$pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxpicture-$curX,3,$curX,$curY,$hideref,$hidedesc);
 
 						$pageposafter=$pdf->getPage();
@@ -453,14 +454,14 @@ class pdf_squille extends ModelePdfReception
 
 					$pdf->SetXY($this->posxweightvol, $curY);
 					$weighttxt='';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
+					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->weight)
 					{
-					    $weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->weight_units,"weight");
+					    $weighttxt=round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuring_units_string($object->lines[$i]->product->weight_units,"weight");
 					}
 					$voltxt='';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
+					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->volume)
 					{
-					    $voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0,"volume");
+					    $voltxt=round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuring_units_string($object->lines[$i]->product->volume_units?$object->lines[$i]->product->volume_units:0,"volume");
 					}
 
 					$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt, 0, 0, false, true, 'C');
@@ -473,7 +474,7 @@ class pdf_squille extends ModelePdfReception
 					}
 
 					$pdf->SetXY($this->posxqtytoship, $curY);
-					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
+					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty,'','C');
 
 					if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT))
 					{
@@ -622,18 +623,20 @@ class pdf_squille extends ModelePdfReception
 		$totalVolume=$tmparray['volume'];
 		$totalOrdered=$tmparray['ordered'];
 		$totalToShip=$tmparray['toship'];
+		
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth)
 		{
 		    $object->trueVolume=price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
 		    $object->volume_units=$object->size_units * 3;
+			
 		}
-
+		
 		if ($totalWeight!='') $totalWeighttoshow=showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		if ($totalVolume!='') $totalVolumetoshow=showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
 		if ($object->trueWeight) $totalWeighttoshow=showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
 		if ($object->trueVolume) $totalVolumetoshow=showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
-
+		
     	$pdf->SetFillColor(255,255,255);
     	$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
     	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', 1);
@@ -740,7 +743,7 @@ class pdf_squille extends ModelePdfReception
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqtytoship, $tab_top+1);
-			$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
+			$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToReceive"),'','C');
 		}
 
 		if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
@@ -834,7 +837,7 @@ class pdf_squille extends ModelePdfReception
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
 		if (! empty($conf->barcode->enabled))
 		{
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
+			// TODO Build code bar with function writeBarCode of barcode module for reception ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
@@ -842,7 +845,7 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetDrawColor(128,128,128);
 		if (! empty($conf->barcode->enabled))
 		{
-			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
+			// TODO Build code bar with function writeBarCode of barcode module for reception ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
@@ -854,7 +857,7 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetFont('','B', $default_font_size + 2);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$title=$outputlangs->transnoentities("SendingSheet");
+		$title=$outputlangs->transnoentities("ReceptionSheet");
 		$pdf->MultiCell($w, 4, $title, '', 'R');
 
 		$pdf->SetFont('','', $default_font_size + 1);
@@ -863,7 +866,7 @@ class pdf_squille extends ModelePdfReception
 
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
+		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("RefReception") ." : ".$object->ref, '', 'R');
 
 		// Date planned delivery
 		if (! empty($object->date_delivery))
@@ -874,12 +877,12 @@ class pdf_squille extends ModelePdfReception
     			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"day",false,$outputlangs,true), '', 'R');
 		}
 
-		if (! empty($object->thirdparty->code_client))
+		if (! empty($object->thirdparty->code_fournisseur))
 		{
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 
@@ -891,11 +894,11 @@ class pdf_squille extends ModelePdfReception
 		$origin_id 	= $object->origin_id;
 
 	    // TODO move to external function
-		if (! empty($conf->$origin->enabled))     // commonly $origin='commande'
+		if (! empty($conf->fournisseur->enabled))     // commonly $origin='commande'
 		{
 			$outputlangs->load('orders');
 
-			$classname = ucfirst($origin);
+			$classname = 'CommandeFournisseur';
 			$linkedobject = new $classname($this->db);
 			$result=$linkedobject->fetch($origin_id);
 			if ($result >= 0)
@@ -962,7 +965,8 @@ class pdf_squille extends ModelePdfReception
 
 			// If RECEPTION contact defined, we use it
 			$usecontact=false;
-			$arrayidcontact=$object->$origin->getIdContact('external','RECEPTION');
+			$arrayidcontact=$object->$origin->getIdContact('external','SHIPPING');
+			
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;

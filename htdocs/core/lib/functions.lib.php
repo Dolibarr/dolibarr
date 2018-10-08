@@ -3932,10 +3932,10 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=
         $dimension = $dimension / 1000;
         $unit = $unit + 3;
     }
-
+	
     $ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
 
-    return $ret;
+	return $ret;
 }
 
 

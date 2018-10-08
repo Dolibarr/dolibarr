@@ -1194,18 +1194,22 @@ class Reception extends CommonObject
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
 		$resql = $db->query($sql);
 		if(!empty($resql)){
-			
+			$this->lines = array();
 			while ($obj = $resql->fetch_object()){
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
-				$sql_qtyasked = 'SELECT qty FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
+				$sql_qtyasked = 'SELECT qty, description, label FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
 				$resql_qtyasked = $db->query($sql_qtyasked);
 				if(!empty($resql_qtyasked)){
 					$obj = $db->fetch_object($resql_qtyasked);
 					$line->qty_asked = $obj->qty;
+					$line->description = $obj->description;
+					$line->label = $obj->label;
 				}else {
 					$line->qty_asked = 0;
+					$line->description = '';
+					$line->label = $obj->label;
 				}
 				$this->lines[]=$line;
 			}
@@ -2059,7 +2063,7 @@ class Reception extends CommonObject
 
 		if (! dol_strlen($modele)) {
 
-			$modele = 'rouget';
+			$modele = 'squille';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
@@ -2071,7 +2075,7 @@ class Reception extends CommonObject
 		$modelpath = "core/modules/reception/doc/";
 
 		$this->fetch_origin();
-
+		
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 

@@ -34,6 +34,7 @@ elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->c
 elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
 elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
 elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
+elseif ($module == 'reception')		{ $permission=$user->rights->reception->creer; }
 elseif ($module == 'project_task')	{ $permission=$user->rights->projet->creer; }
 elseif (! isset($permission) && isset($user->rights->$module->creer))
 {
@@ -86,7 +87,7 @@ if ($permission) {
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject=$object;
-		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
@@ -125,7 +126,7 @@ if ($permission) {
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
 			$tmpobject=$object;
-			if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+			if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 			$formcompany->selectTypeContact($tmpobject, '', 'type','external'); ?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
@@ -155,7 +156,7 @@ if ($permission) {
 	foreach($arrayofsource as $source) {
 
 		$tmpobject=$object;
-		if ($object->element == 'shipping' && is_object($objectsrc)) $tmpobject=$objectsrc;
+		if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 
 		$tab = $tmpobject->liste_contact(-1,$source);
 		$num=count($tab);
