@@ -718,6 +718,10 @@ class BookKeeping extends CommonObject
 		$sql .= " t.credit,";
 		$sql .= " t.montant,";
 		$sql .= " t.sens,";
+		$sql .= " t.multicurrency_amount,";
+		$sql .= " t.multicurrency_code,";
+		$sql .= " t.lettering_code,";
+		$sql .= " t.date_lettering,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.import_key,";
 		$sql .= " t.code_journal,";
@@ -786,6 +790,10 @@ class BookKeeping extends CommonObject
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
 				$line->sens = $obj->sens;
+				$line->multicurrency_amount = $obj->multicurrency_amount;
+				$line->multicurrency_code = $obj->multicurrency_code;
+				$line->lettering_code = $obj->lettering_code;
+				$line->date_lettering = $obj->date_lettering;
 				$line->fk_user_author = $obj->fk_user_author;
 				$line->import_key = $obj->import_key;
 				$line->code_journal = $obj->code_journal;

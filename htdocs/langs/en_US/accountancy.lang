@@ -263,6 +263,7 @@ Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
 Modelcsv_agiris=Export towards Agiris
 Modelcsv_configurable=Export Configurable
+Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

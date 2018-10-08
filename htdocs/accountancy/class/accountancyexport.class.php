@@ -54,6 +54,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_COGILOG = 8;
 	public static $EXPORT_TYPE_AGIRIS = 9;
 	public static $EXPORT_TYPE_CONFIGURABLE = 10;
+	public static $EXPORT_TYPE_FEC = 11;
 
 
 	/**
@@ -78,8 +79,8 @@ class AccountancyExport
 	 *
 	 * @param DoliDb $db Database handler
 	 */
-    public function __construct(DoliDB &$db)
-    {
+	public function __construct(DoliDB &$db)
+	{
 		global $conf;
 
 		$this->db = &$db;
@@ -92,8 +93,8 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-    public static function getType()
-    {
+	public static function getType()
+	{
 		global $langs;
 
 		return array (
@@ -107,6 +108,7 @@ class AccountancyExport
 				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 				self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
 				self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
+				self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 			);
 	}
 
@@ -115,8 +117,8 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-    public static function getTypeConfig()
-    {
+	public static function getTypeConfig()
+	{
 		global $conf, $langs;
 
 		return array (
@@ -161,6 +163,10 @@ class AccountancyExport
 					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
 					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
 				),
+				self::$EXPORT_TYPE_FEC => array(
+					'label' => $langs->trans('Modelcsv_FEC'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
 			),
 			'cr'=> array (
 				'1' => $langs->trans("Unix"),
@@ -178,8 +184,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public static function downloadFile()
-    {
+	public static function downloadFile()
+	{
 		global $conf;
 		$filename = 'general_ledger';
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
@@ -189,10 +195,10 @@ class AccountancyExport
 	 * Function who chose which export to use with the default config
 	 *
 	 * @param unknown $TData data
-     * @return void
+	 * @return void
 	 */
-    public function export(&$TData)
-    {
+	public function export(&$TData)
+	{
 		global $conf, $langs;
 
 		self::downloadFile();
@@ -228,6 +234,9 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
+			case self::$EXPORT_TYPE_FEC :
+				$this->exportFEC($TData);
+				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
@@ -241,8 +250,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportNormal($objectLines)
-    {
+	public function exportNormal($objectLines)
+	{
 		global $conf;
 
 		foreach ( $objectLines as $line ) {
@@ -266,8 +275,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportCegid($objectLines)
-    {
+	public function exportCegid($objectLines)
+	{
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
@@ -292,8 +301,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportCogilog($objectLines)
-    {
+	public function exportCogilog($objectLines)
+	{
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
@@ -326,8 +335,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportCoala($objectLines)
-    {
+	public function exportCoala($objectLines)
+	{
 		// Coala export
 		$separator = ";";
 		$end_line = "\n";
@@ -354,8 +363,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportBob50($objectLines)
-    {
+	public function exportBob50($objectLines)
+	{
 
 		// Bob50
 		$separator = ";";
@@ -393,8 +402,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportCiel(&$TData)
-    {
+	public function exportCiel(&$TData)
+	{
 		global $conf;
 
 		$end_line ="\r\n";
@@ -434,13 +443,13 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportQuadratus(&$TData)
-    {
+	public function exportQuadratus(&$TData)
+	{
 		global $conf;
 
 		$end_line ="\r\n";
 
-        //We should use dol_now function not time however this is wrong date to transfert in accounting
+		//We should use dol_now function not time however this is wrong date to transfert in accounting
 		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ( $TData as $data ) {
@@ -454,8 +463,8 @@ class AccountancyExport
 			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
 			$Tab['folio'] = '000';
 
-            //We use invoice date $data->doc_date not $date_ecriture which is the transfert date
-            //maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
+			//We use invoice date $data->doc_date not $date_ecriture which is the transfert date
+			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
 			//$Tab['date_ecriture'] = $date_ecriture;
 			$Tab['date_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
 			$Tab['filler'] = ' ';
@@ -463,25 +472,25 @@ class AccountancyExport
 			$Tab['sens'] = $data->sens; // C or D
 			$Tab['signe_montant'] = '+';
 
-            //elarifr le montant doit etre en centimes sans point decimal !
+			//elarifr le montant doit etre en centimes sans point decimal !
 			$Tab['montant'] = str_pad(abs($data->montant*100), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
-		    // $Tab['montant'] = str_pad(abs($data->montant), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
+			// $Tab['montant'] = str_pad(abs($data->montant), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
-            // elarifr:  date format must be fixed format : 6 char ddmmyy = %d%m%yand not defined by user / dolibarr setting
+			// elarifr:  date format must be fixed format : 6 char ddmmyy = %d%m%yand not defined by user / dolibarr setting
 			if (! empty($data->date_echeance))
 				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance,  '%d%m%y' );     // elarifr:  format must be ddmmyy
+				$Tab['date_echeance'] = dol_print_date($data->date_echeance,  '%d%m%y' );	 // elarifr:  format must be ddmmyy
 			else
 				$Tab['date_echeance'] = '000000';
 
-            //elarifr please keep quadra named field lettrage(2) + codestat(3) instead of fake lettrage(5)
+			//elarifr please keep quadra named field lettrage(2) + codestat(3) instead of fake lettrage(5)
 			//$Tab['lettrage'] = str_repeat(' ', 5);
 			$Tab['lettrage'] = str_repeat(' ', 2);
 			$Tab['codestat'] = str_repeat(' ', 3);
 			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 5), 5);
 
-            //elarifr keep correct quadra named field instead of anon filler
+			//elarifr keep correct quadra named field instead of anon filler
 			//$Tab['filler2'] = str_repeat(' ', 20);
 			$Tab['affaire'] = str_repeat(' ', 10);
 			$Tab['quantity1'] = str_repeat(' ', 10);
@@ -490,16 +499,16 @@ class AccountancyExport
 			$Tab['code_journal2'] = str_pad(self::trunc($data->code_journal, 3), 3);
 			$Tab['filler3'] = str_repeat(' ', 3);
 
-            //elarifr keep correct quadra named field instead of anon filler libelle_ecriture2 is 30 char not 32 !!!!
-            //as we use utf8, we must remove accent to have only one ascii char instead of utf8 2 chars for specials that report wrong line size that will exceed import format spec
-            //todo we should filter more than only accent to avoid wrong line size
-            //TODO: remove invoice number doc_ref in libelle,
-            //TODO: we should offer an option for customer to build the libelle using invoice number / name / date in accounting software
+			//elarifr keep correct quadra named field instead of anon filler libelle_ecriture2 is 30 char not 32 !!!!
+			//as we use utf8, we must remove accent to have only one ascii char instead of utf8 2 chars for specials that report wrong line size that will exceed import format spec
+			//todo we should filter more than only accent to avoid wrong line size
+			//TODO: remove invoice number doc_ref in libelle,
+			//TODO: we should offer an option for customer to build the libelle using invoice number / name / date in accounting software
 			//$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref) . ' ' . dol_string_unaccent($data->label_operation), 30), 30);
 			$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 30), 30);
 			$Tab['codetva'] = str_repeat(' ', 2);
 
-            //elarifr we need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
+			//elarifr we need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
 			//$Tab['num_piece3'] = str_pad(self::trunc($data->piece_num, 10), 10);
 			$Tab['num_piece3'] = substr(self::trunc($data->doc_ref, 20), -10);
 			$Tab['filler4'] = str_repeat(' ', 73);
@@ -518,8 +527,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportEbp($objectLines)
-    {
+	public function exportEbp($objectLines)
+	{
 
 		$separator = ',';
 		$end_line = "\n";
@@ -551,8 +560,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportAgiris($objectLines)
-    {
+	public function exportAgiris($objectLines)
+	{
 
 		$separator = ';';
 		$end_line = "\n";
@@ -589,8 +598,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-    public function exportConfigurable($objectLines)
-    {
+	public function exportConfigurable($objectLines)
+	{
 		global $conf;
 
 		foreach ($objectLines as $line) {
@@ -613,15 +622,89 @@ class AccountancyExport
 		}
 	}
 
+	/**
+	 * Export format : FEC
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportFEC($objectLines)
+	{
+		$separator = ';';
+		$end_line = "\n";
+
+		foreach ( $objectLines as $line ) {
+			$date_creation = dol_print_date($line->date_creation, '%d%m%Y');
+			$date_doc = dol_print_date($line->doc_date, '%d%m%Y');
+			$date_valid = dol_print_date($line->date_validated, '%d%m%Y');
+
+			// FEC:JournalCode
+			print $line->code_journal;
+
+			// FEC:JournalLib
+			print $line->journal_label;
+
+			// FEC:EcritureNum
+			print $line->piece_num . $separator;
+
+			// FEC:EcritureDate
+			print $date_creation . $separator;
+
+			// FEC:CompteNum
+			print $line->numero_compte . $separator
+
+			// FEC:CompteLib
+			print $line->label_compte . $separator;
+
+			// FEC:CompAuxNum
+			print $line->subledger_account . $separator;
+
+			// FEC:CompAuxLib
+			print $line->subledger_label . $separator;
+
+			// FEC:PieceRef
+			print $line->doc_ref . $separator;
+
+			// FEC:PieceDate
+			print $date_doc . $separator;
+
+			// FEC:EcritureLib
+			print $line->label_operation . $separator;
+
+			// FEC:Debit
+			print price($line->debit) . $separator;
+
+			// FEC:Credit
+			print price($line->credit) . $separator;
+
+			// FEC:EcritureLet
+			print $line->lettering_code . $separator;
+
+			// FEC:DateLet
+			print $line->date_lettering . $separator;
+
+			// FEC:ValidDate
+			print $date_valid . $separator;
+
+			// FEC:Montantdevise
+			print $line->multicurrency_amount . $separator;
+
+			// FEC:Idevise
+			print $line->multicurrency_code;
+
+			print $end_line;
+		}
+	}
 
 	/**
 	 *
 	 * @param unknown $str data
 	 * @param integer $size data
-     * @return string
+	 * @return string
 	 */
-    public static function trunc($str, $size)
-    {
+	public static function trunc($str, $size)
+	{
 		return dol_trunc($str, $size, 'right', 'UTF-8', 1);
 	}
 }
