@@ -128,6 +128,8 @@ class Facture extends CommonInvoice
 	public $paye;
 	//! key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
+	//! key of pos source ('0', '1', ...)
+	public $pos_source;
 	//! id of template invoice when generated from a template invoice
 	public $fk_fac_rec_source;
 	//! id of source invoice if replacement invoice or credit note
@@ -447,7 +449,7 @@ class Facture extends CommonInvoice
 		$sql.= ", note_public";
 		$sql.= ", ref_client, ref_int";
         $sql.= ", fk_account";
-		$sql.= ", module_source, fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
+		$sql.= ", module_source, pos_source, fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
 		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
 		$sql.= ", situation_cycle_ref, situation_counter, situation_final";
 		$sql.= ", fk_incoterms, location_incoterms";
@@ -472,6 +474,7 @@ class Facture extends CommonInvoice
 		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
 		$sql.= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
+		$sql.= ", ".($this->pos_source ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql.= ", ".($this->fk_fac_rec_source?"'".$this->db->escape($this->fk_fac_rec_source)."'":"null");
 		$sql.= ", ".($this->fk_facture_source?"'".$this->db->escape($this->fk_facture_source)."'":"null");
 		$sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");

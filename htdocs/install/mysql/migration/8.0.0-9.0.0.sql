@@ -35,6 +35,7 @@ ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version    FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accounting_system (pcg_version);
 
 ALTER TABLE llx_facture ADD COLUMN module_source varchar(32);
+ALTER TABLE llx_facture ADD COLUMN pos_source varchar(32);
 
 create table llx_facture_rec_extrafields
 (
