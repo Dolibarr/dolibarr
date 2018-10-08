@@ -5803,6 +5803,7 @@ abstract class CommonObject
             if(file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php')))$url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php',1);
             else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.$class.'_card.php',1);
             $out.='<a class="butActionNew" href="'.$url_path.'?action=create&backtopage='.$_SERVER['PHP_SELF'].'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+            //TODO Add Javascript code to add input fields contents to new elements urls
 		}
 		elseif ($type == 'password')
 		{
