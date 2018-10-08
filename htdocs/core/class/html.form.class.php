@@ -2971,7 +2971,10 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$label=($langs->trans("DemandReasonType".$obj->code)!=("DemandReasonType".$obj->code)?$langs->trans("DemandReasonType".$obj->code):($obj->label!='-'?$obj->label:''));
+				$label=($obj->label!='-'?$obj->label:'');
+				if ($langs->trans("DemandReasonType".$obj->code) != ("DemandReasonType".$obj->code)) $label = $langs->trans("DemandReasonType".$obj->code); // So translation key DemandReasonTypeSRC_XXX will work
+				if ($langs->trans($obj->code) != $obj->code) $label=$langs->trans($obj->code);																// So translation key SRC_XXX will work
+
 				$tmparray[$obj->rowid]['id']   =$obj->rowid;
 				$tmparray[$obj->rowid]['code'] =$obj->code;
 				$tmparray[$obj->rowid]['label']=$label;
@@ -3020,7 +3023,8 @@ class Form
 			{
 				print '<option value="'.$arraydemandreason['id'].'">';
 			}
-			print $arraydemandreason['label'];
+			$label=$arraydemandreason['label'];	// Translation of label was already done into the ->loadCacheInputReason
+			print $langs->trans($label);
 			print '</option>';
 		}
 		print '</select>';
