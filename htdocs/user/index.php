@@ -194,7 +194,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 // TODO add hook
 if (! empty($conf->multicompany->enabled)) {
 	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		if (! empty($user->admin) && empty($user->entity)) {
+		if (! empty($user->admin)) {
 			if ($conf->entity == 1) {
 				$sql.= " WHERE u.entity IS NOT NULL";
 			} else {
