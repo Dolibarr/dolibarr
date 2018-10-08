@@ -609,11 +609,22 @@ if (empty($reshook))
 	// Classify billed
 	else if ($action == 'classifybilled' && $usercanclose)
 	{
+		$db->begin();
+
 		$result=$object->cloture($user, 4, '');
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
 		}
 	}
 
@@ -627,11 +638,22 @@ if (empty($reshook))
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
+				$db->begin();
+
 				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','none'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				}
+
+				if (! $error)
+				{
+					$db->commit();
+				}
+				else
+				{
+					$db->rollback();
 				}
 			}
 		}
@@ -643,11 +665,22 @@ if (empty($reshook))
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
 		{
+			$db->begin();
+
 			$result=$object->reopen($user, 1);
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
+			}
+
+			if (! $error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
 			}
 		}
 	}
