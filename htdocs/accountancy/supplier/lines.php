@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","accountancy","productbatch"));
@@ -223,7 +224,18 @@ else if ($search_year > 0)
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if (strlen(trim($search_country))) {
-	$sql .= natural_search("co.code", $search_country);
+	$arrayofcode = getCountriesInEEC();
+	$country_code_in_EEC = $country_code_in_EEC_without_me = '';
+	foreach ($arrayofcode as $key => $value)
+	{
+		$country_code_in_EEC.=($country_code_in_EEC ? "," : "")."'".$value."'";
+		if ($value != $mysoc->country_code) $country_code_in_EEC_without_me.=($country_code_in_EEC_without_me ? "," : "")."'".$value."'";
+	}
+	if ($search_country == 'special_allnotme')     $sql .= " AND co.code <> '".$db->escape($mysoc->country_code)."'";
+	elseif ($search_country == 'special_eec')      $sql .= " AND co.code IN (".$country_code_in_EEC.")";
+	elseif ($search_country == 'special_eecnotme') $sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
+	elseif ($search_country == 'special_noteec')   $sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
+	else $sql .= natural_search(array("co.code","co.label"), $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
 	$sql .= natural_search("s.tva_intra", $search_tvaintra);
@@ -312,7 +324,7 @@ if ($result) {
 	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth200', 'code2');
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth200', 'code2', 1, 0, 1);
 	//	print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="' . dol_escape_htmltag($search_tvaintra) . '"></td>';

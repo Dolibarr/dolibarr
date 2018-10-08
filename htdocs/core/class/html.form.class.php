@@ -665,13 +665,14 @@ class Form
 	 *  @param	string	$morecss			More css class
 	 *  @param	string	$usecodeaskey		''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
 	 *  @param	int		$showempty			Show empty choice
-	 *  @param	int		$disablefavorites	Disable favorites
+	 *  @param	int		$disablefavorites	1=Disable favorites,
+	 *  @param	int		$addspecialentries	1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 *  @return string           			HTML string with select
 	 */
-	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1, $disablefavorites=0)
+	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1, $disablefavorites=0, $addspecialentries=0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf,$langs,$mysoc;
 
 		$langs->load("dict");
 
@@ -713,9 +714,25 @@ class Form
 				if (empty($disablefavorites)) array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
 				else $countryArray = dol_sort_array($countryArray, 'label');
 
+				if ($showempty)
+				{
+					$out.='<option value="">&nbsp;</option>'."\n";
+				}
+
+				if ($addspecialentries)	// Add dedicated entries for groups of countries
+				{
+					//if ($showempty) $out.= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+					$out.= '<option value="special_allnotme"'.($selected == 'special_allnotme' ? ' selected' : '').'>'.$langs->trans("CountriesExceptMe", $langs->transnoentitiesnoconv("Country".$mysoc->country_code)).'</option>';
+					$out.= '<option value="special_eec"'.($selected == 'special_eec' ? ' selected' : '').'>'.$langs->trans("CountriesInEEC").'</option>';
+					if ($mysoc->isInEEC()) $out.= '<option value="special_eecnotme"'.($selected == 'special_eecnotme' ? ' selected' : '').'>'.$langs->trans("CountriesInEECExceptMe", $langs->transnoentitiesnoconv("Country".$mysoc->country_code)).'</option>';
+					$out.= '<option value="special_noteec"'.($selected == 'special_noteec' ? ' selected' : '').'>'.$langs->trans("CountriesNotInEEC").'</option>';
+					$out.= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+				}
+
 				foreach ($countryArray as $row)
 				{
-					if (empty($showempty) && empty($row['rowid'])) continue;
+					//if (empty($showempty) && empty($row['rowid'])) continue;
+					if (empty($row['rowid'])) continue;
 
 					if (empty($disablefavorites) && $row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
