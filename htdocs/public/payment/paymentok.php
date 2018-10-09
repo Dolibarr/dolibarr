@@ -551,7 +551,9 @@ if ($ispaymentok)
 							$listofmimes=array(dol_mimetype($file));
 						}
 
-						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1);
+						$moreinheader='X-Dolibarr-Info: send_an_email by public/payment/paymentok.php'."\r\n";
+
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, "", $moreinheader);
 
 						if ($result < 0)
 						{

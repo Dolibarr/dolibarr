@@ -950,6 +950,7 @@ if (empty($id))
 {
     print $langs->trans("DictionaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+    print '<br>';
 }
 
 

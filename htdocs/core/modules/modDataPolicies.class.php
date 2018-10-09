@@ -43,7 +43,8 @@ class modDataPolicies extends DolibarrModules {
      *
      * @param DoliDB $db Database handler
      */
-    public function __construct($db) {
+    public function __construct($db)
+    {
         global $langs, $conf;
 
         $this->db = $db;
@@ -221,7 +222,8 @@ class modDataPolicies extends DolibarrModules {
      * 	@param      string	$options    Options when enabling module ('', 'noboxes')
      * 	@return     int             	1 if OK, 0 if KO
      */
-    public function init($options = '') {
+    public function init($options = '')
+    {
     	global $langs;
 
     	$this->_load_tables('/datapolicies/sql/');
@@ -268,10 +270,10 @@ class modDataPolicies extends DolibarrModules {
      * 	@param      string	$options    Options when enabling module ('', 'noboxes')
      * 	@return     int             	1 if OK, 0 if KO
      */
-    public function remove($options = '') {
+    public function remove($options = '')
+    {
         $sql = array();
 
         return $this->_remove($sql, $options);
     }
-
 }

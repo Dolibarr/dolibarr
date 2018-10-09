@@ -34,6 +34,9 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN fk_pcg_version varchar(32) NOT 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version    FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accounting_system (pcg_version);
 
+ALTER TABLE llx_facture ADD COLUMN module_source varchar(32);
+ALTER TABLE llx_facture ADD COLUMN pos_source varchar(32);
+
 create table llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -77,6 +80,7 @@ ALTER TABLE llx_societe ADD COLUMN snapchat  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN googleplus  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN youtube  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN whatsapp  varchar(255) after skype;
+
 ALTER TABLE llx_socpeople ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN facebook varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN instagram  varchar(255) after skype;
@@ -84,6 +88,25 @@ ALTER TABLE llx_socpeople ADD COLUMN snapchat  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN googleplus  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN youtube  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN whatsapp  varchar(255) after skype;
+
+ALTER TABLE llx_adherent ADD COLUMN skype  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN twitter  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN facebook varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN instagram  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN snapchat  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN googleplus  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN youtube  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN whatsapp  varchar(255);
+
+ALTER TABLE llx_user ADD COLUMN skype  varchar(255);
+ALTER TABLE llx_user ADD COLUMN twitter  varchar(255);
+ALTER TABLE llx_user ADD COLUMN facebook varchar(255);
+ALTER TABLE llx_user ADD COLUMN instagram  varchar(255);
+ALTER TABLE llx_user ADD COLUMN snapchat  varchar(255);
+ALTER TABLE llx_user ADD COLUMN googleplus  varchar(255);
+ALTER TABLE llx_user ADD COLUMN youtube  varchar(255);
+ALTER TABLE llx_user ADD COLUMN whatsapp  varchar(255);
+
 
 ALTER TABLE llx_website CHANGE COLUMN fk_user_create fk_user_creat integer;
 ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;

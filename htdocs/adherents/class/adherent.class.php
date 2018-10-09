@@ -153,7 +153,7 @@ class Adherent extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *  Function sending an email has the adherent with the text supplied in parameter.
+	 *  Function sending an email to the current member with the text supplied in parameter.
 	 *
 	 *  @param	string	$text				Content of message (not html entities encoded)
 	 *  @param	string	$subject			Subject of message
@@ -165,9 +165,10 @@ class Adherent extends CommonObject
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
 	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$moreinheader		Add more html headers
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
+	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='', $moreinheader='')
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -189,9 +190,11 @@ class Adherent extends CommonObject
 		$from=$conf->email_from;
 		if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
 
+		$trackid = 'mem'.$this->id;
+
 		// Send email (substitutionarray must be done just before this)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
+		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, '', '', $trackid, $moreinheader);
 		if ($mailfile->sendfile())
 		{
 			return 1;
@@ -2661,8 +2664,11 @@ class Adherent extends CommonObject
 						$from = $conf->global->ADHERENT_MAIL_FROM;
 						$to = $adherent->email;
 
+						$trackid = 'mem'.$adherent->id;
+						$moreinheader='X-Dolibarr-Info: sendReminderForExpiredSubscription'."\r\n";
+
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
 						$result = $cmail->sendfile();
 						if (! $result)
 						{

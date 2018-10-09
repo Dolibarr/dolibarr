@@ -129,7 +129,7 @@ if ($what == 'mysql')
     {
         $arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
         $ok=0;
-        dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that on of this command is inside ".$cmddump);
+        dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
         foreach($arrayofallowedcommand as $allowedcommand)
         {
             if (preg_match('/'.preg_quote($allowedcommand,'/').'/', $cmddump))

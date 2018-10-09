@@ -294,12 +294,11 @@ class Utils
 
 			if ($handle)
 			{
-				$execmethod=1;
 				if (! empty($conf->global->MAIN_EXEC_USE_POPEN)) $execmethod=$conf->global->MAIN_EXEC_USE_POPEN;
 				if (empty($execmethod)) $execmethod=1;
 
 				$ok=0;
-				dol_syslog("Run command with method ".$execmethod." with ".$fullcommandcrypted);
+				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_DEBUG);
 
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1)
@@ -322,7 +321,7 @@ class Utils
 						{
 							$i++;   // output line number
 							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
-							fwrite($handle,$read);
+							fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 							if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
 							elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
 						}
@@ -410,13 +409,13 @@ class Utils
 
 			if ($compression == 'gz' or $compression == 'bz')
 			{
-				$this->backup_tables($outputfiletemp);
+				$this->backupTables($outputfiletemp);
 				dol_compress_file($outputfiletemp, $outputfile, $compression);
 				unlink($outputfiletemp);
 			}
 			else
 			{
-				$this->backup_tables($outputfile);
+				$this->backupTables($outputfile);
 			}
 
 			$this->output = "";
@@ -836,7 +835,7 @@ class Utils
 	 *	@param	string	$tables			Table name or '*' for all
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function backup_tables($outputfile, $tables='*')
+	function backupTables($outputfile, $tables='*')
 	{
 		global $db, $langs;
 		global $errormsg;

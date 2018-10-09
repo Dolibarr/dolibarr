@@ -1,7 +1,8 @@
 <?php
 
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +24,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
 require_once '../lib/datapolicies.lib.php';
 
-//require_once "../class/myclass.class.php";
 // Translations
-$langs->load('admin');
-$langs->load('companies');
-$langs->load('members');
-$langs->load('datapolicies@datapolicies');
+$langs->loadLangs(array('admin', 'companies', 'members', 'datapolicies'));
 
 
 // Parameters
@@ -121,32 +118,32 @@ $linkr = 'TXTLINKDATAPOLICIESREFUSE_' . $l;
 $content = 'DATAPOLICIESCONTENT_' . $l;
 $acc = 'DATAPOLICIESACCEPT_' . $l;
 $ref = 'DATAPOLICIESREFUSE_' . $l;
-print '<tr ' . $bc[$var] . '><td class="fieldrequired">';
+print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICIESSUBJECTMAIL') . '</td><td>';
 print '<input type="text" size="100" name="' . $subject . '" value="' . $conf->global->$subject . '" />';
 print '</td><tr>';
-print '<tr ' . $bc[$var] . '><td class="fieldrequired">';
+print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICIESCONTENTMAIL').'</td><td>';
 print $langs->trans('DATAPOLICIESSUBSITUTION');echo'__LINKACCEPT__,__LINKREFUSED__,__FIRSTNAME__,__NAME__,__CIVILITY__';
 $doleditor = new DolEditor($content, $conf->global->$content, '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
-print '<tr ' . $bc[$var] . '><td class="fieldrequired">';
+print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('TXTLINKDATAPOLICIESACCEPT') . '</td><td>';
 print '<input type="text" size="200" name="' . $linka . '" value="' . $conf->global->$linka . '" />';
 print '</td><tr>';
-print '<tr ' . $bc[$var] . '><td class="fieldrequired">';
+print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('TXTLINKDATAPOLICIESREFUSE') . '</td><td>';
 print '<input type="text" size="200" name="' . $linkr . '" value="' . $conf->global->$linkr . '" />';
 print '</td><tr>';
-print '<tr ' . $bc[$var] . '><td class="fieldrequired">';
+print '<tr class"oddeven"><td class="fieldrequired">';
 
 print $langs->trans('DATAPOLICIESACCEPT').'</td><td>';
 
 $doleditor = new DolEditor($acc, $conf->global->$acc, '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
-print '<tr ' . $bc[$var] . '><td class="fieldrequired">';
+print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICIESREFUSE').'</td><td>';
 
 print $langs->trans('');
