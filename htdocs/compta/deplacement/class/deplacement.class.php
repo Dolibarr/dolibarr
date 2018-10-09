@@ -59,6 +59,10 @@ class Deplacement extends CommonObject
 
 	public $datec;         // Creation date
 	public $dated;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
 
 	/**

@@ -69,9 +69,25 @@ class PaymentVarious extends CommonObject
     public $label;
 
 	public $accountancy_code;
+
+	/**
+     * @var int ID
+     */
 	public $fk_project;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 
