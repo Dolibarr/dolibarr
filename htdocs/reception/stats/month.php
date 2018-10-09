@@ -17,14 +17,14 @@
  */
 
 /**
- *    \file       htdocs/expedition/stats/month.php
+ *    \file       htdocs/reception/stats/month.php
  *    \ingroup    commande
- *    \brief      Page des stats expeditions par mois
+ *    \brief      Page des stats receptions par mois
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 
@@ -39,15 +39,15 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
-print load_fiche_titre($langs->trans("StatisticsOfSendings").' '.$_GET["year"], $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfReceptions").' '.$_GET["year"], $mesg);
 
-$stats = new ExpeditionStats($db);
-$data = $stats->getNbExpeditionByMonth($_GET["year"]);
+$stats = new ReceptionStats($db);
+$data = $stats->getNbReceptionByMonth($_GET["year"]);
 
-dol_mkdir($conf->expedition->dir_temp);
+dol_mkdir($conf->reception->dir_temp);
 
-$filename = $conf->expedition->dir_temp."/expedition".$year.".png";
-$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expedition'.$year.'.png';
+$filename = $conf->reception->dir_temp."/reception".$year.".png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=reception'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -65,7 +65,7 @@ if (! $mesg)
 }
 
 print '<table class="border" width="100%">';
-print '<tr><td align="center">Nombre d expedition par mois</td>';
+print '<tr><td align="center">Nombre d reception par mois</td>';
 print '<td align="center">';
 print $px->show();
 print '</td></tr>';
