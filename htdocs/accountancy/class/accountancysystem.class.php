@@ -43,7 +43,11 @@ class AccountancySystem
 	 */
 	public $rowid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_pcg_version;
+
 	public $pcg_type;
 	public $pcg_subtype;
 

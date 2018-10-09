@@ -70,8 +70,17 @@ class BookKeeping extends CommonObject
 	public $date_lim_reglement;
 	public $doc_type;
 	public $doc_ref;
+
+	/**
+     * @var int ID
+     */
 	public $fk_doc;
+
+	/**
+     * @var int ID
+     */
 	public $fk_docdet;
+
 	public $thirdparty_code;
 	public $subledger_account;
 	public $subledger_label;
@@ -82,7 +91,12 @@ class BookKeeping extends CommonObject
 	public $credit;
 	public $montant;
 	public $sens;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
 	public $import_key;
 	public $code_journal;
 	public $journal_label;
@@ -1871,8 +1885,17 @@ class BookKeepingLine
 	public $doc_date = '';
 	public $doc_type;
 	public $doc_ref;
+
+	/**
+     * @var int ID
+     */
 	public $fk_doc;
+
+	/**
+     * @var int ID
+     */
 	public $fk_docdet;
+
 	public $thirdparty_code;
 	public $subledger_account;
 	public $subledger_label;
@@ -1883,7 +1906,12 @@ class BookKeepingLine
 	public $credit;
 	public $montant;
 	public $sens;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
 	public $import_key;
 	public $code_journal;
 	public $journal_label;
