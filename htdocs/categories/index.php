@@ -82,6 +82,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<form method="post" action="index.php?type='.$type.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+
+
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
