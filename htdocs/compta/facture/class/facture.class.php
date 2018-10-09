@@ -98,8 +98,17 @@ class Facture extends CommonInvoice
 	public $socid;
 
 	public $author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_valid;
+
 	public $date;              // Date invoice
 	public $date_creation;		// Creation date
 	public $date_validation;	// Validation date
@@ -138,7 +147,11 @@ class Facture extends CommonInvoice
 	public $date_lim_reglement;
 	public $cond_reglement_code;		// Code in llx_c_paiement
 	public $mode_reglement_code;		// Code in llx_c_paiement
-	public $fk_bank;					// Field to store bank id to use when payment mode is withdraw
+
+	/**
+     * @var int ID Field to store bank id to use when payment mode is withdraw
+     */
+	public $fk_bank;
 
 	/**
 	 * @deprecated
@@ -157,7 +170,11 @@ class Facture extends CommonInvoice
 	public $fac_rec;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
@@ -4318,42 +4335,42 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $table_element='facturedet';
 
-	var $oldline;
+	public $oldline;
 
 	//! From llx_facturedet
 	//! Id facture
-	var $fk_facture;
+	public $fk_facture;
 	//! Id parent line
-	var $fk_parent_line;
+	public $fk_parent_line;
 	/**
 	 * @deprecated
 	 */
-	var $label;
+	public $label;
 	//! Description ligne
-	var $desc;
+	public $desc;
 
-	var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-	var $fk_remise_except;	// Link to line into llx_remise_except
-	var $rang = 0;
+	public $localtax1_type;	// Local tax 1 type
+	public $localtax2_type;	// Local tax 2 type
+	public $fk_remise_except;	// Link to line into llx_remise_except
+	public $rang = 0;
 
-	var $fk_fournprice;
-	var $pa_ht;
-	var $marge_tx;
-	var $marque_tx;
+	public $fk_fournprice;
+	public $pa_ht;
+	public $marge_tx;
+	public $marque_tx;
 
-	var $special_code;	// Liste d'options non cumulabels:
+	public $special_code;	// Liste d'options non cumulabels:
 	// 1: frais de port
 	// 2: ecotaxe
 	// 3: ??
 
-	var $origin;
-	var $origin_id;
+	public $origin;
+	public $origin_id;
 
-	var $fk_code_ventilation = 0;
+	public $fk_code_ventilation = 0;
 
-	var $date_start;
-	var $date_end;
+	public $date_start;
+	public $date_end;
 
 	// Ne plus utiliser
 	//var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
@@ -4364,17 +4381,17 @@ class FactureLigne extends CommonInvoiceLine
 	 * @deprecated
 	 * @see product_ref
 	 */
-	var $ref;				// Product ref (deprecated)
-	var $product_ref;       // Product ref
+	public $ref;				// Product ref (deprecated)
+	public $product_ref;       // Product ref
 	/**
 	 * @deprecated
 	 * @see product_label
 	 */
-	var $libelle;      		// Product label (deprecated)
-	var $product_label;     // Product label
-	var $product_desc;  	// Description produit
+	public $libelle;      		// Product label (deprecated)
+	public $product_label;     // Product label
+	public $product_desc;  	// Description produit
 
-	var $skip_update_total; // Skip update price total for special lines
+	public $skip_update_total; // Skip update price total for special lines
 
 	/**
 	 * @var int Situation advance percentage
@@ -4387,12 +4404,12 @@ class FactureLigne extends CommonInvoiceLine
 	public $fk_prev_id;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_subprice;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 *	Load invoice line from database

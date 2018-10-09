@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018 SuperAdmin
+/* Copyright (C) 2018 Nicolas ZABOURI <info@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,6 @@ Class DataPolicies extends Contact
             $i = 0;
             while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
-                //echo "<pre>".print_r($obj,1)."</pre>";
                 $contact = new Contact($db);
                 $contact->fetch($obj->rowid);
 
@@ -92,7 +91,6 @@ Class DataPolicies extends Contact
             $i = 0;
             while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
-                //echo "<pre>".print_r($obj,1)."</pre>";
                 $societe = new Societe($db);
                 $societe->fetch($obj->rowid);
 
@@ -128,7 +126,6 @@ Class DataPolicies extends Contact
             $i = 0;
             while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
-                //echo "<pre>".print_r($obj,1)."</pre>";
                 $adherent = new Adherent($db);
                 $adherent->fetch($obj->rowid);
 
@@ -153,7 +150,6 @@ Class DataPolicies extends Contact
      	$from = $user->getFullName($langs) . ' <' . $user->email . '>';
      	$replyto = $from;
      	$sendto = $contact->email;
-     	//echo "<pre>".print_r($contact,1)."</pre>";
      	$code= md5($contact->email);
      	if (!empty($contact->default_lang)) {
      		$l = $contact->default_lang;
@@ -243,8 +239,8 @@ Class DataPolicies extends Contact
 
 
      	$substitutionarray = array(
-            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&c='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
-            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&c='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
+            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&s='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
+            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&s='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
      	);
      	$subject = make_substitutions($subject, $substitutionarray);
      	$message = make_substitutions($message, $substitutionarray);
@@ -308,8 +304,8 @@ Class DataPolicies extends Contact
 
 
     	$substitutionarray = array(
-            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&c='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
-            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&c='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
+            '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&a='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
+            '__LINKREFUSED__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=2&a='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linkr.'</a>',
     	);
     	$subject = make_substitutions($subject, $substitutionarray);
     	$message = make_substitutions($message, $substitutionarray);

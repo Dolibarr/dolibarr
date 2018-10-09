@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018 SuperAdmin
+/* Copyright (C) 2018 Nicolas ZABOURI   <info@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,6 @@ function datapoliciesAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	//$this->tabs = array(
-	//	'entity:+tabname:Title:@datapolicies:/datapolicies/mypage.php?id=__ID__'
-	//); // to add new tab
-	//$this->tabs = array(
-	//	'entity:-tabname:Title:@datapolicies:/datapolicies/mypage.php?id=__ID__'
-	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicies');
 
 	return $head;

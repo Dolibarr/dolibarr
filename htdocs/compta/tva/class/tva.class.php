@@ -60,8 +60,19 @@ class Tva extends CommonObject
      */
     public $label;
 
+    /**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
     /**
