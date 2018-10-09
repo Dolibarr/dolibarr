@@ -64,7 +64,15 @@ class ChargeSociales extends CommonObject
     public $date_creation;
     public $date_modification;
     public $date_validation;
+
+    /**
+     * @var int ID
+     */
     public $fk_account;
+
+    /**
+     * @var int ID
+     */
 	public $fk_project;
 
 
