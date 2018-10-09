@@ -1837,24 +1837,28 @@ class Societe extends CommonObject
 
     	if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
     	{
+            $code = '';
     		if (($this->client) && (! empty ( $this->code_client ))
     			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
     			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
     			)
-    		)
-    		$code = $this->code_client . ' - ';
+    		) {
+    		    $code .= $this->code_client . ' - ';
+            }
 
     		if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
     			&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
     			|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
     			)
-    		)
-    		$code .= $this->code_fournisseur . ' - ';
+    		) {
+    		    $code .= $this->code_fournisseur . ' - ';
+            }
 
-    		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
-    			$name =$code.' '.$name;
-    		else
-    			$name =$code;
+    		if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1) {
+    			$name = $code.' '.$name;
+            } else {
+    			$name = $code;
+            }
     	}
 
     	if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
