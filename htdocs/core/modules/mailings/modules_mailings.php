@@ -41,7 +41,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 */
 	public $error='';
 
-    var $tooltip='';
+    public $tooltip='';
 
 
     /**

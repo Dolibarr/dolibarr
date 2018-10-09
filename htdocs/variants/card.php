@@ -133,7 +133,6 @@ if ($confirm == 'yes') {
 $langs->load('products');
 
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
-$var = false;
 
 llxHeader('', $title);
 

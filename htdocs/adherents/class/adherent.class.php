@@ -51,7 +51,11 @@ class Adherent extends CommonObject
 	 */
 	public $table_element='adherent';
 
-	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	public $mesgs;
 
@@ -65,8 +69,17 @@ class Adherent extends CommonObject
 	public $pass_indatabase_crypted;
 
 	public $societe;
+
+	/**
+	 * @var Societe $company {@type Societe}
+	 */
 	public $company;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 

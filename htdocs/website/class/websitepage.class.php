@@ -64,7 +64,12 @@ class WebsitePage extends CommonObject
 	public $htmlheader;
 	public $content;
 	public $grabbed_from;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $date_creation;
 	public $date_modification;
 

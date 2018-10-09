@@ -51,11 +51,11 @@ class Notify
 	 */
 	public $errors = array();
 
-	var $author;
-	var $ref;
-	var $date;
-	var $duree;
-	var $note;
+	public $author;
+	public $ref;
+	public $date;
+	public $duree;
+	public $note;
 
 	/**
      * @var int Project ID
