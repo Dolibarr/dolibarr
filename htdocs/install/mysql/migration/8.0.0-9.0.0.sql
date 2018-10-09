@@ -70,8 +70,8 @@ ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after a
 
 ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
 
-ALTER TABLE llx_paiement ADD COLUMN key_charge varchar(128);
-ALTER TABLE llx_paiement ADD COLUMN site varchar(128);
+ALTER TABLE llx_paiement ADD COLUMN ext_payment_id varchar(128);
+ALTER TABLE llx_paiement ADD COLUMN ext_payment_site varchar(128);
 
 ALTER TABLE llx_societe ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN facebook varchar(255) after skype;
