@@ -2467,16 +2467,16 @@ class Propal extends CommonObject
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-			 	// Define output language
-			  	$outputlangs = $langs;
-			   	if (! empty($conf->global->MAIN_MULTILANGS))
-			   	{
-			   		$outputlangs = new Translate("",$conf);
-			   		$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
-			   		$outputlangs->setDefaultLang($newlang);
-			   	}
-			   	//$ret=$object->fetch($id);    // Reload to get new records
-				   $this->generateDocument($modelpdf, $outputlangs);
+				// Define output language
+				$outputlangs = $langs;
+				if (! empty($conf->global->MAIN_MULTILANGS))
+				{
+					$outputlangs = new Translate("",$conf);
+					$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
 			}
 
 			if (! $error)
@@ -2484,7 +2484,7 @@ class Propal extends CommonObject
 				$this->oldcopy= clone $this;
 				$this->statut = $statut;
 				$this->date_cloture = $now;
-				$this->note_private = $note;
+				$this->note_private = $newprivatenote;
 			}
 
 			if (! $notrigger && empty($error))
@@ -2495,13 +2495,17 @@ class Propal extends CommonObject
 				// End call triggers
 			}
 
-			if ( ! $error )
+			if (! $error)
 			{
 				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->statut = $this->oldcopy->statut;
+				$this->date_cloture = $this->oldcopy->date_cloture;
+				$this->note_private = $this->oldcopy->note_private;
+
 				$this->db->rollback();
 				return -1;
 			}
@@ -3162,7 +3166,7 @@ class Propal extends CommonObject
 			$this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
 			$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
 			$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
-			$this->labelstatut_short[1]=$langs->trans("Opened");
+			$this->labelstatut_short[1]=$langs->trans("PropalStatusValidatedShort");
 			$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
 			$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");

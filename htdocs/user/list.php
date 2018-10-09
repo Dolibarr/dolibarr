@@ -126,7 +126,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 // Default search
 if ($search_statut == '') $search_statut='1';
-if ($mode == 'employee') $search_employee=1;
+if ($mode == 'employee' && ! GETPOSTISSET('search_employee')) $search_employee=1;
 
 
 
