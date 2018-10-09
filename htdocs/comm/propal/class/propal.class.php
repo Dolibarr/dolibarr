@@ -3109,7 +3109,7 @@ class Propal extends CommonObject
 			$this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
 			$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
 			$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
-			$this->labelstatut_short[1]=$langs->trans("Opened");
+			$this->labelstatut_short[1]=$langs->trans("PropalStatusValidatedShort");
 			$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
 			$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
