@@ -121,9 +121,9 @@ class PaymentVarious extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=(int)($this->fk_bank);
-		$this->fk_user_author=(int)($this->fk_user_author);
-		$this->fk_user_modif=(int)($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		$this->db->begin();
 
@@ -321,9 +321,9 @@ class PaymentVarious extends CommonObject
 		$this->amount=price2num(trim($this->amount));
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=(int)($this->fk_bank);
-		$this->fk_user_author=(int)($this->fk_user_author);
-		$this->fk_user_modif=(int)($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		// Check parameters
 		if (! $this->label)
