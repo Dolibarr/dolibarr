@@ -50,6 +50,9 @@ class Expedition extends CommonObject
 	 */
 	public $element="shipping";
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element="fk_expedition";
 
 	/**
@@ -62,7 +65,11 @@ class Expedition extends CommonObject
 	 */
 	public $table_element_line="expeditiondet";
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png

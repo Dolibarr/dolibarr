@@ -38,6 +38,9 @@ abstract class CommonDocGenerator
 	 */
 	public $error='';
 
+	/**
+     * @var DoliDB Database handler.
+     */
 	protected $db;
 
 

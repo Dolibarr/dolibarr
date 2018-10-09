@@ -38,8 +38,9 @@ class FormResource
      */
     public $db;
 
-    var $substit=array();
-    var $param=array();
+    public $substit=array();
+
+    public $param=array();
 
     /**
 	 * @var string Error code (or message)

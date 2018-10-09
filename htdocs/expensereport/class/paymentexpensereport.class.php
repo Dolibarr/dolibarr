@@ -45,6 +45,9 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
 	public $fk_expensereport;

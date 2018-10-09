@@ -61,7 +61,12 @@ class Events // extends CommonObject
 
 	public $tms;
 	public $type;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $dateevent;
 
 	/**

@@ -161,6 +161,9 @@ class Categorie extends CommonObject
 	 */
 	public $table_element='categorie';
 
+	/**
+     * @var int ID
+     */
 	public $fk_parent;
 
 	/**

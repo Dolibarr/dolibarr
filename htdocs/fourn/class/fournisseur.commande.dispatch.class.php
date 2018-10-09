@@ -78,7 +78,12 @@ class CommandeFournisseurDispatch extends CommonObject
 
 	public $datec='';
 	public $comment;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $tms='';
 	public $batch;
 	public $eatby='';

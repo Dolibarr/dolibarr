@@ -48,10 +48,10 @@ class MailmanSpip
 	 */
 	public $error='';
 
-    var $mladded_ok;
-    var $mladded_ko;
-    var $mlremoved_ok;
-    var $mlremoved_ko;
+    public $mladded_ok;
+    public $mladded_ko;
+    public $mlremoved_ok;
+    public $mlremoved_ko;
 
 
     /**

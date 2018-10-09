@@ -122,7 +122,12 @@ class MyObject extends CommonObject
     public $label;
 
 	public $amount;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;
