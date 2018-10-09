@@ -1427,7 +1427,7 @@ if ($action != 'dopayment')
 	{
 		if ($source == 'invoice' && $object->paye)
 		{
-			print '<br><br>'.$langs->trans("InvoicePaid");
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
 		else
 		{
