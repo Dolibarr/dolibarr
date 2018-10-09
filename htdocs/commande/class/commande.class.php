@@ -111,6 +111,9 @@ class Commande extends CommonOrder
 	public $brouillon;
 	public $cond_reglement_code;
 
+	/**
+     * @var int ID
+     */
 	public $fk_account;
 
 	/**
@@ -160,7 +163,12 @@ class Commande extends CommonOrder
 	public $date_commande;
 
 	public $date_livraison;	    // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+
+	/**
+     * @var int ID
+     */
 	public $fk_remise_except;
+
 	public $remise_percent;
 	public $remise_absolue;
 	public $info_bits;
@@ -180,7 +188,11 @@ class Commande extends CommonOrder
 	public $lines = array();
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;

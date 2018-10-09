@@ -168,7 +168,12 @@ class Propal extends CommonObject
 	public $remise = 0;
 	public $remise_percent = 0;
 	public $remise_absolue = 0;
+
+	/**
+     * @var int ID
+     */
 	public $fk_address;
+
 	public $address_type;
 	public $address;
 	public $availability_id;
@@ -191,7 +196,11 @@ class Propal extends CommonObject
 	public $specimen;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
