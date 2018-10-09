@@ -171,6 +171,10 @@ class Account extends CommonObject
 	 * @var string
 	 */
 	public $account_number;
+
+	/**
+     * @var int ID
+     */
 	public $fk_accountancy_journal;
 
 	/**
@@ -1704,16 +1708,37 @@ class AccountLine extends CommonObject
     public $label;
 
     public $note;
+
+    /**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_rappro;
+
+	/**
+     * @var int ID
+     */
 	public $fk_type;
+
 	public $rappro;        // Is it conciliated
 	public $num_releve;    // If conciliated, what is bank statement
 	public $num_chq;       // Num of cheque
 	public $bank_chq;      // Bank of cheque
-	public $fk_bordereau;  // Id of cheque receipt
 
-	public $fk_account;            // Id of bank account
+	/**
+     * @var int ID of cheque receipt
+     */
+	public $fk_bordereau;
+
+	/**
+     * @var int ID of bank account
+     */
+	public $fk_account;
+
 	public $bank_account_label;    // Label of bank account
 
     /**
