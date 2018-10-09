@@ -582,26 +582,14 @@ if (empty($reshook))
 		{
 			if ($lines[$i]->id == $line_id)
 			{
-				if (count($lines[$i]->details_entrepot) > 1)
-				{
-					// delete multi warehouse lines
-					foreach ($lines[$i]->details_entrepot as $details_entrepot) {
-						$line->id = $details_entrepot->line_id;
-						if (! $error && $line->delete($user) < 0)
-						{
-							$error++;
-						}
-					}
-				}
-				else
-				{
+				
 					// delete single warehouse line
 					$line->id = $line_id;
 					if (! $error && $line->delete($user) < 0)
 					{
 						$error++;
 					}
-				}
+				
 			}
 			unset($_POST["lineid"]);
 		}
@@ -2211,7 +2199,7 @@ else if ($id || $ref)
         print '<div class="fichecenter"><div class="fichehalfleft">';
 
         $objectref = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->reception->dir_output . "/reception/" .$objectref;
+		$filedir = $conf->reception->dir_output . "/" .$objectref;
 
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
