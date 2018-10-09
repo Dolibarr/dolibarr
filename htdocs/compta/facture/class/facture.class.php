@@ -1177,6 +1177,10 @@ class Facture extends CommonInvoice
 
         if ($user->rights->facture->lire) {
             $label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
+            if ($this->type == self::TYPE_REPLACEMENT) $label='<u>' . $langs->transnoentitiesnoconv("ShowInvoiceReplace") . '</u>';
+            if ($this->type == self::TYPE_CREDIT_NOTE) $label='<u>' . $langs->transnoentitiesnoconv("ShowInvoiceAvoir") . '</u>';
+            if ($this->type == self::TYPE_DEPOSIT)     $label='<u>' . $langs->transnoentitiesnoconv("ShowInvoiceDeposit") . '</u>';
+            if ($this->type == self::TYPE_SITUATION)   $label='<u>' . $langs->transnoentitiesnoconv("ShowInvoiceSituation") . '</u>';
             if (! empty($this->ref))
                 $label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
             if (! empty($this->ref_client))
@@ -1191,10 +1195,6 @@ class Facture extends CommonInvoice
                 $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
                 $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-    		if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
-    		if ($this->type == self::TYPE_CREDIT_NOTE) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
-    		if ($this->type == self::TYPE_DEPOSIT) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
-    		if ($this->type == self::TYPE_SITUATION) $label=$langs->transnoentitiesnoconv("ShowInvoiceSituation").': '.$this->ref;
     		if ($moretitle) $label.=' - '.$moretitle;
         }
 
