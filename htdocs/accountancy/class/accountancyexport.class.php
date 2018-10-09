@@ -194,7 +194,7 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config
 	 *
-	 * @param unknown $TData data
+	 * @param array		$TData 		data
 	 * @return void
 	 */
 	public function export(&$TData)
@@ -652,7 +652,7 @@ class AccountancyExport
 			print $date_creation . $separator;
 
 			// FEC:CompteNum
-			print $line->numero_compte . $separator
+			print $line->numero_compte . $separator;
 
 			// FEC:CompteLib
 			print $line->label_compte . $separator;
@@ -699,8 +699,8 @@ class AccountancyExport
 
 	/**
 	 *
-	 * @param unknown $str data
-	 * @param integer $size data
+	 * @param string	$str 	data
+	 * @param integer 	$size 	data
 	 * @return string
 	 */
 	public static function trunc($str, $size)
