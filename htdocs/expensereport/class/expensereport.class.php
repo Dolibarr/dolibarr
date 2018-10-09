@@ -2416,22 +2416,26 @@ class ExpenseReportLine
 	 */
 	public $error='';
 
-    var $rowid;
-    var $comments;
-    var $qty;
-    var $value_unit;
-    var $date;
+    /**
+	 * @var int ID
+	 */
+	public $rowid;
 
-    var $fk_c_type_fees;
-    var $fk_c_exp_tax_cat;
-    var $fk_projet;
-    var $fk_expensereport;
+    public $comments;
+    public $qty;
+    public $value_unit;
+    public $date;
 
-    var $type_fees_code;
-    var $type_fees_libelle;
+    public $fk_c_type_fees;
+    public $fk_c_exp_tax_cat;
+    public $fk_projet;
+    public $fk_expensereport;
 
-    var $projet_ref;
-    var $projet_title;
+    public $type_fees_code;
+    public $type_fees_libelle;
+
+    public $projet_ref;
+    public $projet_title;
 
     var $vatrate;
     var $total_ht;
