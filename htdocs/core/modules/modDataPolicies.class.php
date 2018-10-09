@@ -91,8 +91,6 @@ class modDataPolicies extends DolibarrModules {
             'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
             'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
             'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
-            'css' => array('/datapolicies/css/datapolicies.css.php'), // Set this to relative path of css file if module has its own css file
-            'js' => array('/datapolicies/js/datapolicies.js.php'), // Set this to relative path of js file if module must load a js on all pages
             'hooks' => array('data' => array('membercard', 'contactcard', 'thirdpartycard'), 'entity' => $conf->entity)  // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
         );
 
@@ -121,17 +119,17 @@ class modDataPolicies extends DolibarrModules {
         //                             1=>array('datapolicies_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
         // );
         $this->const = array(
-            array('DATAPOLICIES_TIERS_CLIENT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_TIERS_PROSPECT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_TIERS_PROSPECT_CLIENT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_TIERS_FOURNISSEUR', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_CONTACT_CLIENT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_CONTACT_PROSPECT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_CONTACT_PROSPECT_CLIENT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_CONTACT_NIPROSPECT_NICLIENT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_CONTACT_FOURNISSEUR', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
-            array('DATAPOLICIES_ADHERENT', 'chaine', '', 'Nombre de mois avant suppression des données', 0),
+            array('DATAPOLICIES_TIERS_CLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_TIERS_PROSPECT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_TIERS_PROSPECT_CLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_TIERS_FOURNISSEUR', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_CONTACT_CLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_CONTACT_PROSPECT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_CONTACT_PROSPECT_CLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_CONTACT_NIPROSPECT_NICLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_CONTACT_FOURNISSEUR', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+            array('DATAPOLICIES_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
         );
 
         $country = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
@@ -235,25 +233,25 @@ class modDataPolicies extends DolibarrModules {
 
         // Extrafield contact
         //$result1=$extrafields->addExtraField('datapolicies_separate', "DATAPOLICIES_BLOCKCHECKBOX", 'separate', 100,  1, 'thirdparty',   0, 0, '', '', 1, '', '1', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_consentement', "DATAPOLICIES_consentement", 'boolean', 101, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_opposition_traitement', "DATAPOLICIES_opposition_traitement", 'boolean', 102, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_opposition_prospection', "DATAPOLICIES_opposition_prospection", 'boolean', 103, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_consentement', $langs->trans("DATAPOLICIES_consentement"), 'boolean', 101, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_opposition_traitement', $langs->trans("DATAPOLICIES_opposition_traitement"), 'boolean', 102, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_opposition_prospection', $langs->trans("DATAPOLICIES_opposition_prospection"), 'boolean', 103, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
         $result1 = $extrafields->addExtraField('datapolicies_date', $langs->trans("DATAPOLICIES_date"), 'date', 104, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0);
         $result1 = $extrafields->addExtraField('datapolicies_send', $langs->trans("DATAPOLICIES_send"), 'date', 105, 3, 'thirdparty', 0, 0, '', '', 0, '', '0', 0);
 
         // Extrafield Tiers
         //$result1=$extrafields->addExtraField('datapolicies_separate', "DATAPOLICIES_BLOCKCHECKBOX", 'separate', 100,  1, 'contact',   0, 0, '', '', 1, '', '1', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_consentement', "DATAPOLICIES_consentement", 'boolean', 101, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_opposition_traitement', "DATAPOLICIES_opposition_traitement", 'boolean', 102, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_opposition_prospection', "DATAPOLICIES_opposition_prospection", 'boolean', 103, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_consentement', $langs->trans("DATAPOLICIES_consentement"), 'boolean', 101, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_opposition_traitement', $langs->trans("DATAPOLICIES_opposition_traitement"), 'boolean', 102, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_opposition_prospection', $langs->trans("DATAPOLICIES_opposition_prospection"), 'boolean', 103, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
         $result1 = $extrafields->addExtraField('datapolicies_date', $langs->trans("DATAPOLICIES_date"), 'date', 104, 3, 'contact', 0, 0, '', '', 1, '', '3', 0);
         $result1 = $extrafields->addExtraField('datapolicies_send', $langs->trans("DATAPOLICIES_send"), 'date', 105, 3, 'contact', 0, 0, '', '', 0, '', '0', 0);
 
         // Extrafield Adherent
         //$result1=$extrafields->addExtraField('datapolicies_separate', "DATAPOLICIES_BLOCKCHECKBOX", 'separate', 100,  1, 'adherent',   0, 0, '', '', 1, '', '1', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_consentement', "DATAPOLICIES_consentement", 'boolean', 101, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_opposition_traitement', "DATAPOLICIES_opposition_traitement", 'boolean', 102, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
-        $result1 = $extrafields->addExtraField('datapolicies_opposition_prospection', "DATAPOLICIES_opposition_prospection", 'boolean', 103, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_consentement', $langs->trans("DATAPOLICIES_consentement"), 'boolean', 101, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_opposition_traitement', $langs->trans("DATAPOLICIES_opposition_traitement"), 'boolean', 102, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
+        $result1 = $extrafields->addExtraField('datapolicies_opposition_prospection', $langs->trans("DATAPOLICIES_opposition_prospection"), 'boolean', 103, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicies@datapolicies', '$conf->datapolicies->enabled');
         $result1 = $extrafields->addExtraField('datapolicies_date', $langs->trans("DATAPOLICIES_date"), 'date', 104, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0);
         $result1 = $extrafields->addExtraField('datapolicies_send', $langs->trans("DATAPOLICIES_send"), 'date', 105, 3, 'adherent', 0, 0, '', '', 0, '', '0', 0);
 
