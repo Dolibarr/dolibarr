@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       SuperAdmin
+/* Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseom.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -134,7 +134,7 @@ class ActionsDatapolicies
             header('Content-Disposition: attachment; filename=datapolicies_portabilite.csv');
             header('Pragma: no-cache');
             $object->fetch(GETPOST('socid'));
-            echo 'Nom;Prénom;Civilite;Tiers;Poste/Fonction;Adresse;CP;Ville;Département;Pays;Email;Tel Pro;Tel Perso;Tel Portable;Messagerie instantanée;Date de naissance;' . PHP_EOL;
+            echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;' . PHP_EOL;
             echo $object->name . ';';
             echo ';';
             echo ';';
@@ -158,7 +158,7 @@ class ActionsDatapolicies
             header('Pragma: no-cache');
             $soc = $object->fetch_thirdparty();
 
-            echo 'Nom;Prénom;Civilite;Tiers;Poste/Fonction;Adresse;CP;Ville;Département;Pays;Email;Tel Pro;Tel Perso;Tel Portable;Messagerie instantanée;Date de naissance;' . PHP_EOL;
+            echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;' . PHP_EOL;
             echo $object->lastname . ';';
             echo $object->firstname . ';';
             echo $object->getCivilityLabel() . ';';
@@ -182,7 +182,7 @@ class ActionsDatapolicies
             header('Content-Disposition: attachment; filename=datapolicies_portabilite.csv');
             header('Pragma: no-cache');
             $soc = $object->fetch_thirdparty();
-            echo 'Nom;Prénom;Civilite;Tiers;Poste/Fonction;Adresse;CP;Ville;Département;Pays;Email;Tel Pro;Tel Perso;Tel Portable;Messagerie instantanée;Date de naissance;' . PHP_EOL;
+            echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;' . PHP_EOL;
             echo $object->lastname . ';';
             echo $object->firstname . ';';
             echo $object->getCivilityLabel() . ';';

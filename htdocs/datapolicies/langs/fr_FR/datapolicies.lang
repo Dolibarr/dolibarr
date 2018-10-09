@@ -1,4 +1,4 @@
-# Copyright (C) 2018  INOVEA CONSEIl info@inovea-conseil.com
+# Copyright (C) 2018  INOVEA CONSEil info@inovea-conseil.com
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -94,3 +94,4 @@ MailSent=L'email a bien été envoyé
 #ERROR
 ErrorSubjectIsRequired=Erreur : vous n'avez pas indiqué l'objet de l'email dans la configuration
 =Suite à un problème technique, nous n'avons pas pu enregistrer votre choix. Nous nous en excusons. Contactez-nous pour nous transmettre votre choix.
+NUMBER_MONTH_BEFORE_DELETION = Nombre de mois avant suppression des données

@@ -1,4 +1,4 @@
-# Copyright (C) 2018 SuperAdmin
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,3 +90,4 @@ MailSent = Email has been sent
 #ERROR
 ErrorSubjectIsRequired= Error : The subject of email is required. Indicate it in the module setup
 =Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
