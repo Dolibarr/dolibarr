@@ -504,7 +504,7 @@ if (empty($reshook))
 
 	// Action update
 	else if (
-		($action == 'settracking_number' 
+		($action == 'settracking_number'
 		|| $action == 'settracking_url'
 		|| $action == 'settrueWeight'
 		|| $action == 'settrueWidth'
@@ -1503,11 +1503,11 @@ if ($action == 'create')
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
 
-									//print $line->fk_product.' - '.$dbatch->batch;
+									//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 									print $langs->trans("Batch").': ';
 									$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
 									if ($result > 0) print $productlotObject->getNomUrl(1);
-									else print 'TableLotIncompleteRunRepair';
+									else print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
 									print ' ('.$dbatch->qty.')';
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
