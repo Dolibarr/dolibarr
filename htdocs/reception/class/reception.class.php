@@ -151,9 +151,10 @@ class Reception extends CommonObject
 	        }
 
 			$obj = new $classname();
+			
 			$numref = "";
 			$numref = $obj->getNextValue($soc,$this);
-
+		
 			if ( $numref != "")
 			{
 				return $numref;
@@ -498,7 +499,8 @@ class Reception extends CommonObject
 				 * Thirparty
 				 */
 				$result=$this->fetch_thirdparty();
-
+				
+				
 				// Retrieve all extrafields for reception
 				// fetch optionals attributes and labels
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -573,12 +575,13 @@ class Reception extends CommonObject
 
 		// Define new ref
 		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
-		{
+		{	
 			$numref = $this->getNextNumRef($soc);
 		}
 		else {
 			$numref = $this->ref;
 		}
+		
         $this->newref = $numref;
 
 		$now=dol_now();
@@ -590,7 +593,6 @@ class Reception extends CommonObject
 		$sql.= ", date_valid = '".$this->db->idate($now)."'";
 		$sql.= ", fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
-
 		dol_syslog(get_class($this)."::valid update reception", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql)
@@ -1145,24 +1147,40 @@ class Reception extends CommonObject
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
 		$resql = $db->query($sql);
+		
 		if(!empty($resql)){
 			$this->lines = array();
 			while ($obj = $resql->fetch_object()){
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
-				$sql_qtyasked = 'SELECT qty, description, label FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
-				$resql_qtyasked = $db->query($sql_qtyasked);
-				if(!empty($resql_qtyasked)){
-					$obj = $db->fetch_object($resql_qtyasked);
+				$sql_commfourndet = 'SELECT qty, description, label, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
+				$resql_commfourndet = $db->query($sql_commfourndet);
+				if(!empty($resql_commfourndet)){
+					$obj = $db->fetch_object($resql_commfourndet);
 					$line->qty_asked = $obj->qty;
 					$line->description = $obj->description;
+					$line->desc = $obj->description;
+					$line->tva_tx = $obj->tva_tx;
+					$line->vat_src_code = $obj->vat_src_code;
+					$line->subprice = $obj->subprice;
+					$line->multicurrency_subprice = $obj->multicurrency_subprice;
+					$line->remise_percent = $obj->remise_percent;
 					$line->label = $obj->label;
 				}else {
 					$line->qty_asked = 0;
 					$line->description = '';
 					$line->label = $obj->label;
 				}
+				
+				$pu_ht=($line->subprice*$line->qty)*(100-$line->remise_percent)/100;
+				$tva = $pu_ht*$line->tva_tx/100;
+				$this->total_ht += $pu_ht;
+				$this->total_tva += $pu_ht*$line->tva_tx/100;
+				
+				$this->total_ttc += $pu_ht+$tva;
+				
+				
 				$this->lines[]=$line;
 			}
 			
@@ -1283,7 +1301,7 @@ class Reception extends CommonObject
 	function initAsSpecimen()
 	{
 		global $langs;
-
+		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 		$now=dol_now();
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
@@ -1339,7 +1357,7 @@ class Reception extends CommonObject
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
-			$line=new ReceptionLigne($this->db);
+			$line=new CommandeFournisseurDispatch($this->db);
 			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->libelle=$langs->trans("Description")." ".$xnbp;
 			$line->qty=10;

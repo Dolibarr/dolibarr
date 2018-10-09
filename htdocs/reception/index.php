@@ -183,7 +183,7 @@ $sql.= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity = ".$conf->entity;
-$sql.= " AND c.fk_statut IN (3,4)";
+$sql.= " AND c.fk_statut IN (4)";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 

@@ -19,20 +19,20 @@
  */
 
 /**
- *  \file       htdocs/expedition/class/expeditionstats.class.php
- *  \ingroup    expedition
- *  \brief      File of class fo tmanage shipment statistics
+ *  \file       htdocs/reception/class/receptionstats.class.php
+ *  \ingroup    reception
+ *  \brief      File of class fo tmanage reception statistics
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+include_once DOL_DOCUMENT_ROOT . '/reception/class/reception.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
 /**
- *		Class to manage shipment statistics
+ *		Class to manage reception statistics
  */
-class ExpeditionStats extends Stats
+class ReceptionStats extends Stats
 {
 	public $table_element;
 
@@ -62,7 +62,7 @@ class ExpeditionStats extends Stats
         $this->userid = $userid;
 		$this->cachefilesuffix = $mode; 
         
-        $object=new Expedition($this->db);
+        $object=new Reception($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 		$this->field='weight';	// Warning, unit of weight is NOT USED AND MUST BE
@@ -79,7 +79,7 @@ class ExpeditionStats extends Stats
     }
 
     /**
-     * Return shipment number by month for a year
+     * Return reception number by month for a year
      *
 	 * @param	int		$year		Year to scan
 	 * @return	array				Array with number by month
@@ -101,7 +101,7 @@ class ExpeditionStats extends Stats
     }
 
 	/**
-	 * Return shipments number per year
+	 * Return receptions number per year
 	 *
 	 * @return	array	Array with number by year
 	 *

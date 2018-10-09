@@ -101,12 +101,12 @@ class mod_reception_beryl extends ModelNumRefReception
 	{
 		global $db,$conf;
 
-		$posindice=8;
+		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."reception";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
-
+		
 		$resql=$db->query($sql);
 		if ($resql)
 		{

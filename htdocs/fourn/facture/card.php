@@ -1390,8 +1390,7 @@ if ($action == 'create')
             $projectid = $originid;
             $element = 'projet';
         }
-        else if (in_array($element,array('order_supplier')))
-        {
+      
             // For compatibility
             if ($element == 'order')    {
                 $element = $subelement = 'commande';
@@ -1412,6 +1411,18 @@ if ($action == 'create')
             $objectsrc = new $classname($db);
             $objectsrc->fetch($originid);
             $objectsrc->fetch_thirdparty();
+			
+			if ($object->origin == 'reception')
+			{
+				$objectsrc->fetchObjectLinked();
+				if (count($objectsrc->linkedObjectsIds['commande']) > 0)
+				{
+					foreach ($objectsrc->linkedObjectsIds['commande'] as $key => $value)
+					{
+						$object->linked_objects['commande'] = $value;
+					}
+				}
+			}
 
             $projectid			= (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
             //$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
@@ -1438,8 +1449,9 @@ if ($action == 'create')
             // Replicate extrafields
             $objectsrc->fetch_optionals($originid);
             $object->array_options = $objectsrc->array_options;
-        }
-    }
+			
+		
+	}
     else
     {
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
@@ -1497,7 +1509,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:'').'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$objectsrc->ref_supplier).'" type="text"></td>';
     print '</tr>';
 
     // Type invoice
@@ -1788,6 +1800,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
     $note_public = $object->getDefaultCreateValueFor('note_public');
+	if(empty($note_public))$note_public = $objectsrc->note_public;
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
     print $doleditor->Create(1);
     print '</td>';
@@ -1798,6 +1811,8 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
     print '<td>';
     $note_private = $object->getDefaultCreateValueFor('note_private');
+	if(empty($note_private))$note_private = $objectsrc->note_private;
+
     $doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
     print $doleditor->Create(1);
     print '</td>';

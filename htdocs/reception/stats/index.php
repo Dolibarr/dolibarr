@@ -18,14 +18,14 @@
  */
 
 /**
- *     \file       htdocs/expedition/stats/index.php
- *     \ingroup    expedition
- *     \brief      Page with shipment statistics
+ *     \file       htdocs/reception/stats/index.php
+ *     \ingroup    reception
+ *     \brief      Page with reception statistics
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
@@ -46,7 +46,7 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load("sendings");
+$langs->load("reception");
 $langs->load("other");
 $langs->load("companies");
 
@@ -59,12 +59,12 @@ $form=new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfReceptions"), $mesg);
 
 
 dol_mkdir($dir);
 
-$stats = new ExpeditionStats($db, $socid, $mode, ($userid>0?$userid:0));
+$stats = new ReceptionStats($db, $socid, $mode, ($userid>0?$userid:0));
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -74,15 +74,15 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-    $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
+    $filenamenb = $dir.'/receptionsnbinyear-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsnbinyear-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-    $filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsnbinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsnbinyear-'.$year.'.png';
+    $filenamenb = $dir.'/receptionsnbinyear-'.$year.'.png';
+    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsnbinyear-'.$year.'.png';
+    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
@@ -102,12 +102,12 @@ if (! $mesg)
     $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
     $px1->SetWidth($WIDTH);
     $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfSendings"));
+    $px1->SetYLabel($langs->trans("NbOfReceptions"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
     $px1->SetPrecisionY(0);
     $px1->mode='depth';
-    $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
+    $px1->SetTitle($langs->trans("NumberOfReceptionsByMonth"));
 
     $px1->draw($filenamenb,$fileurlnb);
 }
@@ -120,15 +120,15 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-    $filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
+    $filenameamount = $dir.'/receptionsamountinyear-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsamountinyear-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-    $filenameamount = $dir.'/shipmentsamountinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsamountinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsamountinyear-'.$year.'.png';
+    $filenameamount = $dir.'/receptionsamountinyear-'.$year.'.png';
+    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsamountinyear-'.$year.'.png';
+    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
@@ -147,12 +147,12 @@ if (! $mesg)
     $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
     $px2->SetWidth($WIDTH);
     $px2->SetHeight($HEIGHT);
-    $px2->SetYLabel($langs->trans("AmountOfShipments"));
+    $px2->SetYLabel($langs->trans("AmountOfReceptions"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
     $px2->SetPrecisionY(0);
     $px2->mode='depth';
-    $px2->SetTitle($langs->trans("AmountOfShipmentsByMonthHT"));
+    $px2->SetTitle($langs->trans("AmountOfReceptionsByMonthHT"));
 
     $px2->draw($filenameamount,$fileurlamount);
 }
@@ -163,15 +163,15 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-    $filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsaverage-'.$user->id.'-'.$year.'.png';
+    $filename_avg = $dir.'/receptionsaverage-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsaverage-'.$user->id.'-'.$year.'.png';
+    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-    $filename_avg = $dir.'/shipmentsaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsaverage-'.$year.'.png';
+    $filename_avg = $dir.'/receptionsaverage-'.$year.'.png';
+    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=receptionsaverage-'.$year.'.png';
+    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstatssupplier&file=receptionsaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
@@ -219,7 +219,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-$type='shipment_stats';
+$type='reception_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
@@ -263,7 +263,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("NbOfSendings").'</td>';
+print '<td align="right">'.$langs->trans("NbOfReceptions").'</td>';
 /*print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
@@ -289,7 +289,7 @@ foreach ($data as $val)
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center">';
 	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a>';
-	else print $langs->trans("ValidationDateNotDefinedEvenIfShipmentValidated");
+	else print $langs->trans("ValidationDateNotDefinedEvenIfReceptionValidated");
 	print '</td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	/*print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
@@ -328,10 +328,10 @@ dol_fiche_end();
 /*
 print '<table class="border" width="100%">';
 print '<tr><td align="center">'.$langs->trans("Year").'</td>';
-print '<td width="40%" align="center">'.$langs->trans("NbOfSendings").'</td></tr>';
+print '<td width="40%" align="center">'.$langs->trans("NbOfReceptions").'</td></tr>';
 
-$sql = "SELECT count(*) as nb, date_format(date_expedition,'%Y') as dm";
-$sql.= " FROM ".MAIN_DB_PREFIX."expedition";
+$sql = "SELECT count(*) as nb, date_format(date_reception,'%Y') as dm";
+$sql.= " FROM ".MAIN_DB_PREFIX."reception";
 $sql.= " WHERE fk_statut > 0";
 $sql.= " AND entity = ".$conf->entity;
 $sql.= " GROUP BY dm DESC";
@@ -357,7 +357,7 @@ print '</table>';
 */
 
 print '<br>';
-print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
+print '<i>'.$langs->trans("StatsOnReceptionsOnlyValidated").'</i>';
 
 llxFooter();
 

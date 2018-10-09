@@ -2147,22 +2147,17 @@ else if ($id || $ref)
 			}
 
 			// Create bill
-			if (! empty($conf->facture->enabled) && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED))
+			if (! empty($conf->fournisseur->enabled) && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED))
 			{
-				if ($user->rights->facture->creer)
+				if ($user->rights->fournisseur->facture->creer)
 				{
 					// TODO show button only   if (! empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
 					// If we do that, we must also make this option official.
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 				}
 			}
 
-			// This is just to generate a delivery receipt
-			//var_dump($object->linkedObjectsIds['delivery']);
-			if ($conf->livraison_bon->enabled && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED) && $user->rights->reception->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
-			}
+		
 			// Close
 			if ($object->statut == Reception::STATUS_VALIDATED)
 			{

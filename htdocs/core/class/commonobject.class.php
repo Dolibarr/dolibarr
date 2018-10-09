@@ -3721,9 +3721,14 @@ abstract class CommonObject
         else if (! empty($line->fk_product))
         {
             $productstatic = new Product($this->db);
-            $productstatic->id = $line->fk_product;
+			$productstatic->id = $line->fk_product;
             $productstatic->ref = $line->ref;
             $productstatic->type = $line->fk_product_type;
+            if(empty($productstatic->ref)){
+				$line->fetch_product();
+				$productstatic = $line->product;
+			}
+			
             $this->tpl['label'].= $productstatic->getNomUrl(1);
             $this->tpl['label'].= ' - '.(! empty($line->label)?$line->label:$line->product_label);
             // Dates
