@@ -159,7 +159,7 @@ class Bookmark extends CommonObject
         $sql.= ", ".$this->db->escape($conf->entity);
         $sql.= ")";
 
-        dol_syslog("Bookmark::update", LOG_DEBUG);
+        dol_syslog("Bookmark::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
