@@ -1224,12 +1224,12 @@ class Adherent extends CommonObject
 					$this->first_subscription_date=$this->db->jdate($obj->datec);
 					$this->first_subscription_date_start=$this->db->jdate($obj->dateh);
 					$this->first_subscription_date_end=$this->db->jdate($obj->datef);
-					$this->first_subscription_amount=$this->db->jdate($obj->subscription);
+					$this->first_subscription_amount=$obj->subscription;
 				}
 				$this->last_subscription_date=$this->db->jdate($obj->datec);
 				$this->last_subscription_date_start=$this->db->jdate($obj->datef);
 				$this->last_subscription_date_end=$this->db->jdate($obj->datef);
-				$this->last_subscription_amount=$this->db->jdate($obj->subscription);
+				$this->last_subscription_amount=$obj->subscription;
 
 				$subscription=new Subscription($this->db);
 				$subscription->id=$obj->rowid;
