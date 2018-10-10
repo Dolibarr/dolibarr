@@ -1533,7 +1533,7 @@ class Reception extends CommonObject
 				{
 					$lineid = $line->id;
 					$qty = $line->qty;
-					if (($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->receptions[$lineid] != $qty)
+					if (($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->receptions[$lineid] < $qty)
 					{
 						$receptions_match_order = 0;
 						$text='Qty for order line id '.$lineid.' is '.$qty.'. However in the receptions with status Reception::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->receptions[$lineid].', so we can t close order';
@@ -1562,7 +1562,7 @@ class Reception extends CommonObject
 				// TODO possibilite d'expedier a partir d'une propale ou autre origine ?
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql.= " ed.eatby, ed.sellby, ed.batch,";
+				$sql.= " ed.eatby, ed.sellby, ed.batch";
 				$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
 				$sql.= " WHERE ed.fk_reception = ".$this->id;
@@ -1570,6 +1570,7 @@ class Reception extends CommonObject
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql=$this->db->query($sql);
+				
 				if ($resql)
 				{
 					$cpt = $this->db->num_rows($resql);
@@ -1596,6 +1597,7 @@ class Reception extends CommonObject
 							    $this->errors = $mouvS->errors;
 								$error++; break;
 							}
+							
 						}
 						else
 						{
@@ -1603,12 +1605,14 @@ class Reception extends CommonObject
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr",$numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+							
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
 							    $error++; break;
 							}
 						}
+						
 					}
 				}
 				else
@@ -1656,8 +1660,10 @@ class Reception extends CommonObject
 		$error=0;
 
 		$this->db->begin();
+		
+		$this->setClosed();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=2, billed=1';    // TODO Update only billed
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET  billed=1';    
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
 		$resql=$this->db->query($sql);
@@ -1714,20 +1720,19 @@ class Reception extends CommonObject
 			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
+				$numref = $this->ref;
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
 				// TODO possibilite d'expedier a partir d'une propale ou autre origine
-				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+				$sql.= " ed.eatby, ed.sellby, ed.batch";
 				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
 				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch_batch as edb on edb.fk_commande_fournisseur_dispatch = ed.rowid";
 				$sql.= " WHERE ed.fk_reception = ".$this->id;
-				$sql.= " AND cd.rowid = ed.fk_origin_line";
-
+				$sql.= " AND cd.rowid = ed.fk_commandefourndet";
+				
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -1736,27 +1741,23 @@ class Reception extends CommonObject
 					for ($i = 0; $i < $cpt; $i++)
 					{
 						$obj = $this->db->fetch_object($resql);
-						if (empty($obj->edbrowid))
-						{
-							$qty = $obj->qty;
-						}
-						else
-						{
-							$qty = $obj->edbqty;
-						}
+						
+						$qty = $obj->qty;
+					
 						if ($qty <= 0) continue;
-						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+						
+						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
 
-						if (empty($obj->edbrowid))
+						if (empty($obj->batch))
 						{
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr",$numref));
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr",$numref));
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1768,7 +1769,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr",$numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr",$numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
