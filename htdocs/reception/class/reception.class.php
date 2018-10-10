@@ -1728,7 +1728,7 @@ class Reception extends CommonObject
 				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " ed.eatby, ed.sellby, ed.batch";
-				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+				$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
 				$sql.= " WHERE ed.fk_reception = ".$this->id;
 				$sql.= " AND cd.rowid = ed.fk_commandefourndet";
