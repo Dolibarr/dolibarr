@@ -2719,7 +2719,7 @@ else
 				}
 
 	 	 		// Reopen a standard paid invoice
-	            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+	            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT || $object->type == FactureFournisseur::TYPE_CREDIT_NOTE) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 	            {
 	                if (! $facidnext && $object->close_code != 'replaced' && $user->rights->fournisseur->facture->creer)	// Not replaced by another invoice
 	                {
