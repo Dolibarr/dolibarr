@@ -268,12 +268,27 @@ if (empty($reshook))
 	    {
 	    	$label='(CustomerInvoicePayment)';
 	    	if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) $label='(CustomerInvoicePaymentBack)';  // Refund of a credit note
-	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
-	        if ($result < 0)
-	        {
-	            setEventMessages($paiement->error, $paiement->errors, 'errors');
-	            $error++;
-	        }
+	    	if (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
+	    	{
+    	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
+    	        if ($result < 0)
+    	        {
+    	            setEventMessages($paiement->error, $paiement->errors, 'errors');
+    	            $error++;
+    	        }
+	    	}
+	    	else 
+	    	{
+	    	    if (GETPOST('paiementcode') !== "CHQ") 
+	    	    {
+	    	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
+	    	        if ($result < 0)
+	    	        {
+	    	            setEventMessages($paiement->error, $paiement->errors, 'errors');
+	    	            $error++;
+	    	        }
+	    	    }
+	    	}
 	    }
 
 	    if (! $error)
