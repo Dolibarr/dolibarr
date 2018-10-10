@@ -238,8 +238,8 @@ $sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
 $sql.= " s.nom as name, s.rowid as socid,";
 $sql.= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('commande_fournisseur')";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande_fournisseur') AND el.targettype = 'reception'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('order_supplier')";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid AND el.sourcetype IN ('order_supplier') AND el.targettype = 'reception'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 $sql.= " WHERE e.entity IN (".getEntity('reception').")";
@@ -247,6 +247,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND sc.fk_user 
 $sql.= " AND e.fk_statut = 1";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 $sql.= " ORDER BY e.date_delivery DESC";
+
 $sql.= $db->plimit(5, 0);
 
 $resql = $db->query($sql);
