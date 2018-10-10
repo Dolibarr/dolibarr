@@ -69,10 +69,6 @@ if ($action == 'delete')
  * View
  */
 
-$_SESSION["commandbackuplastdone"]='';
-$_SESSION["commandbackuptorun"]='';
-$_SESSION["commandbackupresult"]='';
-
 // Increase limit of time. Works only if we are not in safe mode
 $ExecTimeLimit=600;
 if (!empty($ExecTimeLimit))
@@ -156,27 +152,7 @@ elseif (in_array($compression, array('gz', 'bz')))
 if ($errormsg)
 {
 	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
-
-	$resultstring='';
-    $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
-
-    $_SESSION["commandbackupresult"]=$resultstring;
 }
-else
-{
-	if ($what)
-	{
-        setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
-
-        $resultstring='<div class="ok">';
-        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
-        $resultstring.=$langs->trans("YouCanDownloadBackupFile");
-        $resultstring.='<div>';
-
-        $_SESSION["commandbackupresult"]=$resultstring;
-	}
-}
-
 
 print '<br>';
 
