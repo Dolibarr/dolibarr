@@ -1423,7 +1423,7 @@ if ($resql)
         	{
         		if ($objp->num_releve)
             	{
-            	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$objp->bankid.'">'.$objp->num_releve.'</a>';
+            	    print '<a href="releve.php?num='.$objp->num_releve.'&account='.$objp->bankid.'&save_lastsearch_values=1">'.$objp->num_releve.'</a>';
             	}
             	if (! $objp->conciliated && $action == 'reconcile')
             	{
