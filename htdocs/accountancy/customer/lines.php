@@ -333,7 +333,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "fd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.facnumber, fd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.facnumber, fd.rowid", "", $param, 'class="nowraponall center"', $sortfield, $sortorder);
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
