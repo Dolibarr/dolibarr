@@ -292,14 +292,16 @@ if (! empty($conf->banque->enabled))
 			print '</td>';
 			print '</tr>';
 		}
+		
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<td>';
+		print $bankline->getNomUrl(1,0,'showconciliated');
+		print '</td>';
+		print '</tr>';
 	}
 
-	print '<tr>';
-	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-	print '<td>';
-	print $bankline->getNomUrl(1,0,'showconciliated');
-	print '</td>';
-	print '</tr>';
+	
 }
 
 // Comments

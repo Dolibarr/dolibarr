@@ -253,7 +253,7 @@ if (empty($reshook))
 	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',1);
 	    $paiement->num_paiement = GETPOST('num_paiement');
 	    $paiement->note         = GETPOST('comment');
-
+	    if (!empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS) && GETPOST('paiementcode') == "CHQ") $paiement->fk_account = GETPOST('accountid');
 	    if (! $error)
 	    {
 	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));    // This include closing invoices and regenerating documents
@@ -279,7 +279,7 @@ if (empty($reshook))
 	    	}
 	    	else 
 	    	{
-	    	    if (GETPOST('paiementcode') !== "CHQ") 
+	    	    if (GETPOST('paiementcode') !== "CHQ")
 	    	    {
 	    	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
 	    	        if ($result < 0)
