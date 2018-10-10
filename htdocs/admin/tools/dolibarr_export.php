@@ -537,7 +537,7 @@ echo $file;
 ?>" /> <br>
 <br>
 
-<?php 
+<?php
 // Show compression choices
 print '<div class="formelementrow">';
 print "\n";
