@@ -76,6 +76,7 @@ TransactionsToConciliate=Entries to reconcile
 Conciliable=Can be reconciled
 Conciliate=Reconcile
 Conciliation=Reconciliation
+SaveStatementOnly=Save statement only
 ReconciliationLate=Reconciliation late
 IncludeClosedAccount=Include closed accounts
 OnlyOpenedAccount=Only open accounts

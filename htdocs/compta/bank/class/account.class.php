@@ -2006,11 +2006,12 @@ class AccountLine extends CommonObject
 	/**
 	 *	Update conciliation field
 	 *
-	 *	@param	User	$user		Objet user making update
-	 *	@param 	int		$cat		Category id
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	User	$user			Objet user making update
+	 *	@param 	int		$cat			Category id
+	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function update_conciliation(User $user, $cat)
+	function update_conciliation(User $user, $cat, $conciliated=1)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2028,9 +2029,9 @@ class AccountLine extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
-		$sql.= " rappro = 1";
+		$sql.= " rappro = ".$conciliated;
 		$sql.= ", num_releve = '".$this->db->escape($this->num_releve)."'";
-		$sql.= ", fk_user_rappro = ".$user->id;
+		if ($conciliated) $sql.= ", fk_user_rappro = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);

@@ -204,12 +204,12 @@ if (empty($reshook))
 }
 
 // Conciliation
-if (GETPOST('confirm_reconcile') && $user->rights->banque->consolidate)
+if ((GETPOST('confirm_savestatement','alpha') || GETPOST('confirm_reconcile','alpha')) && $user->rights->banque->consolidate)
 {
     $error=0;
 
     // Definition, nettoyage parametres
-    $num_releve=trim(GETPOST("num_releve"));
+    $num_releve=trim(GETPOST("num_releve","alpha"));
 
     if ($num_releve)
     {
@@ -222,7 +222,7 @@ if (GETPOST('confirm_reconcile') && $user->rights->banque->consolidate)
                 {
                     $result=$bankline->fetch($row);
                     $bankline->num_releve=$num_releve; //$_POST["num_releve"];
-                    $result=$bankline->update_conciliation($user, GETPOST("cat"));
+                    $result=$bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile','alpha')?1:0);	// If we confirm_reconcile, we set flag 'rappro' to 1.
                     if ($result < 0)
                     {
                         setEventMessages($bankline->error, $bankline->errors, 'errors');
@@ -248,7 +248,20 @@ if (GETPOST('confirm_reconcile') && $user->rights->banque->consolidate)
 
     if (! $error)
     {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);	// To avoid to submit twice and allow back
+    	$param='action=reconcile&contextpage=banktransactionlist&id='.$id.'&search_account='.$id;
+		$param.='&search_conciliated='.urlencode($search_conciliated);
+		if ($page) $param.='&page='.urlencode($page);
+		if ($offset) $param.='&offset='.urlencode($offset);
+		if ($search_thirdparty) $param.='&search_thirdparty='.urlencode($search_thirdparty);
+		if ($search_num_releve) $param.='&search_num_releve='.urlencode($search_num_releve);
+		if ($search_start_dt) $param.='&search_start_dt='.urlencode($search_start_dt);
+		if ($search_end_dt) $param.='&search_end_dt='.urlencode($search_end_dt);
+		if ($search_start_dv) $param.='&search_start_dv='.urlencode($search_start_dv);
+		if ($search_end_dv) $param.='&search_end_dv='.urlencode($search_end_dv);
+		if ($search_type) $param.='&search_type='.urlencode($search_type);
+		if ($search_debit) $param.='&search_debit='.urlencode($search_debit);
+		if ($search_credit) $param.='&search_credit='.urlencode($search_credit);
+		header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);	// To avoid to submit twice and allow the back button
         exit;
     }
 }
@@ -579,6 +592,8 @@ if ($resql)
 	        print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 	    }
 	    print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' ';
+	    print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
+	    print ' '.$langs->trans("or").' ';
 	    print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 	    print ' '.$langs->trans("or").' ';
 	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
