@@ -2343,6 +2343,9 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element='expeditiondet';
 
+	/**
+     * @var int ID
+     */
 	public $fk_origin_line;
 
 	/**
