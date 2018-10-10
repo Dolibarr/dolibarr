@@ -130,11 +130,6 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$filter = array();
 }
 
-
-/*
- * View
- */
-
 if ($action == 'export_csv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
@@ -156,13 +151,23 @@ if ($action == 'export_csv') {
 		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
+
+	exit;
 }
 
-else {
-	$title_page = $langs->trans("AccountBalance");
 
-	llxHeader('', $title_page);
 
+/*
+ * View
+ */
+
+$title_page = $langs->trans("AccountBalance");
+
+llxHeader('', $title_page);
+
+
+if ($action != 'export_csv')
+{
 	// List
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
