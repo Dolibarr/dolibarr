@@ -36,6 +36,14 @@ $error = 0;
 
 // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
 $dir = DOL_DOCUMENT_ROOT."/install/mysql/tables/";
+$sql='ALTER TABLE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;';
+$db->query($sql);
+
+
+
+
+
+
 
 $ok = 0;
 $handle = opendir($dir);
@@ -275,4 +283,7 @@ if ($tablefound && $error == 0)
 	print $langs->trans("OtherKeysCreation").'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 	$okkeys = 1;
 }
-    
+
+
+
+
