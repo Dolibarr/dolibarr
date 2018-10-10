@@ -469,7 +469,7 @@ if ($result) {
 		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Invoice
-		print '<td>' . $facturefourn_static->getNomUrl(1) . '</td>';
+		print '<td class="nowraponall">' . $facturefourn_static->getNomUrl(1) . '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
 		print $objp->invoice_label;
