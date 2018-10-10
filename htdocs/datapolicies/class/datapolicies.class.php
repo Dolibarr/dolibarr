@@ -16,11 +16,9 @@
  */
 
 /**
- * \file    datapolicies/class/actions_datapolicies.class.php
+ * \file    datapolicies/class/datapolicies.class.php
  * \ingroup datapolicies
- * \brief   Example hook overload.
- *
- * Put detailed description here.
+ * \brief   Class to manage feature of Data Policies module.
  */
 include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
@@ -147,6 +145,9 @@ Class DataPolicies extends Contact
     function sendMailDataPoliciesContact($contact)
     {
      	global $langs, $conf, $db, $user;
+
+     	$error = 0;
+
      	$from = $user->getFullName($langs) . ' <' . $user->email . '>';
      	$replyto = $from;
      	$sendto = $contact->email;
@@ -165,6 +166,9 @@ Class DataPolicies extends Contact
      	$message = $conf->global->$ma;
      	$linka = $conf->global->$la;
      	$linkr = $conf->global->$lr;
+     	$sendtocc = $sendtobcc = '';
+     	$filepath = $mimetype = $filename = array();
+     	$deliveryreceipt = 0;
 
      	$substitutionarray = array(
      	'__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&c='.$contact->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
@@ -217,6 +221,9 @@ Class DataPolicies extends Contact
     function sendMailDataPoliciesCompany($societe)
     {
      	global $langs, $conf, $db, $user;
+
+     	$error = 0;
+
      	$from = $user->getFullName($langs) . ' <' . $user->email . '>';
      	$replyto = $from;
      	$sendto = $societe->email;
@@ -236,7 +243,9 @@ Class DataPolicies extends Contact
      	$message = $conf->global->$ma;
      	$linka = $conf->global->$la;
      	$linkr = $conf->global->$lr;
-
+     	$sendtocc = $sendtobcc = '';
+     	$filepath = $mimetype = $filename = array();
+     	$deliveryreceipt = 0;
 
      	$substitutionarray = array(
             '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&s='.$societe->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',
@@ -284,6 +293,9 @@ Class DataPolicies extends Contact
     function sendMailDataPoliciesAdherent($adherent)
     {
     	global $langs, $conf, $db, $user;
+
+    	$error = 0;
+
     	$from = $user->getFullName($langs) . ' <' . $user->email . '>';
     	$replyto = $from;
     	$sendto = $adherent->email;
@@ -301,7 +313,9 @@ Class DataPolicies extends Contact
     	$message = $conf->global->$ma;
     	$linka = $conf->global->$la;
     	$linkr = $conf->global->$lr;
-
+    	$sendtocc = $sendtobcc = '';
+    	$filepath = $mimetype = $filename = array();
+    	$deliveryreceipt = 0;
 
     	$substitutionarray = array(
             '__LINKACCEPT__' => '<a href="'.dol_buildpath('/datapolicies/public/index.php?action=1&a='.$adherent->id.'&l='.$l.'&key='.$code,3).'" target="_blank">'.$linka.'</a>',

@@ -21,6 +21,7 @@
  * \ingroup datapolicies
  * \brief   datapolicies setup page.
  */
+
 if (!defined('NOLOGIN'))
     define("NOLOGIN", 1);   // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))
@@ -35,12 +36,13 @@ dol_include_once('/adherents/class/adherent.class.php');
 dol_include_once('/user/class/user.class.php');
 dol_include_once('/datapolicies/class/datapolicies.class.php');
 
-$idc = GETPOST('c');
-$ids = GETPOST('s');
-$ida = GETPOST('a');
-$action = GETPOST('action');
-$lang = GETPOST('l');
-$code = GETPOST('key');
+$idc = GETPOST('c', 'int');
+$ids = GETPOST('s', 'int');
+$ida = GETPOST('a', 'int');
+$action = GETPOST('action', 'alpha');
+$lang = GETPOST('l', 'alpha');
+$code = GETPOST('key', 'alpha');
+
 $acc = "DATAPOLICIESACCEPT_" . $lang;
 $ref = "DATAPOLICIESREFUSE_" . $lang;
 $langs->load('datapolicies@datapolicies',0,0,$lang);
