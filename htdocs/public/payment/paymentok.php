@@ -313,7 +313,7 @@ if ($ispaymentok)
 		$adht = new AdherentType($db);
 		$object = new Adherent($db);
 
-		$result1 = $object->fetch(0, $tmptag['MEM']);
+		$result1 = $object->fetch($tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
 
 		if ($result1 > 0 && $result2 > 0)
@@ -588,7 +588,7 @@ if ($ispaymentok)
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
-		$result = $invoice->fetch(0, $tmptag['INV']);
+		$result = $invoice->fetch($tmptag['INV']);
 		if ($result)
 		{
 			$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
@@ -776,9 +776,9 @@ if ($ispaymentok)
 		}
 		elseif (in_array('INV', array_keys($tmptag)))
 		{
-			$url=$urlwithroot."/compta/facture/card.php?ref=".$tmptag['INV'];
+			$url=$urlwithroot."/compta/facture/card.php?id=".$tmptag['INV'];
 			$content.='<strong>'.$companylangs->trans("Payment")."</strong><br><br>\n";
-			$content.=$companylangs->trans("Invoice").': <strong>'.$tmptag['INV']."</strong><br>\n";
+			$content.=$companylangs->trans("InvoiceId").': <strong>'.$tmptag['INV']."</strong><br>\n";
 			//$content.=$companylangs->trans("ThirdPartyId").': '.$tmptag['CUS']."<br>\n";
 			$content.=$companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		}

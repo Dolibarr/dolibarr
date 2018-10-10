@@ -813,7 +813,7 @@ if ($source == 'order')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
+	$fulltag='ORD='.$order->id.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -933,7 +933,7 @@ if ($source == 'invoice')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
+	$fulltag='INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -1115,7 +1115,7 @@ if ($source == 'contractline')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	$fulltag='COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
