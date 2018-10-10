@@ -113,9 +113,6 @@ if($action)
 	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') {
 	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT','alpha'),'chaine',0,'',$conf->entity);
 	}
-	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_RECEPTION') {
-	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_RECEPTION", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_RECEPTION','alpha'),'chaine',0,'',$conf->entity);
-	}
 	if($action == 'INDEPENDANT_SUBPRODUCT_STOCK') {
 	    $res = dolibarr_set_const($db, "INDEPENDANT_SUBPRODUCT_STOCK", GETPOST('INDEPENDANT_SUBPRODUCT_STOCK','alpha'),'chaine',0,'',$conf->entity);
 	}
@@ -444,20 +441,7 @@ if($conf->expedition->enabled) {
 	print "</td>\n";
 	print "</tr>\n";
 }
-if($conf->reception->enabled) {
-	$var = !$var;
-	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForReception").'</td>';
-	print '<td width="160" align="right">';
-	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_RECEPTION\">";
-	print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_RECEPTION",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_RECEPTION,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-	print "</td>\n";
-	print "</tr>\n";
-}
+
 print '</table>';
 
 $virtualdiffersfromphysical=0;

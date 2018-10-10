@@ -108,7 +108,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('receptioncard','globalcard'));
 
-$permissiondellink=$user->rights->reception->livraison->creer;	// Used by the include of actions_dellink.inc.php
+$permissiondellink=$user->rights->reception->creer;	// Used by the include of actions_dellink.inc.php
 //var_dump($object->lines[0]->detail_batch);
 
 
@@ -333,9 +333,10 @@ if (empty($reshook))
 					$idl = "idl".$i;
 					
 					$entrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
+				
 					if ($entrepot_id < 0)
 						$entrepot_id = '';
-					if (!($linesrc->fk_product > 0))
+					if (!($linesrc->fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						$entrepot_id = 0;
 					$eatby = GETPOST($eatby, 'alpha');
 					$sellby = GETPOST($sellby, 'alpha');
@@ -387,22 +388,6 @@ if (empty($reshook))
 	    }
 	}
 
-	/*
-	 * Build a receiving receipt
-	 */
-	else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->reception->livraison->creer)
-	{
-	    $result = $object->create_delivery($user);
-	    if ($result > 0)
-	    {
-	        header("Location: ".DOL_URL_ROOT.'/livraison/card.php?action=create_delivery&id='.$result);
-	        exit;
-	    }
-	    else
-	    {
-	        setEventMessages($object->error, $object->errors, 'errors');
-	    }
-	}
 
 	else if ($action == 'confirm_valid' && $confirm == 'yes' &&
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))
@@ -542,7 +527,7 @@ if (empty($reshook))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$upload_dir =	$conf->reception->dir_output . "/reception";
+		$upload_dir =	$conf->reception->dir_output ;
 		$file =	$upload_dir	. '/' .	GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -1801,6 +1786,7 @@ else if ($id || $ref)
     		$sql.= " AND obj.fk_commande = ".$origin_id;
     		$sql.= " AND obj.rowid = ed.fk_commandefourndet";
     		$sql.= " AND ed.fk_reception = e.rowid";
+    		$sql.= " AND ed.fk_reception !=".$object->id;
     		//if ($filter) $sql.= $filter;
     		$sql.= " ORDER BY obj.fk_product";
 			
@@ -2166,7 +2152,7 @@ else if ($id || $ref)
 				{
 					$label="Close"; $paramaction='classifyclosed';       // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on receptions instead of orders
-					if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					if (! empty($conf->fournisseur->enabled) && ! empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 					{
 					    $label="ClassifyBilled";
 					    $paramaction='classifybilled';

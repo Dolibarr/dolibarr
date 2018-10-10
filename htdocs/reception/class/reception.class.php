@@ -753,38 +753,6 @@ class Reception extends CommonObject
 	}
 
 
-	/**
-	 *	Create a delivery receipt from a reception
-	 *
-	 *	@param	User	$user       User
-	 *  @return int  				<0 if KO, >=0 if OK
-	 */
-	function create_delivery($user)
-	{
-		global $conf;
-
-		if ($conf->livraison_bon->enabled)
-		{
-			if ($this->statut == 1 || $this->statut == 2)
-			{
-				// Reception validee
-				include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
-				$delivery = new Livraison($this->db);
-				$result=$delivery->create_from_reception($user, $this->id);
-				if ($result > 0)
-				{
-					return $result;
-				}
-				else
-				{
-					$this->error=$delivery->error;
-					return $result;
-				}
-			}
-			else return 0;
-		}
-		else return 0;
-	}
 
 	/**
 	 * Add an reception line.
@@ -814,7 +782,7 @@ class Reception extends CommonObject
 
 		$supplierorderline = new CommandeFournisseurLigne($this->db);
 		$supplierorderline->fetch($id);
-
+		
 		if (! empty($conf->stock->enabled) && ! empty($supplierorderline->fk_product))
 		{
 			$fk_product = $supplierorderline->fk_product;
@@ -826,28 +794,7 @@ class Reception extends CommonObject
 				return -1;
 			}
 
-			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_RECEPTION)
-			{
-			    // Check must be done for stock of product into warehouse if $entrepot_id defined
-				$product=new Product($this->db);
-				$result=$product->fetch($fk_product);
-
-				if ($entrepot_id > 0) {
-					$product->load_stock('warehouseopen');
-					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
-				}
-				else
-					$product_stock = $product->stock_reel;
-
-				$product_type=$product->type;
-				if ($product_type == 0 && $product_stock < $qty)
-				{
-                    $langs->load("errors");
-				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnReception', $product->ref);
-					$this->db->rollback();
-					return -3;
-				}
-			}
+			
 		}
 
 		// extrafields
@@ -973,7 +920,6 @@ class Reception extends CommonObject
 
 	/**
 	 * 	Delete reception.
-	 *  Warning, do not delete a reception if a delivery is linked to (with table llx_element_element)
 	 *
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
@@ -985,13 +931,7 @@ class Reception extends CommonObject
 		$error=0;
 		$this->error='';
 
-		// Add a protection to refuse deleting if reception has at least one delivery
-		$this->fetchObjectLinked($this->id, 'reception', 0, 'delivery');	// Get deliveries linked to this reception
-		if (count($this->linkedObjectsIds) > 0)
-		{
-			$this->error='ErrorThereIsSomeDeliveries';
-			return -1;
-		}
+		
 
 		$this->db->begin();
 		// Stock control
@@ -1205,11 +1145,10 @@ class Reception extends CommonObject
 	function getNomUrl($withpicto=0,$option=0,$max=0,$short=0,$notooltip=0)
 	{
 		global $langs;
-
 		$result='';
         $label = '<u>' . $langs->trans("ShowReception") . '</u>';
         $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
-        $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
+        $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
 
 		$url = DOL_URL_ROOT.'/reception/card.php?id='.$this->id;
 
@@ -1762,7 +1701,7 @@ class Reception extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=1';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'reception SET fk_statut=1, billed=0';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
 		$resql=$this->db->query($sql);

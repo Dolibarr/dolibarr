@@ -5566,6 +5566,10 @@ class Form
         			$tplpath = 'expedition';
         			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
         		}
+        		else if ($objecttype == 'reception') {
+        			$tplpath = 'reception';
+        			if (empty($conf->reception->enabled)) continue;	// Do not show if module disabled
+        		}
         		else if ($objecttype == 'delivery')         {
         			$tplpath = 'livraison';
         			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
@@ -5585,7 +5589,7 @@ class Form
 
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
-
+				
 
         		// Output template part (modules that overwrite templates must declare this into descriptor)
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
