@@ -113,6 +113,31 @@ class AccountancyExport
 	}
 
 	/**
+	 * Return string to summarize the format (Used to generated export filename)
+	 *
+	 * @param	int		$type		Format id
+	 * @return 	string				Format code
+	 */
+	private static function getFormatCode($type)
+	{
+		$formatcode = array (
+			//self::$EXPORT_TYPE_NORMAL => 'csv',
+			self::$EXPORT_TYPE_CONFIGURABLE => 'csv',
+			self::$EXPORT_TYPE_CEGID => 'cegid',
+			self::$EXPORT_TYPE_COALA => 'coala',
+			self::$EXPORT_TYPE_BOB50 => 'bob50',
+			self::$EXPORT_TYPE_CIEL => 'ciel',
+			self::$EXPORT_TYPE_QUADRATUS => 'quadratus',
+			self::$EXPORT_TYPE_EBP => 'ebp',
+			self::$EXPORT_TYPE_COGILOG => 'cogilog',
+			self::$EXPORT_TYPE_AGIRIS => 'agiris',
+			self::$EXPORT_TYPE_FEC => 'fec',
+		);
+
+		return $formatcode[$type];
+	}
+
+	/**
 	 * Array with all export type available (key + label) and parameters for config
 	 *
 	 * @return array of type
@@ -179,17 +204,6 @@ class AccountancyExport
 		);
 	}
 
-	/**
-	 * Download the export
-	 *
-	 * @return void
-	 */
-	public static function downloadFile()
-	{
-		global $conf;
-		$filename = 'general_ledger';
-		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
-	}
 
 	/**
 	 * Function who chose which export to use with the default config
@@ -201,7 +215,10 @@ class AccountancyExport
 	{
 		global $conf, $langs;
 
-		self::downloadFile();
+
+		$filename = 'general_ledger-'.$this->getFormatCode($conf->global->ACCOUNTING_EXPORT_MODELCSV);
+		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+
 
 		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
 			case self::$EXPORT_TYPE_NORMAL :
