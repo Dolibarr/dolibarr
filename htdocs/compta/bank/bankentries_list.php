@@ -261,6 +261,7 @@ if ((GETPOST('confirm_savestatement','alpha') || GETPOST('confirm_reconcile','al
 		if ($search_type) $param.='&search_type='.urlencode($search_type);
 		if ($search_debit) $param.='&search_debit='.urlencode($search_debit);
 		if ($search_credit) $param.='&search_credit='.urlencode($search_credit);
+		$param.='&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder);
 		header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);	// To avoid to submit twice and allow the back button
         exit;
     }
