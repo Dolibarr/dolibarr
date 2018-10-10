@@ -82,6 +82,27 @@ elseif ($action == 'unsetreportlastnumreleve') {
     }
 }
 
+// Payments by check don't create bank records
+if ($action == 'setchkdontcreatebankrecords') {
+    if (dolibarr_set_const($db, "BANK_CHK_DONT_CREATE_BANK_RECORDS", 1, 'chaine', 0,
+        '', $conf->entity) > 0) {
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
+}
+elseif ($action == 'unsetchkdontcreatebankrecords') {
+    if (dolibarr_set_const($db, "BANK_CHK_DONT_CREATE_BANK_RECORDS", 0, 'chaine', 0,
+        '', $conf->entity) > 0) {
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
+}
 
 if ($action == 'specimen') {
     $modele = GETPOST('module', 'alpha');
@@ -430,6 +451,44 @@ else
 
 print "</tr>\n";
 print '</table>';
+
+print '<br><br>';
+
+print load_fiche_titre($langs->trans("MenuChequeDeposits"), '', '');
+
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print '<td>' . $langs->trans("Name") . '</td>';
+print '<td>' . $langs->trans("Description") . '</td>';
+print '<td align="center" width="60">' . $langs->trans("Status") . "</td>\n";
+print "</tr>\n";
+
+print '<tr class="oddeven"><td width="100">';
+print $langs->trans('ChequeDeposits');
+print "</td><td>\n";
+print $langs->trans('ChkDontCreateBankRecords');
+print '</td>';
+// Active
+if ($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS) {
+    print '<td align="center">' . "\n";
+    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=unsetchkdontcreatebankrecords">';
+    print img_picto($langs->trans("Enabled"), 'switch_on');
+    print '</a>';
+    print '</td>';
+}
+else
+{
+    print '<td align="center">' . "\n";
+    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setchkdontcreatebankrecords">' . img_picto($langs->trans("Disabled"),
+        'switch_off') . '</a>';
+    print "</td>";
+}
+
+print "</tr>\n";
+print '</table>';
+
+print '<br><br>';
+
 dol_fiche_end();
 
 // End of page
