@@ -429,7 +429,7 @@ if ($id > 0 || ! empty($ref))
             if ($user->rights->banque->consolidate) {
             	$newparam = $param;
             	$newparam = preg_replace('/search_conciliated=\d+/i','',$newparam);
-            	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
             } else {
             	$buttonreconcile = '<a class="butActionNewRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
@@ -1401,16 +1401,17 @@ if ($resql)
 
     	if (! empty($arrayfields['b.num_releve']['checked']))
     	{
-            print '<td class="nowrap" align="center">';
+            print '<td class="nowraponall" align="center">';
         	// Transaction reconciliated or edit link
         	if ($bankaccount->canBeConciliated() > 0)
         	{
-            	if ($objp->conciliated)  // If line not conciliated and account can be conciliated
+        		if ($objp->num_releve)
             	{
             	    print '<a href="releve.php?num='.$objp->num_releve.'&amp;account='.$objp->bankid.'">'.$objp->num_releve.'</a>';
             	}
-            	else if ($action == 'reconcile')
+            	if (! $objp->conciliated && $action == 'reconcile')
             	{
+            		if ($objp->num_releve) print '&nbsp;';
             	    print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked':'').'>';
             	}
         	}
