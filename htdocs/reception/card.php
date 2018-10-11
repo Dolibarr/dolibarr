@@ -966,20 +966,21 @@ $numAsked ++;
 					
 				}
 			}
+			
 
             print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function() {';
-    	    	$i=0;
-    	    	while($i < $numAsked)
+    	    	$i=1;
+    	    	while($i <= $numAsked)
     	    	{
     	    		print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
     	    		$i++;
     	    	}
         		print '});
 	            jQuery("#autoreset").click(function() {';
-    	    	$i=0;
-    	    	while($i < $numAsked)
+    	    	$i=1;
+    	    	while($i <= $numAsked)
     	    	{
     	    		print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
     	    		$i++;
@@ -1048,8 +1049,7 @@ $numAsked ++;
 
                 print '<!-- line '.$line->rowid.' for product -->'."\n";
                 print '<tr class="oddeven">'."\n";
-				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value=\''.$line->id.'\' />';
-				print '<input type="hidden" name="comment'.$indiceAsked.'" value=\''.GETPOST('comment').'\' />';
+				
 				
                 // Product label
                 if ($line->fk_product > 0)  // If predefined product
@@ -1103,6 +1103,8 @@ $numAsked ++;
 				
                 // Qty
                 print '<td align="center">'.$line->qty;
+				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value=\''.$line->id.'\' />';
+				print '<input type="hidden" name="comment'.$indiceAsked.'" value=\''.GETPOST('comment').'\' />';
                 print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$dispatchLines[$indiceAsked]['qty'].'">';
                 print '</td>';
                 $qtyProdCom=$line->qty;
