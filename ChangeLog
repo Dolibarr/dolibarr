@@ -86,7 +86,7 @@ NEW: Add a tab to specify accountant/auditor of the company
 NEW: Add Date delivery and Availability on Propals List
 NEW: Add date in goods reception supplier order table
 NEW: Add delivery_time_days of suppliers in export profile
-NEW: Add Docments'tab to expedition module
+NEW: Add Documents'tab to expedition module
 NEW: Use dol_print_phone in thirdparty list page to format phone
 NEW: Add entry for the GDPR contact
 NEW: Add extrafield type "html"
