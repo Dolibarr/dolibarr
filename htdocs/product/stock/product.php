@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
- * Copyright (C) 2013-2015 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2013-2018 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
