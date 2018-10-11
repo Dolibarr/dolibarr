@@ -83,6 +83,8 @@ $workflowcodes=array(
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>50, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>''),
     'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>40, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>''),
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->expedition->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
+	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->reception->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'bill'),
+	
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
