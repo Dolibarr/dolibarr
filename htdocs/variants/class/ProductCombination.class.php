@@ -634,7 +634,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		}
 
 		$db->commit();
-		return 1;
+		return $newproduct->id;
 	}
 
 	/**

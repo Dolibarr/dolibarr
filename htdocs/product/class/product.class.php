@@ -3494,6 +3494,25 @@ class Product extends CommonObject
 	}
 
 	/**
+	 * Return if a product has variants or not
+	 *
+	 * @return 	int		Number of variants
+	 */
+	function hasVariants() {
+		$nb = 0;
+		$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".$this->id;
+		$sql.= " AND entity IN (".getEntity('product').")";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) $nb = $obj->nb;
+		}
+
+		return $nb;
+	}
+
+	/**
 	 *  Return all parent products for current product (first level only)
 	 *
 	 *  @return 	array 		Array of product
