@@ -44,7 +44,8 @@ class AccountancyExport
 	/**
 	 * @var Type of export. Defined by $conf->global->ACCOUNTING_EXPORT_MODELCSV
 	 */
-	public static $EXPORT_TYPE_NORMAL = 1;	 // Classic CSV
+	public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV
+	public static $EXPORT_TYPE_CONFIGURABLE = 10;		// CSV
 	public static $EXPORT_TYPE_CEGID = 2;
 	public static $EXPORT_TYPE_COALA = 3;
 	public static $EXPORT_TYPE_BOB50 = 4;
@@ -53,7 +54,6 @@ class AccountancyExport
 	public static $EXPORT_TYPE_EBP = 7;
 	public static $EXPORT_TYPE_COGILOG = 8;
 	public static $EXPORT_TYPE_AGIRIS = 9;
-	public static $EXPORT_TYPE_CONFIGURABLE = 10;
 	public static $EXPORT_TYPE_FEC = 11;
 
 
@@ -98,7 +98,8 @@ class AccountancyExport
 		global $langs;
 
 		return array (
-				self::$EXPORT_TYPE_NORMAL => $langs->trans('Modelcsv_normal'),
+				//self::$EXPORT_TYPE_NORMAL => $langs->trans('Modelcsv_normal'),
+				self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
 				self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
 				self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
 				self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
@@ -107,9 +108,33 @@ class AccountancyExport
 				self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
 				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 				self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
-				self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
 				self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 			);
+	}
+
+	/**
+	 * Return string to summarize the format (Used to generated export filename)
+	 *
+	 * @param	int		$type		Format id
+	 * @return 	string				Format code
+	 */
+	private static function getFormatCode($type)
+	{
+		$formatcode = array (
+			//self::$EXPORT_TYPE_NORMAL => 'csv',
+			self::$EXPORT_TYPE_CONFIGURABLE => 'csv',
+			self::$EXPORT_TYPE_CEGID => 'cegid',
+			self::$EXPORT_TYPE_COALA => 'coala',
+			self::$EXPORT_TYPE_BOB50 => 'bob50',
+			self::$EXPORT_TYPE_CIEL => 'ciel',
+			self::$EXPORT_TYPE_QUADRATUS => 'quadratus',
+			self::$EXPORT_TYPE_EBP => 'ebp',
+			self::$EXPORT_TYPE_COGILOG => 'cogilog',
+			self::$EXPORT_TYPE_AGIRIS => 'agiris',
+			self::$EXPORT_TYPE_FEC => 'fec',
+		);
+
+		return $formatcode[$type];
 	}
 
 	/**
@@ -123,13 +148,13 @@ class AccountancyExport
 
 		return array (
 			'param' => array(
-				self::$EXPORT_TYPE_NORMAL => array(
+				/*self::$EXPORT_TYPE_NORMAL => array(
 					'label' => $langs->trans('Modelcsv_normal'),
 					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
 					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
 					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
 					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
-				),
+				),*/
 				self::$EXPORT_TYPE_CEGID => array(
 					'label' => $langs->trans('Modelcsv_CEGID'),
 				),
@@ -179,17 +204,6 @@ class AccountancyExport
 		);
 	}
 
-	/**
-	 * Download the export
-	 *
-	 * @return void
-	 */
-	public static function downloadFile()
-	{
-		global $conf;
-		$filename = 'general_ledger';
-		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
-	}
 
 	/**
 	 * Function who chose which export to use with the default config
@@ -201,12 +215,19 @@ class AccountancyExport
 	{
 		global $conf, $langs;
 
-		self::downloadFile();
+
+		$filename = 'general_ledger-'.$this->getFormatCode($conf->global->ACCOUNTING_EXPORT_MODELCSV);
+		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+
 
 		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
 			case self::$EXPORT_TYPE_NORMAL :
-				$this->exportNormal($TData);
+				/*$this->exportNormal($TData);
+				break;*/
+			case self::$EXPORT_TYPE_CONFIGURABLE :
+				$this->exportConfigurable($TData);
 				break;
+			case self::$EXPORT_TYPE_NORMAL :
 			case self::$EXPORT_TYPE_CEGID :
 				$this->exportCegid($TData);
 				break;
@@ -231,9 +252,6 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_AGIRIS :
 				$this->exportAgiris($TData);
 				break;
-			case self::$EXPORT_TYPE_CONFIGURABLE :
-				$this->exportConfigurable($TData);
-				break;
 			case self::$EXPORT_TYPE_FEC :
 				$this->exportFEC($TData);
 				break;
@@ -250,6 +268,7 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
+	/* Use $EXPORT_TYPE_CONFIGURABLE instead
 	public function exportNormal($objectLines)
 	{
 		global $conf;
@@ -267,6 +286,7 @@ class AccountancyExport
 			print $this->end_line;
 		}
 	}
+	*/
 
 	/**
 	 * Export format : CEGID
@@ -610,12 +630,12 @@ class AccountancyExport
 			$tab[] = $date;
 			$tab[] = $line->doc_ref;
 			$tab[] = $line->label_operation;
-			$tab[] =  length_accountg($line->numero_compte);
-			$tab[] =  length_accounta($line->subledger_account);
-			$tab[] =  price($line->debit);
-			$tab[] =  price($line->credit);
-			$tab[] =  price($line->montant);
-			$tab[] =  $line->code_journal;
+			$tab[] = length_accountg($line->numero_compte);
+			$tab[] = length_accounta($line->subledger_account);
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = price($line->montant);
+			$tab[] = $line->code_journal;
 
 			$separator = $this->separator;
 			print implode($separator, $tab) . $this->end_line;

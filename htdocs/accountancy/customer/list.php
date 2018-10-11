@@ -466,7 +466,7 @@ if ($result) {
 		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Invoice
-		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
+		print '<td class="nowraponall">' . $facture_static->getNomUrl(1) . '</td>';
 
 		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 

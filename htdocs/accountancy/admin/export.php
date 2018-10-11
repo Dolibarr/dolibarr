@@ -79,6 +79,7 @@ $model_option = array (
 /*
  * Actions
  */
+
 if ($action == 'update') {
 	$error = 0;
 
@@ -123,6 +124,8 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
+
+
 
 /*
  * View
@@ -267,7 +270,7 @@ if ($num2) {
         } else {
             print '<input type="text" size="20" id="'. $label .'" name="' . $key['label'] . '" value="' . $conf->global->$label . '">';
         }
-		
+
 		print '</td></tr>';
 	}
 

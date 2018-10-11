@@ -477,12 +477,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'amount'   => price2num($amountstripe, 'MU'),
 					'currency' => $currency,
 					'capture'  => true,							// Charge immediatly
-					'description' => 'Stripe payment: '.$FULLTAG,
+					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 					'metadata' => $metadata,
 					'customer' => $customer->id,
 					'source' => $card,
 					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-				),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
+				),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -517,10 +517,10 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'amount'   => price2num($amountstripe, 'MU'),
 				'currency' => $currency,
 				'capture'  => true,							// Charge immediatly
-				'description' => 'Stripe payment: '.$FULLTAG,
+				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 				'metadata' => $metadata,
 				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-			),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
+			),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{
@@ -813,7 +813,7 @@ if ($source == 'order')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
+	$fulltag='ORD='.$order->id.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -933,7 +933,7 @@ if ($source == 'invoice')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
+	$fulltag='INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -1115,7 +1115,7 @@ if ($source == 'contractline')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	$fulltag='COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
