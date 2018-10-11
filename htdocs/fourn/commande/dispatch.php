@@ -744,11 +744,12 @@ if ($id > 0 || ! empty($ref)) {
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.label as entrepot,";
-	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
-	if($conf->reception->enabled)$sql.=" ,cfd.fk_reception";
+	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status,  cfd.datec";
+	if($conf->reception->enabled)$sql.=" ,cfd.fk_reception, r.date_delivery";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entrepot as e ON cfd.fk_entrepot = e.rowid";
+	if($conf->reception->enabled)$sql.=" LEFT JOIN " . MAIN_DB_PREFIX . "reception as r ON cfd.fk_reception = r.rowid";
 	$sql .= " WHERE cfd.fk_commande = " . $object->id;
 	$sql .= " AND cfd.fk_product = p.rowid";
 	$sql .= " ORDER BY cfd.rowid ASC";
@@ -768,7 +769,10 @@ if ($id > 0 || ! empty($ref)) {
 
 			print '<tr class="liste_titre">';
 			if($conf->reception->enabled)print '<td>' . $langs->trans("Reception") . '</td>';
+			
 			print '<td>' . $langs->trans("Product") . '</td>';
+			print '<td>' . $langs->trans("DateCreation") . '</td>';
+			print '<td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
 			if (! empty($conf->productbatch->enabled)) {
 				print '<td>' . $langs->trans("batch_number") . '</td>';
 				print '<td>' . $langs->trans("EatByDate") . '</td>';
@@ -807,6 +811,8 @@ if ($id > 0 || ! empty($ref)) {
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
 				print "</td>\n";
+				print '<td>'.dol_print_date($db->jdate($objp->datec),'day').'</td>';
+				print '<td>'.dol_print_date($db->jdate($objp->date_delivery),'day').'</td>';
 
 				if (! empty($conf->productbatch->enabled)) {
 					print '<td>' . $objp->batch . '</td>';

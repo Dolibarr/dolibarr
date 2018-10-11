@@ -73,11 +73,7 @@ class Reception extends CommonObject
 	var $trueSize;
 
 	var $date_delivery;		// Date delivery planed
-	/**
-	 * @deprecated
-	 * @see date_reception
-	 */
-	var $date;
+	
 
 	/**
 	 * Effective delivery date
@@ -355,52 +351,7 @@ class Reception extends CommonObject
 		}
 	}
 
-	/**
-	 * Create the detail (eat-by date) of the reception line
-	 *
-	 * @param 	object		$line_ext		full line informations
-	 * @param	array		$array_options		extrafields array
-	 * @return	int							<0 if KO, >0 if OK
-	 */
-	function create_line_batch($line_ext,$array_options=0)
-	{
-		$error = 0;
-		$stockLocationQty = array(); // associated array with batch qty in stock location
-
-		$tab=$line_ext->detail_batch;
-		// create stockLocation Qty array
-		foreach ($tab as $detbatch)
-		{
-			if ($detbatch->entrepot_id)
-			{
-				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->dluo_qty;
-			}
-		}
-		// create reception lines
-		foreach ($stockLocationQty as $stockLocation => $qty)
-		{
-			if (($line_id = $this->create_line($stockLocation,$line_ext->origin_line_id,$qty,$array_options)) < 0)
-			{
-				$error++;
-			}
-			else
-			{
-				// create reception batch lines for stockLocation
-				foreach ($tab as $detbatch)
-				{
-					if ($detbatch->entrepot_id == $stockLocation){
-						if (! ($detbatch->create($line_id) >0))		// Create an receptionlinebatch
-						{
-							$error++;
-						}
-					}
-				}
-			}
-		}
-
-		if (! $error) return 1;
-		else return -1;
-	}
+	
 
 	/**
 	 *	Get object and lines from database
