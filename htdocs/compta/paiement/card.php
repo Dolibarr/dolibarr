@@ -233,7 +233,7 @@ $disable_delete = 0;
 // Bank account
 if (! empty($conf->banque->enabled))
 {
-	if ($object->fk_account > 0)
+	if ($object->fk_account > 0 || $object->bank_account > 0)
 	{
 		$bankline=new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -247,7 +247,7 @@ if (! empty($conf->banque->enabled))
 		print '<td>'.$langs->trans('BankAccount').'</td>';
 		print '<td>';
 		$accountstatic=new Account($db);
-		$accountstatic->fetch($bankline->fk_account);
+		$accountstatic->fetch(($object->fk_account > 0) ? $object->fk_account : $object->bank_account);
 		print $accountstatic->getNomUrl(1);
 		print '</td>';
 		print '</tr>';
