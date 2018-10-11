@@ -107,7 +107,23 @@ elseif ($action == 'unsetchkdontcreatebankrecords') {
                 $paiement = new Paiement($db);
                 $paiement->fetch($obj->rowid);
                 
-                $result = $paiement->addPaymentToBank($user, 'payement', '(CreateByConfDesactivate)', $paiement->bank_account, '', '');
+                $emetteur = "";
+                
+                $sql2 = "SELECT s.nom as emetteur";
+                $sql2.= " FROM ".MAIN_DB_PREFIX."societe as s";
+                $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (f.fk_soc = s.rowid)";
+                $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON (pf.fk_facture = f.rowid)";
+                $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement) ";
+                $sql2.= " WHERE p.rowid = ".$paiement->id;
+                
+                $resql2 = $db->query($sql2);
+                if ($resql2)
+                {
+                    $obj2 = $db->fetch_object($resql2);
+                    $emetteur = $obj2->emetteur;
+                }
+                
+                $result = $paiement->addPaymentToBank($user, 'payement', '(CreateByConfDesactivate)', $paiement->bank_account, $emetteur, '');
                 if ($result < 0)
                 {
                     setEventMessage('Error for payment '. $paiement->id. ' : ' .$paiement->error, 'errors');
