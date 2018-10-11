@@ -96,6 +96,26 @@ if ($action == 'setchkdontcreatebankrecords') {
 elseif ($action == 'unsetchkdontcreatebankrecords') {
     if (dolibarr_set_const($db, "BANK_CHK_DONT_CREATE_BANK_RECORDS", 0, 'chaine', 0,
         '', $conf->entity) > 0) {
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."paiement WHERE fk_bank = 0";
+        $resql = $db->query($sql);
+        
+        if ($resql && $db->num_rows($resql))
+        {
+            dol_include_once('/compta/paiement/class/paiement.class.php');
+            while ($obj = $db->fetch_object($resql))
+            {
+                $paiement = new Paiement($db);
+                $paiement->fetch($obj->rowid);
+                
+                $result = $paiement->addPaymentToBank($user, 'payement', '(CreateByConfDesactivate)', $paiement->bank_account, '', '');
+                if ($result < 0)
+                {
+                    setEventMessage('Error for payment '. $paiement->id. ' : ' .$paiement->error, 'errors');
+                    $error++;
+                }
+            }
+        }
+        
         header("Location: " . $_SERVER["PHP_SELF"]);
         exit;
     }
