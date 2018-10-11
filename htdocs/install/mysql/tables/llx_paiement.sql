@@ -30,6 +30,7 @@ create table llx_paiement
   multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	
   fk_paiement      integer NOT NULL,
   num_paiement     varchar(50),
+  fk_account	   integer,								-- planned account
   note             text,
   ext_payment_id   varchar(128),						-- external id of payment (for example Stripe charge id)
   ext_payment_site varchar(128),						-- name of external paymentmode (for example 'stripe')

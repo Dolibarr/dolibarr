@@ -75,6 +75,10 @@ ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
 
 ALTER TABLE llx_paiement ADD COLUMN ext_payment_id varchar(128);
 ALTER TABLE llx_paiement ADD COLUMN ext_payment_site varchar(128);
+ALTER TABLE llx_paiement ADD COLUMN fk_account integer DEFAULT 0 NOT NULL after num_paiement;
+
+-- Get the planned account of the paiement from bankentries
+UPDATE llx_paiement as p INNER JOIN llx_bank as b ON p.fk_bank = b.rowid SET p.fk_account = b.fk_account WHERE p.fk_account = 0;
 
 ALTER TABLE llx_societe ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN facebook varchar(255) after skype;
