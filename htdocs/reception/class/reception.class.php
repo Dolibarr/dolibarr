@@ -1793,6 +1793,12 @@ class Reception extends CommonObject
     				$error++;
     			}
    			}
+			
+			if($this->origin == 'order_supplier'){
+				$commande = new CommandeFournisseur($this->db);
+				$commande->fetch($this->origin_id);
+				$commande->setStatus($user,4);
+			}
 
 		} else {
 			$error++;
