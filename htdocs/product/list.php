@@ -286,6 +286,11 @@ if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_ty
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
 
+if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+}
+
+
 $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
@@ -294,6 +299,11 @@ if (dol_strlen($search_type) && $search_type != '-1')
 	if ($search_type == 1) $sql.= " AND p.fk_product_type = 1";
 	else $sql.= " AND p.fk_product_type <> 1";
 }
+
+if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+	$sql .= " AND pac.rowid IS NULL";
+}
+
 if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
 if ($search_label)   $sql .= natural_search('p.label', $search_label);
 if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
