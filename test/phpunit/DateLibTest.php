@@ -205,6 +205,26 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $result=num_public_holiday($date1,$date2,'XX',1);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(2,$result,'NumPublicHoliday for XX');   // 1 opened day, 2 closed days (even if country unknown)
+
+        $conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS='12-13,2019-12-14';
+
+        $date1=dol_mktime(0, 0, 0, 12, 13, 2018);
+        $date2=dol_mktime(0, 0, 0, 12, 13, 2018);
+        $result=num_public_holiday($date1,$date2,'YY',1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(1,$result,'NumPublicHoliday for YY the 2018-12-13');   // 0 opened day, 1 closed days (even if country unknown)
+
+        $date1=dol_mktime(0, 0, 0, 12, 14, 2018);
+        $date2=dol_mktime(0, 0, 0, 12, 14, 2018);
+        $result=num_public_holiday($date1,$date2,'YY',1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(0,$result,'NumPublicHoliday for YY the 2018-12-14');   // 1 opened day, 0 closed days (even if country unknown)
+
+        $date1=dol_mktime(0, 0, 0, 12, 14, 2019);
+        $date2=dol_mktime(0, 0, 0, 12, 14, 2019);
+        $result=num_public_holiday($date1,$date2,'YY',1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(1,$result,'NumPublicHoliday for YY the 2019-12-14');   // 0 opened day, 1 closed days (even if country unknown)
     }
 
     /**
