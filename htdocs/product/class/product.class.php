@@ -3498,7 +3498,8 @@ class Product extends CommonObject
 	 *
 	 * @return 	int		Number of variants
 	 */
-	function hasVariants() {
+	function hasVariants()
+	{
 		$nb = 0;
 		$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".$this->id;
 		$sql.= " AND entity IN (".getEntity('product').")";
