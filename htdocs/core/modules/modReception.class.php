@@ -166,9 +166,9 @@ class modReception extends DolibarrModules
 		// Exports
 		//--------
 		$r=0;
-/*
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		$shipment=new Commande($this->db);
+
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		$shipment=new CommandeFournisseur($this->db);
 		$contact_arrays=$shipment->liste_type_contact('external','',0,0,'');
 		if (is_array($contact_arrays) && count($contact_arrays)>0){
 			$idcontacts=join(',',array_keys($shipment->liste_type_contact('external','',0,0,'')));
@@ -179,23 +179,23 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Shipments';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_permission[$r]=array(array("reception","shipment","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'ThirdParty','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','d.nom'=>'State','co.label'=>'Country','co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_customer'=>"RefCustomer",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_delivery'=>"DateDeliveryPlanned",'c.tracking_number'=>"TrackingNumber",'c.height'=>"Height",'c.width'=>"Width",'c.size'=>"Depth",'c.size_units'=>'SizeUnits','c.weight'=>"Weight",'c.weight_units'=>"WeightUnits",'c.fk_statut'=>'Status','c.note_public'=>"NotePublic",'ed.rowid'=>'LineId','cd.description'=>'Description','ed.qty'=>"Qty",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel','p.weight'=>'ProductWeight','p.weight_units'=>'WeightUnits','p.volume'=>'ProductVolume','p.volume_units'=>'VolumeUnits');
-		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) $this->export_fields_array[$r]+=array('sp.rowid'=>'IdContact','sp.lastname'=>'Lastname','sp.firstname'=>'Firstname','sp.note_public'=>'NotePublic');
+		$this->export_label[$r]='Receptions';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r]=array(array("reception","reception","export"));
+		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'ThirdParty','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','d.nom'=>'State','co.label'=>'Country','co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_supplier'=>"RefSupplier",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_delivery'=>"DateDeliveryPlanned",'c.tracking_number'=>"TrackingNumber",'c.height'=>"Height",'c.width'=>"Width",'c.size'=>"Depth",'c.size_units'=>'SizeUnits','c.weight'=>"Weight",'c.weight_units'=>"WeightUnits",'c.fk_statut'=>'Status','c.note_public'=>"NotePublic",'ed.rowid'=>'LineId','cd.description'=>'Description','ed.qty'=>"Qty",'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel','p.weight'=>'ProductWeight','p.weight_units'=>'WeightUnits','p.volume'=>'ProductVolume','p.volume_units'=>'VolumeUnits');
+		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) $this->export_fields_array[$r]+=array('sp.rowid'=>'IdContact','sp.lastname'=>'Lastname','sp.firstname'=>'Firstname','sp.note_public'=>'NotePublic');
 		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text");
-		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_customer'=>"Text",'c.date_creation'=>"Date",'c.date_delivery'=>"Date",'c.tracking_number'=>"Numeric",'c.height'=>"Numeric",'c.width'=>"Numeric",'c.weight'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",'ed.qty'=>"Numeric",'d.nom'=>'Text');
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company','co.code'=>'company','s.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.siret'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','c.rowid'=>"shipment",'c.ref'=>"shipment",'c.ref_customer'=>"shipment",'c.fk_soc'=>"shipment",'c.date_creation'=>"shipment",'c.date_delivery'=>"shipment",'c.tracking_number'=>'shipment','c.height'=>"shipment",'c.width'=>"shipment",'c.size'=>'shipment','c.size_units'=>'shipment','c.weight'=>"shipment",'c.weight_units'=>'shipment','c.fk_statut'=>"shipment",'c.note_public'=>"shipment",'ed.rowid'=>'shipment_line','cd.description'=>'shipment_line','ed.qty'=>"shipment_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product','p.weight'=>'product','p.weight_units'=>'product','p.volume'=>'product','p.volume_units'=>'product');
-		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) $this->export_entities_array[$r]+=array('sp.rowid'=>'contact','sp.lastname'=>'contact','sp.firstname'=>'contact','sp.note_public'=>'contact');
-		$this->export_dependencies_array[$r]=array('shipment_line'=>'ed.rowid','product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT))
+		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_supplier'=>"Text",'c.date_creation'=>"Date",'c.date_delivery'=>"Date",'c.tracking_number'=>"Numeric",'c.height'=>"Numeric",'c.width'=>"Numeric",'c.weight'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",'ed.qty'=>"Numeric",'d.nom'=>'Text');
+		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company','co.code'=>'company','s.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.siret'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','c.rowid'=>"reception",'c.ref'=>"reception",'c.ref_supplier'=>"reception",'c.fk_soc'=>"reception",'c.date_creation'=>"reception",'c.date_delivery'=>"reception",'c.tracking_number'=>'reception','c.height'=>"reception",'c.width'=>"reception",'c.size'=>'reception','c.size_units'=>'reception','c.weight'=>"reception",'c.weight_units'=>'reception','c.fk_statut'=>"reception",'c.note_public'=>"reception",'ed.rowid'=>'reception_line','cd.description'=>'reception_line','ed.qty'=>"reception_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product','p.weight'=>'product','p.weight_units'=>'product','p.volume'=>'product','p.volume_units'=>'product');
+		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) $this->export_entities_array[$r]+=array('sp.rowid'=>'contact','sp.lastname'=>'contact','sp.firstname'=>'contact','sp.note_public'=>'contact');
+		$this->export_dependencies_array[$r]=array('reception_line'=>'ed.rowid','product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT))
 		{
 		    $keyforselect='socpeople'; $keyforelement='contact'; $keyforaliasextra='extra3';
 		    include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
-		$keyforselect='reception'; $keyforelement='shipment'; $keyforaliasextra='extra';
+		$keyforselect='reception'; $keyforelement='reception'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect='receptiondet'; $keyforelement='shipment_line'; $keyforaliasextra='extra2';
+		$keyforselect='commande_fournisseur_dispatch'; $keyforelement='reception_line'; $keyforaliasextra='extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -205,19 +205,19 @@ class modReception extends DolibarrModules
 		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'receptiondet as ed';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'receptiondet_extrafields as extra2 ON ed.rowid = extra2.fk_object';
-		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'commandedet as cd';
+		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch as ed';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch_extrafields as extra2 ON ed.rowid = extra2.fk_object';
+		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
-		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT))
+		if ($idcontacts && ! empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT))
 		{
 		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
 		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
 		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
-		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_reception AND ed.fk_origin_line = cd.rowid';
+		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_reception AND ed.fk_commandefourndet = cd.rowid';
 		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('reception').')';
-		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;*/
+		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 	}
 
 

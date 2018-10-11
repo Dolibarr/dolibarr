@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - sendings
 RefReception=Réf. réception
 Reception=Réception
+reception=Réception
+reception_line=Ligne de réception
 Receptions=Réceptions
 AllReceptions=Toutes les réceptions
 Reception=Réception
