@@ -66,24 +66,51 @@ print '<tr class="liste_titre">';
 print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
+$num = 0;
+
 if ($resql)
 {
-  if ($row = $db->fetch_row($resql) )
+    if ($row = $db->fetch_row($resql) )
     {
-      $num = $row[0];
+        $num = $row[0];
     }
-  print '<tr class="oddeven">';
-  print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
-  print '</td></tr>';
-  print "</table>\n";
 }
 else
 {
   dol_print_error($db);
 }
 
+if (!empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
+{
+    $sql = "SELECT count(p.rowid)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = p.fk_paiement";
+    $sql.= " WHERE cp.code = 'CHQ'";
+    $sql.= " AND p.fk_bank = 0";
+    
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        if ($row = $db->fetch_row($resql) )
+        {
+            $num+= $row[0];
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+if (!empty($num))
+{
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
+    print '<td align="right">';
+    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+    print '</td></tr>';
+    print "</table>\n";
+}
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
