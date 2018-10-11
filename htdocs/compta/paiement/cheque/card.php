@@ -437,6 +437,34 @@ if ($action == 'new')
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
 			$i++;
 		}
+		
+		if (!empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
+		{
+		   $sql2 = "SELECT ba.rowid as bid, p.datec as datec, p.datep as date, p.amount, ba.label, p.rowid as paymentid, s.nom as emetteur";
+		   $sql2.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON (pf.fk_paiement = p.rowid)";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (f.rowid = pf.fk_facture)";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = f.fk_soc)";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (p.fk_account = ba.rowid)";
+		   $sql2.= " WHERE p.fk_bank = 0";
+		   
+		   $resql2 = $db->query($sql2);
+		   if ($resql2)
+		   {
+		       
+		       while ( $obj = $db->fetch_object($resql2) )
+		       {
+		           $accounts[$obj->bid] = $obj->label;
+		           $lines[$obj->bid][$i]["date"] = $db->jdate($obj->date);
+		           $lines[$obj->bid][$i]["amount"] = $obj->amount;
+		           $lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
+		           $lines[$obj->bid][$i]["numero"] = '';
+		           $lines[$obj->bid][$i]["banque"] = '';
+		           $lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
+		           $i++;
+		       }
+		   }
+		}
 
 		if ($i == 0)
 		{
@@ -480,7 +508,8 @@ if ($action == 'new')
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
 		print '<td align="right" width="100px">'.$langs->trans("Amount")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
+		if (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
+		  print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
@@ -517,21 +546,25 @@ if ($action == 'new')
 					print '&nbsp;';
 				}
 				print '</td>';
-				// Link to bank transaction
-				print '<td align="center">';
-				$accountlinestatic->rowid=$value["id"];
-				if ($accountlinestatic->rowid)
+				if (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
 				{
-					print $accountlinestatic->getNomUrl(1);
+    				// Link to bank transaction
+    				print '<td align="center">';
+    				$accountlinestatic->rowid=$value["id"];
+    				if ($accountlinestatic->rowid)
+    				{
+    					print $accountlinestatic->getNomUrl(1);
+    				}
+    				else
+    				{
+    					print '&nbsp;';
+    				}
+    				print '</td>';
 				}
-				else
-				{
-					print '&nbsp;';
-				}
-				print '</td>';
 
+				$vid = (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS)) ? $value["id"] : $value["paymentid"];
 				print '<td align="center">';
-				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+				print '<input id="'.$vid.'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$vid.'">';
 				print '</td>' ;
 				print '</tr>';
 
