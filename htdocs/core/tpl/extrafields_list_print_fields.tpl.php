@@ -21,7 +21,7 @@ if (! empty($extrafieldsobjectkey))	// New method: $extrafieldsobject can be 'so
 				if ($align) print ' align="'.$align.'"';
 				print '>';
 				$tmpkey='options_'.$key;
-				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')))
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !preg_match('/^[0-9]{10}$/', $obj->$tmpkey))
 				{
 					$value = $db->jdate($obj->$tmpkey);
 				}
