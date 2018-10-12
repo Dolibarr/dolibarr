@@ -133,3 +133,17 @@ CREATE TABLE llx_takepos_floor_tables(
 
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
+
+CREATE TABLE llx_bordereau_chequedet
+(
+    rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+    fk_bordereau 	integer NOT NULL,
+    fk_bank 		integer,
+    fk_paiement 	integer,
+    emetteur 		varchar(255),
+    amount 			double(28,8) DEFAULT 0
+) ENGINE = InnoDB;
+
+ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bordereau (fk_bordereau);
+ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bank (fk_bank);
+ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_paiement (fk_paiement);
