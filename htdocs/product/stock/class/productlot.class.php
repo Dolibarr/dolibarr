@@ -63,14 +63,27 @@ class Productlot extends CommonObject
 	 */
 	public $entity;
 
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
 	public $datec = '';
 	public $tms = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
 	public $import_key;
 
 
