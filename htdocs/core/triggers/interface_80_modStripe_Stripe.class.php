@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/core/triggers/interface_50_modStripe_Stripe.class.php
+ *  \file       htdocs/core/triggers/interface_80_modStripe_Stripe.class.php
  *  \ingroup    core
  *  \brief      Fichier
  *  \remarks    Son propre fichier d'actions peut etre cree par recopie de celui-ci:
@@ -148,9 +148,9 @@ class InterfaceStripe
 				{
 					$namecleaned = $object->name ? $object->name : null;
 					$vatcleaned = array(
-          "tax_id" => $object->tva_intra ? $object->tva_intra : null,	// We force data to "null" if empty as expected by Stripe
-          "type" => 'vat',
-          );
+						"tax_id" => $object->tva_intra ? $object->tva_intra : null,	// We force data to "null" if empty as expected by Stripe
+						"type" => 'vat',
+					);
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;

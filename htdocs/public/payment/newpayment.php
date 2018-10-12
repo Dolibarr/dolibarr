@@ -495,12 +495,17 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 		}
 		else
 		{
+			$vatcleaned = array(
+				"tax_id" => $vatnumber ? $vatnumber : null,	// We force data to "null" if empty as expected by Stripe
+				"type" => 'vat',
+			);
+
 			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
 			$customer = \Stripe\Customer::create(array(
 				'email' => $email,
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
-				'business_vat_id' => ($vatnumber?$vatnumber:null),
+				'tax_info' => $vatcleaned,
 				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 			));
 			// Return $customer = array('id'=>'cus_XXXX', ...)
