@@ -58,6 +58,11 @@ FIX: stock replenish with multientity
 FIX: table llx_chargessociales doesn't exists
 FIX: we must see number of all shared projects
 FIX: when stock is empty for current entity but > 0 in other entity, until this commit product wasn't displaied on replenishment, it must depends on multientity stock sharing
+FIX: when we're just admin and not super admin, if we create new user with transverse mode, we don't see it then we can't add him in usergroup
+FIX: wrong function name
+FIX: Wrong position of firstname lastname
+FIX: wrong value for module part and return access denied
+FIX: Wrong variable and trigger name
 
 ***** ChangeLog for 7.0.3 compared to 7.0.2 *****
 FIX: 7.0 task contact card without withproject parameters
