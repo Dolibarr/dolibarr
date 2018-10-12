@@ -49,7 +49,11 @@ class WebsitePage extends CommonObject
 	 */
 	public $picto = 'label';
 
+	/**
+     * @var int ID
+     */
 	public $fk_website;
+
 	public $pageurl;
 	public $aliasalt;
 	public $type_container;
