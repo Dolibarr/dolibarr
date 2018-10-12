@@ -2,6 +2,37 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 6.0.8 compared to 6.0.7 *****
+FIX: #8762
+FIX: #9032
+FIX: case when we valid form with keyboard
+FIX: clause must not be there
+FIX: dol_delete_file must work in a context without db handler loaded
+FIX: entity test must be on product_fourn_price table and not product table
+FIX: Fetch shipping will now fetch project id
+FIX: $fk_account is always empty, must be $soc->fk_account
+FIX: getEntity project and not projet
+FIX: If we enable 3 steps for supplier order approbation, we must no…
+FIX: If we enable 3 steps for supplier order approbation, we must not delete all fourn rights def.
+FIX: Keep supplier proposal price for supplier order
+FIX: langs fr
+FIX: missing filters during ordering
+FIX: missing filters during reordering
+FIX: need to filter on aa.entity for same accounting accounts available in several entities
+FIX: page must always be 0 when we search
+FIX: page must always be 0 when we search (to avoid case : when we're on page 3 and we're looking for a precise thirdparty, we stay on page 3 and nothing's displaied)
+FIX: PDF address: handle when contact thirdparty different from document thirdparty
+FIX: propal: correctly preset project when creating with origin/originid
+FIX: pu_ht_devise was not converted to numeric so decimals were lost
+FIX: pu_ht_devise was not converted to numeric so decimals were lost when calculating total_ht_devise
+FIX: remain to pay for credit note was wrong on invoice list
+FIX: shipment: fk_proje(c)t not handled in fetch() and update() methods
+FIX: showOptionals: column mismatches
+FIX: sometimes amounts are identical but php find them different.
+FIX: test is_erasable() must be done before call function delete()
+FIX: test is_erasable() must be done before call function delete() too to avoid delete invoice with &action=delete in url
+FIX: we must see number of all shared projects
+FIX: wrong var name
 
 ***** ChangeLog for 6.0.7 compared to 6.0.6 *****
 FIX: #8023
