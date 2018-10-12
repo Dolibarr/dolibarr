@@ -301,6 +301,8 @@ if (empty($reshook))
 			$object->phone_mobile= trim(GETPOST("phone_mobile",'alpha'));
 			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email",'alpha'));
 			$object->skype       = trim(GETPOST("skype",'alpha'));
+			$object->twitter     = trim(GETPOST("twitter",'alpha'));
+			$object->facebook    = trim(GETPOST("facebook",'alpha'));
 			$object->birth       = $birthdate;
 
 			$object->typeid      = GETPOST("typeid",'int');
@@ -443,6 +445,8 @@ if (empty($reshook))
 		$phone_perso=GETPOST("phone_perso",'alpha');
 		$phone_mobile=GETPOST("phone_mobile",'alpha');
 		$skype=GETPOST("member_skype",'alpha');
+		$twitter=GETPOST("member_twitter",'alpha');
+		$facebook=GETPOST("member_facebook",'alpha');
 		$email=preg_replace('/\s+/', '', GETPOST("member_email",'alpha'));
 		$login=GETPOST("member_login",'alpha');
 		$pass=GETPOST("password",'alpha');
@@ -467,7 +471,11 @@ if (empty($reshook))
 		$object->phone       = $phone;
 		$object->phone_perso = $phone_perso;
 		$object->phone_mobile= $phone_mobile;
+
 		$object->skype       = $skype;
+		$object->twitter     = $twitter;
+		$object->facebook    = $facebook;
+
 		$object->email       = $email;
 		$object->login       = $login;
 		$object->pass        = $pass;
@@ -985,7 +993,19 @@ else
 			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype','alpha')?GETPOST('member_skype','alpha'):$object->skype).'"></td></tr>';
 	    }
 
-		// Birthday
+	    // Twitter
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Twitter").'</td><td><input type="text" name="member_twitter" size="40" value="'.(GETPOST('member_twitter','alpha')?GETPOST('member_twitter','alpha'):$object->twitter).'"></td></tr>';
+	    }
+
+	    // Facebook
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="member_facebook" size="40" value="'.(GETPOST('member_facebook','alpha')?GETPOST('member_facebook','alpha'):$object->facebook).'"></td></tr>';
+	    }
+
+	    // Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
@@ -1220,7 +1240,7 @@ else
 	    // Skype
 	    if (! empty($conf->socialnetworks->enabled))
 	    {
-			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
 	    }
 
 	    // Twitter

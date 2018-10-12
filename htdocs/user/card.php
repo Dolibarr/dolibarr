@@ -201,6 +201,8 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
 			$object->skype = GETPOST("skype", 'alpha');
+			$object->twitter = GETPOST("twitter", 'alpha');
+			$object->facebook = GETPOST("facebook", 'alpha');
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature");
@@ -348,6 +350,8 @@ if (empty($reshook)) {
 				$object->office_fax = GETPOST("office_fax", 'alpha');
 				$object->user_mobile = GETPOST("user_mobile");
 				$object->skype = GETPOST("skype", 'alpha');
+				$object->twitter = GETPOST("twitter", 'alpha');
+				$object->facebook = GETPOST("facebook", 'alpha');
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature",'none');
@@ -588,6 +592,8 @@ if (empty($reshook)) {
 					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
 					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
 					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
+					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
+					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
 				}
@@ -1023,7 +1029,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<td>';
 		if (! empty($ldap_twitter))
 		{
-			print '<input type="hidden" name="skype" value="'.$ldap_twitter.'">';
+			print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
 			print $ldap_twitter;
 		}
 		else
@@ -1040,7 +1046,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<td>';
 		if (! empty($ldap_facebook))
 		{
-			print '<input type="hidden" name="skype" value="'.$ldap_facebook.'">';
+			print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
 			print $ldap_facebook;
 		}
 		else
