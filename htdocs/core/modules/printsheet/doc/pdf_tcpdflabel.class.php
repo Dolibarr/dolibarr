@@ -266,6 +266,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -278,6 +279,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 */
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;

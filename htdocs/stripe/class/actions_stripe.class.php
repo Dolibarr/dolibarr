@@ -236,5 +236,4 @@ class ActionsStripeconnect
 		}
 		return 0;
 	}
-
 }

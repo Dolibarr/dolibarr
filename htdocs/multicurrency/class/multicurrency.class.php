@@ -20,15 +20,14 @@
  */
 
 /**
- * \file    dev/skeletons/skeleton_class.class.php
- * \ingroup mymodule othermodule1 othermodule2
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \file    htdocs/multicurrency/class/multicurrency.class.php
+ * \ingroup multicurrency
+ * \brief   This file is a CRUD class file (Create/Read/Update/Delete) for multicurrency
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 /**
  * Class Currency
@@ -42,12 +41,12 @@ class MultiCurrency extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'multicurrency';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'multicurrency';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -62,32 +61,32 @@ class MultiCurrency extends CommonObject
 	 * @var mixed Sample property 1
 	 */
 	public $id;
-	
+
 	/**
 	 * @var mixed Sample property 1
 	 */
 	public $code;
-	
+
 	/**
 	 * @var mixed Sample property 2
 	 */
 	public $name;
-	
+
 	/**
-	 * @var mixed Sample property 2
+	 * @var int Entity
 	 */
 	public $entity;
-	
+
 	/**
 	 * @var mixed Sample property 2
 	 */
 	public $date_create;
-	
+
 	/**
 	 * @var mixed Sample property 2
 	 */
 	public $fk_user;
-	
+
 	/**
 	 * @var mixed Sample property 2
 	 */
@@ -488,7 +487,6 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
-
 	 }
 
 	 /**
@@ -695,32 +693,32 @@ class CurrencyRate extends CommonObjectLine
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'multicurrency_rate';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'multicurrency_rate';
-	
+
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
 	 * @var double Rate
 	 */
 	public $rate;
-	
+
 	/**
 	 * @var date Date synchronisation
 	 */
 	public $date_sync;
-	
+
 	/**
 	 * @var int Id of currency
 	 */
 	public $fk_multicurrency;
-	
+
 	/**
 	 * @var int Id of entity
 	 */
@@ -940,5 +938,4 @@ class CurrencyRate extends CommonObjectLine
 			return 1;
 		}
 	}
-
 }

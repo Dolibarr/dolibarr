@@ -29,8 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("admin");
-$langs->load('other');
+$langs->loadLangs(array("admin", "other"));
 
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');

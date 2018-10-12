@@ -30,7 +30,7 @@ class RssParser
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -61,7 +61,7 @@ class RssParser
      */
     public function __construct($db)
     {
-    	$this->db=$db;
+    	$this->db = $db;
     }
 
     /**
@@ -461,6 +461,7 @@ class RssParser
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Triggered when opened tag is found
      *
@@ -471,6 +472,7 @@ class RssParser
      */
     function feed_start_element($p, $element, &$attrs)
     {
+        // phpcs:enable
         $el = $element = strtolower($element);
         $attrs = array_change_key_case($attrs, CASE_LOWER);
 
@@ -581,6 +583,7 @@ class RssParser
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Triggered when CDATA is found
      *
@@ -590,6 +593,7 @@ class RssParser
      */
     function feed_cdata($p, $text)
     {
+        // phpcs:enable
         if ($this->_format == 'atom' and $this->incontent)
         {
             $this->append_content($text);
@@ -601,6 +605,7 @@ class RssParser
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Triggered when closed tag is found
      *
@@ -610,6 +615,7 @@ class RssParser
      */
     function feed_end_element($p, $el)
     {
+        // phpcs:enable
         $el = strtolower($el);
 
         if ($el == 'item' or $el == 'entry')
@@ -670,6 +676,7 @@ class RssParser
         $str1 .= $str2;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Enter description here ...
      *
@@ -678,6 +685,7 @@ class RssParser
      */
     function append_content($text)
     {
+        // phpcs:enable
         if ( $this->initem ) {
             $this->concat($this->current_item[ $this->incontent ], $text);
         }
@@ -729,7 +737,6 @@ class RssParser
 
         }
     }
-
 }
 
 
@@ -756,7 +763,7 @@ function xml2php($xml)
         }
 
         //Let see if the new child is not in the array
-        if($tab==false && in_array($key,array_keys($array)))
+        if ($tab === false && in_array($key,array_keys($array)))
         {
             //If this element is already in the array we will create an indexed array
             $tmp = $array[$key];
@@ -765,7 +772,7 @@ function xml2php($xml)
             $array[$key][] = $child;
             $tab = true;
         }
-        elseif($tab == true)
+        elseif($tab === true)
         {
             //Add an element in an existing array
             $array[$key][] = $child;
@@ -780,12 +787,10 @@ function xml2php($xml)
     }
 
 
-    if($fils==0)
+    if ($fils==0)
     {
         return (string) $xml;
     }
 
     return $array;
-
 }
-

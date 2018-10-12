@@ -88,9 +88,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
-	$entitytouseforuserdir = $object->entity;
-	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;
-	$upload_dir = $conf->user->multidir_output[$entitytouseforuserdir] . "/" . $object->id ;
+	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
+	// For users, the upload_dir is always $conf->user->entity for the moment
+	$upload_dir = $conf->user->dir_output. "/" . $object->id ;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -133,7 +133,7 @@ if ($object->id)
 
 	$linkback = '';
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

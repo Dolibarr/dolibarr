@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -580,7 +581,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="maxwidthonsmartphone">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print $form->select_date($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0, 1);
+			print $form->selectDate($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0);
 			print '</td>';
 
 			// Contributor
@@ -759,7 +760,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="maxwidthonsmartphone">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print $form->select_date($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0, 1);
+			print $form->selectDate($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0);
 			print '</td>';
 
 			// Task
@@ -965,9 +966,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			{
     				if (empty($task_time->task_date_withhour))
     				{
-    					print $form->select_date(($date2?$date2:$date1),'timeline',3,3,2,"timespent_date",1,0,1);
+    					print $form->selectDate(($date2?$date2:$date1), 'timeline', 3, 3, 2, "timespent_date", 1, 0);
     				}
-    				else print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
+    				else print $form->selectDate(($date2?$date2:$date1), 'timeline', 1, 1, 2, "timespent_date", 1, 0);
     			}
     			else
     			{

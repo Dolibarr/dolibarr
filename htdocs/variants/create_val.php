@@ -118,7 +118,7 @@ print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-print_fiche_titre($langs->trans('NewProductAttributeValue'));
+print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 
 dol_fiche_head();
 

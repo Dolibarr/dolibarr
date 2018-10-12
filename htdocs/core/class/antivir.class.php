@@ -40,8 +40,11 @@ class AntiVir
 	 */
 	public $errors = array();
 
-	var $output;
-	
+	/**
+	 * @var string Used to return message
+	 */
+	public $output;
+
 	/**
      * @var DoliDB Database handler.
      */
@@ -57,6 +60,7 @@ class AntiVir
 		$this->db=$db;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
@@ -67,6 +71,7 @@ class AntiVir
 	 */
 	function dol_avscan_file($file)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$return = 0;
@@ -179,6 +184,4 @@ class AntiVir
 
 		return $ret;
 	}
-
 }
-

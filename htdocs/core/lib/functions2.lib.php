@@ -194,9 +194,10 @@ function dol_print_file($langs,$filename,$searchalt=0)
  */
 function dol_print_object_info($object, $usetable=0)
 {
-    global $langs,$db;
-    $langs->load("other");
-    $langs->load("admin");
+    global $langs, $db;
+
+    // Load translation files required by the page
+    $langs->loadLangs(array('other', 'admin'));
 
     include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -1167,6 +1168,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     return $numFinal;
 }
 
+/**
+ * Get string between
+ *
+ * @param   string  $string     String to test
+ * @param   int     $start      Value for start
+ * @param   int     $end        Value for end
+ * @return  string              Return part of string
+ */
 function get_string_between($string, $start, $end)
 {
     $string = " ".$string;
@@ -1771,7 +1780,7 @@ function getSoapParams()
  */
 function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 {
-	global $db,$conf;
+	global $db, $conf, $langs;
 
 	$ret='';
 

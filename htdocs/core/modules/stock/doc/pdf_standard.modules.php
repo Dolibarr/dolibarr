@@ -58,9 +58,9 @@ class pdf_standard extends ModelePDFStock
 
 	/**
      * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2);
+	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
@@ -68,15 +68,46 @@ class pdf_standard extends ModelePDFStock
      */
 	public $version = 'dolibarr';
 
+    /**
+     * @var int page_largeur
+     */
     public $page_largeur;
+
+    /**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+
+    /**
+     * @var array format
+     */
     public $format;
+
+	/**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
-    public $emetteur;	// Objet societe qui emet
+    /**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 
 	/**
@@ -146,6 +177,7 @@ class pdf_standard extends ModelePDFStock
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -159,6 +191,7 @@ class pdf_standard extends ModelePDFStock
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -898,7 +931,6 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetLineStyle(array('dash'=>'0','color'=>array(220,26,26)));
 		$pdf->line($this->marge_gauche, $tab_top+11, $this->page_largeur-$this->marge_droite, $tab_top+11);
 		$pdf->SetLineStyle(array('dash'=>0));
-
 	}
 
 	/**
@@ -1145,5 +1177,4 @@ class pdf_standard extends ModelePDFStock
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 	    return pdf_pagefoot($pdf,$outputlangs,'PRODUCT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

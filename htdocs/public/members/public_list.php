@@ -40,10 +40,7 @@ require '../../main.inc.php';
 if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
 
 
-$langs->load("main");
-$langs->load("members");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("main", "members", "companies", "other"));
 
 
 /**

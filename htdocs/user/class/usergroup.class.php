@@ -1,11 +1,11 @@
 <?php
-/* Copyright (c) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014		Alexis Algoud		<alexis@atm-consulting.fr>
- * Copyright (C) 2018           Nicolas ZABOURI		<info@inovea-conseil.com>
+/* Copyright (c) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,27 +39,45 @@ class UserGroup extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='usergroup';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='usergroup';
-	
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    public $picto='group';
-	public $entity;		// Entity of group
 
-
-	public $name;			// Name of group
 	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+    public $picto='group';
+
+	/**
+	 * @var int Entity of group
+	 */
+	public $entity;
+
+	/**
+	 * @var string
 	 * @deprecated
 	 * @see name
 	 */
-	public $nom;			// Name of group
+	public $nom;
+
+	/**
+	 * @var string name
+	 */
+	public $name;			// Name of group
+
 	public $globalgroup;	// Global group
+
 	public $datec;			// Creation date of group
+
 	public $datem;			// Modification date of group
+
 	public $note;			// Description
+
 	public $members=array();	// Array of users
 
 	public $nb_rights;					// Number of rights granted to the user
@@ -385,7 +403,6 @@ class UserGroup extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-
 	}
 
 
@@ -511,7 +528,6 @@ class UserGroup extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-
 	}
 
 
@@ -805,6 +821,7 @@ class UserGroup extends CommonObject
 	    return $this->LibStatut(0,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -814,6 +831,7 @@ class UserGroup extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 	    global $langs;
 	    $langs->load('users');
 	    return '';
@@ -896,6 +914,7 @@ class UserGroup extends CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -907,6 +926,7 @@ class UserGroup extends CommonObject
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
@@ -916,6 +936,7 @@ class UserGroup extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
@@ -923,6 +944,7 @@ class UserGroup extends CommonObject
 	 */
 	function _load_ldap_info()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$info=array();
@@ -985,7 +1007,7 @@ class UserGroup extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-         *  @param   null|array  $moreparams     Array to provide more information
+     *  @param      null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
@@ -1012,4 +1034,3 @@ class UserGroup extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }
-

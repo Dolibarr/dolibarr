@@ -1490,8 +1490,11 @@ else if ($id > 0 || ! empty($ref))
 
 					// Date d'intervention
 					print '<td align="center" class="nowrap">';
-                                        if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($db->jdate($objp->date_intervention),'di',0,0,0,"date_intervention");
-                                        else $form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+                    if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+                        print $form->selectDate($db->jdate($objp->date_intervention),'di',0,0,0,"date_intervention");
+                    } else {
+                        print $form->selectDate($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+                    }
 					print '</td>';
 
                     // Duration
@@ -1556,18 +1559,25 @@ else if ($id > 0 || ! empty($ref))
                 print '<td align="center" class="nowrap">';
 				$now=dol_now();
 				$timearray=dol_getdate($now);
-				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
-				else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
-                                if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($timewithnohour,'di',0,0,0,"addinter");
-                                else $form->select_date($timewithnohour,'di',1,1,0,"addinter");
+				if (! GETPOST('diday','int')) {
+                    $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+                } else {
+                    $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
+                }
+                if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+                    print $form->selectDate($timewithnohour,'di',0,0,0,"addinter");
+                } else {
+                    print $form->selectDate($timewithnohour,'di',1,1,0,"addinter");
+                }
 				print '</td>';
 
                 // Duration
                 print '<td align="right">';
                 if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
                     $selectmode = 'select';
-                    if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
+                    if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
                         $selectmode = 'text';
+                    }
                     $form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
                 }
                 print '</td>';

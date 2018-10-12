@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-$langs->load("companies");
-$langs->load("members");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
 
 // Security check
 $result=restrictedArea($user,'adherent');

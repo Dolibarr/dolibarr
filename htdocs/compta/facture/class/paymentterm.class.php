@@ -32,7 +32,7 @@ class PaymentTerm // extends CommonObject
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -42,24 +42,24 @@ class PaymentTerm // extends CommonObject
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	//public  $element='c_payment_term';			//!< Id that identify managed objects
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
-	var $context =array();
+	public $context =array();
 
     /**
 	 * @var int ID
 	 */
 	public $id;
 
-	var $code;
-	var $sortorder;
-	var $active;
-	var $libelle;
-	var $libelle_facture;
-	var $type_cdr;
-	var $nbjour;
-	var $decalage;
+	public $code;
+	public $sortorder;
+	public $active;
+	public $libelle;
+	public $libelle_facture;
+	public $type_cdr;
+	public $nbjour;
+	public $decalage;
 
 
 
@@ -135,18 +135,17 @@ class PaymentTerm // extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
 
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+	        // Uncomment this and change MYOBJECT to your own tag if you
+	        // want this action call a trigger.
+			//if (! $notrigger) {
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			}
+	        //    // Call triggers
+	        //    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	        //    $interface=new Interfaces($this->db);
+	        //    $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+	        //    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	        //    // End call triggers
+			//}
         }
 
         // Commit or rollback
@@ -311,21 +310,16 @@ class PaymentTerm // extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action call a trigger.
+		//if (! $error && ! $notrigger) {
 				// Call triggers
 				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				//$interface=new Interfaces($this->db);
 				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// End call triggers
-			}
-		}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -367,21 +361,16 @@ class PaymentTerm // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action call a trigger.
+		//if (! $error && ! $notrigger) {
 		        //// Call triggers
 		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		        //$interface=new Interfaces($this->db);
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}
-		}
+		//}
 
         // Commit or rollback
 		if ($error)
@@ -439,12 +428,9 @@ class PaymentTerm // extends CommonObject
 			$error++;
 		}
 
-		if (! $error)
-		{
-
-
-
-		}
+		//if (! $error)
+		//{
+		//}
 
 		unset($this->context['createfromclone']);
 
@@ -482,5 +468,4 @@ class PaymentTerm // extends CommonObject
 		$this->nbjour='';
 		$this->decalage='';
 	}
-
 }

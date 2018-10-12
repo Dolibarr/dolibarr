@@ -34,56 +34,64 @@ class Task extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='project_task';	
-	
+	public $element='project_task';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='projet_task';	
-	
+	public $table_element='projet_task';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_task';
+
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
-	var $fk_task_parent;
-	
-	/**
-     * @var string proper name for given parameter
+    public $fk_task_parent;
+
+    /**
+     * @var string Label of task
      */
     public $label;
-    
-	var $description;
-	var $duration_effective;		// total of time spent on this task
-	var $planned_workload;
-	var $date_c;
-	var $date_start;
-	var $date_end;
-	var $progress;
-	var $fk_statut;
-	var $priority;
-	var $fk_user_creat;
-	var $fk_user_valid;
-	var $rang;
 
-	var $timespent_min_date;
-	var $timespent_max_date;
-	var $timespent_total_duration;
-	var $timespent_total_amount;
-	var $timespent_nblinesnull;
-	var $timespent_nblines;
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	public $duration_effective;		// total of time spent on this task
+	public $planned_workload;
+	public $date_c;
+	public $date_start;
+	public $date_end;
+	public $progress;
+	public $fk_statut;
+	public $priority;
+	public $fk_user_creat;
+	public $fk_user_valid;
+	public $rang;
+
+	public $timespent_min_date;
+	public $timespent_max_date;
+	public $timespent_total_duration;
+	public $timespent_total_amount;
+	public $timespent_nblinesnull;
+	public $timespent_nblines;
 	// For detail of lines of timespent record, there is the property ->lines in common
 
 	// Var used to call method addTimeSpent(). Bad practice.
-	var $timespent_id;
-	var $timespent_duration;
-	var $timespent_old_duration;
-	var $timespent_date;
-	var $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
-	var $timespent_withhour;		// 1 = we entered also start hours for timesheet line
-	var $timespent_fk_user;
-	var $timespent_note;
+	public $timespent_id;
+	public $timespent_duration;
+	public $timespent_old_duration;
+	public $timespent_date;
+	public $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
+	public $timespent_withhour;		// 1 = we entered also start hours for timesheet line
+	public $timespent_fk_user;
+	public $timespent_note;
 
-	var $comments = array();
+	public $comments = array();
 
 	public $oldcopy;
 
@@ -1711,6 +1719,7 @@ class Task extends CommonObject
 		return $this->LibStatut($this->fk_statut, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return status label for an object
 	 *
@@ -1720,6 +1729,7 @@ class Task extends CommonObject
 	 */
 	function LibStatut($statut, $mode=0)
 	{
+        // phpcs:enable
 		// list of Statut of the task
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='ToDo';
@@ -1738,59 +1748,59 @@ class Task extends CommonObject
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
-			if ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==4) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==5) return img_picto($langs->trans($this->statuts_short[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			/*if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
-			if ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
-			if ($statut==3) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
+			elseif ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			elseif ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			elseif ($statut==3) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 			*/
-			//return $this->progress.' %';
+			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			/*if ($statut==0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
-			if ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
-			if ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==4) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-			if ($statut==5) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
+			elseif ($statut==1) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			elseif ($statut==2) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			elseif ($statut==3) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==4) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==5) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 			*/
-			//return $this->progress.' %';
+			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
 	}
@@ -1828,6 +1838,7 @@ class Task extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1836,6 +1847,7 @@ class Task extends CommonObject
 	 */
 	function load_board($user)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		// For external user, no check is done on company because readability is managed by public status of project and assignement.
@@ -1901,6 +1913,7 @@ class Task extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
@@ -1908,6 +1921,7 @@ class Task extends CommonObject
 	 */
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $user;
 
 		$mine=0; $socid=$user->societe_id;

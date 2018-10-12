@@ -651,7 +651,6 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
 function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
 	// TODO
-
 }
 
 /**
@@ -1134,16 +1133,17 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
  *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
+ *  @param	int		$indexdatabase	Try to remove also index entries.
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null,$allowdotdot=false)
+function dol_delete_file($file, $disableglob=0, $nophperrors=0, $nohook=0, $object=null, $allowdotdot=false, $indexdatabase=1)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
 
-	$langs->load("other");
-	$langs->load("errors");
+	// Load translation files required by the page
+    $langs->loadLangs(array('other', 'errors'));
 
 	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
 
@@ -1201,7 +1201,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 						{
 							$rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
 
-							if (is_object($db))		// $db may not be defined when lib is in a context with define('NOREQUIREDB',1)
+							if (is_object($db) && $indexdatabase)		// $db may not be defined when lib is in a context with define('NOREQUIREDB',1)
 							{
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
 								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -1269,7 +1269,7 @@ function dol_delete_dir($dir,$nophperrors=0)
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$onlysub		Delete only files and subdir, not main directory
  *  @param  int		$countdeleted   Counter to count nb of elements found really deleted
- *  @return int             		Number of files and directory we try to remove. NB really removed is returned into $countdeleted.
+ *  @return int             		Number of files and directory we try to remove. NB really removed is returned into var by reference $countdeleted.
  */
 function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$countdeleted=0)
 {
@@ -2162,10 +2162,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$dirins.'/'.$original_file;
 	}
 	// Wrapping for some images
-	elseif (($modulepart == 'mycompany' || $modulepart == 'companylogo') && !empty($conf->mycompany->dir_output))
+	elseif ($modulepart == 'mycompany' && !empty($conf->mycompany->dir_output))
 	{
 		$accessallowed=1;
-		$original_file=$conf->mycompany->dir_output.'/logos/'.$original_file;
+		$original_file=$conf->mycompany->dir_output.'/'.$original_file;
 	}
 	// Wrapping for users photos
 	elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output))

@@ -1,9 +1,8 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,12 +38,12 @@ class WebsitePage extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'websitepage';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
-	
+
 	/**
 	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -55,12 +54,22 @@ class WebsitePage extends CommonObject
 	public $aliasalt;
 	public $type_container;
 	public $title;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $htmlheader;
 	public $content;
 	public $grabbed_from;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $date_creation;
 	public $date_modification;
 
@@ -87,8 +96,8 @@ class WebsitePage extends CommonObject
 	    'date_creation'  =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'tms'            =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
-		//'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
-		//'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
+		'fk_user_creat'  =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
+		'fk_user_modif'  =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
 	);
@@ -125,7 +134,7 @@ class WebsitePage extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int		$id				Id object.
-	 * 									- If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
+	 * 									- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
 	 * 									- If value is < 0, we must exclude this ID.
 	 * @param string	$website_id 	Web site id (page name must also be filled if this parameter is used)
 	 * @param string	$page       	Page name (website id must also be filled if this parameter is used)
@@ -153,7 +162,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -195,6 +206,8 @@ class WebsitePage extends CommonObject
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->fk_user_modif = $obj->fk_user_modif;
 			}
 			$this->db->free($resql);
 
@@ -245,7 +258,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
@@ -260,11 +275,11 @@ class WebsitePage extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
             $sql .=  ' ' . $this->db->plimit($limit, $offset);
@@ -294,6 +309,8 @@ class WebsitePage extends CommonObject
 				$record->grabbed_from = $obj->grabbed_from;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
+				$record->fk_user_creat = $obj->fk_user_creat;
+				$record->fk_user_modif = $obj->fk_user_modif;
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
@@ -388,6 +405,7 @@ class WebsitePage extends CommonObject
 		$object->ref = $newref;
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
+		$object->fk_user_creat = $user->id;
 		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
@@ -467,6 +485,7 @@ class WebsitePage extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -476,6 +495,7 @@ class WebsitePage extends CommonObject
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
@@ -484,27 +504,27 @@ class WebsitePage extends CommonObject
 			if ($status == 1) return $langs->trans('Enabled');
 			if ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			if ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
@@ -520,6 +540,8 @@ class WebsitePage extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		global $user;
+
 		$this->id = 0;
 
 		$now=dol_now();
@@ -537,6 +559,6 @@ class WebsitePage extends CommonObject
 		$this->grabbed_from = '';
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);
+		$this->fk_user_creat = $user->id;
 	}
-
 }

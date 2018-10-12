@@ -31,31 +31,46 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'product_customer_price'; 
-	
+	public $element = 'product_customer_price';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'product_customer_price'; 
-	
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_type;
-	var $localtax1_tx;
-	var $localtax2_type;
-	var $localtax2_tx;
-	var $fk_user;
-	var $lines = array ();
+	public $table_element = 'product_customer_price';
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $datec = '';
+	public $tms = '';
+	public $fk_product;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+  public $fk_soc;
+
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_type;
+	public $localtax1_tx;
+	public $localtax2_type;
+	public $localtax2_tx;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $lines = array ();
+
 
 	/**
 	 * Constructor
@@ -64,9 +79,7 @@ class Productcustomerprice extends CommonObject
 	 */
     function __construct($db)
     {
-
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
@@ -304,6 +317,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load all customer prices in memory from database
 	 *
@@ -316,6 +330,7 @@ class Productcustomerprice extends CommonObject
 	 */
 	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ( empty($sortfield)) $sortfield = "t.rowid";
@@ -417,6 +432,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load all objects in memory from database
 	 *
@@ -429,6 +445,7 @@ class Productcustomerprice extends CommonObject
 	 */
 	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
+        // phpcs:enable
 		global $langs;
 
 		if (! empty($sortfield)) $sortfield = "t.rowid";
@@ -962,24 +979,38 @@ class PriceByCustomerLine
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $entity;
-	var $datec = '';
-	var $tms = '';
-	var $fk_product;
-	var $fk_soc;
-	var $price;
-	var $price_ttc;
-	var $price_min;
-	var $price_min_ttc;
-	var $price_base_type;
-	var $default_vat_code;
-	var $tva_tx;
-	var $recuperableonly;
-	var $localtax1_tx;
-	var $localtax2_tx;
-	var $fk_user;
-	var $import_key;
-	var $socname;
-	var $prodref;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $datec = '';
+	public $tms = '';
+	public $fk_product;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+  public $fk_soc;
+
+	public $price;
+	public $price_ttc;
+	public $price_min;
+	public $price_min_ttc;
+	public $price_base_type;
+	public $default_vat_code;
+	public $tva_tx;
+	public $recuperableonly;
+	public $localtax1_tx;
+	public $localtax2_tx;
+
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+	public $import_key;
+	public $socname;
+	public $prodref;
 }

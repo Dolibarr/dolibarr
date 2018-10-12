@@ -34,7 +34,7 @@ class RejetPrelevement
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
      * @var DoliDB Database handler.
      */
@@ -69,7 +69,6 @@ class RejetPrelevement
 
     	$this->facturer[0]=$langs->trans("NoInvoiceRefused");
 		$this->facturer[1]=$langs->trans("InvoiceRefused");
-
 	}
 
 	/**
@@ -198,9 +197,9 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
@@ -209,6 +208,7 @@ class RejetPrelevement
 	 */
 	function _send_email($fac)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$userid = 0;
@@ -327,7 +327,6 @@ class RejetPrelevement
 		}
 
 		return $arr;
-
 	}
 
 	/**
@@ -371,6 +370,4 @@ class RejetPrelevement
 			return -2;
 		}
 	}
-
 }
-

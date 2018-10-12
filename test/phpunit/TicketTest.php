@@ -60,6 +60,8 @@ class TicketTest extends PHPUnit_Framework_TestCase
 	 */
 	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;

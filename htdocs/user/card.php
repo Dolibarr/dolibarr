@@ -13,6 +13,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,6 +201,8 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
 			$object->skype = GETPOST("skype", 'alpha');
+			$object->twitter = GETPOST("twitter", 'alpha');
+			$object->facebook = GETPOST("facebook", 'alpha');
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature");
@@ -347,6 +350,8 @@ if (empty($reshook)) {
 				$object->office_fax = GETPOST("office_fax", 'alpha');
 				$object->user_mobile = GETPOST("user_mobile");
 				$object->skype = GETPOST("skype", 'alpha');
+				$object->twitter = GETPOST("twitter", 'alpha');
+				$object->facebook = GETPOST("facebook", 'alpha');
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature",'none');
@@ -587,6 +592,8 @@ if (empty($reshook)) {
 					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
 					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
 					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
+					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
+					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
 				}
@@ -999,7 +1006,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Skype
-	if (! empty($conf->skype->enabled))
+	if (! empty($conf->socialnetworks->enabled))
 	{
 		print '<tr><td>'.$langs->trans("Skype").'</td>';
 		print '<td>';
@@ -1010,7 +1017,41 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 		else
 		{
-			print '<input size="40" type="text" name="skype" value="'.GETPOST('skype').'">';
+			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype','alpha').'">';
+		}
+		print '</td></tr>';
+	}
+
+	// Twitter
+	if (! empty($conf->socialnetworks->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Twitter").'</td>';
+		print '<td>';
+		if (! empty($ldap_twitter))
+		{
+			print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
+			print $ldap_twitter;
+		}
+		else
+		{
+			print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter','alpha').'">';
+		}
+		print '</td></tr>';
+	}
+
+	// Facebook
+	if (! empty($conf->socialnetworks->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Facebook").'</td>';
+		print '<td>';
+		if (! empty($ldap_facebook))
+		{
+			print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
+			print $ldap_facebook;
+		}
+		else
+		{
+			print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook','alpha').'">';
 		}
 		print '</td></tr>';
 	}
@@ -1158,21 +1199,21 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Date employment
 	print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 	print '<td>';
-	echo $form->select_date(GETPOST('dateemployment'),'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+	print $form->selectDate(GETPOST('dateemployment'), 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
 	// Date employment END
 	print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
 	print '<td>';
-	echo $form->select_date(GETPOST('dateemploymentend'),'dateemploymentend',0,0,1,'form'.'dateemploymentend',1,0,1);
+	print $form->selectDate(GETPOST('dateemploymentend'), 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
 	// Date birth
 	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 	print '<td>';
-	echo $form->select_date(GETPOST('birth'),'birth',0,0,1,'createuser',1,0,1);
+	print $form->selectDate(GETPOST('birth'), 'birth', 0, 0, 1, 'createuser', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
@@ -2194,7 +2235,7 @@ else
 			print '</td></tr>';
 
 			// Skype
-			if (! empty($conf->skype->enabled))
+			if (! empty($conf->socialnetworks->enabled))
 			{
 				print '<tr><td>'.$langs->trans("Skype").'</td>';
 				print '<td>';
@@ -2206,6 +2247,40 @@ else
 				{
 					print '<input type="hidden" name="skype" value="'.$object->skype.'">';
 					print $object->skype;
+				}
+				print '</td></tr>';
+			}
+
+			// Twitter
+			if (! empty($conf->socialnetworks->enabled))
+			{
+				print '<tr><td>'.$langs->trans("Twitter").'</td>';
+				print '<td>';
+				if ($caneditfield  && empty($object->ldap_sid))
+				{
+					print '<input size="40" type="text" name="twitter" class="flat" value="'.$object->twitter.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="twitter" value="'.$object->twitter.'">';
+					print $object->twitter;
+				}
+				print '</td></tr>';
+			}
+
+			// Skype
+			if (! empty($conf->socialnetworks->enabled))
+			{
+				print '<tr><td>'.$langs->trans("Facebook").'</td>';
+				print '<td>';
+				if ($caneditfield  && empty($object->ldap_sid))
+				{
+					print '<input size="40" type="text" name="facebook" class="flat" value="'.$object->facebook.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="facebook" value="'.$object->facebook.'">';
+					print $object->facebook;
 				}
 				print '</td></tr>';
 			}
@@ -2284,7 +2359,7 @@ else
 			{
 				print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
 				print '<td>';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+				$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, null, null, null, 1 );
 				$c = new Categorie( $db );
 				$cats = $c->containing($object->id, Categorie::TYPE_USER);
 				foreach ($cats as $cat) {
@@ -2454,14 +2529,14 @@ else
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+			print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
 			print '</td>';
 			print "</tr>\n";
 
 			// Date employmentEnd
 			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
 			print '<td>';
-			echo $form->select_date(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend,'dateemploymentend',0,0,1,'form'.'dateemploymentend',1,0,1);
+			print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 			print '</td>';
 			print "</tr>\n";
 
@@ -2469,7 +2544,7 @@ else
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
-			echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
+			print $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
 			print '</td>';
 			print "</tr>\n";
 

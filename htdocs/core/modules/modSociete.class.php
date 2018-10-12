@@ -49,7 +49,7 @@ class modSociete extends DolibarrModules
 		$this->numero = 1;
 
 		$this->family = "crm";
-		$this->module_position = 10;
+		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des sociétés et contacts";
@@ -317,7 +317,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).')' : '';
+				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subordinatesids).')' : '';
 			}
 			$this->export_sql_end[$r] .=')';
 		}
@@ -368,7 +368,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subronidatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subronidatesids).')' : '';
+				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subordinatesids).')' : '';
 			}
 			$this->export_sql_end[$r] .=')';
 		}

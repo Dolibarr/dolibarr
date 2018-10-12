@@ -38,12 +38,12 @@ class Opensurveysondage extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='opensurvey_sondage';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='opensurvey_sondage';	
-	
+	public $table_element='opensurvey_sondage';
+
     public $picto = 'opensurvey';
 
 	public $id_sondage;
@@ -52,6 +52,10 @@ class Opensurveysondage extends CommonObject
 	 * @see description
 	 */
 	public $commentaires;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
 
 	public $mail_admin;
@@ -107,7 +111,6 @@ class Opensurveysondage extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -467,6 +470,7 @@ class Opensurveysondage extends CommonObject
 		return $result;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return array of lines
 	 *
@@ -474,6 +478,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	function fetch_lines()
 	{
+        // phpcs:enable
 		$ret=array();
 
 		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
@@ -622,6 +627,7 @@ class Opensurveysondage extends CommonObject
 	    return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return label of status
 	 *
@@ -631,6 +637,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	function LibStatut($status,$mode)
 	{
+        // phpcs:enable
 	    global $langs, $conf;
 
 	    //print 'x'.$status.'-'.$billed;
@@ -671,5 +678,4 @@ class Opensurveysondage extends CommonObject
 	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
 	    }
 	}
-
 }

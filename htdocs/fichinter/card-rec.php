@@ -8,6 +8,7 @@
  * Copyright (C) 2012	   Cedric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016-2018 Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +46,8 @@ if (! empty($conf->contrat->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcontract.class.php';
 }
 
-
-$langs->load('bills');
-$langs->load('compta');
-$langs->load('admin');
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array("interventions","admin","compta","bills"));
 
 // Security check
 $id=(GETPOST('fichinterid', 'int')?GETPOST('fichinterid', 'int'):GETPOST('id', 'int'));
@@ -357,7 +355,7 @@ if ($action == 'create') {
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(
 							12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')
 			) : -1);
-		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
+		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation

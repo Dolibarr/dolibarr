@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +35,12 @@ class Notify
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -50,12 +51,16 @@ class Notify
 	 */
 	public $errors = array();
 
-	var $author;
-	var $ref;
-	var $date;
-	var $duree;
-	var $note;
-	var $fk_project;
+	public $author;
+	public $ref;
+	public $date;
+	public $duree;
+	public $note;
+
+	/**
+     * @var int Project ID
+     */
+    public $fk_project;
 
 	// Les codes actions sont definis dans la table llx_notify_def
 
@@ -364,6 +369,14 @@ class Notify
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
+			$projtitle='';
+			if (! empty($object->fk_project))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$proj = new Project($this->db);
+				$proj->fetch($object->fk_project);
+				$projtitle='('.$proj->title.')';
+			}
 
 			if ($num > 0)
 			{
@@ -385,7 +398,7 @@ class Notify
 							$outputlangs->setDefaultLang($obj->default_lang);
 						}
 
-						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
+						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
 
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
@@ -567,7 +580,7 @@ class Notify
 				$link = '';
 				$num++;
 
-				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+				$subject = '['.$mysoc->name.'] '.$langs->transnoentitiesnoconv("DolibarrNotification").($projtitle?' '.$projtitle:'');
 
 				switch ($notifcode) {
 					case 'BILL_VALIDATE':
@@ -729,6 +742,4 @@ class Notify
 		if (! $error) return $num;
 		else return -1 * $error;
 	}
-
 }
-

@@ -48,7 +48,7 @@ class modPrelevement extends DolibarrModules
 		$this->numero = 57;
 
 		$this->family = "financial";
-		$this->module_position = 520;
+		$this->module_position = '52';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des Prelevements";
@@ -135,7 +135,6 @@ class modPrelevement extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-
 	}
 
 

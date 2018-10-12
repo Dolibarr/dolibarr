@@ -38,7 +38,7 @@
 class FormOther
 {
     private $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */
@@ -53,11 +53,10 @@ class FormOther
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return HTML select list of export models
      *
@@ -68,12 +67,13 @@ class FormOther
      *    @param    int		$fk_user          Utilisateur créant le modèle
      *    @return	void
      */
-    function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0, $fk_user=null)
+    function select_export_model($selected='', $htmlname='exportmodelid', $type='', $useempty=0, $fk_user=null)
     {
+        // phpcs:enable
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
-		if(!empty($fk_user))$sql.=" AND fk_user=".$fk_user;
+		if (!empty($fk_user)) $sql.=" AND fk_user=".$fk_user;
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
@@ -109,6 +109,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of export models
      *
@@ -118,8 +119,9 @@ class FormOther
      *    @param    int		$useempty          Affiche valeur vide dans liste
      *    @return	void
      */
-    function select_import_model($selected='',$htmlname='importmodelid',$type='',$useempty=0)
+    function select_import_model($selected='', $htmlname='importmodelid', $type='', $useempty=0)
     {
+        // phpcs:enable
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."import_model";
         $sql.= " WHERE type = '".$type."'";
@@ -158,6 +160,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of ecotaxes with label
      *
@@ -165,8 +168,9 @@ class FormOther
      *    @param    string	$htmlname	Name of combo list
      *    @return	integer
      */
-    function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
+    function select_ecotaxes($selected='', $htmlname='ecotaxe_id')
     {
+        // phpcs:enable
         global $langs;
 
         $sql = "SELECT e.rowid, e.code, e.label, e.price, e.organization,";
@@ -214,6 +218,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return list of revenue stamp for country
      *
@@ -222,8 +227,9 @@ class FormOther
      *    @param    string	$country_code   Country Code
      *    @return	string					HTML select list
      */
-    function select_revenue_stamp($selected='',$htmlname='revenuestamp',$country_code='')
+    function select_revenue_stamp($selected='', $htmlname='revenuestamp', $country_code='')
     {
+        // phpcs:enable
     	global $langs;
 
     	$out='';
@@ -271,6 +277,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Return a HTML select list to select a percent
      *
@@ -285,6 +292,7 @@ class FormOther
      */
     function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100,$showempty=0)
     {
+        // phpcs:enable
         $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
         if ($showempty) $return.='<option value="-1"'.(($selected == -1 || $selected == '')?' selected':'').'>&nbsp;</option>';
 
@@ -307,6 +315,7 @@ class FormOther
         return $return;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Return select list for categories (to use in form search selectors)
      *
@@ -321,6 +330,7 @@ class FormOther
      */
     function select_categories($type, $selected=0, $htmlname='search_categ', $nocateg=0, $showempty=1, $morecss='')
     {
+        // phpcs:enable
         global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -367,6 +377,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return select list for categories (to use in form search selectors)
      *
@@ -380,6 +391,7 @@ class FormOther
      */
     function select_salesrepresentatives($selected,$htmlname,$user,$showstatus=0,$showempty=1,$morecss='')
     {
+        // phpcs:enable
         global $conf,$langs;
         $langs->load('users');
 
@@ -621,6 +633,7 @@ class FormOther
 		else print $textifnotdefined;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *		Output a HTML code to select a color
      *
@@ -635,6 +648,7 @@ class FormOther
      */
     function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
+        // phpcs:enable
     	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
 
@@ -738,6 +752,7 @@ class FormOther
         return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Creation d'un icone de couleur
      *
@@ -750,6 +765,7 @@ class FormOther
      */
     function CreateColorIcon($color,$module,$name,$x='12',$y='12')
     {
+        // phpcs:enable
         global $conf;
 
         $file = $conf->$module->dir_temp.'/'.$name.'.png';
@@ -777,6 +793,7 @@ class FormOther
         ImageDestroy($image);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    	Return HTML combo list of week
      *
@@ -787,15 +804,18 @@ class FormOther
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
     {
+        // phpcs:enable
         global $langs;
 
-        $week = array(	0=>$langs->trans("Day0"),
-        1=>$langs->trans("Day1"),
-        2=>$langs->trans("Day2"),
-        3=>$langs->trans("Day3"),
-        4=>$langs->trans("Day4"),
-        5=>$langs->trans("Day5"),
-        6=>$langs->trans("Day6"));
+        $week = array(
+            0=>$langs->trans("Day0"),
+            1=>$langs->trans("Day1"),
+            2=>$langs->trans("Day2"),
+            3=>$langs->trans("Day3"),
+            4=>$langs->trans("Day4"),
+            5=>$langs->trans("Day5"),
+            6=>$langs->trans("Day6")
+        );
 
         $select_week = '<select class="flat" name="'.$htmlname.'">';
         if ($useempty)
@@ -819,6 +839,7 @@ class FormOther
         return $select_week;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *      Return HTML combo list of month
      *
@@ -831,6 +852,7 @@ class FormOther
      */
     function select_month($selected='', $htmlname='monthid', $useempty=0, $longlabel=0, $morecss='')
     {
+        // phpcs:enable
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -860,6 +882,7 @@ class FormOther
         return $select_month;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Return HTML combo list of years
      *
@@ -876,6 +899,7 @@ class FormOther
      */
     function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
+        // phpcs:enable
         print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option,$morecss);
     }
 
@@ -932,6 +956,7 @@ class FormOther
         return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Show form to select address
      *
@@ -945,6 +970,7 @@ class FormOther
      */
     function form_address($page, $selected, $socid, $htmlname='address_id', $origin='', $originid='')
     {
+        // phpcs:enable
         global $langs,$conf;
         global $form;
 
@@ -1016,7 +1042,7 @@ class FormOther
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
         		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		if (preg_match('/graph/',$box->class) && empty($conf->browser->phone))
+        		if (preg_match('/graph/',$box->class) && $conf->browser->layout != 'phone')
         		{
         			$label=$label.' <span class="fa fa-bar-chart"></span>';
         		}
@@ -1123,8 +1149,8 @@ class FormOther
 
         if ($nbboxactivated)
         {
-        	$langs->load("boxes");
-			$langs->load("projects");
+        	// Load translation files required by the page
+            $langs->loadLangs(array("boxes","projects"));
 
         	$emptybox=new ModeleBoxes($db);
 
@@ -1150,7 +1176,7 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
@@ -1177,7 +1203,7 @@ class FormOther
                 }
             }
 
-            if (empty($conf->browser->phone))
+            if ($conf->browser->layout != 'phone')
             {
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();
@@ -1193,6 +1219,7 @@ class FormOther
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return a HTML select list of a dictionary
      *
@@ -1207,6 +1234,7 @@ class FormOther
      */
     function select_dictionary($htmlname,$dictionarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0,$moreattrib='')
     {
+        // phpcs:enable
         global $langs, $conf;
 
         $langs->load("admin");
@@ -1255,6 +1283,4 @@ class FormOther
             dol_print_error($this->db);
         }
     }
-
 }
-

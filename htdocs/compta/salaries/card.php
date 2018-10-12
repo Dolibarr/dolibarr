@@ -3,6 +3,7 @@
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Charlie BENKE        <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ $projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', '', '', 'payment');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new PaymentSalary($db);
 
@@ -255,13 +256,13 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print fieldLabel('DatePayment','datep',1).'</td><td>';
-	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+	print $form->selectDate((empty($datep)?-1:$datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print fieldLabel('DateValue','datev',0).'</td><td>';
-	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+	print $form->selectDate((empty($datev)?-1:$datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Employee
@@ -280,13 +281,13 @@ if ($action == 'create')
 	// Date start period
 	print '<tr><td>';
 	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
-	print $form->select_date($datesp,"datesp",'','','','add');
+	print $form->selectDate($datesp, "datesp", '', '', '', 'add');
 	print '</td></tr>';
 
 	// Date end period
 	print '<tr><td>';
 	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
-	print $form->select_date($dateep,"dateep",'','','','add');
+	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
 	print '</td></tr>';
 
 	// Amount

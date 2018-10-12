@@ -36,14 +36,17 @@ class ChargeSociales extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='chargesociales';
-	
+
     public $table='chargesociales';
-    
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='chargesociales';
-	
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'bill';
 
     /**
@@ -51,18 +54,26 @@ class ChargeSociales extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    var $date_ech;
-    var $lib;
-    var $type;
-    var $type_libelle;
-    var $amount;
-    var $paye;
-    var $periode;
-    var $date_creation;
-    var $date_modification;
-    var $date_validation;
-    var $fk_account;
-	var $fk_project;
+    public $date_ech;
+    public $lib;
+    public $type;
+    public $type_libelle;
+    public $amount;
+    public $paye;
+    public $periode;
+    public $date_creation;
+    public $date_modification;
+    public $date_validation;
+
+    /**
+     * @var int ID
+     */
+    public $fk_account;
+
+    /**
+     * @var int ID
+     */
+	public $fk_project;
 
 
     /**
@@ -73,7 +84,6 @@ class ChargeSociales extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
     /**
@@ -289,7 +299,6 @@ class ChargeSociales extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
     }
 
 
@@ -368,6 +377,7 @@ class ChargeSociales extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Tag social contribution as payed completely
      *
@@ -376,6 +386,7 @@ class ChargeSociales extends CommonObject
      */
     function set_paid($user)
     {
+        // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
         $sql.= " paye = 1";
         $sql.= " WHERE rowid = ".$this->id;
@@ -383,6 +394,8 @@ class ChargeSociales extends CommonObject
         if ($return) return 1;
         else return -1;
     }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Remove tag payed on social contribution
      *
@@ -391,6 +404,7 @@ class ChargeSociales extends CommonObject
      */
     function set_unpaid($user)
     {
+        // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
         $sql.= " paye = 0";
         $sql.= " WHERE rowid = ".$this->id;
@@ -411,6 +425,7 @@ class ChargeSociales extends CommonObject
         return $this->LibStatut($this->paye,$mode,$alreadypaid);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoi le libelle d'un statut donne
      *
@@ -421,52 +436,49 @@ class ChargeSociales extends CommonObject
      */
     function LibStatut($statut,$mode=0,$alreadypaid=-1)
     {
+        // phpcs:enable
         global $langs;
-        $langs->load('customers');
-        $langs->load('bills');
 
-        if ($mode == 0)
+        // Load translation files required by the page
+        $langs->loadLangs(array("customers","bills"));
+
+        if ($mode == 0 || $mode == 1)
         {
             if ($statut ==  0) return $langs->trans("Unpaid");
             if ($statut ==  1) return $langs->trans("Paid");
         }
-        if ($mode == 1)
-        {
-            if ($statut ==  0) return $langs->trans("Unpaid");
-            if ($statut ==  1) return $langs->trans("Paid");
-        }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
             if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
             if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
             if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
             if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
             if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
-        if ($mode == 5)
+        elseif ($mode == 5)
         {
             if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
-        if ($mode == 6)
+        elseif ($mode == 6)
         {
             if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
 
-        return "Error, mode/status not found";
+        else return "Error, mode/status not found";
     }
 
 
@@ -646,4 +658,3 @@ class ChargeSociales extends CommonObject
         $this->type_libelle = 'Social contribution label';
     }
 }
-

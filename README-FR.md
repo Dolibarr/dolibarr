@@ -94,14 +94,15 @@ Voir fichier ChangeLog.
 
 - Gestion de marque-pages
 - Gestion des promesses de dons
-- Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
 - Rapports
 - Imports/Exports des données
+- Support des codes barres
+- Calcul des marges
 - Connectivité LDAP
 - Intégratn de ClickToDial
 - Intégration RSS
 - Intégation Skype
-- Intégration de système de paiements (Paypal, Strip, Paybox...)
+- Intégration de système de paiements (Paypal, Stripe, Paybox...)
 - …
 
 ### Divers:
@@ -114,9 +115,18 @@ Voir fichier ChangeLog.
 - Application simple à utiliser.
 - Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur https://wiki.dolibarr.org/index.php/Prérequis). 
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
-- Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
 - APIs.
 - Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
+- Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
+- Support natif de nombreuses fonctions spécifiques aux pays comme:
+	- La tax espagnole TE et ISPF
+	- Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
+	- La loi française Finance 2016 et logiciels de caisse
+	- La double taxe canadienne
+	- Le timbre fiscal tunisien
+	- Numérotation de facture de l'argentines (avec type A,B,C...) 
+	- Compatible avec vos processus RGPD 
+	- ...
 - …
 
 ### Extension

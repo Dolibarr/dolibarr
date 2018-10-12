@@ -163,6 +163,12 @@ function fichinter_admin_prepare_head()
 		return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object  $object     Object related to tabs
+ * @return  array               Array of tabs to show
+ */
 function fichinter_rec_prepare_head($object)
 {
 	global $langs, $conf; //, $user;

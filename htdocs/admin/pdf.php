@@ -32,11 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other'));
-
-$langs->load("companies");
-$langs->load("products");
-$langs->load("members");
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members'));
 
 if (! $user->admin) accessforbidden();
 
@@ -71,6 +67,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'', $conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'', $conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", $_POST["MAIN_INVERT_SENDER_RECIPIENT"],'chaine',0,'', $conf->entity);
 	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION", $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'', $conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"],'chaine',0,'', $conf->entity);
 
@@ -576,31 +574,36 @@ else	// Show
 	print "</td>";
 	print '</tr>';
 
-	//Desc
+	// Hide Desc
 
 	print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC,1);
 	print '</td></tr>';
 
-	//Ref
+	// Hide Ref
 
 	print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF,1);
 	print '</td></tr>';
 
-	//Details
+	// Hide Details
 
 	print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
 	print '</td></tr>';
 
+	// Invert sender and recipient
+	print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_INVERT_SENDER_RECIPIENT,1);
+	print '</td></tr>';
 
-    print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
+	// Use French location
+	print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_PDF_USE_ISO_LOCATION,1);
 	print '</td></tr>';
 
 
-    print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
+	print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
 	print $arraydetailsforpdffoot[($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0)];
 	print '</td></tr>';
 

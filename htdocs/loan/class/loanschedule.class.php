@@ -17,8 +17,8 @@
 
 /**
  *      \file       htdocs/loan/class/loanschedule.class.php
- *		\ingroup    facture
- *		\brief      File of class to manage schedule of loans
+ *      \ingroup    loan
+ *      \brief      File of class to manage schedule of loans
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -33,11 +33,11 @@ class LoanSchedule extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='loan_schedule';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='loan_schedule';	
+	public $table_element='loan_schedule';
 
 	var $fk_loan;
 	var $datec='';
@@ -58,7 +58,7 @@ class LoanSchedule extends CommonObject
 	 * @deprecated
 	 * @see amount, amounts
 	 */
-	var $total;
+	public $total;
 
 	/**
 	 *	Constructor
@@ -190,37 +190,35 @@ class LoanSchedule extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-	{
-		if ($this->db->num_rows($resql))
-		{
-			$obj = $this->db->fetch_object($resql);
+		if ($resql) {
+            if ($this->db->num_rows($resql)) {
+                $obj = $this->db->fetch_object($resql);
 
-			$this->id = $obj->rowid;
-			$this->ref = $obj->rowid;
+                $this->id = $obj->rowid;
+                $this->ref = $obj->rowid;
 
-			$this->fk_loan = $obj->fk_loan;
-			$this->datec = $this->db->jdate($obj->datec);
-			$this->tms = $this->db->jdate($obj->tms);
-			$this->datep = $this->db->jdate($obj->datep);
-			$this->amount_capital = $obj->amount_capital;
-			$this->amount_insurance = $obj->amount_insurance;
-			$this->amount_interest = $obj->amount_interest;
-			$this->fk_typepayment = $obj->fk_typepayment;
-			$this->num_payment = $obj->num_payment;
-			$this->note_private = $obj->note_private;
-			$this->note_public = $obj->note_public;
-			$this->fk_bank = $obj->fk_bank;
-			$this->fk_user_creat = $obj->fk_user_creat;
-			$this->fk_user_modif = $obj->fk_user_modif;
+                $this->fk_loan = $obj->fk_loan;
+                $this->datec = $this->db->jdate($obj->datec);
+                $this->tms = $this->db->jdate($obj->tms);
+                $this->datep = $this->db->jdate($obj->datep);
+                $this->amount_capital = $obj->amount_capital;
+                $this->amount_insurance = $obj->amount_insurance;
+                $this->amount_interest = $obj->amount_interest;
+                $this->fk_typepayment = $obj->fk_typepayment;
+                $this->num_payment = $obj->num_payment;
+                $this->note_private = $obj->note_private;
+                $this->note_public = $obj->note_public;
+                $this->fk_bank = $obj->fk_bank;
+                $this->fk_user_creat = $obj->fk_user_creat;
+                $this->fk_user_modif = $obj->fk_user_modif;
 
-			$this->type_code = $obj->type_code;
-			$this->type_libelle = $obj->type_libelle;
+                $this->type_code = $obj->type_code;
+                $this->type_libelle = $obj->type_libelle;
 
-			$this->bank_account   = $obj->fk_account;
-			$this->bank_line      = $obj->fk_bank;
-		}
-		$this->db->free($resql);
+                $this->bank_account   = $obj->fk_account;
+                $this->bank_line      = $obj->fk_bank;
+            }
+            $this->db->free($resql);
 
 			return 1;
 		}
@@ -374,13 +372,22 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
-	function calc_mens($capital,$rate,$nbterm)
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 * Calculate mensuality
+	 *
+	 * @param   double  $capital        Capital
+	 * @param   double  $rate           rate
+	 * @param   int     $nbterm         nb term
+	 * @return  double                  mensuality
+	 */
+	function calc_mens($capital, $rate, $nbterm)
 	{
+        // phpcs:enable
 		$result='';
 
-		if (!empty($capital)&&!empty($rate)&&!empty($nbterm))
-		{
-			$result=($capital*($rate/12))/(1-pow((1+($rate/12)),($nbterm*-1)));
+		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
+			$result = ($capital*($rate/12))/(1-pow((1+($rate/12)),($nbterm*-1)));
 		}
 
 		return $result;
@@ -423,7 +430,7 @@ class LoanSchedule extends CommonObject
 		{
 			while($obj = $this->db->fetch_object($resql))
 			{
-				$line = New LoanSchedule($this->db);
+				$line = new LoanSchedule($this->db);
 				$line->id = $obj->rowid;
 				$line->ref = $obj->rowid;
 
@@ -454,6 +461,7 @@ class LoanSchedule extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  trans_paiment
 	 *
@@ -461,6 +469,7 @@ class LoanSchedule extends CommonObject
 	 */
 	function trans_paiment()
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -547,4 +556,3 @@ class LoanSchedule extends CommonObject
 		return $result;
 	}
 }
-

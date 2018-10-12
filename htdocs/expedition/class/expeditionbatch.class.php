@@ -31,8 +31,8 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='expeditionlignebatch';			
-	
+	public $element='expeditionlignebatch';
+
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
 	var $sellby;
@@ -51,7 +51,6 @@ class ExpeditionLineBatch extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 	/**
@@ -63,15 +62,15 @@ class ExpeditionLineBatch extends CommonObject
 	function fetchFromStock($id_stockdluo)
 	{
         $sql = "SELECT";
-	$sql.= " pb.batch,";
-	$sql.= " pl.sellby,";
-	$sql.= " pl.eatby,";
-	$sql.= " ps.fk_entrepot";
+        $sql.= " pb.batch,";
+        $sql.= " pl.sellby,";
+        $sql.= " pl.eatby,";
+        $sql.= " ps.fk_entrepot";
 
         $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
         $sql.= " JOIN ".MAIN_DB_PREFIX."product_stock as ps on pb.fk_product_stock=ps.rowid";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."product_lot as pl on pl.batch = pb.batch AND pl.fk_product = ps.fk_product";
-	$sql.= " WHERE pb.rowid = ".(int) $id_stockdluo;
+        $sql.= " WHERE pb.rowid = ".(int) $id_stockdluo;
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -236,5 +235,4 @@ class ExpeditionLineBatch extends CommonObject
 			return -1;
 		}
 	}
-
 }

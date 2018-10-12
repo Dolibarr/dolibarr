@@ -32,10 +32,19 @@ class InterfaceNotification extends DolibarrTriggers
 {
 	public $family = 'notification';
 	public $description = "Triggers of this module send email notifications according to Notification module setup.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'email';
 
-	var $listofmanagedevents=array(
+	public $listofmanagedevents=array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
 		'ORDER_VALIDATE',
@@ -131,5 +140,4 @@ class InterfaceNotification extends DolibarrTriggers
 
 		return $ret;
 	}
-
 }

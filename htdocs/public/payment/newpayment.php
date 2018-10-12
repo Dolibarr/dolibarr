@@ -31,9 +31,8 @@ define("NOLOGIN",1);		// This means this output page does not require to be logg
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
-// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retreive from object ref and not from url.
-$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+// Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : (! empty($_GET['e']) ? (int) $_GET['e'] : (! empty($_POST['e']) ? (int) $_POST['e'] : 1))));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
@@ -411,7 +410,10 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$stripeToken = GETPOST("stripeToken",'alpha');
 	$email = GETPOST("email",'alpha');
 	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
-	$vatnumber = GETPOST('vatnumber','alpha');
+	$dol_type=(GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
+  	$dol_id=GETPOST('dol_id', 'int');
+  	$vatnumber = GETPOST('vatnumber','alpha');
+	$savesource=GETPOST('savesource', 'int');
 
 	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
@@ -422,12 +424,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 
 	try {
 		$metadata = array(
-			'dol_version'=>DOL_VERSION,
-			'dol_entity'=>$conf->entity,
+			'dol_version' => DOL_VERSION,
+			'dol_entity'  => $conf->entity,
+			'dol_company' => $mysoc->name,		// Usefull when using multicompany
 			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
 		);
-		if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
-		if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+
 		if (! empty($thirdparty_id)) $metadata["dol_thirdparty_id"] = $thirdparty_id;
 
 		if ($thirdparty_id > 0)
@@ -453,7 +455,9 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
 			// Create Stripe card from Token
+			if (! empty($savesource)) {
 			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+			} else { $card = $stripeToken; }
 
 			if (empty($card))
 			{
@@ -464,17 +468,21 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			}
 			else
 			{
+        if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+        if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+        if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+
 				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
 				$charge = \Stripe\Charge::create(array(
 					'amount'   => price2num($amountstripe, 'MU'),
 					'currency' => $currency,
 					'capture'  => true,							// Charge immediatly
-					'description' => 'Stripe payment: '.$FULLTAG,
-					'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
+					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+					'metadata' => $metadata,
 					'customer' => $customer->id,
 					'source' => $card,
 					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-				),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
+				),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -497,6 +505,10 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			));
 			// Return $customer = array('id'=>'cus_XXXX', ...)
 
+        if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+        if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+        if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+
 			// The customer was just created with a source, so we can make a charge
 			// with no card defined, the source just used for customer creation will be used.
 			dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
@@ -505,10 +517,10 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'amount'   => price2num($amountstripe, 'MU'),
 				'currency' => $currency,
 				'capture'  => true,							// Charge immediatly
-				'description' => 'Stripe payment: '.$FULLTAG,
-				'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
+				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+				'metadata' => $metadata,
 				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-			),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
+			),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{
@@ -682,12 +694,12 @@ else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$width=150;
 }
 // Output html code for logo
@@ -801,7 +813,7 @@ if ($source == 'order')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
+	$fulltag='ORD='.$order->id.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -823,6 +835,7 @@ if ($source == 'order')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
+  	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink)
 	{
@@ -920,7 +933,7 @@ if ($source == 'invoice')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
+	$fulltag='INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -942,6 +955,7 @@ if ($source == 'invoice')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
+ 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($invoice->id).'">';
 	$directdownloadlink = $invoice->getLastMainDocLink('facture');
 	if ($directdownloadlink)
 	{
@@ -1101,7 +1115,7 @@ if ($source == 'contractline')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	$fulltag='COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -1140,6 +1154,7 @@ if ($source == 'contractline')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($contractline->id).'">';
 	$directdownloadlink = $contract->getLastMainDocLink('contract');
 	if ($directdownloadlink)
 	{
@@ -1414,7 +1429,7 @@ if ($action != 'dopayment')
 	{
 		if ($source == 'invoice' && $object->paye)
 		{
-			print '<br><br>'.$langs->trans("InvoicePaid");
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
 		else
 		{
@@ -1546,7 +1561,6 @@ if (preg_match('/^dopayment/',$action))
 	    <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
-
 	    <!-- Used to display form errors -->
 	    <div id="card-errors" role="alert"></div>
 	    </div>
@@ -1557,8 +1571,6 @@ if (preg_match('/^dopayment/',$action))
 
 	    </form>
 
-
-	    <script src="https://js.stripe.com/v2/"></script>
 	    <script src="https://js.stripe.com/v3/"></script>
 
 	    <script type="text/javascript" language="javascript">';

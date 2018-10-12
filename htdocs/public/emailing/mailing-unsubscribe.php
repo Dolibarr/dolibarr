@@ -53,8 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 global $user, $conf, $langs;
 
-$langs->load("main");
-$langs->load("mails");
+$langs->loadLangs(array("main", "mails"));
 
 $tag=GETPOST('tag');
 $unsuscrib=GETPOST('unsuscrib');

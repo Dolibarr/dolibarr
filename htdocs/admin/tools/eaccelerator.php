@@ -181,7 +181,6 @@ function create_script_table($list)
         print '</tr>';
     }
     print '</table>';
-
 }
 
 /**

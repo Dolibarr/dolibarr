@@ -37,14 +37,14 @@ class ImportXlsx extends ModeleImports
      * @var DoliDB Database handler.
      */
     public $db;
-    
-    var $datatoimport;
 
-	/**
+    public $datatoimport;
+
+    /**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
@@ -54,29 +54,39 @@ class ImportXlsx extends ModeleImports
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	/**
-     * @var string proper name for given parameter
+     * @var string label
      */
     public $label;
-    
-	var $extension;    // Extension of files imported by driver
-	var $version;      // Version of driver
 
-	var $label_lib;    // Label of external lib used by driver
-	var $version_lib;  // Version of external lib used by driver
+	public $extension;    // Extension of files imported by driver
 
-	var $separator;
+	/**
+     * Dolibarr version of driver
+     * @public string
+     */
+	public $version = 'dolibarr';
 
-    var $file;      // Path of file
-	var $handle;    // Handle fichier
+	public $label_lib;    // Label of external lib used by driver
 
-	var $cacheconvert=array();      // Array to cache list of value found after a convertion
-	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+	public $version_lib;  // Version of external lib used by driver
 
-	var $workbook; // temporary import file
-	var $record; // current record
-	var $headers;
+	public $separator;
+
+    public $file;      // Path of file
+
+	public $handle;    // Handle fichier
+
+	public $cacheconvert=array();      // Array to cache list of value found after a convertion
+
+	public $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+
+	public $workbook; // temporary import file
+
+	public $record; // current record
+
+	public $headers;
 
 
 	/**
@@ -115,6 +125,7 @@ class ImportXlsx extends ModeleImports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output header of an example file for this format
 	 *
@@ -123,29 +134,31 @@ class ImportXlsx extends ModeleImports
 	 */
 	function write_header_example($outputlangs)
 	{
-	  global $user,$conf,$langs;
-	  // create a temporary object, the final output will be generated in footer
-          if (!empty($conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR)) {
+        // phpcs:enable
+        global $user,$conf,$langs;
+        // create a temporary object, the final output will be generated in footer
+        if (!empty($conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR)) {
             $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_discISAM;
             $cacheSettings = array (
-              'dir' => $conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR
-          );
-          PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+                'dir' => $conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR
+            );
+            PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
         }
 
-            $this->workbook = new PHPExcel();
-            $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
-            $this->workbook->getProperties()->setTitle($outputlangs->trans("Import").' - '.$file);
-            $this->workbook->getProperties()->setSubject($outputlangs->trans("Import").' - '.$file);
-            $this->workbook->getProperties()->setDescription($outputlangs->trans("Import").' - '.$file);
+        $this->workbook = new PHPExcel();
+        $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
+        $this->workbook->getProperties()->setTitle($outputlangs->trans("Import").' - '.$file);
+        $this->workbook->getProperties()->setSubject($outputlangs->trans("Import").' - '.$file);
+        $this->workbook->getProperties()->setDescription($outputlangs->trans("Import").' - '.$file);
 
-            $this->workbook->setActiveSheetIndex(0);
-            $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
-            $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
+        $this->workbook->setActiveSheetIndex(0);
+        $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
+        $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
 
-	    return '';
-	}
+        return '';
+    }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output title line of an example file for this format
 	 *
@@ -155,6 +168,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	function write_title_example($outputlangs,$headerlinefields)
 	{
+        // phpcs:enable
 		global $conf;
 		$this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
 		$this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
@@ -170,6 +184,7 @@ class ImportXlsx extends ModeleImports
 		return ''; // final output will be generated in footer
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output record of an example file for this format
 	 *
@@ -179,6 +194,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	function write_record_example($outputlangs,$contentlinevalues)
 	{
+        // phpcs:enable
 		$col = 0;
 		$row = 2;
 		foreach($contentlinevalues as $cell) {
@@ -189,6 +205,7 @@ class ImportXlsx extends ModeleImports
 		return ''; // final output will be generated in footer
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Output footer of an example file for this format
 	 *
@@ -197,7 +214,8 @@ class ImportXlsx extends ModeleImports
 	 */
 	function write_footer_example($outputlangs)
 	{
-		// return te file content as a string
+        // phpcs:enable
+		// return the file content as a string
 		$tempfile = tempnam(sys_get_temp_dir(), 'dol');
 		$objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
 		$objWriter->save($tempfile);
@@ -211,6 +229,7 @@ class ImportXlsx extends ModeleImports
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Open input file
 	 *
@@ -219,6 +238,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	function import_open_file($file)
 	{
+        // phpcs:enable
 		global $langs;
 		$ret=1;
 
@@ -233,6 +253,7 @@ class ImportXlsx extends ModeleImports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Return nb of records. File must be closed.
 	 *
@@ -241,6 +262,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	function import_get_nb_of_lines($file)
 	{
+        // phpcs:enable
 		$reader = new PHPExcel_Reader_Excel2007();
 		$this->workbook = $reader->load($file);
 
@@ -253,6 +275,7 @@ class ImportXlsx extends ModeleImports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Input header line from file
 	 *
@@ -260,6 +283,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	function import_read_header()
 	{
+        // phpcs:enable
 		// This is not called by the import code !!!
 		$this->headers = array();
 		$colcount = PHPExcel_Cell::columnIndexFromString($this->workbook->getActiveSheet()->getHighestDataColumn());
@@ -270,6 +294,7 @@ class ImportXlsx extends ModeleImports
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Return array of next record in input file.
 	 *
@@ -277,6 +302,7 @@ class ImportXlsx extends ModeleImports
 	 */
 	function import_read_record()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
@@ -293,6 +319,7 @@ class ImportXlsx extends ModeleImports
 		return $array;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
@@ -300,11 +327,14 @@ class ImportXlsx extends ModeleImports
 	 */
 	function import_close_file()
 	{
+        // phpcs:enable
 		$this->workbook->disconnectWorksheets();
 		unset($this->workbook);
 	}
 
 
+    // What is this doing here ? it is common to all imports, is should be in the parent class
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Insert a record into database
 	 *
@@ -316,9 +346,9 @@ class ImportXlsx extends ModeleImports
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	// What is this doing here ? it is common to all imports, is should be in the parent class
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updatekeys)
 	{
+        // phpcs:enable
 		global $langs,$conf,$user;
         global $thirdparty_static;    	// Specific to thirdparty import
 		global $tablewithentity_cache;	// Cache to avoid to call  desc at each rows on tables
@@ -782,5 +812,4 @@ class ImportXlsx extends ModeleImports
 
 		return 1;
 	}
-
 }

@@ -36,21 +36,33 @@ class Subscription extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='subscription';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='subscription';
-	
-    public $picto='payment';
 
-	var $datec;				// Date creation
-	var $datem;				// Date modification
-	var $dateh;				// Subscription start date (date subscription)
-	var $datef;				// Subscription end date
-	var $fk_adherent;
-	var $amount;
-	var $fk_bank;
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='payment';
+
+	public $datec;				// Date creation
+	public $datem;				// Date modification
+	public $dateh;				// Subscription start date (date subscription)
+	public $datef;				// Subscription end date
+
+	/**
+     * @var int ID
+     */
+	public $fk_adherent;
+
+	public $amount;
+
+	/**
+     * @var int ID
+     */
+	public $fk_bank;
 
 
 	/**
@@ -363,6 +375,7 @@ class Subscription extends CommonObject
 	    return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -371,6 +384,7 @@ class Subscription extends CommonObject
 	 */
 	function LibStatut($statut)
 	{
+        // phpcs:enable
 	    global $langs;
 	    $langs->load("members");
 	    return '';

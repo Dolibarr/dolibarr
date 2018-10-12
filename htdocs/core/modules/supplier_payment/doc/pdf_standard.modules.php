@@ -119,9 +119,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		// Translations
+		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
@@ -176,7 +176,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		PaiementFourn		$object				Id of object to generate
@@ -186,21 +187,19 @@ class pdf_standard extends ModelePDFSuppliersPayments
      *  @param		int					$hidedesc			Do not show desc
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
-	 */
+     */
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc,$hookmanager;
+        // phpcs:enable
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("suppliers");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "suppliers", "companies", "bills", "dict", "products"));
+
 		$object->factures = array();
 
 		if ($conf->fournisseur->payment->dir_output)
@@ -512,6 +511,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -523,6 +523,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -567,7 +568,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		// Date
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
 		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', 1);
-
 	}
 
 
@@ -613,7 +613,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Output Rect
 		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
-
 	}
 
 
@@ -628,12 +627,11 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $langs,$conf,$mysoc;
+		global $langs, $conf, $mysoc;
 
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("orders");
-		$outputlangs->load("companies");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills"));
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Do not add the BACKGROUND as this is for suppliers
@@ -812,5 +810,4 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

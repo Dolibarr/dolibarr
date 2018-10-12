@@ -54,7 +54,11 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 class pdf_beluga extends ModelePDFProjects
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 	/**
 	 *	Constructor
@@ -110,6 +114,7 @@ class pdf_beluga extends ModelePDFProjects
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
@@ -119,6 +124,7 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	function write_file($object,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
 
         $formproject=new FormProjets($this->db);
@@ -794,5 +800,4 @@ class pdf_beluga extends ModelePDFProjects
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

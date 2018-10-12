@@ -35,12 +35,12 @@ class Conf
 	/** \public */
 	//! To store properties found in conf file
 	var $file;
-	
+
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	//! To store properties found into database
 	var $global;
 	//! To store browser info
@@ -48,7 +48,7 @@ class Conf
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
-	//! Used to store current currency
+	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
 	public $theme;        // Contains current theme ("eldy", "auguria", ...)
@@ -182,7 +182,7 @@ class Conf
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
 							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
-							else if (in_array($partname,array('sms'))) $value = $modulename;
+							else if (in_array($partname,array('sms'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
 						}
@@ -523,6 +523,9 @@ class Conf
 		// By default, we open card if one found
 		if (! isset($this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE)) $this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=1;
 
+		// By default, we show state code in combo list
+		if (! isset($this->global->MAIN_SHOW_STATE_CODE)) $this->global->MAIN_SHOW_STATE_CODE=1;
+
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
 		if (! empty($this->modules_parts['moduleforexternal']))		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
@@ -666,7 +669,6 @@ class Conf
 				$this->loghandlers[$handler] = $loghandlerinstance;
 			}
 		}
-
 	}
 }
 

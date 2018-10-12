@@ -88,7 +88,7 @@ TriggerDefDesc=Define in the trigger file the code you want to execute for each 
 SeeIDsInUse=See IDs in use in your installation
 SeeReservedIDsRangeHere=See range of reserved IDs
 ToolkitForDevelopers=Toolkit for Dolibarr developers
-TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module (Setup->Other Setup->MAIN_FEATURES_LEVEL = 2) and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=See <span class="fa fa-bug"></span> on the top right menu
 AddLanguageFile=Add language file
 YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")

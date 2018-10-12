@@ -44,7 +44,7 @@ class modLabel extends DolibarrModules
 		$this->numero = 60;
 
 		$this->family = "technic";
-		$this->module_position = 80;
+		$this->module_position = '75';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des etiquettes";
@@ -90,7 +90,6 @@ class modLabel extends DolibarrModules
 		$this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
 		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[4][4] = 'supprimer';
-
 	}
 
 	/**

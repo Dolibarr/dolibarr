@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/core/class/fiscalyear.php
+ *      \file       htdocs/core/class/fiscalyear.class.php
  *		\ingroup    fiscal year
  *		\brief      File of class to manage fiscal years
  */
@@ -32,31 +32,50 @@ class Fiscalyear extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='fiscalyear';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='accounting_fiscalyear';
-	
-	public $table_element_line = '';
-	public $fk_element = '';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
-	var $rowid;
 
 	/**
-     * @var string proper name for given parameter
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line = '';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = '';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+     * @var string fiscal year label
      */
     public $label;
-    
-	var $date_start;
-	var $date_end;
-	var $datec;
-	var $statut;		// 0=open, 1=closed
-	var $entity;
 
-	var $statuts=array();
-	var $statuts_short=array();
+	public $date_start;
+	public $date_end;
+	public $datec;
+	public $statut;		// 0=open, 1=closed
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $statuts=array();
+	public $statuts_short=array();
 
 	/**
 	 * Constructor
@@ -68,9 +87,7 @@ class Fiscalyear extends CommonObject
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
-        $this->statuts = array(0 => 'Opened', 1 => 'Closed');
-
-		return 1;
+		$this->statuts = array(0 => 'Opened', 1 => 'Closed');
 	}
 
 	/**
@@ -250,6 +267,7 @@ class Fiscalyear extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Give a label from a status
 	 *
@@ -259,35 +277,36 @@ class Fiscalyear extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts_short[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8');
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 	}
 
@@ -335,5 +354,4 @@ class Fiscalyear extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
 }

@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es>
@@ -1244,12 +1244,12 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			print "</tr>\n";
 		}
 	}
-	else
-	{
+	//else
+	//{
 		//print '<tr class="oddeven">';
 		//print '<td>'.$langs->trans("NoAddressYetDefined").'</td>';
 		//print "</tr>\n";
-	}
+	//}
 	print "\n</table>\n";
 
 	print "<br>\n";
@@ -1285,7 +1285,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Conf		       $conf		   Object conf
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
- * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur
+ * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource
  * 		@param	Contact		       $objcon		   Object contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
@@ -1302,6 +1302,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
     global $form;
 
     global $param;
+
+    dol_include_once('/comm/action/class/actioncomm.class.php');
 
     // Check parameters
     if (! is_object($filterobj) && ! is_object($objcon)) dol_print_error('','BadParameter');
@@ -1323,34 +1325,42 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
         $sql.= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
-        if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
-        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
-        if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-        if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
-        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
-        if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
+        	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
+        	$sql.= " ON er.resource_type = 'dolresource'";
+        	$sql.= " AND er.element_id = a.id";
+        	$sql.= " AND er.resource_id = ".$filterobj->id;
+        }
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
+
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
-        if (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        if (is_object($filterobj) && get_class($filterobj) == 'Adherent')
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
         {
             $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
             if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-        if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
         {
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-        if (is_object($filterobj) && get_class($filterobj) == 'Product')
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
         {
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
+        //TODO check how ot work with new table actioncomm_resources and multiple contact affectation
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         // Condition on actioncode
         if (! empty($actioncode))
@@ -1362,7 +1372,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 else
                 {
                     if ($actioncode == 'AC_OTH') $sql.= " AND c.type != 'systemauto'";
-                    if ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
+                    elseif ($actioncode == 'AC_OTH_AUTO') $sql.= " AND c.type = 'systemauto'";
                 }
             }
             else
@@ -1373,7 +1383,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             }
         }
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-        if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+        elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
         $sql.= $db->order($sortfield, $sortorder);
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
@@ -1387,8 +1397,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             {
                 $obj = $db->fetch_object($resql);
 
+                $contactaction = new ActionComm($db);
+                $contactaction->id=$obj->id;
+                $result = $contactaction->fetchResources();
+                if ($result<0) {
+                	dol_print_error($db);
+                	setEventMessage("company.lib::show_actions_done Error fetch ressource",'errors');
+                }
+
                 //if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-                //if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+                //elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
                 $tododone='';
                 if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone='todo';
 
@@ -1408,6 +1426,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                     'userphoto'=>$obj->user_photo,
 
                     'contact_id'=>$obj->fk_contact,
+                	'socpeopleassigned' => $contactaction->socpeopleassigned,
             		'lastname'=>$obj->lastname,
             		'firstname'=>$obj->firstname,
             		'fk_element'=>$obj->fk_element,
@@ -1488,10 +1507,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	    require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-	    $formactions=new FormActions($db);
+        $formactions=new FormActions($db);
 
-	    $actionstatic=new ActionComm($db);
+        $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
 
@@ -1551,7 +1571,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('');
-		$out.=getTitleFieldOfList($langs->trans("ActionOnContact"), 0, $_SERVER["PHP_SELF"], 'a.fk_contact', '', $param, '', $sortfield, $sortorder);
+		$out.=getTitleFieldOfList($langs->trans("ActionOnContact"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
 		$out.='</tr>';
@@ -1582,7 +1602,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='</td>';
 
             // Author of event
-            $out.='<td>';
+            $out.='<td class="tdoverflowmax100">';
             //$userstatic->id=$histo[$key]['userid'];
             //$userstatic->login=$histo[$key]['login'];
             //$out.=$userstatic->getLoginUrl(1);
@@ -1670,10 +1690,28 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 $contactstatic->firstname=$histo[$key]['firstname'];
                 $contactstatic->id=$histo[$key]['contact_id'];
                 $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
-            }
-            else
-            {
-                $out.='<td>&nbsp;</td>';
+            } elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
+				$out .= '<td>';
+				foreach ( $histo[$key]['socpeopleassigned'] as $cid => $Tab ) {
+					$contact = new Contact($db);
+					$result = $contact->fetch($cid);
+
+					if ($result < 0)
+						dol_print_error($db, $contact->error);
+
+					if ($result > 0) {
+						$out .= $contact->getNomUrl(1);
+						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+							if (! empty($contact->phone_pro))
+								$out .= '(' . dol_print_phone($contact->phone_pro) . ')';
+						}
+						$out .= '<div class="paddingright"></div>';
+					}
+				}
+				$out .= '</td>';
+			}
+            else {
+            	$out.='<td>&nbsp;</td>';
             }
 
             // Status

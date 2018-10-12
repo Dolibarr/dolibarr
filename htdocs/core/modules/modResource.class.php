@@ -55,7 +55,7 @@ class modResource extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -285,7 +285,6 @@ class modResource extends DolibarrModules
 		$this->import_regex_array[$r]=array('s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
 		$this->import_examplevalues_array[$r]=array('r.ref'=>"REF1",'r.fk_code_type_resource'=>"Code from dictionary resource type",'r.datec'=>"2017-01-01 or 2017-01-01 12:30:00");
 		$this->import_updatekeys_array[$r]=array('r.rf'=>'ResourceFormLabel_ref');
-
 	}
 
 	/**

@@ -31,7 +31,7 @@ class Ctypent // extends CommonObject
      * @var DoliDB Database handler.
      */
     public $db;
-	
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -41,7 +41,7 @@ class Ctypent // extends CommonObject
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	//var $element='ctypent';			//!< Id that identify managed objects
 	//var $table_element='ctypent';	//!< Name of table without prefix where object is stored
 
@@ -49,11 +49,11 @@ class Ctypent // extends CommonObject
 	 * @var int ID
 	 */
 	public $id;
-	
-	var $code;
-	var $libelle;
-	var $active;
-	var $module;
+
+	public $code;
+	public $libelle;
+	public $active;
+	public $module;
 
 
 
@@ -66,7 +66,6 @@ class Ctypent // extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -333,5 +332,4 @@ class Ctypent // extends CommonObject
 			return 1;
 		}
 	}
-
 }

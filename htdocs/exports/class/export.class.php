@@ -70,6 +70,7 @@ class Export
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Load an exportable dataset
 	 *
@@ -79,6 +80,7 @@ class Export
 	 */
 	function load_arrays($user,$filter='')
 	{
+        // phpcs:enable
 		global $langs,$conf,$mysoc;
 
 		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
@@ -207,6 +209,7 @@ class Export
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build the sql export request.
 	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
@@ -218,6 +221,7 @@ class Export
 	 */
 	function build_sql($indice, $array_selected, $array_filterValue)
 	{
+        // phpcs:enable
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
 		$i=0;
@@ -269,6 +273,7 @@ class Export
 		return $sql;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build the conditionnal string from filter the query
 	 *
@@ -279,6 +284,7 @@ class Export
 	 */
 	function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
+        // phpcs:enable
 		//print $TypeField." ".$NameField." ".$ValueField;
 		$InfoFieldList = explode(":", $TypeField);
 		// build the input field on depend of the type of file
@@ -362,6 +368,7 @@ class Export
 		return $Condition;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build an input field used to filter the query
 	 *
@@ -372,6 +379,7 @@ class Export
 	 */
 	function build_filterField($TypeField, $NameField, $ValueField)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$szFilterField='';
@@ -510,6 +518,7 @@ class Export
 		return $szMsg;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Build export file.
 	 *      File is built into directory $conf->export->dir_temp.'/'.$user->id
@@ -525,6 +534,7 @@ class Export
 	 */
 	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
  	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$indice=0;
@@ -820,6 +830,7 @@ class Export
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Output list all export models
 	 *  TODO Move this into a class htmlxxx.class.php
@@ -828,6 +839,7 @@ class Export
 	 */
 	function list_export_model()
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		$sql = "SELECT em.rowid, em.field, em.label, em.type, em.filter";
@@ -874,6 +886,4 @@ class Export
 			dol_print_error($this->db);
 		}
 	}
-
 }
-

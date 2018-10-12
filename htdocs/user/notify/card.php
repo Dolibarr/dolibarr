@@ -137,7 +137,7 @@ if ($result > 0)
 
     dol_fiche_head($head, 'notify', $langs->trans("User"), -1, 'user');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', '', '', 0, '', '', 0, '');
 
@@ -188,7 +188,7 @@ if ($result > 0)
 
 
     // Add notification form
-    print_fiche_titre($langs->trans("AddNewNotification"),'','');
+    print load_fiche_titre($langs->trans("AddNewNotification"),'','');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -276,7 +276,7 @@ if ($result > 0)
     }
 
     // List of active notifications
-    print_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
+    print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
 
     // Line with titles
     print '<table width="100%" class="noborder">';

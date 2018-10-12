@@ -143,6 +143,12 @@ $object = new Cronjob($db);
 
 $filter=array();
 if (! empty($id)) {
+	if (! is_numeric($id))
+	{
+		echo "Error: Bad value for parameter job id";
+		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
+		exit;
+	}
 	$filter['t.rowid']=$id;
 }
 
@@ -162,7 +168,7 @@ foreach($object->lines as $val)
 	$qualifiedjobs[] = $val;
 }
 
-// TODO This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
+// TODO Duplicate. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
 $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
@@ -239,6 +245,13 @@ exit(0);
 
 
 
+/**
+ * script cron usage
+ *
+ * @param string $path          path
+ * @param string $script_file   filename
+ * @return void
+ */
 function usage($path,$script_file)
 {
 	global $conf;
@@ -252,4 +265,3 @@ function usage($path,$script_file)
 	print "For example, to run pending tasks every 5mn, you can add this line:\n";
 	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 }
-

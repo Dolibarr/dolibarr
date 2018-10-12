@@ -28,47 +28,97 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 /**
  * Class to manage categories of an accounting account
  */
-class AccountancyCategory 	// extends CommonObject
+class AccountancyCategory // extends CommonObject
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	/**
 	 * @var string 		Error string
 	 * @see             errors
 	 */
 	public $error;
-	
+
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
-	
+
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='c_accounting_category';			
-	
+	public $element='c_accounting_category';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='c_accounting_category';	
+	public $table_element='c_accounting_category';
 
-	public $id;
+	/**
+     * @var int ID
+     */
+    public $id;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $code;
-	public $label;
+
+	/**
+     * @var string Accountancy Category label
+     */
+    public $label;
+
+    /**
+	 * @var mixed Sample property 1
+	 */
 	public $range_account;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $sens;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $category_type;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $formula;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $position;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $fk_country;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $active;
 
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $lines_cptbk;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $lines_display;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $sdc;
 
 
@@ -145,18 +195,18 @@ class AccountancyCategory 	// extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_accounting_category");
 
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
 
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -284,18 +334,17 @@ class AccountancyCategory 	// extends CommonObject
 
 		if (! $error)
 		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -340,18 +389,17 @@ class AccountancyCategory 	// extends CommonObject
 
 		if (! $error)
 		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -713,7 +761,7 @@ class AccountancyCategory 	// extends CommonObject
 	 * Return list of personalized groups that are active
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
-	 * @return	array							Array of groups
+	 * @return	array|int						Array of groups or -1 if error
 	 */
 	public function getCats($categorytype=-1)
 	{
@@ -770,7 +818,7 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
 	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
-	 * @return 	array       					Array of accounting accounts
+	 * @return 	array|int       				Array of accounting accounts or -1 if error
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{
@@ -824,5 +872,4 @@ class AccountancyCategory 	// extends CommonObject
 			return -1;
 		}
 	}
-
 }
