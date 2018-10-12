@@ -147,19 +147,22 @@ class InterfaceStripe
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
-					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// We force data to "null" if empty as expected by Stripe
+					$vatcleaned = array(
+          "tax_id" => $object->tva_intra ? $object->tva_intra : null,	// We force data to "null" if empty as expected by Stripe
+          "type" => 'vat',
+          );
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
 					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
 					if ($namecleaned != $customer->description) $changerequested++;
-					if ($vatcleaned != $customer->business_vat_id) $changerequested++;
+					if ($vatcleaned != $customer->tax_info) $changerequested++;
 
 					if ($changerequested)
 					{
 						if (! empty($object->email)) $customer->email = $object->email;
 						$customer->description = $namecleaned;
-						$customer->business_vat_id = $vatcleaned;
+						$customer->tax_info = $vatcleaned;
 
 						$customer->save();
 					}
