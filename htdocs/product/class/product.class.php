@@ -290,6 +290,9 @@ class Product extends CommonObject
 
 	public $oldcopy;
 
+	/**
+     * @var int ID
+     */
     public $fk_price_expression;
 
     /* To store supplier price found */
