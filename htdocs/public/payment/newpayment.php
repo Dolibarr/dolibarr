@@ -413,12 +413,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$dol_type=(GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
   	$dol_id=GETPOST('dol_id', 'int');
   	$vatnumber = GETPOST('vatnumber','alpha');
-	$savesource=GETPOST('savesource', 'int');
+  	$savesource=GETPOSTISSET('savesource')?GETPOST('savesource', 'int'):1;
 
-	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("thirdparty_id = ".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST email = ".$email, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST thirdparty_id = ".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
 	$error = 0;
 
@@ -444,7 +444,6 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				$servicestatus = 1;
 			}
 
-
 			$thirdparty = new Societe($db);
 			$thirdparty->fetch($thirdparty_id);
 
@@ -455,9 +454,11 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
 			// Create Stripe card from Token
-			if (! empty($savesource)) {
-			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
-			} else { $card = $stripeToken; }
+			if ($savesource) {
+				$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+			} else {
+				$card = $stripeToken;
+			}
 
 			if (empty($card))
 			{
@@ -468,9 +469,9 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			}
 			else
 			{
-        if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
-        if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
-        if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+				if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+				if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+				if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
 
 				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
 				$charge = \Stripe\Charge::create(array(
@@ -495,24 +496,29 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 		}
 		else
 		{
-			$vatcleaned = array(
-				"tax_id" => $vatnumber ? $vatnumber : null,	// We force data to "null" if empty as expected by Stripe
-				"type" => 'vat',
-			);
+			$vatcleaned = $vatnumber ? $vatnumber : null;
+
+			$taxinfo = array('type'=>'vat');
+			if ($vatcleaned)
+			{
+				$taxinfo["tax_id"] = $vatcleaned;
+			}
+			// We force data to "null" if not defined as expected by Stripe
+			if (empty($vatcleaned)) $taxinfo=null;
 
 			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
 			$customer = \Stripe\Customer::create(array(
 				'email' => $email,
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
-				'tax_info' => $vatcleaned,
+				'tax_info' => $taxinfo,
 				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 			));
 			// Return $customer = array('id'=>'cus_XXXX', ...)
 
-        if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
-        if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
-        if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+			if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+			if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+			if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
 
 			// The customer was just created with a source, so we can make a charge
 			// with no card defined, the source just used for customer creation will be used.
