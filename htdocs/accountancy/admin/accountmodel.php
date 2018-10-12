@@ -55,8 +55,8 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
-$listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
+$listoffset=GETPOST('listoffset','alpha');
+$listlimit=GETPOST('listlimit','int')>0?GETPOST('listlimit','int'):1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'aZ09comma');
