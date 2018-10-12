@@ -92,11 +92,15 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $sref="";
     $snom="";
     $sall="";
+	$tosell="";
+	$tobuy="";
     $search_sale="";
     $search_categ="";
     $type="";
     $catid='';
     $toolowstock='';
+	$fourn_id='';
+	$sbarcode='';
 }
 
 
@@ -183,6 +187,20 @@ if ($resql)
 	}
 	$texte.=' ('.$langs->trans("Stocks").')';
 
+	$param='';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)	$param.="&sall=".$sall;
+	if ($tosell)	$param.="&tosell=".$tosell;
+	if ($tobuy)		$param.="&tobuy=".$tobuy;
+	if ($type)		$param.="&type=".$type;
+	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
+	if ($snom)		$param.="&snom=".$snom;
+	if ($sref)		$param.="&sref=".$sref;
+	if ($search_sale) $param.="&search_sale=".$search_sale;
+	if ($search_categ) $param.="&search_categ=".$search_categ;
+	if ($toolowstock) $param.="&toolowstock=".$toolowstock;
+	if ($sbarcode) $param.="&sbarcode=".$sbarcode;
+	if ($catid) $param.="&catid=".$catid;
 
 	llxHeader("", $texte, $helpurl);
 
@@ -193,14 +211,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	if ($sref || $snom || $sall || GETPOST('search'))
-	{
-	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy.(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
-	}
-	else
-	{
-	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"").(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
-	}
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
 
 	if (! empty($catid))
 	{
@@ -235,14 +246,6 @@ if ($resql)
         print $hookmanager->resPrint;
         print '</div>';
     }
-
-	$param='';
-	if ($tosell)	$param.="&tosell=".$tosell;
-	if ($tobuy)		$param.="&tobuy=".$tobuy;
-	if ($type)		$param.="&type=".$type;
-	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
-	if ($snom)		$param.="&snom=".$snom;
-	if ($sref)		$param.="&sref=".$sref;
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
