@@ -73,11 +73,11 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number','int');
+			$account_number = GETPOST('account_number','string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number','int'));
+			$account_number = clean_account(GETPOST('account_number','string'));
 		}
 
 		if (GETPOST('account_parent','int') <= 0)
@@ -138,11 +138,11 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number','int');
+			$account_number = GETPOST('account_number','string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number','int'));
+			$account_number = clean_account(GETPOST('account_number','string'));
 		}
 
 		if (GETPOST('account_parent','int') <= 0)
