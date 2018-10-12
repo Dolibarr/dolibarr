@@ -45,6 +45,7 @@ MassStockTransferShort=Mass stock transfer
 StockMovement=Stock movement
 StockMovements=Stock movements
 LabelMovement=Movement label
+TypeMovement=Movement type
 NumberOfUnit=Number of units
 UnitPurchaseValue=Unit purchase price
 StockTooLow=Stock too low
