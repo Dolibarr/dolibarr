@@ -1535,6 +1535,7 @@ if (empty($reshook))
 					{
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
+						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals($line->id);
 						$line->situation_percent =  $line->get_prev_progress($object->id); // get good progress including credit note 
 						
