@@ -40,10 +40,13 @@ function datapoliciesAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/datapolicies/admin/setupmail.php", 1);
-	$head[$h][1] = $langs->trans("DATAPOLICIESMail");
-	$head[$h][2] = 'settings';
-	$h++;
+	if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
+	{
+		$head[$h][0] = dol_buildpath("/datapolicies/admin/setupmail.php", 1);
+		$head[$h][1] = $langs->trans("DATAPOLICIESMail");
+		$head[$h][2] = 'settings';
+		$h++;
+	}
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicies');
 
