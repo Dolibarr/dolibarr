@@ -435,6 +435,7 @@ if ($action == 'new')
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
 			$lines[$obj->bid][$i]["id"] = $obj->transactionid;
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
+			$lines[$obj->bid][$i]["typeline"] = "bank";
 			$i++;
 		}
 		
@@ -460,7 +461,9 @@ if ($action == 'new')
 		           $lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
 		           $lines[$obj->bid][$i]["numero"] = '';
 		           $lines[$obj->bid][$i]["banque"] = '';
+		           $lines[$obj->bid][$i]["id"] = $obj->paymentid;
 		           $lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
+		           $lines[$obj->bid][$i]["typeline"] = "payment";
 		           $i++;
 		       }
 		   }
@@ -562,9 +565,8 @@ if ($action == 'new')
     				print '</td>';
 				}
 
-				$vid = (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS)) ? $value["id"] : $value["paymentid"];
 				print '<td align="center">';
-				print '<input id="'.$vid.'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$vid.'">';
+				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise['.$value['typeline'].'][]" value="'.$value["id"].'">';
 				print '</td>' ;
 				print '</tr>';
 
