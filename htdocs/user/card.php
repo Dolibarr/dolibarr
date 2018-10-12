@@ -1000,7 +1000,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Skype
-	if (! empty($conf->skype->enabled))
+	if (! empty($conf->socialnetworks->enabled))
 	{
 		print '<tr><td>'.$langs->trans("Skype").'</td>';
 		print '<td>';
@@ -1011,7 +1011,41 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 		else
 		{
-			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype').'">';
+			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype','alpha').'">';
+		}
+		print '</td></tr>';
+	}
+
+	// Twitter
+	if (! empty($conf->socialnetworks->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Twitter").'</td>';
+		print '<td>';
+		if (! empty($ldap_twitter))
+		{
+			print '<input type="hidden" name="skype" value="'.$ldap_twitter.'">';
+			print $ldap_twitter;
+		}
+		else
+		{
+			print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter','alpha').'">';
+		}
+		print '</td></tr>';
+	}
+
+	// Facebook
+	if (! empty($conf->socialnetworks->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Facebook").'</td>';
+		print '<td>';
+		if (! empty($ldap_facebook))
+		{
+			print '<input type="hidden" name="skype" value="'.$ldap_facebook.'">';
+			print $ldap_facebook;
+		}
+		else
+		{
+			print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook','alpha').'">';
 		}
 		print '</td></tr>';
 	}
@@ -2195,7 +2229,7 @@ else
 			print '</td></tr>';
 
 			// Skype
-			if (! empty($conf->skype->enabled))
+			if (! empty($conf->socialnetworks->enabled))
 			{
 				print '<tr><td>'.$langs->trans("Skype").'</td>';
 				print '<td>';
@@ -2207,6 +2241,40 @@ else
 				{
 					print '<input type="hidden" name="skype" value="'.$object->skype.'">';
 					print $object->skype;
+				}
+				print '</td></tr>';
+			}
+
+			// Twitter
+			if (! empty($conf->socialnetworks->enabled))
+			{
+				print '<tr><td>'.$langs->trans("Twitter").'</td>';
+				print '<td>';
+				if ($caneditfield  && empty($object->ldap_sid))
+				{
+					print '<input size="40" type="text" name="twitter" class="flat" value="'.$object->twitter.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="twitter" value="'.$object->twitter.'">';
+					print $object->twitter;
+				}
+				print '</td></tr>';
+			}
+
+			// Skype
+			if (! empty($conf->socialnetworks->enabled))
+			{
+				print '<tr><td>'.$langs->trans("Facebook").'</td>';
+				print '<td>';
+				if ($caneditfield  && empty($object->ldap_sid))
+				{
+					print '<input size="40" type="text" name="facebook" class="flat" value="'.$object->facebook.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="facebook" value="'.$object->facebook.'">';
+					print $object->facebook;
 				}
 				print '</td></tr>';
 			}

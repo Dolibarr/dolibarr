@@ -609,12 +609,23 @@ abstract class CommonObject
 			$out.=dol_print_url($this->url,'_goout',0,1);
 			$outdone++;
 		}
-		if (! empty($conf->skype->enabled))
+		$out.='<div style="clear: both;">';
+		if (! empty($conf->socialnetworks->enabled))
 		{
-			$out.='<div style="clear: both;"></div>';
-			if ($this->skype) $out.=dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
+			if ($this->skype) $out.=dol_print_socialnetworks($this->skype,$this->id,$object->id,'skype');
 			$outdone++;
 		}
+		if (! empty($conf->socialnetworks->enabled))
+		{
+			if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter,$this->id,$object->id,'twitter');
+			$outdone++;
+		}
+		if (! empty($conf->socialnetworks->enabled))
+		{
+			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook,$this->id,$object->id,'facebook');
+			$outdone++;
+		}
+		$out.='</div>';
 
 		$out.='<!-- END Part to show address block -->';
 
