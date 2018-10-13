@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_einstein.modules.php
  *	\ingroup    commande
- *	\brief      Fichier de la classe permettant de generer les commandes au modele Einstein
+ *	\brief      File of Class to generate PDF orders with template Einstein
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe to generate PDF orders with template Einstein
+ *	Class to generate PDF orders with template Einstein
  */
 class pdf_einstein extends ModelePDFCommandes
 {
