@@ -599,7 +599,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			foreach($arrayofdaystring as $daystring)
 			{
 				$tmp=explode('-',$daystring);
-				var_dump($tmp);
 				if ($tmp[2])
 				{
 					if ($tmp[0] == $annee && $tmp[1] == $mois && $tmp[2] == $jour) $ferie=true;
