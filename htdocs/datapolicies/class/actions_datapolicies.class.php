@@ -363,45 +363,48 @@ class ActionsDatapolicies
         global $conf, $user, $langs;
         $langs->load('datapolicies@datapolicies');
 
-        $dialog = '<div id="dialogdatapolicies" style="display:none;" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">';
-        $dialog .= '<div class="confirmmessage">' . img_help('', '') . ' ' . $langs->trans('DATAPOLICIES_PORTABILITE_CONFIRMATION') . '</div>';
-        $dialog .= "</div>";
-        $dialog .= '<script>
-                  $( function() {
-                    $("#rpgpdbtn").on("click", function(){
-                        var href = $(this).attr("href");
-                        $( "#dialogdatapolicies" ).dialog({
-                          modal: true,
-                          buttons: {
-                            "OK": function() {
-                              window.open(href);
-                              $( this ).dialog( "close" );
-                            },
-                            "' . $langs->trans('Cancel') . '": function() {
-                              $( this ).dialog( "close" );
-                            }
-                          }
-                        });
+        if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
+        {
+	        $dialog = '<div id="dialogdatapolicies" style="display:none;" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">';
+	        $dialog .= '<div class="confirmmessage">' . img_help('', '') . ' ' . $langs->trans('DATAPOLICIES_PORTABILITE_CONFIRMATION') . '</div>';
+	        $dialog .= "</div>";
+	        $dialog .= '<script>
+	                  $( function() {
+	                    $("#rpgpdbtn").on("click", function(){
+	                        var href = $(this).attr("href");
+	                        $( "#dialogdatapolicies" ).dialog({
+	                          modal: true,
+	                          buttons: {
+	                            "OK": function() {
+	                              window.open(href);
+	                              $( this ).dialog( "close" );
+	                            },
+	                            "' . $langs->trans('Cancel') . '": function() {
+	                              $( this ).dialog( "close" );
+	                            }
+	                          }
+	                        });
 
 
-                    return false;
-                    });
-                  } );
-                  </script>';
-        echo $dialog;
-        if ($parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
-            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
-        } elseif ($parameters['currentcontext'] == 'membercard') {
-            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
-        } elseif ($parameters['currentcontext'] == 'contactcard') {
-            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
-        }
-        if (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
-            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
-        } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'membercard') {
-            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
-        } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'contactcard') {
-            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
+	                    return false;
+	                    });
+	                  } );
+	                  </script>';
+	        echo $dialog;
+	        if ($parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
+	            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
+	        } elseif ($parameters['currentcontext'] == 'membercard') {
+	            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
+	        } elseif ($parameters['currentcontext'] == 'contactcard') {
+	            echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=datapolicies_portabilite" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">' . $langs->trans("DATAPOLICIES_PORTABILITE") . '</a></div>';
+	        }
+	        if (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
+	            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?socid=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
+	        } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'membercard') {
+	            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?rowid=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
+	        } elseif (!empty($object->mail) && empty($object->array_options['options_datapolicies_send']) && $parameters['currentcontext'] == 'contactcard') {
+	            echo '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . "?id=" . $object->id . '&action=send_datapolicies" title="' . $langs->trans('DATAPOLICIES_SEND') . '">' . $langs->trans("DATAPOLICIES_SEND") . '</a></div>';
+	        }
         }
     }
 
