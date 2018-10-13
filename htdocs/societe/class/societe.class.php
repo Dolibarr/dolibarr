@@ -88,7 +88,7 @@ class Societe extends CommonObject
 	 * Thirdparty name
 	 * @var string
 	 * @deprecated Use $name instead
-	 * @see name
+	 * @see $name
 	 */
 	public $nom;
 
@@ -128,21 +128,21 @@ class Societe extends CommonObject
 	 * State code
 	 * @var string
 	 * @deprecated Use state_code instead
-	 * @see state_code
+	 * @see $state_code
 	 */
 	public $departement_code;
 
 	/**
 	 * @var string
 	 * @deprecated Use state instead
-	 * @see state
+	 * @see $state
 	 */
 	public $departement;
 
 	/**
 	 * @var string
 	 * @deprecated Use country instead
-	 * @see country
+	 * @see $country
 	 */
 	public $pays;
 
@@ -317,7 +317,7 @@ class Societe extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated Note is split in public and private notes
-	 * @see note_public, note_private
+	 * @see $note_public, $note_private
 	 */
 	public $note;
 
@@ -1979,24 +1979,33 @@ class Societe extends CommonObject
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
+			$code = '';
 			if (($this->client) && (! empty ( $this->code_client ))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
 				)
 			)
-			$code = $this->code_client . ' - ';
+			{
+				$code = $this->code_client . ' - ';
+			}
 
 			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
 				)
 			)
-			$code .= $this->code_fournisseur . ' - ';
+			{
+				$code .= $this->code_fournisseur . ' - ';
+			}
 
 			if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
+			{
 				$name =$code.' '.$name;
+			}
 			else
+			{
 				$name =$code;
+			}
 		}
 
 		if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
