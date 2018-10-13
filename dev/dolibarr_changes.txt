@@ -1,5 +1,5 @@
 
-This file describe changes made on external library after beeing included
+This file describes changes made on external libraries after being included
 in Dolibarr root.
 
 
