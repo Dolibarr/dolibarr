@@ -2038,6 +2038,9 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
+.divpasswordmessagedesc {
+	text-align: justify;
+}
 span.fa.atoplogin, span.fa.atoplogin:hover {
     font-size: 16px;
     text-decoration: none !important;

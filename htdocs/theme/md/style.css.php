@@ -1236,6 +1236,8 @@ div.backgroundsemitransparent {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+
 div.login_block {
 	/* position: initial !important;*/
 	display: none;
@@ -1250,6 +1252,12 @@ div.login_block {
 	color: #333 !important;
 	font-weight: normal !important;
 }
+.divpasswordmessagedesc {
+	text-align: justify;
+}
+
+
+
 #id-right {
 	padding-left: 0 ! important;
 }
