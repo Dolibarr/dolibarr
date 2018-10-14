@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +90,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->add($dn,$info,$user);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'USER_MODIFY')
@@ -128,7 +129,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->update($dn,$info,$user,$olddn,$newrdn,$newparent);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'USER_NEW_PASSWORD')
@@ -165,13 +166,13 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
-		elseif ($action == 'USER_ENABLEDISABLE')
-		{
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		}
+		// elseif ($action == 'USER_ENABLEDISABLE')
+		// {
+		// 	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		// }
 		elseif ($action == 'USER_DELETE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -188,7 +189,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->delete($dn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'USER_SETINGROUP')
@@ -226,7 +227,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'USER_REMOVEFROMGROUP')
@@ -264,7 +265,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 
@@ -290,7 +291,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->add($dn,$info,$user);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'GROUP_MODIFY')
@@ -327,7 +328,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'GROUP_DELETE')
@@ -346,7 +347,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->delete($dn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 
@@ -367,7 +368,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->add($dn,$info,$user);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'CONTACT_MODIFY')
@@ -404,7 +405,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'CONTACT_DELETE')
@@ -423,7 +424,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->delete($dn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 
@@ -444,87 +445,78 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->add($dn,$info,$user);
 
 					// For member type
-					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
+					if (! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1' && $object->typeid > 0)
 					{
-						$membertype=new AdherentType($this->db);
-						if ($object->typeid > 0)
+                        $membertype=new AdherentType($this->db);
+						$membertype->fetch($object->typeid);
+						$membertype->listMembersForMemberType('', 1);
+
+						$oldinfo=$membertype->_load_ldap_info();
+						$olddn=$membertype->_load_ldap_dn($oldinfo);
+
+						// Verify if entry exist
+						$container=$membertype->_load_ldap_dn($oldinfo,1);
+						$search = "(".$membertype->_load_ldap_dn($oldinfo,2).")";
+						$records=$ldap->search($container,$search);
+						if (count($records) && $records['count'] == 0)
 						{
-							$membertype->fetch($object->typeid);
-							$membertype->listMembersForMemberType('', 1);
-
-							$oldinfo=$membertype->_load_ldap_info();
-							$olddn=$membertype->_load_ldap_dn($oldinfo);
-
-							// Verify if entry exist
-							$container=$membertype->_load_ldap_dn($oldinfo,1);
-							$search = "(".$membertype->_load_ldap_dn($oldinfo,2).")";
-							$records=$ldap->search($container,$search);
-							if (count($records) && $records['count'] == 0)
-							{
-								$olddn = '';
-							}
-
-							$info=$membertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
-							$dn=$membertype->_load_ldap_dn($info);
-
-							$result=$ldap->update($dn,$info,$user,$olddn);
+							$olddn = '';
 						}
+
+						$info=$membertype->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+						$dn=$membertype->_load_ldap_dn($info);
+
+						$result=$ldap->update($dn,$info,$user,$olddn);
 					}
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_VALIDATE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
+			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1' && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
 			{
 				// If status field is setup to be synchronized
-				if (! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
+                $ldap=new Ldap();
+				$result=$ldap->connect_bind();
+
+				if ($result > 0)
 				{
-					$ldap=new Ldap();
-					$result=$ldap->connect_bind();
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					$olddn=$dn;	// We know olddn=dn as we change only status
 
-					if ($result > 0)
-					{
-						$info=$object->_load_ldap_info();
-						$dn=$object->_load_ldap_dn($info);
-						$olddn=$dn;	// We know olddn=dn as we change only status
-
-						$result=$ldap->update($dn,$info,$user,$olddn);
-					}
-
-					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
+
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_SUBSCRIPTION')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
-			{
+			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1' &&
 				// If subscriptions fields are setup to be synchronized
-				if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE
-					|| $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT
-					|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE
-					|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
-					|| $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)
+				($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE
+				|| $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT
+				|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE
+				|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
+				|| $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)) {
+				$ldap=new Ldap();
+				$result=$ldap->connect_bind();
+
+				if ($result > 0)
 				{
-					$ldap=new Ldap();
-					$result=$ldap->connect_bind();
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					$olddn=$dn;	// We know olddn=dn as we change only subscriptions
 
-					if ($result > 0)
-					{
-						$info=$object->_load_ldap_info();
-						$dn=$object->_load_ldap_dn($info);
-						$olddn=$dn;	// We know olddn=dn as we change only subscriptions
-
-						$result=$ldap->update($dn,$info,$user,$olddn);
-					}
-
-					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
+
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_MODIFY')
@@ -618,55 +610,48 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_NEW_PASSWORD')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
-			{
+			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1' && ($conf->global->LDAP_FIELD_PASSWORD || $conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
 				// If password field is setup to be synchronized
-				if ($conf->global->LDAP_FIELD_PASSWORD || $conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
+                $ldap=new Ldap();
+				$result=$ldap->connect_bind();
+
+				if ($result > 0)
 				{
-					$ldap=new Ldap();
-					$result=$ldap->connect_bind();
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					$olddn=$dn;	// We know olddn=dn as we change only password
 
-					if ($result > 0)
-					{
-						$info=$object->_load_ldap_info();
-						$dn=$object->_load_ldap_dn($info);
-						$olddn=$dn;	// We know olddn=dn as we change only password
-
-						$result=$ldap->update($dn,$info,$user,$olddn);
-					}
-
-					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
+
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_RESILIATE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
+			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1' && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
 			{
 				// If status field is setup to be synchronized
-				if (! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
+                $ldap=new Ldap();
+				$result=$ldap->connect_bind();
+
+				if ($result > 0)
 				{
-					$ldap=new Ldap();
-					$result=$ldap->connect_bind();
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					$olddn=$dn;	// We know olddn=dn as we change only status
 
-					if ($result > 0)
-					{
-						$info=$object->_load_ldap_info();
-						$dn=$object->_load_ldap_dn($info);
-						$olddn=$dn;	// We know olddn=dn as we change only status
-
-						$result=$ldap->update($dn,$info,$user,$olddn);
-					}
-
-					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
+
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_DELETE')
@@ -716,7 +701,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 
@@ -742,7 +727,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->add($dn,$info,$user);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_TYPE_MODIFY')
@@ -783,7 +768,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->update($dn,$info,$user,$olddn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_TYPE_DELETE')
@@ -802,7 +787,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$result=$ldap->delete($dn);
 				}
 
-				if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
+				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 
