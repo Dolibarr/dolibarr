@@ -429,7 +429,8 @@ class ActionsDatapolicies
                 $jsscript .= "var forme_juridique = [" . PHP_EOL;
                 $jsscript .= "11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005" . PHP_EOL;
                 $jsscript .= "];" . PHP_EOL;
-                $jsscript .= "function hideRgPD() { if ($('#typent_id').val() == 8 || forme_juridique.indexOf(parseInt($('#forme_juridique_code').val())) > -1) { console.log(elementToHide); $('tr.societe_extras_datapolicies_consentement, tr.societe_extras_datapolicies_opposition_traitement, tr.societe_extras_datapolicies_opposition_prospection').show(); } else { $('tr.societe_extras_datapolicies_consentement, tr.societe_extras_datapolicies_opposition_traitement, tr.societe_extras_datapolicies_opposition_prospection').hide(); }}" . PHP_EOL;
+                $jsscript .= "function hideRgPD() {" . PHP_EOL;
+                $jsscript .= " if ($('#typent_id').val() == 8 || forme_juridique.indexOf(parseInt($('#forme_juridique_code').val())) > -1) { console.log(elementToHide); $('tr.societe_extras_datapolicies_consentement, tr.societe_extras_datapolicies_opposition_traitement, tr.societe_extras_datapolicies_opposition_prospection').show(); } else { $('tr.societe_extras_datapolicies_consentement, tr.societe_extras_datapolicies_opposition_traitement, tr.societe_extras_datapolicies_opposition_prospection').hide(); }}" . PHP_EOL;
                 $jsscript .= "hideRgPD();" . PHP_EOL;
                 $jsscript .= "$('#forme_juridique_code, #typent_id').change(function(){ hideRgPD(); });" . PHP_EOL;
                 $jsscript .= '</script>';
