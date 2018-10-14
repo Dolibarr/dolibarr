@@ -4085,7 +4085,7 @@ class Product extends CommonObject
     function load_virtual_stock()
     {
         // phpcs:enable
-        global $conf;
+        global $conf, $hookmanager, $action;
 
         $stock_commande_client=0;
         $stock_commande_fournisseur=0;
@@ -4135,6 +4135,17 @@ class Product extends CommonObject
         if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
+
+	if (! is_object($hookmanager)) {
+	    include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	    $hookmanager=new HookManager($this->db);
+	}
+	$hookmanager->initHooks(array('productdao'));
+	$parameters=array('id'=>$this->id);
+	// Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
+	if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
+
     }
 
 
