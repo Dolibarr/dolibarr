@@ -4085,7 +4085,7 @@ class Product extends CommonObject
     function load_virtual_stock()
     {
         // phpcs:enable
-        global $conf, $action;
+        global $conf, $hookmanager, $action;
 
         $stock_commande_client=0;
         $stock_commande_fournisseur=0;
