@@ -19,6 +19,7 @@
 /**
  *	\file			htdocs/core/website.inc.php
  *  \brief			Common file loaded by all website pages (after master.inc.php). It set the new object $weblangs, using parameter 'l'.
+ *  				This file is included in top of all container pages.
  *  			    The global variable $websitekey must be defined.
  */
 
@@ -34,6 +35,36 @@ if (! is_object($weblangs))
 {
 	$weblangs = dol_clone($langs);
 }
+
+// A lang was forced, so we change weblangs init
 if (GETPOST('l','aZ09')) $weblangs->setDefaultLang(GETPOST('l','aZ09'));
+// A lang was forced, so we check to find if we must make a redirect on translation page
+if (! defined('USEDOLIBARREDITOR'))
+{
+	if (GETPOST('l','aZ09'))
+	{
+		$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
+		$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
+		$sql.=" WHERE w.rowid = wp.fk_website AND w.ref = '".$db->escape($websitekey)."' AND fk_page = '".$db->escape($pageid)."' AND lang = '".$db->escape(GETPOST('l','aZ09'))."'";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				//$pageid = $obj->rowid;
+				//$pageref = $obj->pageurl;
+				if (! defined('USEDOLIBARRSERVER')) {
+					// TODO Redirect
+				}
+				else
+				{
+					// TODO Redirect
+				}
+			}
+		}
+	}
+}
+
 // Load websitepage class
 include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';

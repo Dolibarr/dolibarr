@@ -1926,10 +1926,11 @@ if (count($object->records) > 0)	// There is at least one web site
 					// Create an array for form
 					$preselectedlanguage = GETPOST('newlang', 'az09') ? GETPOST('newlang', 'az09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$formquestion = array(
-						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> 'copy_of_'.$objectpage->pageurl),
+						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
 						array('type' => 'other','name' => 'newlang', 'label' => $langs->trans("Language"), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, 1, 0, 0, 'minwidth200', 0, 1)),
 						array('type' => 'other','name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
+						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> 'copy_of_'.$objectpage->pageurl),
 					);
 
 				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?website='.$object->ref.'&pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
@@ -2517,6 +2518,53 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td><td>';
 	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
 	print '</td></tr>';
+
+	if ($action != 'createcontainer')
+	{
+		// Translation of
+		if ($objectpage->fk_page > 0)
+		{
+			print '<tr><td>';
+			print $langs->trans('ThisPageIsTranslationOf');
+			print '</td><td>';
+			$sourcepage=new WebsitePage($db);
+			$result = $sourcepage->fetch($objectpage->fk_page);
+			if ($result == 0)	// not found, we can reset value
+			{
+
+			}
+			elseif ($result > 0)
+			{
+				print $sourcepage->getNomUrl(1);
+			}
+			print '</td></tr>';
+		}
+
+		// Has translation pages
+		$sql='SELECT rowid, lang from '.MAIN_DB_PREFIX.'website_page where fk_page = '.$objectpage->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $db->num_rows($resql);
+			if ($num_rows > 0)
+			{
+				print '<tr><td>';
+				print $langs->trans('ThisPageHasTranslationPages');
+				print '</td><td>';
+				$i=0;
+				while ($obj = $db->fetch_object($resql))
+				{
+					$tmppage=new WebsitePage($db);
+					$tmppage->fetch($obj->rowid);
+					if ($i > 0) print ' - ';
+					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+					$i++;
+				}
+				print '</td></tr>';
+			}
+		}
+		else dol_print_error($db);
+	}
 
 	print '<tr><td class="titlefieldcreate">';
 	$htmlhelp=$langs->trans("WEBSITE_ALIASALTDesc");
