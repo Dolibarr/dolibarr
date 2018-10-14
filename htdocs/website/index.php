@@ -1943,6 +1943,7 @@ if (count($object->records) > 0)	// There is at least one web site
 
 				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
 
+				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
 				print '<div class="inline-block">';
 				print $langs->trans("EditInLine");
@@ -1966,12 +1967,12 @@ if (count($object->records) > 0)	// There is at least one web site
 				print '</div>';
 				print '<div class="inline-block">';
 				print $langs->trans("ShowSubcontainers");
-				if ($websitepage->grabbed_from)
+				/*if ($websitepage->grabbed_from)
 				{
 					print '<a class="button nobordertransp opacitymedium nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
 				}
 				else
-				{
+				{*/
 					if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 					{
 						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOff"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
@@ -1980,7 +1981,7 @@ if (count($object->records) > 0)	// There is at least one web site
 					{
 						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOn"),'switch_on','',false,0,0,'','nomarginleft').'</a>';
 					}
-				}
+				/*}*/
 				print '</div>';
 				print '</div>';
 
