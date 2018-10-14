@@ -337,6 +337,7 @@ if ($resql)
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
 		$product_static->entity=$objp->entity;
+		$product_static->status_batch=$objp->tobatch;
 
 		$product_lot_static->batch=$objp->batch;
 		$product_lot_static->product_id=$objp->rowid;
