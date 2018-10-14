@@ -50,11 +50,19 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 		}
 		if ($pageid > 0)
 		{
+			// Load tmppage if we have $websitepagefile defined
+			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+			$tmppage=new WebsitePage($db);
+			$tmppage->fetch($pageid);
+
 			$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
-			$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
-			$sql.=" WHERE w.rowid = wp.fk_website AND w.ref = '".$db->escape($websitekey)."' AND wp.lang = '".$db->escape(GETPOST('l','aZ09'))."'";
-			$sql.=" AND wp.fk_page = ".$db->escape($pageid);
-			//var_dump($sql);exit;
+			$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp";
+			$sql.=" WHERE wp.fk_website = ".$website->id;
+			$sql.=" AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
+			if ($tmppage->fk_page > 0) $sql.=" OR wp.fk_page = ".$tmppage->fk_page." OR wp.rowid = ".$tmppage->fk_page;
+			$sql.=")";
+			$sql.= " AND wp.lang = '".$db->escape(GETPOST('l','aZ09'))."'";
+
 			$resql = $db->query($sql);
 			if ($resql)
 			{
