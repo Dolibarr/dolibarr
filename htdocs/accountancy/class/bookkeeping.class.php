@@ -991,7 +991,7 @@ class BookKeeping extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
-			while ($obj = $this->db->fetch_object($resql) && $i < $num)
+			while (($obj = $this->db->fetch_object($resql)) && ($i < min($limit, $num)))
 			{
 				$line = new BookKeepingLine();
 
