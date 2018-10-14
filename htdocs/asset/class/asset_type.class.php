@@ -29,21 +29,44 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class AssetType extends CommonObject
 {
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = 'asset_type';
-	public $element = 'asset_type';
-	public $picto = 'group';
-	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	/** @var string Label */
-	public $label;
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'asset_type';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'group';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
+     * @var string Asset type label
+     */
+    public $label;
+
 	/** @var string Accountancy code asset */
 	public $accountancy_code_asset;
+
 	/** @var string Accountancy code depreciation asset */
 	public $accountancy_code_depreciation_asset;
+
 	/** @var string Accountancy code depreciation expense */
 	public $accountancy_code_depreciation_expense;
+
 	/** @var string 	Public note */
 	public $note;
+
 	/** @var array Array of asset */
 	public $asset=array();
 
@@ -73,14 +96,23 @@ class AssetType extends CommonObject
 		$error=0;
 
 		$this->label=trim($this->label);
+		$this->accountancy_code_asset = trim($this->accountancy_code_asset);
+		$this->accountancy_code_depreciation_asset = trim($this->accountancy_code_depreciation_asset);
+		$this->accountancy_code_depreciation_expense = trim($this->accountancy_code_depreciation_expense);
 
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."asset_type (";
 		$sql.= "label";
+		$sql.= ", accountancy_code_asset";
+		$sql.= ", accountancy_code_depreciation_asset";
+		$sql.= ", accountancy_code_depreciation_expense";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->escape($this->label)."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code_asset)."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -265,6 +297,7 @@ class AssetType extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of asset's type
 	 *
@@ -272,6 +305,7 @@ class AssetType extends CommonObject
 	 */
 	function liste_array()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$assettypes = array();
@@ -411,4 +445,13 @@ class AssetType extends CommonObject
 		);
 	}
 
+	/**
+	 *     getLibStatut
+	 *
+	 *     @return string     Return status of a type of asset
+	 */
+	function getLibStatut()
+	{
+		return '';
+	}
 }

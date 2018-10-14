@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
 
 $action=GETPOST('action','alpha');
@@ -69,7 +70,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_all=GETPOST('search_all', 'alphanohtml');
+$search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
@@ -296,7 +297,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = c
 // We'll need this table joined to the select in order to filter by categ
 if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
 // We'll need this table joined to the select in order to filter by sale
-// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+// No check is done on company permission because readability is managed by public status of project and assignement.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_sale > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_project_user > 0)
@@ -306,7 +307,7 @@ if ($search_project_user > 0)
 $sql.= " WHERE p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
-if ($socid > 0) $sql.= " AND (p.fk_soc = ".$socid.")";
+if ($socid > 0) $sql.= " AND (p.fk_soc = ".$socid.")";	// This filter if when we use a hard coded filter on company on url (not related to filter for external users)
 if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
@@ -351,11 +352,14 @@ if ($search_opp_status)
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
 	if ($search_opp_status == 'all') $sql .= " AND p.fk_opp_status IS NOT NULL";
 	if ($search_opp_status == 'openedopp') $sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST'))";
+	if ($search_opp_status == 'notopenedopp') $sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON')))";
 	if ($search_opp_status == 'none') $sql .= " AND p.fk_opp_status IS NULL";
 }
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
-if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+//if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
+if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
+// No check is done on company permission because readability is managed by public status of project and assignement.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 if ($search_opp_amount != '') $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -421,7 +425,7 @@ if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
 if ($search_label != '') 		$param.='&search_label='.$search_label;
 if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
 if ($search_status >= 0) 		$param.='&search_status='.$search_status;
-if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all','openedopp','none'))) 	    $param.='&search_opp_status='.urlencode($search_opp_status);
+if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all','openedopp','notopenedopp','none'))) 	    $param.='&search_opp_status='.urlencode($search_opp_status);
 if ($search_opp_percent != '') 	$param.='&search_opp_percent='.urlencode($search_opp_percent);
 if ($search_public != '') 		$param.='&search_public='.$search_public;
 if ($search_project_user != '')   $param.='&search_project_user='.$search_project_user;
@@ -447,7 +451,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject');
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewProject').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -484,7 +488,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';
@@ -535,18 +539,21 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 print '<tr class="liste_titre_filter">';
+// Project ref
 if (! empty($arrayfields['p.ref']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="6">';
 	print '</td>';
 }
+// Project label
 if (! empty($arrayfields['p.title']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_label" size="8" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 }
+// Third party
 if (! empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -589,6 +596,7 @@ if (! empty($arrayfields['p.public']['checked']))
 	print $form->selectarray('search_public',$array,$search_public);
 	print '</td>';
 }
+// Opp status
 if (! empty($arrayfields['p.fk_opp_status']['checked']))
 {
 	print '<td class="liste_titre nowrap center">';
@@ -916,7 +924,6 @@ print "</table>\n";
 print '</div>';
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

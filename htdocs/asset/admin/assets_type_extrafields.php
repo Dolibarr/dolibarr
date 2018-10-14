@@ -17,17 +17,16 @@
  */
 
 /**
-/**
  * \file        htdocs/asset/admin/assets_type_extrafields.php
  * \ingroup     asset
  * \brief       Page to setup extra fields type of assets
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("assets");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('assets', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -64,7 +63,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 
-$head = AssetsAdminPrepareHead();
+$head = asset_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes_type', $langs->trans("Assets"), -1, 'generic');
 
@@ -108,6 +107,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 if (GETPOST('actioncode','array'))
@@ -202,7 +203,6 @@ if ($id > 0 || $ref)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

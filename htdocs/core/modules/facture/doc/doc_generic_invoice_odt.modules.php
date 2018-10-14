@@ -38,10 +38,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_invoice_odt extends ModelePDFFactures
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Company object that emits
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+   * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+   */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -51,10 +64,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+        $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT/ODS templates";
@@ -96,10 +109,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 */
 	function info($langs)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
 
 		$form = new Form($this->db);
 
@@ -176,6 +189,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -189,6 +203,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -210,10 +225,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->facture->dir_output)
 		{
@@ -286,6 +299,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
@@ -372,7 +386,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_other=$this->get_substitutionarray_other($outputlangs);
 				// retrieve contact information for use in invoice as contact_xxx tags
 				$array_thirdparty_contact = array();
-				if ($usecontact) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
@@ -501,6 +515,4 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 		return -1;
 	}
-
 }
-

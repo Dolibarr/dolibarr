@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-// Langs
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","main","accountancy"));
 
 // Security check
@@ -66,38 +66,53 @@ $year_current = $year_start;
 $action = GETPOST('action','aZ09');
 
 
-
 /*
  * Actions
  */
+
+if ($action == 'clean' || $action == 'validatehistory')
+{
+	// Clean database
+	$db->begin();
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sql1 .= " SET fk_code_ventilation = 0";
+	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN';
+	$sql1 .= '	(SELECT accnt.rowid ';
+	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ' AND accnt.entity = '.$conf->entity.')';
+	$sql1 .= ' AND fd.fk_facture IN (SELECT rowid FROM ' . MAIN_DB_PREFIX . 'facture WHERE entity = '.$conf->entity.')';
+	$sql1 .= ' AND fk_code_ventilation <> 0';
+
+	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		$db->rollback();
+		setEventMessages($db->lasterror(), null, 'errors');
+	} else {
+		$db->commit();
+	}
+	// End clean database
+}
 
 if ($action == 'validatehistory') {
 
 	$error = 0;
 	$db->begin();
 
-	// First clean corrupted data
-	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sqlclean .= " SET fk_code_ventilation = 0";
-	$sqlclean .= ' WHERE fd.fk_code_ventilation NOT IN ';
-	$sqlclean .= '	(SELECT accnt.rowid ';
-	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-	$sqlclean .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-	$sqlclean .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-	$resql = $db->query($sqlclean);
-
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facturedet.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
+		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "facturedet.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND " . MAIN_DB_PREFIX . "facturedet.fk_code_ventilation = 0";
 	} else {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd, " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
+		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	}
@@ -128,26 +143,6 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
-// Clean database
-$db->begin();
-$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-$sql1 .= " SET fk_code_ventilation = 0";
-$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
-$sql1 .= '	(SELECT accnt.rowid ';
-$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
-$resql1 = $db->query($sql1);
-if (! $resql1) {
-	$error ++;
-	$db->rollback();
-	setEventMessage($db->lasterror(), 'errors');
-} else {
-	$db->commit();
-}
-// End clean database
-
 print $langs->trans("DescVentilCustomer") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
@@ -158,7 +153,7 @@ $y = $year_current;
 $buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
 
 print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
-//print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
+//print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
@@ -234,7 +229,7 @@ print '<br>';
 
 
 print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
-//print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
+//print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
@@ -314,7 +309,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	print '<br>';
 
 	print_barre_liste($langs->trans("OtherInfo"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
-	//print_fiche_titre($langs->trans("OtherInfo"), '', '');
+	//print load_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
@@ -420,6 +415,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

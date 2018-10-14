@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("website");
+// Load translation files required by the page
+$langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -324,10 +322,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     if ($website->id > 0)
     {
-	    $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
-	    $result = $db->query($sql);
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
 
-	    $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
 	    $result = $db->query($sql);
 	    if (! $result)
 	    {
@@ -642,9 +646,7 @@ if ($id)
 
 dol_fiche_end();
 
-//print '<br>';
-
-
+// End of page
 llxFooter();
 $db->close();
 

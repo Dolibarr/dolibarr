@@ -23,12 +23,13 @@
  *	\brief      Prelevement statistics
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 
 // Security check
@@ -192,5 +193,6 @@ if ($prev_id > 0 || $ref)
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

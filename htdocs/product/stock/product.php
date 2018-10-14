@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2015 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,11 +45,8 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("products");
-$langs->load("orders");
-$langs->load("bills");
-$langs->load("stocks");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadlangs(array('products', 'orders', 'bills', 'stocks', 'sendings'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $backtopage=GETPOST('backtopage','alpha');
@@ -85,6 +83,9 @@ if ($id > 0 || ! empty($ref))
     $result = $object->fetch($id, $ref);
 
 }
+
+if(empty($id) && !empty($object->id)) $id = $object->id;
+
 $modulepart='product';
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -130,27 +131,27 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 	if($maj_ok) {
 
 		$pse = new ProductStockEntrepot($db);
-		if($pse->fetch('', GETPOST('id'), GETPOST('fk_entrepot')) > 0) {
+		if($pse->fetch('', $id, GETPOST('fk_entrepot')) > 0) {
 
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
 			$pse->desiredstock  	 = $desiredstock;
-			if($pse->update($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseUpdated'));
+			if($pse->update($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseUpdated'), null, 'mesgs');
 
 		} else {
 
 			// Create
 			$pse->fk_entrepot 		 = GETPOST('fk_entrepot');
-			$pse->fk_product  	 	 = GETPOST('id');
+			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
-			if($pse->create($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseCreated'));
+			if($pse->create($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseCreated'), null, 'mesgs');
 
 		}
 
 	}
 
-	header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id'));
+	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 	exit;
 
 }
@@ -160,7 +161,7 @@ if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->c
 
 	$pse = new ProductStockEntrepot($db);
 	$pse->fetch(GETPOST('fk_productstockwarehouse'));
-	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
+	if($pse->delete($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseDeleted'), null, 'mesgs');
 
 	$action = '';
 
@@ -176,7 +177,7 @@ if ($action == 'setseuil_stock_alerte' && !empty($user->rights->produit->creer))
     if ($result < 0)
     	setEventMessages($object->error, $object->errors, 'errors');
     //else
-    //	setEventMessage($lans->trans("SavedRecordSuccessfully"));
+    //	setEventMessages($lans->trans("SavedRecordSuccessfully"), null, 'mesgs');
     $action='';
 }
 
@@ -884,10 +885,10 @@ if ($resql)
 			        print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
 			        print '<td align="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 			        print '<td align="center" width="10%">';
-			        $form->select_date($pdluo->eatby,'eatby','','',1,'',1,0,1);
+			        print $form->selectDate($pdluo->eatby,'eatby','','',1,'',1,0);
 			        print '</td>';
 			        print '<td align="center" width="10%">';
-			        $form->select_date($pdluo->sellby,'sellby','','',1,'',1,0,1);
+			        print $form->selectDate($pdluo->sellby,'sellby','','',1,'',1,0);
 			        print '</td>';
 			        print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
 			        print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
@@ -951,7 +952,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 	if (!empty($user->rights->produit->creer)){
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
-		print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
 	print '<table class="noborder" width="100%">';
 	if (!empty($user->rights->produit->creer)){
@@ -968,7 +969,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 	}
 
 	$pse = new ProductStockEntrepot($db);
-	$lines = $pse->fetchAll(GETPOST('id'));
+	$lines = $pse->fetchAll($id);
 
 	if (!empty($lines))
 	{
@@ -981,7 +982,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 			print '<td align="right">'.$line['seuil_stock_alerte'].'</td>';
 			print '<td align="right">'.$line['desiredstock'].'</td>';
 			if (!empty($user->rights->produit->creer)){
-				print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
+			    print '<td align="right"><a href="?id='.$id.'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
 			}
 			print '</tr>';
 		}
@@ -989,11 +990,11 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 
 	print "</table>";
 
-	if (!empty($user->rights->produit->creer)){ 
-	    print '</form>'; 
+	if (!empty($user->rights->produit->creer)){
+	    print '</form>';
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

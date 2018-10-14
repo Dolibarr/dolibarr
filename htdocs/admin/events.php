@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 if (!$user->admin)
 accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("users","admin","other"));
 
 $action=GETPOST('action','aZ09');
@@ -94,7 +94,7 @@ print "</tr>\n";
 foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
-	{		
+	{
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
@@ -114,6 +114,6 @@ print "</div>";
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
 $db->close();

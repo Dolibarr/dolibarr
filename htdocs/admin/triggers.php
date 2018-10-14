@@ -23,6 +23,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
@@ -83,6 +84,6 @@ foreach ($triggers as $trigger)
 print '</table>';
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

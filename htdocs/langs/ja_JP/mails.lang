@@ -11,7 +11,9 @@ MailFrom=送信者
 MailErrorsTo=エラーへ
 MailReply=に返信
 MailTo=受信者（単数または複数）
+MailToUsers=To user(s)
 MailCC=にコピー
+MailToCCUsers=Copy to users(s)
 MailCCC=にキャッシュされたコピー
 MailTopic=メールしてくださいトピック
 MailText=メッセージ
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Information
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

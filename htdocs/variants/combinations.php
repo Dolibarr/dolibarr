@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2016	Marcos García	      <marcosgdf@gmail.com>
- * Copyright (C) 2017	Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2016   Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017   Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018   Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,8 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
-$langs->load("products");
-$langs->load("other");
+$langs->loadLangs(array("products", "other"));
 
-$var = false;
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'int');
 $ref = GETPOST('ref');
@@ -104,7 +103,7 @@ if ($_POST) {
         $features = $_SESSION['addvariant_'.$object->id];
 
 		if (!$features) {
-			setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 		}
 		else
 		{
@@ -147,7 +146,7 @@ if ($_POST) {
 				$result = $prodcomb->createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
 				if ($result > 0)
 				{
-					setEventMessage($langs->trans('RecordSaved'));
+					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 					unset($_SESSION['addvariant_'.$object->id]);
 
 					$db->commit();
@@ -214,7 +213,7 @@ if ($_POST) {
 
 		} else {
 			$db->commit();
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		}
 
 	}
@@ -230,7 +229,7 @@ if ($_POST) {
 		$prodcomb->variation_weight = $weight_impact;
 
 		if ($prodcomb->update($user) > 0) {
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 			exit();
 		} else {
@@ -250,13 +249,13 @@ if ($action === 'confirm_deletecombination') {
 
 		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
 			$db->commit();
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
 			exit();
 		}
 
 		$db->rollback();
-		setEventMessage($langs->trans('ProductCombinationAlreadyUsed'), 'errors');
+		setEventMessages($langs->trans('ProductCombinationAlreadyUsed'), null, 'errors');
 		$action = '';
 	}
 } elseif ($action === 'edit') {
@@ -284,12 +283,12 @@ if ($action === 'confirm_deletecombination') {
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$prodstatic->id, 2));
 				exit();
 			} else {
-				setEventMessage($langs->trans('ErrorCopyProductCombinations'), 'errors');
+				setEventMessages($langs->trans('ErrorCopyProductCombinations'), null, 'errors');
 			}
 		}
 
 	} else {
-		setEventMessage($langs->trans('ErrorDestinationProductNotFound'), 'errors');
+		setEventMessages($langs->trans('ErrorDestinationProductNotFound'), null, 'errors');
 	}
 
 }
@@ -449,7 +448,7 @@ if (! empty($id) || ! empty($ref))
                 if($valueid > 0) {
                     print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
                 }
-                    
+
 		print dol_fiche_head();
 
 		?>
@@ -773,7 +772,6 @@ if (! empty($id) || ! empty($ref))
 	// not found
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

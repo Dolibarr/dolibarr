@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +41,7 @@ if (! empty($conf->stock->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/st
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm'));
 
 $id=GETPOST('id','int');			// id of order
@@ -257,12 +260,11 @@ if ($id > 0 || ! empty($ref))
 
 		}
 
-		if (! $formconfirm) {
-		    $parameters = array();
-		    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-		    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-		}
+		// Call Hook formConfirm
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 		// Print form confirm
 		print $formconfirm;
@@ -370,7 +372,7 @@ if ($id > 0 || ! empty($ref))
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
-			$form->select_date($object->date_livraison>0?$object->date_livraison:-1,'liv_','','','',"setdatedelivery");
+			print $form->selectDate($object->date_livraison>0?$object->date_livraison:-1, 'liv_', '', '', '', "setdatedelivery");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -641,7 +643,6 @@ if ($id > 0 || ! empty($ref))
 			}
 			print "</tr>\n";
 
-			$var=true;
 			$toBeShipped=array();
 			$toBeShippedTotal=0;
 			while ($i < $num)
@@ -921,12 +922,11 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		/* Commande non trouvee */
-		print "Commande inexistante";
+		/* Order not found */
+		setEventMessages($langs->trans("NonExistentOrder"), null, 'errors');
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

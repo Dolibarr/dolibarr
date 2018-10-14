@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -377,7 +378,7 @@ if (! $error && $massaction == 'confirm_presend')
 					//var_dump($filepath);
 
 					// Send mail (substitutionarray must be done just before this)
-					require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 					$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 					if ($mailfile->error)
 					{
@@ -423,25 +424,25 @@ if (! $error && $massaction == 'confirm_presend')
 								if ($triggername == 'SOCIETE_SENTBYMAIL')    $triggername = 'COMPANY_SENTBYEMAIL';
 								if ($triggername == 'CONTRAT_SENTBYMAIL')    $triggername = 'CONTRACT_SENTBYEMAIL';
 								if ($triggername == 'COMMANDE_SENTBYMAIL')   $triggername = 'ORDER_SENTBYEMAIL';
-								if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYEMAIL';
+								if ($triggername == 'FACTURE_SENTBYMAIL')    $triggername = 'BILL_SENTBYMAIL';
 								if ($triggername == 'EXPEDITION_SENTBYMAIL') $triggername = 'SHIPPING_SENTBYEMAIL';
 								if ($triggername == 'COMMANDEFOURNISSEUR_SENTBYMAIL') $triggername = 'ORDER_SUPPLIER_SENTBYMAIL';
 								if ($triggername == 'FACTUREFOURNISSEUR_SENTBYMAIL') $triggername = 'BILL_SUPPLIER_SENTBYEMAIL';
 								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') $triggername = 'PROPOSAL_SUPPLIER_SENTBYEMAIL';
 
-								if (! empty($trigger_name))
+								if (! empty($triggername))
 								{
 									// Appel des triggers
-									include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+									include_once DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php";
 									$interface=new Interfaces($db);
-									$result=$interface->run_triggers($trigger_name, $objectobj, $user, $langs, $conf);
+									$result=$interface->run_triggers($triggername, $objectobj, $user, $langs, $conf);
 									if ($result < 0) { $error++; $errors=$interface->errors; }
 									// Fin appel triggers
 
 									if ($error)
 									{
 										setEventMessages($db->lasterror(), $errors, 'errors');
-										dol_syslog("Error in trigger ".$trigger_name.' '.$db->lasterror(), LOG_ERR);
+										dol_syslog("Error in trigger ".$triggername.' '.$db->lasterror(), LOG_ERR);
 									}
 								}
 
@@ -610,6 +611,13 @@ if ($massaction == 'confirm_createbills')
 						{
 							$fk_parent_line = 0;
 						}
+
+						// Extrafields
+						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+							$lines[$i]->fetch_optionals($lines[$i]->rowid);
+							$array_options = $lines[$i]->array_options;
+						}
+
 						$result = $objecttmp->addline(
 							$desc,
 							$lines[$i]->subprice,
@@ -634,7 +642,8 @@ if ($massaction == 'confirm_createbills')
 							$fk_parent_line,
 							$lines[$i]->fk_fournprice,
 							$lines[$i]->pa_ht,
-							$lines[$i]->label
+							$lines[$i]->label,
+							$array_options
 							);
 						if ($result > 0)
 						{
@@ -694,7 +703,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+		setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 
 		// Make a redirect to avoid to bill twice if we make a refresh or back
 		$param='';
@@ -736,6 +745,56 @@ if ($massaction == 'confirm_createbills')
 	}
 }
 
+if (!$error && $massaction == 'cancelorders')
+{
+
+	$db->begin();
+
+	$nbok = 0;
+
+
+	$orders = GETPOST('toselect', 'array');
+	foreach ($orders as $id_order)
+	{
+
+		$cmd = new Commande($db);
+		if ($cmd->fetch($id_order) <= 0)
+			continue;
+
+		if ($cmd->statut != Commande::STATUS_VALIDATED)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidToBeCanceled", $cmd->ref), null, 'errors');
+			$error++;
+			break;
+		}
+		else
+			$result = $cmd->cancel();
+
+		if ($result < 0)
+		{
+			setEventMessages($cmd->error, $cmd->errors, 'errors');
+			$error++;
+			break;
+		}
+		else
+			$nbok++;
+	}
+	if (!$error)
+	{
+		if ($nbok > 1)
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		else
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
+}
+
+
 if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
 {
 	if (empty($diroutputmassaction))
@@ -766,7 +825,8 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	}
 
 	$arrayofinclusion=array();
-	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf).'.pdf','/').'$';
+	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf),'/').'\.pdf$';
+	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf),'/').'_[a-zA-Z0-9-_]+\.pdf$';	// To include PDF generated from ODX files
 	$listoffiles = dol_dir_list($uploaddir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
 	// build list of files with full path
@@ -1029,24 +1089,23 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 		$result=$objecttmp->fetch($toselectid);
 		if ($result > 0)
 		{
-			// Refuse deletion for some status ?
-			/*
-       		if ($objectclass == 'Facture' && $objecttmp->status == Facture::STATUS_DRAFT)
-       		{
-       			$langs->load("errors");
-       			$nbignored++;
-       			$resaction.='<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction',$objecttmp->ref).'</div><br>';
-       			continue;
-       		}*/
+			// Refuse deletion for some objects/status
+			if ($objectclass == 'Facture' && empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $objecttmp->status != Facture::STATUS_DRAFT)
+			{
+				$langs->load("errors");
+				$nbignored++;
+				$resaction.='<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction',$objecttmp->ref).'</div><br>';
+				continue;
+			}
 
-			if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
+			if (in_array($objecttmp->element, array('societe', 'member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
 			else $result = $objecttmp->delete($user);
 
 			if ($result <= 0)
 			{
-				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-				$error++;
-				break;
+			    setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			    $error++;
+			    break;
 			}
 			else $nbok++;
 		}

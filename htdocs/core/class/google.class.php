@@ -26,10 +26,17 @@
  */
 class GoogleAPI
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	var $key;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $key;
 
 	/**
 	 * Constructor

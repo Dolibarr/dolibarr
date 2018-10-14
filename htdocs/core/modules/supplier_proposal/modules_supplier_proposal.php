@@ -36,18 +36,23 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModelePDFSupplierProposal extends CommonDocGenerator
 {
-	var $error='';
-
-
 	/**
-	 *  Return list of active generation modules
-	 *
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Return list of active generation modules
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='supplier_proposal';
@@ -66,7 +71,10 @@ abstract class ModelePDFSupplierProposal extends CommonDocGenerator
  */
 abstract class ModeleNumRefSupplierProposal
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * Return if a module can be used or not

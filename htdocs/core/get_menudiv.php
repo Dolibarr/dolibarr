@@ -203,7 +203,7 @@ if (! class_exists('MenuManager'))
 	}
 }
 $menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
-$menumanager->loadMenu('all','all');
+$menumanager->loadMenu('all','all');	// Load this->tabMenu with sql menu entries
 //var_dump($menumanager);exit;
 $menumanager->showmenu('jmobile');
 

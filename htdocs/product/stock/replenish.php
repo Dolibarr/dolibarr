@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2013-2018	Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
@@ -33,15 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->societe_id) {
     $socid = $user->societe_id;
 }
 $result=restrictedArea($user,'produit|service');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
@@ -87,6 +89,9 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 $usevirtualstock=0;
 if ($mode == 'virtual') $usevirtualstock=1;
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
@@ -185,6 +190,7 @@ if ($action == 'order' && isset($_POST['valid']))
             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
             $sql.= " WHERE fk_soc = ".$suppliersid[$i];
             $sql.= " AND source = 42 AND fk_statut = 0";
+            $sql.= " AND entity IN (".getEntity('commande_fournisseur').")";
             $sql.= " ORDER BY date_creation DESC";
             $resql = $db->query($sql);
             if($resql && $db->num_rows($resql) > 0) {
@@ -294,7 +300,7 @@ $sql.= ' ,'.$sqldesiredtock.' as desiredstock, '.$sqlalertstock.' as alertstock,
 $sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
-$sql.= ' ON p.rowid = s.fk_product';
+$sql.= ' ON (p.rowid = s.fk_product AND s.fk_entrepot IN (SELECT ent.rowid FROM '.MAIN_DB_PREFIX.'entrepot AS ent WHERE ent.entity IN('.getEntity('stock').')))';
 if($fk_supplier > 0) {
 	$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid AND pfp.fk_soc = '.$fk_supplier.')';
 }
@@ -670,6 +676,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	}
 	$i++;
 }
+
+$parameters=array('sql'=>$sql);
+$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print '</table>';
 print '</div>';
 

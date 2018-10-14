@@ -33,7 +33,7 @@ PropalStatusSigned=Signée (à facturer)
 PropalStatusNotSigned=Non signée (fermée)
 PropalStatusBilled=Facturée
 PropalStatusDraftShort=Brouillon
-PropalStatusValidatedShort=Validé
+PropalStatusValidatedShort=Validée (ouverte)
 PropalStatusClosedShort=Fermée
 PropalStatusSignedShort=Signée
 PropalStatusNotSignedShort=Non signée
@@ -75,6 +75,7 @@ AvailabilityTypeAV_1M=1 mois
 TypeContact_propal_internal_SALESREPFOLL=Commercial suivi proposition
 TypeContact_propal_external_BILLING=Contact client facturation proposition
 TypeContact_propal_external_CUSTOMER=Contact client suivi proposition
+TypeContact_propal_external_SHIPPING=Contact client pour la livraison
 # Document models
 DocModelAzurDescription=Modèle de proposition commerciale complet (logo…)
 DefaultModelPropalCreate=Modèle par défaut à la création

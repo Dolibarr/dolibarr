@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
+// Load translation files required by the page
 $langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
@@ -396,6 +397,6 @@ else if ($id > 0 || $ref) {
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -331,7 +331,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 	var vLangs={'en':
 			{'format':'Format','hour':'Hour','day':'Day','week':'Week','month':'Month','quarter':'Quarter','hours':'Hours','days':'Days',
 			 'weeks':'Weeks','months':'Months','quarters':'Quarters','hr':'Hr','dy':'Day','wk':'Wk','mth':'Mth','qtr':'Qtr','hrs':'Hrs',
-			 'dys':'Days','wks':'Wks','mths':'Mths','qtrs':'Qtrs','resource':'Resource','duration':'Duration','comp':'% Comp.',
+			 'dys':'Days','wks':'Wks','mths':'Mths','qtrs':'Qtrs','resource':'Resource','duration':'Duration','comp':'%',
 			 'completion':'Completion','startdate':'Start Date','enddate':'End Date','moreinfo':'More Information','notes':'Notes',
 			 'january':'January','february':'February','march':'March','april':'April','maylong':'May','june':'June','july':'July',
 			 'august':'August','september':'September','october':'October','november':'November','december':'December','jan':'Jan',

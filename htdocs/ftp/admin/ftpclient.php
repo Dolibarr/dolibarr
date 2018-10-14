@@ -25,8 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("ftp");
+$langs->loadLangs(array("admin", "ftp"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -234,8 +233,6 @@ else
 			$idrss = $reg[0];
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 
-			$var=true;
-
 			print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="numero_entry" value="'.$idrss.'">';
@@ -311,6 +308,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -34,7 +34,7 @@ class Subscriptions extends DolibarrApi
         'fk_adherent',
         'dateh',
         'datef',
-        'amount'
+        'amount',
     );
 
     /**
@@ -85,7 +85,8 @@ class Subscriptions extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();

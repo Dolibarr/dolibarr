@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-$langs->load("agenda");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('agenda', 'admin', 'other'));
 
 $def = array();
 $actiontest=GETPOST('test','alpha');
@@ -158,7 +157,7 @@ dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
@@ -219,7 +218,6 @@ print "</div>";
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

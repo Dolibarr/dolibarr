@@ -542,7 +542,7 @@ class Translate
 	 */
 	private function getTradFromKey($key)
 	{
-		global $db;
+		global $conf, $db;
 
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
 
@@ -576,6 +576,9 @@ class Translate
         	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
         }
+
+        if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) dol_syslog(__METHOD__." missing translation for key '".$newstr."' in ".$_SERVER["PHP_SELF"], LOG_DEBUG);
+
         return $newstr;
 	}
 
@@ -753,6 +756,7 @@ class Translate
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of all available languages
 	 *
@@ -763,6 +767,7 @@ class Translate
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		// We scan directory langs to detect available languages
@@ -792,6 +797,7 @@ class Translate
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
@@ -801,6 +807,7 @@ class Translate
 	 */
 	function file_exists($filename,$searchalt=0)
 	{
+        // phpcs:enable
 		// Test si fichier dans repertoire de la langue
 		foreach($this->dir as $searchdir)
 		{
@@ -1015,6 +1022,7 @@ class Translate
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return an array with content of all loaded translation keys (found into this->tab_translate) so
 	 * we get a substitution array we can use for substitutions (for mail or ODT generation for example)
@@ -1023,6 +1031,7 @@ class Translate
 	 */
 	function get_translations_for_substitutions()
 	{
+        // phpcs:enable
 		$substitutionarray = array();
 
 		foreach($this->tab_translate as $code => $label) {

@@ -21,6 +21,7 @@ CREATE TABLE llx_website_page
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	fk_website    integer NOT NULL,
+	type_container varchar(16) NOT NULL DEFAULT 'page',
 	pageurl       varchar(255) NOT NULL,
 	aliasalt      varchar(255),
 	title         varchar(255),						
@@ -31,10 +32,10 @@ CREATE TABLE llx_website_page
 	htmlheader	  text,
 	content		  mediumtext,		-- text is not enough in size
     status        integer DEFAULT 1,
-	grabbed_from   varchar(255),
-    fk_user_create integer,
-    fk_user_modif  integer,
-    date_creation  datetime,
-	tms            timestamp,
-    import_key     varchar(14)      -- import key
+	grabbed_from  varchar(255),
+    fk_user_creat integer,
+    fk_user_modif integer,
+    date_creation datetime,
+	tms           timestamp,
+    import_key    varchar(14)      -- import key
 ) ENGINE=innodb;

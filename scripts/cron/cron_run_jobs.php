@@ -41,9 +41,9 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once ($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
-require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (! isset($argv[1]) || ! $argv[1]) {
@@ -73,7 +73,7 @@ $error=0;
 $now=dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayrfc') . " *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayhourrfc') . " *****\n";
 
 // Check module cron is activated
 if (empty($conf->cron->enabled))
@@ -143,6 +143,12 @@ $object = new Cronjob($db);
 
 $filter=array();
 if (! empty($id)) {
+	if (! is_numeric($id))
+	{
+		echo "Error: Bad value for parameter job id";
+		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
+		exit;
+	}
 	$filter['t.rowid']=$id;
 }
 
@@ -162,7 +168,7 @@ foreach($object->lines as $val)
 	$qualifiedjobs[] = $val;
 }
 
-// TODO This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
+// TODO Duplicate. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
 $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
@@ -174,11 +180,14 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 	foreach($qualifiedjobs as $line)
 	{
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
-		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label."\n";
+
+		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
+			echo " - qualified\n";
+
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 
 			$cronjob=new Cronjob($db);
@@ -218,6 +227,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		}
 		else
 		{
+			echo " - not qualified\n";
+
 			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 		}
 	}
@@ -234,6 +245,13 @@ exit(0);
 
 
 
+/**
+ * script cron usage
+ *
+ * @param string $path          path
+ * @param string $script_file   filename
+ * @return void
+ */
 function usage($path,$script_file)
 {
 	global $conf;
@@ -247,4 +265,3 @@ function usage($path,$script_file)
 	print "For example, to run pending tasks every 5mn, you can add this line:\n";
 	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 }
-

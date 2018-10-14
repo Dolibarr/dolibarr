@@ -28,17 +28,15 @@
  *       \brief      Page liste des contrats
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("contracts");
-$langs->load("products");
-$langs->load("companies");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -109,7 +107,6 @@ $fieldstosearchall = array(
 	'c.ref_customer'=>'RefCustomer',
 	'c.ref_supplier'=>'RefSupplier',
 	's.nom'=>"ThirdParty",
-	'cd.description'=>'Description',
 	'c.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
@@ -254,7 +251,7 @@ else if ($year > 0)
 	$sql.= " AND c.date_contrat BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_name) $sql .= natural_search('s.nom', $search_name);
-if ($search_email) $sql .= natural_search('s.email', $search_name);
+if ($search_email) $sql .= natural_search('s.email', $search_email);
 if ($search_contract) $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
 if (!empty($search_ref_customer)) $sql .= natural_search(array('c.ref_customer'), $search_ref_customer);
 if (!empty($search_ref_supplier)) $sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
@@ -377,7 +374,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->contrat->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create">'.$langs->trans('NewContractSubscription');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewContractSubscription').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -390,6 +387,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, $newcardbutton, '', $limit);
 
@@ -402,7 +400,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';
@@ -548,13 +546,13 @@ if (! empty($arrayfields['c.tms']['checked']))
 // First end date
 if (! empty($arrayfields['lower_planned_end_date']['checked']))
 {
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
 		print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
 		print '</br>';
-		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);
+		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0, 'valignmiddle');
 		print ' ';
-		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5);
+		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '', 'valignmiddle');
 		print '</td>';
 }
 // Status
@@ -623,7 +621,7 @@ while ($i < min($num,$limit))
 		if (!empty($obj->note_private) || !empty($obj->note_public))
 		{
 			print ' <span class="note">';
-			print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"),'note').'</a>';
 			print '</span>';
 		}
 
@@ -771,7 +769,7 @@ while ($i < min($num,$limit))
 	// Date lower end date
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td align="center" class="nowrapforall">';
 		print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

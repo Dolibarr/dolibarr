@@ -24,8 +24,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
-$langs->load("bookmarks");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('bookmarks', 'admin'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -84,7 +84,7 @@ llxHeader('', $langs->trans("ListOfBookmarks"));
 $newcardbutton='';
 if ($user->rights->bookmark->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans('NewBookmark');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewBookmark').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -209,7 +209,7 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();
 

@@ -17,14 +17,15 @@ DeliveryNotValidated=Delivery not validated
 StatusDeliveryCanceled=Canceled
 StatusDeliveryDraft=Draft
 StatusDeliveryValidated=Received
-# merou PDF model						   
-NameAndSignature=Name and Signature : 
+# merou PDF model
+NameAndSignature=Name and Signature :
 ToAndDate=To___________________________________ on ____/_____/__________
 GoodStatusDeclaration=Have received the goods above in good condition,
-Deliverer=Deliverer : 
+Deliverer=Deliverer :
 Sender=Sender
 Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Non-existent order

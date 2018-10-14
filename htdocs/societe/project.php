@@ -31,8 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("companies");
-$langs->load("projects");
+$langs->loadLangs(array("companies", "projects"));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -147,7 +146,6 @@ if ($socid)
 	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->load("mails");
 
 if (! $user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->societe_id > 0)) accessforbidden();
@@ -244,7 +245,7 @@ if (empty($reshook))
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 							}
 						}
-						/* For backward compatibility */
+						/* For backward compatibility, deprecated */
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 						{
 							$substitutionarray['__SECUREKEYPAYPAL__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
@@ -873,7 +874,7 @@ else
 				}
 			}
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright='';
 			$nbtry = $nbok = 0;
@@ -1357,5 +1358,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

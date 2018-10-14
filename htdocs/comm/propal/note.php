@@ -33,10 +33,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('propal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('propal', 'compta', 'bills', 'companies'));
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -146,6 +144,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

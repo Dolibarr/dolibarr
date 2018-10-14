@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("admin");
-$langs->load("languages");
-$langs->load("other");
-
-$langs->load("companies");
-$langs->load("products");
-$langs->load("members");
-$langs->load("projects");
-$langs->load("hrm");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
 
 if (! $user->admin) accessforbidden();
 
@@ -87,10 +80,10 @@ if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACK
 
 if ($action == 'update')
 {
-	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",				$_POST["MAIN_LANG_DEFAULT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MULTILANGS",					$_POST["MAIN_MULTILANGS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", $_POST["MAIN_LANG_DEFAULT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_THEME", $_POST["main_theme"],'chaine',0,'',$conf->entity);
 
 	$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
 	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
@@ -141,21 +134,24 @@ if ($action == 'update')
 	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
 	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT",			$_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED",	$_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_START_WEEK",					$_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",		$_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS",		$_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_SHOW_LOGO",					$_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",		$_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
+	if (GETPOST('THEME_ELDY_USE_CHECKED') == '') dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", '0', 'chaine', 0, '', $conf->entity);
+	else dolibarr_set_const($db, "THEME_ELDY_USE_CHECKED", $_POST["THEME_ELDY_USE_CHECKED"], 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK",		$_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
-	dolibarr_set_const($db, "MAIN_MOTD",						dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME",						dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
-	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", $_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", $_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", $_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_START_WEEK", $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", $_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", $_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_SHOW_LOGO", $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", $_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
+
+	dolibarr_set_const($db, "MAIN_HELPCENTER_DISABLELINK", $_POST["MAIN_HELPCENTER_DISABLELINK"],'chaine',0,'',0);	// Param for all entities
+	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", $_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
+	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
 	$varforimage='imagebackground'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
 	if ($_FILES[$varforimage]["tmp_name"])
@@ -244,7 +240,7 @@ if ($action == 'edit')	// Edit
 
 	// Default language
 	print '<tr><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300');
+	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 2);
 	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -317,8 +313,8 @@ if ($action == 'edit')	// Edit
 
 	// Firstname/Name
 	print '<tr><td class="titlefield">'.$langs->trans("FirstnameNamePosition").'</td><td>';
-	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"),1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
-	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
+	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"), 1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
+	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, (isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
 	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -421,7 +417,7 @@ if ($action == 'edit')	// Edit
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
 			print ' &nbsp; ';
-			print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
+			print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
 		}
 	} else {
 		print '<img class="paddingleft valignmiddle" width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -569,7 +565,7 @@ else	// Show
 	print $conf->global->MAIN_LOGIN_BACKGROUND;
 	if ($conf->global->MAIN_LOGIN_BACKGROUND && is_file($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND))
 	{
-		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'">';
+		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
 	}
 	else
 	{
@@ -586,6 +582,6 @@ else	// Show
 	print '</div>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

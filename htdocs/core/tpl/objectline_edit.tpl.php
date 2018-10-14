@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 if (in_array($object->element,array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 if (empty($user->rights->margins->creer)) $colspan++;
-if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
@@ -148,7 +149,7 @@ $coldisplay=-1; // We remove first td
 	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
 
-	if (!empty($conf->multicurrency->enabled)) {
+	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
@@ -258,9 +259,9 @@ if (!empty($extrafieldsline))
 	<td colspan="<?php echo 7+$colspan ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
-	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,$line->date_start?0:1,"updateligne",1,0,1);
-	echo ' '.$langs->trans('to').' ';
-	echo $form->select_date($line->date_end,'date_end',$hourmin,$hourmin,$line->date_end?0:1,"updateligne",1,0,1);
+	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start?0:1, "updateline", 1, 0);
+	print ' '.$langs->trans('to').' ';
+	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end?0:1, "updateline", 1, 0);
 	print '<script type="text/javascript">';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {

@@ -35,18 +35,22 @@ class Asset extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'asset';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'asset';
+
 	/**
 	 * @var int  Does module support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+
 	/**
 	 * @var int  Does asset support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
+
 	/**
 	 * @var string String with name of icon for asset. Must be the part after the 'object_' into object_asset.png
 	 */
@@ -78,8 +82,9 @@ class Asset extends CommonObject
 		'ref' => array('type'=>'varchar(10)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>-1, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text",),
-		'amount' => array('type'=>'double(24,8)', 'label'=>'Amount', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty",),
+		'amount_ht' => array('type'=>'double(24,8)', 'label'=>'AmountHTShort', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
+		'amount_vat' => array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
+		'fk_asset_type' => array('type'=>'integer:AssetType:asset/class/asset.class.php', 'label'=>'AssetsType', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty",),
 		'description' => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>90, 'notnull'=>-1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>91, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>-1,),
@@ -90,20 +95,59 @@ class Asset extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Active', '-1'=>'Cancel')),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
-	public $label;
+
+    /**
+     * @var string Asset label
+     */
+    public $label;
+
 	public $amount;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $note_public;
 	public $note_private;
 	public $date_creation;
 	public $tms;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
 	public $import_key;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
 
 	// If this object has a subtable with lines
@@ -214,7 +258,7 @@ class Asset extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -328,6 +372,7 @@ class Asset extends CommonObject
 		return $this->LibStatut($this->status,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -337,43 +382,38 @@ class Asset extends CommonObject
 	 */
 	static function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
 

@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("users","companies","agenda","commercial"));
 
 $action=GETPOST('action','alpha');
@@ -188,9 +190,9 @@ $form=new Form($db);
 $userstatic=new User($db);
 $formactions=new FormActions($db);
 
-$nav='';
-$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
-$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav = '';
+$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+$nav .=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 
 $now=dol_now();
 
@@ -294,8 +296,8 @@ if ($status == '0') { $sql.= " AND a.percent = 0"; }
 if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
 if ($status == '100') { $sql.= " AND a.percent = 100"; }
-if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
-if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+if ($status == 'done') { $sql.= " AND (a.percent = 100)"; }
+if ($status == 'todo') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }
 if ($search_id) $sql.=natural_search("a.id", $search_id, 1);
 if ($search_title) $sql.=natural_search("a.label", $search_title);
 // We must filter on assignement table
@@ -414,7 +416,7 @@ if ($resql)
 
         //$param='month='.$monthshown.'&year='.$year;
         $hourminsec='100000';
-        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">'.$langs->trans("AddAction");
+        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
         $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
         $newcardbutton.= '</a>';
     }
@@ -437,15 +439,17 @@ if ($resql)
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
+		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);
 		print '</td>';
 	}
 	if (! empty($arrayfields['a.datep2']['checked']))	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
+		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0);
 		print '</td>';
 	}
-	if (! empty($arrayfields['s.nom']['checked']))			print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['s.nom']['checked'])) {
+        print '<td class="liste_titre"></td>';
+    }
 	if (! empty($arrayfields['a.fk_contact']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.fk_element']['checked']))	print '<td class="liste_titre"></td>';
 
@@ -631,6 +635,7 @@ if ($resql)
 		// Linked object
 		if (! empty($arrayfields['a.fk_element']['checked'])) {
 		        print '<td>';
+		        //var_dump($obj->fkelement.' '.$obj->elementtype);
 		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
               		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		            print dolGetElementUrl($obj->fk_element,$obj->elementtype,1);
@@ -670,7 +675,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

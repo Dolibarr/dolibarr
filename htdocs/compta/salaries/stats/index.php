@@ -26,8 +26,8 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salariesstats.class.php';
 
-$langs->load("salaries");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("salaries","companies"));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
@@ -40,18 +40,6 @@ $id = GETPOST('id','int');
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
-
-// Other security check
-$childids = $user->getAllChildIds();
-$childids[]=$user->id;
-if ($userid > 0)
-{
-	if (empty($user->rights->salaries->payment->readall) && ! in_array($userid, $childids))
-	{
-		accessforbidden();
-		exit;
-	}
-}
 
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
@@ -77,11 +65,6 @@ print load_fiche_titre($title, $mesg);
 dol_mkdir($dir);
 
 $useridtofilter=$userid;	// Filter from parameters
-if (empty($useridtofilter))
-{
-	$useridtofilter=$childids;
-	if (! empty($user->rights->salaries->payment->readall)) $useridtofilter=0;
-}
 
 $stats = new SalariesStats($db, $socid, $useridtofilter);
 
@@ -288,7 +271,6 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

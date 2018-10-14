@@ -111,14 +111,14 @@ SendingAnEMailToMember=Enviar e-mail de información al miembro
 SendingEmailOnAutoSubscription=Enviar E-Mail en una auto-inscripción
 SendingEmailOnMemberValidation=Enviar E-Mail en la validación de un nuevo miembro
 SendingEmailOnNewSubscription=Enviar E-Mail en una nueva suscripción
-SendingReminderForExpiredSubscription=Enviar un recordatorio para suscripción expirada
+SendingReminderForExpiredSubscription=Sending reminder for expired subscriptions
 SendingEmailOnCancelation=Enviar E-Mail en una cancelación
 # Topic of email templates
 YourMembershipRequestWasReceived=Su membresía fue recibida.
 YourMembershipWasValidated=Su membresía ha sido validada.
 YourSubscriptionWasRecorded=Su suscripción ha sido guardada
 SubscriptionReminderEmail=Recordatorio de suscripción
-YourMembershipWasCanceled=Your membership was canceled
+YourMembershipWasCanceled=Su membresía fue cancelada.
 CardContent=Contenido de su ficha de miembro
 # Text of email templates
 ThisIsContentOfYourMembershipRequestWasReceived=Queremos informarle que se ha solicitado una nueva membresía. <br> <br>

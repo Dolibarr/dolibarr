@@ -32,44 +32,70 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Holiday extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='holiday';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='holiday';
-	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	var $fk_element = 'fk_holiday';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 0;
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_holiday';
+
 	public $picto = 'holiday';
 
 	/**
 	 * @deprecated
 	 * @see id
 	 */
-	var $rowid;
+	public $rowid;
 
-	var $fk_user;
-	var $date_create='';
-	var $description;
-	var $date_debut='';			// Date start in PHP server TZ
-	var $date_fin='';			// Date end in PHP server TZ
-	var $date_debut_gmt='';		// Date start in GMT
-	var $date_fin_gmt='';		// Date end in GMT
-	var $halfday='';			// 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
-	var $statut='';				// 1=draft, 2=validated, 3=approved
-	var $fk_validator;
-	var $date_valid='';
-	var $fk_user_valid;
-	var $date_refuse='';
-	var $fk_user_refuse;
-	var $date_cancel='';
-	var $fk_user_cancel;
-	var $detail_refuse='';
-	var $fk_type;
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user;
 
-	var $holiday = array();
-	var $events = array();
-	var $logs = array();
+	public $date_create='';
 
-	var $optName = '';
-	var $optValue = '';
-	var $optRowid = '';
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	public $date_debut='';			// Date start in PHP server TZ
+	public $date_fin='';			// Date end in PHP server TZ
+	public $date_debut_gmt='';		// Date start in GMT
+	public $date_fin_gmt='';		// Date end in GMT
+	public $halfday='';			// 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	public $statut='';				// 1=draft, 2=validated, 3=approved
+	public $fk_validator;
+	public $date_valid='';
+	public $fk_user_valid;
+	public $date_refuse='';
+	public $fk_user_refuse;
+	public $date_cancel='';
+	public $fk_user_cancel;
+	public $detail_refuse='';
+	public $fk_type;
+
+	public $holiday = array();
+	public $events = array();
+	public $logs = array();
+
+	public $optName = '';
+	public $optValue = '';
+	public $optRowid = '';
 
 	/**
 	 * Draft status
@@ -346,12 +372,12 @@ class Holiday extends CommonObject
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
 		$sql.= " AND cp.fk_user IN (".$user_id.")";
 
-		// Filtre de séléction
+		// Selection filter
 		if(!empty($filter)) {
 			$sql.= $filter;
 		}
 
-		// Ordre d'affichage du résultat
+		// Order of display of the result
 		if(!empty($order)) {
 			$sql.= $order;
 		}
@@ -359,19 +385,19 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::fetchByUser", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 
-		// Si pas d'erreur SQL
+		// If no SQL error
 		if ($resql) {
 
 			$i = 0;
 			$tab_result = $this->holiday;
 			$num = $this->db->num_rows($resql);
 
-			// Si pas d'enregistrement
+			// If no registration
 			if(!$num) {
 				return 2;
 			}
 
-			// Liste les enregistrements et les ajoutent au tableau
+			// List the records and add them to the table
 			while($i < $num) {
 
 				$obj = $this->db->fetch_object($resql);
@@ -412,13 +438,13 @@ class Holiday extends CommonObject
 				$i++;
 			}
 
-			// Retourne 1 avec le tableau rempli
+			// Returns 1 with the filled array
 			$this->holiday = $tab_result;
 			return 1;
 		}
 		else
 		{
-			// Erreur SQL
+			// SQL Error
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -471,12 +497,12 @@ class Holiday extends CommonObject
 		$sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 
-		// Filtrage de séléction
+		// Selection filtering
 		if(!empty($filter)) {
 			$sql.= $filter;
 		}
 
-		// Ordre d'affichage
+		// order of display
 		if(!empty($order)) {
 			$sql.= $order;
 		}
@@ -484,19 +510,19 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 
-		// Si pas d'erreur SQL
+		// If no SQL error
 		if ($resql) {
 
 			$i = 0;
 			$tab_result = $this->holiday;
 			$num = $this->db->num_rows($resql);
 
-			// Si pas d'enregistrement
+			// If no registration
 			if(!$num) {
 				return 2;
 			}
 
-			// On liste les résultats et on les ajoutent dans le tableau
+			// List the records and add them to the table
 			while($i < $num) {
 
 				$obj = $this->db->fetch_object($resql);
@@ -536,13 +562,13 @@ class Holiday extends CommonObject
 
 				$i++;
 			}
-			// Retourne 1 et ajoute le tableau à la variable
+			// Returns 1 and adds the array to the variable
 			$this->holiday = $tab_result;
 			return 1;
 		}
 		else
 		{
-			// Erreur SQL
+			// SQL Error
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -913,6 +939,7 @@ class Holiday extends CommonObject
 		return $this->LibStatut($this->statut, $mode, $this->date_debut);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns the label of a statut
 	 *
@@ -923,58 +950,59 @@ class Holiday extends CommonObject
 	 */
 	function LibStatut($statut, $mode=0, $startdate='')
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			if ($statut == 1) return $langs->trans('DraftCP');
-			if ($statut == 2) return $langs->trans('ToReviewCP');
-			if ($statut == 3) return $langs->trans('ApprovedCP');
-			if ($statut == 4) return $langs->trans('CancelCP');
-			if ($statut == 5) return $langs->trans('RefuseCP');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP');
+			elseif ($statut == 3) return $langs->trans('ApprovedCP');
+			elseif ($statut == 4) return $langs->trans('CancelCP');
+			elseif ($statut == 5) return $langs->trans('RefuseCP');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
+			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
 
-		return $statut;
+		else return $statut;
 	}
 
 
@@ -985,7 +1013,8 @@ class Holiday extends CommonObject
 	 *   @param		string	$htmlname		Name of HTML select field
 	 *   @return    string					Show select of status
 	 */
-	function selectStatutCP($selected='', $htmlname='select_statut') {
+    function selectStatutCP($selected='', $htmlname='select_statut')
+    {
 
 		global $langs;
 
@@ -1009,7 +1038,6 @@ class Holiday extends CommonObject
 
 		$statut.= '</select>'."\n";
 		print $statut;
-
 	}
 
 	/**
@@ -1019,7 +1047,8 @@ class Holiday extends CommonObject
 	 *  @param	string	$value      vrai si mise à jour OK sinon faux
 	 *  @return boolean				ok or ko
 	 */
-	function updateConfCP($name,$value) {
+    function updateConfCP($name,$value)
+    {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 		$sql.= " value = '".$value."'";
@@ -1238,7 +1267,6 @@ class Holiday extends CommonObject
 				return -1;
 			}
 		}
-
 	}
 
 	/**
@@ -1247,7 +1275,8 @@ class Holiday extends CommonObject
 	 *  @param	string	$name       name du paramètre de configuration
 	 *  @return string      		retourne checked si > 0
 	 */
-	function getCheckOption($name) {
+    function getCheckOption($name)
+    {
 
 		$sql = "SELECT value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
@@ -1308,13 +1337,13 @@ class Holiday extends CommonObject
 	 *  @param	int		$user_id        ID de l'utilisateur à supprimer
 	 *  @return boolean      			Vrai si pas d'erreur, faut si Erreur
 	 */
-	function deleteCPuser($user_id) {
+    function deleteCPuser($user_id)
+    {
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_users";
 		$sql.= " WHERE fk_user = '".$user_id."'";
 
 		$this->db->query($sql);
-
 	}
 
 
@@ -1569,6 +1598,50 @@ class Holiday extends CommonObject
 		}
 	}
 
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 * Return list of people with permission to validate leave requests.
+	 * Search for permission "approve leave requests"
+	 *
+	 * @return  array       Array of user ids
+	 */
+	function fetch_users_approver_holiday()
+	{
+        // phpcs:enable
+		$users_validator=array();
+
+		$sql = "SELECT DISTINCT ur.fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
+		$sql.= " WHERE ur.fk_id = rd.id and rd.module = 'holiday' AND rd.perms = 'approve'";                                              // Permission 'Approve';
+		$sql.= "UNION";
+		$sql.= " SELECT DISTINCT ugu.fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_user as ugu, ".MAIN_DB_PREFIX."usergroup_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
+		$sql.= " WHERE ugu.fk_usergroup = ur.fk_usergroup AND ur.fk_id = rd.id and rd.module = 'holiday' AND rd.perms = 'approve'";       // Permission 'Approve';
+		//print $sql;
+
+		dol_syslog(get_class($this)."::fetch_users_approver_holiday sql=".$sql);
+		$result = $this->db->query($sql);
+		if($result)
+		{
+			$num_lignes = $this->db->num_rows($result); $i = 0;
+			while ($i < $num_lignes)
+			{
+				$objp = $this->db->fetch_object($result);
+				array_push($users_validator,$objp->fk_user);
+				$i++;
+			}
+			return $users_validator;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch_users_approver_holiday  Error ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+
 	/**
 	 *	Compte le nombre d'utilisateur actifs dans Dolibarr
 	 *
@@ -1590,7 +1663,8 @@ class Holiday extends CommonObject
 	 *
 	 *  @return     int      retourne le nombre d'utilisateur
 	 */
-	function countActiveUsersWithoutCP() {
+    function countActiveUsersWithoutCP()
+    {
 
 		$sql = "SELECT count(u.rowid) as compteur";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
@@ -1826,5 +1900,4 @@ class Holiday extends CommonObject
 		$this->halfday=0;
 		$this->fk_type=1;
 	}
-
 }

@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 
 
 if (empty($user->id)) {
@@ -70,7 +70,9 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -203,7 +205,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	$parameters = array('authentication'=>$authentication, 'thirdparty'=>$body);
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$thid->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
     	} catch(SoapFault $exception) {
     		echo $exception;
     		$result=0;
@@ -398,5 +400,4 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-
 }

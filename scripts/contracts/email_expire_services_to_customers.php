@@ -50,12 +50,10 @@ $mode=$argv[1];
 $targettype=$argv[2];
 
 
-require($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 
-$langs->load('main');
-$langs->load('contracts');
-
+$langs->loadLangs(array('main', 'contracts'));
 
 // Global variables
 $version=DOL_VERSION;
@@ -154,10 +152,9 @@ if ($resql)
             // Define line content
             $outputlangs=new Translate('',$conf);
             $outputlangs->setDefaultLang(empty($obj->default_lang)?$langs->defaultlang:$obj->default_lang);	// By default language of customer
-            $outputlangs->load("bills");
-            $outputlangs->load("main");
-            $outputlangs->load("contracts");
-    		$outputlangs->load("products");
+
+            // Load translation files required by the page
+            $outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
             if (dol_strlen($newemail))
             {

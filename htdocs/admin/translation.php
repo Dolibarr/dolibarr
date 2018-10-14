@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("companies","products","admin","sms","other","errors"));
 
 if (!$user->admin) accessforbidden();
@@ -39,7 +40,7 @@ $transkey=GETPOST('transkey','alpha');
 $transvalue=GETPOST('transvalue','alpha');
 
 
-$mode = GETPOST('mode')?GETPOST('mode'):'overwrite';
+$mode = GETPOST('mode','aZ09')?GETPOST('mode','aZ09'):'overwrite';
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -583,6 +584,6 @@ if (! empty($langcode))
 	dol_set_focus('#transvalue');
 }
 
+// End of page
 llxFooter();
-
 $db->close();

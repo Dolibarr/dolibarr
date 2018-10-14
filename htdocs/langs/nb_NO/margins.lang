@@ -31,7 +31,7 @@ MARGIN_TYPE=Foreslått innkjøps-/kostpris for utregning av margin
 MargeType1=Margin på beste leverandørpris
 MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
 MargeType3=Marginer på kostpris
-MarginTypeDesc=* Margin på beste kjøpskurs = Salgspris - Beste leverandørpris definert på varekortet<br> * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - Vektet gjennomsnittspris (WAP) eller beste leverandør pris hvis WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris definert på varekortet, eller WAP hvis kostpris ikke er definert, eller beste leverandør pris hvis WAP ikke er definert
+MarginTypeDesc=* Margin på beste innkjøpspris = Salgspris - Beste leverandørpris på varekort - * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - WAP eller beste leverandørpris dersom WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris på varekort eller WAP hvis kostpris ikke er definert, eller beste leverandørpris dersom WAP ennå ikke er definert
 CostPrice=Kostpris
 UnitCharges=Enhets-avgifter
 Charges=Avgifter
@@ -41,4 +41,4 @@ rateMustBeNumeric=Sats må ha en numerisk verdi
 markRateShouldBeLesserThan100=Dekningsbidrag skal være lavere enn 100
 ShowMarginInfos=Vis info om marginer
 CheckMargins=Margindetaljer
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=Rapporten for margin per bruker, bruker koblingen mellom tredjeparter og salgsrepresentanter for å beregne marginen til hver salgsrepresentant. Fordi noen tredjeparter kanskje ikke har noen dedikert salgsrepresentant og noen tredjeparter kan være knyttet til flere, kan noen beløp bli utelatt i denne rapporten (hvis det ikke er salgsrepresentant), og noen kan vises på forskjellige linjer (for hver salgsrepresentant).

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("companies","compta","accountancy","products"));
 
 // Security check
@@ -495,5 +495,6 @@ if ($result)
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

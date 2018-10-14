@@ -29,9 +29,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load('admin');
-$langs->load('compta');
-$langs->load('accountancy');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'compta', 'accountancy'));
 
 if (!$user->admin)
 accessforbidden();
@@ -165,5 +164,6 @@ print "</table>\n";
 print '<br><br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

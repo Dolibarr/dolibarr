@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin)
@@ -339,5 +340,6 @@ if (function_exists("ldap_connect"))
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

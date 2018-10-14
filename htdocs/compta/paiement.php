@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014      Teddy Andreotti       <125155@supinfo.com>
- * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
+ * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('multicurrency');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
@@ -469,7 +468,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
         $datepayment = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         $datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'') : $datepayment);
-        $form->select_date($datepayment,'','','',0,"add_paiement",1,1,0,0,'','',$facture->date);
+        print $form->selectDate($datepayment, '', '', '', 0, "add_paiement", 1, 1, 0, '', '', $facture->date);
         print '</td></tr>';
 
         // Payment mode
@@ -591,7 +590,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -600,7 +598,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-
 
 					$soc = new Societe($db);
 					$soc->fetch($objp->socid);
@@ -844,7 +841,6 @@ if (! GETPOST('action','aZ09'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';

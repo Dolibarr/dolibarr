@@ -33,19 +33,37 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ExportExcel2007 extends ExportExcel
 {
-	var $id;
-	var $label;
-	var $extension;
-	var $version;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $label_lib;
-	var $version_lib;
+	/**
+     * @var string label
+     */
+    public $label;
 
-	var $workbook;      // Handle fichier
-	var $worksheet;     // Handle onglet
-	var $row;
-	var $col;
-    var $file;          // To save filename
+	public $extension;
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	public $label_lib;
+
+	public $version_lib;
+
+	public $workbook;      // Handle fichier
+
+	public $worksheet;     // Handle onglet
+
+	public $row;
+
+	public $col;
+
+    public $file;          // To save filename
 
 	/**
 	 *	Constructor
@@ -65,7 +83,7 @@ class ExportExcel2007 extends ExportExcel
 		$this->version='1.30';             // Driver version
 
 		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
-		
+
 		if (empty($this->disabled))
 		{
     		// If driver use an external library, put its name here
@@ -85,18 +103,20 @@ class ExportExcel2007 extends ExportExcel
                 $this->version_lib='1.8.0';		// No way to get info from library
     		}
 		}
-		
+
 		$this->row=0;
 	}
 
 
-	/**
-     *	Close Excel file
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     *  Close Excel file
      *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 *  @return		int							<0 if KO, >0 if OK
      */
 	function close_file()
 	{
+        // phpcs:enable
 		global $conf;
 
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -113,6 +133,4 @@ class ExportExcel2007 extends ExportExcel
     	}
 		return 1;
 	}
-
 }
-

@@ -47,11 +47,11 @@ class modBlockedLog extends DolibarrModules
 		// It is used to group modules in module setup page
         $this->family = "base";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '90';
+        $this->module_position = '75';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -145,7 +145,8 @@ class modBlockedLog extends DolibarrModules
      *
      * @return	boolean		True if already used, otherwise False
      */
-    function alreadyUsed() {
+    function alreadyUsed()
+    {
 
     	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
     	$b=new BlockedLog($this->db);
@@ -204,7 +205,8 @@ class modBlockedLog extends DolibarrModules
 	 * @param      string	$options    Options when enabling module ('', 'noboxes')
 	 * @return     int             		1 if OK, 0 if KO
 	 */
-    function remove($options = '') {
+    function remove($options = '')
+    {
 
     	global $conf, $user;
 

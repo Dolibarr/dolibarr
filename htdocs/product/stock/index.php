@@ -27,8 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("stocks");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array('stocks', 'productbatch'));
 
 // Security check
 $result=restrictedArea($user,'stock');
@@ -185,6 +185,6 @@ if ($resql)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

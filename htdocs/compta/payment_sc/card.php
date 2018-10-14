@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
 $id=GETPOST("id",'int');
@@ -75,7 +74,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	}
 }
 
-// Create payment
+// Validate social contribution
+/*
 if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)
 {
 	$db->begin();
@@ -112,6 +112,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 		$db->rollback();
 	}
 }
+*/
 
 
 /*
@@ -151,12 +152,14 @@ if ($action == 'delete')
 /*
  * Validation confirmation of payment
  */
+/*
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
+*/
 
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/payments.php">' . $langs->trans("BackToList") . '</a>';
@@ -324,8 +327,6 @@ if ($action == '')
 
 print '</div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

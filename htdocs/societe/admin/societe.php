@@ -29,8 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("admin");
-$langs->load('other');
+$langs->loadLangs(array("admin", "other"));
 
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
@@ -171,6 +170,21 @@ if ($action == 'setdoc')
 if ($action=="setaddrefinlist") {
 	$setaddrefinlist = GETPOST('value','int');
 	$res = dolibarr_set_const($db, "SOCIETE_ADD_REF_IN_LIST", $setaddrefinlist,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+//Activate Set adress in list
+if ($action=="setaddadressinlist") {
+	$val = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val,'yesno',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
@@ -769,6 +783,24 @@ else
 print '</a></td>';
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
 
 
 print '<tr class="oddeven">';
@@ -835,7 +867,6 @@ print '</form>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2016       Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +35,12 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-// Langs
+// Load translation files required by the page
 $langs->loadLangs(array("accountancy"));
 
 $page = GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
@@ -53,7 +54,7 @@ if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
 
-if (GETPOST("exportcsv")) $action = 'export_csv';
+if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
 
 
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -129,11 +130,6 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$filter = array();
 }
 
-
-/*
- * View
- */
-
 if ($action == 'export_csv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
@@ -155,13 +151,23 @@ if ($action == 'export_csv') {
 		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
+
+	exit;
 }
 
-else {
-	$title_page = $langs->trans("AccountBalance");
 
-	llxHeader('', $title_page);
 
+/*
+ * View
+ */
+
+$title_page = $langs->trans("AccountBalance");
+
+llxHeader('', $title_page);
+
+
+if ($action != 'export_csv')
+{
 	// List
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -186,16 +192,16 @@ else {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	$button = '<input type="submit" name="exportcsv" class="butActionNew" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
+	$button = '<input type="submit" name="exportcsv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, $button, $result, $result, 'title_accountancy', 0);
 
 	$moreforfilter = '';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateStart') . ': ';
-	$moreforfilter .= $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->selectDate($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= $langs->trans('DateEnd') . ': ';
-	$moreforfilter .= $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->selectDate($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= '</div>';
 
 	if (! empty($moreforfilter)) {
@@ -298,7 +304,8 @@ else {
 	print "</table>";
 	print '</form>';
 
-	llxFooter();
 }
 
+// End of page
+llxFooter();
 $db->close();

@@ -32,7 +32,7 @@ class Users extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
-		'login'
+		'login',
 	);
 
 	/**
@@ -43,7 +43,8 @@ class Users extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+    function __construct()
+    {
 		global $db, $conf;
 		$this->db = $db;
 		$this->useraccount = new User($this->db);
@@ -63,7 +64,8 @@ class Users extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of User objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+    {
 	    global $db, $conf;
 
 	    $obj_ret = array();
@@ -136,7 +138,8 @@ class Users extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-	function get($id) {
+    function get($id)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
 		//}
@@ -162,7 +165,8 @@ class Users extends DolibarrApi
 	 * @param array $request_data New user data
 	 * @return int
 	 */
-	function post($request_data = null) {
+    function post($request_data = null)
+    {
 	    // check user authorization
 	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
 	    //   throw new RestException(401, "User creation not allowed");
@@ -194,7 +198,8 @@ class Users extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 			//throw new RestException(401);
 		//}
@@ -227,37 +232,53 @@ class Users extends DolibarrApi
     }
 
     /**
-	 * add user to group
+	 * Add a user into a group
 	 *
 	 * @param   int     $id        User ID
 	 * @param   int     $group     Group ID
+	 * @param   int     $entity    Entity ID (valid only for superadmin in multicompany transverse mode)
 	 * @return  int                1 if success
      *
 	 * @url	GET {id}/setGroup/{group}
 	 */
-	function setGroup($id, $group) {
+    function setGroup($id, $group, $entity = 1)
+    {
+
+		global $conf;
+
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
-        $result = $this->useraccount->fetch($id);
-        if (!$result)
-        {
-          throw new RestException(404, 'User not found');
-        }
+		$result = $this->useraccount->fetch($id);
+		if (!$result)
+		{
+			throw new RestException(404, 'User not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-        {
-          throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
+		{
+			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
 
-        $result = $this->useraccount->SetInGroup($group,1);
-        if (! ($result > 0))
-        {
-            throw new RestException(500, $this->useraccount->error);
-        }
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && ! empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
+		{
+			$entity = (! empty($entity) ? $entity : $conf->entity);
+		}
+		else
+		{
+			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
+			// hack the security by giving himself permissions on another entity.
+			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
+		}
 
-        return 1;
-    }
+		$result = $this->useraccount->SetInGroup($group, $entity);
+		if (! ($result > 0))
+		{
+			throw new RestException(500, $this->useraccount->error);
+		}
+
+		return 1;
+	}
 
 	/**
 	 * Delete account
@@ -265,7 +286,8 @@ class Users extends DolibarrApi
 	 * @param   int     $id Account ID
 	 * @return  array
 	 */
-	function delete($id) {
+    function delete($id)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
@@ -348,7 +370,8 @@ class Users extends DolibarrApi
 	 * @return  array
 	 * @throws RestException
 	 */
-	function _validate($data) {
+    function _validate($data)
+    {
 		$account = array();
 		foreach (Users::$FIELDS as $field)
 		{

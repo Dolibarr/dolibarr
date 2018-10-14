@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-$langs->load("trips");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -58,7 +56,7 @@ $permissionnote=$user->rights->expensereport->creer;	// Used by the include of a
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
 
 /*
@@ -99,6 +97,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

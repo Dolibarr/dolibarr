@@ -36,18 +36,22 @@ class MyObject extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'myobject';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'mymodule_myobject';
+
 	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+
 	/**
 	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -66,6 +70,7 @@ class MyObject extends CommonObject
 	 *  'position' is the sort order of field.
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
@@ -83,7 +88,7 @@ class MyObject extends CommonObject
 	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
 	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
 		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
-		'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		'description'   =>array('type'=>'text',			'label'=>'Description',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
 		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
@@ -96,12 +101,33 @@ class MyObject extends CommonObject
 	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
-	public $label;
+
+	/**
+     * @var string label
+     */
+    public $label;
+
 	public $amount;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;
@@ -117,18 +143,22 @@ class MyObject extends CommonObject
 	 * @var int    Name of subtable line
 	 */
 	//public $table_element_line = 'myobjectdet';
+
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
 	//public $fk_element = 'fk_myobject';
+
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
 	//public $class_element_line = 'MyObjectline';
+
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('myobjectdet');
+
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
 	 */
@@ -181,7 +211,7 @@ class MyObject extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $hookmanager, $langs;
+		global $langs, $hookmanager, $extrafields;
 	    $error = 0;
 
 	    dol_syslog(__METHOD__, LOG_DEBUG);
@@ -201,6 +231,20 @@ class MyObject extends CommonObject
 	    $object->ref = "copy_of_".$object->ref;
 	    $object->title = $langs->trans("CopyOf")." ".$object->title;
 	    // ...
+	    // Clear extrafields that are unique
+	    if (is_array($object->array_options) && count($object->array_options) > 0)
+	    {
+	    	$extrafields->fetch_name_optionals_label($this->element);
+	    	foreach($object->array_options as $key => $option)
+	    	{
+	    		$shortkey = preg_replace('/options_/', '', $key);
+	    		if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+	    		{
+	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+	    			unset($object->array_options[$key]);
+	    		}
+	    	}
+	    }
 
 	    // Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -285,7 +329,7 @@ class MyObject extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
-		global $db, $conf, $langs;
+		global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
@@ -318,6 +362,13 @@ class MyObject extends CommonObject
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+            /*
+             $hookmanager->initHooks(array('myobjectdao'));
+             $parameters=array('id'=>$this->id);
+             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+             */
         }
         else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
@@ -330,6 +381,13 @@ class MyObject extends CommonObject
 		if ($withpicto != 2) $result.= $this->ref;
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		global $action,$hookmanager;
+		$hookmanager->initHooks(array('myobjectdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}
@@ -345,6 +403,7 @@ class MyObject extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -352,8 +411,9 @@ class MyObject extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
-	static function LibStatut($status, $mode=0)
+	function LibStatut($status, $mode=0)
 	{
+		// phpcs:enable
 		if (empty($this->labelstatus))
 		{
 			global $langs;
@@ -366,34 +426,34 @@ class MyObject extends CommonObject
 		{
 			return $this->labelstatus[$status];
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
 			return $this->labelstatus[$status];
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4').' '.$this->labelstatus[$status];
-			if ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4');
-			if ($status == 0) return img_picto($this->labelstatus[$status],'statut5');
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4').' '.$this->labelstatus[$status];
-			if ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4');
-			if ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
 			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4');
-			if ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
 		}
 	}
 

@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin","companies","bills","other","banks"));
 
 if (!$user->admin)
@@ -280,6 +280,6 @@ dol_fiche_end();
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

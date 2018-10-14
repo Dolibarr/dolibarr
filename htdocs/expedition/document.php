@@ -37,9 +37,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
 
 $action		= GETPOST('action','aZ09');
 $confirm	= GETPOST('confirm');
@@ -97,7 +96,7 @@ if ($id > 0 || ! empty($ref)){
 		dol_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, 'sending');
 	
 
-		// Construit liste des fichiers
+		// Build file list
 		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file){
@@ -186,7 +185,6 @@ else{
 	exit;
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

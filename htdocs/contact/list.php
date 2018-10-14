@@ -32,8 +32,10 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers"));
 
 $action=GETPOST('action','alpha');
@@ -41,6 +43,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contactlist';
 
 // Security check
 $id = GETPOST('id','int');
@@ -65,6 +68,8 @@ $search_phone_mobile=GETPOST("search_phone_mobile",'alpha');
 $search_fax=GETPOST("search_fax",'alpha');
 $search_email=GETPOST("search_email",'alpha');
 $search_skype=GETPOST("search_skype",'alpha');
+$search_twitter=GETPOST("search_twitter",'alpha');
+$search_facebook=GETPOST("search_facebook",'alpha');
 $search_priv=GETPOST("search_priv",'alpha');
 $search_categ=GETPOST("search_categ",'int');
 $search_categ_thirdparty=GETPOST("search_categ_thirdparty",'int');
@@ -74,14 +79,15 @@ $search_type=GETPOST('search_type','alpha');
 $search_zip=GETPOST('search_zip','alpha');
 $search_town=GETPOST('search_town','alpha');
 $search_import_key=GETPOST("search_import_key","alpha");
+$search_country=GETPOST("search_country",'intcomma');
 
 if ($search_status=='') $search_status=1; // always display activ customer first
 
 $optioncss = GETPOST('optioncss','alpha');
 
 
-$type=GETPOST("type");
-$view=GETPOST("view");
+$type=GETPOST("type",'aZ');
+$view=GETPOST("view",'alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -94,29 +100,28 @@ if (! $sortfield) $sortfield="p.lastname";
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 
-$contextpage='contactlist';
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 if ($type == "p")
 {
-	$contextpage='contactprospectlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactprospectlist';
 	$titre.='  ('.$langs->trans("ThirdPartyProspects").')';
 	$urlfiche="card.php";
 }
 if ($type == "c")
 {
-	$contextpage='contactcustomerlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactcustomerlist';
 	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="card.php";
 }
 else if ($type == "f")
 {
-	$contextpage='contactsupplierlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactsupplierlist';
 	$titre.=' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche="card.php";
 }
 else if ($type == "o")
 {
-	$contextpage='contactotherlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactotherlist';
 	$titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche="";
 }
@@ -147,12 +152,15 @@ $arrayfields=array(
 	'p.poste'=>array('label'=>"PostOrFunction", 'checked'=>1),
 	'p.town'=>array('label'=>"Town", 'checked'=>0),
 	'p.zip'=>array('label'=>"Zip", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
 	'p.phone'=>array('label'=>"Phone", 'checked'=>1),
 	'p.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
 	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1),
-	'p.fax'=>array('label'=>"Fax", 'checked'=>1),
+	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'checked'=>1),
-	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->skype->enabled))),
+	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
+	'p.twitter'=>array('label'=>"Twitter", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
+	'p.facebook'=>array('label'=>"Facebook", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
 	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
 	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
@@ -202,6 +210,9 @@ if (empty($reshook))
 		$search_lastname="";
 		$search_firstname="";
 		$search_societe="";
+		$search_town="";
+		$search_zip="";
+		$search_country="";
 		$search_poste="";
 		$search_phone="";
 		$search_phone_perso="";
@@ -210,6 +221,8 @@ if (empty($reshook))
 		$search_fax="";
 		$search_email="";
 		$search_skype="";
+		$search_twitter="";
+		$search_facebook="";
 		$search_priv="";
 		$search_status=-1;
 		$search_categ='';
@@ -297,12 +310,15 @@ if ($search_id > 0)                 $sql.= natural_search("p.rowid",$search_id,1
 if ($search_lastname)               $sql.= natural_search('p.lastname', $search_lastname);
 if ($search_firstname)              $sql.= natural_search('p.firstname', $search_firstname);
 if ($search_societe)                $sql.= natural_search('s.nom', $search_societe);
+if ($search_country)                $sql .= " AND p.fk_pays IN (".$search_country.')';
 if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_poste);
 if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
-if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone);
+if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone_pro);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
 if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
 if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
+if (strlen($search_twitter))        $sql.= natural_search('p.twitter', $search_twitter);
+if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_facebook);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip",$search_zip);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
@@ -395,6 +411,7 @@ if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_
 if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);
 if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
 if ($search_town != '') $param.='&amp;search_town='.urlencode($search_town);
+if ($search_country != '') $param.= "&search_country=".urlencode($search_country);
 if ($search_job != '') $param.='&amp;search_job='.urlencode($search_job);
 if ($search_phone_pro != '') $param.='&amp;search_phone_pro='.urlencode($search_phone_pro);
 if ($search_phone_perso != '') $param.='&amp;search_phone_perso='.urlencode($search_phone_perso);
@@ -422,7 +439,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->societe->contact->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create">'.$langs->trans('NewContactAddress');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewContactAddress').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -434,6 +451,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
 print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, $newcardbutton, '', $limit);
@@ -447,11 +465,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 if ($search_firstlast_only)
 {
-	print $langs->trans("FilterOnInto", $search_firstlast_only) . $langs->trans("Lastname").", ".$langs->trans("Firstname");
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_firstlast_only) . $langs->trans("Lastname").", ".$langs->trans("Firstname").'</div>';
 }
 
 $moreforfilter='';
@@ -516,6 +534,12 @@ if (! empty($arrayfields['p.firstname']['checked']))
 	print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
 	print '</td>';
 }
+if (! empty($arrayfields['p.poste']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
+	print '</td>';
+}
 if (! empty($arrayfields['p.zip']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -528,10 +552,25 @@ if (! empty($arrayfields['p.town']['checked']))
 	print '<input class="flat" type="text" name="search_town" size="5" value="'.dol_escape_htmltag($search_town).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['p.poste']['checked']))
+// State
+/*if (! empty($arrayfields['state.nom']['checked']))
+ {
+ print '<td class="liste_titre">';
+ print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+ print '</td>';
+ }
+ // Region
+ if (! empty($arrayfields['region.nom']['checked']))
+ {
+ print '<td class="liste_titre">';
+ print '<input class="flat searchstring" size="4" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
+ print '</td>';
+ }*/
+// Country
+if (! empty($arrayfields['country.code_iso']['checked']))
 {
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
+	print '<td class="liste_titre" align="center">';
+	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
 	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))
@@ -568,6 +607,18 @@ if (! empty($arrayfields['p.skype']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="search_skype" size="6" value="'.dol_escape_htmltag($search_skype).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['p.twitter']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_twitter" size="6" value="'.dol_escape_htmltag($search_twitter).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['p.facebook']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_facebook" size="6" value="'.dol_escape_htmltag($search_facebook).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['p.thirdparty']['checked']))
@@ -628,15 +679,20 @@ print '<tr class="liste_titre">';
 if (! empty($arrayfields['p.rowid']['checked']))               print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['p.lastname']['checked']))            print_liste_field_titre($arrayfields['p.lastname']['label'],$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.firstname']['checked']))           print_liste_field_titre($arrayfields['p.firstname']['label'],$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.poste']['checked']))               print_liste_field_titre($arrayfields['p.poste']['label'],$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.zip']['checked']))                 print_liste_field_titre($arrayfields['p.zip']['label'],$_SERVER["PHP_SELF"],"p.zip", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.town']['checked']))                print_liste_field_titre($arrayfields['p.town']['label'],$_SERVER["PHP_SELF"],"p.town", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.poste']['checked']))               print_liste_field_titre($arrayfields['p.poste']['label'],$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
+//if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+//if (! empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['country.code_iso']['checked']))      print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"co.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.phone']['checked']))               print_liste_field_titre($arrayfields['p.phone']['label'],$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.phone_perso']['checked']))         print_liste_field_titre($arrayfields['p.phone_perso']['label'],$_SERVER["PHP_SELF"],"p.phone_perso", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.phone_mobile']['checked']))        print_liste_field_titre($arrayfields['p.phone_mobile']['label'],$_SERVER["PHP_SELF"],"p.phone_mobile", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.fax']['checked']))                 print_liste_field_titre($arrayfields['p.fax']['label'],$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'],$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'],$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'],$_SERVER["PHP_SELF"],"p.twitter", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'],$_SERVER["PHP_SELF"],"p.facebook", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'],$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'],$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
 // Extra fields
@@ -695,6 +751,12 @@ while ($i < min($num,$limit))
 		print '<td>'.$obj->firstname.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
+	// Job position
+	if (! empty($arrayfields['p.poste']['checked']))
+	{
+		print '<td class="tdoverflowmax100">'.$obj->poste.'</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
 	// Zip
 	if (! empty($arrayfields['p.zip']['checked']))
 	{
@@ -707,10 +769,25 @@ while ($i < min($num,$limit))
 		print '<td>'.$obj->town.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
-	// Function
-	if (! empty($arrayfields['p.poste']['checked']))
+	// State
+	/*if (! empty($arrayfields['state.nom']['checked']))
 	{
-		print '<td>'.dol_trunc($obj->poste,20).'</td>';
+		print "<td>".$obj->state_name."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Region
+	if (! empty($arrayfields['region.nom']['checked']))
+	{
+		print "<td>".$obj->region_name."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}*/
+	// Country
+	if (! empty($arrayfields['country.code_iso']['checked']))
+	{
+		print '<td align="center">';
+		$tmparray=getCountry($obj->fk_pays,'all');
+		print $tmparray['label'];
+		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone
@@ -746,7 +823,19 @@ while ($i < min($num,$limit))
 	// Skype
 	if (! empty($arrayfields['p.skype']['checked']))
 	{
-		if (! empty($conf->skype->enabled)) { print '<td>'.dol_print_skype($obj->skype,$obj->rowid,$obj->socid,'AC_SKYPE',18).'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->skype,$obj->rowid,$obj->socid,'skype').'</td>'; }
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Twitter
+	if (! empty($arrayfields['p.twitter']['checked']))
+	{
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->twitter,$obj->rowid,$obj->socid,'twitter').'</td>'; }
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Facebook
+	if (! empty($arrayfields['p.facebook']['checked']))
+	{
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->facebook,$obj->rowid,$obj->socid,'facebook').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Company

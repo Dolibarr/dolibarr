@@ -24,15 +24,13 @@
  *      \brief      Page liste des prelevements
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("withdrawals");
-$langs->load("companies");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'withdrawals', 'companies', 'categories'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -215,5 +213,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

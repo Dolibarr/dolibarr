@@ -25,10 +25,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("admin");
-$langs->load("members");
-$langs->load("errors");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'members', 'errors', 'other'));
 
 // Choice of print year or current year.
 $now = dol_now();
@@ -321,6 +319,6 @@ if ($conf->product->enabled || $conf->product->service)
 print '</form>';
 print '<br>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -24,14 +24,12 @@
  *		\brief      Home page for cheque receipts
  */
 
-require('../../../main.inc.php');
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -70,7 +68,6 @@ print "</tr>\n";
 
 if ($resql)
 {
-  $var=false;
   if ($row = $db->fetch_row($resql) )
     {
       $num = $row[0];
@@ -94,7 +91,7 @@ $max=10;
 
 $sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
 $sql.= " bc.statut, bc.nbcheque,";
-$sql.= " ba.ref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
+$sql.= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
 $sql.= " aj.code";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
@@ -116,7 +113,6 @@ if ($resql)
 	print '<th align="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
-	$var=true;
 	while ( $objp = $db->fetch_object($resql) )
 	{
         $checkdepositstatic->id=$objp->rowid;
@@ -124,7 +120,7 @@ if ($resql)
 	    $checkdepositstatic->statut=$objp->statut;
 
 		$accountstatic->id=$objp->bid;
-		$accountstatic->ref=$objp->ref;
+		$accountstatic->ref=$objp->bref;
 		$accountstatic->label=$objp->label;
 		$accountstatic->number=$objp->number;
 		$accountstatic->currency_code=$objp->currency_code;
@@ -155,6 +151,6 @@ else
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

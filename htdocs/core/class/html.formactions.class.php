@@ -29,8 +29,15 @@
  */
 class FormActions
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -41,10 +48,10 @@ class FormActions
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Show list of action status
      *
@@ -59,6 +66,7 @@ class FormActions
      */
     function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
+        // phpcs:enable
         global $langs,$conf;
 
         $listofstatus = array(
@@ -197,7 +205,7 @@ class FormActions
             $newcardbutton='';
 			if (! empty($conf->agenda->enabled))
 			{
-				$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:'').($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">'.$langs->trans("AddEvent");
+				$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:($socid>0?'&socid='.$socid:'')).($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'"><span class="valignmiddle">'.$langs->trans("AddEvent").'</span>';
 				$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 				$newcardbutton.= '</a>';
 			}
@@ -306,6 +314,7 @@ class FormActions
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Output html select list of type of event
      *
@@ -320,6 +329,7 @@ class FormActions
      */
     function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
+        // phpcs:enable
         global $langs,$user,$form,$conf;
 
         if (! is_object($form)) $form=new Form($db);
@@ -359,5 +369,4 @@ class FormActions
         else print $out;
         return '';
     }
-
 }

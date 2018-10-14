@@ -28,8 +28,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("boxes");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'boxes'));
 
 if (! $user->admin) accessforbidden();
 
@@ -488,7 +488,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

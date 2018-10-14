@@ -10,6 +10,8 @@
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,60 +45,98 @@ if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expe
  */
 class Expedition extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element="shipping";
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element="fk_expedition";
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element="expedition";
+
+	/**
+	 * @var int    Name of subtable line
+	 */
 	public $table_element_line="expeditiondet";
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'sending';
 
-	var $socid;
-	var $ref_customer;
-	var $ref_int;
-	var $brouillon;
-	var $entrepot_id;
-	var $lines=array();
-	var $tracking_number;
-	var $tracking_url;
-	var $billed;
-	var $model_pdf;
+	public $socid;
+	public $ref_customer;
+	public $ref_int;
+	public $brouillon;
+	public $entrepot_id;
+	public $lines=array();
+	public $tracking_number;
+	public $tracking_url;
+	public $billed;
+	public $model_pdf;
 
-	var $trueWeight;
-	var $weight_units;
-	var $trueWidth;
-	var $width_units;
-	var $trueHeight;
-	var $height_units;
-	var $trueDepth;
-	var $depth_units;
+	public $trueWeight;
+	public $weight_units;
+	public $trueWidth;
+	public $width_units;
+	public $trueHeight;
+	public $height_units;
+	public $trueDepth;
+	public $depth_units;
 	// A denormalized value
-	var $trueSize;
+	public $trueSize;
 
-	var $date_delivery;		// Date delivery planed
+	public $date_delivery;		// Date delivery planed
+
 	/**
 	 * @deprecated
 	 * @see date_shipping
 	 */
-	var $date;
+	public $date;
+
 	/**
 	 * @deprecated
 	 * @see date_shipping
 	 */
-	var $date_expedition;
+	public $date_expedition;
+
 	/**
 	 * Effective delivery date
 	 * @var int
 	 */
 	public $date_shipping;
-	var $date_creation;
-	var $date_valid;
 
-	var $meths;
-	var $listmeths;			// List of carriers
+	public $date_creation;
+	public $date_valid;
 
+	public $meths;
+	public $listmeths;			// List of carriers
 
+    /**
+	 * Draft status
+	 */
 	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated status
+	 */
 	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Closed status
+	 */
 	const STATUS_CLOSED = 2;
 
 
@@ -312,7 +352,7 @@ class Expedition extends CommonObject
 				}
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 				{
 					$result=$this->insertExtraFields();
 					if ($result < 0)
@@ -370,6 +410,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create a expedition line
 	 *
@@ -381,6 +422,7 @@ class Expedition extends CommonObject
 	 */
 	function create_line($entrepot_id, $origin_line_id, $qty,$array_options=0)
 	{
+        //phpcs:enable
 		$expeditionline = new ExpeditionLigne($this->db);
 		$expeditionline->fk_expedition = $this->id;
 		$expeditionline->entrepot_id = $entrepot_id;
@@ -396,6 +438,7 @@ class Expedition extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Create the detail (eat-by date) of the expedition line
 	 *
@@ -405,6 +448,7 @@ class Expedition extends CommonObject
 	 */
 	function create_line_batch($line_ext,$array_options=0)
 	{
+        // phpcs:enable
 		$error = 0;
 		$stockLocationQty = array(); // associated array with batch qty in stock location
 
@@ -459,17 +503,19 @@ class Expedition extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.billed";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet, e.billed";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
-		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
 		$sql.= ', i.libelle as libelle_incoterms';
+		$sql.= ', s.libelle as shipping_method';
+		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as s ON e.fk_shipping_method = s.rowid';
 		$sql.= " WHERE e.entity IN (".getEntity('expedition').")";
 		if ($id)   	  $sql.= " AND e.rowid=".$id;
 		if ($ref)     $sql.= " AND e.ref='".$this->db->escape($ref)."'";
@@ -487,9 +533,9 @@ class Expedition extends CommonObject
 				$this->id                   = $obj->rowid;
 				$this->ref                  = $obj->ref;
 				$this->socid                = $obj->socid;
-				$this->ref_customer			= $obj->ref_customer;
-				$this->ref_ext				= $obj->ref_ext;
-				$this->ref_int				= $obj->ref_int;
+				$this->ref_customer	    = $obj->ref_customer;
+				$this->ref_ext		    = $obj->ref_ext;
+				$this->ref_int		    = $obj->ref_int;
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
@@ -499,11 +545,13 @@ class Expedition extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->shipping_method_id	= $obj->fk_shipping_method;
+				$this->shipping_method_id   = $obj->fk_shipping_method;
+				$this->shipping_method	    = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
+				$this->fk_project	    = $obj->fk_projet;
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -519,13 +567,13 @@ class Expedition extends CommonObject
 				$this->note_private         = $obj->note_private;
 
 				// A denormalized value
-				$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
+				$this->trueSize             = $obj->size."x".$obj->width."x".$obj->height;
 				$this->size_units           = $obj->size_units;
 
 				//Incoterms
-				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->fk_incoterms         = $obj->fk_incoterms;
+				$this->location_incoterms   = $obj->location_incoterms;
+				$this->libelle_incoterms    = $obj->libelle_incoterms;
 
 				$this->db->free($result);
 
@@ -539,8 +587,7 @@ class Expedition extends CommonObject
 				 */
 				$result=$this->fetch_thirdparty();
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
+				// Retreive extrafields
 				$this->fetch_optionals();
 
 				/*
@@ -792,6 +839,7 @@ class Expedition extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Create a delivery receipt from a shipment
 	 *
@@ -800,6 +848,7 @@ class Expedition extends CommonObject
 	 */
 	function create_delivery($user)
 	{
+        // phpcs:enable
 		global $conf;
 
 		if ($conf->livraison_bon->enabled)
@@ -899,6 +948,7 @@ class Expedition extends CommonObject
 		$this->lines[$num] = $line;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Add a shipment line with batch record
 	 *
@@ -908,6 +958,7 @@ class Expedition extends CommonObject
 	 */
 	function addline_batch($dbatch,$array_options=0)
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$num = count($this->lines);
@@ -1023,6 +1074,7 @@ class Expedition extends CommonObject
 		$sql.= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0)?$this->shipping_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
 		$sql.= " width=".(($this->trueWidth != '')?$this->trueWidth:"null").",";
 		$sql.= " size_units=".(isset($this->size_units)?$this->size_units:"null").",";
@@ -1111,7 +1163,7 @@ class Expedition extends CommonObject
 		// Stock control
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
 
@@ -1283,9 +1335,9 @@ class Expedition extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load lines
 	 *
@@ -1293,6 +1345,7 @@ class Expedition extends CommonObject
 	 */
 	function fetch_lines()
 	{
+        // phpcs:enable
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
 
@@ -1572,6 +1625,7 @@ class Expedition extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return label of a status
 	 *
@@ -1581,37 +1635,38 @@ class Expedition extends CommonObject
 	 */
 	function LibStatut($statut,$mode)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode==0)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			if ($statut==1) return $langs->trans($this->statuts[$statut]);
-			if ($statut==2) return $langs->trans($this->statuts[$statut]);
+			elseif ($statut==1) return $langs->trans($this->statuts[$statut]);
+			elseif ($statut==2) return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode==1)
+		elseif ($mode==1)
 		{
 			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
-			if ($statut==1) return $langs->trans($this->statutshorts[$statut]);
-			if ($statut==2) return $langs->trans($this->statutshorts[$statut]);
+			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]);
+			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]);
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
 	}
 
@@ -1692,9 +1747,9 @@ class Expedition extends CommonObject
 			$this->lines[]=$line;
 			$xnbp++;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set the planned delivery date
 	 *
@@ -1704,6 +1759,7 @@ class Expedition extends CommonObject
 	 */
 	function set_date_livraison($user, $date_livraison)
 	{
+        // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
@@ -1729,6 +1785,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
 	 *
@@ -1736,6 +1793,7 @@ class Expedition extends CommonObject
 	 */
 	function fetch_delivery_methods()
 	{
+        // phpcs:enable
 		global $langs;
 		$this->meths = array();
 
@@ -1755,6 +1813,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Fetch all deliveries method and return an array. Load array this->listmeths.
 	 *
@@ -1763,6 +1822,7 @@ class Expedition extends CommonObject
 	 */
 	function list_delivery_methods($id='')
 	{
+        // phpcs:enable
 		global $langs;
 
 		$this->listmeths = array();
@@ -1789,6 +1849,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update/create delivery method.
 	 *
@@ -1798,6 +1859,7 @@ class Expedition extends CommonObject
 	 */
 	function update_delivery_method($id='')
 	{
+        // phpcs:enable
 		if ($id=='')
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
@@ -1817,6 +1879,7 @@ class Expedition extends CommonObject
 		if ($resql < 0) dol_print_error($this->db,'');
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Activate delivery method.
 	 *
@@ -1826,13 +1889,14 @@ class Expedition extends CommonObject
 	 */
 	function activ_delivery_method($id)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
 		$sql.= ' WHERE rowid='.$id;
 
 		$resql = $this->db->query($sql);
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  DesActivate delivery method.
 	 *
@@ -1842,14 +1906,15 @@ class Expedition extends CommonObject
 	 */
 	function disable_delivery_method($id)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
 		$sql.= ' WHERE rowid='.$id;
 
 		$resql = $this->db->query($sql);
-
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Forge an set tracking url
 	 *
@@ -1858,6 +1923,7 @@ class Expedition extends CommonObject
 	 */
 	function GetUrlTrackingStatus($value='')
 	{
+        // phpcs:enable
 		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
@@ -2035,6 +2101,7 @@ class Expedition extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
 	 *
@@ -2042,6 +2109,7 @@ class Expedition extends CommonObject
 	 */
 	function set_billed()
 	{
+        // phpcs:enable
 		global $user;
 		$error=0;
 
@@ -2214,9 +2282,10 @@ class Expedition extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+     *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0,$moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -2237,7 +2306,7 @@ class Expedition extends CommonObject
 
 		$this->fetch_origin();
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
 	}
 
 	/**
@@ -2264,7 +2333,14 @@ class Expedition extends CommonObject
  */
 class ExpeditionLigne extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='expeditiondet';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='expeditiondet';
 
 	public $fk_origin_line;
@@ -2275,7 +2351,10 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $fk_expedition;
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	// From llx_expeditiondet
 	var $qty;
@@ -2408,7 +2487,8 @@ class ExpeditionLigne extends CommonObjectLine
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -2724,4 +2804,3 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 	}
 }
-

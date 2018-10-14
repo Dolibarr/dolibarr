@@ -33,8 +33,8 @@ if (! empty($conf->projet->enabled)) {
 
 if (!$user->rights->commande->lire)	accessforbidden();
 
-$langs->load("orders");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings'));
 
 $socid=0;
 $comid = GETPOST("id",'int');
@@ -128,5 +128,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

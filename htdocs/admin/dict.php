@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","main","companies","resource","holiday","accountancy","hrm","orders","contracts","projects","propal","bills","interventions"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
@@ -182,7 +183,7 @@ $tabsql[10]= "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.l
 $tabsql[11]= "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = " . getEntity($tabname[12]);
 $tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity = " . getEntity($tabname[13]);
-$tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
+$tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.label, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $tabsql[17]= "SELECT id      as rowid, code, label, accountancy_code, active FROM ".MAIN_DB_PREFIX."c_type_fees";
@@ -260,7 +261,7 @@ $tabfield[10]= "country_id,country,code,taux,localtax1_type,localtax1,localtax2_
 $tabfield[11]= "element,source,code,libelle,position";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfield[13]= "code,libelle,type,entity";
-$tabfield[14]= "code,libelle,price,organization,country_id,country";
+$tabfield[14]= "code,label,price,organization,country";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle,sortorder";
 $tabfield[17]= "code,label,accountancy_code";
@@ -299,7 +300,7 @@ $tabfieldvalue[10]= "country,code,taux,localtax1_type,localtax1,localtax2_type,l
 $tabfieldvalue[11]= "element,source,code,libelle,position";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type";
-$tabfieldvalue[14]= "code,libelle,price,organization,country";
+$tabfieldvalue[14]= "code,label,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
 $tabfieldvalue[16]= "code,libelle,sortorder";
 $tabfieldvalue[17]= "code,label,accountancy_code";
@@ -338,7 +339,7 @@ $tabfieldinsert[10]= "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,
 $tabfieldinsert[11]= "element,source,code,libelle,position";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[13]= "code,libelle,type,entity";
-$tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
+$tabfieldinsert[14]= "code,label,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label,sortorder";
 $tabfieldinsert[17]= "code,label,accountancy_code";
@@ -378,7 +379,7 @@ $tabrowid[9] = "code_iso";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
 $tabrowid[12]= "";
-$tabrowid[13]= "";
+$tabrowid[13]= "id";
 $tabrowid[14]= "";
 $tabrowid[15]= "";
 $tabrowid[16]= "code";
@@ -418,7 +419,7 @@ $tabcond[10]= true;
 $tabcond[11]= (! empty($conf->societe->enabled));
 $tabcond[12]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
 $tabcond[13]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
-$tabcond[14]= (! empty($conf->product->enabled) && ! empty($conf->ecotax->enabled));
+$tabcond[14]= (! empty($conf->product->enabled) && (! empty($conf->ecotax->enabled) || ! empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15]= true;
 $tabcond[16]= (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
 $tabcond[17]= (! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled));
@@ -455,7 +456,7 @@ $tabhelp[8]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->
 $tabhelp[9]  = array('code'=>$langs->trans("EnterAnyCode"), 'unicode'=>$langs->trans("UnicodeCurrency"));
 $tabhelp[10] = array('code'=>$langs->trans("EnterAnyCode"), 'taux'=>$langs->trans("SellTaxRate"), 'recuperableonly'=>$langs->trans("RecuperableOnly"), 'localtax1_type'=>$langs->trans("LocalTaxDesc"), 'localtax2_type'=>$langs->trans("LocalTaxDesc"));
 $tabhelp[11] = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
-$tabhelp[12] = array('code'=>$langs->trans("EnterAnyCode"), 'type_cdr'=>$langs->trans("TypeCdr"));
+$tabhelp[12] = array('code'=>$langs->trans("EnterAnyCode"), 'type_cdr'=>$langs->trans("TypeCdr", $langs->transnoentitiesnoconv("NbOfDays"), $langs->transnoentitiesnoconv("Offset"), $langs->transnoentitiesnoconv("NbOfDays"), $langs->transnoentitiesnoconv("Offset")));
 $tabhelp[13] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[14] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[15] = array('code'=>$langs->trans("EnterAnyCode"));
@@ -949,8 +950,8 @@ if (empty($id))
 {
     print $langs->trans("DictionaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+    print '<br>';
 }
-print "<br>\n";
 
 
 $param = '&id='.urlencode($id);
@@ -1014,6 +1015,13 @@ if ($id)
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
+
+    if ($id == 10 && empty($conf->global->FACTURE_TVAOPTION))
+    {
+    	print info_admin($langs->trans("VATIsUsedIsOff", $langs->transnoentities("Setup"), $langs->transnoentities("CompanyFoundation")));
+    }
+
+    print "<br>\n";
 
     // Form to add a new line
     if ($tabname[$id])
@@ -1734,7 +1742,7 @@ else
 
 print '<br>';
 
-
+// End of page
 llxFooter();
 $db->close();
 

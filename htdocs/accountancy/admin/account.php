@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","admin","accountancy","salaries"));
 
 $mesg = '';
@@ -62,9 +63,9 @@ if (! $sortorder) $sortorder = "ASC";
 $arrayfields=array(
     'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
     'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>0),
+	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
     'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
-    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
+    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
 	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
 
@@ -120,14 +121,35 @@ if (empty($reshook))
 			if ($country_code)
 			{
 				$sqlfile = DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_accounting_account_'.strtolower($country_code).'.sql';
-				$result = run_sql($sqlfile, 1, 0, 1);
+
+				$offsetforchartofaccount = 0;
+				// Get the comment line '-- ADD CCCNNNNN to rowid...' to find CCCNNNNN (CCC is country num, NNNNN is id of accounting account)
+				// and pass CCCNNNNN + (num of company * 100 000 000) as offset to the run_sql as a new parameter to say to update sql on the fly to add offset to rowid and account_parent value.
+				// This is to be sure there is no conflict for each chart of account, whatever is country, whatever is company when multicompany is used.
+				$tmp = file_get_contents($sqlfile);
+				if (preg_match('/-- ADD (\d+) to rowid/ims', $tmp, $reg))
+				{
+					$offsetforchartofaccount += $reg[1];
+				}
+				$offsetforchartofaccount+=($conf->entity  * 100000000);
+
+				$result = run_sql($sqlfile, 1, $conf->entity, 1, '', 'default', 32768, 0, $offsetforchartofaccount);
+
+				if ($result > 0)
+				{
+					setEventMessages($langs->trans("ChartLoaded"), null);
+				}
+				else
+				{
+					setEventMessages($langs->trans("ErrorDuringChartLoad"), null, 'warnings');
+				}
 			}
 
             if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
                 $error++;
             }
         } else {
-            $error ++;
+            $error++;
         }
     }
 
@@ -170,9 +192,9 @@ $pcgver = $conf->global->CHARTOFACCOUNTS;
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent";
-else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = " . $conf->entity;
+if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = " . $conf->entity;
+else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = " . $conf->entity;
 $sql .= " WHERE asy.rowid = " . $pcgver;
 //print $sql;
 if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);
@@ -225,7 +247,7 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	$newcardbutton = '<a class="butActionNew" href="./card.php?action=create">' . $langs->trans("Addanaccount");
+	$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("Addanaccount").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 
@@ -405,5 +427,6 @@ if ($resql)
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

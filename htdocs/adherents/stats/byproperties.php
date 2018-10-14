@@ -44,8 +44,8 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
-$langs->load("members");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members"));
 
 
 /*
@@ -143,7 +143,6 @@ print '</table>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

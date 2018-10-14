@@ -35,11 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
-$langs->load("other");
-$langs->load("users");
-$langs->load("salaries");
-$langs->load('hrm');
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","users","salaries","hrm"));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -47,8 +44,9 @@ $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
 // Security check
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', $id, '');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 
 // Get parameters
@@ -93,7 +91,7 @@ if ($object->id)
 
 	dol_fiche_head($head, 'documents',  $langs->trans("SalaryPayment"), -1, 'payment');
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -136,6 +134,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -42,10 +42,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
-$langs->load('bills');
-$langs->load('compta');
-$langs->load('admin');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'compta', 'admin', 'other'));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -427,7 +425,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
 		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
@@ -436,7 +434,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
+		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
 		$formother->select_year($search_year_date_when?$search_year_date_when:-1,'search_year_date_when',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
@@ -609,7 +607,7 @@ if ($resql)
 				print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				if (! $invoicerectmp->isMaxNbGenReached())
 				{
-					if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
+					if (! $objp->suspended && $objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
 				}
 				else
 				{
@@ -711,6 +709,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

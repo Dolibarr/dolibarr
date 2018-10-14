@@ -46,9 +46,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load("sendings");
-$langs->load("other");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('sendings', 'other', 'companies'));
 
 
 /*
@@ -359,6 +358,6 @@ print '</table>';
 print '<br>';
 print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
+// End of page
 llxFooter();
-
 $db->close();

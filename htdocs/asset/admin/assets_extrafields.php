@@ -23,9 +23,10 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("assets","admin","companies"));
 
 $extrafields = new ExtraFields($db);
@@ -63,7 +64,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 
-$head = AssetsAdminPrepareHead();
+$head = asset_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("Assets"), -1, 'generic');
 
@@ -108,6 +109,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

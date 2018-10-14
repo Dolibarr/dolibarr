@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere root dolibarr
 $path=preg_replace('/purge-data.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../../htdocs/master.inc.php");
+require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -44,8 +44,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-$langs->load("main");
-$langs->load("errors");
+$langs->loadLangs(array("main", "errors"));
 
 // Global variables
 $version=DOL_VERSION;

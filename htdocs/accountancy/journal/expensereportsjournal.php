@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta","bills","other","accountancy","trips","errors"));
 
 $id_journal = GETPOST('id_journal', 'int');
@@ -398,10 +400,12 @@ if ($action == 'writebookkeeping') {
 		$param.='&date_endmonth='.$date_endmonth;
 		$param.='&date_endyear='.$date_endyear;
 		$param.='&in_bookkeeping='.$in_bookkeeping;
+
 		header("Location: ".$_SERVER['PHP_SELF'].($param?'?'.$param:''));
 		exit;
 	}
 }
+
 
 /*
  * View
@@ -525,7 +529,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
-	$nom = $langs->trans("ExpenseReportsJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
+	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
@@ -533,7 +537,8 @@ if (empty($action) || $action == 'view') {
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices=array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+    $period = $form->selectDate($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0) . ' - ' . $form->selectDate($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0);
+    $period .= ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 

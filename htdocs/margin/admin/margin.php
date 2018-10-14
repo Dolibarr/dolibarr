@@ -26,13 +26,10 @@ include '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 
-$langs->load("admin");
-$langs->load("bills");
-$langs->load("margins");
-$langs->load("stocks");
+$langs->loadLangs(array("admin", "bills", "margins", "stocks"));
 
 if (! $user->admin) accessforbidden();
 
@@ -129,11 +126,9 @@ print '<td colspan="2" align="center">'.$langs->trans("Value").'</td>'."\n";
 print '<td align="left">'.$langs->trans("Description").'</td>'."\n";
 print '</tr>';
 
-$var=true;
 $form = new Form($db);
 
 // GLOBAL DISCOUNT MANAGEMENT
-
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
@@ -165,7 +160,6 @@ print '</tr>';
 print '</form>';
 
 // DISPLAY MARGIN RATES
-
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
 print '<td colspan="2" align="center">';
@@ -189,7 +183,6 @@ print '<td>'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$la
 print '</tr>';
 
 // DISPLAY MARK RATES
-
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
 print '<td colspan="2" align="center">';
@@ -259,7 +252,6 @@ print '</tr>';
 print '</form>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
-
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
@@ -283,5 +275,6 @@ dol_fiche_end();
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

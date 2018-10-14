@@ -61,7 +61,7 @@ foreach ($remains as $key => $value)
 }
 
 // Treatment
-$result = $amountPayment != '' ? ($amountPayment - array_sum($amounts)) : ($amountPayment + array_sum($amounts));					// Remaining amountPayment
+$result = ($amountPayment != '') ? ($amountPayment - array_sum($amounts)) : array_sum($amounts);					// Remaining amountPayment
 $toJsonArray = 	array();
 $totalRemaining = price2num(array_sum($remains));
 $toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');

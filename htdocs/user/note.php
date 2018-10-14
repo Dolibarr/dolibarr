@@ -31,10 +31,8 @@ $id = GETPOST('id','int');
 $action = GETPOST('action','aZ09');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'usernote';   // To manage different context of search
 
-$langs->load("companies");
-$langs->load("members");
-$langs->load("bills");
-$langs->load("users");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'members', 'bills', 'users'));
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
@@ -95,7 +93,7 @@ if ($id)
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
@@ -160,6 +158,6 @@ if ($id)
 	print "</form>\n";
 }
 
+// End of page
 llxFooter();
-
 $db->close();

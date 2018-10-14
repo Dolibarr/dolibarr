@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('compta');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
 $id =GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
@@ -276,7 +274,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 {
 	if ($object->fetch($id) > 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$langs->load("other");
 
@@ -389,7 +387,7 @@ if ($action == 'new')
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
-	print $form->select_date($filterdate,'fd',0,0,1,'',1,1,1);
+	print $form->selectDate($filterdate, 'fd', 0, 0, 1, '', 1, 1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
@@ -589,7 +587,7 @@ else
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setdate">';
-        $form->select_date($object->date_bordereau,'datecreate_','','','',"setdate");
+        print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         print '</form>';
     }
@@ -809,8 +807,6 @@ if ($action != 'new')
 	}
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

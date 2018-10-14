@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2018 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  *		\brief      List of holiday
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('users', 'holidays', 'hrm'));
 
 // Protection if external user
@@ -381,7 +382,7 @@ else
 	$newcardbutton='';
 	if ($user->rights->holiday->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request">'.$langs->trans('MenuAddCP');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request"><span class="valignmiddle">'.$langs->trans('MenuAddCP').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -398,7 +399,7 @@ else
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
@@ -410,14 +411,14 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 // Filters
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre" align="left">';
+print '<td class="liste_titre">';
 print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 print '</td>';
 
 // Create date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
-$formother->select_year($search_year_create,'search_year_create',1, $min_year, 0);
+print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
+$formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
 print '</td>';
 
 
@@ -487,13 +488,13 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 // Start date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
+print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
 $formother->select_year($search_year_start,'search_year_start',1, $min_year, $max_year);
 print '</td>';
 
 // End date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
+print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
 $formother->select_year($search_year_end,'search_year_end',1, $min_year, $max_year);
 print '</td>';
 
@@ -629,8 +630,8 @@ print '</form>';
 	print '</div>';
 }*/
 
+// End of page
 llxFooter();
-
 $db->close();
 
 

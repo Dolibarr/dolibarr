@@ -22,7 +22,7 @@
  *  \brief      Manage record and specific data for batch number management
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 /**
@@ -30,7 +30,11 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Productbatch extends CommonObject
 {
-	var $element='productbatch';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='productbatch';
+
 	private static $_table_element='product_batch';		//!< Name of table without prefix where object is stored
 
 	var $tms='';
@@ -52,7 +56,6 @@ class Productbatch extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -69,7 +72,7 @@ class Productbatch extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		$this->clean_param();
+		$this->cleanParam();
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -200,7 +203,7 @@ class Productbatch extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		$this->clean_param();
+		$this->cleanParam();
 
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
 		if ($this->qty < 0)
@@ -391,16 +394,14 @@ class Productbatch extends CommonObject
 		$this->eatby='';
 		$this->batch='';
 		$this->import_key='';
-
-
 	}
 
 	/**
 	 *  Clean fields (triming)
 	 *
-	 *	@return	void
+	 *  @return	void
 	 */
-	private function clean_param()
+	private function cleanParam()
 	{
 		if (isset($this->fk_product_stock)) $this->fk_product_stock=(int) trim($this->fk_product_stock);
 		if (isset($this->batch)) $this->batch=trim($this->batch);
@@ -539,5 +540,4 @@ class Productbatch extends CommonObject
             return -1;
         }
     }
-
 }

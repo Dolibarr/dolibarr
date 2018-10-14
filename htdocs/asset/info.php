@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file       info.php
+ *  \file       htdocs/asset/info.php
  *  \ingroup    asset
  *  \brief      Page to show an asset information
  */
@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
 $id = GETPOST('id','int');
@@ -54,7 +55,7 @@ $form = new Form($db);
 
 $object->info($id);
 
-$head = AssetsPrepareHead($object);
+$head = asset_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
@@ -78,5 +79,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

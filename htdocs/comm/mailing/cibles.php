@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->load("mails");
 
 // Security check
@@ -65,7 +66,6 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 
 
-
 /*
  * Actions
  */
@@ -74,8 +74,6 @@ if ($action == 'add')
 {
 	$module=GETPOST("module");
 	$result=-1;
-
-	$var=true;
 
 	foreach ($modulesdir as $dir)
 	{
@@ -277,8 +275,6 @@ if ($object->fetch($id) >= 0)
 
 		clearstatcache();
 
-		$var = true;
-
 		foreach ($modulesdir as $dir)
 		{
 		    $modulenames=array();
@@ -306,9 +302,11 @@ if ($object->fetch($id) >= 0)
 			// Sort $modulenames
 			sort($modulenames);
 
+			$var = true;
+
 			// Loop on each submodule
-            foreach($modulenames as $modulename)
-            {
+			foreach($modulenames as $modulename)
+			{
 				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
@@ -331,16 +329,14 @@ if ($object->fetch($id) >= 0)
 				// Si le module mailing est qualifie
 				if ($qualified)
 				{
-					$var = !$var;
-
 					if ($allowaddtarget)
 					{
-						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form class="oddeven tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 					else
 					{
-					    print '<div '.$bctag[$var].'>';
+					    print '<div class="oddeven tagtr">';
 					}
 
 					print '<div class="tagtd">';
@@ -561,7 +557,7 @@ if ($object->fetch($id) >= 0)
                         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
                         $objectstatic=new Adherent($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'user')
                     {
@@ -569,14 +565,21 @@ if ($object->fetch($id) >= 0)
                         $objectstatic=new User($db);
 						$objectstatic->fetch($obj->source_id);
                         $objectstatic->id=$obj->source_id;
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'thirdparty')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $objectstatic=new Societe($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
+                    }
+                    else if ($obj->source_type == 'contact')
+                    {
+                    	include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+                    	$objectstatic=new Contact($db);
+                    	$objectstatic->fetch($obj->source_id);
+                    	print $objectstatic->getNomUrl(1);
                     }
                     else
                     {
@@ -643,7 +646,6 @@ if ($object->fetch($id) >= 0)
 
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

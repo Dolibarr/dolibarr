@@ -21,6 +21,7 @@
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure journals
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -30,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","compta","accountancy"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
@@ -126,16 +128,16 @@ complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
-	// Must match ids defined into eldy.lib.php
-	$sourceList = array(
-			'1' => $langs->trans('AccountingJournalType1'),
-			'2' => $langs->trans('AccountingJournalType2'),
-			'3' => $langs->trans('AccountingJournalType3'),
-			'4' => $langs->trans('AccountingJournalType4'),
-			'5' => $langs->trans('AccountingJournalType5'),
-			'8' => $langs->trans('AccountingJournalType8'),
-			'9' => $langs->trans('AccountingJournalType9')
-	);
+// Must match ids defined into eldy.lib.php
+$sourceList = array(
+	'1' => $langs->trans('AccountingJournalType1'),
+	'2' => $langs->trans('AccountingJournalType2'),
+	'3' => $langs->trans('AccountingJournalType3'),
+	'4' => $langs->trans('AccountingJournalType4'),
+	'5' => $langs->trans('AccountingJournalType5'),
+	'8' => $langs->trans('AccountingJournalType8'),
+	'9' => $langs->trans('AccountingJournalType9'),
+);
 
 /*
  * Actions
@@ -292,10 +294,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
-if (GETPOST('actioncancel'))
-{
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
+//if (GETPOST('actioncancel'))
+//{
+//	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
+//}
 
 if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
@@ -600,6 +602,7 @@ if ($id)
 
 					if (empty($reshook))
 					{
+                        $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
 
@@ -610,10 +613,12 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
-								$langs->loadLangs(array("accountancy"));
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
-								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($obj->nature)?$key:$obj->{$fieldlist[$field]});
+								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature))?$key:$obj->{$fieldlist[$field]});
 							}
+							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+								$valuetoshow=$langs->trans($obj->label);
+                            }
 
 							$class='tddict';
 							// Show value for field
@@ -678,7 +683,7 @@ if ($id)
 
 print '<br>';
 
-
+// End of page
 llxFooter();
 $db->close();
 

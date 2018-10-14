@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2017  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","mails","languages"));
 
 $action     = GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
@@ -447,7 +447,6 @@ $fieldlist=explode(',',$tabfield[$id]);
 
 // Form to add a new line
 $alabelisused=0;
-$var=false;
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -557,7 +556,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 		print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
 	}
 	else if ($tmpfieldlist == 'joinfiles') {
-		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
+		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1') . '">';
 	}
 	else
 	{
@@ -591,9 +590,7 @@ $colspan=count($fieldlist)+1;
 
 print '</table>';
 print '</div>';
-
 print '</form>';
-
 print '<br>';
 
 
@@ -611,7 +608,6 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
-    $var=true;
 
     $param = '&id='.$id;
     $paramwithsearch = $param;
@@ -929,6 +925,7 @@ print '</form>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();
 
@@ -993,7 +990,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print '<td>';
 			if (! empty($conf->global->MAIN_MULTILANGS))
 			{
-				$selectedlang = $langs->defaultlang;
+				$selectedlang = GETPOSTISSET('langcode','aZ09')?GETPOST('langcode','aZ09'):$langs->defaultlang;
 				if ($context == 'edit') $selectedlang = $obj->{$fieldlist[$field]};
 				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth150');
 			}

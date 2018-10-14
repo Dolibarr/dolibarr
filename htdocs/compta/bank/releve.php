@@ -25,7 +25,7 @@
  *		\brief      Page to show a bank statement report
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks","categories","companies","bills","trips"));
 
 $action=GETPOST('action', 'alpha');
@@ -812,7 +813,6 @@ else
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -3,6 +3,7 @@
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2018		ptibogxiv				<support@ptibogxiv.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $servicename='Stripe';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("paypal");
-$langs->load("paybox");
-$langs->load("stripe");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (! $user->admin) accessforbidden();
 
@@ -73,12 +71,16 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
-	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
+    $result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) {
+        $error ++;
+    }
+    $result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
-  $result = dolibarr_set_const($db, "STRIPE_MINIMAL_3DSECURE", GETPOST('STRIPE_MINIMAL_3DSECURE', 'int'), 'chaine', 0, '', $conf->entity);
+    $result = dolibarr_set_const($db, "STRIPE_MINIMAL_3DSECURE", GETPOST('STRIPE_MINIMAL_3DSECURE', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
-		$error ++;  
+		$error ++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
@@ -119,10 +121,8 @@ if ($action == 'setvalue' && $user->admin)
 if ($action=="setlive")
 {
 	$liveenable = GETPOST('value','int');
-	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable,'yesno',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	if (! $error)
-	{
+	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable, 'yesno', 0, '', $conf->entity);
+	if ($res > 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
@@ -255,6 +255,11 @@ print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
+print $langs->trans("StripeUserAccountForActions").'</td><td>';
+print $form->select_dolusers($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS, 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
 print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
@@ -268,13 +273,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 }
 
 // Minimal amount for force 3Dsecure if it's optionnal
-print '<tr class="oddeven"><td>';
-print $langs->trans("STRIPE_MINIMAL_3DSECURE").'</td><td>';
-print '<input class="flat" name="STRIPE_MINIMAL_3DSECURE" size="3" value="' .$conf->global->STRIPE_MINIMAL_3DSECURE . '">'.$langs->getCurrencySymbol($conf->currency).'</td></tr>';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_MINIMAL_3DSECURE").'</td><td>';
+	print '<input class="flat" name="STRIPE_MINIMAL_3DSECURE" size="3" value="' .$conf->global->STRIPE_MINIMAL_3DSECURE . '">'.$langs->getCurrencySymbol($conf->currency).'</td></tr>';
+}
 
+// Warehouse for automatic decrement
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 {
-	// Stock for automatic decrement
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
 	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE,'ONLINE_PAYMENT_WAREHOUSE','',1,$disabled);
@@ -307,8 +315,8 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
 print '</td></tr>';
 
 // Payment token for URL
@@ -354,7 +362,6 @@ if (! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();
-

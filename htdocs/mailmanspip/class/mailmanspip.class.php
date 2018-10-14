@@ -38,13 +38,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class MailmanSpip
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $mladded_ok;
-    var $mladded_ko;
-    var $mlremoved_ok;
-    var $mlremoved_ko;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    public $mladded_ok;
+    public $mladded_ko;
+    public $mlremoved_ok;
+    public $mlremoved_ko;
 
 
     /**
@@ -163,6 +170,7 @@ class MailmanSpip
         return $result;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Fonction qui donne les droits redacteurs dans spip
      *
@@ -171,6 +179,7 @@ class MailmanSpip
      */
     function add_to_spip($object)
     {
+        // phpcs:enable
         dol_syslog(get_class($this)."::add_to_spip");
 
         if ($this->isSpipEnabled())
@@ -205,6 +214,7 @@ class MailmanSpip
         return 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Fonction qui enleve les droits redacteurs dans spip
      *
@@ -213,6 +223,7 @@ class MailmanSpip
      */
     function del_to_spip($object)
     {
+        // phpcs:enable
         dol_syslog(get_class($this)."::del_to_spip");
 
         if ($this->isSpipEnabled())
@@ -244,6 +255,7 @@ class MailmanSpip
         return 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
      *
@@ -252,6 +264,7 @@ class MailmanSpip
      */
     function is_in_spip($object)
     {
+        // phpcs:enable
         if ($this->isSpipEnabled())
         {
             if ($this->checkSpipConfig())
@@ -294,6 +307,7 @@ class MailmanSpip
         return -1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Subscribe an email to all mailing-lists
      *
@@ -303,6 +317,7 @@ class MailmanSpip
      */
     function add_to_mailman($object,$listes='')
     {
+        // phpcs:enable
         global $conf,$langs,$user;
 
         dol_syslog(get_class($this)."::add_to_mailman");
@@ -365,6 +380,7 @@ class MailmanSpip
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Unsubscribe an email from all mailing-lists
      *  Used when a user is resiliated
@@ -375,6 +391,7 @@ class MailmanSpip
      */
     function del_to_mailman($object,$listes='')
     {
+        // phpcs:enable
         global $conf,$langs,$user;
 
         dol_syslog(get_class($this)."::del_to_mailman");
@@ -436,5 +453,4 @@ class MailmanSpip
 	        }
         }
     }
-
 }

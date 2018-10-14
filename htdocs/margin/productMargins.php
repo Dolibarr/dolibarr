@@ -28,10 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -136,11 +134,11 @@ print '</tr>';
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-$form->select_date($startdate,'startdate','','',1,"sel",1,1);
+print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-$form->select_date($enddate,'enddate','','',1,"sel",1,1);
+print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -369,5 +367,6 @@ $(document).ready(function() {
 </script>
 ';
 
+// End of page
 llxFooter();
 $db->close();

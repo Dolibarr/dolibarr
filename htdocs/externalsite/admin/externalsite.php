@@ -35,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (!$user->admin)
     accessforbidden();
 
-
-$langs->load("admin");
-$langs->load("other");
-$langs->load("externalsite");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'externalsite'));
 
 $def = array();
 
@@ -93,8 +91,6 @@ print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
 print "<td>".$langs->trans("Examples")."</td>";
 print "</tr>";
-
-$var=true;
 
 
 print '<tr class="oddeven">';

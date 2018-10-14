@@ -33,8 +33,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
-$langs->load("admin");
-$langs->load("members");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members"));
 
 if (! $user->admin) accessforbidden();
 
@@ -265,7 +265,6 @@ form_constantes($constantes, 0, $helptext);
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

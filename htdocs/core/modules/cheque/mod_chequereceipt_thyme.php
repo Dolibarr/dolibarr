@@ -30,9 +30,18 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php
  */
 class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $name = 'Thyme';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	public $name = 'Thyme';
 
 
     /**
@@ -42,7 +51,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -124,6 +133,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -133,8 +143,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      */
     function chequereceipt_get_num($objsoc,$objforref)
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
-

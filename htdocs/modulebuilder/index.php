@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
 $action=GETPOST('action','aZ09');
@@ -119,13 +121,22 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 		}
 
-		// Delete some files
+		if (!empty($conf->global->MODULEBUILDER_USE_ABOUT))
+		{
+			dol_delete_file($destdir.'/admin/about.php');
+		}
+		if (!empty($conf->global->MODULEBUILDER_USE_DOCFOLDER))
+		{
+			dol_delete_dir($destdir.'/doc/');
+		}
+
+		// Delete some files related to object (because to previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
 		dol_delete_file($destdir.'/myobject_note.php');
 		dol_delete_file($destdir.'/myobject_document.php');
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
-		dol_delete_file($destdir.'/lib/myobject.lib.php');
+		dol_delete_file($destdir.'/lib/mymodule_myobject.lib.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_mymodule_myobject_extrafields.sql');
@@ -162,6 +173,12 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			{
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 			}
+		}
+
+		if (!empty($conf->global->MODULEBUILDER_SPECIFIC_README))
+		{
+			dol_delete_file($destdir.'/README.md');
+			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
 		}
 	}
 
@@ -277,14 +294,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 	if (! $error)
 	{
-		// Delete some files
+		// Copy some files
 		$filetogenerate = array(
 		'myobject_card.php'=>strtolower($objectname).'_card.php',
 		'myobject_note.php'=>strtolower($objectname).'_note.php',
 		'myobject_document.php'=>strtolower($objectname).'_document.php',
 		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
@@ -397,7 +414,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'Mon module'=>$module,
 			'htdocs/modulebuilder/template/'=>strtolower($modulename),
 			'myobject'=>strtolower($objectname),
-			'MyObject'=>$objectname
+			'MyObject'=>$objectname,
+                        'MYOBJECT'=>strtoupper($objectname)
 			);
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -645,7 +663,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 		'myobject_document.php'=>strtolower($objectname).'_document.php',
 		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'lib/mymodule.lib.php'=>'lib/'.strtolower($module).'.lib.php',
+		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
@@ -1166,7 +1185,7 @@ elseif (! empty($module))
 				print '<br>';
 				print '<br>';
 
-				print_fiche_titre($langs->trans("DescriptorFile"));
+				print load_fiche_titre($langs->trans("DescriptorFile"));
 
 				if (! empty($moduleobj))
 				{
@@ -1230,7 +1249,7 @@ elseif (! empty($module))
 					print '<br><br>';
 
 					// Readme file
-					print_fiche_titre($langs->trans("ReadmeFile"));
+					print load_fiche_titre($langs->trans("ReadmeFile"));
 
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
@@ -1240,7 +1259,7 @@ elseif (! empty($module))
 					print '<br><br>';
 
 					// ChangeLog
-					print_fiche_titre($langs->trans("ChangeLog"));
+					print load_fiche_titre($langs->trans("ChangeLog"));
 
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
@@ -1625,7 +1644,7 @@ elseif (! empty($module))
 						}
 						else
 						{
-							$result = @include_once($dirread.'/'.$pathtoclass);
+							$result = @include_once $dirread.'/'.$pathtoclass;
 						}
 						if (class_exists($tabobj))
 						{
@@ -1665,24 +1684,24 @@ elseif (! empty($module))
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder">';
 							print '<tr class="liste_titre">';
-							print '<td>'.$langs->trans("Property");
-							print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
-							print '</td>';
-							print '<td>';
+							print '<th class="liste_titre">'.$langs->trans("Property");
+							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("SeeExamples").'</a>)';
+							print '</th>';
+							print '<th>';
 							print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
-							print '</td>';
-							print '<td>'.$langs->trans("Type").'</td>';
-							print '<td>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</td>';
-							print '<td class="center">'.$langs->trans("DefaultValue").'</td>';
-							print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
-							print '<td class="right">'.$langs->trans("Position").'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</td>';
-							print '<td>'.$langs->trans("Comment").'</td>';
-							print '<td></td>';
+							print '</th>';
+							print '<th>'.$langs->trans("Type").'</td>';
+							print '<th>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</th>';
+							print '<th class="center">'.$langs->trans("DefaultValue").'</th>';
+							print '<th class="center">'.$langs->trans("DatabaseIndex").'</th>';
+							print '<th class="right">'.$langs->trans("Position").'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
+							print '<th>'.$langs->trans("Comment").'</th>';
+							print '<th></th>';
 							print '</tr>';
 
 							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobjet->fields may have been
@@ -2472,8 +2491,6 @@ elseif (! empty($module))
 
 dol_fiche_end(); // End modules
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

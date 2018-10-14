@@ -26,9 +26,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'admin'));
 
 if (! $user->admin) accessforbidden();
 
@@ -38,8 +37,8 @@ if ($action == 'update')
 {
     $error=0;
     $MAXDEC=8;
-    if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  > $MAXDEC
-    || $_POST["MAIN_MAX_DECIMALS_TOT"]   > $MAXDEC
+    if ($_POST["MAIN_MAX_DECIMALS_UNIT"] > $MAXDEC
+    || $_POST["MAIN_MAX_DECIMALS_TOT"] > $MAXDEC
     || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > $MAXDEC)
     {
         $error++;
@@ -67,11 +66,11 @@ if ($action == 'update')
 
     if (! $error)
     {
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",   $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT",    $_POST["MAIN_MAX_DECIMALS_TOT"],'chaine',0,'',$conf->entity);
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN",  $_POST["MAIN_MAX_DECIMALS_SHOWN"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT", $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT", $_POST["MAIN_MAX_DECIMALS_TOT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN", $_POST["MAIN_MAX_DECIMALS_SHOWN"],'chaine',0,'',$conf->entity);
 
-        dolibarr_set_const($db, "MAIN_ROUNDING_RULE_TOT",   $_POST["MAIN_ROUNDING_RULE_TOT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_ROUNDING_RULE_TOT", $_POST["MAIN_ROUNDING_RULE_TOT"],'chaine',0,'',$conf->entity);
 
         header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
         exit;
@@ -307,7 +306,6 @@ else
 	*/
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

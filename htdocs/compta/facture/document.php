@@ -35,14 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('propal');
-$langs->load('compta');
-$langs->load('other');
-$langs->load("bills");
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('propal', 'compta', 'other', 'bills', 'companies'));
 
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
@@ -81,7 +78,7 @@ if ($object->fetch($id))
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+require_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -107,7 +104,7 @@ if ($id > 0 || ! empty($ref))
 
     	$totalpaye = $object->getSommePaiement();
 
-		// Construit liste des fichiers
+		// Build file list
 		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
@@ -194,6 +191,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

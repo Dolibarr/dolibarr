@@ -36,7 +36,11 @@ class box_fournisseurs extends ModeleBoxes
     var $boxlabel="BoxLastSuppliers";
     var $depends = array("fournisseur");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
     var $info_box_head = array();
@@ -146,7 +150,6 @@ class box_fournisseurs extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
     }
 
 	/**
@@ -161,6 +164,5 @@ class box_fournisseurs extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

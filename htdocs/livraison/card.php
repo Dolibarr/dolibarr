@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015			  Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,9 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
+$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
 
-$langs->load("sendings");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
@@ -77,9 +75,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard','globalcard'));
 
+
 /*
  * Actions
  */
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -245,9 +245,16 @@ if ($action == 'update_extras_line')
 }
 
 
+// Actions to build doc
+$upload_dir = $conf->expedition->dir_output.'/receipt';
+$permissioncreate = $user->rights->expedition->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+
 /*
  * Build document
  */
+/*
 if ($action == 'builddoc')	// En get ou en post
 {
 	// Save last template used to generate document
@@ -283,6 +290,7 @@ elseif ($action == 'remove_file')
 	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
+*/
 
 
 /*
@@ -498,7 +506,7 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
+				print $form->selectDate($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
@@ -578,7 +586,7 @@ else
 			print '</div>';
 
 			/*
-			 * Lignes produits
+			 * Products lines
 			 */
 
 			$num_prod = count($object->lines);
@@ -596,11 +604,8 @@ else
 				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num_prod)
 			{
-
-
 				print '<tr class="oddeven">';
 				if ($object->lines[$i]->fk_product > 0)
 				{
@@ -678,7 +683,7 @@ else
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					}
 					print '<tr class="oddeven">';
-					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var], 'colspan'=>$colspan),$i);
+					print $line->showOptionals($extrafieldsline, $mode, array('style'=>'class="oddeven"', 'colspan'=>$colspan),$i);
 					print '</tr>';
 				}
 
@@ -776,6 +781,6 @@ else
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();
