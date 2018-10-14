@@ -42,6 +42,21 @@ $page = GETPOST("page");
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'alpha');
+if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
+
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+//if (! $sortfield) $sortfield="p.date_fin";
+//if (! $sortorder) $sortorder="DESC";
+
+
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 
@@ -53,14 +68,6 @@ $search_accountancy_code_end = GETPOST('search_accountancy_code_end', 'alpha');
 if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
-
-if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
-
-
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
-if (empty($page) || $page < 0) { $page = 0; }
-
-$offset = $limit * $page;
 
 $object = new BookKeeping($db);
 
