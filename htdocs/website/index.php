@@ -1749,7 +1749,7 @@ if (count($object->records) > 0)	// There is at least one web site
 
 		$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot);
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/website/index.php?website='.$websitekey.'" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
 		print $form->textwithpicto('', $htmltext, 1, 'preview');
 		print '</a>';
@@ -1760,7 +1760,7 @@ if (count($object->records) > 0)	// There is at least one web site
 		$htmltext =$langs->trans("SetHereVirtualHost", $dataroot);
 		$htmltext.='<br>';
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 		$htmltext.='<br>';
 		$htmltext.='<br>';
 		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
@@ -1782,7 +1782,7 @@ if (count($object->records) > 0)	// There is at least one web site
 			$htmltext = $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>');
 			$htmltext.='<br>';
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 			print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$websitekey.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</a>';
@@ -2003,7 +2003,7 @@ if (count($object->records) > 0)	// There is at least one web site
 
 			$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot);
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 
 			print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview');
@@ -2321,7 +2321,7 @@ if ($action == 'createsite')
 	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>');
 	$htmltext.='<br>';
 	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'tooltipvirtual');
 	print '</td><td>';
