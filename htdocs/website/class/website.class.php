@@ -1089,10 +1089,26 @@ class Website extends CommonObject
 	 */
 	public function componentSelectLang($languagecodes, $weblangs, $morecss='', $htmlname='')
 	{
+		global $websitepagefile;
+
 		if (! is_object($weblangs)) return 'ERROR componentSelectLang called with parameter $weblangs not defined';
 
-		$languagecodeselected = $weblangs->defaultlang;
+		$languagecodeselected= $weblangs->defaultlang;	// Becasue we must init with a value, but real value is the lang of main parent container
+		if (! empty($websitepagefile))
+		{
+			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+			if ($pageid > 0)
+			{
+				$tmppage=new WebsitePage($this->db);
+				$tmppage->fetch($pageid);
+
+				$languagecodeselected=$tmppage->lang;
+				$languagecodes[]=$tmppage->lang;	// We add language code of page into combo list
+			}
+		}
+
 		$weblangs->load('languages');
+		//var_dump($weblangs->defaultlang);
 
 		$url = $_SERVER["REQUEST_URI"];
 		$url = preg_replace('/(\?|&)l=([a-zA-Z_]*)/', '', $url);	// We remove param l from url

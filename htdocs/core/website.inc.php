@@ -33,33 +33,48 @@ if (! is_object($website))
 }
 if (! is_object($weblangs))
 {
-	$weblangs = dol_clone($langs);
+	$weblangs = dol_clone($langs);	// TODO Use an object lang from a language set into $website object instead of backoffice
 }
 
 // A lang was forced, so we change weblangs init
 if (GETPOST('l','aZ09')) $weblangs->setDefaultLang(GETPOST('l','aZ09'));
 // A lang was forced, so we check to find if we must make a redirect on translation page
-if (! defined('USEDOLIBARREDITOR'))
+if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing page using Dolibarr server or a Native web server
 {
+	//print_r(get_defined_constants(true));exit;
 	if (GETPOST('l','aZ09'))
 	{
-		$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
-		$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
-		$sql.=" WHERE w.rowid = wp.fk_website AND w.ref = '".$db->escape($websitekey)."' AND fk_page = '".$db->escape($pageid)."' AND lang = '".$db->escape(GETPOST('l','aZ09'))."'";
-		$resql = $db->query($sql);
-		if ($resql)
+		if (! $pageid && ! empty($websitepagefile))
 		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
+			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+		}
+		if ($pageid > 0)
+		{
+			$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
+			$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
+			$sql.=" WHERE w.rowid = wp.fk_website AND w.ref = '".$db->escape($websitekey)."' AND wp.lang = '".$db->escape(GETPOST('l','aZ09'))."'";
+			$sql.=" AND wp.fk_page = ".$db->escape($pageid);
+			//var_dump($sql);exit;
+			$resql = $db->query($sql);
+			if ($resql)
 			{
-				//$pageid = $obj->rowid;
-				//$pageref = $obj->pageurl;
-				if (! defined('USEDOLIBARRSERVER')) {
-					// TODO Redirect
-				}
-				else
+				$obj = $db->fetch_object($resql);
+				if ($obj)
 				{
-					// TODO Redirect
+					$newpageid = $obj->rowid;
+					if ($newpageid != $pageid) 		// To avoid to make a redirect on same page (infinite loop)
+					{
+						if (defined('USEDOLIBARRSERVER')) {
+							header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'.php&l='.GETPOST('l','aZ09'));
+							exit;
+						}
+						else
+						{
+							$newpageref = $obj->pageurl;
+							header("Location: ".$newpageref.'.php?l='.GETPOST('l','aZ09'));
+							exit;
+						}
+					}
 				}
 			}
 		}
