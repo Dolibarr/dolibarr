@@ -58,6 +58,7 @@ $fourn_id = GETPOST("fourn_id",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
+if (empty($page) || $page < 0) $page = 0;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
@@ -88,6 +89,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $sref="";
     $snom="";
     $sall="";
+	$tosell="";
+	$tobuy="";
     $search_sale="";
     $search_categ="";
     $type="";
@@ -95,6 +98,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $toolowstock='';
     $search_batch='';
     $search_warehouse='';
+	$fourn_id='';
+	$sbarcode='';
 }
 
 
@@ -193,6 +198,24 @@ if ($resql)
 	}
 	$texte.=' ('.$langs->trans("StocksByLotSerial").')';
 
+	$param='';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)		$param.="&sall=".$sall;
+	if ($tosell)		$param.="&tosell=".$tosell;
+	if ($tobuy)			$param.="&tobuy=".$tobuy;
+	if ($type)			$param.="&type=".$type;
+	if ($fourn_id)		$param.="&fourn_id=".$fourn_id;
+	if ($snom)			$param.="&snom=".$snom;
+	if ($sref)			$param.="&sref=".$sref;
+	if ($search_batch)	$param.="&search_batch=".$search_batch;
+	if ($sbarcode)		$param.="&sbarcode=".$sbarcode;
+	if ($search_warehouse)	$param.="&search_warehouse=".$search_warehouse;
+	if ($catid)			$param.="&catid=".$catid;
+	if ($toolowstock)	$param.="&toolowstock=".$toolowstock;
+	if ($search_sale)	$param.="&search_sale=".$search_sale;
+	if ($search_categ)	$param.="&search_categ=".$search_categ;
+	/*if ($eatby)		$param.="&eatby=".$eatby;
+	if ($sellby)	$param.="&sellby=".$sellby;*/
 
 	llxHeader("",$title,$helpurl,$texte);
 
@@ -203,14 +226,8 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	if ($sref || $snom || $sall || GETPOST('search'))
-	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
-	}
-	else
-	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
-	}
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
+
 
 	if (! empty($catid))
 	{
@@ -243,17 +260,6 @@ if ($resql)
         print '</div>';
     }
 
-
-	$param='';
-	if ($tosell)		$param.="&tosell=".$tosell;
-	if ($tobuy)			$param.="&tobuy=".$tobuy;
-	if ($type)			$param.="&type=".$type;
-	if ($fourn_id)		$param.="&fourn_id=".$fourn_id;
-	if ($snom)			$param.="&snom=".$snom;
-	if ($sref)			$param.="&sref=".$sref;
-	if ($search_batch)	$param.="&search_batch=".$search_batch;
-	/*if ($eatby)		$param.="&eatby=".$eatby;
-	if ($sellby)	$param.="&sellby=".$sellby;*/
 
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
