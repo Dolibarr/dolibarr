@@ -2189,50 +2189,52 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 }
 
 /**
- * Show Skype link
+ * Show social network link
  *
- * @param	string		$skype			Skype to show (only skype, without 'Name of recipient' before)
+ * @param	string		$value			Skype to show (only skype, without 'Name of recipient' before)
  * @param	int 		$cid 			Id of contact if known
  * @param	int 		$socid 			Id of third party if known
- * @param	int 		$addlink		0=no link to create action
- * @param	int			$max			Max number of characters to show
+ * @param	string 		$type			'skype','facebook',...
  * @return	string						HTML Link
  */
-function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
+function dol_print_socialnetworks($value,$cid,$socid,$type)
 {
 	global $conf,$user,$langs;
 
-	$newskype=$skype;
+	$newskype=$value;
 
-	if (empty($skype)) return '&nbsp;';
+	if (empty($value)) return '&nbsp;';
 
-	if (! empty($addlink))
+	if (! empty($type))
 	{
-		$newskype =img_picto($langs->trans("Skype"), 'object_skype.png');
-		$newskype.= '&nbsp;';
-		$newskype.=dol_trunc($skype,$max);
-		$newskype.= '&nbsp;';
-		$newskype.='<a href="skype:';
-		$newskype.=dol_trunc($skype,$max);
-		$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
-		$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
-		$newskype.='</a>&nbsp;&nbsp;&nbsp;<a href="skype:';
-		$newskype.=dol_trunc($skype,$max);
-		$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$skype.'" title="'.$langs->trans("Chat").'&nbsp;'.$skype.'">';
-		$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
-		$newskype.='</a>';
-
-		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		$newskype ='<div class="divsocialnetwork inline-block valignmiddle">';
+		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
+		$newskype.=$value;
+		if ($type == 'skype')
 		{
-			$type='AC_SKYPE'; $link='';
-			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			$newskype='<div class="divskype nowrap">'.$newskype.($link?' '.$link:'').'</div>';
+			$newskype.= '&nbsp;';
+			$newskype.='<a href="skype:';
+			$newskype.=$value;
+			$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
+			$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
+			$newskype.='</a><a href="skype:';
+			$newskype.=$value;
+			$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
+			$newskype.='<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
+			$newskype.='</a>';
 		}
+		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type=='skype')
+		{
+			$addlink='AC_SKYPE'; $link='';
+			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			$newskype.=($link?' '.$link:'');
+		}
+		$newskype.='</div>';
 	}
 	else
 	{
 		$langs->load("errors");
-		$newskype.=img_warning($langs->trans("ErrorBadSkype",$skype));
+		$newskype.=img_warning($langs->trans("ErrorBadSocialNetworkValue",$value));
 	}
 	return $newskype;
 }
@@ -3151,11 +3153,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow')
-			)) {
+				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
+				'skype','twitter','facebook'
+			)
+		)) {
 			$fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
-			$marginleftonlyshort = 0;
+			$marginleftonlyshort = 2;
 			if ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
 				$facolor = '#999';
@@ -3237,12 +3241,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
 				$facolor = '#444';
+				$marginleftonlyshort=0;
 			}
 
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
 				$morecss.= ($morecss?' ':'').$reg[1];
 			}
-			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?'marginleftonlyshort':'marginleftonly').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:'').'>';
+			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?($marginleftonlyshort==1?'marginleftonlyshort':'marginleftonly'):'').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:'').'>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}

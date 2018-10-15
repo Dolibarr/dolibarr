@@ -186,10 +186,21 @@ class Stripe extends CommonObject
 			{
 				$dataforcustomer = array(
 					"email" => $object->email,
-					"business_vat_id" => $object->tva_intra,
 					"description" => $object->name,
 					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
+
+				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
+
+				$taxinfo = array('type'=>'vat');
+				if ($vatcleaned)
+				{
+					$taxinfo["tax_id"] = $vatcleaned;
+				}
+				// We force data to "null" if not defined as expected by Stripe
+				if (empty($vatcleaned)) $taxinfo=null;
+
+				$dataforcustomer["tax_info"] = $taxinfo;
 
 				//$a = \Stripe\Stripe::getApiKey();
 				//var_dump($a);var_dump($key);exit;
