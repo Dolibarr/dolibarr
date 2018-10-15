@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
- * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2017  Alexandre Spangaro		<aspangaro@zendsi.com>
- * Copyright (C) 2013-2016  Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016  Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2014       Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -317,7 +317,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
-					$bookkeeping->subledger_label = '';    // TODO To complete
+					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;

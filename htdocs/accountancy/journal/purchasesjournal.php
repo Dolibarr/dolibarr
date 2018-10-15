@@ -310,7 +310,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
-					$bookkeeping->subledger_label = '';    // TODO To complete
+					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;
