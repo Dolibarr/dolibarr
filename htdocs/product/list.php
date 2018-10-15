@@ -68,7 +68,7 @@ $type=GETPOST("type","int");
 
 //Show/hide child products
 if (!empty($conf->variants->enabled) && ! empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
-	$show_childproducts = GETPOST('show_childproducts');
+	$show_childproducts = GETPOST('search_show_childproducts');
 } else {
 	$show_childproducts = '';
 }
@@ -404,7 +404,7 @@ if ($resql)
 	if ($search_tobuy != '') $param.="&search_tobuy=".urlencode($search_tobuy);
 	if ($fourn_id > 0) $param.=($fourn_id?"&fourn_id=".$fourn_id:"");
 	if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
-	if ($show_childproducts) $param.=($show_childproducts?"&show_childproducts=".urlencode($show_childproducts):"");
+	if ($show_childproducts) $param.=($show_childproducts?"&search_show_childproducts=".urlencode($show_childproducts):"");
 	if ($type != '') $param.='&type='.urlencode($type);
 	if ($search_type != '') $param.='&search_type='.urlencode($search_type);
 	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
@@ -482,8 +482,8 @@ if ($resql)
 	//Show/hide child products. Hidden by default
 	if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD )) {
 		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.= '<input type="checkbox" id="show_childproducts" name="show_childproducts"'.($show_childproducts ? 'checked="checked"':'').'>';
-		$moreforfilter.= ' <label for="show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
+		$moreforfilter.= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"':'').'>';
+		$moreforfilter.= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
 		$moreforfilter.='</div>';
 	}
 
