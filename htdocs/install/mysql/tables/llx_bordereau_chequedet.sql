@@ -27,6 +27,7 @@ CREATE TABLE llx_bordereau_chequedet
     fk_bordereau 	integer NOT NULL,
     fk_bank 		integer,
     fk_paiement 	integer,
+    type_line		varchar(255),
     emetteur 		varchar(255),
     amount 			double(28,8) DEFAULT 0
 ) ENGINE = InnoDB;

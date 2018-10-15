@@ -140,6 +140,7 @@ CREATE TABLE llx_bordereau_chequedet
     fk_bordereau 	integer NOT NULL,
     fk_bank 		integer,
     fk_paiement 	integer,
+    type_line		varchar(255),
     emetteur 		varchar(255),
     amount 			double(28,8) DEFAULT 0
 ) ENGINE = InnoDB;
@@ -147,3 +148,9 @@ CREATE TABLE llx_bordereau_chequedet
 ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bordereau (fk_bordereau);
 ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bank (fk_bank);
 ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_paiement (fk_paiement);
+
+INSERT INTO llx_bordereau_chequedet (fk_bordereau, fk_bank, fk_paiement, type_line, emetteur, amount)
+SELECT b.fk_bordereau, b.rowid as fk_bank, IF(ISNULL(p.rowid), 0, p.rowid) as fk_paiement, 'bank' as type_line, b.emetteur, b.amount
+FROM llx_bank as b
+LEFT JOIN llx_paiement as p ON p.fk_bank=b.rowid
+WHERE b.fk_bordereau <> 0
