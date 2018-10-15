@@ -513,7 +513,7 @@ class LoanSchedule extends CommonObject
 
 		if($resql){
 			while($obj = $this->db->fetch_object($resql)){
-				$lastrecorded = $this->lastpaiment($obj->rowid);
+				$lastrecorded = $this->lastPayment($obj->rowid);
 				$toinsert = $this->paimenttorecord($obj->rowid, $lastrecorded);
 				if(count($toinsert)>0){
 					foreach ($toinsert as $echid){
@@ -535,12 +535,12 @@ class LoanSchedule extends CommonObject
 
 
 	/**
-	 *  transPayment
+	 *  lastpayment
 	 *
 	 *  @param  int    $loanid     Loan id
 	 *  @return int                < 0 if KO, Date > 0 if OK
 	 */
-	public function lastpaiment($loanid)
+	private function lastPayment($loanid)
 	{
 		$sql = "SELECT p.datep";
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p ";
