@@ -1079,20 +1079,72 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Component to select language (Full CSS Only)
+	 * Component to select language inside a container (Full CSS Only)
 	 *
-	 * @param	array		$languagecodes			Language codes array. Example: array('en_US','fr_FR','de_DE','es_ES')
-	 * @param	Translate	$weblangs				Language Object
-	 * @param	string		$morecss				More CSS class on component
-	 * @param	string		$htmlname				Suffix for HTML name
-	 * @return 	string								HTML select component
+	 * @param	array|string	$languagecodes			'auto' to show all languages available for page, or language codes array like array('en_US','fr_FR','de_DE','es_ES')
+	 * @param	Translate		$weblangs				Language Object
+	 * @param	string			$morecss				More CSS class on component
+	 * @param	string			$htmlname				Suffix for HTML name
+	 * @return 	string									HTML select component
 	 */
 	public function componentSelectLang($languagecodes, $weblangs, $morecss='', $htmlname='')
 	{
+		global $websitepagefile, $website;
+
 		if (! is_object($weblangs)) return 'ERROR componentSelectLang called with parameter $weblangs not defined';
 
-		$languagecodeselected = $weblangs->defaultlang;
+		// Load tmppage if we have $websitepagefile defined
+		$tmppage=new WebsitePage($this->db);
+
+		$pageid = 0;
+		if (! empty($websitepagefile))
+		{
+			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+			if ($pageid > 0)
+			{
+				$tmppage->fetch($pageid);
+			}
+		}
+
+		// Fill with existing translation, nothing if none
+		if (! is_array($languagecodes) && $pageid > 0)
+		{
+			$languagecodes = array();
+
+			$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
+			$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp";
+			$sql.=" WHERE wp.fk_website = ".$website->id;
+			$sql.=" AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
+			if ($tmppage->fk_page > 0) $sql.=" OR wp.fk_page = ".$tmppage->fk_page." OR wp.rowid = ".$tmppage->fk_page;
+			$sql.=")";
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$newlang = $obj->lang;
+					if ($obj->rowid == $pageid) $newlang = $obj->lang;
+					if (! in_array($newlang, $languagecodes)) $languagecodes[]=$newlang;
+				}
+			}
+		}
+		// Now $languagecodes is always an array
+
+		$languagecodeselected= $weblangs->defaultlang;	// Because we must init with a value, but real value is the lang of main parent container
+		if (! empty($websitepagefile))
+		{
+			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+			if ($pageid > 0)
+			{
+
+				$languagecodeselected=$tmppage->lang;
+				if (! in_array($tmppage->lang, $languagecodes)) $languagecodes[]=$tmppage->lang;	// We add language code of page into combo list
+			}
+		}
+
 		$weblangs->load('languages');
+		//var_dump($weblangs->defaultlang);
 
 		$url = $_SERVER["REQUEST_URI"];
 		$url = preg_replace('/(\?|&)l=([a-zA-Z_]*)/', '', $url);	// We remove param l from url
@@ -1103,7 +1155,8 @@ class Website extends CommonObject
 		$MAXHEIGHT = 4 * $HEIGHTOPTION;
 		$nboflanguage = count($languagecodes);
 
-		$out.='<!-- componentSelectLang'.$htmlname.' -->'."\n";
+		$out ='<!-- componentSelectLang'.$htmlname.' -->'."\n";
+
 		$out.= '<style>';
 		$out.= '.componentSelectLang'.$htmlname.':hover { height: '.min($MAXHEIGHT, ($HEIGHTOPTION * $nboflanguage)).'px; overflow-x: hidden; overflow-y: '.((($HEIGHTOPTION * $nboflanguage) > $MAXHEIGHT) ? ' scroll' : 'hidden').'; }'."\n";
 		$out.= '.componentSelectLang'.$htmlname.' li { line-height: '.$HEIGHTOPTION.'px; }'."\n";

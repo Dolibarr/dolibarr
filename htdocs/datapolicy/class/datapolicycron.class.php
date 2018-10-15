@@ -17,15 +17,15 @@
  */
 
 /**
- * \file    datapolicies/class/datapoliciescron.class.php
- * \ingroup datapolicies
+ * \file    datapolicy/class/datapolicycron.class.php
+ * \ingroup datapolicy
  * \brief   Example hook overload.
  */
 
 /**
- * Class DataPoliciesCron
+ * Class DataPolicyCron
  */
-class DataPoliciesCron
+class DataPolicyCron
 {
 	/**
 	 * Function exec
@@ -36,7 +36,7 @@ class DataPoliciesCron
     {
         global $conf, $db, $langs, $user;
 
-        $langs->load('datapolicies@datapolicies');
+        $langs->load('datapolicy@datapolicy');
 
         // FIXME Removed hardcoded values of id
         $arrayofparameters=array(
@@ -510,11 +510,11 @@ class DataPoliciesCron
     {
         global $conf, $db, $langs, $user;
 
-        $langs->load('datapolicies@datapolicies');
+        $langs->load('datapolicy@datapolicy');
 
-        require_once DOL_DOCUMENT_ROOT . '/datapolicies/class/datapolicies.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/datapolicy/class/datapolicy.class.php';
 
-        $contacts = new DataPolicies($db);
+        $contacts = new DataPolicy($db);
         $contacts->getAllContactNotInformed();
         $contacts->getAllCompaniesNotInformed();
         $contacts->getAllAdherentsNotInformed();

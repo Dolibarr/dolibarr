@@ -229,7 +229,7 @@ DoNotStoreClearPassword=Do no store clear passwords in database but store only e
 MainDbPasswordFileConfEncrypted=Database password encrypted in conf.php (Activated recommended)
 InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
-ProtectAndEncryptPdfFiles=Protection of generated PDF files NOT recommended, breaks mass PDF generation)
+ProtectAndEncryptPdfFiles=Protection of generated PDF files NOT recommended (breaks mass PDF generation)
 ProtectAndEncryptPdfFilesDesc=Protection of a PDF document keeps it available to read and print with any PDF browser. However, editing and copying is not possible anymore. Note that using this feature makes building of a global merged PDFs not working.
 Feature=Feature
 DolibarrLicense=License
@@ -1225,6 +1225,7 @@ WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at follow
 BillsSetup=Invoices module setup
 BillsNumberingModule=Invoices and credit notes numbering model
 BillsPDFModules=Invoice documents models
+BillsPDFModulesAccordindToInvoiceType=Invoice documents models according to invoice type
 PaymentsPDFModules=Payment documents models
 CreditNote=Credit note
 CreditNotes=Credit notes
@@ -1802,7 +1803,7 @@ EnterCalculationRuleIfPreviousFieldIsYes=Enter calculation rule if previous fiel
 SeveralLangugeVariatFound=Several language variants found
 COMPANY_AQUARIUM_REMOVE_SPECIAL=Remove special characters
 COMPANY_AQUARIUM_CLEAN_REGEX=Regex filter to clean value (COMPANY_AQUARIUM_CLEAN_REGEX)
-GDPRContact=Privacy Policies or GDPR contact
+GDPRContact=Data Protection Officer (DPO, Data Privacy or GDPR contact)
 GDPRContactDesc=If you store data about European companies/citizen, you can store the contact who is responsible for the General Data Protection Regulation here
 HelpOnTooltip=Help text to show on tooltip
 HelpOnTooltipDesc=Put text or a translation key here for the text to show on a tooltip when this field appears in a form
