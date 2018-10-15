@@ -1155,7 +1155,8 @@ class Website extends CommonObject
 		$MAXHEIGHT = 4 * $HEIGHTOPTION;
 		$nboflanguage = count($languagecodes);
 
-		$out.='<!-- componentSelectLang'.$htmlname.' -->'."\n";
+		$out ='<!-- componentSelectLang'.$htmlname.' -->'."\n";
+
 		$out.= '<style>';
 		$out.= '.componentSelectLang'.$htmlname.':hover { height: '.min($MAXHEIGHT, ($HEIGHTOPTION * $nboflanguage)).'px; overflow-x: hidden; overflow-y: '.((($HEIGHTOPTION * $nboflanguage) > $MAXHEIGHT) ? ' scroll' : 'hidden').'; }'."\n";
 		$out.= '.componentSelectLang'.$htmlname.' li { line-height: '.$HEIGHTOPTION.'px; }'."\n";
