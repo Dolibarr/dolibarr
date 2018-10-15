@@ -50,9 +50,9 @@ class MailmanSpip
 	public $error='';
 
     /**
-	 * @var string[]	Array of error strings
-	 */
-	public $errors = array();
+     * @var string[]	Array of error strings
+     */
+    public $errors = array();
 
     public $mladded_ok;
     public $mladded_ko;
