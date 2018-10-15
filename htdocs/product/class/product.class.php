@@ -4750,51 +4750,51 @@ class Product extends CommonObject
 		}
 	}
 
-    /**
-     *  Load information for tab info
-     *
-     *  @param  int		$id     Id of thirdparty to load
-     *  @return	void
-     */
-    function info($id)
-    {
-        $sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
-        $sql.= " p.fk_user_author, p.fk_user_modif";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-        $sql.= " WHERE p.rowid = ".$id;
+	/**
+	 *  Load information for tab info
+	 *
+	 *  @param  int		$id     Id of thirdparty to load
+	 *  @return	void
+	 */
+	function info($id)
+	{
+		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
+		$sql.= " p.fk_user_author, p.fk_user_modif";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+		$sql.= " WHERE p.rowid = ".$id;
 
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
-
-                $this->id = $obj->rowid;
-
-                if ($obj->fk_user_author) {
-                    $cuser = new User($this->db);
-                    $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation     = $cuser;
-                }
-
-                if ($obj->fk_user_modif) {
-                    $muser = new User($this->db);
-                    $muser->fetch($obj->fk_user_modif);
-                    $this->user_modification = $muser;
-                }
-
-                $this->ref			     = $obj->ref;
-                $this->date_creation     = $this->db->jdate($obj->date_creation);
-                $this->date_modification = $this->db->jdate($obj->date_modification);
-            }
-
-            $this->db->free($result);
-
-        }
-        else
+		$result=$this->db->query($sql);
+		if ($result)
 		{
-            dol_print_error($this->db);
-        }
-    }
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+
+				$this->id = $obj->rowid;
+
+				if ($obj->fk_user_author) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation     = $cuser;
+				}
+
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
+
+				$this->ref			     = $obj->ref;
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+			}
+
+			$this->db->free($result);
+
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
 }
