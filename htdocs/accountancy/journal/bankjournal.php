@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010  Jean Heimburger     <jean@tiaris.info>
- * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Christophe Battarel <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
- * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
@@ -154,6 +155,8 @@ $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 $journal_label = $accountingjournalstatic->label;
+
+$accountingaccountstatic = new AccountingAccount($db);
 
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
@@ -461,7 +464,12 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = $langs->trans("Bank");
+
+					$accountingaccountstatic->fetch('',$k,1);
+					$accountingaccount_label = $accountingaccountstatic->label;
+					$bookkeeping->label_compte = $accountingaccount_label;
+
+					$bookkeeping->label_operation = $reflabel;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
@@ -517,6 +525,7 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'bank';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_bank"];
+						$bookkeeping->label_operation = $reflabel;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 						$bookkeeping->debit = ($mt < 0 ? - $mt : 0);
@@ -530,22 +539,34 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch('',$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER,1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if ($tabtype[$key] == 'payment_supplier') {		   // If payment is payment of supplier invoice, we get ref of invoice
 							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch('',$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER,1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if ($tabtype[$key] == 'payment_expensereport') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch('',$conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT,1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if ($tabtype[$key] == 'payment_salary') {
 							$bookkeeping->subledger_account = $tabuser[$key]['accountancy_code'];
 							$bookkeeping->subledger_label = $tabuser[$key]['name'];
 							$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch('',$conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT,1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if (in_array($tabtype[$key], array('sc', 'payment_sc'))) {   // If payment is payment of social contribution
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
@@ -555,27 +576,42 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch($k,'',1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if ($tabtype[$key] == 'payment_donation') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch($k,'',1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if ($tabtype[$key] == 'payment_loan') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch($k,'',1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch($k,'',1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else if ($tabtype[$key] == 'banktransfert') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
-							$bookkeeping->label_compte = '';
+
+							$accountingaccountstatic->fetch($k,'',1);
+							$accountingaccount_label = $accountingaccountstatic->label;
+							$bookkeeping->label_compte = $accountingaccount_label;
 						} else {
 							if ($tabtype[$key] == 'unknown')	// Unknown transaction, we will use a waiting account for thirdparty.
 							{
@@ -583,7 +619,10 @@ if (! $error && $action == 'writebookkeeping') {
 								$bookkeeping->subledger_account = '';
 								$bookkeeping->subledger_label = '';
 								$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-								$bookkeeping->label_compte = '';
+
+								$accountingaccountstatic->fetch('',$conf->global->ACCOUNTING_ACCOUNT_SUSPENSE,1);
+								$accountingaccount_label = $accountingaccountstatic->label;
+								$bookkeeping->label_compte = $accountingaccount_label;
 							}
 						}
 						$bookkeeping->label_operation = $reflabel;
