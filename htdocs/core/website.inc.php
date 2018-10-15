@@ -74,7 +74,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 				if ($newpageid != $pageid) 		// To avoid to make a redirect on same page (infinite loop)
 				{
 					if (defined('USEDOLIBARRSERVER')) {
-						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'.php&l='.GETPOST('l','aZ09'));
+						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'&l='.GETPOST('l','aZ09'));
 						exit;
 					}
 					else
