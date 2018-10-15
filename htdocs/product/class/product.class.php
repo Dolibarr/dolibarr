@@ -299,7 +299,7 @@ class Product extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see ref_supplier
+	 * @see $ref_supplier
 	 */
 	public $ref_fourn;
 	public $ref_supplier;
@@ -3282,7 +3282,7 @@ class Product extends CommonObject
 	 *
 	 *  @param	int		$fromId     Id product source
 	 *  @param  int		$toId       Id product target
-	 *  @return nt         			< 0 if KO, > 0 if OK
+	 *  @return int         			< 0 if KO, > 0 if OK
 	 */
 	function clone_price($fromId, $toId)
 	{
