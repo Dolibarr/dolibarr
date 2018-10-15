@@ -951,16 +951,7 @@ class pdf_squille extends ModelePdfReception
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFillColor(255,255,255);
 
-			// Show sender name
-			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetFont('','B',$default_font_size);
-			$pdf->MultiCell($widthrecbox-2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy=$pdf->getY();
-
-			// Show sender information
-			$pdf->SetXY($posx+2,$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->MultiCell($widthrecbox-2, 4, $carac_emetteur, 0, 'L');
+		
 
 
 			// If RECEPTION contact defined, we use it
@@ -985,6 +976,18 @@ class pdf_squille extends ModelePdfReception
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails',$object);
 
+				// Show recipient name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell($widthrecbox-2, 4, $carac_client_name, 0, 'L');
+
+			$posy = $pdf->getY();
+
+			// Show recipient information
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetXY($posx+2,$posy);
+			$pdf->MultiCell($widthrecbox-2, 4, $carac_client, 0, 'L');
+			
 			// Show recipient
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
@@ -999,17 +1002,18 @@ class pdf_squille extends ModelePdfReception
 			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient").":", 0, 'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
-			// Show recipient name
+			
+			
+			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 2, $carac_client_name, 0, 'L');
+			$pdf->SetFont('','B',$default_font_size);
+			$pdf->MultiCell($widthrecbox, 2, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$posy=$pdf->getY();
 
-			$posy = $pdf->getY();
-
-			// Show recipient information
-			$pdf->SetFont('','', $default_font_size - 1);
+			// Show sender information
 			$pdf->SetXY($posx+2,$posy);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->MultiCell($widthrecbox, 4, $carac_emetteur, 0, 'L');
 		}
 
 		$pdf->SetTextColor(0,0,0);

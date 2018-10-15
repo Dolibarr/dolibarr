@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - sendings
+# Dolibarr language file - Source file is en_US - receptions
 RefReception=Réf. réception
 Reception=Réception
 reception=Réception
@@ -11,7 +11,7 @@ ShowReception=Afficher Réceptions
 Receivings=Bons de réceptions
 ReceptionsArea=Espace réceptions
 ListOfReceptions=Liste des réceptions
-ReceptionMethod=Méthode de réception
+ReceptionMethod=Mode de transport
 LastReceptions=Les %s dernières réceptions
 StatisticsOfReceptions=Statistiques des réceptions
 NbOfReceptions=Nombre de réceptions

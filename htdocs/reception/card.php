@@ -625,11 +625,13 @@ if (empty($reshook))
 					// single warehouse reception line
 					$stockLocation = "entl".$line_id;
 					$qty = "qtyl".$line_id;
+					$comment = "comment".$line_id;
 					
 					
 					$line->id = $line_id;
 					$line->fk_entrepot = GETPOST($stockLocation, 'int');
 					$line->qty = GETPOST($qty, 'int');
+					$line->comment = GETPOST($comment, 'alpha');
 					
 					if(!empty($conf->productbatch->enabled)){
 						$batch = "batch".$line_id;
@@ -869,7 +871,7 @@ if ($action == 'create')
             print '</td></tr>';
 
             // Delivery method
-            print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
+            print "<tr><td>".$langs->trans("ReceptionMethod")."</td>";
             print '<td colspan="3">';
             $recept->fetch_delivery_methods();
             print $form->selectarray("shipping_method_id", $recept->meths, GETPOST('shipping_method_id','int'),1,0,0,"",1);
@@ -1128,9 +1130,10 @@ $numAsked ++;
 					$quantityToBeDelivered = $dispatchLines[$indiceAsked]['qty'];
 				}
                 $warehouse_id = $dispatchLines[$indiceAsked]['ent'];
+				
 
 				$warehouseObject = null;
-				if ($warehouse_id > 0 || ! ($line->fk_product > 0) || empty($conf->stock->enabled))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if ( !empty($conf->stock->enabled))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 				{
 				    print '<!-- Case warehouse already known or product not a predefined product -->';
 					
@@ -1163,7 +1166,7 @@ $numAsked ++;
 								if ($line->fk_product > 0)
 								{
 								    print '<!-- Show warehouse selection -->';
-									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1);
+									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0 , 0, $line->fk_product, '', 1);
 									
 								}
 							}
@@ -1192,28 +1195,7 @@ $numAsked ++;
 						}
 						print "</tr>\n";
 						
-						// Show subproducts of product
-						if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
-						{
-							$product->get_sousproduits_arbo();
-							$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-							if(count($prods_arbo) > 0)
-							{
-								foreach($prods_arbo as $key => $value)
-								{
-									//print $value[0];
-									$img='';
-									if ($value['stock'] < $value['stock_alert'])
-									{
-										$img=img_warning($langs->trans("StockTooLow"));
-									}
-									print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
-										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
-										</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-										<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
-								}
-							}
-						}
+						
 						
 						
 				}
@@ -1600,7 +1582,7 @@ else if ($id || $ref)
 		// Reception method
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('SendingMethod');
+		print $langs->trans('ReceptionMethod');
 		print '</td>';
 
 		if ($action != 'editshipping_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'),1).'</a></td>';
@@ -1690,6 +1672,8 @@ else if ($id || $ref)
 		}
 		// Product/Service
 		print '<td>'.$langs->trans("Products").'</td>';
+		// Comment
+		print '<td>'.$langs->trans("Comment").'</td>';
 		// Qty
 		print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)
@@ -1869,6 +1853,16 @@ else if ($id || $ref)
 				print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
 				print "</td>\n";
 			}
+			
+			if ($action == 'editline' && $lines[$i]->id == $line_id)
+			{
+				print '<td ><textarea name="comment'.$line_id.'" id="comment'.$line_id.'" /> '.$lines[$i]->comment.'</textarea></td>';
+			}
+			else
+			{
+				print '<td style="white-space: pre;" >'.$lines[$i]->comment.'</td>';
+			}
+
 
 			// Qty ordered
 			print '<td align="center">'.$lines[$i]->qty_asked.'</td>';

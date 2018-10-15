@@ -832,7 +832,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '</td>';
 
 				// Comment
-				print '<td class="tdoverflowmax300">' . $objp->comment . '</td>';
+				print '<td class="tdoverflowmax300" style="white-space: pre;">' . $objp->comment . '</td>';
 
 				// Status
 				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
