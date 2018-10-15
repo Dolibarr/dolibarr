@@ -4156,16 +4156,15 @@ class Product extends CommonObject
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
 
-	if (! is_object($hookmanager)) {
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	    $hookmanager=new HookManager($this->db);
-	}
-	$hookmanager->initHooks(array('productdao'));
-	$parameters=array('id'=>$this->id);
-	// Note that $action and $object may have been modified by some hooks
-	$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
-	if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
-
+		if (! is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('productdao'));
+		$parameters=array('id'=>$this->id);
+		// Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
+		if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
     }
 
 
