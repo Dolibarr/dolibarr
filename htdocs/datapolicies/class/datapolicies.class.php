@@ -149,7 +149,7 @@ Class DataPolicies extends Contact
      	$error = 0;
 
      	$from = $user->getFullName($langs) . ' <' . $user->email . '>';
-     	$replyto = $from;
+
      	$sendto = $contact->email;
      	$code= md5($contact->email);
      	if (!empty($contact->default_lang)) {
@@ -225,7 +225,7 @@ Class DataPolicies extends Contact
      	$error = 0;
 
      	$from = $user->getFullName($langs) . ' <' . $user->email . '>';
-     	$replyto = $from;
+
      	$sendto = $societe->email;
 
      	$code= md5($societe->email);
@@ -297,7 +297,7 @@ Class DataPolicies extends Contact
     	$error = 0;
 
     	$from = $user->getFullName($langs) . ' <' . $user->email . '>';
-    	$replyto = $from;
+
     	$sendto = $adherent->email;
 
     	$code= md5($adherent->email);
