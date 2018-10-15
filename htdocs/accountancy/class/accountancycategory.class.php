@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -539,9 +540,9 @@ class AccountancyCategory
 	/**
 	 * get cpts of category
 	 *
-	 * @param int $cat_id Id accounting account category
+	 * @param int $cat_id   Id accounting account category
 	 *
-	 * @return array       Result in table
+	 * @return array|int    Result in table or -1 if error
 	 */
 	public function getCptsCat($cat_id) {
 		global $mysoc;
