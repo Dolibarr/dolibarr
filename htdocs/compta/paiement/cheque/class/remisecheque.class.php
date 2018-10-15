@@ -497,6 +497,21 @@ class RemiseCheque extends CommonObject
 	    {
 	        $this->line->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'bordereau_chequedet');
 	        $this->lines[] = $this->line;
+	        
+	        // update bankentry
+	        if ($this->line->type_line == "bank")
+	        {
+	            $sql2 = "UPDATE ".MAIN_DB_PREFIX."bank SET fk_bordereau = ".$this->id." WHERE rowid = ". $this->line->fk_bank;
+	            $resql2 = $this->db->query($sql2);
+	            if (!$resql2)
+	            {
+	                $this->errno = $this->db->lasterrno;
+	                $this->error = $this->db->lasterror;
+	                dol_syslog("RemiseCheque::Addline Update Bank Error ".$this->error, LOG_ERR);
+	                return $this->errno;
+	            }
+	        }
+	        
 	        return $this->line->id;
 	    }
 	    else
