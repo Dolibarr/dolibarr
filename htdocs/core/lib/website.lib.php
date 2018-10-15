@@ -305,7 +305,7 @@ function redirectToContainer($containerref, $containeraliasalt='',$containerid=0
  */
 function includeContainer($containerref)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
 

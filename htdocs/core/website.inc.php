@@ -25,15 +25,27 @@
 
 // Load website class
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-// Define $website and $weblangs
+// Define $website
 if (! is_object($website))
 {
 	$website=new Website($db);
 	$website->fetch(0,$websitekey);
 }
+// Define $weblangs
 if (! is_object($weblangs))
 {
 	$weblangs = dol_clone($langs);	// TODO Use an object lang from a language set into $website object instead of backoffice
+}
+// Define $websitepage if we have $websitepagefile defined
+if (! $pageid && ! empty($websitepagefile))
+{
+	$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+}
+if ($pageid > 0)
+{
+	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+	$websitepage=new WebsitePage($db);
+	$websitepage->fetch($pageid);
 }
 
 // A lang was forced, so we change weblangs init
@@ -44,44 +56,32 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 	//print_r(get_defined_constants(true));exit;
 	if (GETPOST('l','aZ09'))
 	{
-		if (! $pageid && ! empty($websitepagefile))
-		{
-			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
-		}
-		if ($pageid > 0)
-		{
-			// Load tmppage if we have $websitepagefile defined
-			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-			$tmppage=new WebsitePage($db);
-			$tmppage->fetch($pageid);
+		$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
+		$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp";
+		$sql.=" WHERE wp.fk_website = ".$website->id;
+		$sql.=" AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
+		if (is_object($websitepage) && $websitepage->fk_page > 0) $sql.=" OR wp.fk_page = ".$websitepage->fk_page." OR wp.rowid = ".$websitepage->fk_page;
+		$sql.=")";
+		$sql.= " AND wp.lang = '".$db->escape(GETPOST('l','aZ09'))."'";
 
-			$sql ="SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
-			$sql.=" FROM ".MAIN_DB_PREFIX."website_page as wp";
-			$sql.=" WHERE wp.fk_website = ".$website->id;
-			$sql.=" AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
-			if ($tmppage->fk_page > 0) $sql.=" OR wp.fk_page = ".$tmppage->fk_page." OR wp.rowid = ".$tmppage->fk_page;
-			$sql.=")";
-			$sql.= " AND wp.lang = '".$db->escape(GETPOST('l','aZ09'))."'";
-
-			$resql = $db->query($sql);
-			if ($resql)
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
 			{
-				$obj = $db->fetch_object($resql);
-				if ($obj)
+				$newpageid = $obj->rowid;
+				if ($newpageid != $pageid) 		// To avoid to make a redirect on same page (infinite loop)
 				{
-					$newpageid = $obj->rowid;
-					if ($newpageid != $pageid) 		// To avoid to make a redirect on same page (infinite loop)
+					if (defined('USEDOLIBARRSERVER')) {
+						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'.php&l='.GETPOST('l','aZ09'));
+						exit;
+					}
+					else
 					{
-						if (defined('USEDOLIBARRSERVER')) {
-							header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'.php&l='.GETPOST('l','aZ09'));
-							exit;
-						}
-						else
-						{
-							$newpageref = $obj->pageurl;
-							header("Location: ".$newpageref.'.php?l='.GETPOST('l','aZ09'));
-							exit;
-						}
+						$newpageref = $obj->pageurl;
+						header("Location: ".$newpageref.'.php?l='.GETPOST('l','aZ09'));
+						exit;
 					}
 				}
 			}
