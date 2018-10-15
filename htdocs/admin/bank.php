@@ -96,6 +96,8 @@ if ($action == 'setchkdontcreatebankrecords') {
 elseif ($action == 'unsetchkdontcreatebankrecords') {
     if (dolibarr_set_const($db, "BANK_CHK_DONT_CREATE_BANK_RECORDS", 0, 'chaine', 0,
         '', $conf->entity) > 0) {
+        
+        // Create bankentries for payments which were created without bankentry
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."paiement WHERE fk_bank = 0";
         $resql = $db->query($sql);
         

@@ -113,6 +113,7 @@ class RemiseCheque extends CommonObject
 				$this->statut         = $obj->statut;
 				$this->ref_ext        = $obj->ref_ext;
 
+				$this->fetch_lines();
 				if ($this->statut == 0)
 				{
 					$this->ref         = "(PROV".$this->id.")";
@@ -214,7 +215,6 @@ class RemiseCheque extends CommonObject
 			        {
 			            foreach ($linetoremise as $bank_id)
 			            {
-			                $line = new stdClass();
 			                $sql = "SELECT p.rowid, b.emetteur, b.amount";
 			                $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
@@ -225,13 +225,15 @@ class RemiseCheque extends CommonObject
 			                {
 			                    $obj = $this->db->fetch_object($res);
 			                    
-			                    $line->fk_bordereau = $this->id;
-			                    $line->fk_bank = $bank_id;
-			                    $line->fk_paiement = (empty($obj->rowid)) ? 0 : intVal($obj->rowid);
-			                    $line->emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
-			                    $line->amount = (empty($obj->amount)) ? 0 : $obj->amount;
+			                    $fk_paiement = (empty($obj->rowid)) ? 0 : intVal($obj->rowid);
+			                    $emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
+			                    $amount = (empty($obj->amount)) ? 0 : $obj->amount;
 			                    
-			                    $this->lines[] = $line;
+			                    $ret = $this->addline($bank_id, $fk_paiement, $typeline, $emetteur, $amount);
+			                    if ($ret<0)
+			                    {
+			                        $this->errno = $ret;
+			                    }
 			                    
 			                }
 			            }
@@ -240,7 +242,6 @@ class RemiseCheque extends CommonObject
 			        {
 			            foreach ($linetoremise as $payment_id)
 			            {
-			                $line = new stdClass();
 			                
 			                $sql = "SELECT p.amount, s.nom as emetteur";
 			                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
@@ -255,13 +256,14 @@ class RemiseCheque extends CommonObject
 			                {
 			                    $obj = $this->db->fetch_object($res);
 			                    
-			                    $line->fk_bordereau = $this->id;
-			                    $line->fk_bank = 0;
-			                    $line->fk_paiement = $payment_id;
-			                    $line->emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
-			                    $line->amount = (empty($obj->amount)) ? 0 : $obj->amount;
-			                    
-			                    $this->lines[] = $line;
+			                    $emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
+			                    $amount = (empty($obj->amount)) ? 0 : $obj->amount;
+			                    			                    
+			                    $ret = $this->addline(0, $payment_id, $typeline, $emetteur, $amount);
+			                    if ($ret<0)
+			                    {
+			                        $this->errno = $ret;
+			                    }
 			                    
 			                }
 			            }
@@ -269,61 +271,8 @@ class RemiseCheque extends CommonObject
 			        
 			    }
 			    
-			    $this->insert_lines();
 			    
-			    var_dump($this->lines);
-			    exit;
-// 				$lines = array();
-// 				$sql = "SELECT b.rowid";
-// 				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-// 				$sql.= " WHERE b.fk_type = 'CHQ'";
-// 				$sql.= " AND b.amount > 0";
-// 				$sql.= " AND b.fk_bordereau = 0";
-// 				$sql.= " AND b.fk_account='".$account_id."'";
-// 				if ($limit) $sql.= $this->db->plimit($limit);
 
-// 				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
-// 				$resql = $this->db->query($sql);
-// 				if ($resql)
-// 				{
-// 					while ($row = $this->db->fetch_row($resql) )
-// 					{
-// 						array_push($lines, $row[0]);
-// 					}
-// 					$this->db->free($resql);
-// 				}
-// 				else
-// 				{
-// 					$this->errno = -1026;
-// 					dol_syslog("RemiseCheque::Create Error ".$this->errno, LOG_ERR);
-// 				}
-			}
-
-			if ($this->id > 0 && $this->errno == 0)
-			{
-// 				foreach ($lines as $lineid)
-// 				{
-// 					$checkremise=false;
-// 					foreach ($toRemise as $linetoremise)
-// 					{
-// 						if($linetoremise==$lineid) $checkremise=true;
-// 					}
-
-// 					if($checkremise==true)
-// 					{
-// 						$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-// 						$sql.= " SET fk_bordereau = ".$this->id;
-// 						$sql.= " WHERE rowid = ".$lineid;
-
-// 						dol_syslog("RemiseCheque::Create", LOG_DEBUG);
-// 						$resql = $this->db->query($sql);
-// 						if (!$resql)
-// 						{
-// 							$this->errno = -18;
-// 							dol_syslog("RemiseCheque::Create Error update bank ".$this->errno, LOG_ERR);
-// 						}
-// 					}
-// 				}
 			}
 
 			if ($this->id > 0 && $this->errno == 0)
@@ -334,6 +283,9 @@ class RemiseCheque extends CommonObject
 					dol_syslog("RemiseCheque::Create Error update amount ".$this->errno, LOG_ERR);
 				}
 			}
+			
+// 			var_dump($this);
+// 			exit;
 		}
 		else
 		{
@@ -476,28 +428,133 @@ class RemiseCheque extends CommonObject
 		}
 	}
 	
-	function insert_lines()
+	/**
+	 * Add a line of remisecheque
+	 * 
+	 * @param int      $fk_bank
+	 * @param int      $fk_paiement
+	 * @param string   $type_line
+	 * @param string   $emetteur
+	 * @param double   $amount
+	 * 
+	 * @return    	int             				<0 if KO, Id of line if OK
+	 */
+	function addline($fk_bank = 0, $fk_paiement = 0, $type_line = '', $emetteur = '', $amount = 0)
 	{
-	    if (is_array($this->lines) && count($this->lines))
+	    // clean parameters
+	    if (empty($fk_bank)) $fk_bank = 0;
+	    if (empty($fk_paiement)) $fk_paiement = 0;
+	    
+	    // check parameters
+	    if (empty($fk_bank) && empty($fk_paiement))
 	    {
-	        foreach ($this->lines as $line)
+	        $this->error = "ErrorAddLineNoLink";
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -1;
+	    }
+	    
+	    if (empty($type_line) || !in_array($type_line, array("bank", "payment")))
+	    {
+	        $this->error = "ErrorAddLineInvalidType";
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -2;
+	    }
+	    
+	    if (empty($this->id))
+	    {
+	        $this->error = "ErrorAddLineNoBordereauId";
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -3;
+	    }
+	    $this->line = new stdClass();
+	    
+	    $this->line->fk_bordereau = $this->id;
+	    $this->line->fk_bank = $fk_bank;
+	    $this->line->fk_paiement = $fk_paiement;
+	    $this->line->type_line = $this->db->escape($type_line);
+	    $this->line->emetteur = (empty($emetteur)) ? '' : $this->db->escape($emetteur);
+	    $this->line->amount = (empty($amount)) ? 0 : $amount;
+	    
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_chequedet (";
+	    $sql.= "fk_bordereau, ";
+	    $sql.= "fk_bank, ";
+	    $sql.= "fk_paiement, ";
+	    $sql.= "type_line,";
+	    $sql.= "emetteur, ";
+	    $sql.= "amount";
+	    $sql.= ") VALUES (";
+	    $sql.= $this->line->fk_bordereau;
+	    $sql.= ", ". $this->line->fk_bank;
+	    $sql.= ", ". $this->line->fk_paiement;
+	    $sql.= ", '".$this->line->type_line."'";
+	    $sql.= ", '".$this->line->emetteur."'";
+	    $sql.= ", '".$this->line->amount."'";
+	    $sql.= ")";
+	    
+	    dol_syslog("RemiseCheque::Addline", LOG_DEBUG);
+	    $res = $this->db->query($sql);
+	    if ($res)
+	    {
+	        $this->line->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'bordereau_chequedet');
+	        $this->lines[] = $this->line;
+	        return $this->line->id;
+	    }
+	    else
+	    {
+	        $this->error = $this->db->lasterror;
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -4;
+	    }
+	    
+	}
+	
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 *	Load all detailed lines into this->lines
+	 *
+	 *	@return     int         1 if OK, < 0 if KO
+	 */
+	function fetch_lines()
+	{
+	    // phpcs:enable
+	    $this->lines=array();
+	    
+	    $sql = "SELECT l.rowid, l.fk_bordereau, l.fk_bank, l.fk_paiement, l.type_line, l.emetteur, l.amount";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_chequedet as l";
+	    $sql.= " WHERE l.fk_bordereau = ".$this->id;
+	    
+	    dol_syslog(get_class($this).'::fetch_lines', LOG_DEBUG);
+	    $result = $this->db->query($sql);
+	    if ($result)
+	    {
+	        $num = $this->db->num_rows($result);
+	        $i = 0;
+	        
+	        while ($i < $num)
 	        {
-	            $sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_chequedet (";
-	            $sql.= "fk_bordereau, ";
-	            $sql.= "fk_bank, ";
-	            $sql.= "fk_paiement, ";
-	            $sql.= "emetteur, ";
-	            $sql.= "amount";
-	            $sql.= ") VALUES (";
-	            $sql.= $this->id;
-	            $sql.= ", ". $line->fk_bank;
-	            $sql.= ", ". $line->fk_paiement;
-	            $sql.= ", '". ((empty($line->emetteur)) ? '' : $this->db->escape($line->emetteur) )."'";
-	            $sql.= ", ". (empty($line->amount)) ? 0 : $line->amount;
+	            $objp = $this->db->fetch_object($result);
 	            
-	            $res = $this->db->query($sql);
+	            $line = new stdClass();
 	            
+	            $line->id              = $objp->rowid;
+	            $line->fk_bordereau    = $objp->fk_bordereau;
+	            $line->fk_bank         = $objp->fk_bank;
+	            $line->fk_paiement     = $objp->fk_paiement;
+	            $line->type_line       = $objp->type_line;
+	            $line->emetteur        = $objp->emetteur;
+	            $line->amount          = floatval($objp->amount);
+	            
+	            $this->lines[$i] = $line;
+	            
+	            $i++;
 	        }
+	        $this->db->free($result);
+	        return 1;
+	    }
+	    else
+	    {
+	        $this->error=$this->db->error();
+	        return -3;
 	    }
 	}
 
@@ -779,23 +836,22 @@ class RemiseCheque extends CommonObject
 		global $conf;
 
 		$this->errno = 0;
+		
 		$this->db->begin();
 		$total = 0;
 		$nb = 0;
-		$sql = "SELECT amount ";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE fk_bordereau = ".$this->id;
-
-		$resql = $this->db->query($sql);
-		if ( $resql )
+		
+		if ( !empty($this->lines) && count($this->lines) )
 		{
-			while ( $row = $this->db->fetch_row($resql) )
+		    $nb = count($this->lines);
+		    $i = 0;
+		    
+			while ( $i < $nb)
 			{
-				$total += $row[0];
-				$nb++;
+				$total += $this->lines[$i]->amount;
+				
+				$i++;
 			}
-
-			$this->db->free($resql);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql.= " SET amount = '".price2num($total)."'";
@@ -809,11 +865,16 @@ class RemiseCheque extends CommonObject
 				$this->errno = -1030;
 				dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
 			}
+			else 
+			{
+			    $this->amount = $total;
+			    $this->nbcheque = $nb;
+			}
 		}
 		else
 		{
 			$this->errno = -1031;
-			dol_syslog("RemiseCheque::updateAmount ERREUR SELECT ($this->errno)");
+			dol_syslog("RemiseCheque::updateAmount No Lines");
 		}
 
 		if ($this->errno === 0)
