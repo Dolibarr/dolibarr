@@ -4005,7 +4005,7 @@ class Product extends CommonObject
 	 *										'warehouseclosed' = Load stock from closed warehouses only,
 	 *										'warehouseinternal' = Load stock from warehouses for internal correction/transfer only
 	 *    @return     int                   < 0 if KO, > 0 if OK
-	 *    @see		  load_virtual_stock, getBatchInfo
+	 *    @see		  load_virtual_stock(), loadBatchInfo()
 	 */
 	function load_stock($option='')
 	{
@@ -4074,79 +4074,80 @@ class Product extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
 	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id.
 	 *
 	 *    @return   int             < 0 if KO, > 0 if OK
-	 *    @see		load_stock, getBatchInfo
+	 *    @see		load_stock(), loadBatchInfo()
 	 */
-    function load_virtual_stock()
-    {
-        // phpcs:enable
-        global $conf, $hookmanager, $action;
+	function load_virtual_stock()
+	{
+		// phpcs:enable
+		global $conf, $hookmanager, $action;
 
-        $stock_commande_client=0;
-        $stock_commande_fournisseur=0;
-        $stock_sending_client=0;
-        $stock_reception_fournisseur=0;
+		$stock_commande_client=0;
+		$stock_commande_fournisseur=0;
+		$stock_sending_client=0;
+		$stock_reception_fournisseur=0;
 
-        if (! empty($conf->commande->enabled))
-        {
-            $result=$this->load_stats_commande(0,'1,2', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_commande_client=$this->stats_commande['qty'];
-        }
-        if (! empty($conf->expedition->enabled))
-        {
-            $result=$this->load_stats_sending(0,'1,2', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_sending_client=$this->stats_expedition['qty'];
-        }
-        if (! empty($conf->fournisseur->enabled))
-        {
-            $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
+		if (! empty($conf->commande->enabled))
+		{
+			$result=$this->load_stats_commande(0,'1,2', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_commande_client=$this->stats_commande['qty'];
+		}
+		if (! empty($conf->expedition->enabled))
+		{
+			$result=$this->load_stats_sending(0,'1,2', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_sending_client=$this->stats_expedition['qty'];
+		}
+		if (! empty($conf->fournisseur->enabled))
+		{
+			$result=$this->load_stats_commande_fournisseur(0,'1,2,3,4', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
-            $result=$this->load_stats_reception(0,'4', 1);
-            if ($result < 0) dol_print_error($this->db,$this->error);
-            $stock_reception_fournisseur=$this->stats_reception['qty'];
-        }
+			$result=$this->load_stats_reception(0,'4', 1);
+			if ($result < 0) dol_print_error($this->db,$this->error);
+			$stock_reception_fournisseur=$this->stats_reception['qty'];
+		}
 
-        // Stock decrease mode
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
-            $this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
-            $this->stock_theorique=$this->stock_reel;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-            $this->stock_theorique=$this->stock_reel-$stock_commande_client;
-        }
-        // Stock Increase mode
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-            $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
-            $this->stock_theorique-=$stock_reception_fournisseur;
-        }
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
-            $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
-        }
+		// Stock decrease mode
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+			$this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
+			$this->stock_theorique=$this->stock_reel;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+			$this->stock_theorique=$this->stock_reel-$stock_commande_client;
+		}
+		// Stock Increase mode
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+			$this->stock_theorique-=$stock_reception_fournisseur;
+		}
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+			$this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
+		}
 
-	if (! is_object($hookmanager)) {
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	    $hookmanager=new HookManager($this->db);
+		if (! is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('productdao'));
+		$parameters=array('id'=>$this->id);
+		// Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
+		if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
+
+		return 1;
 	}
-	$hookmanager->initHooks(array('productdao'));
-	$parameters=array('id'=>$this->id);
-	// Note that $action and $object may have been modified by some hooks
-	$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
-	if ($reshook > 0) $this->stock_theorique = $hookmanager->resArray['stock_theorique'];
-
-    }
 
 
 	/**
@@ -4154,7 +4155,7 @@ class Product extends CommonObject
 	 *
 	 *	@param		string		$batch		Lot/serial number
 	 *  @return     array					Array with record into product_batch
-	 *  @see		load_stock, load_virtual_stock
+	 *  @see		load_stock(), load_virtual_stock()
 	 */
     function loadBatchInfo($batch)
     {
