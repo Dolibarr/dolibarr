@@ -44,6 +44,14 @@ class FormMail extends Form
 
 	public $fromname;
 	public $frommail;
+    /**
+     * @var string user, company, robot
+     */
+    public $fromtype;
+    /**
+     * @var int ID
+     */
+    public $fromid;
 	public $replytoname;
 	public $replytomail;
 	public $toname;
@@ -90,11 +98,6 @@ class FormMail extends Form
 
 	public $withtouser=array();
 	public $withtoccuser=array();
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
 
 	public $lines_model;
 
