@@ -629,8 +629,10 @@ if ($ispaymentok)
 				}
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_paiement = '';
-				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
-
+				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
+				$paiement->payment_id = $TRANSACTIONID;
+				$paiement->payment_site = $paymentmethod;
+        
 				if (! $error)
 				{
 					$paiement_id = $paiement->create($user, 1);    // This include closing invoices and regenerating documents
