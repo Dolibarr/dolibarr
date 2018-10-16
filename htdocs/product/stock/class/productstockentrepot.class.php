@@ -51,8 +51,17 @@ class ProductStockEntrepot extends CommonObject
 	public $table_element = 'product_warehouse_properties';
 
 	public $tms = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
+	/**
+     * @var int ID
+     */
 	public $fk_entrepot;
+
 	public $seuil_stock_alerte;
 	public $desiredstock;
 	public $import_key;

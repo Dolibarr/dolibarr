@@ -52,9 +52,22 @@ class Menubase
     public $module;
     public $type;
     public $mainmenu;
+
+    /**
+     * @var int ID
+     */
     public $fk_menu;
+
+    /**
+     * @var int ID
+     */
     public $fk_mainmenu;
+
+    /**
+     * @var int ID
+     */
     public $fk_leftmenu;
+
     public $position;
     public $url;
     public $target;

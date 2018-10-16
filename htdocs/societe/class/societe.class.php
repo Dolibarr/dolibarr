@@ -281,7 +281,12 @@ class Societe extends CommonObject
 	public $remise_supplier_percent;
 	public $mode_reglement_supplier_id;
 	public $cond_reglement_supplier_id;
+
+	/**
+     * @var int ID
+     */
 	public $fk_prospectlevel;
+
 	public $name_bis;
 
 	//Log data
@@ -449,12 +454,20 @@ class Societe extends CommonObject
 	public $array_options;
 
 	// Incoterms
+	/**
+     * @var int ID
+     */
 	public $fk_incoterms;
+
 	public $location_incoterms;
 	public $libelle_incoterms;  //Used into tooltip
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 
 

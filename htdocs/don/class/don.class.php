@@ -73,8 +73,17 @@ class Don extends CommonObject
     public $town;
     public $email;
     public $public;
+
+    /**
+     * @var int ID
+     */
     public $fk_project;
+
+    /**
+     * @var int ID
+     */
     public $fk_typepayment;
+
 	public $num_payment;
 	public $date_valid;
 	public $modepaymentid = 0;

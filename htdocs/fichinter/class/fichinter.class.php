@@ -82,8 +82,16 @@ class Fichinter extends CommonObject
 	 */
 	public $description;
 
+	/**
+     * @var int ID
+     */
 	public $fk_contrat = 0;
+
+	/**
+     * @var int ID
+     */
 	public $fk_project = 0;
+
 	public $extraparams=array();
 
 	public $lines = array();
@@ -1360,7 +1368,11 @@ class FichinterLigne extends CommonObjectLine
 	public $error='';
 
 	// From llx_fichinterdet
+	/**
+     * @var int ID
+     */
 	public $fk_fichinter;
+
 	public $desc;          	// Description ligne
 	public $datei;           // Date intervention
 	public $duration;        // Duree de l'intervention

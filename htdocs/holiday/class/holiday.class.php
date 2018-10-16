@@ -79,14 +79,38 @@ class Holiday extends CommonObject
 	public $date_fin_gmt='';		// Date end in GMT
 	public $halfday='';			// 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 	public $statut='';				// 1=draft, 2=validated, 3=approved
+
+	/**
+     * @var int ID
+     */
 	public $fk_validator;
+
 	public $date_valid='';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_valid;
+
 	public $date_refuse='';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_refuse;
+
 	public $date_cancel='';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_cancel;
+
 	public $detail_refuse='';
+
+	/**
+     * @var int ID
+     */
 	public $fk_type;
 
 	public $holiday = array();
