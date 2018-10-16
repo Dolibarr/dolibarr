@@ -937,28 +937,19 @@ class RemiseCheque extends CommonObject
 			$classname='BordereauCheque'.ucfirst($model);
 			$docmodel = new $classname($this->db);
 
-			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-			$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-			$sql.= ", ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-			$sql.= " WHERE b.fk_account = ba.rowid";
-			$sql.= " AND b.fk_bordereau = bc.rowid";
-			$sql.= " AND bc.rowid = ".$this->id;
-			$sql.= " AND bc.entity = ".$conf->entity;
-			$sql.= " ORDER BY b.dateo ASC, b.rowid ASC";
-
+			if(empty($this->lines)) $this->fetch_lines();
+			
 			dol_syslog("RemiseCheque::generatePdf", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result)
+			if (count($this->lines))
 			{
 				$i = 0;
-				while ($objp = $this->db->fetch_object($result))
+				foreach ($this->lines as $line)
 				{
 					$docmodel->lines[$i] = new stdClass();
-					$docmodel->lines[$i]->bank_chq = $objp->banque;
-					$docmodel->lines[$i]->emetteur_chq = $objp->emetteur;
-					$docmodel->lines[$i]->amount_chq = $objp->amount;
-					$docmodel->lines[$i]->num_chq = $objp->num_chq;
+					$docmodel->lines[$i]->bank_chq = $line->banque;
+					$docmodel->lines[$i]->emetteur_chq = $line->emetteur;
+					$docmodel->lines[$i]->amount_chq = $line->amount;
+					$docmodel->lines[$i]->num_chq = $line->num_chq;
 					$i++;
 				}
 			}
