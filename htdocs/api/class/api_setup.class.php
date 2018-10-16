@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@capnetworks.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
+ * Copyright (C) 2018   Frédéric France         <frederic.france@netlogic.fr>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -580,9 +581,7 @@ class Setup extends DolibarrApi
 
         return $list;
     }
-	
-if (! empty($conf->ticket->enabled))
-{    
+
      /**
      * Get the list of tickets categories.
      *
@@ -762,7 +761,6 @@ if (! empty($conf->ticket->enabled))
     	return $list;
     }
 
-}	
 
     /**
      * Do a test of integrity for files and setup.
