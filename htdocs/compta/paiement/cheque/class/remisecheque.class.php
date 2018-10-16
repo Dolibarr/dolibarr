@@ -26,7 +26,8 @@
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 /**
  *	Class to manage cheque delivery receipts
@@ -419,6 +420,13 @@ class RemiseCheque extends CommonObject
 				{
 				    $this->ref = $numref;
 					$this->statut = 1;
+					
+					$ret = $this->createBankEntry();
+					if ($ret < 0)
+					{
+					    $this->errno = $ret;
+					    dol_syslog("Remisecheque::Validate BankEntry creation Error ".$this->errno, LOG_ERR);
+					}
 				}
 				else
 				{
@@ -607,6 +615,107 @@ class RemiseCheque extends CommonObject
 	        $this->error=$this->db->error();
 	        return -3;
 	    }
+	}
+	
+	/**
+	 * Create a global bank entry for lines which haven't one
+	 * 
+	 * @return	int	>0 if OK or <0 if KO
+	 */
+	function createBankEntry()
+	{
+	    global $user;
+	    
+	    if(empty($this->lines)) $this->fetch_lines();
+	    
+	    $error = 0;
+	    $this->db->begin();
+	    
+	    if(count($this->lines))
+	    {
+	        $total = 0;
+	        $TLinesToUpdate = array();
+	        foreach ($this->lines as $line)
+	        {
+	            if($line->type_line == "payment" && empty($line->fk_bank))
+	            {
+	                $paiement = new Paiement($this->db);
+	                $paiement->fetch($line->fk_paiement);
+	                
+	                if (empty($paiement->fk_bank))
+	                {
+	                    $total += $paiement->amount;
+	                    $TLinesToUpdate[] = $line->id;
+	                }
+	                else
+	                {
+	                    // update line->fk_bank
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX.$line->$table_element." SET fk_bank = ".$paiement->fk_bank." WHERE rowid = ".$line->id;
+	                    $res = $this->db->query($sql);
+	                    if (!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update lines fk_bank error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update lines fk_bank error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                }
+	            }
+	            else continue;
+	        }
+	        
+	        if (!$error && count($TLinesToUpdate))
+	        {
+	            //create a global bankentry
+	            $account = new Account($this->db);
+	            $res = $account->fetch($this->fk_account);
+	            
+	            if ($res)
+	            {
+	                $date = dol_now();
+	                $label = '(CustomerChequeDeposit)';
+	                $amount = $total;
+	                
+	                $ret = $account->addline($date, 'CHQ', $label, $amount, '', '', $user);
+	                if ($ret < 0)
+	                {
+	                    $error++;
+	                    $this->errors[] = "RemiseCheque::createBankEntry add global bankentry error : " . $this->db->lasterror;
+	                    dol_syslog("RemiseCheque::createBankEntry add global bankentry error : " . $this->db->lasterror, LOG_ERR);
+	                }
+	                else
+	                {
+	                    // update lines
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->lines[0]->$table_element." SET fk_bank = ".$ret." WHERE rowid in (".implode($TLinesToUpdate).")";
+	                    $res = $this->db->query($sql);
+	                    if(!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update lines error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update lines error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                }
+	            }
+	            else
+	            {
+	                $error++;
+	                $this->errors[] = "RemiseCheque::createBankEntry can't fetch account error : " . $this->db->lasterror;
+	                dol_syslog("RemiseCheque::createBankEntry can't fetch account error : " . $this->db->lasterror, LOG_ERR);
+	            }
+	        }
+	        
+	        if ($error)
+	        {
+	            $this->db->rollback();
+	            setEventMessages('Errors during BankEntry creation', $this->errors, 'errors');
+	            return -1
+	        }
+	        else
+	        {
+	            $this->db->commit();
+	            return 1;
+	        }
+	    }
+	    else return -2;
 	}
 
 	/**
