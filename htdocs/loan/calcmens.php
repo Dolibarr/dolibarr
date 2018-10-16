@@ -50,7 +50,7 @@ $echance++;
 $capital=$cap_rest;
 while ($echance<=$nbterm) {
 
-	$mens = round($object->calc_mens($capital,$rate,$nbterm-$echance+1),2,PHP_ROUND_HALF_UP);
+	$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm-$echance+1), 2, PHP_ROUND_HALF_UP);
 
 	$int = ($capital*($rate/12));
 	$int = round($int,2,PHP_ROUND_HALF_UP);
@@ -63,4 +63,3 @@ while ($echance<=$nbterm) {
 }
 
 echo json_encode($output);
-

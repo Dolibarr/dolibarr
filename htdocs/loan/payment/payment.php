@@ -93,12 +93,12 @@ if ($action == 'add_payment')
     		// Create a line of payments
     		$payment = new PaymentLoan($db);
     		$payment->chid				= $chid;
-    		$payment->datepaid			= $datepaid;
+    		$payment->datep = $datepaid;
             $payment->label             = $loan->label;
 			$payment->amount_capital	= GETPOST('amount_capital');
 			$payment->amount_insurance	= GETPOST('amount_insurance');
 			$payment->amount_interest	= GETPOST('amount_interest');
-			$payment->paymenttype		= GETPOST('paymenttype');
+			$payment->paymenttype = GETPOST('paymenttype', 'int');
     		$payment->num_payment		= GETPOST('num_payment');
     		$payment->note_private      = GETPOST('note_private','none');
     		$payment->note_public       = GETPOST('note_public','none');
