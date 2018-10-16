@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2018      Thibault FOUCART		 <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,8 @@ class Paiement extends CommonObject
 	//paiement de llx_c_paiement
 	public $num_paiement;	// Numero du CHQ, VIR, etc...
 	public $num_payment;	// Numero du CHQ, VIR, etc...
+  public $payment_id;	// Id of external modepayment
+  public $payment_site;	// name of external modepayment
 	public $bank_account;	// Id compte bancaire du paiement
 	public $bank_line;     // Id de la ligne d'ecriture bancaire
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
@@ -102,7 +105,7 @@ class Paiement extends CommonObject
 	 */
 	function fetch($id, $ref='', $fk_bank='')
 	{
-		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.fk_bank,';
+		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
 		$sql.= ' p.num_paiement as num_payment, p.note,';
 		$sql.= ' b.fk_account';
@@ -135,6 +138,8 @@ class Paiement extends CommonObject
 				$this->type_libelle   = $obj->type_libelle;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
+        $this->payment_id     = $obj->ext_payment_id;
+        $this->payment_site   = $obj->ext_payment_site;
 
 				$this->bank_account   = $obj->fk_account; // deprecated
 				$this->fk_account     = $obj->fk_account;
@@ -228,9 +233,11 @@ class Paiement extends CommonObject
 			$mtotal = $totalamount;
 		}
 		$note = ($this->note_public?$this->note_public:$this->note);
+    $payment_id = $this->payment_id ? $this->payment_id : null;
+    $payment_site = $this->payment_site ? $this->payment_site : null;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($note)."', ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
+		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($note)."', '".$this->payment_id."', '".$this->payment_site."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
