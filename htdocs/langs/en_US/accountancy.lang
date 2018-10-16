@@ -160,6 +160,7 @@ Docref=Reference
 LabelAccount=Label account
 LabelOperation=Label operation
 Sens=Sens
+LetteringCode=Lettering code
 Codejournal=Journal
 NumPiece=Piece number
 TransactionNumShort=Num. transaction

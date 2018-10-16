@@ -111,7 +111,7 @@ if ($action == 'lettering') {
 
 if ($action == 'autolettrage') {
 
-	$result = $BookKeeping->lettrageTiers($socid);
+	$result = $BookKeeping->lettering_thirdparty($socid);
 
 	if ($result < 0) {
 		setEventMessages('', $BookKeeping->errors, 'errors');
@@ -140,55 +140,13 @@ $head = societe_prepare_head($object);
 
 dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-dol_fiche_head($head, 'accounting_supplier', $langs->trans("ThirdParty"), 0, 'company');
+dol_fiche_head($head, 'lettering_supplier', $langs->trans("ThirdParty"), 0, 'company');
 
-print '<table width="100%" class="border">';
-print '<tr><td width="30%">' . $langs->trans("ThirdPartyName") . '</td><td width="70%" colspan="3">';
-$object->next_prev_filter = "te.fournisseur = 1";
-print $form->showrefnav($object, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '');
-print '</td></tr>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
-{
-	print '<tr><td>' . $langs->trans('Prefix') . '</td><td colspan="3">' . $object->prefix_comm . '</td></tr>';
-}
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-print '<tr>';
-print '<td class="nowrap">' . $langs->trans("SupplierCode") . '</td><td colspan="3">';
-print $object->code_fournisseur;
-if ($object->check_codefournisseur() != 0)
-	print ' <font class="error">(' . $langs->trans("WrongSupplierCode") . ')</font>';
-print '</td>';
-print '</tr>';
-
-print '<tr>';
-print '<td>';
-print $form->editfieldkey("SupplierAccountancyCode", 'supplieraccountancycode', $object->code_compta_fournisseur, $object, $user->rights->societe->creer);
-print '</td><td colspan="3">';
-print $form->editfieldval("SupplierAccountancyCode", 'supplieraccountancycode', $object->code_compta_fournisseur, $object, $user->rights->societe->creer);
-print '</td>';
-print '</tr>';
-
-// Address
-print '<tr><td valign="top">' . $langs->trans("Address") . '</td><td colspan="3">';
-dol_print_address($object->address, 'gmap', 'thirdparty', $object->id);
-print '</td></tr>';
-
-// Zip / Town
-print '<tr><td class="nowrap">' . $langs->trans("Zip") . ' / ' . $langs->trans("Town") . '</td><td colspan="3">' . $object->zip . (($object->zip && $object->town) ? ' / ' : '') . $object->town . '</td>';
-print '</tr>';
-
-// Country
-print '<tr><td>' . $langs->trans("Country") . '</td><td colspan="3">';
-// $img=picto_from_langcode($object->country_code);
-$img = '';
-if ($object->isInEEC())
-	print $form->textwithpicto(($img ? $img . ' ' : '') . $object->country, $langs->trans("CountryIsInEEC"), 1, 0);
-else
-	print ($img ? $img . ' ' : '') . $object->country;
-print '</td></tr>';
-
-print '</table>';
+dol_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";

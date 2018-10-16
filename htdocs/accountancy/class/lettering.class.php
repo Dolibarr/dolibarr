@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /**
- * \file accountancy/class/bookkeeping.class.php
- * \ingroup Advanced accountancy
- * \brief 	File of class for lettering
+ * \file        accountancy/class/bookkeeping.class.php
+ * \ingroup     Advanced accountancy
+ * \brief       File of class for lettering
  */
 include_once DOL_DOCUMENT_ROOT . "/accountancy/class/bookkeeping.class.php";
 include_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
@@ -32,12 +32,12 @@ include_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
 class lettering extends BookKeeping
 {
 	/**
-	 * lettrageTiers
+	 * lettering_thirdparty
 	 *
 	 * @param int $socid Thirdparty id
 	 * @return int 1 OK, <0 error
 	 */
-	public function lettrageTiers($socid)
+	public function lettering_thirdparty($socid)
 	{
 		global $conf;
 
