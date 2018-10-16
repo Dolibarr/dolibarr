@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2014-2017 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2015-2017 Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2014-2017  Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017  Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1640,9 +1641,9 @@ class BookKeeping extends CommonObject
 	/**
 	 * Transform transaction
 	 *
-	 * @param  number   $direction     If 0 tmp => real, if 1 real => tmp
-	 * @param  string   $piece_num     Piece num
-	 * @return void
+	 * @param  number   $direction      If 0 tmp => real, if 1 real => tmp
+	 * @param  string   $piece_num      Piece num
+	 * @return int                      int <0 if KO, >0 if OK
 	 */
 	public function transformTransaction($direction=0,$piece_num='')
 	{
@@ -1678,8 +1679,7 @@ class BookKeeping extends CommonObject
 				$this->errors[] = 'Error ' . $this->db->lasterror();
 				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
-		}
-		if ($direction==1) {
+		} elseif ($direction==1) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element.'_tmp WHERE piece_num = '.$piece_num;
 			$resql = $this->db->query($sql);
 			if (! $resql) {
