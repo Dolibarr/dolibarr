@@ -179,7 +179,8 @@ if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banq
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->cheque)
 {
-	$object->id = $id;
+	$object->fetch($id);
+	
 	$result = $object->delete();
 	if ($result == 0)
 	{

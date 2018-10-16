@@ -327,10 +327,37 @@ class RemiseCheque extends CommonObject
 	 */
 	function delete($user='')
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->errno = 0;
 		$this->db->begin();
+		
+		if ($this->statut == 1)
+		{
+		    $sql = "SELECT datec, datev, dateo, amount, fk_account  FROM ".MAIN_DB_PREFIX."bank WHERE fk_bordereau = ".$this->id." AND label LIKE '(ChequeDeposit)'";
+		    $res = $this->db->query($sql);
+		    
+		    if ($res && $this->db->num_rows($res))
+		    {
+		        $obj = $this->db->fetch_object($res);
+		        // create a regulation entry
+		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_type, fk_bordereau";
+		        $sql.= ") VALUES (";
+		        $sql.= "'".$obj->datec."'";
+		        $sql.= ", '". $obj->datev."'";
+		        $sql.= ", '". $obj->dateo."'";
+		        $sql.= ", '-".$obj->amount."'";
+		        $sql.= ", '(ChequeDepositCancel)'";
+		        $sql.= ", ".$obj->fk_account;
+		        $sql.= ", ".$user->id;
+		        $sql.= ", 'CHQ'";
+		        $sql.= ", ".$this->id;
+		        $sql.= ")";
+		        
+		        $res = $this->db->query($sql);
+// 		        var_dump($obj, $sql); exit;
+		    }
+		}
 		
 		// delete lines
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_chequedet";
@@ -357,6 +384,7 @@ class RemiseCheque extends CommonObject
     			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
     			    $sql.= " SET fk_bordereau = 0";
     			    $sql.= " WHERE fk_bordereau = ".$this->id;
+    			    $sql.= " AND label NOT LIKE '%ChequeDeposit%'";
     
     			    $resql = $this->db->query($sql);
     			    if (!$resql)
@@ -672,7 +700,7 @@ class RemiseCheque extends CommonObject
 	            if ($res > 0)
 	            {
 	                $date = dol_now();
-	                $label = '(CustomerChequeDeposit)';
+	                $label = '(ChequeDeposit)';
 	                $amount = $total;
 	                
 	                $ret = $account->addline($date, 'CHQ', $label, $amount, '', '', $user);
