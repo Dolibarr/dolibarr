@@ -305,7 +305,7 @@ function redirectToContainer($containerref, $containeraliasalt='',$containerid=0
  */
 function includeContainer($containerref)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
 
@@ -624,7 +624,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
-	$tplcontent.= '<link href="/'.$objectpage->pageurl.'.php" rel="canonical" />'."\n";
+	$tplcontent.= '<link href="/'.(($objectpage->id == $object->fk_default_home) ? '' : ($objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent.= '<!-- Include HTML header from common file -->'."\n";
