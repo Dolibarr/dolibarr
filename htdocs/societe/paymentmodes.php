@@ -959,9 +959,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '<td>';
 					print '</td>';
 				}
+				// Src ID
 				print '<td>';
-				print $src->id;
+				if (!empty($stripeacc)) $connect=$stripeacc.'/';
+				$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
+				if ($servicestatus)
+				{
+					$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
+				}
+				print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$src->id."</a>";
 				print '</td>';
+				// Img of credit card
 				print '<td>';
 				if ($src->object=='card')
 				{
@@ -975,8 +983,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
-
-				print'</td><td valign="middle">';
+				print'</td>';
+				print '<td valign="middle">';
 				if ($src->object=='card')
 				{
 					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
