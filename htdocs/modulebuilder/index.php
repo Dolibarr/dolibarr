@@ -1154,9 +1154,16 @@ elseif (! empty($module))
 		$head2[$h][2] = 'buildpackage';
 		$h++;
 
+		// Link to enable / disable
 		print $modulestatusinfo;
 		print ' '.$linktoenabledisable;
-		print '<br><br>';
+		print '<br>';
+
+		if (realpath($dirread.'/'.$modulelowercase) != $dirread.'/'.$modulelowercase)
+		{
+			print $langs->trans("RealPathOfModule").' : <strong>'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
+		}
+		print '<br>';
 
 		if ($tab == 'description')
 		{
@@ -1579,7 +1586,7 @@ elseif (! empty($module))
 
 						print '<br>';
 
-						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtodocument?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtolib?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.($realpathtopicto?'':'<strike>').$pathtopicto.($realpathtopicto?'':'</strike>').'</strong>';

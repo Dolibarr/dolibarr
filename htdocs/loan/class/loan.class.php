@@ -67,25 +67,25 @@ class Loan extends CommonObject
 	public $date_modification;
 	public $date_validation;
 
-    /**
+	/**
      * @var int Bank ID
      */
-    public $fk_bank;
+	public $fk_bank;
 
-    /**
-     * @var int User ID
+	/**
+     * @var int ID
      */
-    public $fk_user_creat;
+	public $fk_user_creat;
 
-    /**
-     * @var int User ID
+	/**
+     * @var int ID
      */
-    public $fk_user_modif;
+	public $fk_user_modif;
 
-    /**
-     * @var int Project ID
+	/**
+     * @var int ID
      */
-    public $fk_project;
+	public $fk_project;
 
 
 	/**

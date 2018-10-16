@@ -2426,9 +2426,24 @@ class ExpenseReportLine
     public $value_unit;
     public $date;
 
+    /**
+     * @var int ID
+     */
     public $fk_c_type_fees;
+
+    /**
+     * @var int ID
+     */
     public $fk_c_exp_tax_cat;
+
+    /**
+     * @var int ID
+     */
     public $fk_projet;
+
+    /**
+     * @var int ID
+     */
     public $fk_expensereport;
 
     public $type_fees_code;
