@@ -1000,7 +1000,7 @@ $numAsked ++;
 
             // Load receptions already done for same order
             $object->loadReceptions();
-
+			
             if ($numAsked)
             {
                 print '<tr class="liste_titre">';
@@ -1106,8 +1106,8 @@ $numAsked ++;
                 // Qty
                 print '<td align="center">'.$line->qty;
 				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value=\''.$line->id.'\' />';
-				print '<input type="hidden" name="comment'.$indiceAsked.'" value=\''.GETPOST('comment').'\' />';
-                print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$dispatchLines[$indiceAsked]['qty'].'">';
+				print '<textarea style="display:none;"  name="comment'.$indiceAsked.'" >'.$line->desc.'</textarea>';
+                print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
                 print '</td>';
                 $qtyProdCom=$line->qty;
 
@@ -1673,7 +1673,7 @@ else if ($id || $ref)
 		// Product/Service
 		print '<td>'.$langs->trans("Products").'</td>';
 		// Comment
-		print '<td>'.$langs->trans("Comment").'</td>';
+		print '<td>'.$langs->trans("Description").'</td>';
 		// Qty
 		print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)

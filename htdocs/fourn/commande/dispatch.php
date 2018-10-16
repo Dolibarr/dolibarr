@@ -708,16 +708,18 @@ if ($id > 0 || ! empty($ref)) {
 		if ($nbproduct)
 		{
           $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($object->statuts[5]));
-
+		 
 			print '<br><div class="center">';
-            print $langs->trans("Comment") . ' : ';
-			print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
-			print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
-			// print ' / '.$object->ref_supplier; // Not yet available
-			print '" class="flat"><br>';
+			if(empty($conf->reception->enabled)){
+				print $langs->trans("Comment") . ' : ';
+				print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
 
-			if(empty($conf->reception->enabled))print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
-			
+				print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
+				// print ' / '.$object->ref_supplier; // Not yet available
+				print '" class="flat"><br>';
+
+				print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
+			}
 			empty($conf->reception->enabled)?$dispatchBt=$langs->trans("DispatchVerb"):$dispatchBt=$langs->trans("Receive");
 			
 			print '<br><input type="submit" class="button" value="' . $dispatchBt. '"';

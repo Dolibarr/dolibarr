@@ -60,6 +60,7 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Quantité de produit déjà reçu 
 NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans l'entrepôt <b>%s</b>. Corrigez l'inventaire ou retourner choisir un autre entrepôt.
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeReception=Vous devez d'abord valider la commande pour pouvoir créer une réception.
+CreateInvoiceForThisSupplier=Facturer réceptions
 
 # Reception methods
 # ModelDocument
@@ -74,3 +75,8 @@ DetailWarehouseFormat= W:%s (Qté : %d)
 
 Billed=Facturé
 ClassifyUnbilled=Classer non facturé
+
+DateInvoice=Date de facturation
+CreateOneBillByThird=Créer une facture par tiers (sinon une par réception)
+ValidateInvoices=Factures validées
+

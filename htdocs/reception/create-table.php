@@ -46,6 +46,9 @@ $sql=" insert into llx_c_action_trigger (code,label,description,elementtype,rang
 
 $db->query($sql);
 
+$sql=" ALTER TABLE ".MAIN_DB_PREFIX."commande_fournisseur_dispatch CHANGE comment comment TEXT;";
+$db->query($sql);
+
 
 
 

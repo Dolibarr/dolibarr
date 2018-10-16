@@ -26,6 +26,8 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -33,8 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 $langs->load("receptions");
 $langs->load("deliveries");
 $langs->load('companies');
+$langs->load('bills');
 
 $socid=GETPOST('socid','int');
+$massaction=GETPOST('massaction','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 // Security check
 $receptionid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -119,7 +125,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -147,18 +153,217 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 
 if (empty($reshook))
 {
-    // Mass actions. Controls on number of lines checked
-    $maxformassaction=1000;
-    if (! empty($massaction) && count($toselect) < 1)
-    {
-        $error++;
-        setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
+	if ($massaction == 'confirm_createbills') {
+
+    	$receptions = GETPOST('toselect','array');
+    	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
+    	$validate_invoices = GETPOST('valdate_invoices', 'int');
+
+    	$TFact = array();
+    	$TFactThird = array();
+
+    	$nb_bills_created = 0;
+
+    	$db->begin();
+		
+    	foreach($receptions as $id_reception)
+    	{ 
+    		$rcp = new Reception($db);
+    		if ($rcp->fetch($id_reception) <= 0) continue;
+			if($rcp->statut != 1) continue; // On ne facture que les réceptions validées
+			$rcp->fetch_thirdparty();
+			
+    		$object = new FactureFournisseur($db);
+    		if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])) $object = $TFactThird[$rcp->socid]; // If option "one bill per third" is set, we use already created reception.
+    		else {
+
+    			$object->socid = $rcp->socid;
+    			$object->type = FactureFournisseur::TYPE_STANDARD;
+    			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_id;
+    			$object->mode_reglement_id	= $rcp->thirdparty->mode_reglement_id;
+    			$object->fk_project			= $rcp->fk_project;
+    			$object->ref_supplier			= $rcp->ref_supplier;
+
+    			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+    			if (empty($datefacture))
+    			{
+    				$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
+    			}
+
+    			$object->date = $datefacture;
+    			$object->origin    = 'reception';
+    			$object->origin_id = $id_reception;
+				
+    			$res = $object->create($user);
+				
+    			if($res > 0){
+					$nb_bills_created++;
+					$object->id = $res;
+				}
+    		}
+
+    		if ($object->id > 0)
+    		{
+				if(!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])){ //cause function create already add object linked for facturefournisseur
+					$res = $object->add_object_linked($object->origin,$id_reception);
+
+					if ($res==0)
+					{
+						$error++;
+					}
+				}
+				
+    			if (! $error)
+    			{
+	    			$lines = $rcp->lines;
+	    			if (empty($lines) && method_exists($rcp, 'fetch_lines'))
+	    			{
+	    				$rcp->fetch_lines();
+	    				$lines = $rcp->lines;
+	    			}
+
+	    			$fk_parent_line=0;
+	    			$num=count($lines);
+
+	    			for ($i=0;$i<$num;$i++)
+	    			{
+	    				$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+	    				if ($lines[$i]->subprice < 0)
+	    				{
+	    					// Negative line, we create a discount line
+	    					$discount = new DiscountAbsolute($db);
+	    					$discount->fk_soc=$object->socid;
+	    					$discount->amount_ht=abs($lines[$i]->total_ht);
+	    					$discount->amount_tva=abs($lines[$i]->total_tva);
+	    					$discount->amount_ttc=abs($lines[$i]->total_ttc);
+	    					$discount->tva_tx=$lines[$i]->tva_tx;
+	    					$discount->fk_user=$user->id;
+	    					$discount->description=$desc;
+	    					$discountid=$discount->create($user);
+	    					if ($discountid > 0)
+	    					{
+	    						$result=$object->insert_discount($discountid);
+	    						//$result=$discount->link_to_invoice($lineid,$id);
+	    					}
+	    					else
+	    					{
+	    						setEventMessages($discount->error, $discount->errors, 'errors');
+	    						$error++;
+	    						break;
+	    					}
+	    				}
+	    				else
+	    				{
+	    					// Positive line
+	    					$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+	    					// Date start
+	    					$date_start=false;
+	    					if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
+	    					if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+	    					if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+	    					//Date end
+	    					$date_end=false;
+	    					if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
+	    					if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+	    					if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+	    					// Reset fk_parent_line for no child products and special product
+	    					if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9)
+	    					{
+	    						$fk_parent_line = 0;
+	    					}
+	    					$result = $object->addline(
+	    							$desc,
+	    							$lines[$i]->subprice,
+	    							$lines[$i]->tva_tx,
+	    							$lines[$i]->localtax1_tx,
+	    							$lines[$i]->localtax2_tx,
+									$lines[$i]->qty,
+	    							$lines[$i]->fk_product,
+	    							$lines[$i]->remise_percent,
+	    							$date_start,
+	    							$date_end,
+	    							0,
+	    							$lines[$i]->info_bits,
+	    							'HT',
+	    							$product_type,
+	    							$i,
+	    							false,
+									0,
+									null,
+	    							$lines[$i]->rowid
+	    							
+	    					);
+	    					if ($result > 0)
+	    					{
+	    						$lineid=$result;
+	    					}
+	    					else
+	    					{
+	    						$lineid=0;
+	    						$error++;
+	    						break;
+	    					}
+	    					// Defined the new fk_parent_line
+	    					if ($result > 0 && $lines[$i]->product_type == 9)
+	    					{
+	    						$fk_parent_line = $result;
+	    					}
+	    				}
+	    			}
+    			}
+    		}
+
+    		//$rcp->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
+
+    		if(!empty($createbills_onebythird) && empty($TFactThird[$rcp->socid])) $TFactThird[$rcp->socid] = $object;
+    		else $TFact[$object->id] = $object;
+    	}
+
+    	// Build doc with all invoices
+    	$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
+    	$toselect = array();
+		
+    	if (! $error && $validate_invoices)
+    	{
+    		$massaction = $action = 'builddoc';
+    		foreach($TAllFact as &$object)
+    		{
+    			$result = $object->validate($user);
+    			if ($result <= 0)
+    			{
+    				$error++;
+    				setEventMessages($object->error, $object->errors, 'errors');
+    				break;
+    			}
+
+    			$id = $object->id; // For builddoc action
+
+    			// Fac builddoc
+    			$donotredirect = 1;
+    			$upload_dir = $conf->fournisseur->facture->dir_output;
+    		    $permissioncreate=$user->rights->fournisseur->facture->creer;
+    		    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+    		}
+
+    		$massaction = $action = 'confirm_createbills';
+    	}
+
+    	if (! $error)
+    	{
+    		$db->commit();
+    		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+    	}
+    	else
+    	{
+    		$db->rollback();
+    		$action='create';
+    		$_GET["origin"]=$_POST["origin"];
+    		$_GET["originid"]=$_POST["originid"];
+    		setEventMessages($object->error, $object->errors, 'errors');
+    		$error++;
+    	}
     }
-    if (! $error && count($toselect) > $maxformassaction)
-    {
-        setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
-        $error++;
-    }
+	
 
 }
 
@@ -261,6 +466,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$reception = new Reception($db);
+	
+	$arrayofselected=is_array($toselect)?$toselect:array();
 
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -277,7 +484,15 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-
+	
+	
+	$arrayofmassactions =  array(
+//    'presend'=>$langs->trans("SendByMail"),
+);
+	
+	if($user->rights->fournisseur->facture->creer)$arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisSupplier");
+	if($massaction == 'createbills') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
 	$i = 0;
@@ -290,8 +505,57 @@ if ($resql)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num, $nbtotalofrecords, '', 0, '', '', $limit);
 
+	
+	if ($massaction == 'createbills')
+	{
+		//var_dump($_REQUEST);
+		print '<input type="hidden" name="massaction" value="confirm_createbills">';
+
+		print '<table class="noborder" width="100%" >';
+		print '<tr>';
+		print '<td class="titlefieldmiddle">';
+		print $langs->trans('DateInvoice');
+		print '</td>';
+		print '<td>';
+		print $form->select_date('', '', '', '', '', '', 1, 1);
+		print '</td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td>';
+		print $langs->trans('CreateOneBillByThird');
+		print '</td>';
+		print '<td>';
+		print $form->selectyesno('createbills_onebythird', '', 1);
+		print '</td>';
+		print '</tr>';
+		print '<tr>';
+		print '<td>';
+		print $langs->trans('ValidateInvoices');
+		print '</td>';
+		print '<td>';
+		if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+		{
+		    print $form->selectyesno('valdate_invoices', 0, 1, 1);
+		    print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
+		}
+		else
+		{
+            print $form->selectyesno('valdate_invoices', 0, 1);
+		}
+		print '</td>';
+		print '</tr>';
+		print '</table>';
+
+		print '<br>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisSupplier').'">  ';
+		print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+		print '</div>';
+		print '<br>';
+	}
+	
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -311,6 +575,8 @@ if ($resql)
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -648,7 +914,14 @@ if ($resql)
 		}
 
 		// Action column
-		print '<td></td>';
+		print '<td align="center">';
+		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+        {
+            $selected=0;
+    		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+    		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+        }
+		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
