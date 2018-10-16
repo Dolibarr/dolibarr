@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,15 +45,28 @@ class FormMail extends Form
 
 	public $fromname;
 	public $frommail;
+
     /**
      * @var string user, company, robot
      */
     public $fromtype;
+
     /**
      * @var int ID
      */
     public $fromid;
-	public $replytoname;
+
+    /**
+     * @var string thirdparty etc
+     */
+    public $totype;
+
+    /**
+     * @var int ID
+     */
+    public $toid;
+
+    public $replytoname;
 	public $replytomail;
 	public $toname;
 	public $tomail;
