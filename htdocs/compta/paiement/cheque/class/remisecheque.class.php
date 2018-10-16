@@ -215,12 +215,12 @@ class RemiseCheque extends CommonObject
 			        {
 			            foreach ($linetoremise as $bank_id)
 			            {
-			                $sql = "SELECT p.rowid, b.emetteur, b.amount";
+			                $sql = "SELECT p.rowid, b.emetteur, b.amount, b.num_chq, b.banque, b.datec";
 			                $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 			                $sql.= " WHERE b.rowid = ".$bank_id;
 			                $res = $this->db->query($sql);
-			                
+			                var_dump($sql); exit;
 			                if($res)
 			                {
 			                    $obj = $this->db->fetch_object($res);
@@ -228,8 +228,11 @@ class RemiseCheque extends CommonObject
 			                    $fk_paiement = (empty($obj->rowid)) ? 0 : intVal($obj->rowid);
 			                    $emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
 			                    $amount = (empty($obj->amount)) ? 0 : $obj->amount;
+			                    $num_chq = (empty($obj->num_chq)) ? '' : $this->db->escape($obj->num_chq);
+			                    $banque = (empty($obj->banque)) ? '' : $this->db->escape($obj->banque);
+			                    $datec = (empty($obj->datec)) ? '' : $this->db->jdate($obj->datec);
 			                    
-			                    $ret = $this->addline($bank_id, $fk_paiement, $typeline, $emetteur, $amount);
+			                    $ret = $this->addline($bank_id, $fk_paiement, $typeline, $emetteur, $amount, $num_chq, $banque, $datec);
 			                    if ($ret<0)
 			                    {
 			                        $this->errno = $ret;
@@ -243,7 +246,7 @@ class RemiseCheque extends CommonObject
 			            foreach ($linetoremise as $payment_id)
 			            {
 			                
-			                $sql = "SELECT p.amount, s.nom as emetteur";
+			                $sql = "SELECT p.amount, p.datec, s.nom as emetteur";
 			                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
 			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON (pf.fk_paiement = p.rowid)";
 			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (f.rowid = pf.fk_facture)";
@@ -258,8 +261,11 @@ class RemiseCheque extends CommonObject
 			                    
 			                    $emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
 			                    $amount = (empty($obj->amount)) ? 0 : $obj->amount;
+			                    $num_chq = '';
+			                    $banque = '';
+			                    $datec = (empty($obj->datec)) ? '' : $this->db->jdate($obj->datec);
 			                    			                    
-			                    $ret = $this->addline(0, $payment_id, $typeline, $emetteur, $amount);
+			                    $ret = $this->addline(0, $payment_id, $typeline, $emetteur, $amount, $num_chq, $banque, $datec);
 			                    if ($ret<0)
 			                    {
 			                        $this->errno = $ret;
@@ -324,7 +330,7 @@ class RemiseCheque extends CommonObject
 
 		$this->errno = 0;
 		$this->db->begin();
-
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
 		$sql.= " WHERE rowid = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
@@ -436,11 +442,16 @@ class RemiseCheque extends CommonObject
 	 * @param string   $type_line
 	 * @param string   $emetteur
 	 * @param double   $amount
+	 * @param string   $num_chq
+	 * @param string   $banque
+	 * @param string   $datec
 	 * 
 	 * @return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($fk_bank = 0, $fk_paiement = 0, $type_line = '', $emetteur = '', $amount = 0)
+	function addline($fk_bank = 0, $fk_paiement = 0, $type_line = '', $emetteur = '', $amount = 0, $num_chq = '', $banque = '', $datec = null)
 	{
+	    dol_syslog("RemiseCheque::addline id=$this->id, fk_bank=$fk_bank, fk_paiement=$fk_paiement, type_line=$type_line, emetteur=$emetteur, amount=$amount, num_chq=$num_chq, banque=$banque, datec=$datec", LOG_DEBUG);
+	    
 	    // clean parameters
 	    if (empty($fk_bank)) $fk_bank = 0;
 	    if (empty($fk_paiement)) $fk_paiement = 0;
@@ -466,22 +477,28 @@ class RemiseCheque extends CommonObject
 	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
 	        return -3;
 	    }
-	    $this->line = new stdClass();
+	    $this->line = new RemiseChequeLine($this->db);
 	    
-	    $this->line->fk_bordereau = $this->id;
-	    $this->line->fk_bank = $fk_bank;
-	    $this->line->fk_paiement = $fk_paiement;
-	    $this->line->type_line = $this->db->escape($type_line);
-	    $this->line->emetteur = (empty($emetteur)) ? '' : $this->db->escape($emetteur);
-	    $this->line->amount = (empty($amount)) ? 0 : $amount;
+	    $this->line->fk_bordereau  = $this->id;
+	    $this->line->fk_bank       = $fk_bank;
+	    $this->line->fk_paiement   = $fk_paiement;
+	    $this->line->type_line     = $this->db->escape($type_line);
+	    $this->line->emetteur      = (empty($emetteur)) ? '' : $this->db->escape($emetteur);
+	    $this->line->amount        = (empty($amount)) ? 0 : $amount;
+	    $line->line->num_chq       = $this->db->escape($num_chq);
+	    $line->line->banque        = $this->db->escape($banque);
+	    $line->line->datec         = $this->db->escape($datec);
 	    
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_chequedet (";
 	    $sql.= "fk_bordereau, ";
 	    $sql.= "fk_bank, ";
 	    $sql.= "fk_paiement, ";
-	    $sql.= "type_line,";
+	    $sql.= "type_line, ";
 	    $sql.= "emetteur, ";
-	    $sql.= "amount";
+	    $sql.= "amount, ";
+	    $sql.= "num_chq, ";
+	    $sql.= "banque, ";
+	    $sql.= "datec";
 	    $sql.= ") VALUES (";
 	    $sql.= $this->line->fk_bordereau;
 	    $sql.= ", ". $this->line->fk_bank;
@@ -489,6 +506,9 @@ class RemiseCheque extends CommonObject
 	    $sql.= ", '".$this->line->type_line."'";
 	    $sql.= ", '".$this->line->emetteur."'";
 	    $sql.= ", '".$this->line->amount."'";
+	    $sql.= ", '".$this->line->num_chq."'";
+	    $sql.= ", '".$this->line->banque."'";
+	    $sql.= ", ".(! empty($this->line->datec)?"'".$this->db->idate($this->line->datec)."'":"null");
 	    $sql.= ")";
 	    
 	    dol_syslog("RemiseCheque::Addline", LOG_DEBUG);
@@ -534,7 +554,7 @@ class RemiseCheque extends CommonObject
 	    // phpcs:enable
 	    $this->lines=array();
 	    
-	    $sql = "SELECT l.rowid, l.fk_bordereau, l.fk_bank, l.fk_paiement, l.type_line, l.emetteur, l.amount";
+	    $sql = "SELECT l.rowid, l.fk_bordereau, l.fk_bank, l.fk_paiement, l.type_line, l.emetteur, l.amount, l.num_chq, l.banque, l.datec";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_chequedet as l";
 	    $sql.= " WHERE l.fk_bordereau = ".$this->id;
 	    
@@ -549,7 +569,7 @@ class RemiseCheque extends CommonObject
 	        {
 	            $objp = $this->db->fetch_object($result);
 	            
-	            $line = new stdClass();
+	            $line = new RemiseChequeLine($this->db);
 	            
 	            $line->id              = $objp->rowid;
 	            $line->fk_bordereau    = $objp->fk_bordereau;
@@ -558,6 +578,9 @@ class RemiseCheque extends CommonObject
 	            $line->type_line       = $objp->type_line;
 	            $line->emetteur        = $objp->emetteur;
 	            $line->amount          = floatval($objp->amount);
+	            $line->num_chq         = $objp->num_chq;
+	            $line->banque          = $objp->banque;
+	            $line->datec           = (!empty($objp->datec)) ? $this->db->jdate($objp->datec) : null;
 	            
 	            $this->lines[$i] = $line;
 	            
@@ -1287,4 +1310,33 @@ class RemiseCheque extends CommonObject
 		}
 		return $langs->trans('Unknown');
 	}
+}
+
+class RemiseChequeLine extends CommonObject
+{
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element='bordereau_chequedet';
+    
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='bordereau_chequedet';
+    
+    public $fk_bordereau; // bordereau id
+    
+    public $fk_bank; // 
+    public $fk_paiement;
+    public $type_line;
+    public $emetteur;
+    public $amount;
+    public $num_chq;
+    public $banque;
+    public $datec;
+    
+    public function __construct(DoliDB $db)
+    {
+        $this->db = $db;
+    }
 }
