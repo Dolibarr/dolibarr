@@ -70,6 +70,8 @@ $parameters=array();
 
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
 
+$accountingaccount = new AccountingAccount($db);
+
 // Get informations of journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
@@ -319,6 +321,10 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+
+					$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
+					$bookkeeping->label_compte = $accountingaccount->label;
+
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
@@ -359,7 +365,6 @@ if ($action == 'writebookkeeping') {
 			foreach ( $tabht[$key] as $k => $mt ) {
 				//if ($mt) {
 					// get compte id and label
-					$accountingaccount = new AccountingAccount($db);
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -373,6 +378,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_compte = $accountingaccount->label;
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
@@ -432,6 +438,10 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+
+						$accountingaccount->fetch($k, null, true);
+						$bookkeeping->label_compte = $accountingaccount->label;
+
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
