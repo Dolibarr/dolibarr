@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -184,7 +185,7 @@ if (empty($reshook))
     			$object->fk_project			= $rcp->fk_project;
     			$object->ref_supplier			= $rcp->ref_supplier;
 
-    			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+    			$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth'),GETPOST('reday'), GETPOST('reyear'));
     			if (empty($datefacture))
     			{
     				$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
@@ -383,6 +384,8 @@ $form=new Form($db);
 $companystatic=new Societe($db);
 $reception=new Reception($db);
 $formcompany=new FormCompany($db);
+$formfile = new FormFile($db);
+
 
 $helpurl='EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('',$langs->trans('ListOfReceptions'),$helpurl);
@@ -757,7 +760,7 @@ if ($resql)
 
     	$reception->id=$obj->rowid;
     	$reception->ref=$obj->ref;
-
+		
     	$companystatic->id=$obj->socid;
     	$companystatic->ref=$obj->name;
     	$companystatic->name=$obj->name;
@@ -770,7 +773,12 @@ if ($resql)
 		{
     		print "<td>";
     		print $reception->getNomUrl(1);
+    		$filename=dol_sanitizeFileName($reception->ref);
+    		$filedir=$conf->reception->dir_output . '/' . dol_sanitizeFileName($reception->ref);
+    		$urlsource=$_SERVER['PHP_SELF'].'?id='.$reception->rowid;
+    		print $formfile->getDocumentsLink($reception->element, $filename, $filedir);
     		print "</td>\n";
+			
     		if (! $i) $totalarray['nbfield']++;
 		}
 
