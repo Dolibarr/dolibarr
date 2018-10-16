@@ -24,10 +24,13 @@
 CREATE TABLE llx_bordereau_chequedet
 (
     rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-    fk_bordereau 	integer NOT NULL,
-    fk_bank 		integer,
-    fk_paiement 	integer,
-    type_line		varchar(255),
-    emetteur 		varchar(255),
-    amount 			double(28,8) DEFAULT 0
+    fk_bordereau 	integer NOT NULL,						-- id of the bordereau
+    fk_bank 		integer,								-- id of the bankentry
+    fk_paiement 	integer,								-- id of the payment
+    type_line		varchar(50),							-- type of the line (can be "bank" or "payment")
+    emetteur 		varchar(255),							-- payment emitter
+    amount 			double(28,8) DEFAULT 0,
+    num_chq			varchar(50),							-- number of the check
+    banque			varchar(255),							-- bank of the emitter
+    datec			datetime,								-- date of the payment
 ) ENGINE = InnoDB;
