@@ -413,7 +413,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$dol_type=(GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
   	$dol_id=GETPOST('dol_id', 'int');
   	$vatnumber = GETPOST('vatnumber','alpha');
-  	$savesource=GETPOSTISSET('savesource')?GETPOST('savesource', 'int'):1;
+	$savesource=GETPOSTISSET('savesource')?GETPOST('savesource', 'int'):1;
 
 	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST email = ".$email, LOG_DEBUG, 0, '_stripe');

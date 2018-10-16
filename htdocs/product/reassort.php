@@ -345,7 +345,7 @@ if ($resql)
 		// Real stock
 		print '<td align="right">';
         if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-		print $objp->stock_physique;
+		print $objp->stock_physique|0;
 		print '</td>';
 
 		// Details per warehouse

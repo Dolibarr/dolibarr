@@ -23,7 +23,7 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 				if ($align) print ' align="'.$align.'"';
 				print '>';
 				$tmpkey='options_'.$key;
-				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')))
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey))
 				{
 					$datenotinstring = $obj->$tmpkey;
 					if (! is_numeric($obj->$tmpkey))	// For backward compatibility

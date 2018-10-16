@@ -319,10 +319,11 @@ if (empty($reshook))
                 if ($i) $sql.=",";
                 $sql.= $field."=";
 
-//                print $keycode.' - '.$_POST[$keycode].'<br>';
-                if ($_POST[$keycode] == '' || ($keycode != 'langcode' && $keycode != 'private' && empty($_POST[$keycode]))) $sql.="null";  // lang must be '' if not defined so the unique key that include lang will work
-                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="''";													   // lang must be '' if not defined so the unique key that include lang will work
-                elseif ($keycode == 'private') $sql.=((int) $_POST[$keycode]);													  		   // private must be 0 or 1
+                //print $keycode.' - '.$_POST[$keycode].'<br>';
+                if ($_POST[$keycode] == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && empty($_POST[$keycode]))) $sql.="null";  // lang must be '' if not defined so the unique key that include lang will work
+                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="''";	// lang must be '' if not defined so the unique key that include lang will work
+                elseif ($keycode == 'private') $sql.=((int) $_POST[$keycode]);	        // private must be 0 or 1
+                elseif ($keycode == 'position')	$sql.=((int) $_POST[$keycode]);
                 else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }

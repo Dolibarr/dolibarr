@@ -141,6 +141,11 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$filter = array();
 }
 
+
+/*
+ * View
+ */
+
 if ($action == 'export_csv')
 {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
@@ -166,11 +171,6 @@ if ($action == 'export_csv')
 	exit;
 }
 
-
-
-/*
- * View
- */
 
 $title_page = $langs->trans("AccountBalance");
 

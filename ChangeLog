@@ -284,6 +284,68 @@ Following changes may create regressions for some external modules, but were nec
   where {TYPE} is contact type code (BILLING, SHIPPING, CUSTOMER, ... see contact type dictionnary). 
 
 
+
+***** ChangeLog for 7.0.4 compared to 7.0.3 *****
+FIX: #8984 button create expense report
+FIX: #9032
+FIX: #9161
+FIX: #9328
+FIX: According to french law, if seller is in France and buyer isn't in UE and isn't a company, TVA used = TVA product
+FIX: Add calls to fetchComments function
+FIX: better compatibility with multicompany
+FIX: case when we valid form with keyboard
+FIX: character making error on bill list
+FIX: check !empty exclude select element
+FIX: combo into popup become crazy with IE10
+FIX: combo of stock in popup are crazy in IE
+FIX: Deletion of files in migration
+FIX: exclude element of the select
+FIX: extrafieldkey
+FIX: Fetch function will fetch comments
+FIX: Fetch task will now fetch comments
+FIX: filter supplier invoice list by societe name.
+FIX: $fk_account is always empty, must be $soc->fk_account
+FIX: Force stripe api version to avoid trouble if we update stripe api
+FIX: getEntity project and not projet
+FIX: Get templates in a forced language
+FIX: global $mysoc missing (to avoid php notice on lines 279, 280 & 281)
+FIX: Injection
+FIX: invoice stats: situation invoices were not counted
+FIX: keep context filter on contact list on change column displayed
+FIX: Keep same project when creating shipping from order
+FIX: langs fr
+FIX: Lose filter on payment type or category after a sort on invoice list
+FIX: Missing behavior
+FIX: missing hook to edit sql
+FIX: multicompany compatibility !
+FIX: need to filter on current entity on replenish
+FIX: Option MAIN_DISABLE_NOTES_TAB #9611
+FIX: page must always be 0 when we search (to avoid case : when we're on page 3 and we're looking for a precise thirdparty, we stay on page 3 and nothing's displaied)
+FIX: Pagination on related item pages
+FIX: Pagination on withdraw request list
+FIX: PDF address: handle when contact thirdparty different from document thirdparty
+FIX: PHP warning, undefined index notnull
+FIX: Product marge tabs on product card
+FIX: Product margin tab and credit note
+FIX: propal: correctly preset project when creating with origin/originid
+FIX: remain to pay for credit note was wrong on invoice list
+FIX: remove debug
+FIX: Remove fetchComments from project and task fetch function
+FIX: remove rowid for multicompany compatibility
+FIX: Search on Ref project on order list
+FIX: search on ref project on propal list
+FIX: showOptionals: column mismatches
+FIX: SQL Injections reported by mu shcor (ADLab of Venustech)
+FIX: stock replenish with multientity
+FIX: table llx_chargessociales doesn't exists
+FIX: we must see number of all shared projects
+FIX: when stock is empty for current entity but > 0 in other entity, until this commit product wasn't displaied on replenishment, it must depends on multientity stock sharing
+FIX: when we're just admin and not super admin, if we create new user with transverse mode, we don't see it then we can't add him in usergroup
+FIX: wrong function name
+FIX: Wrong position of firstname lastname
+FIX: wrong value for module part and return access denied
+FIX: Wrong variable and trigger name
+
 ***** ChangeLog for 7.0.3 compared to 7.0.2 *****
 FIX: 7.0 task contact card without withproject parameters
 FIX: #8722
@@ -766,6 +828,32 @@ Following changes may create regressions for some external modules, but were nec
   multicompany module to a version that support Dolibarr v7, everything should work as expected. 
 
 
+***** ChangeLog for 6.0.8 compared to 6.0.7 *****
+FIX: #8762
+FIX: #9032
+FIX: case when we valid form with keyboard
+FIX: clause must not be there
+FIX: dol_delete_file must work in a context without db handler loaded
+FIX: entity test must be on product_fourn_price table and not product table
+FIX: Fetch shipping will now fetch project id
+FIX: $fk_account is always empty, must be $soc->fk_account
+FIX: getEntity project and not projet
+FIX: If we enable 3 steps for supplier order approbation, we must not delete all fourn rights def.
+FIX: Keep supplier proposal price for supplier order
+FIX: langs fr
+FIX: missing filters during reordering
+FIX: need to filter on aa.entity for same accounting accounts available in several entities
+FIX: page must always be 0 when we search (to avoid case : when we're on page 3 and we're looking for a precise thirdparty, we stay on page 3 and nothing's displaied)
+FIX: PDF address: handle when contact thirdparty different from document thirdparty
+FIX: propal: correctly preset project when creating with origin/originid
+FIX: pu_ht_devise was not converted to numeric so decimals were lost when calculating total_ht_devise
+FIX: remain to pay for credit note was wrong on invoice list
+FIX: shipment: fk_proje(c)t not handled in fetch() and update() methods
+FIX: showOptionals: column mismatches
+FIX: sometimes amounts are identical but php find them different.
+FIX: test is_erasable() must be done before call function delete() too to avoid delete invoice with &action=delete in url
+FIX: we must see number of all shared projects
+FIX: wrong var name
 
 ***** ChangeLog for 6.0.7 compared to 6.0.6 *****
 FIX: #8023
