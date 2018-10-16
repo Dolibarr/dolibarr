@@ -476,22 +476,25 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 		elseif ($action == 'MEMBER_VALIDATE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1' && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
+			if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
 			{
 				// If status field is setup to be synchronized
-                $ldap=new Ldap();
-				$result=$ldap->connect_bind();
-
-				if ($result > 0)
+				if (! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
 				{
-					$info=$object->_load_ldap_info();
-					$dn=$object->_load_ldap_dn($info);
-					$olddn=$dn;	// We know olddn=dn as we change only status
+					$ldap=new Ldap();
+					$result=$ldap->connect_bind();
 
-					$result=$ldap->update($dn,$info,$user,$olddn);
+					if ($result > 0)
+					{
+						$info=$object->_load_ldap_info();
+						$dn=$object->_load_ldap_dn($info);
+						$olddn=$dn;	// We know olddn=dn as we change only status
+
+						$result=$ldap->update($dn,$info,$user,$olddn);
+					}
+
+					if ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 				}
-
-				elseif ($result < 0) $this->error="ErrorLDAP ".$ldap->error;
 			}
 		}
 		elseif ($action == 'MEMBER_SUBSCRIPTION')
