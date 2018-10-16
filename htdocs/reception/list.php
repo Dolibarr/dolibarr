@@ -195,7 +195,7 @@ if (empty($reshook))
     			$object->origin_id = $id_reception;
 				
     			$res = $object->create($user);
-				
+				//var_dump($object->error);exit;
     			if($res > 0){
 					$nb_bills_created++;
 					$object->id = $res;
@@ -295,6 +295,9 @@ if (empty($reshook))
 	    							$lines[$i]->rowid
 	    							
 	    					);
+							
+							$rcp->add_object_linked('invoice_supplierdet',$result);
+							
 	    					if ($result > 0)
 	    					{
 	    						$lineid=$result;
