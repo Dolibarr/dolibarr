@@ -346,10 +346,10 @@ class Stripe extends CommonObject
 	/**
 	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
 	 *
-	 * @param	int 	$amount									Amount to pay
+	 * @param	int 	$stripeamount									Amount to pay
 	 * @param	string 	$currency								EUR, GPB...
-	 * @param	string 	$origin									Object type to pay (order, invoice, contract...)
-	 * @param	int 	$item									Object id to pay
+	 * @param	string 	$dol_type									Object type to pay (order, invoice, contract...)
+	 * @param	int 	$dol_id									Object id to pay
 	 * @param	string 	$source									src_xxxxx or card_xxxxx
 	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
@@ -358,7 +358,7 @@ class Stripe extends CommonObject
 	 * @param	boolean	$capture								Set capture flag to true (take payment) or false (wait)
 	 * @return Stripe
 	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0, $capture=true)
+	public function createPaymentStripe($stripeamount, $currency, $dol_type, $dol_id, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0, $capture=true)
 	{
 		global $conf;
 
@@ -387,29 +387,28 @@ class Stripe extends CommonObject
 		}
 
 		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (! in_array($currency, $arrayzerounitcurrency)) $stripeamount=$amount * 100;
-		else $stripeamount = $amount;
+		if (! in_array($currency, $arrayzerounitcurrency)) $stripeamount=$stripeamount * 100;
 
 		$societe = new Societe($this->db);
 		if ($key > 0) $societe->fetch($key);
 
 		$description = "";
 		$ref = "";
-		if ($origin == order) {
+		if ($dol_type == order) {
 			$order = new Commande($this->db);
-			$order->fetch($item);
+			$order->fetch($dol_id);
 			$ref = $order->ref;
 			$description = "ORD=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
-		} elseif ($origin == invoice) {
+		} elseif ($dol_type == invoice) {
 			$invoice = new Facture($this->db);
-			$invoice->fetch($item);
+			$invoice->fetch($dol_id);
 			$ref = $invoice->ref;
 			$description = "INV=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
 		}
 
 		$metadata = array(
-			"dol_id" => "" . $item . "",
-			"dol_type" => "" . $origin . "",
+			"dol_id" => "" . $dol_id . "",
+			"dol_type" => "" . $dol_type . "",
 			"dol_thirdparty_id" => "" . $societe->id . "",
 			'dol_thirdparty_name' => $societe->name,
 			'dol_version'=>DOL_VERSION,
@@ -427,7 +426,7 @@ class Stripe extends CommonObject
 				if (preg_match('/acct_/i', $source))
 				{
 					$charge = \Stripe\Charge::create(array(
-						"amount" => "$stripeamount",
+						"amount" => price2num($stripeamount, 'MU'),
 						"currency" => "$currency",
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 						"description" => "Stripe payment: ".$description,
@@ -437,7 +436,7 @@ class Stripe extends CommonObject
 					));
 				} else {
 					$paymentarray = array(
-						"amount" => "$stripeamount",
+						"amount" => price2num($stripeamount, 'MU'),
 						"currency" => "$currency",
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 						"description" => "Stripe payment: ".$description,
@@ -456,13 +455,13 @@ class Stripe extends CommonObject
 				}
 			} else {
 
-				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+				$fee = round(($stripeamount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
 				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 
         		$paymentarray = array(
-						"amount" => "$stripeamount",
+						"amount" => price2num($stripeamount, 'MU'),
 						"currency" => "$currency",
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 						"description" => "Stripe payment: ".$description,
