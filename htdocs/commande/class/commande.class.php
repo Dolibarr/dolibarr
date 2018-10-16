@@ -155,9 +155,9 @@ class Commande extends CommonOrder
 	public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
 	public $demand_reason_code;
 	public $date;				// Date commande
-  public $date_creation;				// Date commande
-  public $date_validation;				// Date commande
-  public $date_modification;				// Date commande
+	public $date_creation;				// Date commande
+	public $date_validation;				// Date commande
+	public $date_modification;				// Date commande
   
 	/**
 	 * @deprecated
@@ -1676,9 +1676,9 @@ class Commande extends CommonOrder
 				$this->total_ttc			= $obj->total_ttc;
 				$this->date					= $this->db->jdate($obj->date_commande);
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
-        $this->date_creation		= $this->db->jdate($obj->date_creation);
-        $this->date_validation		= $this->db->jdate($obj->date_valid);
-        $this->date_modification		= $this->db->jdate($obj->tms);
+				$this->date_creation		= $this->db->jdate($obj->date_creation);
+				$this->date_validation		= $this->db->jdate($obj->date_valid);
+				$this->date_modification		= $this->db->jdate($obj->tms);
 				$this->remise				= $obj->remise;
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
