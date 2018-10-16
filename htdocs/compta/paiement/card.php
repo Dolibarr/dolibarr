@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018     Thibault FOUCART   <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
@@ -309,6 +311,33 @@ print '</td></tr>';
 
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
+
+// External link
+if (!empty($object->payment_id) && !empty($object->payment_site)) {
+$stripe=new Stripe($db);
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE)))
+{
+	$service = 'StripeTest';
+	$servicestatus = '0';
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+}
+else
+{
+	$service = 'StripeLive';
+	$servicestatus = '1';
+}
+
+$stripeacc = $stripe->getStripeAccount($service);
+
+if (!empty($stripeacc)) $connect=$stripeacc.'/';	
+  	$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$object->payment_id;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$object->payment_id;
+			}
+      
+print '<tr><td>'.$langs->trans('Source').' '.$object->payment_site.'</td><td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$object->payment_id.'</a></td></tr>';
+}
 
 print '</table>';
 
