@@ -557,7 +557,7 @@ if (empty($reshook))
 			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
 			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
                 }
-     
+
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
 			if (empty($num) && !empty($newcu))
@@ -967,7 +967,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
 				}
-				print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$src->id."</a>";
+				print $src->id." <a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')."</a>";
 				print '</td>';
 				// Img of credit card
 				print '<td>';
