@@ -1154,9 +1154,16 @@ elseif (! empty($module))
 		$head2[$h][2] = 'buildpackage';
 		$h++;
 
+		// Link to enable / disable
 		print $modulestatusinfo;
 		print ' '.$linktoenabledisable;
-		print '<br><br>';
+		print '<br>';
+
+		if (realpath($dirread.'/'.$modulelowercase) != $dirread.'/'.$modulelowercase)
+		{
+			print $langs->trans("RealPathOfModule").' : <strong>'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
+		}
+		print '<br>';
 
 		if ($tab == 'description')
 		{
