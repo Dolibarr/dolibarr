@@ -960,7 +960,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '</td>';
 				}
 				print '<td>';
-				print $src->id;
+        if (!empty($stripeacc)) $connect=$stripeacc.'/';
+      $url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
+			}
+				print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$src->id."</a>";
 				print '</td>';
 				print '<td>';
 				if ($src->object=='card')
