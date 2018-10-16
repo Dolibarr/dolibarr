@@ -17,9 +17,9 @@
  */
 
 /**
- * \file    datapolicies/admin/setup.php
- * \ingroup datapolicies
- * \brief   datapolicies setup page.
+ * \file    datapolicy/admin/setup.php
+ * \ingroup datapolicy
+ * \brief   datapolicy setup page.
  */
 
 if (!defined('NOLOGIN'))
@@ -34,7 +34,7 @@ dol_include_once('/contact/class/contact.class.php');
 dol_include_once('/societe/class/societe.class.php');
 dol_include_once('/adherents/class/adherent.class.php');
 dol_include_once('/user/class/user.class.php');
-dol_include_once('/datapolicies/class/datapolicies.class.php');
+dol_include_once('/datapolicy/class/datapolicy.class.php');
 
 $idc = GETPOST('c', 'int');
 $ids = GETPOST('s', 'int');
@@ -45,7 +45,7 @@ $code = GETPOST('key', 'alpha');
 
 $acc = "DATAPOLICIESACCEPT_" . $lang;
 $ref = "DATAPOLICIESREFUSE_" . $lang;
-$langs->load('datapolicies@datapolicies',0,0,$lang);
+$langs->load('datapolicy@datapolicy',0,0,$lang);
 
 if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
     return 0;
@@ -56,18 +56,18 @@ if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
     if ($check != $code) {
         $return = $langs->trans('ErrorEmailDATAPOLICIES');
     } elseif ($action == 1) {
-        $contact->array_options['options_datapolicies_consentement'] = 1;
-        $contact->array_options['options_datapolicies_opposition_traitement'] = 0;
-        $contact->array_options['options_datapolicies_opposition_prospection'] = 0;
-        $contact->array_options['options_datapolicies_date'] = date('Y-m-d', time());
+        $contact->array_options['options_datapolicy_consentement'] = 1;
+        $contact->array_options['options_datapolicy_opposition_traitement'] = 0;
+        $contact->array_options['options_datapolicy_opposition_prospection'] = 0;
+        $contact->array_options['options_datapolicy_date'] = date('Y-m-d', time());
 
         $return = $conf->global->$acc;
     } elseif ($action == 2) {
         $contact->no_email = 1;
-        $contact->array_options['options_datapolicies_consentement'] = 0;
-        $contact->array_options['options_datapolicies_opposition_traitement'] = 1;
-        $contact->array_options['options_datapolicies_opposition_prospection'] = 1;
-        $contact->array_options['options_datapolicies_date'] = date('Y-m-d', time());
+        $contact->array_options['options_datapolicy_consentement'] = 0;
+        $contact->array_options['options_datapolicy_opposition_traitement'] = 1;
+        $contact->array_options['options_datapolicy_opposition_prospection'] = 1;
+        $contact->array_options['options_datapolicy_date'] = date('Y-m-d', time());
 
         $return = $conf->global->$ref;
     }
@@ -79,16 +79,16 @@ if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
     if ($check != $code) {
         $return = $langs->trans('ErrorEmailDATAPOLICIES');
     } elseif ($action == 1) {
-        $societe->array_options['options_datapolicies_consentement'] = 1;
-        $societe->array_options['options_datapolicies_opposition_traitement'] = 0;
-        $societe->array_options['options_datapolicies_opposition_prospection'] = 0;
-        $societe->array_options['options_datapolicies_date'] = date('Y-m-d', time());
+        $societe->array_options['options_datapolicy_consentement'] = 1;
+        $societe->array_options['options_datapolicy_opposition_traitement'] = 0;
+        $societe->array_options['options_datapolicy_opposition_prospection'] = 0;
+        $societe->array_options['options_datapolicy_date'] = date('Y-m-d', time());
         $return = $conf->global->$acc;
     } elseif ($action == 2) {
-        $societe->array_options['options_datapolicies_consentement'] = 0;
-        $societe->array_options['options_datapolicies_opposition_traitement'] = 1;
-        $societe->array_options['options_datapolicies_opposition_prospection'] = 1;
-        $societe->array_options['options_datapolicies_date'] = date('Y-m-d', time());
+        $societe->array_options['options_datapolicy_consentement'] = 0;
+        $societe->array_options['options_datapolicy_opposition_traitement'] = 1;
+        $societe->array_options['options_datapolicy_opposition_prospection'] = 1;
+        $societe->array_options['options_datapolicy_date'] = date('Y-m-d', time());
 
         $return = $conf->global->$ref;
     }
@@ -100,16 +100,16 @@ if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
     if ($check != $code) {
         $return = $langs->trans('ErrorEmailDATAPOLICIES');
     } elseif ($action == 1) {
-        $adherent->array_options['options_datapolicies_consentement'] = 1;
-        $adherent->array_options['options_datapolicies_opposition_traitement'] = 0;
-        $adherent->array_options['options_datapolicies_opposition_prospection'] = 0;
-        //$adherent->array_options['options_datapolicies_date'] = date('Y-m-d', time());
+        $adherent->array_options['options_datapolicy_consentement'] = 1;
+        $adherent->array_options['options_datapolicy_opposition_traitement'] = 0;
+        $adherent->array_options['options_datapolicy_opposition_prospection'] = 0;
+        //$adherent->array_options['options_datapolicy_date'] = date('Y-m-d', time());
         $return = $conf->global->$acc;
     } elseif ($action == 2) {
-        $adherent->array_options['options_datapolicies_consentement'] = 0;
-        $adherent->array_options['options_datapolicies_opposition_traitement'] = 1;
-        $adherent->array_options['options_datapolicies_opposition_prospection'] = 1;
-        //$adherent->array_options['options_datapolicies_date'] = date('Y-m-d', time());
+        $adherent->array_options['options_datapolicy_consentement'] = 0;
+        $adherent->array_options['options_datapolicy_opposition_traitement'] = 1;
+        $adherent->array_options['options_datapolicy_opposition_prospection'] = 1;
+        //$adherent->array_options['options_datapolicy_date'] = date('Y-m-d', time());
 
         $return = $conf->global->$ref;
     }

@@ -1236,6 +1236,11 @@ div.backgroundsemitransparent {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+
+
+/* Login */
+
 div.login_block {
 	/* position: initial !important;*/
 	display: none;
@@ -1250,6 +1255,10 @@ div.login_block {
 	color: #333 !important;
 	font-weight: normal !important;
 }
+
+
+
+
 #id-right {
 	padding-left: 0 ! important;
 }

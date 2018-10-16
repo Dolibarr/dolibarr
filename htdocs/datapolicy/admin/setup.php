@@ -17,21 +17,21 @@
  */
 
 /**
- * \file    datapolicies/admin/setup.php
- * \ingroup datapolicies
- * \brief   datapolicies setup page.
+ * \file    datapolicy/admin/setup.php
+ * \ingroup datapolicy
+ * \brief   datapolicy setup page.
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once '../lib/datapolicies.lib.php';
+require_once '../lib/datapolicy.lib.php';
 //require_once "../class/myclass.class.php";
 
 // Translations
 $langs->load('admin');
 $langs->load('companies');
 $langs->load('members');
-$langs->load('datapolicies@datapolicies');
+$langs->load('datapolicy@datapolicy');
 
 // Access control
 if (! $user->admin) accessforbidden();
@@ -41,17 +41,17 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters=array(
-    'DATAPOLICIES_TIERS_CLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
-    'DATAPOLICIES_ADHERENT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
+    'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200'),
 );
 
 
@@ -81,26 +81,26 @@ if (DOL_VERSION < '7' && $action == 'update') {
 
 $arrayofparameters=array(
     'ThirdParty' => array(
-        'DATAPOLICIES_TIERS_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_TIERS_CLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_TIERS_PROSPECT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_TIERS_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200'),
     ),
     'Contact' => array(
-        'DATAPOLICIES_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
-        'DATAPOLICIES_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_PROSPECT_CLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_CONTACT_FOURNISSEUR'=>array('css'=>'minwidth200'),
     ),
     'Member' => array(
-        'DATAPOLICIES_ADHERENT'=>array('css'=>'minwidth200'),
+        'DATAPOLICY_ADHERENT'=>array('css'=>'minwidth200'),
     )
 );
 
 $valTab = array(
-    '' => $langs->trans('None'),
+    '' => $langs->trans('Never'),
     '6' => $langs->trans('NB_MONTHS', 6),
     '12' => $langs->trans('ONE_YEAR'),
     '24' => $langs->trans('NB_YEARS', 2),
@@ -108,6 +108,8 @@ $valTab = array(
     '48' => $langs->trans('NB_YEARS', 4),
     '60' => $langs->trans('NB_YEARS', 5),
     '120' => $langs->trans('NB_YEARS', 10),
+	'180' => $langs->trans('NB_YEARS', 15),
+	'240' => $langs->trans('NB_YEARS', 20),
 );
 
 
@@ -115,20 +117,20 @@ $valTab = array(
  * View
  */
 
-$page_name = "datapoliciesSetup";
+$page_name = "datapolicySetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicies@datapolicies');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicy@datapolicy');
 
 // Configuration header
-$head = datapoliciesAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "datapolicies@datapolicies");
+$head = datapolicyAdminPrepareHead();
+dol_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
 
 // Setup page goes here
-echo $langs->trans("datapoliciesSetupPage");
+echo '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span><br><br>';
 
 
 if ($action == 'edit')
@@ -180,7 +182,7 @@ else
         foreach($tab as $key => $val)
         {
             print '<tr class="oddeven"><td>';
-            print $form->textwithpicto($langs->trans($key),$langs->trans('DATAPOLICIES_Tooltip_SETUP'));
+            print $form->textwithpicto($langs->trans($key),$langs->trans('DATAPOLICY_Tooltip_SETUP'));
             print '</td><td>' . ($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]) . '</td></tr>';
         }
 

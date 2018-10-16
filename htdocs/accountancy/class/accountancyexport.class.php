@@ -651,8 +651,28 @@ class AccountancyExport
 	 */
 	public function exportFEC($objectLines)
 	{
-		$separator = ';';
+		$separator = "\t";
 		$end_line = "\n";
+
+		print "JournalCode" . $separator;
+		print "JournalLib" . $separator;
+		print "EcritureNum" . $separator;
+		print "EcritureDate" . $separator;
+		print "CompteNum" . $separator;
+		print "CompteLib" . $separator;
+		print "CompAuxNum" . $separator;
+		print "CompAuxLib" . $separator;
+		print "PieceRef" . $separator;
+		print "PieceDate" . $separator;
+		print "EcritureLib" . $separator;
+		print "Debit" . $separator;
+		print "Credit" . $separator;
+		print "EcritureLet" . $separator;
+		print "DateLet" . $separator;
+		print "ValidDate" . $separator;
+		print "Montantdevise" . $separator;
+		print "Idevise";
+		print $end_line;
 
 		foreach ( $objectLines as $line ) {
 			$date_creation = dol_print_date($line->date_creation, '%d%m%Y');
@@ -660,10 +680,10 @@ class AccountancyExport
 			$date_valid = dol_print_date($line->date_validated, '%d%m%Y');
 
 			// FEC:JournalCode
-			print $line->code_journal;
+			print $line->code_journal . $separator;
 
 			// FEC:JournalLib
-			print $line->journal_label;
+			print $line->journal_label . $separator;
 
 			// FEC:EcritureNum
 			print $line->piece_num . $separator;
@@ -693,10 +713,10 @@ class AccountancyExport
 			print $line->label_operation . $separator;
 
 			// FEC:Debit
-			print price($line->debit) . $separator;
+			print price2num($line->debit) . $separator;
 
 			// FEC:Credit
-			print price($line->credit) . $separator;
+			print price2num($line->credit) . $separator;
 
 			// FEC:EcritureLet
 			print $line->lettering_code . $separator;
