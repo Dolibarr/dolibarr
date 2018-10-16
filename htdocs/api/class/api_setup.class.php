@@ -579,7 +579,8 @@ class Setup extends DolibarrApi
         return $list;
     }
 	
-if ($conf->ticket->enabled) {    
+if (! empty($conf->ticket->enabled))
+{    
      /**
      * Get the list of tickets categories.
      *
