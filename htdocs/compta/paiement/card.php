@@ -313,7 +313,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 // External link
-if (!empty($object->payment_id) && !empty($object->payment_site) && $object->payment_site == stripe) {
+if (!empty($object->payment_id) && !empty($object->payment_site) && $object->payment_site == 'stripe') {
 $stripe=new Stripe($db);
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE)))
 {
