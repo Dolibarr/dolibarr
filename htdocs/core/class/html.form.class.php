@@ -58,6 +58,11 @@ class Form
 	 */
 	public $error='';
 
+    /**
+     * @var string[]    Array of error strings
+     */
+    public $errors = array();
+
 	public $num;
 
 	// Cache arrays
