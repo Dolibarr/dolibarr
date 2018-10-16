@@ -139,18 +139,18 @@ if ($conf->accounting->enabled)
 	$langs->loadLangs(array('bills', 'trips'));
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsCustomers"), '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("CustomersVentilation").'</strong>')."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsCustomers"), '<a href="'.DOL_URL_ROOT.'/accountancy/customer/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".'<mark>'.$langs->transnoentitiesnoconv("CustomersVentilation").'</mark>'.'</strong>'.'</a>')."\n";
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("SuppliersVentilation").'</strong>')."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".'<mark>'.$langs->transnoentitiesnoconv("SuppliersVentilation").'</mark>'.'</strong>'.'</a>')."\n";
 	print "<br>\n";
 
 	if (! empty($conf->expensereport->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$step++;
-		print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("ExpenseReports"), '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong>')."\n";
-		print "<br>\n";
+		print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64+$step), $langs->transnoentitiesnoconv("ExpenseReports"), '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy")."-".'<mark>'.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</mark>'.'</strong>'.'</a>')."\n";
+	    print "<br>\n";
 	}
 
 	$step++;
