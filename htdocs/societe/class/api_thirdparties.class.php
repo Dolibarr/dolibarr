@@ -18,6 +18,7 @@
 
 use Luracast\Restler\RestException;
 
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 /**
  * API class for thirdparties
