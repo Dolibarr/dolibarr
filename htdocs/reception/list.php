@@ -199,6 +199,8 @@ if (empty($reshook))
     			if($res > 0){
 					$nb_bills_created++;
 					$object->id = $res;
+				}else {
+					$error++;
 				}
     		}
 
