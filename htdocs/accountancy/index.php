@@ -89,7 +89,7 @@ if ($conf->accounting->enabled)
 	print "<br>\n";
 	if (! empty($conf->tax->enabled))
 	{
-	    $textlink = '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong>';
+	     $textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup").'-'.'<mark>'.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</mark>'.'</strong>'.'</a>';
 	    $step++;
 	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, $textlink);
 	    print "<br>\n";
@@ -105,7 +105,7 @@ if ($conf->accounting->enabled)
 	if (! empty($conf->expensereport->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 	{
 	    $step++;
-	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong>');
+	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".'<mark>'.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</mark>'.'</strong>'.'</a>');
 	    print "<br>\n";
 	}
 	/*
@@ -123,7 +123,7 @@ if ($conf->accounting->enabled)
 	}*/
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("ProductsBinding").'</strong>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/productaccount.php">'.'<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".'<mark>'.$langs->transnoentitiesnoconv("ProductsBinding").'</mark>'.'</strong>'.'</a>');
 	print "<br>\n";
 
 
