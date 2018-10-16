@@ -212,7 +212,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 
-					$accountingaccount->fetch(null ,$conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+					$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
 					$bookkeeping->label_compte = $accountingaccount->label;
 
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
