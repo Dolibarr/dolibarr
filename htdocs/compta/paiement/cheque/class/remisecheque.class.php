@@ -667,9 +667,9 @@ class RemiseCheque extends CommonObject
 	        {
 	            //create a global bankentry
 	            $account = new Account($this->db);
-	            $res = $account->fetch($this->fk_account);
+	            $res = $account->fetch($this->account_id);
 	            
-	            if ($res)
+	            if ($res > 0)
 	            {
 	                $date = dol_now();
 	                $label = '(CustomerChequeDeposit)';
@@ -679,13 +679,23 @@ class RemiseCheque extends CommonObject
 	                if ($ret < 0)
 	                {
 	                    $error++;
-	                    $this->errors[] = "RemiseCheque::createBankEntry add global bankentry error : " . $this->db->lasterror;
-	                    dol_syslog("RemiseCheque::createBankEntry add global bankentry error : " . $this->db->lasterror, LOG_ERR);
+	                    $this->errors[] = "RemiseCheque::createBankEntry add global bankentry error : " . $account->error;
+	                    dol_syslog("RemiseCheque::createBankEntry add global bankentry error : " . $account->error, LOG_ERR);
 	                }
 	                else
 	                {
+	                    // Update bankentry created
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET fk_bordereau = ".$this->id." WHERE rowid = ".$ret;
+	                    $res = $this->db->query($sql);
+	                    if(!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update bankentry error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update bankentry error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                    
 	                    // update lines
-	                    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->lines[0]->$table_element." SET fk_bank = ".$ret." WHERE rowid in (".implode($TLinesToUpdate).")";
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_chequedet SET fk_bank = ".$ret." WHERE rowid in (".implode($TLinesToUpdate).")";
 	                    $res = $this->db->query($sql);
 	                    if(!$res)
 	                    {
@@ -698,8 +708,8 @@ class RemiseCheque extends CommonObject
 	            else
 	            {
 	                $error++;
-	                $this->errors[] = "RemiseCheque::createBankEntry can't fetch account error : " . $this->db->lasterror;
-	                dol_syslog("RemiseCheque::createBankEntry can't fetch account error : " . $this->db->lasterror, LOG_ERR);
+	                $this->errors[] = "RemiseCheque::createBankEntry can't fetch account error : " . $this->account_id;
+	                dol_syslog("RemiseCheque::createBankEntry can't fetch account error : " . $this->account_id, LOG_ERR);
 	            }
 	        }
 	        
@@ -707,7 +717,7 @@ class RemiseCheque extends CommonObject
 	        {
 	            $this->db->rollback();
 	            setEventMessages('Errors during BankEntry creation', $this->errors, 'errors');
-	            return -1
+	            return -1;
 	        }
 	        else
 	        {
