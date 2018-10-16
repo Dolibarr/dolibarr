@@ -220,7 +220,7 @@ class RemiseCheque extends CommonObject
 			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 			                $sql.= " WHERE b.rowid = ".$bank_id;
 			                $res = $this->db->query($sql);
-			                var_dump($sql); exit;
+			                
 			                if($res)
 			                {
 			                    $obj = $this->db->fetch_object($res);
@@ -331,32 +331,45 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 		$this->db->begin();
 		
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
-
-		$resql = $this->db->query($sql);
-		if ( $resql )
+		// delete lines
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_chequedet";
+		$sql.= " WHERE fk_bordereau = ".$this->id;
+		dol_syslog("Remisecheque::Deletelines of bordereau $this->id");
+		$res = $this->db->query($sql);
+		if ($res)
 		{
-			$num = $this->db->affected_rows($resql);
-
-			if ($num <> 1) {
-				$this->errno = -2;
-				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
-			}
-
-			if ( $this->errno === 0) {
-			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-			    $sql.= " SET fk_bordereau = 0";
-			    $sql.= " WHERE fk_bordereau = ".$this->id;
-
-			    $resql = $this->db->query($sql);
-			    if (!$resql)
-			    {
-			        $this->errno = -1028;
-				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
-				}
-			}
+    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+    		$sql.= " WHERE rowid = ".$this->id;
+    		$sql.= " AND entity = ".$conf->entity;
+    
+    		$resql = $this->db->query($sql);
+    		if ( $resql )
+    		{
+    			$num = $this->db->affected_rows($resql);
+    
+    			if ($num <> 1) {
+    				$this->errno = -2;
+    				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
+    			}
+    
+    			if ( $this->errno === 0) {
+    			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+    			    $sql.= " SET fk_bordereau = 0";
+    			    $sql.= " WHERE fk_bordereau = ".$this->id;
+    
+    			    $resql = $this->db->query($sql);
+    			    if (!$resql)
+    			    {
+    			        $this->errno = -1028;
+    				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+    				}
+    			}
+    		}
+		}
+		else 
+		{
+		    $this->errno = -1;
+		    dol_syslog("RemiseCheque::Delete lines ($this->errno)");
 		}
 
 		if ($this->errno === 0)
@@ -485,9 +498,9 @@ class RemiseCheque extends CommonObject
 	    $this->line->type_line     = $this->db->escape($type_line);
 	    $this->line->emetteur      = (empty($emetteur)) ? '' : $this->db->escape($emetteur);
 	    $this->line->amount        = (empty($amount)) ? 0 : $amount;
-	    $line->line->num_chq       = $this->db->escape($num_chq);
-	    $line->line->banque        = $this->db->escape($banque);
-	    $line->line->datec         = $this->db->escape($datec);
+	    $this->line->num_chq       = $this->db->escape($num_chq);
+	    $this->line->banque        = $this->db->escape($banque);
+	    $this->line->datec         = $datec;
 	    
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_chequedet (";
 	    $sql.= "fk_bordereau, ";
@@ -508,7 +521,7 @@ class RemiseCheque extends CommonObject
 	    $sql.= ", '".$this->line->amount."'";
 	    $sql.= ", '".$this->line->num_chq."'";
 	    $sql.= ", '".$this->line->banque."'";
-	    $sql.= ", ".(! empty($this->line->datec)?"'".$this->db->idate($this->line->datec)."'":"null");
+	    $sql.= ", ".(! empty($this->line->datec) ? "'".$this->db->idate($this->line->datec)."'" :"null");
 	    $sql.= ")";
 	    
 	    dol_syslog("RemiseCheque::Addline", LOG_DEBUG);
