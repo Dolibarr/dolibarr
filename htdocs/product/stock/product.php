@@ -766,17 +766,37 @@ if (empty($reshook))
 	{
 	    print "<div class=\"tabsAction\">\n";
 
-		if (! $variants) {
-
-			if ($user->rights->stock->mouvement->creer) {
+		if ($user->rights->stock->mouvement->creer)
+		{
+			if (! $variants) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=correction">' . $langs->trans("CorrectStock") . '</a>';
 			}
-
-			//if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
-			if ($user->rights->stock->mouvement->creer) {
-				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=transfert">' . $langs->trans("TransferStock") . '</a>';
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">' . $langs->trans("CorrectStock") . '</a>';
 			}
 		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("CorrectStock") . '</a>';
+		}
+
+		//if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
+		if ($user->rights->stock->mouvement->creer)
+		{
+			if (! $variants) {
+				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=transfert">' . $langs->trans("TransferStock") . '</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">' . $langs->trans("TransferStock") . '</a>';
+			}
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("CorrectStock") . '</a>';
+		}
+
 		print '</div>';
 	}
 
