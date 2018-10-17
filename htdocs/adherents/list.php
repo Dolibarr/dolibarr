@@ -61,6 +61,10 @@ $search_phone_mobile=GETPOST("search_phone_mobile",'alpha');
 $search_type=GETPOST("search_type",'alpha');
 $search_email=GETPOST("search_email",'alpha');
 $search_categ = GETPOST("search_categ",'int');
+$subcat = false;
+if (GETPOST('subcat', 'alpha') === 'yes') {
+    $subcat = true;
+}
 $catid        = GETPOST("catid",'int');
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -177,6 +181,7 @@ if (empty($reshook))
 		$search_phone_mobile='';
 		$search_morphy="";
 		$search_categ="";
+		$subcat=0;
 		$catid="";
 		$sall="";
 		$statut='';
@@ -219,14 +224,23 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // N
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
-if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
+if (! empty($search_categ) || ! empty($catid))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cm.fk_categorie';
+}
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.fk_adherent_type = t.rowid ";
 if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$db->escape($catid);
 if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
-if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0)
+{
+    $sql.= " AND (cm.fk_categorie = ".$db->escape($search_categ);
+    if ($subcat) $sql.= " OR c.fk_parent = ".$db->escape($search_categ);
+    $sql.= ")";
+}
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
 $sql.= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) $sql.=natural_search(array_keys($fieldstosearchall), $sall);
@@ -340,6 +354,8 @@ if ($search_country != '') $param.= "&search_country=".urlencode($search_country
 if ($search_phone != '') $param.= "&search_phone=".urlencode($search_phone);
 if ($search_phone_perso != '') $param.= "&search_phone_perso=".urlencode($search_phone_perso);
 if ($search_phone_mobile != '') $param.= "&search_phone_mobile=".urlencode($search_phone_mobile);
+if (!empty($search_categ)) $param.= "&search_categ=".urlencode($search_categ);
+if ($subcat) $param.= "&subcat=yes";
 if ($filter)         $param.="&filter=".urlencode($filter);
 if ($search_type > 0)       $param.="&search_type=".urlencode($search_type);
 if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
@@ -395,6 +411,7 @@ if (! empty($conf->categorie->enabled))
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('Categories'). ': ';
 	$moreforfilter.=$formother->select_categories(Categorie::TYPE_MEMBER,$search_categ,'search_categ',1);
+	$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcat" value="yes"'.(($subcat) ? ' checked>' : '>');
 	$moreforfilter.='</div>';
 }
 $parameters=array();
