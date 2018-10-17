@@ -6,6 +6,7 @@
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Philippe Grand	            <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  *	\file       htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
  *	\ingroup    ficheinter
- *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
+ *	\brief      File of class to generate intervention file from Soleil model
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -107,7 +108,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var string object that emits
 	 */
 	public $emetteur;
 
@@ -118,7 +119,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		$this->db = $db;
 		$this->name = 'soleil';
@@ -135,13 +136,13 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 0;                 // Affiche mode reglement
-		$this->option_condreg = 0;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 0;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 0;                 // Display payment mode
+		$this->option_condreg = 0;                 // Display payment terms
+		$this->option_codeproduitservice = 0;      // Display product-service code
+		$this->option_multilang = 1;               // Available in several languages
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		// Get source company
 		$this->emetteur=$mysoc;
@@ -481,7 +482,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		object		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -544,7 +545,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	object		$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -720,7 +721,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	PDF			$pdf     			PDF
+	 *   	@param	object		$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
