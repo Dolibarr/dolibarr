@@ -61,6 +61,11 @@ $search_deliveryyear=GETPOST("search_deliveryyear","int");
 $search_deliverymonth=GETPOST("search_deliverymonth","int");
 $search_deliveryday=GETPOST("search_deliveryday","int");
 $search_product_category=GETPOST('search_product_category','int');
+$subcatProd=false;
+if (GETPOST('subcatProd', 'alpha') === "yes")
+{
+    $subcatProd=true;
+}
 $search_ref=GETPOST('search_ref','alpha')!=''?GETPOST('search_ref','alpha'):GETPOST('sref','alpha');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
 $search_company=GETPOST('search_company','alpha');
@@ -75,6 +80,11 @@ $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
 $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
+$subcatCust=false;
+if (GETPOST('subcatCust', 'alpha') === "yes")
+{
+    $subcatCust=true;
+}
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
@@ -175,6 +185,7 @@ if (empty($reshook))
 		$search_user='';
 		$search_sale='';
 		$search_product_category='';
+		$subcatProd=0;
 		$search_ref='';
 		$search_ref_customer='';
 		$search_company='';
@@ -199,6 +210,7 @@ if (empty($reshook))
 		$toselect='';
 		$search_array_options=array();
 		$search_categ_cus=0;
+		$subcatCust=0;
 	}
 	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
 	 || GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
@@ -256,11 +268,19 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (! empty($search_categ_cus)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ_cus))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+    if ($subcatCust) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as ccc ON ccc.rowid = cc.fk_categorie';
+}
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
-if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+if ($search_product_category > 0)
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+    if ($subcatProd) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as ccp ON ccp.rowid = cp.fk_categorie';
+}
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -271,7 +291,12 @@ if ($search_user > 0)
 }
 $sql.= ' WHERE c.fk_soc = s.rowid';
 $sql.= ' AND c.entity IN ('.getEntity('commande').')';
-if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
+if ($search_product_category > 0)
+{
+    $sql.=" AND (cp.fk_categorie = ".$search_product_category;
+    if ($subcatProd) $sql.= " OR ccp.fk_parent = ".$db->escape($search_product_category);
+    $sql.=")";
+}
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
@@ -337,7 +362,12 @@ if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$sear
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
-if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus > 0)
+{
+    $sql.= " AND (cc.fk_categorie = ".$db->escape($search_categ_cus);
+    if ($subcatCust) $sql.= " OR ccc.fk_parent = ".$db->escape($search_categ_cus);
+    $sql.=")";
+}
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -432,6 +462,8 @@ if ($resql)
 	if ($show_files)            $param.='&show_files=' .urlencode($show_files);
 	if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
 	if ($billed != '')			$param.='&billed='.urlencode($billed);
+	if ($subcatCust) $param.="&subcatCust=yes";
+	if ($subcatProd) $param.="&subcatProd=yes";
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -559,6 +591,7 @@ if ($resql)
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcatProd" value="yes"'.(($subcatProd) ? ' checked>' : '>');
 		$moreforfilter.='</div>';
 	}
 	if (! empty($conf->categorie->enabled))
@@ -567,6 +600,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
 		$moreforfilter.=$formother->select_categories('customer',$search_categ_cus,'search_categ_cus',1);
+		$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcatCust" value="yes"'.(($subcatCust) ? ' checked>' : '>');
 	 	$moreforfilter.='</div>';
 	}
 	$parameters=array();
