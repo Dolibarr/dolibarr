@@ -449,6 +449,7 @@ if ($action == 'new')
 		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = f.fk_soc)";
 		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (p.fk_account = ba.rowid)";
 		   $sql2.= " WHERE p.fk_bank = 0";
+		   $sql2.= " AND p.rowid not in (SELECT DISTINCT fk_paiement FROM ".MAIN_DB_PREFIX."bordereau_chequedet WHERE fk_bank = 0)";
 		   
 		   $resql2 = $db->query($sql2);
 		   if ($resql2)
