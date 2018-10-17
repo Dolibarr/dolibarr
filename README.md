@@ -1,6 +1,7 @@
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)
+[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 |6|7|8|develop|
 |----------|----------|----------|----------|
