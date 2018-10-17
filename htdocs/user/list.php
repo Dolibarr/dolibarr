@@ -128,6 +128,11 @@ $search_previousconn=GETPOST('search_previousconn','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $search_categ = GETPOST("search_categ",'int');
 $catid = GETPOST('catid','int');
+$subcat=false;
+if (GETPOST('subcat', 'alpha') === "yes")
+{
+    $subcat=true;
+}
 
 // Default search
 if ($search_statut == '') $search_statut='1';
@@ -171,6 +176,7 @@ if (empty($reshook))
 		$search_date_update="";
 		$search_array_options=array();
         $search_categ=0;
+        $subcat=0;
 	}
 }
 
@@ -201,7 +207,11 @@ $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
-if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ) || ! empty($catid))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
+    if ($subcat) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as ccc ON ccc.rowid = cu.fk_categorie';
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -227,7 +237,12 @@ if ($search_statut != '' && $search_statut >= 0) $sql.= " AND u.statut IN (".$db
 if ($sall)                           $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 if ($catid > 0)     $sql.= " AND cu.fk_categorie = ".$catid;
 if ($catid == -2)   $sql.= " AND cu.fk_categorie IS NULL";
-if ($search_categ > 0)   $sql.= " AND cu.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0)
+{
+    $sql.= " AND (cu.fk_categorie = ".$db->escape($search_categ);
+    if ($subcat) $sql.= " OR ccc.fk_parent = ".$db->escape($search_categ);
+    $sql.=")";
+}
 if ($search_categ == -2) $sql.= " AND cu.fk_categorie IS NULL";
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -282,6 +297,7 @@ if ($search_statut != '') $param.="&search_statut=".$search_statut;
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
 if ($mode != '')      $param.='&mode='.$mode;
 if ($search_categ > 0) $param.="&search_categ=".urlencode($search_categ);
+if ($subcat) $param.='&subcat=yes';
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -333,6 +349,7 @@ if (! empty($conf->categorie->enabled))
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.=$langs->trans('Categories'). ': ';
     $moreforfilter.=$htmlother->select_categories(Categorie::TYPE_USER,$search_categ,'search_categ',1);
+    $moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcat" value="yes"'.(($subcat) ? ' checked>' : '>');
     $moreforfilter.='</div>';
 }
 
