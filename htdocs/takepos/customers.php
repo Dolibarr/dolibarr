@@ -111,6 +111,17 @@ $search_level_to   = GETPOST("search_level_to","alpha");
 $search_stcomm=GETPOST('search_stcomm','int');
 $search_import_key  = GETPOST("search_import_key","alpha");
 
+$subcatCust=false;
+if (GETPOST('subcatCust', 'alpha') === "yes")
+{
+    $subcatCust=true;
+}
+$subcatSupp=false;
+if (GETPOST('subcatSupp', 'alpha') === "yes")
+{
+    $subcatSupp=true;
+}
+
 $type=GETPOST('type');
 $optioncss=GETPOST('optioncss','alpha');
 $mode=GETPOST("mode");
@@ -281,6 +292,8 @@ if (empty($reshook))
 	 	$search_import_key='';
 	 	$toselect='';
 		$search_array_options=array();
+		$subcatCust=0;
+		$subcatSupp=0;
 	}
 
 	// Mass actions
@@ -437,8 +450,16 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typ
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.	code_region = state.fk_region)";
 // We'll need this table joined to the select in order to filter by categ
-if (! empty($search_categ_cus)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
-if (! empty($search_categ_sup)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ_cus))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+    if ($subcatCust) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as ccc ON ccc.rowid = cc.fk_categorie';
+}
+if (! empty($search_categ_sup))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+    if ($subcatSupp) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as ccs ON ccs.rowid = cs.fk_categorie';
+}
 $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -449,8 +470,18 @@ if ($socid)                $sql.= " AND s.rowid = ".$socid;
 if ($search_sale)          $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 if ($search_sale)          $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
-if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
-if ($search_categ_sup > 0) $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
+if ($search_categ_cus > 0)
+{
+    $sql.= " AND (cc.fk_categorie = ".$db->escape($search_categ_cus);
+    if ($subcatCust) $sql.= " OR ccc.fk_parent = ".$db->escape($search_categ_cus);
+    $sql.=")";
+}
+if ($search_categ_sup > 0)
+{
+    $sql.= " AND (cs.fk_categorie = ".$db->escape($search_categ_sup);
+    if ($subcatSupp) $sql.= " OR ccs.fk_parent = ".$db->escape($search_categ_sup);
+    $sql.=")";
+}
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
 if ($search_categ_sup == -2)   $sql.= " AND cs.fk_categorie IS NULL";
 
@@ -571,6 +602,8 @@ if ($search_level_from != '') $param.='&search_level_from='.urlencode($search_le
 if ($search_level_to != '')   $param.='&search_level_to='.urlencode($search_level_to);
 if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
 if ($type != '') $param.='&type='.urlencode($type);
+if ($subcatCust) $param.="&subcatCust=yes";
+if ($subcatSupp) $param.="&subcatSupp=yes";
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -635,6 +668,7 @@ if (empty($type) || $type == 'c' || $type == 'p')
 		$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
 		$moreforfilter.=$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
+		$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcatCust" value="yes"'.(($subcatCust) ? ' checked>' : '>');
 	 	$moreforfilter.='</div>';
 	}
 }
@@ -646,6 +680,7 @@ if (empty($type) || $type == 'f')
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('SuppliersCategoriesShort').': ';
 		$moreforfilter.=$formother->select_categories('supplier',$search_categ_sup,'search_categ_sup',1);
+		$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcatSupp" value="yes"'.(($subcatSupp) ? ' checked>' : '>');
 		$moreforfilter.='</div>';
 	}
 }
