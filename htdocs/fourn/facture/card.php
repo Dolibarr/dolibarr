@@ -710,7 +710,7 @@ if (empty($reshook))
 									$lines[$i]->fk_unit,
 									$lines[$i]->id
 								);
-
+							
 								if ($result < 0)
 								{
 									$error++;

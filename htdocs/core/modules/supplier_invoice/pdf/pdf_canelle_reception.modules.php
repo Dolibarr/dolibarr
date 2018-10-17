@@ -387,13 +387,21 @@ class pdf_canelle_reception extends ModelePDFSuppliersInvoices
 					
 					// Reception
 					$reception_content = '';
-					$object->lines[$i]->fetchObjectLinked();
-					if (!empty($object->lines[$i]->linkedObjects['reception']))
-					{
-						$reception =  array_shift($object->lines[$i]->linkedObjects['reception']);
-						$reception_content = $reception->ref.' du '.date('d/m/Y', $reception->date_delivery);
-						
+					if(!empty($object->linkedObjects['reception'])){
+						if(count($object->linkedObjects['reception']) == 1){
+							$reception =  array_shift($object->linkedObjects['reception']);
+							$reception_content = $reception->ref.' du '.date('d/m/Y', $reception->date_delivery);
+						}else {
+							$object->lines[$i]->fetchObjectLinked();
+							if (!empty($object->lines[$i]->linkedObjects['reception']))
+							{
+								$reception =  array_shift($object->lines[$i]->linkedObjects['reception']);
+								$reception_content = $reception->ref.' du '.date('d/m/Y', $reception->date_delivery);
+
+							}
+						}
 					}
+					
 					
 
 					$pdf->SetXY($this->posxreception-5, $curY);

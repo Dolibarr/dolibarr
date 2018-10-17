@@ -263,15 +263,13 @@ class Reception extends CommonObject
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
-					if (! isset($this->lines[$i]->detail_batch))
-					{	
-						$this->lines[$i]->fk_reception = $this->id;
+					$this->lines[$i]->fk_reception = $this->id;
 
-						if (! $this->lines[$i]->create($user) > 0)
-						{
-							$error++;
-						}
+					if (! $this->lines[$i]->create($user) > 0)
+					{
+						$error++;
 					}
+					
 					
 				}
 

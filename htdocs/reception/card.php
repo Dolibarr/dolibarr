@@ -1860,7 +1860,7 @@ else if ($id || $ref)
 			}
 			else
 			{
-				print '<td style="white-space: pre;" >'.$lines[$i]->comment.'</td>';
+				print '<td style="white-space: pre-wrap;max-width: 200px;" >'.$lines[$i]->comment.'</td>';
 			}
 
 
