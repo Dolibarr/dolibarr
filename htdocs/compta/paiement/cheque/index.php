@@ -87,6 +87,7 @@ if (!empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = p.fk_paiement";
     $sql.= " WHERE cp.code = 'CHQ'";
     $sql.= " AND p.fk_bank = 0";
+    $sql.= " AND p.rowid not in (SELECT DISTINCT fk_paiement FROM ".MAIN_DB_PREFIX."bordereau_chequedet WHERE fk_bank = 0)";
     
     $resql = $db->query($sql);
     if ($resql)
