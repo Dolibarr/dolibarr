@@ -355,6 +355,11 @@ class RemiseCheque extends CommonObject
 		        $sql.= ")";
 		        
 		        $res = $this->db->query($sql);
+		        if (!$res)
+		        {
+		            $this->errno = -4;
+		            dol_syslog("Remisecheque::delete Can't regulate bank entry Error ".$this->errno, LOG_ERR);
+		        }
 // 		        var_dump($obj, $sql); exit;
 		    }
 		}
