@@ -67,6 +67,10 @@ $offset = $limit * $page ;
 // Load sale and categ filters
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
+$subcat = false;
+if (GETPOST('subcat', 'alpha') === 'yes') {
+    $subcat = true;
+}
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
@@ -96,6 +100,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $toolowstock='';
     $search_batch='';
     $search_warehouse='';
+    $subcat=0;
 }
 
 
@@ -124,9 +129,12 @@ $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid';                // Detail for each lot on each warehouse
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+if ($search_categ)
+{
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+    if ($subcat) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cp.fk_categorie';
+}
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if ($sall) $sql.=natural_search(array('p.ref','p.label','p.description','p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
@@ -149,7 +157,12 @@ if (! empty($canvas)) $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
 if($catid) $sql.= " AND cp.fk_categorie = ".$catid;
 if ($fourn_id > 0) $sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 // Insert categ filter
-if ($search_categ) $sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ)
+{
+    $sql .= " AND (cp.fk_categorie = ".$db->escape($search_categ);
+    if ($subcat) $sql.= " OR c.fk_parent = ".$db->escape($search_categ);
+    $sql.= ")";
+}
 if ($search_warehouse) $sql .= natural_search("e.ref", $search_warehouse);
 if ($search_batch) $sql .= natural_search("pb.batch", $search_batch);
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
@@ -235,6 +248,7 @@ if ($resql)
 	 	$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ');
+		$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcat" value="yes"'.(($subcat) ? ' checked>' : '>');
 	 	$moreforfilter.='</div>';
 	}
 	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
@@ -258,6 +272,8 @@ if ($resql)
 	if ($snom)			$param.="&snom=".$snom;
 	if ($sref)			$param.="&sref=".$sref;
 	if ($search_batch)	$param.="&search_batch=".$search_batch;
+	if ($search_categ)  $param.="&search_categ=".$search_categ;
+	if ($subcat)       $param.="&subcat=yes";
 	/*if ($eatby)		$param.="&eatby=".$eatby;
 	if ($sellby)	$param.="&sellby=".$sellby;*/
 

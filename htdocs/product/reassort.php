@@ -63,6 +63,10 @@ $offset = $limit * $page ;
 // Load sale and categ filters
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
+$subcat = false;
+if (GETPOST('subcat', 'alpha') === 'yes') {
+    $subcat = true;
+}
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas=GETPOST("canvas");
@@ -97,6 +101,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $type="";
     $catid='';
     $toolowstock='';
+    $subcat=0;
 }
 
 
@@ -119,9 +124,12 @@ $sql.= ' SUM(s.reel) as stock_physique';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+if ($search_categ)
+{
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+    if ($subcat) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cp.fk_categorie';
+}
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
 if ($sall) $sql.=natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $all);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type))
@@ -144,7 +152,12 @@ if (! empty($canvas)) $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
 if($catid) $sql.= " AND cp.fk_categorie = ".$catid;
 if ($fourn_id > 0) $sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 // Insert categ filter
-if ($search_categ) $sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ)
+{
+    $sql .= " AND (cp.fk_categorie = ".$db->escape($search_categ);
+    if ($subcat) $sql.= " OR c.fk_parent = ".$db->escape($search_categ);
+    $sql.= ")";
+}
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql.= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
 if ($toolowstock) $sql.= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
@@ -224,6 +237,7 @@ if ($resql)
 	 	$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ');
+		$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcat" value="yes"'.(($subcat) ? ' checked>' : '>');
 	 	$moreforfilter.='</div>';
 	}
 
@@ -250,6 +264,7 @@ if ($resql)
 	if ($sref)		$param.="&sref=".$sref;
 	if ($toolowstock)		$param.="&toolowstock=".$toolowstock;
 	if ($search_categ)		$param.="&search_categ=".$search_categ;
+	if ($subcat)       $param.="&subcat=yes";
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
