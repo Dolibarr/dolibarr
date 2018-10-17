@@ -72,6 +72,10 @@ $pagenext = $page + 1;
 
 $search_all=GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
+$subcat = false;
+if (GETPOST('subcat', 'alpha') === 'yes') {
+    $subcat = true;
+}
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
@@ -164,6 +168,7 @@ if (empty($reshook))
 	{
 		$search_all='';
 		$search_categ='';
+		$subcat=0;
 		$search_ref="";
 		$search_label="";
 		$search_societe="";
@@ -295,7 +300,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
 // We'll need this table joined to the select in order to filter by categ
-if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
+}
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -308,7 +317,12 @@ $sql.= " WHERE p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid > 0) $sql.= " AND (p.fk_soc = ".$socid.")";	// This filter if when we use a hard coded filter on company on url (not related to filter for external users)
-if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0)
+{
+    $sql.= " AND (cs.fk_categorie = ".$db->escape($search_categ);
+    if ($subcat) $sql.= " OR c.fk_parent = ".$db->escape($search_categ);
+    $sql.= ")";
+}
 if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
 if ($search_label) $sql .= natural_search('p.title', $search_label);
@@ -433,6 +447,8 @@ if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
 if ($search_opp_amount != '')    $param.='&search_opp_amount='.$search_opp_amount;
 if ($search_budget_amount != '') $param.='&search_budget_amount='.$search_budget_amount;
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($search_categ > 0)          $param.='&search_categ='.$search_categ;
+if ($subcat)                    $param.='&subcat=yes';
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -500,6 +516,7 @@ if (! empty($conf->categorie->enabled))
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';
 	$moreforfilter.=$formother->select_categories('project', $search_categ, 'search_categ', 1, 1, 'maxwidth300');
+	$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcat" value="yes"'.(($subcat) ? ' checked>' : '>');
 	$moreforfilter.='</div>';
 }
 
