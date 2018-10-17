@@ -386,6 +386,7 @@ class pdf_canelle_reception extends ModelePDFSuppliersInvoices
 					
 					
 					// Reception
+					$object->fetchObjectLinked();
 					$reception_content = '';
 					if(!empty($object->linkedObjects['reception'])){
 						if(count($object->linkedObjects['reception']) == 1){

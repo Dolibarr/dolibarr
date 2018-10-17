@@ -352,7 +352,8 @@ class pdf_squille extends ModelePdfReception
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
-
+				$fk_commandefourndet=0;
+				$totalOrdered=0;
 				// Loop on each lines
 				for ($i = 0; $i < $nblignes; $i++)
 				{
@@ -470,7 +471,11 @@ class pdf_squille extends ModelePdfReception
 					if (empty($conf->global->RECEPTION_PDF_HIDE_ORDERED))
 					{
 					   $pdf->SetXY($this->posxqtyordered, $curY);
-					   $pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked,'','C');
+					   if($object->lines[$i]->fk_commandefourndet!=$fk_commandefourndet){
+						   $pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked,'','C');
+						   $totalOrdered+=$object->lines[$i]->qty_asked;
+					   }
+					   $fk_commandefourndet = $object->lines[$i]->fk_commandefourndet;
 					}
 
 					$pdf->SetXY($this->posxqtytoship, $curY);
@@ -546,7 +551,7 @@ class pdf_squille extends ModelePdfReception
 				}
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs,$totalOrdered);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -590,7 +595,7 @@ class pdf_squille extends ModelePdfReception
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs,$totalOrdered)
 	{
 		global $conf,$mysoc;
 
@@ -621,8 +626,10 @@ class pdf_squille extends ModelePdfReception
 		$tmparray=$object->getTotalWeightVolume();
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
-		$totalOrdered=$tmparray['ordered'];
 		$totalToShip=$tmparray['toship'];
+		
+		
+	
 		
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth)
@@ -924,6 +931,7 @@ class pdf_squille extends ModelePdfReception
 		 	// Add internal contact of origin element if defined
 			$arrayidcontact=array();
 			if (! empty($origin) && is_object($object->$origin)) $arrayidcontact=$object->$origin->getIdContact('internal','SALESREPFOLL');
+			if(empty($arrayidcontact)) $arrayidcontact=$object->$origin->getIdContact('internal','SHIPPING');
 		 	if (count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user(reset($arrayidcontact));
@@ -950,9 +958,6 @@ class pdf_squille extends ModelePdfReception
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFillColor(255,255,255);
-
-		
-
 
 			// If RECEPTION contact defined, we use it
 			$usecontact=false;

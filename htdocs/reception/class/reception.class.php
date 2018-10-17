@@ -1847,6 +1847,7 @@ class Reception extends CommonObject
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
 								$error++; break;
+								
 							}
 						}
 						else
@@ -1861,6 +1862,7 @@ class Reception extends CommonObject
 							    $error++; break;
 							}
 						}
+						
 					}
 				}
 				else
@@ -1869,7 +1871,7 @@ class Reception extends CommonObject
 					$error++;
 				}
 			}
-
+			
             if (!$error) {
             	// Call trigger
             	$result=$this->call_trigger('RECEPTION_UNVALIDATE',$user);
