@@ -1084,13 +1084,76 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Insere la remise en base
 	 *
-	 *	@param	int		$account_id 		Compte bancaire concerne
+	 *	@param	int		$line_id 		id de la ligne à retirer
 	 * 	@return	int
 	 */
-	function removeCheck($account_id)
+	function removeCheck($line_id)
 	{
 		$this->errno = 0;
 
+		$found = false;
+		$i = 0;
+		foreach ($this->lines as $line)
+		{
+		    if ($line->id !== $line_id) continue;
+		    else
+		    {
+		        $found = true;
+		    }
+		    
+		    if($found) break;
+		    $i++;
+		}
+		
+		if(!$found)
+		{
+		    $this->error = "RemiseCheque::removeCheck error line not found";
+		    dol_syslog($this->error, LOG_ERR);
+		    return -1;
+		}
+		
+		$this->db->begin();
+		
+		if (empty($this->statut))
+		{
+		    if ($this->lines[$i]->type_line == "bank")
+		    {
+		        // update bankentry
+		        $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+		        $sql.= " SET fk_bordereau = 0";
+		        $sql.= " WHERE rowid = '".$this->lines[$i]->fk_bank."'";
+		        $sql.= " AND fk_bordereau = ".$this->id;
+		        
+		        $resql = $this->db->query($sql);
+		        if ($resql)
+		        {
+		            // delete line
+		            $sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_chequedet";
+		            $sql.= " WHERE rowid = ".$this->lines[$i]->id;
+		            $resql = $this->db->query($sql);
+		            if (!$resql)
+		            {
+		                $this->error = "RemiseCheque::removeCheck error can't delete bordereau line (type=bank)";
+		                dol_syslog($this->error, LOG_ERR);
+		                $this->db->rollback();
+		                return -1;
+		            }
+		            
+		            $this->updateAmount();
+		        }
+		        else
+		        {
+		            $this->errno = -1032;
+		            $this->error = "RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)";
+		            dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)", LOG_ERR);
+		            $this->db->rollback();
+		            return -1;
+		        }
+		    }
+		    elseif ()
+		}
+		
+		exit;
 		if ($this->id > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
@@ -1109,6 +1172,9 @@ class RemiseCheque extends CommonObject
 				dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
 			}
 		}
+		
+		$this->db->commit();
+		
 		return 0;
 	}
 
