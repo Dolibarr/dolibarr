@@ -65,6 +65,10 @@ $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $type=GETPOST("type","int");
+$subcat = false;
+if (GETPOST('subcat', 'alpha') === 'yes') {
+    $subcat = true;
+}
 
 //Show/hide child products
 if (!empty($conf->variants->enabled) && ! empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -218,6 +222,7 @@ if (empty($reshook))
 		$search_tosell="";
 		$search_tobuy="";
 		$search_tobatch='';
+		$subcat=0;
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
 		$show_childproducts = '';
@@ -280,7 +285,11 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // N
 $sql.=$hookmanager->resPrint;
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
-if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ) || ! empty($catid))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cp.fk_categorie';
+}
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 // multilang
 if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
@@ -311,7 +320,12 @@ if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)
 if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
 if ($catid > 0)     $sql.= " AND cp.fk_categorie = ".$catid;
 if ($catid == -2)   $sql.= " AND cp.fk_categorie IS NULL";
-if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0)
+{
+    $sql.= " AND (cp.fk_categorie = ".$db->escape($search_categ);
+    if ($subcat) $sql.= " OR c.fk_parent = ".$db->escape($search_categ);
+    $sql.= ")";
+}
 if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
 if ($fourn_id > 0)  $sql.= " AND pfp.fk_soc = ".$fourn_id;
 if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
@@ -411,6 +425,7 @@ if ($resql)
 	if ($search_tobatch) $param="&search_ref_supplier=".urlencode($search_ref_supplier);
 	if ($search_accountancy_code_sell) $param="&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
 	if ($search_accountancy_code_buy) $param="&search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
+	if ($subcat) $param.="&subcat=yes";
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -476,6 +491,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
+		$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcat" value="yes"'.(($subcat) ? ' checked>' : '>');
 		$moreforfilter.='</div>';
 	}
 
