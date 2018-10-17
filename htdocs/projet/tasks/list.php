@@ -44,6 +44,10 @@ $id=GETPOST('id','int');
 
 $search_all=GETPOST('search_all', 'alphanohtml');
 $search_categ=GETPOST("search_categ",'alpha');
+$subcat = false;
+if (GETPOST('subcat', 'alpha') === 'yes') {
+    $subcat = true;
+}
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus']))
 {
@@ -173,6 +177,7 @@ if (empty($reshook))
 		$search_eyear='';
 		$toselect='';
 		$search_array_options=array();
+		$subcat=0;
 	}
 
 	// Mass actions
@@ -263,7 +268,11 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 // We'll need this table joined to the select in order to filter by categ
-if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ))
+{
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
+}
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($search_project_user > 0)  $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
@@ -273,7 +282,12 @@ $sql.= " AND p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-if ($search_categ > 0)     $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0)
+{
+    $sql.= " AND (cs.fk_categorie = ".$db->escape($search_categ);
+    if ($subcat) $sql.= " OR c.fk_parent = ".$db->escape($search_categ);
+    $sql.= ")";
+}
 if ($search_categ == -2)   $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_project_ref)   $sql .= natural_search('p.ref', $search_project_ref);
 if ($search_project_title) $sql .= natural_search('p.title', $search_project_title);
@@ -384,6 +398,9 @@ if ($search_public != '') 		$param.='&search_public='.$search_public;
 if ($search_project_user != '')   $param.='&search_project_user='.$search_project_user;
 if ($search_task_user > 0)    	$param.='&search_task_user='.$search_task_user;
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($search_categ > 0) $param.='&search_categ='.$search_categ;
+if ($subcat) $param.='&subcat=yes';
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -449,6 +466,7 @@ if (! empty($conf->categorie->enabled))
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';
 	$moreforfilter.=$formother->select_categories('project', $search_categ, 'search_categ', 1, 'maxwidth300');
+	$moreforfilter.='&nbsp;'.$langs->trans("SubCats") . '? <input type="checkbox" name="subcat" value="yes"'.(($subcat) ? ' checked>' : '>');
 	$moreforfilter.='</div>';
 }
 
