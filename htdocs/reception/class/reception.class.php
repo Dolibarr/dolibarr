@@ -173,7 +173,7 @@ class Reception extends CommonObject
 	 *  Create reception en base
 	 *
 	 *  @param	User	$user       Objet du user qui cree
-   * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return int 				<0 si erreur, id reception creee si ok
 	 */
 	function create($user, $notrigger=0)
@@ -1471,7 +1471,7 @@ class Reception extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			// Set order billed if 100% of order is shipped (qty in reception lines match qty in order lines)
+			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
 			if ($this->origin == 'order_supplier' && $this->origin_id > 0)
 			{
 				$order = new CommandeFournisseur($this->db);

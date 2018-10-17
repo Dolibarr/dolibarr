@@ -39,15 +39,24 @@ $dir = DOL_DOCUMENT_ROOT."/install/mysql/tables/";
 $sql='ALTER TABLE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch ADD COLUMN fk_reception integer DEFAULT NULL;';
 
 
-$db->query($sql);
+$resql = $db->query($sql);
+if(empty($resql)){
+	var_dump($db->error);
+}
 
 $sql=" insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECEPTION_VALIDATE','Reception validated','Executed when a reception is validated','reception',22);
 		insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECEPTION_SENTBYMAIL','Reception sent by mail','Executed when a reception is sent by mail','reception',22);";
 
-$db->query($sql);
+$resql = $db->query($sql);
+if(empty($resql)){
+	var_dump($db->error);
+}
 
 $sql=" ALTER TABLE ".MAIN_DB_PREFIX."commande_fournisseur_dispatch CHANGE comment comment TEXT;";
-$db->query($sql);
+$resql = $db->query($sql);
+if(empty($resql)){
+	var_dump($db->error);
+}
 
 
 

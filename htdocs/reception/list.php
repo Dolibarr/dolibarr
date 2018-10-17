@@ -166,22 +166,25 @@ if (empty($reshook))
     	$nb_bills_created = 0;
 
     	$db->begin();
-		
+		$errors =array();
     	foreach($receptions as $id_reception)
     	{ 
     		$rcp = new Reception($db);
-    		if ($rcp->fetch($id_reception) <= 0) continue;
-			if($rcp->statut != 1) continue; // On ne facture que les réceptions validées
-			$rcp->fetch_thirdparty();
-			
+			 // On ne facture que les réceptions validées
+    		if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != 1){
+				$errors[]=$langs->trans('StatusMustBeValidate',$rcp->ref);
+				$error++;
+				continue;
+			}
+					
     		$object = new FactureFournisseur($db);
     		if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])) $object = $TFactThird[$rcp->socid]; // If option "one bill per third" is set, we use already created reception.
     		else {
 
     			$object->socid = $rcp->socid;
     			$object->type = FactureFournisseur::TYPE_STANDARD;
-    			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_id;
-    			$object->mode_reglement_id	= $rcp->thirdparty->mode_reglement_id;
+    			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_supplier_id;
+    			$object->mode_reglement_id	= $rcp->thirdparty->mode_reglement_supplier_id;
     			$object->fk_project			= $rcp->fk_project;
     			$object->ref_supplier			= $rcp->ref_supplier;
 
@@ -201,6 +204,7 @@ if (empty($reshook))
 					$nb_bills_created++;
 					$object->id = $res;
 				}else {
+					$errors[]=$object->error;
 					$error++;
 				}
     		}
@@ -212,6 +216,7 @@ if (empty($reshook))
 
 					if ($res==0)
 					{
+						$errors[]=$object->error;
 						$error++;
 					}
 				}
@@ -297,7 +302,7 @@ if (empty($reshook))
 	    							
 	    					);
 							
-							$rcp->add_object_linked('invoice_supplierdet',$result);
+							$rcp->add_object_linked('facture_fourn_det',$result);
 							
 	    					if ($result > 0)
 	    					{
@@ -361,11 +366,12 @@ if (empty($reshook))
     	}
     	else
     	{
+			
     		$db->rollback();
     		$action='create';
     		$_GET["origin"]=$_POST["origin"];
     		$_GET["originid"]=$_POST["originid"];
-    		setEventMessages($object->error, $object->errors, 'errors');
+    		setEventMessages($object->error, $errors, 'errors');
     		$error++;
     	}
     }
