@@ -1117,7 +1117,7 @@ class Product extends CommonObject
 			// Delete from product_association
 			if (!$error){
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
-				$sql.= " WHERE fk_product_pere = ".$this->id." OR fk_product_fils = ".$this->id;
+				$sql.= " WHERE fk_product_pere = ".$id." OR fk_product_fils = ".$id;
 				dol_syslog(get_class($this).'::delete', LOG_DEBUG);
 				$result = $this->db->query($sql);
 				if (! $result)
