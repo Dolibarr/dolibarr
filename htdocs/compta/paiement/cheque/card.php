@@ -164,7 +164,7 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 
 if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banque->cheque)
 {
-	$object->id = $id;
+    $object->fetch($id);
 	$result = $object->removeCheck($_GET["lineid"]);
 	if ($result === 0)
 	{
@@ -776,11 +776,11 @@ else
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$line->id.'">'.img_delete().'</a>';
 			}
-   			if ($object->statut == 1 && $objp->statut != 2)
+   			if ($object->statut == 1 && $line->statut != 2)
    			{
    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$line->id.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
    			}
-			if ($objp->statut == 2)
+			if ($line->statut == 2)
 			{
 				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
 			}

@@ -355,11 +355,6 @@ class RemiseCheque extends CommonObject
 		        $sql.= ")";
 		        
 		        $res = $this->db->query($sql);
-		        if (!$res)
-		        {
-		            $this->errno = -4;
-		            dol_syslog("Remisecheque::delete Can't regulate bank entry Error ".$this->errno, LOG_ERR);
-		        }
 // 		        var_dump($obj, $sql); exit;
 		    }
 		}
@@ -608,8 +603,9 @@ class RemiseCheque extends CommonObject
 	    // phpcs:enable
 	    $this->lines=array();
 	    
-	    $sql = "SELECT l.rowid, l.fk_bordereau, l.fk_bank, l.fk_paiement, l.type_line, l.emetteur, l.amount, l.num_chq, l.banque, l.datec";
+	    $sql = "SELECT l.rowid, l.fk_bordereau, l.fk_bank, l.fk_paiement, l.type_line, l.emetteur, l.amount, l.num_chq, l.banque, l.datec, p.statut";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_chequedet as l";
+	    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.rowid = l.fk_paiement";
 	    $sql.= " WHERE l.fk_bordereau = ".$this->id;
 	    
 	    dol_syslog(get_class($this).'::fetch_lines', LOG_DEBUG);
@@ -635,6 +631,7 @@ class RemiseCheque extends CommonObject
 	            $line->num_chq         = $objp->num_chq;
 	            $line->banque          = $objp->banque;
 	            $line->datec           = (!empty($objp->datec)) ? $this->db->jdate($objp->datec) : null;
+	            $line->statut          = $objp->statut;
 	            
 	            $this->lines[$i] = $line;
 	            
@@ -1490,6 +1487,7 @@ class RemiseChequeLine extends CommonObject
     public $num_chq;
     public $banque;
     public $datec;
+    public $statut;
     
     public function __construct(DoliDB $db)
     {
