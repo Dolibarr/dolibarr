@@ -65,10 +65,26 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public $id;
 
+	/**
+     * @var int ID
+     */
 	public $fk_commande;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
+	/**
+     * @var int ID
+     */
 	public $fk_commandefourndet;
+
 	public $qty;
+
+	/**
+     * @var int ID
+     */
 	public $fk_entrepot;
 
 	/**

@@ -16,9 +16,9 @@
  */
 
 /**
- * \file    datapolicies/lib/datapolicies.lib.php
- * \ingroup datapolicies
- * \brief   Library files with common functions for datapolicies
+ * \file    datapolicy/lib/datapolicy.lib.php
+ * \ingroup datapolicy
+ * \brief   Library files with common functions for datapolicy
  */
 
 /**
@@ -26,26 +26,29 @@
  *
  * @return array
  */
-function datapoliciesAdminPrepareHead()
+function datapolicyAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("datapolicies@datapolicies");
+	$langs->load("datapolicy@datapolicy");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/datapolicies/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings_DATAPOLICIES");
+	$head[$h][0] = dol_buildpath("/datapolicy/admin/setup.php", 1);
+	$head[$h][1] = $langs->trans("Deletion");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/datapolicies/admin/setupmail.php", 1);
-	$head[$h][1] = $langs->trans("DATAPOLICIESMail");
-	$head[$h][2] = 'settings';
-	$h++;
+	if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
+	{
+		$head[$h][0] = dol_buildpath("/datapolicy/admin/setupmail.php", 1);
+		$head[$h][1] = $langs->trans("DATAPOLICIESMail");
+		$head[$h][2] = 'settings';
+		$h++;
+	}
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicies');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicy');
 
 	return $head;
 }

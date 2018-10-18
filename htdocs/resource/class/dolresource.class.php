@@ -47,7 +47,12 @@ class Dolresource extends CommonObject
 	public $element_type;
 	public $busy;
 	public $mandatory;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_create;
+
 	public $type_label;
 	public $tms='';
 

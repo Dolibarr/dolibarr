@@ -51,7 +51,7 @@ class Loan extends CommonObject
 	public $datestart;
 	public $dateend;
 
-	/**
+    /**
      * @var string Loan label
      */
     public $label;
@@ -66,9 +66,25 @@ class Loan extends CommonObject
 	public $date_creation;
 	public $date_modification;
 	public $date_validation;
+
+	/**
+     * @var int Bank ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
+	/**
+     * @var int ID
+     */
 	public $fk_project;
 
 
@@ -158,10 +174,10 @@ class Loan extends CommonObject
 		if (isset($this->account_capital)) $this->account_capital = trim($this->account_capital);
 		if (isset($this->account_insurance)) $this->account_insurance = trim($this->account_insurance);
 		if (isset($this->account_interest)) $this->account_interest = trim($this->account_interest);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
-		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
+		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_project)) $this->fk_project = (int) $this->fk_project;
 
 		// Check parameters
 		if (! $newcapital > 0 || empty($this->datestart) || empty($this->dateend))
@@ -445,9 +461,9 @@ class Loan extends CommonObject
 
 		$tooltip = '<u>' . $langs->trans("ShowLoan") . '</u>';
 		if (! empty($this->ref))
-			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+			$tooltip .= '<br><strong>' . $langs->trans('Ref') . ':</strong> ' . $this->ref;
 		if (! empty($this->label))
-			$tooltip .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
+			$tooltip .= '<br><strong>' . $langs->trans('Label') . ':</strong> ' . $this->label;
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
 		$linkend = '</a>';

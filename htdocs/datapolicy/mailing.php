@@ -16,26 +16,26 @@
  */
 
 /**
- * \file    datapolicies/mailing.php
- * \ingroup datapolicies
- * \brief   datapolicies mailing page.
+ * \file    datapolicy/mailing.php
+ * \ingroup datapolicy
+ * \brief   datapolicy mailing page.
  */
 
 require '../../main.inc.php';
 dol_include_once('/contact/class/contact.class.php');
-dol_include_once('/datapolicies/class/datapolicies.class.php');
+dol_include_once('/datapolicy/class/datapolicy.class.php');
 
 $idcontact = GETPOST('idc');
 
 if(!empty($idcontact)){
     $contact = new Contact($db);
     $contact->fetch($idcontact);
-    DataPolicies::sendMailDataPoliciesContact($contact);
+    DataPolicy::sendMailDataPolicyContact($contact);
 
 
 }else{
 
-    $contacts = new DataPolicies($db);
+    $contacts = new DataPolicy($db);
     $contacts->getAllContactNotInformed();
     $contacts->getAllCompaniesNotInformed();
     $contacts->getAllAdherentsNotInformed();

@@ -60,7 +60,7 @@ $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 if ($page == -1)
 	$page = 0 ;
 
-$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if ($sortorder == "")

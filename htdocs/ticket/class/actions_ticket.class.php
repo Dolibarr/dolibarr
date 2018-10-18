@@ -70,6 +70,9 @@ class ActionsTicket
 	 */
 	public $description;
 
+	/**
+     * @var int ID
+     */
     public $fk_statut;
 
     /**

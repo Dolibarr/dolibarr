@@ -45,6 +45,10 @@ class Productcustomerprice extends CommonObject
 
 	public $datec = '';
 	public $tms = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
 
 	/**
@@ -987,12 +991,16 @@ class PriceByCustomerLine
 
 	public $datec = '';
 	public $tms = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
 
 	/**
 	 * @var int Thirdparty ID
 	 */
-  public $fk_soc;
+    public $fk_soc;
 
 	public $price;
 	public $price_ttc;

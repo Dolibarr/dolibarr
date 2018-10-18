@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,7 @@ if ($user->societe_id > 0)
 /*
  * Actions
  */
+$accountingaccount = new AccountingAccount($db);
 
 // Get informations of journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -208,8 +209,12 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
-					$bookkeeping->subledger_label = $tabuser[$key]['user_accountancy_code'];
+					$bookkeeping->subledger_label = $tabuser[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+
+					$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+					$bookkeeping->label_compte = $accountingaccount->label;
+
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -248,7 +253,6 @@ if ($action == 'writebookkeeping') {
 			foreach ( $tabht[$key] as $k => $mt ) {
 				if ($mt) {
 					// get compte id and label
-					$accountingaccount = new AccountingAccount($db);
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -260,6 +264,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_compte = $accountingaccount->label;
 						$bookkeeping->label_operation = $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -316,6 +321,10 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
 					$bookkeeping->numero_compte = $k;
+
+					$accountingaccount->fetch($k, null, true);
+					$bookkeeping->label_compte = $accountingaccount->label;
+
 					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %';
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -400,10 +409,12 @@ if ($action == 'writebookkeeping') {
 		$param.='&date_endmonth='.$date_endmonth;
 		$param.='&date_endyear='.$date_endyear;
 		$param.='&in_bookkeeping='.$in_bookkeeping;
+
 		header("Location: ".$_SERVER['PHP_SELF'].($param?'?'.$param:''));
 		exit;
 	}
 }
+
 
 /*
  * View

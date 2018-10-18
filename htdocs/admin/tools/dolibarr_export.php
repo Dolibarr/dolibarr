@@ -493,6 +493,7 @@ print '</table>';
 
 </div> 	<!-- end div fichehalfleft -->
 
+
 <div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">
 <div class="ficheaddleft">
 
@@ -505,21 +506,94 @@ print '<br>';
 
 </div>
 </div>
-
+</form>
 </fieldset>
 
 <br>
+<!-- Dump of a server -->
+
+<form method="post" action="export_files.php" name="dump">
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+<input type="hidden" name="export_type" value="server" />
 
 <fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>
+<div class="fichehalfleft">
+
 <?php
 print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
+
 ?>
+
+<label for="zipfilename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label><br>
+<input type="text" name="zipfilename_template" style="width: 90%"
+	id="zipfilename_template"
+	value="<?php
+$prefix='documents';
+$ext='zip';
+
+$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+echo $file;
+?>" /> <br>
+<br>
+
+<?php
+// Show compression choices
+print '<div class="formelementrow">';
+print "\n";
+
+print $langs->trans("Compression").': &nbsp; ';
+$filecompression = $compression;
+array_shift($filecompression);
+$filecompression['zip']= array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));
+
+foreach($filecompression as $key => $val)
+{
+    if (! $val['function'] || function_exists($val['function']))	// Enabled export format
+    {
+        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked>';
+        print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+    }
+    else	// Disabled export format
+    {
+        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
+        print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+        print ' ('.$langs->trans("NotAvailable").')';
+    }
+    print ' &nbsp; &nbsp; ';
+}
+
+print '</div>';
+print "\n";
+
+?>
+<br>
+<div align="center"><input type="submit" class="button"
+	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
+<br>
+</div>
+
+</div>
+
+<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">
+<div class="ficheaddleft">
+
+<?php
+$filearray=dol_dir_list($conf->admin->dir_output.'/documents','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'documents/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
+print '<br>';
+?>
+
+
+</div>
+</div>
+
 </fieldset>
-
-
-
 </form>
+
+
+
+
 <?php
 
 // End of page

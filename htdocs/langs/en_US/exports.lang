@@ -84,7 +84,7 @@ TooMuchErrors=There are still <b>%s</b> other source lines with errors but outpu
 TooMuchWarnings=There are still <b>%s</b> other source lines with warnings but output has been limited.
 EmptyLine=Empty line (will be discarded)
 CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
-FileWasImported=File was imported with number <b>%s</b>. 
+FileWasImported=File was imported with number <b>%s</b>.
 YouCanUseImportIdToFindRecord=You can find all the imported records in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>.
 NbOfLinesImported=Number of lines successfully imported: <b>%s</b>.
@@ -118,7 +118,7 @@ SetThisValueTo2ToExcludeFirstLine=For example, set this value to 3 to exclude th
 KeepEmptyToGoToEndOfFile=Keep this field empty to go up to the end of file
 SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for update attempt
 UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
-NoUpdateAttempt=No update attempt was performed, only insert 
+NoUpdateAttempt=No update attempt was performed, only insert
 ImportDataset_user_1=Users (employees or not) and properties
 ComputedField=Computed field
 ## filters

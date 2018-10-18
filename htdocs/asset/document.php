@@ -95,7 +95,7 @@ if ($object->id)
 	 * Show tabs
 	 */
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
-	$head = AssetsPrepareHead($object);
+	$head = asset_prepare_head($object);
 
 	dol_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
 

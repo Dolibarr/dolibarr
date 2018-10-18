@@ -217,7 +217,7 @@ else if ($action == "confirm_create") {
 		$action='create';
 		$error++;
 	}
-	if (! GETPOST('next_num_mvt'))
+	if (! GETPOST('next_num_mvt', 'alpha'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
 		$error++;
@@ -253,7 +253,7 @@ else if ($action == "confirm_create") {
 }
 
 if ($action == 'setdate') {
-	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
+	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 	$result = $object->updateByMvt($piece_num,'doc_date',$db->idate($datedoc),$mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -357,7 +357,7 @@ if ($action == 'create')
 
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Codejournal") . '</td>';
-	print '<td>' . $formaccounting->select_journal(GETPOST('code_journal'),'code_journal',0,1,array(),1,1) . '</td>';
+	print '<td>' . $formaccounting->select_journal(GETPOST('code_journal', 'alpha'),'code_journal',0,1,array(),1,1) . '</td>';
 	print '</tr>';
 
 	print '<tr>';

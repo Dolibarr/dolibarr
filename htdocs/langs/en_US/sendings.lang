@@ -56,7 +56,7 @@ ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
 ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
-NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse. 
+NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 

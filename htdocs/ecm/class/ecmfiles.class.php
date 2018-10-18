@@ -85,8 +85,17 @@ class EcmFiles extends CommonObject
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_m;
+
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
@@ -879,8 +888,17 @@ class EcmfilesLine
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_m;
+
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;

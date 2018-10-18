@@ -49,7 +49,11 @@ class WebsitePage extends CommonObject
 	 */
 	public $picto = 'label';
 
+	/**
+     * @var int ID
+     */
 	public $fk_website;
+
 	public $pageurl;
 	public $aliasalt;
 	public $type_container;
@@ -193,8 +197,11 @@ class WebsitePage extends CommonObject
 
 				$this->fk_website = $obj->fk_website;
 				$this->type_container = $obj->type_container;
+
 				$this->pageurl = $obj->pageurl;
+				$this->ref = $obj->pageurl;
 				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+
 				$this->title = $obj->title;
 				$this->description = $obj->description;
 				$this->keywords = $obj->keywords;

@@ -689,6 +689,9 @@ textarea.centpercent {
 	height: 28px;
 	vertical-align: middle;
 }
+.divsocialnetwork:not(:first-child) {
+    padding-left: 20px;
+}
 div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
@@ -1233,6 +1236,11 @@ div.backgroundsemitransparent {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+
+
+/* Login */
+
 div.login_block {
 	/* position: initial !important;*/
 	display: none;
@@ -1247,6 +1255,10 @@ div.login_block {
 	color: #333 !important;
 	font-weight: normal !important;
 }
+
+
+
+
 #id-right {
 	padding-left: 0 ! important;
 }

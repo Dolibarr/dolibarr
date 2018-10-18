@@ -1063,6 +1063,39 @@ else
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
                         });
+
+						init_customer_categ();
+			  			$("#customerprospect").change(function() {
+								init_customer_categ();
+						});
+						function init_customer_categ() {
+								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER)?'1':'0').'))
+								{
+									jQuery(".visibleifcustomer").hide();
+								}
+								else
+								{
+									jQuery(".visibleifcustomer").show();
+								}
+						}
+
+						init_supplier_categ();
+			       		$("#fournisseur").change(function() {
+							init_supplier_categ();
+						});
+						function init_supplier_categ() {
+								console.log("is supplier = "+jQuery("#fournisseur").val());
+								if (jQuery("#fournisseur").val() == 0)
+								{
+									jQuery(".visibleifsupplier").hide();
+								}
+								else
+								{
+									jQuery(".visibleifsupplier").show();
+								}
+						}
+
                         $("#selectcountry_id").change(function() {
                         	document.formsoc.action.value="create";
                         	document.formsoc.submit();
@@ -1421,22 +1454,20 @@ else
 			$langs->load('categories');
 
 			// Customer
-			if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
-				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
-					null, "90%");
-				print "</td></tr>";
-			}
+			//if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
+			print '<tr class="visibleifcustomer"><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+			print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+			print "</td></tr>";
+			//}
 
 			// Supplier
-			if ($object->fournisseur) {
-				print '<tr><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-				print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
-					null, "90%");
-				print "</td></tr>";
-			}
+			//if ($object->fournisseur) {
+			print '<tr class="visibleifsupplier"><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+			print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null, null, "90%");
+			print "</td></tr>";
+			//}
 		}
 
 		// Multicurrency
@@ -1488,11 +1519,6 @@ else
     }
     elseif ($action == 'edit')
     {
-        /*
-         * Edition
-         */
-
-
         //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
@@ -1612,8 +1638,10 @@ else
             	$sub2=0;
             }else{$sub2=1;}
 
-            print "\n".'<script type="text/javascript">';
-            print '$(document).ready(function () {
+            if ($conf->use_javascript_ajax)
+            {
+            	print "\n".'<script type="text/javascript">';
+            	print '$(document).ready(function () {
     			var val='.$sub.';
     			var val2='.$sub2.';
     			if("#localtax1assuj_value".value==undefined){
@@ -1647,19 +1675,44 @@ else
     				}
     			});
 
-               });';
-            print '</script>'."\n";
+				init_customer_categ();
+	  			$("#customerprospect").change(function() {
+					init_customer_categ();
+				});
+       			function init_customer_categ() {
+					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
+					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER)?'1':'0').'))
+					{
+						jQuery(".visibleifcustomer").hide();
+					}
+					else
+					{
+						jQuery(".visibleifcustomer").show();
+					}
+				}
 
+				init_supplier_categ();
+	  			$("#fournisseur").change(function() {
+					init_supplier_categ();
+				});
+       			function init_supplier_categ() {
+					console.log("is supplier = "+jQuery("#fournisseur").val());
+					if (jQuery("#fournisseur").val() == 0)
+					{
+						jQuery(".visibleifsupplier").hide();
+					}
+					else
+					{
+						jQuery(".visibleifsupplier").show();
+					}
+				};
 
-            if ($conf->use_javascript_ajax)
-            {
-                print "\n".'<script type="text/javascript" language="javascript">';
-                print '$(document).ready(function () {
-                			$("#selectcountry_id").change(function() {
-                				document.formsoc.action.value="edit";
-                				document.formsoc.submit();
-                			});
-                       })';
+       			$("#selectcountry_id").change(function() {
+       				document.formsoc.action.value="edit";
+      				document.formsoc.submit();
+        			});
+
+                })';
                 print '</script>'."\n";
             }
 
@@ -2022,34 +2075,30 @@ else
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 			{
 				// Customer
-				if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
-					print '<tr><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
-					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
-					$arrayselected=array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-					print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
-					print "</td></tr>";
+				print '<tr class="visibleifcustomer"><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
+				print '<td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
+				$arrayselected=array();
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
 				}
+				print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print "</td></tr>";
 
 				// Supplier
-				if ($object->fournisseur) {
-					print '<tr><td>' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td>';
-					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
-					$arrayselected=array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-					print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
-					print "</td></tr>";
+				print '<tr class="visibleifsupplier"><td>' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td>';
+				print '<td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+				$arrayselected=array();
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
 				}
+				print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print "</td></tr>";
 			}
 
 			// Multicurrency
