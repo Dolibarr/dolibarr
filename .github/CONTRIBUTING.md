@@ -4,7 +4,7 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum).
+<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum) or [the dolibarr-user mailing list](https://lists.nongnu.org/mailman/listinfo/dolibarr-user). If you need help contributing code to Dolibar use [the dolibarr-dev mailing list](https://lists.nongnu.org/mailman/listinfo/dolibarr-dev).
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
 
