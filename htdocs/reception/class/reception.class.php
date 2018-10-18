@@ -1250,8 +1250,7 @@ class Reception extends CommonObject
 			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->libelle=$langs->trans("Description")." ".$xnbp;
 			$line->qty=10;
-			$line->qty_asked=5;
-			$line->qty_shipped=4;
+			
 			$line->fk_product=$this->commande->lines[$xnbp]->fk_product;
 
 			$this->lines[]=$line;
@@ -1508,7 +1507,7 @@ class Reception extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine ?
+				// TODO possibilite de receptionner a partir d'une propale ou autre origine ?
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " ed.eatby, ed.sellby, ed.batch";
@@ -1673,7 +1672,7 @@ class Reception extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				// TODO possibilite de receptionner a partir d'une propale ou autre origine
 				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " ed.eatby, ed.sellby, ed.batch";
@@ -1809,7 +1808,7 @@ class Reception extends CommonObject
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				// TODO possibilite de receptionner a partir d'une propale ou autre origine
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " ed.eatby, ed.sellby, ed.batch";

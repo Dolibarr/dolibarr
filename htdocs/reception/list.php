@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'reception',$receptionid,'');
 
 $diroutputmassaction=$conf->reception->dir_output . '/temp/massgeneration/'.$user->id;
 
-$search_ref_exp = GETPOST("search_ref_exp");
+$search_ref_rcp = GETPOST("search_ref_rcp");
 $search_ref_liv = GETPOST('search_ref_liv');
 $search_ref_supplier = GETPOST('search_ref_supplier');
 $search_company = GETPOST("search_company");
@@ -138,7 +138,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_ref_supplier='';
-    $search_ref_exp='';
+    $search_ref_rcp='';
     $search_ref_liv='';
     $search_company='';
     $search_town='';
@@ -467,7 +467,7 @@ if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
-if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
+if ($search_ref_rcp) $sql .= natural_search('e.ref', $search_ref_rcp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_ref_supplier) $sql .= natural_search('e.ref_supplier', $search_ref_supplier);
@@ -516,7 +516,7 @@ if ($resql)
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sall) $param.= "&amp;sall=".$sall;
-	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".$search_ref_exp;
+	if ($search_ref_rcp) $param.= "&amp;search_ref_rcp=".$search_ref_rcp;
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
 	if ($search_company) $param.= "&amp;search_company=".$search_company;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
@@ -630,7 +630,7 @@ if ($resql)
 	if (! empty($arrayfields['e.ref']['checked']))
 	{
 	    print '<td class="liste_titre">';
-    	print '<input class="flat" size="6" type="text" name="search_ref_exp" value="'.$search_ref_exp.'">';
+    	print '<input class="flat" size="6" type="text" name="search_ref_rcp" value="'.$search_ref_rcp.'">';
         print '</td>';
 	}
 	// Ref customer

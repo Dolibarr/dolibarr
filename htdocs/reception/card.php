@@ -1909,7 +1909,7 @@ else if ($id || $ref)
 					{
 							print '<!-- case edit 1 -->';
 							print '<tr>';
-							// Qty to ship or shipped
+							// Qty to receive or received
 							print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">' . '</td>';
 							// Warehouse source
 							print '<td>' . $formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
@@ -1929,7 +1929,7 @@ else if ($id || $ref)
 					{
 						print '<!-- case edit 2 -->';
 						print '<tr>';
-						// Qty to ship or shipped
+						// Qty to receive or received
 						print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty.'">' . '</td>';
 						// Warehouse source
 						print '<td>' . '</td>';
@@ -1942,33 +1942,21 @@ else if ($id || $ref)
 			}
 			else
 			{
-				// Qty to ship or shipped
+				// Qty to receive or received
 				print '<td align="center">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
 				if (! empty($conf->stock->enabled))
 				{
 					print '<td align="left">';
+					
 					if ($lines[$i]->fk_entrepot > 0)
 					{
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->fk_entrepot);
 						print $entrepot->getNomUrl(1);
 					}
-					else if (count($lines[$i]->details_entrepot) > 1)
-					{
-						$detail = '';
-						foreach ($lines[$i]->details_entrepot as $detail_entrepot)
-						{
-							if ($detail_entrepot->entrepot_id > 0)
-							{
-								$entrepot = new Entrepot($db);
-								$entrepot->fetch($detail_entrepot->entrepot_id);
-								$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
-							}
-						}
-						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"),$detail);
-					}
+					
 					print '</td>';
 				}
 
@@ -2014,9 +2002,7 @@ else if ($id || $ref)
 			else print '&nbsp;';
 			print '</td>';
 
-			// Size
-			//print '<td align="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume").'</td>';
-
+			
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td align="center" colspan="2" valign="middle">';
