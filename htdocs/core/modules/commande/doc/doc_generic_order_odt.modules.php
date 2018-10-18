@@ -4,21 +4,22 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018       Philippe Grand      <philippe.grand@atoo-net.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	\file       htdocs/core/modules/commande/doc/doc_generic_order_odt.modules.php
@@ -46,7 +47,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	public $emetteur;
 
 	/**
-   * @var array() Minimum version of PHP required by module.
+   * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
    */
 	public $phpmin = array(5, 4);
@@ -351,6 +352,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -366,6 +368,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 				catch(OdfException $e)
 				{
+                    dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Define substitution array
@@ -402,6 +405,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -434,9 +438,11 @@ class doc_generic_order_odt extends ModelePDFCommandes
 								}
 								catch(OdfException $e)
 								{
+                                    dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+                                    dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -460,6 +466,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -473,7 +480,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					}catch (Exception $e){
-						$this->error=$e->getMessage();
+                        $this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
@@ -481,7 +489,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 					try {
 					$odfHandler->saveToDisk($file);
 					}catch (Exception $e){
-						$this->error=$e->getMessage();
+                        $this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
