@@ -208,10 +208,11 @@ elseif(count($echeance->lines)>0)
 		$mens = $line->amount_capital+$line->amount_insurance+$line->amount_interest;
 		$int = $line->amount_interest;
 		$cap_rest = price2num($capital - ($mens-$int), 'MT');
+		$insu = ($insurance+(($i == 1) ? $regulInsurance : 0));
 		print '<tr>';
 		print '<td align="center" id="n'.$i.'"><input type="hidden" name="hi_rowid' .$i .'" id ="hi_rowid' .$i .'" value="' . $line->id . '">' . $i .'</td>';
 		print '<td align="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . $line->datep . '">' . dol_print_date($line->datep,'day') . '</td>';
-		print '<td align="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0),0,'',1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
+		print '<td align="center" id="insurance'.$i.'">'.price($insu,0,'',1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . $insu . '">';
 		print '<td align="center" id="interets'.$i.'">'.price($int,0,'',1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
 		if($line->datep > dol_now()){
 			print '<td align="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"> €</td>';
@@ -221,7 +222,7 @@ elseif(count($echeance->lines)>0)
 		
 		print '<td align="center" id="capital'.$i.'">'.price($cap_rest).' €</td><input type="hidden" name="hi_capital' .$i .'" id ="hi_capital' .$i .'" value="' . $cap_rest . '">';
 		print '<td align="center">';
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&amount_capital='.urlencode(price($mens-$int)).'&amount_insurance='.urlencode(price($insu)).'&amount_interest='.urlencode(price($int)).'">'.$langs->trans('DoPayment').'</a>';
 		print '</td>';
 		print '</tr>'."\n";
 		$i++;
