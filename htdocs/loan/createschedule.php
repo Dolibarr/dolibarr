@@ -35,7 +35,7 @@ $object = new Loan($db);
 $object->fetch($loanid);
 
 // Load translation files required by the page
-$langs->loadLangs(array("loan"));
+$langs->loadLangs(array("compta","bills","loan"));
 
 if ($action == 'createecheancier') {
 
@@ -45,6 +45,7 @@ if ($action == 'createecheancier') {
 		$date =  GETPOST('hi_date'.$i,'int');
 		$mens = GETPOST('mens'.$i);
 		$int = GETPOST('hi_interets'.$i);
+		$insurance = GETPOST('hi_insurance'.$i);
 
 		$echeance = new LoanSchedule($db);
 
@@ -53,10 +54,10 @@ if ($action == 'createecheancier') {
 		$echeance->tms = dol_now();
 		$echeance->datep = $date;
 		$echeance->amount_capital = $mens-$int;
-		$echeance->amount_insurance = 0;
+		$echeance->amount_insurance = $insurance;
 		$echeance->amount_interest = $int;
 		$echeance->fk_typepayment = 3;
-		$echeance->fk_bank = 1;
+		$echeance->fk_bank = 0;
 		$echeance->fk_user_creat = $user->id;
 		$echeance->fk_user_modif = $user->id;
 		$result=$echeance->create($user);
@@ -75,11 +76,13 @@ if ($action == 'updateecheancier') {
 		$mens = GETPOST('mens'.$i);
 		$int = GETPOST('hi_interets'.$i);
 		$id = GETPOST('hi_rowid'.$i);
+		$insurance = GETPOST('hi_insurance'.$i);
+		
 		$echeance = new LoanSchedule($db);
 		$echeance->fetch($id);
 		$echeance->tms = dol_now();
 		$echeance->amount_capital = $mens-$int;
-		$echeance->amount_insurance = 0;
+		$echeance->amount_insurance = $insurance;
 		$echeance->amount_interest = $int;
 		$echeance->fk_user_modif = $user->id;
 		$result= $echeance->update($user,0);
@@ -143,26 +146,33 @@ if(count($echeance->lines)>0)
 }
 print '<table class="border" width="100%">';
 print '<tr class="liste_titre">';
-print '<th align="center" colspan="5">';
+$colspan = 6;
+if (count($echeance->lines)>0) $colspan++;
+print '<th align="center" colspan="'.$colspan.'">';
 print $langs->trans("FinancialCommitment");
 print '</th>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-Print '<th width="10%" align="center">'.$langs->trans("Term").'</th>';
-Print '<th width="10%" align="center">'.$langs->trans("Date").'</th>';
+Print '<th width="5%" align="center">'.$langs->trans("Term").'</th>';
+Print '<th width="5%" align="center">'.$langs->trans("Date").'</th>';
+print '<th width="15%" align="center">'.$langs->trans("Insurance");
+Print '<th width="15%" align="center">'.$langs->trans("InterestAmount").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Amount").'</th>';
-Print '<th width="20%" align="center">'.$langs->trans("InterestAmount").'</th>';
 Print '<th width="40%" align="center">'.$langs->trans("CapitalRemain");
 print ' ('.price2num($object->capital).')';
 print '<input type="hidden" name="hi_capital0" id ="hi_capital0" value="'.$object->capital.'">';
 print '</th>';
+if (count($echeance->lines)>0) print '<th>'.$langs->trans('DoPayment').'</th>';
 print '</tr>'."\n";
 
 if ($object->nbterm > 0 && count($echeance->lines)==0)
 {
 	$i=1;
 	$capital = $object->capital;
+	$insurance = $object->insurance_amount/$object->nbterm;
+	$insurance = price2num($insurance, 'MT');
+	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
 	while($i <$object->nbterm+1)
 	{
 		$mens = price2num($echeance->calcMonthlyPayments($capital, $object->rate/100, $object->nbterm-$i+1), 'MT');
@@ -172,8 +182,9 @@ if ($object->nbterm > 0 && count($echeance->lines)==0)
 		print '<tr>';
 		print '<td align="center" id="n'.$i.'">' . $i .'</td>';
 		print '<td align="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . dol_time_plus_duree($object->datestart, $i-1, 'm') . '">' . dol_print_date(dol_time_plus_duree($object->datestart, $i-1, 'm'),'day') . '</td>';
-		print '<td align="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"> €</td>';
+		print '<td align="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0),0,'',1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
 		print '<td align="center" id="interets'.$i.'">'.price($int,0,'',1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
+		print '<td align="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"> €</td>';
 		print '<td align="center" id="capital'.$i.'">'.price($cap_rest).' €</td><input type="hidden" name="hi_capital' .$i .'" id ="hi_capital' .$i .'" value="' . $cap_rest . '">';
 		print '</tr>'."\n";
 		$i++;
@@ -184,6 +195,9 @@ elseif(count($echeance->lines)>0)
 {
 	$i=1;
 	$capital = $object->capital;
+	$insurance = $object->insurance_amount/$object->nbterm;
+	$insurance = price2num($insurance, 'MT');
+	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
 	foreach ($echeance->lines as $line){
 		$mens = $line->amount_capital+$line->amount_insurance+$line->amount_interest;
 		$int = $line->amount_interest;
@@ -191,13 +205,16 @@ elseif(count($echeance->lines)>0)
 		print '<tr>';
 		print '<td align="center" id="n'.$i.'"><input type="hidden" name="hi_rowid' .$i .'" id ="hi_rowid' .$i .'" value="' . $line->id . '">' . $i .'</td>';
 		print '<td align="center" id ="date' .$i .'"><input type="hidden" name="hi_date' .$i .'" id ="hi_date' .$i .'" value="' . $line->datep . '">' . dol_print_date($line->datep,'day') . '</td>';
+		print '<td align="center" id="insurance'.$i.'">'.price($insurance+(($i == 1) ? $regulInsurance : 0),0,'',1).' €</td><input type="hidden" name="hi_insurance' .$i .'" id ="hi_insurance' .$i .'" value="' . ($insurance+(($i == 1) ? $regulInsurance : 0)) . '">';
+		print '<td align="center" id="interets'.$i.'">'.price($int,0,'',1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
 		if($line->datep > dol_now()){
 			print '<td align="center"><input name="mens'.$i.'" id="mens'.$i.'" size="5" value="'.$mens.'" ech="'.$i.'"> €</td>';
 		}else{
 			print '<td align="center">' . price($mens) . ' €</td><input type="hidden" name="mens' .$i .'" id ="mens' .$i .'" value="' . $mens . '">';
 		}
-		print '<td align="center" id="interets'.$i.'">'.price($int,0,'',1).' €</td><input type="hidden" name="hi_interets' .$i .'" id ="hi_interets' .$i .'" value="' . $int . '">';
+		
 		print '<td align="center" id="capital'.$i.'">'.price($cap_rest).' €</td><input type="hidden" name="hi_capital' .$i .'" id ="hi_capital' .$i .'" value="' . $cap_rest . '">';
+		print '<td align="center"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></td>';
 		print '</tr>'."\n";
 		$i++;
 		$capital = $cap_rest;

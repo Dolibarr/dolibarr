@@ -66,6 +66,8 @@ class Loan extends CommonObject
 	public $date_creation;
 	public $date_modification;
 	public $date_validation;
+	
+	public $insurance_amount;
 
 	/**
      * @var int Bank ID
@@ -106,7 +108,7 @@ class Loan extends CommonObject
 	 */
 	function fetch($id)
 	{
-		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public,";
+		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
 		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql.= " WHERE l.rowid = ".$id;
@@ -129,6 +131,7 @@ class Loan extends CommonObject
 				$this->rate					= $obj->rate;
 				$this->note_private			= $obj->note_private;
 				$this->note_public			= $obj->note_public;
+				$this->insurance_amount     = $obj->insurance_amount;
 				$this->paid					= $obj->paid;
 
 				$this->account_capital		= $obj->accountancy_account_capital;
@@ -169,6 +172,8 @@ class Loan extends CommonObject
 
 		// clean parameters
 		$newcapital=price2num($this->capital,'MT');
+		if (empty($this->insurance_amount)) $this->insurance_amount = 0;
+		$newinsuranceamount=price2num($this->insurance_amount, 'MT');
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->account_capital)) $this->account_capital = trim($this->account_capital);
@@ -205,7 +210,7 @@ class Loan extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note_private, note_public,";
 		$sql.= " accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity,";
-		$sql.= " datec, fk_projet, fk_user_author)";
+		$sql.= " datec, fk_projet, fk_user_author, insurance_amount)";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."',";
 		$sql.= " '".$this->db->escape($this->fk_bank)."',";
 		$sql.= " '".price2num($newcapital)."',";
@@ -221,7 +226,8 @@ class Loan extends CommonObject
 		$sql.= " ".$conf->entity.",";
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " ".(empty($this->fk_project)?'NULL':$this->fk_project).",";
-		$sql.= " ".$user->id;
+		$sql.= " ".$user->id.",";
+		$sql.= " '".price2num($newinsuranceamount)."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -339,7 +345,8 @@ class Loan extends CommonObject
 		$sql.= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql.= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
 		$sql.= " fk_projet=".(empty($this->fk_project)?'NULL':$this->fk_project).",";
-		$sql.= " fk_user_modif = ".$user->id;
+		$sql.= " fk_user_modif = ".$user->id.",";
+		$sql.= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -549,7 +556,6 @@ class Loan extends CommonObject
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
 		$sql.= ' l.tms';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'loan as l';
 		$sql.= ' WHERE l.rowid = '.$id;
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);

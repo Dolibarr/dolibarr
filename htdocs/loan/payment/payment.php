@@ -264,7 +264,7 @@ if ($action == 'create')
 	print '<td align="right">';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital">';
+		print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital" value="'.GETPOST('amount_capital').'">';
 	}
 	else
 	{
@@ -273,7 +273,7 @@ if ($action == 'create')
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance">';
+		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance" value="'.GETPOST('amount_insurance').'">';
 	}
 	else
 	{
@@ -282,7 +282,7 @@ if ($action == 'create')
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest">';
+		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest" value="'.GETPOST('amount_interest').'">';
 	}
 	else
 	{

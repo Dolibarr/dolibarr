@@ -129,3 +129,6 @@ CREATE TABLE llx_takepos_floor_tables(
 
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
+
+ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
+
