@@ -664,7 +664,7 @@ class RemiseCheque extends CommonObject
 	    if(count($this->lines))
 	    {
 	        $total = 0;
-	        $TLinesToUpdate = array();
+	        $TLinesToUpdate = $TPaymentToUpdate = array();
 	        foreach ($this->lines as $line)
 	        {
 	            if($line->type_line == "payment" && empty($line->fk_bank))
@@ -676,6 +676,7 @@ class RemiseCheque extends CommonObject
 	                {
 	                    $total += $paiement->amount;
 	                    $TLinesToUpdate[] = $line->id;
+	                    $TPaymentToUpdate[] = $line->fk_paiement;
 	                }
 	                else
 	                {
@@ -724,8 +725,18 @@ class RemiseCheque extends CommonObject
 	                        dol_syslog("RemiseCheque::createBankEntry update bankentry error : " . $this->db->lasterror, LOG_ERR);
 	                    }
 	                    
+	                    // Update payments
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_bank = ".$ret." WHERE rowid in (".implode(",", $TPaymentToUpdate).")";
+	                    $res = $this->db->query($sql);
+	                    if(!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update payments error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update payments error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                    
 	                    // update lines
-	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_chequedet SET fk_bank = ".$ret." WHERE rowid in (".implode($TLinesToUpdate).")";
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_chequedet SET fk_bank = ".$ret." WHERE rowid in (".implode(",", $TLinesToUpdate).")";
 	                    $res = $this->db->query($sql);
 	                    if(!$res)
 	                    {
@@ -1090,18 +1101,18 @@ class RemiseCheque extends CommonObject
 	function removeCheck($line_id)
 	{
 		$this->errno = 0;
-
+		
 		$found = false;
 		$i = 0;
 		foreach ($this->lines as $line)
 		{
-		    if ($line->id !== $line_id) continue;
-		    else
+		    if ($line->id == $line_id)
 		    {
 		        $found = true;
 		    }
 		    
 		    if($found) break;
+		    
 		    $i++;
 		}
 		
@@ -1125,53 +1136,68 @@ class RemiseCheque extends CommonObject
 		        $sql.= " AND fk_bordereau = ".$this->id;
 		        
 		        $resql = $this->db->query($sql);
-		        if ($resql)
-		        {
-		            // delete line
-		            $sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_chequedet";
-		            $sql.= " WHERE rowid = ".$this->lines[$i]->id;
-		            $resql = $this->db->query($sql);
-		            if (!$resql)
-		            {
-		                $this->error = "RemiseCheque::removeCheck error can't delete bordereau line (type=bank)";
-		                dol_syslog($this->error, LOG_ERR);
-		                $this->db->rollback();
-		                return -1;
-		            }
-		            
-		            $this->updateAmount();
-		        }
-		        else
+		        if (!$resql)
 		        {
 		            $this->errno = -1032;
-		            $this->error = "RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)";
-		            dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)", LOG_ERR);
+		            $this->error = "RemiseCheque::removeCheck bank ERREUR UPDATE ($this->errno)";
+		            dol_syslog($this->error, LOG_ERR);
 		            $this->db->rollback();
 		            return -1;
 		        }
 		    }
-		    elseif ()
+		    elseif ($this->lines[$i]->type_line == "payment")
+		    {
+		        // if we disable the BANK_CHK_DONT_CREATE_BANK_RECORDS configuration, it create bankentries for payment which haven't one
+		        // so we must verify if a bank entry has been created
+		        $sql = "SELECT p.fk_bank FROM ".MAIN_DB_PREFIX."paiement as p WHERE p.rowid = ".$this->lines[$i]->fk_paiement;
+		        
+		        $resql = $this->db->query($sql);
+		        if ($resql && $this->db->num_rows($resql))
+		        {
+		            $obj = $this->db->fetch_object($resql);
+		            if (!empty($obj->fk_bank)){
+    		            // update bankentry
+    		            $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+    		            $sql.= " SET fk_bordereau = 0";
+    		            $sql.= " WHERE rowid = '".$obj->fk_bank."'";
+    		            $sql.= " AND fk_bordereau = ".$this->id;
+    		            
+    		            $resql = $this->db->query($sql);
+    		            if (!$resql)
+    		            {
+    		                $this->errno = -1032;
+    		                $this->error = "RemiseCheque::removeCheck payment ERREUR UPDATE ($this->errno)";
+    		                dol_syslog($this->error, LOG_ERR);
+    		                $this->db->rollback();
+    		                return -1;
+    		            }
+		            }
+		        }
+		        
+		    }
+		}
+		else
+		{
+		    $this->errno = -2;
+		    $this->error = "RemiseCheque::removeCheck Error Bordereau already validated ($this->errno)";
+		    dol_syslog($this->error, LOG_ERR);
+		    $this->db->rollback();
+		    return -1;
 		}
 		
-		exit;
-		if ($this->id > 0)
+		// delete line
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_chequedet";
+		$sql.= " WHERE rowid = ".$this->lines[$i]->id;
+		$resql = $this->db->query($sql);
+		if (!$resql)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-			$sql.= " SET fk_bordereau = 0";
-			$sql.= " WHERE rowid = '".$account_id."'";
-			$sql.= " AND fk_bordereau = ".$this->id;
-
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$this->updateAmount();
-			}
-			else
-			{
-				$this->errno = -1032;
-				dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
-			}
+		    $this->error = "RemiseCheque::removeCheck error can't delete bordereau line";
+		    dol_syslog($this->error, LOG_ERR);
+		    $this->db->rollback();
+		    return -1;
 		}
+		
+		$this->updateAmount();
 		
 		$this->db->commit();
 		
@@ -1182,17 +1208,39 @@ class RemiseCheque extends CommonObject
 	 *	Check return management
 	 *	Reopen linked invoices and create a new negative payment.
 	 *
-	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
+	 *	@param	int		$line_id 		   Id of line concerned
 	 *	@param	date	$rejection_date    Date to use on the negative payment
 	 * 	@return	int                        Id of negative payment line created
 	 */
-	function rejectCheck($bank_id, $rejection_date)
+	function rejectCheck($line_id, $rejection_date)
 	{
 		global $db, $user;
 
+		$found = false;
+		
+		foreach ($this->lines as $line)
+		{
+		    if ($line->id == $line_id)
+		    {
+		        $found = true;
+		        $bank_id = $line->fk_bank;
+		        $payment_id = $line->fk_paiement;
+		    }
+		    
+		    if($found) break;
+		}
+		
+		//var_dump($found, $line_id); exit;
+		if(!$found)
+		{
+		    $this->error = "RemiseCheque::removeCheck error line not found";
+		    dol_syslog($this->error, LOG_ERR);
+		    return -1;
+		}
+		
 		$payment = new Paiement($db);
-		$payment->fetch(0,0,$bank_id);
-
+		$payment->fetch($payment_id);
+		
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
 
@@ -1223,6 +1271,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment->datepaye = $rejection_date;
 			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement','code','id',1);
 			$rejectedPayment->num_paiement = $payment->numero;
+			$rejectedPayment->fk_account = $payment->fk_account;
 
 			while($obj = $db->fetch_object($resql))
 			{
