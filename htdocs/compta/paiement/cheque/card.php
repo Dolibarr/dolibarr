@@ -442,7 +442,7 @@ if ($action == 'new')
 		
 		if (!empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
 		{
-		   $sql2 = "SELECT ba.rowid as bid, p.datec as datec, p.datep as date, p.amount, ba.label, p.rowid as paymentid, s.nom as emetteur";
+		   $sql2 = "SELECT DISTINCT ba.rowid as bid, p.datec as datec, p.datep as date, p.amount, ba.label, p.rowid as paymentid, s.nom as emetteur";
 		   $sql2.= " FROM ".MAIN_DB_PREFIX."paiement as p";
 		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON (pf.fk_paiement = p.rowid)";
 		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (f.rowid = pf.fk_facture)";
