@@ -513,8 +513,7 @@ if ($action == 'new')
 		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
 		print '<td align="right" width="100px">'.$langs->trans("Amount")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
-		if (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
-		  print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
+		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
 		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
@@ -551,21 +550,19 @@ if ($action == 'new')
 					print '&nbsp;';
 				}
 				print '</td>';
-				if (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
+
+				// Link to bank transaction
+				print '<td align="center">';
+				$accountlinestatic->rowid=$value["id"];
+				if ($accountlinestatic->rowid)
 				{
-    				// Link to bank transaction
-    				print '<td align="center">';
-    				$accountlinestatic->rowid=$value["id"];
-    				if ($accountlinestatic->rowid)
-    				{
-    					print $accountlinestatic->getNomUrl(1);
-    				}
-    				else
-    				{
-    					print '&nbsp;';
-    				}
-    				print '</td>';
+					print $accountlinestatic->getNomUrl(1);
 				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
 
 				print '<td align="center">';
 				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise['.$value['typeline'].'][]" value="'.$value["id"].'">';
