@@ -330,6 +330,7 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight + $this->variation_weight;
 		$child->weight_units = $parent->weight_units;
+		$child->label = $parent->label;
 
 		if ($child->update($child->id, $user) > 0) {
 
