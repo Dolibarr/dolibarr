@@ -391,13 +391,15 @@ class pdf_canelle_reception extends ModelePDFSuppliersInvoices
 					if(!empty($object->linkedObjects['reception'])){
 						if(count($object->linkedObjects['reception']) == 1){
 							$reception =  array_shift($object->linkedObjects['reception']);
-							$reception_content = $reception->ref.' du '.date('d/m/Y', $reception->date_delivery);
+							$reception_content = $reception->ref;
+							if(!empty($reception->date_delivery))$reception_content .=' du '.date('d/m/Y', $reception->date_delivery);
 						}else {
 							$object->lines[$i]->fetchObjectLinked();
 							if (!empty($object->lines[$i]->linkedObjects['reception']))
 							{
 								$reception =  array_shift($object->lines[$i]->linkedObjects['reception']);
-								$reception_content = $reception->ref.' du '.date('d/m/Y', $reception->date_delivery);
+								$reception_content = $reception->ref;
+								if(!empty($reception->date_delivery))$reception_content .=' du '.date('d/m/Y', $reception->date_delivery);
 
 							}
 						}
@@ -405,8 +407,8 @@ class pdf_canelle_reception extends ModelePDFSuppliersInvoices
 					
 					
 
-					$pdf->SetXY($this->posxreception-5, $curY);
-					$pdf->MultiCell($this->posxtva-$this->posxreception+4, 3, $reception_content, 0, 'R');
+					$pdf->SetXY($this->posxreception-1, $curY);
+					$pdf->MultiCell($this->posxtva-$this->posxreception+1, 3, $reception_content, 0, 'C');
 
 					// VAT Rate
                     if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))

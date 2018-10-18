@@ -187,9 +187,9 @@ class pdf_squille extends ModelePdfReception
 			}
 			else
 			{
-				$expref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->reception->dir_output."/" . $expref;
-				$file = $dir . "/" . $expref . ".pdf";
+				$rcpref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->reception->dir_output."/" . $rcpref;
+				$file = $dir . "/" . $rcpref . ".pdf";
 			}
 
 			if (! file_exists($dir))
