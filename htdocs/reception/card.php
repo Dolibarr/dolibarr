@@ -83,6 +83,10 @@ else {
 }
 
 $action		= GETPOST('action','alpha');
+//Select mail models is same action as presend
+if (GETPOST('modelselected')) {
+	$action = 'presend';
+}
 $confirm	= GETPOST('confirm','alpha');
 $cancel     = GETPOST('cancel','alpha');
 
@@ -2181,10 +2185,7 @@ else if ($id || $ref)
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	}
-	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
+	
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);

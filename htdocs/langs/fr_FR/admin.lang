@@ -1667,6 +1667,7 @@ MailToSendSupplierRequestForQuotation=Pour l'envoi de demande de prix fournisseu
 MailToSendSupplierOrder=Pour l'envoi de commande fournisseur
 MailToSendSupplierInvoice=Pour l'envoi de facture fournisseur
 MailToSendContract=Pour envoyer un contrat
+MailToSendReception=Pour l'envoi de réception fournisseur
 MailToThirdparty=Envoy email depuis la fiche Tiers
 ByDefaultInList=Afficher par défaut sur les vues listes
 YouUseLastStableVersion=Vous utilisez la dernière version stable
