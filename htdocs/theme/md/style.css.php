@@ -1205,6 +1205,13 @@ td.showDragHandle {
 .side-nav-vert {
 	margin-left: 228px;
 }
+<?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
+.side-nav-vert {
+	position: sticky;
+	top: 0px;
+	z-index: 210;
+}
+<?php } ?>
 
 /* For smartphone (testmenuhider is on) */
 <?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
