@@ -652,6 +652,27 @@ if (empty($reshook))
 					}
 					$object->origin    = GETPOST('origin');
 					$object->origin_id = GETPOST('originid');
+					
+					
+					require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+					$classname = ucfirst($subelement);
+					if ($classname == 'Fournisseur.commande') $classname='CommandeFournisseur';
+					$objectsrc = new $classname($db);
+					$objectsrc->fetch($originid);
+					$objectsrc->fetch_thirdparty();
+
+					if ($object->origin == 'reception')
+					{
+						$objectsrc->fetchObjectLinked();
+
+						if (count($objectsrc->linkedObjectsIds['order_supplier']) > 0)
+						{
+							foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value)
+							{
+								$object->linked_objects['order_supplier'] = $value;
+							}
+						}
+					}
 
 					$id = $object->create($user);
 
@@ -1411,18 +1432,8 @@ if ($action == 'create')
             $objectsrc = new $classname($db);
             $objectsrc->fetch($originid);
             $objectsrc->fetch_thirdparty();
+
 			
-			if ($object->origin == 'reception')
-			{
-				$objectsrc->fetchObjectLinked();
-				if (count($objectsrc->linkedObjectsIds['commande']) > 0)
-				{
-					foreach ($objectsrc->linkedObjectsIds['commande'] as $key => $value)
-					{
-						$object->linked_objects['commande'] = $value;
-					}
-				}
-			}
 
             $projectid			= (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
             //$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');

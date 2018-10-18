@@ -178,15 +178,35 @@ if (empty($reshook))
 			}
 					
     		$object = new FactureFournisseur($db);
-    		if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])) $object = $TFactThird[$rcp->socid]; // If option "one bill per third" is set, we use already created reception.
+    		if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])){
+				$object = $TFactThird[$rcp->socid]; // If option "one bill per third" is set, we use already created reception.
+				$object->fetchObjectLinked();
+				$rcp->fetchObjectLinked();
+				
+				if (count($rcp->linkedObjectsIds['order_supplier']) > 0)
+				{
+					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value)
+					{
+						if(empty($object->linkedObjectsIds['order_supplier']) || !in_array($value, $object->linkedObjectsIds['order_supplier']))//Dont try to link if already linked
+							$object->add_object_linked('order_supplier', $value); // add supplier order linked object
+					}
+				}
+				
+			}
     		else {
-
+				
+				
+							
     			$object->socid = $rcp->socid;
     			$object->type = FactureFournisseur::TYPE_STANDARD;
     			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_supplier_id;
     			$object->mode_reglement_id	= $rcp->thirdparty->mode_reglement_supplier_id;
+				$object->fk_account         = !empty($rcp->thirdparty->fk_account)?$rcp->thirdparty->fk_account:0;
+				$object->remise_percent 	= !empty($rcp->thirdparty->remise_percent)?$rcp->thirdparty->remise_percent:0;
+				$object->remise_absolue 	= !empty($rcp->thirdparty->remise_absolue)?$rcp->thirdparty->remise_absolue:0;
+
     			$object->fk_project			= $rcp->fk_project;
-    			$object->ref_supplier			= $rcp->ref_supplier;
+    			$object->ref_supplier		= $rcp->ref_supplier;
 
     			$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth'),GETPOST('reday'), GETPOST('reyear'));
     			if (empty($datefacture))
@@ -197,6 +217,15 @@ if (empty($reshook))
     			$object->date = $datefacture;
     			$object->origin    = 'reception';
     			$object->origin_id = $id_reception;
+				
+				$rcp->fetchObjectLinked();
+				if (count($rcp->linkedObjectsIds['order_supplier']) > 0)
+				{
+					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value)
+					{
+						$object->linked_objects['order_supplier'] = $value;
+					}
+				}
 				
     			$res = $object->create($user);
 				//var_dump($object->error);exit;
