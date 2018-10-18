@@ -78,6 +78,10 @@ class Entrepot extends CommonObject
 	//! Code Postal
 	public $zip;
 	public $town;
+
+	/**
+     * @var int ID
+     */
 	public $fk_parent;
 
 	// List of short language codes for status

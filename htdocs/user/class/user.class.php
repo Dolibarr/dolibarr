@@ -123,6 +123,9 @@ class User extends CommonObject
 	public $socid;
 	public $contactid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_member;
 
 	/**

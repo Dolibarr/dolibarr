@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Frederic France			<frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -93,9 +93,30 @@ class Adherent extends CommonObject
 	public $twitter;
 	public $facebook;
 
+    /**
+     * @var string Phone number
+     */
 	public $phone;
+
+    /**
+     * @var string Private Phone number
+     */
 	public $phone_perso;
+
+    /**
+     * @var string Mobile phone number
+     */
 	public $phone_mobile;
+
+    /**
+     * @var string Fax number
+     */
+    public $fax;
+
+    /**
+     * @var string Function
+     */
+    public $poste;
 
 	public $morphy;
 	public $public;

@@ -49,6 +49,9 @@ class Task extends CommonObject
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
+	/**
+     * @var int ID parent task
+     */
     public $fk_task_parent;
 
     /**
@@ -67,10 +70,24 @@ class Task extends CommonObject
 	public $date_start;
 	public $date_end;
 	public $progress;
+
+	/**
+     * @var int ID
+     */
 	public $fk_statut;
+
 	public $priority;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_valid;
+
 	public $rang;
 
 	public $timespent_min_date;

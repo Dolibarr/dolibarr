@@ -62,8 +62,16 @@ class Ticketlogs// extends CommonObject
 	 */
 	public $id;
 
+	/**
+     * @var int ID
+     */
     public $fk_track_id;
+
+    /**
+     * @var int ID
+     */
     public $fk_user_create;
+
     public $datec = '';
     public $message;
 

@@ -99,3 +99,4 @@ InitStructureFromExistingTable=Build the structure array string of an existing t
 UseAboutPage=Disable the about page
 UseDocFolder=Disable the documentation folder
 UseSpecificReadme=Use a specific ReadMe
+RealPathOfModule=Real path of module

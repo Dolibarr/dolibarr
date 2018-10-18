@@ -83,8 +83,17 @@ class Cronjob extends CommonObject
 	public $status;
 
 	public $processing;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_mod;
+
 	public $nbrun;
 	public $libname;
 	public $test;					// A test condition to know if job is visible/qualified
@@ -1390,8 +1399,16 @@ class Cronjobline
 	 */
 	public $status;
 
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_mod;
+
 	public $note;
 	public $nbrun;
 	public $libname;

@@ -22,10 +22,10 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
-require_once '../lib/datapolicies.lib.php';
+require_once '../lib/datapolicy.lib.php';
 
 // Translations
-$langs->loadLangs(array('admin', 'companies', 'members', 'datapolicies'));
+$langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy'));
 
 
 // Parameters
@@ -78,17 +78,17 @@ if ($action == 'setvalue' && $user->admin) {
  * View
  */
 
-$page_name = "datapoliciesSetup";
+$page_name = "datapolicySetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . $langs->trans("BackToModuleList") . '</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicies@datapolicies');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicy@datapolicy');
 
 // Configuration header
-$head = datapoliciesAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "datapolicies@datapolicies");
+$head = datapolicyAdminPrepareHead();
+dol_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
 
 
 
@@ -161,7 +161,7 @@ dol_fiche_end();
 print '<br><br>';
 
 print $langs->trans('SendAgreementText');
-print '<a class="button" href="'.dol_buildpath('/datapolicies/mailing.php').'">'.$langs->trans('SendAgreement').'</a>';
+print '<a class="button" href="'.dol_buildpath('/datapolicy/mailing.php').'">'.$langs->trans('SendAgreement').'</a>';
 
 llxFooter();
 $db->close();

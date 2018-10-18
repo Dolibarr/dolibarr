@@ -1383,7 +1383,7 @@ else
 			// Password
 			print '<tr><td>'.$langs->trans("Password").'</td>';
 
-			print '<td>';
+			print '<td class="wordbreak">';
 			$valuetoshow='';
 			if (preg_match('/ldap/',$dolibarr_main_authentication))
 			{

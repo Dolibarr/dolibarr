@@ -130,8 +130,17 @@ class MyObject extends CommonObject
 
 	public $date_creation;
 	public $tms;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
