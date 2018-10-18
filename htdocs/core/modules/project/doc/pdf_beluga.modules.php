@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin  <regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Charlie Benke  <charlie@patas-monkey.com>
- * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	    Philippe Grand      <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *	\file       htdocs/core/modules/project/doc/pdf_beluga.modules.php
  *	\ingroup    project
- *	\brief      Fichier de la classe permettant de generer les projets au modele beluga
+ *	\brief      File of class to generate project document beluga
  *	\author	    Charlie Benke
  */
 
@@ -49,7 +50,7 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 
 /**
- *	Class to manage generation of project document Baleine
+ *	Class to manage generation of project document beluga
  */
 
 class pdf_beluga extends ModelePDFProjects
@@ -67,7 +68,7 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "projects", "companies"));
@@ -87,15 +88,15 @@ class pdf_beluga extends ModelePDFProjects
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
+		$this->option_logo = 1;                    // Display logo FAC_PDF_LOGO
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_codeproduitservice = 1;      // Display product-service code
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
 
-		// Defini position des colonnes
+		// Define position of columns
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxdate=$this->marge_gauche+25;
 		$this->posxsociety=$this->marge_gauche+45;
