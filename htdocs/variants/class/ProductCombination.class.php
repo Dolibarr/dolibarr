@@ -330,7 +330,8 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight + $this->variation_weight;
 		$child->weight_units = $parent->weight_units;
-		$child->label = $parent->label;
+		$varlabel = $this->getLabelOfCombination($this->fk_product_child);
+		$child->label = $parent->label.$varlabel;
 
 		if ($child->update($child->id, $user) > 0) {
 
@@ -682,5 +683,40 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Return label for combinations
+	 * @param 	int 	$prod_child		id of child
+	 * @return 	string	combination label
+	 */
+	public function getLabelOfCombination($prod_child)
+	{
+		$label = '';
+		$sql = 'SELECT pav.value AS label';
+		$sql.= ' FROM llx_product_attribute_combination pac';
+		$sql.= ' INNER JOIN llx_product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
+		$sql.= ' INNER JOIN llx_product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
+		$sql.= ' WHERE pac.fk_product_child='.$prod_child;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				if ($obj->label)
+				{
+					$label.=' '.$obj->label;
+				}
+				$i++;
+			}
+
+		}
+		return $label;
 	}
 }
