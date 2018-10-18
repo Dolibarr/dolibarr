@@ -235,7 +235,7 @@ class Paiement extends CommonObject
 		$note = ($this->note_public?$this->note_public:$this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($note)."', ".($this->payment_id?"'".$this->db->escape($this->payment_id)."'":"null").", ".($this->payment_site?"'".$this->db->escape($this->payment_site)."'":"null").", ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($note)."', ".($this->payment_id?"'".$this->db->escape($this->payment_id)."'":"null").", ".($this->payment_site?"'".$this->db->escape($this->payment_site)."'":"null").", ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
