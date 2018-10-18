@@ -694,9 +694,9 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	{
 		$label = '';
 		$sql = 'SELECT pav.value AS label';
-		$sql.= ' FROM llx_product_attribute_combination pac';
-		$sql.= ' INNER JOIN llx_product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
-		$sql.= ' INNER JOIN llx_product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
 		$sql.= ' WHERE pac.fk_product_child='.$prod_child;
 
 		$resql = $this->db->query($sql);
