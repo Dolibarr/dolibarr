@@ -108,7 +108,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 	/**
 	 * Issuer
-	 * @var string object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 
