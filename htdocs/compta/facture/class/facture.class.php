@@ -110,9 +110,6 @@ class Facture extends CommonInvoice
 	public $fk_user_valid;
 
 	public $date;              // Date invoice
-	public $date_creation;		// Creation date
-	public $date_validation;	// Validation date
-	public $date_modification;	// Validation date
 	public $datem;
 	public $ref_client;
 	public $ref_int;

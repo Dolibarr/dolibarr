@@ -399,6 +399,12 @@ abstract class CommonObject
 	public $firstname;
 	public $civility_id;
 
+	// Dates
+	public $date_creation;			// Date creation
+	public $date_validation;		// Date validation
+	public $date_modification;		// Date last change (tms field)
+
+
 
 	// No constructor as it is an abstract class
 
