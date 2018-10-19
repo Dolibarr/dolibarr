@@ -340,14 +340,33 @@ class ProductCombination
 
 			// MultiPrix
 			if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-				$new_type = $parent->multiprices_base_type[1];
-				$new_min_price = $parent->multiprices_min[1];
-				$new_psq = $parent->multiprices_recuperableonly[1];
+				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+				{
+					if ($parent->multiprices[$i] != '') {
+						$new_type = $parent->multiprices_base_type[$i];
+						$new_min_price = $parent->multiprices_min[$i];
+						if ($parent->prices_by_qty_list[$i]) {
+							$new_psq = 1;
+						} else {
+							$new_psq = 0;
+						}
 
-				if ($new_type == 'TTC') {
-					$new_price = $parent->multiprices_ttc[1];
-				} else {
-					$new_price = $parent->multiprices[1];
+						if ($new_type == 'TTC') {
+							$new_price = $parent->multiprices_ttc[$i];
+						} else {
+							$new_price = $parent->multiprices[$i];
+						}
+
+						if ($this->variation_price_percentage) {
+							if ($new_price != 0) {
+								$new_price *= 1 + ($this->variation_price / 100);
+							}
+						} else {
+							$new_price += $this->variation_price;
+						}
+
+						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq);
+					}
 				}
 			} else {
 				$new_type = $parent->price_base_type;
@@ -359,15 +378,17 @@ class ProductCombination
 				} else {
 					$new_price = $parent->price;
 				}
-			}
 
-			if ($this->variation_price_percentage) {
-				$new_price *= 1 + ($this->variation_price/100);
-			} else {
-				$new_price += $this->variation_price;
-			}
+				if ($this->variation_price_percentage) {
+					if ($new_price != 0) {
+						$new_price *= 1 + ($this->variation_price / 100);
+					}
+				} else {
+					$new_price += $this->variation_price;
+				}
 
-			$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+			}
 
 			$this->db->commit();
 
