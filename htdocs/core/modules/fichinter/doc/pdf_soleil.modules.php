@@ -108,7 +108,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 	/**
 	 * Issuer
-	 * @var string object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 
