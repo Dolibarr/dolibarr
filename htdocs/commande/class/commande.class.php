@@ -155,9 +155,6 @@ class Commande extends CommonOrder
 	public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
 	public $demand_reason_code;
 	public $date;				// Date commande
-	public $date_creation;				// Date commande
-	public $date_validation;				// Date commande
-	public $date_modification;				// Date commande
   
 	/**
 	 * @deprecated
