@@ -207,10 +207,10 @@ elseif(count($echeance->lines)>0)
 	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
 	$printed = false;
 	foreach ($echeance->lines as $line){
-		$mens = $line->amount_capital+$line->amount_insurance+$line->amount_interest;
+		$mens = $line->amount_capital+$line->amount_interest;
 		$int = $line->amount_interest;
 		$insu = ($insurance+(($i == 1) ? $regulInsurance : 0));
-		$cap_rest = price2num($capital - ($mens-$int-$insu), 'MT');
+		$cap_rest = price2num($capital - ($mens-$int), 'MT');
 		
 		print '<tr>';
 		print '<td align="center" id="n'.$i.'"><input type="hidden" name="hi_rowid' .$i .'" id ="hi_rowid' .$i .'" value="' . $line->id . '">' . $i .'</td>';
