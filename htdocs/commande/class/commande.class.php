@@ -155,7 +155,7 @@ class Commande extends CommonOrder
 	public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
 	public $demand_reason_code;
 	public $date;				// Date commande
-
+  
 	/**
 	 * @deprecated
 	 * @see date
@@ -1620,7 +1620,7 @@ class Commande extends CommonOrder
 		$sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
 		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
 		$sql.= ', c.fk_account';
-		$sql.= ', c.date_commande';
+		$sql.= ', c.date_commande, c.date_valid, c.tms';
 		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_shipping_method';
 		$sql.= ', c.fk_warehouse';
@@ -1673,6 +1673,9 @@ class Commande extends CommonOrder
 				$this->total_ttc			= $obj->total_ttc;
 				$this->date					= $this->db->jdate($obj->date_commande);
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
+				$this->date_creation		= $this->db->jdate($obj->date_creation);
+				$this->date_validation		= $this->db->jdate($obj->date_valid);
+				$this->date_modification		= $this->db->jdate($obj->tms);
 				$this->remise				= $obj->remise;
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
