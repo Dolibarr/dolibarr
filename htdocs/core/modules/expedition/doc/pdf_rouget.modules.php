@@ -106,7 +106,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 	/**
 	 * Issuer
-	 * @var string object that emits
+	 * @var Societe 	Object of company that emits
 	 */
 	public $emetteur;
 
