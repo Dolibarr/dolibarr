@@ -70,7 +70,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
         $openid = new SimpleOpenID();
         $openid->SetIdentity($_GET['openid_identity']);
         $openid_validation_result = $openid->ValidateWithServer();
-        if ($openid_validation_result == true)
+        if ($openid_validation_result === true)
         {
             // OK HERE KEY IS VALID
 
@@ -90,7 +90,7 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
                 }
             }
         }
-        else if($openid->IsError() == true)
+        else if($openid->IsError() === true)
         {
             // ON THE WAY, WE GOT SOME ERROR
             $error = $openid->GetError();
