@@ -112,6 +112,7 @@ class Facture extends CommonInvoice
 	public $date;              // Date invoice
 	public $date_creation;		// Creation date
 	public $date_validation;	// Validation date
+	public $date_modification;	// Validation date
 	public $datem;
 	public $ref_client;
 	public $ref_int;
@@ -1361,6 +1362,7 @@ class Facture extends CommonInvoice
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
 				$this->date_creation		= $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
+				$this->date_modification		= $this->db->jdate($obj->datem);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
