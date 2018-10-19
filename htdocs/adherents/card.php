@@ -634,6 +634,12 @@ if (empty($reshook))
 					$msg     = $arraydefaultmessage->content;
 				}
 
+                if (empty($labeltouse)) {
+                    //fallback on the old configuration.
+                    $subject = $conf->global->ADHERENT_MAIL_VALID_SUBJECT;
+                    $msg = $conf->global->ADHERENT_MAIL_VALID;
+                }
+
 				$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
 				complete_substitutions_array($substitutionarray, $outputlangs, $object);
 				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
@@ -706,6 +712,12 @@ if (empty($reshook))
 						$subject = $arraydefaultmessage->topic;
 						$msg     = $arraydefaultmessage->content;
 					}
+
+                    if (empty($labeltouse)) {
+                        //fallback on the old configuration.
+                        $subject = $conf->global->ADHERENT_MAIL_RESIL_SUBJECT;
+                        $msg = $conf->global->ADHERENT_MAIL_RESIL;
+                    }
 
 					$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
