@@ -352,10 +352,12 @@ class Ticketlogs// extends CommonObject
      */
     public function initAsSpecimen()
     {
+	global $user;
+	    
         $this->id = 0;
 
         $this->fk_track_id = '';
-        $this->fk_user_create = 1;
+        $this->fk_user_create = $user->id;
         $this->datec = '';
         $this->message = '';
     }
