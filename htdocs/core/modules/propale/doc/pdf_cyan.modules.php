@@ -118,7 +118,7 @@ class pdf_cyan extends ModelePDFPropales
 		$this->atleastonediscount=0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *  Function to build pdf onto disk
      *
