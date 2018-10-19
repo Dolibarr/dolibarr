@@ -795,7 +795,7 @@ if ($id > 0)
 				// Emit payment
 				if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a>';
 				}
 
 				// Classify 'paid'

@@ -34,6 +34,7 @@ $chid=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 $line_id = GETPOST('line_id', 'int');
+$last=GETPOST('last');
 
 // Security check
 $socid=0;
@@ -44,6 +45,26 @@ if ($user->societe_id > 0)
 
 $loan = new Loan($db);
 $loan->fetch($chid);
+
+if($last)
+{
+    $ls = new LoanSchedule($db);
+    // grab all loanschedule
+    $res = $ls->fetchAll($chid);
+    if ($res > 0)
+    {
+        foreach ($ls->lines as $l)
+        {
+            // get the last unpaid loanschedule
+            if (empty($l->fk_bank))
+            {
+                $line_id = $l->id;
+                break;
+            }
+        }
+    }
+    
+}
 
 if (!empty($line_id))
 {
