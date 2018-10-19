@@ -1727,10 +1727,13 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
+
 			$discount->discount_type=$discount_type;
-			$discount->amount_ht=price2num($remise,'MT');
-			$discount->amount_tva=price2num($remise*$tva_tx/100,'MT');
-			$discount->amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
+
+			$discount->amount_ht=$discount->multicurrency_amount_ht=price2num($remise,'MT');
+			$discount->amount_tva=$discount->multicurrency_amount_tva=price2num($remise*$tva_tx/100,'MT');
+			$discount->amount_ttc=$discount->multicurrency_amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
+
 			$discount->tva_tx=price2num($tva_tx,'MT');
 			$discount->description=$desc;
 
