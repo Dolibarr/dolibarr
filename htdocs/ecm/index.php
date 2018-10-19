@@ -109,7 +109,8 @@ if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (! $error)
 	{
-	    $res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', '', '', 0);
+		$generatethumbs = 0;
+		$res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', null, '', $generatethumbs);
 	    if ($res > 0)
 	    {
 	       $result=$ecmdir->changeNbOfFiles('+');
