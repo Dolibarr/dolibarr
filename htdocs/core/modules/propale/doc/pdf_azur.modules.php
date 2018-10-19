@@ -116,7 +116,7 @@ class pdf_azur extends ModelePDFPropales
 
 	/**
 	 * Issuer
-	 * @var string object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 
