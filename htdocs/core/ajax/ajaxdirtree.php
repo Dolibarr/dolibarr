@@ -30,6 +30,7 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
+
 if (! isset($mode) || $mode != 'noajax')    // For ajax call
 {
 	$res=@include '../../main.inc.php';
@@ -39,16 +40,26 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
+	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = '/bbb/'; }
+
 	$openeddir = GETPOST('openeddir');
 	$modulepart= GETPOST('modulepart');
 	$selecteddir = jsUnEscape(GETPOST('dir'));        // relative path. We must decode using same encoding function used by javascript: escape()
+
+	$preopened = GETPOST('preopened');
+
 	if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/','',$selecteddir);    // We removed last '/' except if it is '/'
 }
 else    // For no ajax call
 {
+	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = GETPOST('preopened'); }
+
 	$openeddir = GETPOST('openeddir');
 	$modulepart= GETPOST('modulepart');
 	$selecteddir = GETPOST('dir');
+
+	$preopened = GETPOST('preopened');
+
 	if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/','',$selecteddir);    // We removed last '/' except if it is '/'
 	if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 }
@@ -58,8 +69,16 @@ $langs->load("ecm");
 
 // Define fullpathselecteddir.
 $fullpathselecteddir='<none>';
-if ($modulepart == 'ecm') $fullpathselecteddir=$conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
-if ($modulepart == 'medias') $fullpathselecteddir=$dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
+if ($modulepart == 'ecm')
+{
+	$fullpathselecteddir=$conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
+	$fullpathopeneddir=$conf->ecm->dir_output.'/'.($openeddir != '/' ? $openeddir : '');
+}
+if ($modulepart == 'medias')
+{
+	$fullpathselecteddir=$dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
+	$fullpathopeneddir=$dolibarr_main_data_root.'/medias/'.($openeddir != '/' ? $openeddir : '');
+}
 
 
 // Security:
@@ -87,20 +106,20 @@ if ($modulepart == 'medias')
  * View
  */
 
-if (! isset($mode) || $mode != 'noajax')
+if (! isset($mode) || $mode != 'noajax')	// if ajax mode
 {
 	top_httphead();
 }
 
-//print '<!-- selecteddir = '.$selecteddir.', openeddir = '.$openeddir.', modulepart='.$modulepart.' -->'."\n";
+//print '<!-- selecteddir (relative dir we click on) = '.$selecteddir.', openeddir = '.$openeddir.', modulepart='.$modulepart.', preopened='.$preopened.' -->'."\n";
 $userstatic=new User($db);
 $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
 
-// Load full tree from database. We will use it to define nbofsubdir and nboffilesinsubdir
+// Load full tree of ECM module from database. We will use it to define nbofsubdir and nboffilesinsubdir
 if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);
 
-// Try to find key into $sqltree
+// Try to find selected dir id into $sqltree and save it into $current_ecmdir_id
 $current_ecmdir_id=-1;
 foreach($sqltree as $keycursor => $val)
 {
@@ -113,6 +132,25 @@ foreach($sqltree as $keycursor => $val)
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
 {
+
+/**
+ * treeOutputForAbsoluteDir
+ *
+ * @param array	  $sqltree					Sqltree
+ * @param string  $selecteddir				Selected dir
+ * @param string  $fullpathselecteddir		Full path of selected dir
+ * @param string  $modulepart				Modulepart
+ * @param string  $websitekey				Website key
+ * @param int     $pageid					Page id
+ * @return	void
+ */
+function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid)
+{
+	global $db, $langs, $form;
+
+	$ecmdirstatic = new EcmDirectory($db);
+	$userstatic = new User($db);
+
 	if (file_exists($fullpathselecteddir))
 	{
 		$files = @scandir($fullpathselecteddir);
@@ -172,7 +210,7 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    		    		$nboffilesinsubdir=$langs->trans("Unknown");
 						}
 
-			        	print '<li class="directory collapsed">';
+			        	print '<li class="directory collapsed">';	// collapsed is opposite if expanded
 
 	    				print "<a class=\"fmdirlia jqft ecmjqft\" href=\"";
 	    				print "#";
@@ -229,15 +267,30 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    				print "</tr></table>\n";
 	                    print '</div>';
 
+	                    if (0)
+	                    {
+	                    	treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid);
+	                    }
+
 	                    //print '<div>&nbsp;</div>';
 	    				print "</li>\n";
 	    			}
 	    		}
 
-	    		// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
-	    		// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
-				print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip (reload into ajaxdirtree) -->\n";
-	    		print '<script type="text/javascript">
+	    		echo "</ul>\n";
+
+	    	}
+	    }
+	    else print "PermissionDenied";
+	}
+}
+
+	treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, $modulepart, $websitekey, $pageid);
+
+	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
+	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
+	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip (reload into ajaxdirtree) -->\n";
+	print '<script type="text/javascript">
 	            	jQuery(document).ready(function () {
 	            		jQuery(".classfortooltip").tooltip({
 							show: { collision: "flipfit", effect:\'toggle\', delay:50 },
@@ -249,13 +302,6 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	            		});
 	            	});
 	            	</script>';
-
-	    		echo "</ul>\n";
-
-	    	}
-	    }
-	    else print "PermissionDenied";
-	}
 
 	// This ajax service is called only when a directory $selecteddir is opened but not when closed.
 	//print '<script language="javascript">';

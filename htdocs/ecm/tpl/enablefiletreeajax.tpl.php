@@ -27,7 +27,7 @@ if (empty($conf) || ! is_object($conf))
 ?>
 
 <!-- BEGIN PHP TEMPLATE ecm/tpl/enablefiletreeajax.tpl.php -->
-<!-- Doc of fileTree plugin at https://www.abeautifulsite.net/jquery-file-tree:  http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
+<!-- Doc of fileTree plugin at https://www.abeautifulsite.net/jquery-file-tree -->
 
 <script type="text/javascript">
 
@@ -35,7 +35,9 @@ if (empty($conf) || ! is_object($conf))
 if (empty($module)) $module='ecm';
 $paramwithoutsection=preg_replace('/&?section=(\d+)/', '', $param);
 
-$openeddir='/';
+$openeddir='/';		// The root directory shown
+// $preopened		// The dir to have preopened
+
 ?>
 
 $(document).ready(function() {
@@ -43,7 +45,7 @@ $(document).ready(function() {
 	$('#filetree').fileTree({
 		root: '<?php print dol_escape_js($openeddir); ?>',
 		// Ajax called if we click to expand a dir (not a file). Parameter 'dir' is provided as a POST parameter by fileTree code to this following URL.
-		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart='.$module.'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection)?'':$paramwithoutsection); ?>',
+		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart='.$module.(empty($preopened)?'':'&preopened='.urlencode($preopened)).'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection)?'':$paramwithoutsection); ?>',
 		folderEvent: 'click',	// 'dblclick'
 		multiFolder: false  },
 		// Called if we click on a file (not a dir)
