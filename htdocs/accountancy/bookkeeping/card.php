@@ -629,7 +629,6 @@ if ($action == 'create')
 							print '<input type="text" name="subledger_account" value="'.$line->subledger_account.'">';
 						}
 						print '</td>';
-						print '<td><input type="text" class="minwidth100" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $line->label_operation. '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
