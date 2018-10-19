@@ -38,6 +38,7 @@ $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $myparam	= GETPOST('myparam','alpha');
+$toselect = GETPOST('toselect', 'array');
 
 
 $search_entity=GETPOST('search_entity','int');
@@ -143,7 +144,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_import_key='';
 	$search_date_creation='';
 	$search_date_update='';
-	$toselect='';
+	$toselect=array();
 	$search_array_options=array();
 }
 
@@ -207,7 +208,8 @@ $sql.= " t.fk_user_modif,";
 $sql.= " t.import_key,";
 $sql.= " p.fk_product_type as product_type,";
 $sql.= " p.ref as product_ref,";
-$sql.= " p.label as product_label";
+$sql.= " p.label as product_label,";
+$sql.= " p.tobatch";
 // Add fields for extrafields
 foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 // Add fields from hooks
@@ -424,6 +426,7 @@ if ($resql)
 				$productstatic->type=$obj->product_type;
 				$productstatic->ref=$obj->product_ref;
 				$productstatic->label=$obj->product_label;
+				$productstatic->status_batch = $obj->tobatch;
 				print '<td>'.$productstatic->getNomUrl(1).'</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}

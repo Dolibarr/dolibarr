@@ -39,10 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
  */
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**

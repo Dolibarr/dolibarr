@@ -38,6 +38,11 @@ abstract class CommonDocGenerator
 	 */
 	public $error='';
 
+    /**
+     * @var string[]    Array of error strings
+     */
+    public $errors = array();
+
 	/**
      * @var DoliDB Database handler.
      */
