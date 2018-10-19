@@ -330,7 +330,7 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight + $this->variation_weight;
 		$child->weight_units = $parent->weight_units;
-		$varlabel = $this->getLabelOfCombination($this->fk_product_child);
+		$varlabel = $this->getCombinationLabel($this->fk_product_child);
 		$child->label = $parent->label.$varlabel;
 
 		if ($child->update($child->id, $user) > 0) {
@@ -688,9 +688,9 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	/**
 	 * Return label for combinations
 	 * @param 	int 	$prod_child		id of child
-	 * @return 	string	combination label
+	 * @return 	string					combination label
 	 */
-	public function getLabelOfCombination($prod_child)
+	public function getCombinationLabel($prod_child)
 	{
 		$label = '';
 		$sql = 'SELECT pav.value AS label';
