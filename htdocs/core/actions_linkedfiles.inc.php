@@ -77,20 +77,23 @@ elseif (GETPOST('linkit','none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Delete file/link
 if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-        $urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-        if (GETPOST('section', 'alpha')) $file = $upload_dir . "/" . $urlfile;	// For a delete of GED module urlfile contains full path from upload_dir
-        else															// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+        $urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);				// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        if (GETPOST('section', 'alpha')) 	// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
+        {
+        	$file = $upload_dir . (preg_match('/\/$/', $upload_dir) ? '' : '/') . $urlfile;
+        }
+        else								// For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 		{
        		$urlfile=basename($urlfile);
-			$file = $upload_dir . "/" . $urlfile;
+       		$file = $upload_dir . (preg_match('/\/$/', $upload_dir) ? '' : '/') . $urlfile;
 			if (! empty($upload_dirold)) $fileold = $upload_dirold . "/" . $urlfile;
 		}
-        $linkid = GETPOST('linkid', 'int');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        $linkid = GETPOST('linkid', 'int');
 
-        if ($urlfile)
+        if ($urlfile)		// delete of a file
         {
-	        $dir = dirname($file).'/';     // Chemin du dossier contenant l'image d'origine
-	        $dirthumb = $dir.'/thumbs/';   // Chemin du dossier contenant la vignette
+	        $dir = dirname($file).'/';		// Chemin du dossier contenant l'image d'origine
+	        $dirthumb = $dir.'/thumbs/';	// Chemin du dossier contenant la vignette (if file is an image)
 
 	        $ret = dol_delete_file($file, 0, 0, 0, (is_object($object)?$object:null));
             if (! empty($fileold)) dol_delete_file($fileold, 0, 0, 0, (is_object($object)?$object:null));     // Delete file using old path
@@ -114,7 +117,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
             if ($ret) setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
             else setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
         }
-        elseif ($linkid)
+        elseif ($linkid)	// delete of external link
         {
             require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
             $link = new Link($db);
@@ -143,7 +146,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         	}
         	else
         	{
-        		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id.(!empty($withproject)?'&withproject=1':''));
+        		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir','alpha')?'&section_dir='.urlencode(GETPOST('section_dir','alpha')):'').(!empty($withproject)?'&withproject=1':''));
         		exit;
         	}
         }
