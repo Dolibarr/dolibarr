@@ -12,7 +12,7 @@
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
- * Copyright (C) 2016-2017	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1111,6 +1111,19 @@ class Product extends CommonObject
 				if (!$error && ($prodcomb->fetchByFkProductChild($id) > 0) && ($prodcomb->delete() < 0)) {
 					$error++;
 					$this->errors[] = 'Error deleting child combination';
+				}
+			}
+
+			// Delete from product_association
+			if (!$error){
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
+				$sql.= " WHERE fk_product_pere = ".$id." OR fk_product_fils = ".$id;
+				dol_syslog(get_class($this).'::delete', LOG_DEBUG);
+				$result = $this->db->query($sql);
+				if (! $result)
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
 				}
 			}
 
