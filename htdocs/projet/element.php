@@ -605,6 +605,10 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
 				}
+				if ($key == 'propal')
+				{
+					if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
+				}
 
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 

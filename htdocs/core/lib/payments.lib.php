@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright (C) 2013	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2013	    Marcos García	        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +163,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			else $out.='&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
 	}
-	if ($type == 'order')
+	elseif ($type == 'order')
 	{
 		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='order_ref';
@@ -180,7 +181,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'invoice')
+	elseif ($type == 'invoice')
 	{
 		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='invoice_ref';
@@ -198,7 +199,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'contractline')
+	elseif ($type == 'contractline')
 	{
 		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='contractline_ref';
@@ -216,7 +217,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'member' || $type == 'membersubscription')
+	elseif ($type == 'member' || $type == 'membersubscription')
 	{
 		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='member_ref';
@@ -315,14 +316,14 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $
 
     	$parammessageform='ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
     	if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
-    	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+    	elseif (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
 
     	// Add other message if VAT exists
     	if ($object->total_vat != 0 || $object->total_tva != 0)
     	{
     		$parammessageform='ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
     		if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
-    		else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+    		elseif (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
     	}
     }
 
