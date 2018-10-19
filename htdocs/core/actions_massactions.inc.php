@@ -1019,16 +1019,6 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 
 			if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
 			else $result = $objecttmp->delete($user);
-			if ($result <= 0)
-			{
-				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-				$error++;
-				break;
-			}
-			else $nbok++;
-
-			if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
-			else $result = $objecttmp->delete($user);
 
 			if ($result <= 0)
 			{
