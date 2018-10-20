@@ -229,7 +229,7 @@ class lettering extends BookKeeping
 	 * @param boolean $notrigger no trigger
  	 * @return number
 	 */
-	public function updateLettrage($ids = array(), $notrigger = false)
+	public function updateLettering($ids = array(), $notrigger = false)
 	{
 		$error = 0;
 		$lettre = 'AAA';

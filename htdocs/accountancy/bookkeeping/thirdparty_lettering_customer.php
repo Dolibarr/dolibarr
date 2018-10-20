@@ -60,11 +60,10 @@ $search_year = GETPOST("search_year", 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 
-$lettering = GETPOST('lettering');
+$lettering = GETPOST('lettering', 'alpha');
 if (! empty($lettering)) {
 	$action = $lettering;
 }
-$toselect = GETPOST('toselect', 'array');
 
 // Did we click on purge search criteria ?
 // All tests are required to be compatible with all browsers
@@ -93,7 +92,7 @@ if ($result < 0)
 
 if ($action == 'lettering') {
 
-	$result = $lettering->updateLettrage($toselect);
+	$result = $lettering->updateLettering($toselect);
 
 	if ($result < 0) {
 		setEventMessages('', $lettering->errors, 'errors');
@@ -216,12 +215,8 @@ if ($resql) {
 	$tmp = '';
 	while ( $obj = $db->fetch_object($resql) ) {
 
-		if ($tmp != $obj->lettering_code || empty($tmp))
-			$tmp = $obj->lettering_code;
-
-		if ($tmp != $obj->lettering_code || empty($obj->lettering_code))
-
-		$solde += ($obj->credit - $obj->debit);
+		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
+		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
 
 		print '<tr class="oddeven">';
 
@@ -229,8 +224,9 @@ if ($resql) {
 			print '<td><a href="' . dol_buildpath('/accountancy/bookkeeping/card.php', 1) . '?piece_num=' . $obj->piece_num . '">';
 			print img_edit();
 			print '</a>&nbsp;' . $obj->doc_type . '</td>' . "\n";
-		} else
+		} else {
 			print '<td>' . $obj->doc_type . '</td>' . "\n";
+		}
 
 		print '<td>' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 		print '<td>' . $obj->doc_ref . '</td>';
@@ -249,14 +245,15 @@ if ($resql) {
 	}
 
 	print '<tr class="oddeven">';
-	print '<td colspan="4">'.$langs->trans("Total").':</td>' . "\n";
+	print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
 	print '<td align="right"><strong>' . price($debit) . '</strong></td>';
 	print '<td align="right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="5"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
-	print '<td colspan="6">'.$langs->trans("Balancing").':</td>' . "\n";
+	print '<td align="right" colspan="4">'.$langs->trans("Balancing").':</td>' . "\n";
+	print '<td colspan="2">&nbsp;</td>';
 	print '<td align="right"><strong>' . price($credit - $debit) . '</strong></td>';
 	print '<td colspan="3"></td>';
 	print "</tr>\n";
