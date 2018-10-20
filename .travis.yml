@@ -2,7 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
-# We use dist: trusty to have php 5.4+ available 
+# We use dist: trusty to have php 5.4+ available
 dist: trusty
 sudo: required
 
@@ -298,7 +298,7 @@ script:
   set -e
   # Exclusions are defined in the ruleset.xml file
   #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
-  #phpcs -s -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
+  phpcs -s -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
   set +e
   echo
 
