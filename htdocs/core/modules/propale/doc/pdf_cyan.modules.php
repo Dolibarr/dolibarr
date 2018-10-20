@@ -7,6 +7,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/propale/doc/pdf_cyan.modules.php
  *	\ingroup    propale
- *	\brief      Fichier de la classe permettant de generer les propales au modele Cyan
+ *	\brief      File of class to generate proposals from Cyan model
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -36,28 +37,87 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Class to generate PDF proposal Cyan
+ *	Class to generate PDF proposal with template Cyan
  */
 class pdf_cyan extends ModelePDFPropales
 {
-	var $db;
-	var $name;
-	var $description;
-	var $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
-	var $type;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-	var $version = 'development';
+	/**
+     * @var string model name
+     */
+    public $name;
 
-	var $page_largeur;
-	var $page_hauteur;
-	var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
 
-	var $emetteur;	// Objet societe qui emet
+    /**
+     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+     */
+    public $update_main_doc_field;
+
+	/**
+     * @var string document type
+     */
+    public $type;
+
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'development';
+
+   /**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+
+    /**
+	 * Issuer
+	 * @var Societe object that emits
+	 */
+	public $emetteur;
 
 
 	/**
@@ -65,10 +125,10 @@ class pdf_cyan extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
-		
+		global $conf, $langs, $mysoc;
+
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
 
@@ -88,16 +148,16 @@ class pdf_cyan extends ModelePDFPropales
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode reglement
-		$this->option_condreg = 1;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 0;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 0;             // Support credit notes
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1;                 // Display payment mode
+		$this->option_condreg = 1;                 // Display payment terms
+		$this->option_codeproduitservice = 1;      // Display product-service code
+		$this->option_multilang = 1;               // Available in several languages
+		$this->option_escompte = 1;                // Displays if there has been a discount
+		$this->option_credit_note = 1;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
-		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		$this->franchise=!$mysoc->tva_assuj;
 
@@ -107,8 +167,8 @@ class pdf_cyan extends ModelePDFPropales
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		
-		
+
+
 
 		$this->tva=array();
 		$this->localtax1=array();
@@ -128,7 +188,7 @@ class pdf_cyan extends ModelePDFPropales
      *  @param		int			$hideref			Do not show ref
      *  @return     int             				1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	public function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
@@ -136,12 +196,8 @@ class pdf_cyan extends ModelePDFPropales
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("propal");
-		$outputlangs->load("products");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal"));
 
 		$nblignes = count($object->lines);
 
@@ -286,8 +342,8 @@ class pdf_cyan extends ModelePDFPropales
 				        break;
 				    }
 				}
-				
-				
+
+
 
 				// New page
 				$pdf->AddPage();
@@ -308,7 +364,7 @@ class pdf_cyan extends ModelePDFPropales
 
 	            $tab_top = 90+$top_shift;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42+$top_shift:10);
-				
+
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -353,7 +409,7 @@ class pdf_cyan extends ModelePDFPropales
 				    if ($tmpuser->email) $notetoshow.=',  Mail: '.$tmpuser->email;
 				    if ($tmpuser->office_phone) $notetoshow.=', Tel: '.$tmpuser->office_phone;
 				}
-				
+
 				$pagenb = $pdf->getPage();
 				if ($notetoshow)
 				{
@@ -361,24 +417,24 @@ class pdf_cyan extends ModelePDFPropales
 
 				    $tab_width = $this->page_largeur-$this->marge_gauche-$this->marge_droite;
 				    $pageposbeforenote = $pagenb;
-				    
+
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 
 
 					$pdf->startTransaction();
-					
+
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					// Description
 					$pageposafternote=$pdf->getPage();
 					$posyafter = $pdf->GetY();
-					
+
 					if($pageposafternote>$pageposbeforenote )
 					{
 					    $pdf->rollbackTransaction(true);
-					    
+
 					    // prepar pages to receive notes
 					    while ($pagenb < $pageposafternote) {
 					        $pdf->AddPage();
@@ -390,16 +446,16 @@ class pdf_cyan extends ModelePDFPropales
 					        // The only function to edit the bottom margin of current page to set it.
 					        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
 					    }
-					    
+
 					    // back to start
 					    $pdf->setPage($pageposbeforenote);
 					    $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
 					    $pdf->SetFont('','', $default_font_size - 1);
 					    $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					    $pageposafternote=$pdf->getPage();
-					    
+
 					    $posyafter = $pdf->GetY();
-					    
+
 					    if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+20)))	// There is no space left for total+free text
 					    {
 					        $pdf->AddPage('','',true);
@@ -411,14 +467,14 @@ class pdf_cyan extends ModelePDFPropales
 					        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
 					        //$posyafter = $tab_top_newpage;
 					    }
-					    
-					    
+
+
 					    // apply note frame to previus pages
 					    $i = $pageposbeforenote;
 					    while ($i < $pageposafternote) {
 					        $pdf->setPage($i);
-					        
-					        
+
+
 					        $pdf->SetDrawColor(128,128,128);
 					        // Draw note frame
 					        if($i>$pageposbeforenote){
@@ -429,21 +485,21 @@ class pdf_cyan extends ModelePDFPropales
 					            $height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
 					            $pdf->Rect($this->marge_gauche, $tab_top-1, $tab_width, $height_note + 1);
 					        }
-					        
+
 					        // Add footer
 					        $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 					        $this->_pagefoot($pdf,$object,$outputlangs,1);
-					        
+
 					        $i++;
 					    }
-					    
+
 					    // apply note frame to last page
 					    $pdf->setPage($pageposafternote);
 					    if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 					    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					    $height_note=$posyafter-$tab_top_newpage;
 					    $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note+1);
-					    
+
 					}
 					else // No pagebreak
 					{
@@ -451,8 +507,8 @@ class pdf_cyan extends ModelePDFPropales
 					    $posyafter = $pdf->GetY();
 					    $height_note=$posyafter-$tab_top;
 					    $pdf->Rect($this->marge_gauche, $tab_top-1, $tab_width, $height_note+1);
-					    
-					    
+
+
 					    if($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+20)) )
 					    {
 					        // not enough space, need to add page
@@ -462,12 +518,12 @@ class pdf_cyan extends ModelePDFPropales
 					        $pdf->setPage($pageposafternote);
 					        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 					        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-					        
+
 					        $posyafter = $tab_top_newpage;
 					    }
-					    
+
 					}
-					
+
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $posyafter +6;
 				}
@@ -479,10 +535,10 @@ class pdf_cyan extends ModelePDFPropales
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
-				
+
 				// Use new auto collum system
 				$this->prepareArrayColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
-				
+
 				// Loop on each lines
 				$pageposbeforeprintlines=$pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
@@ -513,12 +569,12 @@ class pdf_cyan extends ModelePDFPropales
     						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
     						//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
     						$pdf->setPage($pageposbefore+1);
-    
+
     						$curY = $tab_top_newpage;
     						$showpricebeforepagebreak=0;
     					}
-    
-    					
+
+
     					if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
     					{
     						$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
@@ -526,7 +582,7 @@ class pdf_cyan extends ModelePDFPropales
     						$posYAfterImage=$curY+$imglinesize['height'];
     					}
 					}
-					
+
 					// Description of product line
 					if($this->getColumnStatus('desc'))
 					{
@@ -540,7 +596,7 @@ class pdf_cyan extends ModelePDFPropales
     						//print $pageposafter.'-'.$pageposbefore;exit;
     						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
     						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
-    
+
     						$pageposafter=$pdf->getPage();
     						$posyafter=$pdf->GetY();
     						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
@@ -596,7 +652,7 @@ class pdf_cyan extends ModelePDFPropales
 					    $this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
 					    $nexY = max($pdf->GetY(),$nexY);
 					}
-					
+
 					// Quantity
 					// Enough for 6 chars
 					if ($this->getColumnStatus('qty'))
@@ -605,8 +661,8 @@ class pdf_cyan extends ModelePDFPropales
 					    $this->printStdColumnContent($pdf, $curY, 'qty', $qty);
 					    $nexY = max($pdf->GetY(),$nexY);
 					}
-					
-					
+
+
 					// Unit
 					if ($this->getColumnStatus('unit'))
 					{
@@ -614,7 +670,7 @@ class pdf_cyan extends ModelePDFPropales
 					    $this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 					    $nexY = max($pdf->GetY(),$nexY);
 					}
-					
+
 					// Discount on line
 					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent)
 					{
@@ -622,7 +678,7 @@ class pdf_cyan extends ModelePDFPropales
 					    $this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
 					    $nexY = max($pdf->GetY(),$nexY);
 					}
-					
+
 					// Total HT line
 					if ($this->getColumnStatus('totalexcltax'))
 					{
@@ -630,8 +686,8 @@ class pdf_cyan extends ModelePDFPropales
 					    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
 					    $nexY = max($pdf->GetY(),$nexY);
 					}
-					
-					
+
+
 					$parameters=array(
 					    'object' => $object,
 					    'i' => $i,
@@ -642,8 +698,8 @@ class pdf_cyan extends ModelePDFPropales
 					    'hidedetails' => $hidedetails
 					);
 					$reshook=$hookmanager->executeHooks('printPDFline',$parameters,$this);    // Note that $object may have been modified by hook
-					
-					
+
+
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
@@ -1069,7 +1125,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			$pdf            Object PDF
+	 *	@param	object		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -1344,7 +1400,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		object		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1389,35 +1445,35 @@ class pdf_cyan extends ModelePDFPropales
 		foreach ($this->cols as $colKey => $colDef)
 		{
 		    if(!$this->getColumnStatus($colKey)) continue;
-		    
+
 		    // get title label
 		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
-		    
+
 		    // Add column separator
 		    if(!empty($colDef['border-left'])){
 		        $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 		    }
-		    
+
 		    if (empty($hidetop))
 		    {
 		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
-		    
+
 		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
 		      $pdf->MultiCell($textWidth,2,$colDef['title']['label'],'',$colDef['title']['align']);
 		    }
 		}
-		
+
 		if (empty($hidetop)){
 			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 		}
 
-		
+
 	}
 
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	object		$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -1639,7 +1695,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
+	 *   	@param	object		$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -1655,7 +1711,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *	Show area for the customer to sign
 	 *
-	 *	@param	PDF			$pdf            Object PDF
+	 *	@param	object		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
@@ -1686,34 +1742,34 @@ class pdf_cyan extends ModelePDFPropales
 
 		return ($tab_hl*7);
 	}
-	
-	
+
+
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
-	 *   	@param	outputlangs		$outputlangs    langs
+	 *   	@param	object		   $object    		common object
+	 *   	@param	string		   $outputlangs     langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
 	 *      @return	null
 	 */
 	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
-	    
+
 	    global $conf, $hookmanager;
-	    
+
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
 	        'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
-	    
+
 	    // Default field style for content
 	    $this->defaultTitlesFieldsStyle = array(
 	        'align' => 'C', // R,C,L
 	        'padding' => array(0.5,0,0.5,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
-	    
+
 	    /*
 	     * For exemple
 	     $this->cols['theColKey'] = array(
@@ -1731,7 +1787,7 @@ class pdf_cyan extends ModelePDFPropales
 	     ),
 	     );
 	     */
-	    
+
 	    $rank=0; // do not use negative rank
 	    $this->cols['desc'] = array(
 	        'rank' => $rank,
@@ -1748,7 +1804,7 @@ class pdf_cyan extends ModelePDFPropales
 	            'align' => 'L',
 	        ),
 	    );
-	    
+
 	    $rank = $rank + 10;
 	    $this->cols['photo'] = array(
 	        'rank' => $rank,
@@ -1763,13 +1819,13 @@ class pdf_cyan extends ModelePDFPropales
 	        ),
 	        'border-left' => false, // remove left line separator
 	    );
-	    
+
 	    if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE) && !empty($this->atleastonephoto))
 	    {
 	        $this->cols['photo']['status'] = true;
 	    }
-	    
-	    
+
+
 	    $rank = $rank + 10;
 	    $this->cols['vat'] = array(
 	        'rank' => $rank,
@@ -1780,12 +1836,12 @@ class pdf_cyan extends ModelePDFPropales
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-	    
+
 	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 	    {
 	        $this->cols['vat']['status'] = true;
 	    }
-	    
+
 	    $rank = $rank + 10;
 	    $this->cols['subprice'] = array(
 	        'rank' => $rank,
@@ -1796,7 +1852,7 @@ class pdf_cyan extends ModelePDFPropales
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-	    
+
 	    $rank = $rank + 10;
 	    $this->cols['qty'] = array(
 	        'rank' => $rank,
@@ -1807,7 +1863,7 @@ class pdf_cyan extends ModelePDFPropales
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-	    
+
 	    $rank = $rank + 10;
 	    $this->cols['progress'] = array(
 	        'rank' => $rank,
@@ -1818,12 +1874,12 @@ class pdf_cyan extends ModelePDFPropales
 	        ),
 	        'border-left' => false, // add left line separator
 	    );
-	    
+
 	    if($this->situationinvoice)
 	    {
 	        $this->cols['progress']['status'] = true;
 	    }
-	    
+
 	    $rank = $rank + 10;
 	    $this->cols['unit'] = array(
 	        'rank' => $rank,
@@ -1837,7 +1893,7 @@ class pdf_cyan extends ModelePDFPropales
 	    if($conf->global->PRODUCT_USE_UNITS){
 	        $this->cols['unit']['status'] = true;
 	    }
-	    
+
 	    $rank = $rank + 10;
 	    $this->cols['discount'] = array(
 	        'rank' => $rank,
@@ -1851,7 +1907,7 @@ class pdf_cyan extends ModelePDFPropales
 	    if ($this->atleastonediscount){
 	        $this->cols['discount']['status'] = true;
 	    }
-	    
+
 	    $rank = $rank + 10;
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
@@ -1862,8 +1918,8 @@ class pdf_cyan extends ModelePDFPropales
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-	    
-	    
+
+
 	    $parameters=array(
 	        'object' => $object,
 	        'outputlangs' => $outputlangs,
@@ -1871,7 +1927,7 @@ class pdf_cyan extends ModelePDFPropales
 	        'hidedesc' => $hidedesc,
 	        'hideref' => $hideref
 	    );
-	    
+
 	    $reshook=$hookmanager->executeHooks('defineColumnField',$parameters,$this);    // Note that $object may have been modified by hook
 	    if ($reshook < 0)
 	    {
@@ -1885,7 +1941,7 @@ class pdf_cyan extends ModelePDFPropales
 	    {
 	        $this->cols = $hookmanager->resArray;
 	    }
-	    
+
 	}
-	
+
 }
