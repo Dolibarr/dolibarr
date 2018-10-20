@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +19,8 @@
  */
 
 /**
- * \file      accountancy/class/bookkeeping.class.php
- * \ingroup   Accounting Expert
+ * \file      htdocs/accountancy/class/lettering.class.php
+ * \ingroup   accountancy
  * \brief     Fichier de la classe des comptes comptable
  */
 
@@ -29,9 +30,9 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
 
 /**
- * Class lettering
+ * Class Lettering
  */
-class lettering extends BookKeeping
+class Lettering extends BookKeeping
 {
     /**
      * lettrageTiers
@@ -48,10 +49,10 @@ class lettering extends BookKeeping
 		$object->fetch($socid);
 
 
-		if( $object->code_compta == '411CUSTCODE')
+		if ($object->code_compta == '411CUSTCODE')
 			$object->code_compta = '';
 
-		if( $object->code_compta_fournisseur == '401SUPPCODE')
+		if ($object->code_compta_fournisseur == '401SUPPCODE')
 			$object->code_compta_fournisseur = '';
 
 
