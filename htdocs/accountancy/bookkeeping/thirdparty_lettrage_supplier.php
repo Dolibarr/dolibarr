@@ -4,6 +4,7 @@
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	      <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +22,8 @@
  */
 
 /**
- * \file    accounting/bookkeeping/thirdparty_lettrage.php
- * \ingroup Accounting Expert
+ * \file    htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
+ * \ingroup accountancy
  * \brief   Onglet de gestion de parametrages des ventilations
  */
 
@@ -65,7 +66,7 @@ $object->id = $socid;
 $object->fetch($socid);
 
 $form = new Form($db);
-$BookKeeping = new lettering($db);
+$BookKeeping = new Lettering($db);
 $formaccounting = new FormAccounting($db);
 
 
