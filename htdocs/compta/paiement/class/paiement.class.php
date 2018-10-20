@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2018      Thibault FOUCART		 <support@ptibogxiv.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,16 +74,69 @@ class Paiement extends CommonObject
 	public $author;
 	public $paiementid;	// Type de paiement. Stocke dans fk_paiement
 	// de llx_paiement qui est lie aux types de
-	//paiement de llx_c_paiement
-	public $num_paiement;	// Numero du CHQ, VIR, etc...
-	public $num_payment;	// Numero du CHQ, VIR, etc...
-    public $payment_id;	// Id of external modepayment
-    public $payment_site;	// name of external modepayment
-	public $bank_account;	// Id compte bancaire du paiement
-	public $bank_line;     // Id de la ligne d'ecriture bancaire
+    //paiement de llx_c_paiement
+
+    /**
+     * @var string type libelle
+     */
+    public $type_libelle;
+
+    /**
+     * @var string type code
+     */
+    public $type_code;
+
+    /**
+     * @var string Numero du CHQ, VIR, etc...
+     * @deprecated
+     * @see num_payment
+     */
+    public $numero;
+
+    /**
+     * @var string Numero du CHQ, VIR, etc...
+     * @deprecated
+     * @see num_payment
+     */
+    public $num_paiement;
+
+    /**
+     * @var string Numero du CHQ, VIR, etc...
+     */
+    public $num_payment;
+
+    /**
+     * @var string Id of external payment mode
+     */
+    public $ext_payment_id;
+
+    /**
+     * @var string Name of external payment mode
+     */
+    public $ext_payment_site;
+
+    /**
+     * @var int bank account id of payment
+     * @deprecated
+     */
+    public $bank_account;
+
+    /**
+     * @var int bank account id of payment
+     */
+    public $fk_account;
+
+    /**
+     * @var int id of payment line in bank account
+     */
+    public $bank_line;
+
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
-	// fk_paiement dans llx_paiement_facture est le rowid du paiement
-    public $fk_paiement;    // Type of paiment
+    // fk_paiement dans llx_paiement_facture est le rowid du paiement
+    /**
+     * @var int payment id
+     */
+    public $fk_paiement;    // Type of payment
 
 
 	/**
@@ -90,7 +144,7 @@ class Paiement extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -103,7 +157,7 @@ class Paiement extends CommonObject
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
 	 *    @return   int		            <0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id, $ref='', $fk_bank='')
+	public function fetch($id, $ref='', $fk_bank='')
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
@@ -138,8 +192,8 @@ class Paiement extends CommonObject
 				$this->type_libelle   = $obj->type_libelle;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
-                $this->payment_id     = $obj->ext_payment_id;
-                $this->payment_site   = $obj->ext_payment_site;
+                $this->ext_payment_id = $obj->ext_payment_id;
+                $this->ext_payment_site = $obj->ext_payment_site;
 
 				$this->bank_account   = $obj->fk_account; // deprecated
 				$this->fk_account     = $obj->fk_account;
@@ -235,7 +289,7 @@ class Paiement extends CommonObject
 		$note = ($this->note_public?$this->note_public:$this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($note)."', ".($this->payment_id?"'".$this->db->escape($this->payment_id)."'":"null").", ".($this->payment_site?"'".$this->db->escape($this->payment_site)."'":"null").", ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
