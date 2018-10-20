@@ -115,7 +115,7 @@ if ($action=="deleteline"){
         $row = $db->fetch_array ($resql);
         $deletelineid=$row[0];
         $invoice->deleteline($deletelineid);
-        $invoice->fetch($deletelineid);
+        $invoice->fetch($placeid);
     }
 }
 

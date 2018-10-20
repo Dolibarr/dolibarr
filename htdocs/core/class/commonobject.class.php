@@ -399,6 +399,12 @@ abstract class CommonObject
 	public $firstname;
 	public $civility_id;
 
+	// Dates
+	public $date_creation;			// Date creation
+	public $date_validation;		// Date validation
+	public $date_modification;		// Date last change (tms field)
+
+
 
 	// No constructor as it is an abstract class
 
@@ -4810,6 +4816,7 @@ abstract class CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$this->array_options = array();
 				$numrows=$this->db->num_rows($resql);
 				if ($numrows)
 				{

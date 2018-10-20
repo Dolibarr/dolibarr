@@ -28,7 +28,7 @@ if (empty($conf) || ! is_object($conf))
 ?>
 
 <!-- BEGIN PHP TEMPLATE core/tpl/filemanager.tpl.php -->
-<!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
+<!-- Doc of fileTree plugin at https://www.abeautifulsite.net/jquery-file-tree -->
 
 <?php
 
@@ -111,7 +111,7 @@ if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABL
 		<?php
 	}
 
-	$sectiondir=GETPOST('file','alpha');
+	$sectiondir=GETPOST('file','alpha')?GETPOST('file','alpha'):GETPOST('section_dir','alpha');
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     $formfile=new FormFile($db);
@@ -168,14 +168,14 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
     	print '<tr><td>';
 
-    	// Show filemanager tree (will be filled by call of ajax /ecm/tpl/enablefiletreeajax.tpl.php that execute ajaxdirtree.php)
+    	// Show filemanager tree (will be filled by a call of ajax /ecm/tpl/enablefiletreeajax.tpl.php, later, that executes ajaxdirtree.php)
 	    print '<div id="filetree" class="ecmfiletree"></div>';
 
 	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
 	    print '</td></tr>';
     }
-    else
+    else	// Show filtree when ajax is disabled (rare)
     {
         print '<tr><td style="padding-left: 20px">';
 
@@ -186,6 +186,9 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
         // Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
         print '<div id="filetree" class="ecmfiletree">';
 
+        // Variables that may be defined:
+        // $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']
+        // $_POST['dir']
         $mode='noajax';
         if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
         include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirtree.php';
@@ -211,7 +214,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 $mode='noajax';
 if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
-include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
+include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';	// Show content of a directory on right side
 
 
 // End right panel
@@ -224,7 +227,15 @@ include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 <?php
 
 
-if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) // Show filtree when ajax is enabled
+{
+	//var_dump($modulepart);
+	// Variables that may be defined:
+	// $_GET['modulepart'], $_GET['openeddir'], $_GET['sortfield'], $_GET['sortorder']
+	// $_POST['dir']
+	// $_POST['section_dir'], $_POST['section_id'], $_POST['token'], $_POST['max_file_size'], $_POST['sendit']
+	if (GETPOST('section_dir','alpha')) { $preopened=GETPOST('section_dir','alpha'); }
+
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }
 

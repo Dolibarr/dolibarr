@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,19 +115,19 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
+			 $this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = trim($this->fk_user_creat);
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = trim($this->fk_user_modif);
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -296,19 +296,19 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
+			 $this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = trim($this->fk_user_creat);
+			 $this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = trim($this->fk_user_modif);
+			 $this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -358,9 +358,6 @@ class Productlot extends CommonObject
 		}
 
 		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
 			// Call triggers
 			$result=$this->call_trigger('PRODUCTLOT_MODIFY',$user);
 			if ($result < 0) { $error++; }
@@ -395,8 +392,8 @@ class Productlot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
+		//if (!$error) {
+			//if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -404,8 +401,8 @@ class Productlot extends CommonObject
 				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
-			}
-		}
+			//}
+		//}
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
@@ -587,15 +584,15 @@ class Productlot extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->entity = '';
-		$this->fk_product = '';
+		$this->entity = null;
+		$this->fk_product = null;
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
 		$this->datec = '';
 		$this->tms = '';
-		$this->fk_user_creat = '';
-		$this->fk_user_modif = '';
+		$this->fk_user_creat = null;
+		$this->fk_user_modif = null;
 		$this->import_key = '';
 	}
 }

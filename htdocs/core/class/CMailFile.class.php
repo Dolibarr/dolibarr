@@ -569,7 +569,8 @@ class CMailFile
 				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
 			}
 
-			if(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+			if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
+			{
 				$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
 				$this->addr_cc = '';
 				$this->addr_bcc = '';
@@ -1349,10 +1350,10 @@ class CMailFile
 		// Build the list of image extensions
 		$extensions = array_keys($this->image_types);
 
-
+		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches);  // If "xxx.ext" or 'xxx.ext' found
 
-		if ($matches)
+		if (! empty($matches))
 		{
 			$i=0;
 			foreach ($matches[1] as $full)
