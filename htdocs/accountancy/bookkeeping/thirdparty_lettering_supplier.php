@@ -104,7 +104,7 @@ if ($action == 'lettering') {
 
 if ($action == 'autolettrage') {
 
-	$result = $lettering->lettering_thirdparty($socid);
+	$result = $lettering->letteringThirdparty($socid);
 
 	if ($result < 0) {
 		setEventMessages('', $lettering->errors, 'errors');
@@ -266,7 +266,7 @@ if ($resql) {
 
 	print "</table>";
 
-	print '<input class="butAction" type="submit" value="lettering" name="lettering" id="lettering">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '&action=lettering">'.$langs->trans('AccountancyLettering').'</a>';
 	//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '&action=autolettrage">'.$langs->trans('AccountancyAutoLettering').'</a>';
 	print "</form>";
 	$db->free($resql);

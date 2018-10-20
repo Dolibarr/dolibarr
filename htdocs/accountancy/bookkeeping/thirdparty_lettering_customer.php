@@ -103,7 +103,7 @@ if ($action == 'lettering') {
 
 if ($action == 'autolettrage') {
 
-	$result = $lettering->lettering_thirdparty($socid);
+	$result = $lettering->letteringThirdparty($socid);
 
 	if ($result < 0) {
 		setEventMessages('', $lettering->errors, 'errors');

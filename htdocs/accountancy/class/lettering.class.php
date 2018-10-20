@@ -32,12 +32,12 @@ include_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
 class lettering extends BookKeeping
 {
 	/**
-	 * lettering_thirdparty
+	 * letteringThirdparty
 	 *
 	 * @param int $socid Thirdparty id
 	 * @return int 1 OK, <0 error
 	 */
-	public function lettering_thirdparty($socid)
+	public function letteringThirdparty($socid)
 	{
 		global $conf;
 
