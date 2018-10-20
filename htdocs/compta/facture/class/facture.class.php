@@ -990,6 +990,7 @@ class Facture extends CommonInvoice
 		$this->user_valid         = '';
 		$this->fk_facture_source  = 0;
 		$this->date_creation      = '';
+		$this->date_modification = '';
 		$this->date_validation    = '';
 		$this->ref_client         = '';
 		$this->close_code         = '';
