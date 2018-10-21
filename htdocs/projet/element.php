@@ -291,7 +291,7 @@ $listofreferent=array(
 	'title'=>"ListSupplierProposalsAssociatedProject",
 	'class'=>'SupplierProposal',
 	'table'=>'supplier_proposal',
-	'datefieldname'=>'date',
+	'datefieldname'=>'datec',
     'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'supplier_proposal',
     'buttonnew'=>'AddSupplierProposal',
@@ -608,6 +608,10 @@ foreach ($listofreferent as $key => $value)
 				if ($key == 'invoice')
 				{
 					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				}
+				if ($key == 'propal')
+				{
+					if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
 				}
 
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;

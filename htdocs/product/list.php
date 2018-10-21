@@ -700,6 +700,7 @@ else
 				$product_static->status     = $obj->tosell;
 				$product_static->entity = $obj->entity;
 				$product_static->pmp = $obj->pmp;
+				$product_static->status_batch = $obj->tobatch;
 
 				if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 				{
