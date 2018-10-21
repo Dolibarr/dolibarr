@@ -89,7 +89,7 @@ class box_services_contracts extends ModeleBoxes
 		    $productstatic = new Product($db);
 
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-			$sql.= " c.rowid, c.ref, c.statut as contract_status,";
+			$sql.= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
 			$sql.= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type,";
 			$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
@@ -127,6 +127,8 @@ class box_services_contracts extends ModeleBoxes
                     $contractstatic->statut=$objp->contract_status;
 					$contractstatic->id=$objp->rowid;
 					$contractstatic->ref=$objp->ref;
+					$contractstatic->ref_customer=$objp->ref_customer;
+					$contractstatic->ref_supplier=$objp->ref_supplier;
 
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
