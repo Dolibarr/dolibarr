@@ -2918,7 +2918,7 @@ div .tdtop {
 .boxstats130 {
     width: 135px;
     height: 48px;
-    padding: 3px
+    padding: 3px;
 }
 @media only screen and (max-width: 767px)
 {
