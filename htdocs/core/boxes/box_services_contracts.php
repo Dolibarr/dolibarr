@@ -41,7 +41,7 @@ class box_services_contracts extends ModeleBoxes
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $param;
 
 	var $info_box_head = array();
@@ -88,7 +88,7 @@ class box_services_contracts extends ModeleBoxes
 		    $thirdpartytmp = new Societe($db);
 		    $productstatic = new Product($db);
 
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
+			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql.= " c.rowid, c.ref, c.statut as contract_status,";
 			$sql.= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type,";
 			$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity";
@@ -130,6 +130,13 @@ class box_services_contracts extends ModeleBoxes
 
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
+					$thirdpartytmp->email = $objp->email;
+					$thirdpartytmp->client = $objp->client;
+					$thirdpartytmp->fournisseur = $objp->fournisseur;
+					$thirdpartytmp->code_client = $objp->code_client;
+					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
