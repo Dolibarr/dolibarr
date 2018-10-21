@@ -468,16 +468,17 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						{
 							//print 'modulepart='.$modulepart.' fullpathselecteddir='.$fullpathselecteddir.' - val[fullrelativename] (in database)='.$val['fullrelativename'].' - val[id]='.$val['id'].' - is_dir='.dol_is_dir($fullpathselecteddir . $file).' - file='.$file."\n";
 							$newselecteddir = $val['fullrelativename'];
+							$newfullpathselecteddir='';
 							if ($modulepart == 'ecm')
 							{
 								$newfullpathselecteddir=$conf->ecm->dir_output.'/'.($val['fullrelativename'] != '/' ? $val['fullrelativename'] : '');
 							}
-							if ($modulepart == 'medias')
+							elseif ($modulepart == 'medias')
 							{
 								$newfullpathselecteddir=$dolibarr_main_data_root.'/medias/'.($val['fullrelativename'] != '/' ? $val['fullrelativename'] : '');
 							}
 
-							treeOutputForAbsoluteDir($sqltree, $newselecteddir, $newfullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened, $depth+1);
+							if ($newfullpathselecteddir) treeOutputForAbsoluteDir($sqltree, $newselecteddir, $newfullpathselecteddir, $modulepart, $websitekey, $pageid, $preopened, $fullpathpreopened, $depth+1);
 						}
 
 						print "</li>\n";
