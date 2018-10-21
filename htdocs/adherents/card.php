@@ -209,7 +209,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			setEventMessages($object->errors, $object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -639,7 +639,9 @@ if (empty($reshook))
 				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 				$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
-				$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, 2);
+				$moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
+
+				$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 				if ($result < 0)
 				{
 					$error++;
@@ -710,7 +712,9 @@ if (empty($reshook))
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 					$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
 
-					$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1);
+					$moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
+
+					$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 				}
 				if ($result < 0)
 				{

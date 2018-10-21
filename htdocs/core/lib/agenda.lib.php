@@ -131,7 +131,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
-		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0);
+		print $formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</td></tr>';
 	}
 

@@ -48,6 +48,7 @@ $result=restrictedArea($user,'projet',$id,'projet&project');
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 if ($id > 0 || ! empty($ref)) {
     $upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);

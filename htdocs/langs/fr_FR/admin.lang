@@ -1039,7 +1039,7 @@ Delays_MAIN_DELAY_MEMBERS=Tolérance de retard avant alerte (en jours) sur cotis
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolérance de retard avant alerte (en jours) sur chèques à déposer
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolérance de retard avant alerte (en jours) sur les notes de frais à approuver
 SetupDescription1=L'espace configuration permet de réaliser le paramétrage afin de pouvoir commencer à utiliser l'application.
-SetupDescription2=Les deux étapes obligatoires sont les deux étapes suivantes (les 2 premières entrées dans le menu de configuration gauche)
+SetupDescription2=Les deux étapes obligatoires sont les 2 premières du menu de configuration, c'est à dire
 SetupDescription3=Les paramètres dans le menu <a href="%s">%s -> %s</a>. Cette étape est requise car elle définie des données utilisées dans les écrans Dolibarr pour personnaliser le comportement par défaut du logiciel (pour les fonctionnalités liées à un pays par exemple).
 SetupDescription4=Les paramètres dans le menu <a href="%s"> %s -> %s </a>. Cette étape est requise car Dolibarr ERP/CRM est un ensemble de plusieurs modules/applications, tous plus ou moins indépendants. Les fonctionnalités sont ajoutées aux menus pour chaque module que vous activez.
 SetupDescription5=Les autres entrées de configuration gèrent des paramètres facultatifs.
@@ -1207,7 +1207,7 @@ WatermarkOnDraft=Filigrane sur les documents brouillons
 JSOnPaimentBill=Activer la fonctionnalité de remplissage automatique des lignes de paiement sur le formulaire de paiement
 CompanyIdProfChecker=Règles sur les Identifiants professionnels
 MustBeUnique=Doit être unique ?
-MustBeMandatory=Obligatoire pour créer des tiers ?
+MustBeMandatory=Obligatoire pour créer des tiers (si num tva ou type de société défini) ?
 MustBeInvoiceMandatory=Obligatoire pour valider des factures ?
 TechnicalServicesProvided=Services techniques fournis
 #####DAV #####

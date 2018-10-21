@@ -52,7 +52,7 @@ create table llx_facturedet
   date_end						datetime   DEFAULT NULL,			-- date end if service
   info_bits						integer    DEFAULT 0,				-- VAT NPR or not (for france only)
 
-  buy_price_ht					double(24,8) DEFAULT 0,				-- buying price
+  buy_price_ht					double(24,8) DEFAULT 0,				-- buying price. Note: this value is saved as an always positive value, even on credit notes (it is price we bought the product before selling it).
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line

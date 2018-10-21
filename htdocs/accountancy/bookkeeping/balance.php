@@ -41,6 +41,21 @@ $page = GETPOST("page");
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'alpha');
+if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
+
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+//if (! $sortfield) $sortfield="p.date_fin";
+//if (! $sortorder) $sortorder="DESC";
+
+
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 
@@ -52,14 +67,6 @@ $search_accountancy_code_end = GETPOST('search_accountancy_code_end', 'alpha');
 if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
-
-if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
-
-
-$limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
-if (empty($page) || $page < 0) { $page = 0; }
-
-$offset = $limit * $page;
 
 $object = new BookKeeping($db);
 
@@ -96,23 +103,27 @@ if ($sortorder == "")
 if ($sortfield == "")
 	$sortfield = "t.numero_compte";
 
-$options = '';
+
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+
 $filter = array ();
 if (! empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
-	$options .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');
+	$param .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');
 }
 if (! empty($search_date_end)) {
 	$filter['t.doc_date<='] = $search_date_end;
-	$options .= '&amp;date_endmonth=' . GETPOST('date_endmonth', 'int') . '&amp;date_endday=' . GETPOST('date_endday', 'int') . '&amp;date_endyear=' . GETPOST('date_endyear', 'int');
+	$param .= '&amp;date_endmonth=' . GETPOST('date_endmonth', 'int') . '&amp;date_endday=' . GETPOST('date_endday', 'int') . '&amp;date_endyear=' . GETPOST('date_endyear', 'int');
 }
 if (! empty($search_accountancy_code_start)) {
 	$filter['t.numero_compte>='] = $search_accountancy_code_start;
-	$options .= '&amp;search_accountancy_code_start=' . $search_accountancy_code_start;
+	$param .= '&amp;search_accountancy_code_start=' . $search_accountancy_code_start;
 }
 if (! empty($search_accountancy_code_end)) {
 	$filter['t.numero_compte<='] = $search_accountancy_code_end;
-	$options .= '&amp;search_accountancy_code_end=' . $search_accountancy_code_end;
+	$param .= '&amp;search_accountancy_code_end=' . $search_accountancy_code_end;
 }
 
 
@@ -134,8 +145,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
  * View
  */
 
-if ($action == 'export_csv') {
-
+if ($action == 'export_csv')
+{
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'balance';
@@ -187,7 +198,8 @@ else {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$button = '<input type="submit" name="exportcsv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, $button, $result, $result, 'title_accountancy', 0);
+
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	$moreforfilter = '';
 
@@ -225,12 +237,12 @@ else {
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
-	print_liste_field_titre("Label", $_SERVER['PHP_SELF'], "t.label_operation", "", $options, "", $sortfield, $sortorder);
-	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $options, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$total_debit = 0;

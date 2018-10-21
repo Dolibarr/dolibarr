@@ -677,6 +677,7 @@ class Contact extends CommonObject
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
+		$sql.= " c.datec as date_creation, c.tms as date_modification,";
 		$sql.= " co.label as country, co.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
@@ -711,6 +712,9 @@ class Contact extends CommonObject
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
 
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
 				$this->departement_code	= $obj->state_code;	       // deprecated
@@ -1046,9 +1050,9 @@ class Contact extends CommonObject
 	function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+		$sql.= " WHERE mc.fk_mailing=m.rowid AND mc.email = '".$this->db->escape($this->email)."' ";
+		$sql.= " AND m.entity IN (".getEntity($this->element).") AND mc.statut NOT IN (-1,0)";      // -1 error, 0 not sent, 1 sent with success
 
 		$resql=$this->db->query($sql);
 		if ($resql)

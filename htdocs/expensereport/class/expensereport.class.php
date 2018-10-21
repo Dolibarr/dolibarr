@@ -139,7 +139,7 @@ class ExpenseReport extends CommonObject
         // List of language codes for status
         $this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
         $this->statuts = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
-        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut8');
+        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut5');
 
         return 1;
     }

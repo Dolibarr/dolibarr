@@ -60,7 +60,7 @@ if (! $res) die("Include of main fails");
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/myobject.lib.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","other"));
@@ -80,7 +80,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectcard','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Initialize array of search criterias
@@ -97,9 +97,6 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 //if ($user->societe_id > 0) access_forbidden();
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'mymodule', $id);
-
-// fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -122,7 +119,7 @@ if (empty($reshook))
 
 	$permissiontoadd = $user->rights->mymodule->write;
 	$permissiontodelete = $user->rights->mymodule->delete;
-	if (empty($backtopage)) $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).'?id=__ID__';
+	if (empty($backtopage)) $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.($id > 0 ? $id : '__ID__');
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
 	$triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 

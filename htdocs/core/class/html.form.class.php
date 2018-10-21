@@ -1110,8 +1110,9 @@ class Form
 			if (count($scrit) > 1) $sql.=")";
 			if (! empty($conf->barcode->enabled))
 			{
-				$sql .= " OR s.barcode LIKE '".$this->db->escape($filterkey)."%'";
+				$sql .= " OR s.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			}
+			$sql.= " OR s.code_client LIKE '".$this->db->escape($prefix.$filterkey)."%' OR s.code_fournisseur LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			$sql.=")";
 		}
 		$sql.=$this->db->order("nom","ASC");
@@ -2970,7 +2971,10 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$label=($langs->trans("DemandReasonType".$obj->code)!=("DemandReasonType".$obj->code)?$langs->trans("DemandReasonType".$obj->code):($obj->label!='-'?$obj->label:''));
+				$label=($obj->label!='-'?$obj->label:'');
+				if ($langs->trans("DemandReasonType".$obj->code) != ("DemandReasonType".$obj->code)) $label = $langs->trans("DemandReasonType".$obj->code); // So translation key DemandReasonTypeSRC_XXX will work
+				if ($langs->trans($obj->code) != $obj->code) $label=$langs->trans($obj->code);																// So translation key SRC_XXX will work
+
 				$tmparray[$obj->rowid]['id']   =$obj->rowid;
 				$tmparray[$obj->rowid]['code'] =$obj->code;
 				$tmparray[$obj->rowid]['label']=$label;
@@ -3019,7 +3023,8 @@ class Form
 			{
 				print '<option value="'.$arraydemandreason['id'].'">';
 			}
-			print $arraydemandreason['label'];
+			$label=$arraydemandreason['label'];	// Translation of label was already done into the ->loadCacheInputReason
+			print $langs->trans($label);
 			print '</option>';
 		}
 		print '</select>';
@@ -3335,7 +3340,7 @@ class Form
 			            if ($obj->situation_final != 1) {
 							//Not prov?
 			                if (substr($obj->facnumber, 1, 4) != 'PROV') {
-			                    if ($selected == $obj->situation_final) {
+			                    if ($selected == $obj->rowid) {
 			                        $opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->facnumber . '</option>';
 								} else {
 								    $opt .= '<option value="' . $obj->rowid . '">' . $obj->facnumber . '</option>';
@@ -3630,7 +3635,7 @@ class Form
 	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice='', $useajax=0, $height=200, $width=500, $disableformtag=0)
+	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice='', $useajax=0, $height=210, $width=500, $disableformtag=0)
 	{
 		global $langs,$conf;
 		global $useglobalvars;
@@ -4710,6 +4715,10 @@ class Form
 				$tmpthirdparty=new Societe($this->db);
 				$defaulttx=get_default_tva($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
 				$defaultnpr=get_default_npr($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
+		        if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
+			        $defaultcode=$reg[1];
+			        $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
+		        }
 				if (empty($defaulttx)) $defaultnpr=0;
 			}
 
@@ -6193,6 +6202,7 @@ class Form
 				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal').')'),
 				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande').')'),
 				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.facnumber as ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture').')'),
+				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture').')'),
 				'contrat'=>array('enabled'=>$conf->contrat->enabled , 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('contract').')'),
 				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('intervention').')'),
 				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled , 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('supplier_proposal').')'),
@@ -6255,8 +6265,7 @@ class Form
 					{
 						$objp = $this->db->fetch_object($resqllist);
 
-						$var = ! $var;
-						print '<tr ' . $bc [$var] . '>';
+						print '<tr class="oddeven">';
 						print '<td aling="left">';
 						print '<input type="radio" name="idtolinkto" value=' . $objp->rowid . '>';
 						print '</td>';

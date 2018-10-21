@@ -13,6 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4137,13 +4138,13 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- * 	@param	int		$id					To force an id on html objects
+ * 	@param	string	$id					To force an id on html objects
  *  @param  string  $morecssontable     More css on table
  *	@param	string	$morehtmlcenter		Added message to show on center
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='', $morehtmlcenter='')
+function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png', $pictoisfullpath=0, $id='', $morecssontable='', $morehtmlcenter='')
 {
 	global $conf;
 
@@ -4153,7 +4154,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle" id="pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -4955,7 +4956,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" order/invoice)
+ *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
  *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country
  */
@@ -4976,7 +4977,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 
 		if ($mysoc->country_code == $thirdparty_seller->country_code) // If selling country is ours
 		{
-			if ($idprodfournprice > 0)     // We want vat for product for a "supplier" order or invoice
+			if ($idprodfournprice > 0)     // We want vat for product for a "supplier" object
 			{
 				$product->get_buyprice($idprodfournprice,0,0,0);
 				$ret=$product->vatrate_supplier;
@@ -5001,7 +5002,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS))
 		{
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
-			$sql = "SELECT taux as vat_rate";
+			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
@@ -5014,6 +5015,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 				if ($obj)
 				{
 					$ret=$obj->vat_rate;
+					if ($obj->default_vat_code) $ret.=' ('.$obj->default_vat_code.')';
 				}
 				$db->free($sql);
 			}
@@ -5173,6 +5175,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			//print 'VATRULE 4';
 			return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
 		}
+	}
+
+	// Si (vendeur en France et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	if (! empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee) && !$thirdparty_buyer->isACompany())
+	{
+		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
 	}
 
 	// Sinon la TVA proposee par defaut=0. Fin de regle.
@@ -5914,7 +5922,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
-			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
+			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
+			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
 
@@ -5930,6 +5939,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 			$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
 			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
 			if (is_object($object) && $object->element == 'member')
@@ -5992,6 +6002,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__MEMBER_PHONE__']=$msgishtml?dol_htmlentitiesbr($object->phone):$object->phone;
 			$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
 			$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
+			$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
+			$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
+			$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
+			$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE__']        = dol_print_date($object->last_subscription_date, 'dayrfc');
+			$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_START__']  = dol_print_date($object->last_subscription_date_start, 'dayrfc');
+			$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_END__']    = dol_print_date($object->last_subscription_date_end, 'dayrfc');
 
 			if (is_object($object) && $object->element == 'societe')
 			{
@@ -6063,7 +6079,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-				$outputlangs->load('paypal');
+				$outputlangs->loadLangs(array('paypal','other'));
 				$typeforonlinepayment='free';
 				if (is_object($object) && $object->element == 'commande') $typeforonlinepayment='order';
 				if (is_object($object) && $object->element == 'facture')  $typeforonlinepayment='invoice';
@@ -6072,7 +6088,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 				$paymenturl=$url;
 			}
 
-			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$outputlangs->trans("PredefinedMailContentLink", $paymenturl):'');
+			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)):'');
 			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
 		}
 	}
@@ -6087,11 +6103,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2__']     = is_object($object)?$object->total_localtax1:'';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3__']     = is_object($object)?$object->total_localtax2:'';
 
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency_code):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency_code)):'';
-		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object)?price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object)?price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
+		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency)):'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object)?price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object)?price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency):'';
 
 		// TODO Add keys for foreign multicurrency
 
@@ -6104,6 +6120,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		}
 	}
 
+	//var_dump($substitutionarray['__AMOUNT_FORMATED__']);
 	if (empty($exclude) || ! in_array('date', $exclude))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -6153,7 +6170,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
  *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
  *  @param	Translate	$outputlangs			Output language
  * 	@return string  		    				Output string after substitutions
- *  @see	complete_substitutions_array
+ *  @see	complete_substitutions_array, getCommonSubstitutionArray
  */
 function make_substitutions($text, $substitutionarray, $outputlangs=null)
 {
@@ -6954,11 +6971,12 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 	// No need to make a return $head. Var is modified as a reference
 	if (! empty($hookmanager))
 	{
-		$parameters=array('object' => $object, 'mode' => $mode, 'head'=>$head);
-		$reshook=$hookmanager->executeHooks('completeTabsHead',$parameters);
+		$parameters=array('object' => $object, 'mode' => $mode, 'head' => $head);
+		$reshook=$hookmanager->executeHooks('completeTabsHead', $parameters);
 		if ($reshook > 0)
 		{
 			$head = $hookmanager->resArray;
+            $h = count($head);
 		}
 	}
 }

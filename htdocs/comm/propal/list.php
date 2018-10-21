@@ -990,7 +990,7 @@ if ($resql)
 	}
 
 	// Show total line
-		if (isset($totalarray['totalhtfield'])
+	if (isset($totalarray['totalhtfield'])
  	   || isset($totalarray['totalvatfield'])
  	   || isset($totalarray['totalttcfield'])
  	   || isset($totalarray['totalamfield'])

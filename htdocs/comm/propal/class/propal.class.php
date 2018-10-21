@@ -13,6 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1007,6 +1008,7 @@ class Propal extends CommonObject
                 // Add linked object (deprecated, use ->linkedObjectsIds instead)
                 if (! $error && $this->origin && $this->origin_id)
                 {
+                    dol_syslog('Deprecated use of linked object, use ->linkedObjectsIds instead', LOG_WARNING);
                 	$ret = $this->add_object_linked();
                 	if (! $ret)	dol_print_error($this->db);
                 }
@@ -1077,13 +1079,6 @@ class Propal extends CommonObject
 							$fk_parent_line = $result;
 						}
 					}
-				}
-
-				// Add linked object
-				if (! $error && $this->origin && $this->origin_id)
-				{
-					$ret = $this->add_object_linked();
-					if (! $ret)	dol_print_error($this->db);
 				}
 
 				// Set delivery address
@@ -1322,6 +1317,7 @@ class Propal extends CommonObject
 		$sql.= ", p.fk_shipping_method";
 		$sql.= ", p.fk_incoterms, p.location_incoterms";
 		$sql.= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
+		$sql.= ", p.tms as date_modification";
 		$sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ", c.label as statut_label";
 		$sql.= ", ca.code as availability_code, ca.label as availability";
@@ -1378,6 +1374,7 @@ class Propal extends CommonObject
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation		= $this->db->jdate($obj->datev); //Validation date
+				$this->date_modification	= $this->db->jdate($obj->date_modification); // tms
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
 				$this->datep                = $this->db->jdate($obj->dp);    // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
@@ -2423,16 +2420,16 @@ class Propal extends CommonObject
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-			 	// Define output language
-			  	$outputlangs = $langs;
-			   	if (! empty($conf->global->MAIN_MULTILANGS))
-			   	{
-			   		$outputlangs = new Translate("",$conf);
-			   		$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
-			   		$outputlangs->setDefaultLang($newlang);
-			   	}
-			   	//$ret=$object->fetch($id);    // Reload to get new records
-				   $this->generateDocument($modelpdf, $outputlangs);
+				// Define output language
+				$outputlangs = $langs;
+				if (! empty($conf->global->MAIN_MULTILANGS))
+				{
+					$outputlangs = new Translate("",$conf);
+					$newlang=(GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
 			}
 
 			if (! $error)
@@ -2440,7 +2437,7 @@ class Propal extends CommonObject
 				$this->oldcopy= clone $this;
 				$this->statut = $statut;
 				$this->date_cloture = $now;
-				$this->note_private = $note;
+				$this->note_private = $newprivatenote;
 			}
 
 			if (! $notrigger && empty($error))
@@ -2451,13 +2448,17 @@ class Propal extends CommonObject
 				// End call triggers
 			}
 
-			if ( ! $error )
+			if (! $error)
 			{
 				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->statut = $this->oldcopy->statut;
+				$this->date_cloture = $this->oldcopy->date_cloture;
+				$this->note_private = $this->oldcopy->note_private;
+
 				$this->db->rollback();
 				return -1;
 			}
@@ -3108,7 +3109,7 @@ class Propal extends CommonObject
 			$this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
 			$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
 			$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
-			$this->labelstatut_short[1]=$langs->trans("Opened");
+			$this->labelstatut_short[1]=$langs->trans("PropalStatusValidatedShort");
 			$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
 			$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
@@ -4186,7 +4187,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
-	 *	@return		int		<0 if ko, >0 if ok
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function update_total()
 	{

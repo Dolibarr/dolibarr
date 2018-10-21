@@ -1005,7 +1005,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 		else
 		{
-			print '<input size="40" type="text" name="skype" value="'.GETPOST('skype').'">';
+			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype').'">';
 		}
 		print '</td></tr>';
 	}
@@ -2262,7 +2262,7 @@ else
 			{
 				print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
 				print '<td>';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+				$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, null, null, null, 1 );
 				$c = new Categorie( $db );
 				$cats = $c->containing($object->id, Categorie::TYPE_USER);
 				foreach ($cats as $cat) {

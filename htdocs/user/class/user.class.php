@@ -1497,6 +1497,12 @@ class User extends CommonObject
 
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
+						$adh->address=$this->address;
+						$adh->town=$this->town;
+						$adh->zip=$this->zip;
+						$adh->state_id=$this->state_id;
+						$adh->country_id=$this->country_id;
+						
 						$adh->email=$this->email;
 						$adh->skype=$this->skype;
 						$adh->phone=$this->office_phone;

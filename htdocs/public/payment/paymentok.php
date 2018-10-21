@@ -87,10 +87,8 @@ if (empty($paymentmethod))
     dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
     exit;
 }
-else
-{
-    dol_syslog("paymentmethod=".$paymentmethod);
-}
+
+dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
 
 $validpaymentmethod=array();
@@ -194,7 +192,7 @@ if (! empty($conf->paypal->enabled))
 		    // From env
 		    $ipaddress          = $_SESSION['ipaddress'];
 
-			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
 
 			// Validate record
 		    if (! empty($paymentType))
@@ -203,34 +201,50 @@ if (! empty($conf->paypal->enabled))
 		        $resArray=getDetails($onlinetoken);
 		        //var_dump($resarray);
 
-		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
-		        $resArray=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
-
 		        $ack = strtoupper($resArray["ACK"]);
 		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 		        {
+		        	// Nothing to do
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+		        }
+		        else
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING);
+		        }
+
+		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
+		        $resArray2=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+		        //var_dump($resarray);
+
+		        $ack = strtoupper($resArray2["ACK"]);
+		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+
 		        	$object->source		= $source;
 		        	$object->ref		= $ref;
 		        	$object->payerID	= $payerID;
 		        	$object->fulltag	= $fulltag;
-		        	$object->resArray	= $resArray;
+		        	$object->resArray	= $resArray2;
 
 		            // resArray was built from a string like that
 		            // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
-		            $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
-		            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
-		            $TAXAMT=urldecode($resArray["TAXAMT"]);
-		            $NOTE=urldecode($resArray["NOTE"]);
+		            $PAYMENTSTATUS=urldecode($resArray2["PAYMENTSTATUS"]);   // Should contains 'Completed'
+		            $TRANSACTIONID=urldecode($resArray2["TRANSACTIONID"]);
+		            $TAXAMT=urldecode($resArray2["TAXAMT"]);
+		            $NOTE=urldecode($resArray2["NOTE"]);
 
 		            $ispaymentok=true;
 		        }
 		        else
 		        {
+		        	dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING);
+
 		            //Display a user friendly Error on the page using any of the following error information returned by PayPal
-		            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
-		            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
-		            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
-		            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
+		            $ErrorCode = urldecode($resArray2["L_ERRORCODE0"]);
+		            $ErrorShortMsg = urldecode($resArray2["L_SHORTMESSAGE0"]);
+		            $ErrorLongMsg = urldecode($resArray2["L_LONGMESSAGE0"]);
+		            $ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 		        }
 		    }
 		    else
@@ -264,6 +278,9 @@ if (empty($paymentType))     $paymentType     = $_SESSION["paymentType"];
 
 $fulltag            = $FULLTAG;
 $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+
+
+dol_syslog("ispaymentok=".$ispaymentok, LOG_DEBUG, 0, '_payment');
 
 
 // Make complementary actions
@@ -372,6 +389,8 @@ if ($ispaymentok)
 				// Create subscription
 				if (! $error)
 				{
+					dol_syslog("Call ->subscription to create subscription", LOG_DEBUG, 0, '_payment');
+
 					$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
 					if ($crowid <= 0)
 					{
@@ -389,11 +408,15 @@ if ($ispaymentok)
 
 				if (! $error)
 				{
-					$autocreatethirdparty = 1;
+					dol_syslog("Call ->subscriptionComplementaryActions option=".$option, LOG_DEBUG, 0, '_payment');
+
+					$autocreatethirdparty = 1;	// will create thirdparty if member not yet linked to a thirdparty
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty);
 					if ($result < 0)
 					{
+						dol_syslog("Error ".$object->error." ".join(',', $object->errors), LOG_DEBUG, 0, '_payment');
+
 						$error++;
 						$postactionmessages[] = $object->error;
 						$postactionmessages = array_merge($postactionmessages, $object->errors);
@@ -401,9 +424,21 @@ if ($ispaymentok)
 					}
 					else
 					{
-						if ($option == 'bankviainvoice') $postactionmessages[] = 'Invoice, payment and bank record created';
-						if ($option == 'bankdirect')     $postactionmessages[] = 'Bank record created';
-						if ($option == 'invoiceonly')    $postactionmessages[] = 'Invoice recorded';
+						if ($option == 'bankviainvoice')
+						{
+							$postactionmessages[] = 'Invoice, payment and bank record created';
+							dol_syslog("Invoice, payment and bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'bankdirect')
+						{
+							$postactionmessages[] = 'Bank record created';
+							dol_syslog("Bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'invoiceonly')
+						{
+							$postactionmessages[] = 'Invoice recorded';
+							dol_syslog("Invoice recorded", LOG_DEBUG, 0, '_payment');
+						}
 						$ispostactionok = 1;
 
 						// If an invoice was created, it is into $object->invoice
@@ -416,7 +451,7 @@ if ($ispaymentok)
 					{
 						$thirdparty_id = $object->fk_soc;
 
-						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
 
 						$service = 'StripeTest';
 						$servicestatus = 0;
@@ -436,6 +471,8 @@ if ($ispaymentok)
 
 						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
 						{
+							dol_syslog("No stripe profile found, so we add it", LOG_DEBUG, 0, '_payment');
+
 							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
 							$stripecu = $ch->customer;							// value 'cus_....'
 
@@ -462,9 +499,11 @@ if ($ispaymentok)
 					$db->rollback();
 				}
 
-				// Send email
+				// Send email to member
 				if (! $error)
 				{
+					dol_syslog("Send email to customer to ".$object->email." if we have to (sendalsoemail = ".$sendalsoemail.")", LOG_DEBUG, 0, '_payment');
+
 					// Send confirmation Email
 					if ($object->email && $sendalsoemail)
 					{
@@ -511,7 +550,9 @@ if ($ispaymentok)
 							$listofmimes=array(dol_mimetype($file));
 						}
 
-						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+						$moreinheader='X-Dolibarr-Info: send_an_email by public/payment/paymentok.php'."\r\n";
+
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, "", $moreinheader);
 
 						if ($result < 0)
 						{
@@ -523,6 +564,8 @@ if ($ispaymentok)
 						{
 							if ($file) $postactionmessages[] = 'Email sent to member (with invoice document attached)';
 							else $postactionmessages[] = 'Email sent to member (without any attached document)';
+
+							// TODO Add actioncomm event
 						}
 					}
 				}
@@ -629,7 +672,7 @@ if ($ispaymentok)
 					}
 					else
 					{
-						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Not way to record the payment.';
+						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
 						$ispostactionok = -1;
 						$error++;
 					}
@@ -691,7 +734,9 @@ if ($ispaymentok)
 
     $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
-	// Send an email
+    dol_syslog("Send email to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
+
+	// Send an email to admins
     if ($sendemail)
 	{
 		$companylangs = new Translate('', $conf);
@@ -773,6 +818,11 @@ if ($ispaymentok)
 		$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 		$content.="<br>\n";
 		$content.="tag=".$fulltag."<br>\ntoken=".$onlinetoken."<br>\npaymentType=".$paymentType."<br>\ncurrencycodeType=".$currencyCodeType."<br>\npayerId=".$payerID."<br>\nipaddress=".$ipaddress."<br>\nFinalPaymentAmt=".$FinalPaymentAmt."<br>\n";
+
+		if (! empty($ErrorCode))         $content.="ErrorCode = ".$ErrorCode."<br>\n";
+		if (! empty($ErrorShortMsg))     $content.="ErrorShortMsg = ".$ErrorShortMsg."<br>\n";
+		if (! empty($ErrorLongMsg))      $content.="ErrorLongMsg = ".$ErrorLongMsg."<br>\n";
+		if (! empty($ErrorSeverityCode)) $content.="ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
 
 		$ishtml=dol_textishtml($content);	// May contain urls
 

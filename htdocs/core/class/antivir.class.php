@@ -62,7 +62,7 @@ class AntiVir
 
 		if (preg_match('/\.virus$/i', $file))
 		{
-		    $this->errors='File has an extension saying file is a virus';
+		    $this->errors[] = 'File has an extension saying file is a virus';
 		    return -97;
 		}
 

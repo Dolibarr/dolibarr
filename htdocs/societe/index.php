@@ -264,7 +264,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last third parties modified
  */
 $max=15;
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur";
+$sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql.= ", s.code_client";
 $sql.= ", s.code_fournisseur";
 $sql.= ", s.logo";
@@ -313,6 +313,7 @@ if ($result)
             $thirdparty_static->code_client = $objp->code_client;
             $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
             $thirdparty_static->canvas=$objp->canvas;
+            $thirdparty_static->email = $objp->email;
 
             print '<tr class="oddeven">';
             // Name

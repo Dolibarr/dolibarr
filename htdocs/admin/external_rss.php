@@ -242,10 +242,10 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-	    preg_match('/^([0-9]+)/i',$obj->note,$reg);
+		preg_match('/^([0-9]+)/i',$obj->note,$reg);
 		$idrss = $reg[1];
-        $keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
-        $keyrsstitle="EXTERNAL_RSS_URLRSS_".$idrss;
+		$keyrsstitle="EXTERNAL_RSS_TITLE_".$idrss;
+		$keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
         //print "x".$idrss;
 
         $rssparser=new RssParser($db);

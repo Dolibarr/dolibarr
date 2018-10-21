@@ -939,7 +939,8 @@ class FormMail extends Form
 
 				if (count($validpaymentmethod) > 0 && $paymenturl)
 				{
-					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=str_replace('\n',"\n",$langs->transnoentities("PredefinedMailContentLink", $paymenturl));
+					$langs->load('other');
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=str_replace('\n', "\n", $langs->transnoentities("PredefinedMailContentLink", $paymenturl));
 					$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
 				}
 				else

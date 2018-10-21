@@ -1877,6 +1877,9 @@ class Commande extends CommonOrder
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
+           	$line->fetch_optionals();
+
+
                 $this->lines[$i] = $line;
 
                 $i++;
@@ -4253,9 +4256,10 @@ class OrderLine extends CommonOrderLine
 	}
 
     /**
-     *	Update totals of order into database
+     *	Update DB line fields total_xxx
+	 *	Used by migration
      *
-     *	@return		int		<0 if ko, >0 if ok
+     *	@return		int		<0 if KO, >0 if OK
      */
     function update_total()
     {

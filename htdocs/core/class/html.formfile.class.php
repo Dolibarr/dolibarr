@@ -122,11 +122,12 @@ class FormFile
 			if (preg_match('/g$/i',$maxphp)) $maxphp=$maxphp*1024*1024;
 			if (preg_match('/t$/i',$maxphp)) $maxphp=$maxphp*1024*1024*1024;
 			// Now $max and $maxphp are in Kb
-			if ($maxphp > 0) $max=min($max,$maxphp);
+			$maxmin = $max;
+			if ($maxphp > 0) $maxmin=min($max,$maxphp);
 
-			if ($max > 0)
+			if ($maxmin > 0)
 			{
-				$out .= '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
+				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
 			}
 
 			$out .= '<input class="flat minwidth400" type="file"';
@@ -179,7 +180,7 @@ class FormFile
 
 			if ($linkfiles)
 			{
-				$out .= "\n<!-- Start form attach new link -->\n";
+				$out .= "\n<!-- Start form link new url -->\n";
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
@@ -207,19 +208,18 @@ class FormFile
 				$out .= '</div>';
 				$out .= '<div class="clearboth"></div>';
 				$out .= '</form><br>';
-				$parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
-				$res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
 
-				$out .= "\n<!-- End form attach new file -->\n";
+				$out .= "\n<!-- End form link new url -->\n";
 			}
 
+			$parameters = array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''), 'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''), 'url'=>$url, 'perm'=>$perm);
+			$res = $hookmanager->executeHooks('formattachOptions',$parameters,$object);
 			if (empty($res))
 			{
 				print '<div class="attacharea attacharea'.$htmlname.'">';
 				print $out;
 				print '</div>';
 			}
-
 			print $hookmanager->resPrint;
 
 			return 1;

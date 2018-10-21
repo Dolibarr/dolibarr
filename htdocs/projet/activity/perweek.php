@@ -128,6 +128,9 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_project_ref = '';
 	$search_thirdparty = '';
 	$search_declared_progress = '';
+
+	// We redefine $usertoprocess
+	$usertoprocess=$user;
 }
 if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
 {
@@ -593,8 +596,7 @@ if ($conf->use_javascript_ajax)
 
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
-
+$restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
 if (count($tasksarray) > 0)
 {
 	//var_dump($tasksarray);				// contains only selected tasks

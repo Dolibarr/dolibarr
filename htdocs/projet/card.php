@@ -64,6 +64,7 @@ if ($id > 0 || ! empty($ref))
 	$ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$id=$object->id;
 	}
 }
@@ -753,7 +754,7 @@ elseif ($object->id > 0)
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
+		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
 
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';

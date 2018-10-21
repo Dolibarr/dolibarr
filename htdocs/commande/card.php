@@ -679,7 +679,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && (! ($price_ht_devise >= 0) || $price_ht_devise == '')) 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && $price_ht == '' && $price_ht_devise == '') 	// Unit price can be 0 but not ''. Also price can be negative for order.
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
@@ -1987,7 +1987,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
@@ -2387,7 +2387,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Total HT
 		$alert = '';
-		if($object->total_ht < $object->thirdparty->order_min_amount) {
+		if (! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT) && $object->total_ht < $object->thirdparty->order_min_amount) {
 			$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->order_min_amount));
 		}
 		print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';

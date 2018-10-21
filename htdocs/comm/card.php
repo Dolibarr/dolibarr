@@ -181,7 +181,7 @@ if (empty($reshook))
 	if ($action == 'setorder_min_amount')
 	{
 		$object->fetch($id);
-		$object->order_min_amount=GETPOST('order_min_amount');
+		$object->order_min_amount=price2num(GETPOST('order_min_amount','alpha'));
 		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -423,15 +423,21 @@ if ($object->id > 0)
 
 	    print '</td>';
 	    print '</tr>';
+	}
 
-		print '<tr class="nowrap">';
-	    print '<td>';
-	    print $form->editfieldkey("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer);
-	    print '</td><td>';
-	    print $form->editfieldval("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
-
-	    print '</td>';
-	    print '</tr>';
+	if ($object->client)
+	{
+		if (! empty($conf->commande->enabled) && ! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT))
+		{
+		    print '<!-- Minimim amount for orders -->'."\n";
+		    print '<tr class="nowrap">';
+		    print '<td>';
+		    print $form->editfieldkey("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer);
+		    print '</td><td>';
+		    print $form->editfieldval("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
+		    print '</td>';
+		    print '</tr>';
+		}
 	}
 
 
@@ -660,6 +666,8 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
+		$langs->load("propal");
+
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
         $sql.= ", p.tva as total_tva";
         $sql.= ", p.total as total_ttc";
@@ -668,7 +676,7 @@ if ($object->id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql.= " AND s.rowid = ".$object->id;
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " AND p.entity IN (".getEntity('propal').")";
 		$sql.= " ORDER BY p.datep DESC";
 
 		$resql=$db->query($sql);
