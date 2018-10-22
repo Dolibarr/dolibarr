@@ -1071,10 +1071,26 @@ class Societe extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				unset($this->country_code);		// We clean this because it may have been changed after an update of country_id
-				unset($this->country);
-				unset($this->state_code);
-				unset($this->state);
+				if (is_object($this->oldcopy))	// If we have information on old values
+				{
+					if ($this->oldcopy->country_id != $this->country_id)
+					{
+						unset($this->country_code);
+						unset($this->country);
+					}
+					if ($this->oldcopy->state_id != $this->state_id)
+					{
+						unset($this->state_code);
+						unset($this->state);
+					}
+				}
+				else
+				{
+					unset($this->country_code);	// We clean this, in the doubt, because it may have been changed after an update of country_id
+					unset($this->country);
+					unset($this->state_code);
+					unset($this->state);
+				}
 
 				$nbrowsaffected = $this->db->affected_rows($resql);
 
