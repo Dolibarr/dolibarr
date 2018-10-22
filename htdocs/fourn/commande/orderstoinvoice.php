@@ -159,6 +159,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			$object->note_private = GETPOST('note_private','none');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
+      $object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$projectid = GETPOST('projectid');
 			if ($projectid > 0)
 				$object->fk_project = $projectid;
@@ -302,6 +303,10 @@ if ($action == 'create' && !$error) {
 	if ($res) {
 		$cond_reglement_id = $soc->cond_reglement_id;
 		$mode_reglement_id = $soc->mode_reglement_id;
+
+    if(!empty($conf->multicurrency->enabled)){
+      $currency_code = $soc->multicurrency_code;
+    }
 	}
 	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
 
@@ -342,6 +347,14 @@ if ($action == 'create' && !$error) {
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
 	$html->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
+  // Multicurrency
+  if(!empty($conf->multicurrency->enabled)){
+    print '<tr>';
+    print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+    print '<td class="maxwidthonsmartphone">';
+    print $form->selectMultiCurrency(GETPOST('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code, 'multicurrency_code');
+    print '</td></tr>';
+  }
 	// Project
 	if (! empty($conf->projet->enabled)) {
 		$formproject = new FormProjets($db);
