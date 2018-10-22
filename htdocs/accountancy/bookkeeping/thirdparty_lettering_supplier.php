@@ -4,6 +4,7 @@
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +22,8 @@
  */
 
 /**
- * \file        accountancy/bookkeeping/thirdparty_lettering_supplier.php
- * \ingroup     Advanced accountancy
+ * \file        htdocs/accountancy/bookkeeping/thirdparty_lettering_supplier.php
+ * \ingroup     accountancy
  * \brief       Tab to setup lettering
  */
 require '../../main.inc.php';
@@ -79,7 +80,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 $socid = GETPOST("socid", 'int');
 // if ($user->societe_id) $socid=$user->societe_id;
 
-$lettering = new lettering($db);
+$lettering = new Lettering($db);
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
