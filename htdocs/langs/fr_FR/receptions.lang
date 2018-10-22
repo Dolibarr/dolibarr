@@ -61,6 +61,7 @@ NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans 
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeReception=Vous devez d'abord valider la commande pour pouvoir créer une réception.
 CreateInvoiceForThisSupplier=Facturer réceptions
+ErrorRefAlreadyExists = La référence fournisseur existe déjà
 
 # Reception methods
 # ModelDocument

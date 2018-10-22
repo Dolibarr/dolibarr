@@ -181,7 +181,8 @@ if (empty($reshook))
     		$object = new FactureFournisseur($db);
     		if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])){
 				$object = $TFactThird[$rcp->socid]; // If option "one bill per third" is set, we use already created reception.
-				$object->fetchObjectLinked();
+				if(empty($object->rowid)&&$object->id != null)$object->rowid = $object->id;
+				if(!empty($object->rowid))$object->fetchObjectLinked();
 				$rcp->fetchObjectLinked();
 				
 				if (count($rcp->linkedObjectsIds['order_supplier']) > 0)
@@ -234,7 +235,7 @@ if (empty($reshook))
 					$nb_bills_created++;
 					$object->id = $res;
 				}else {
-					$errors[]=$object->error;
+					$errors[]=$rcp->ref.' : '.$langs->trans($object->error);
 					$error++;
 				}
     		}
