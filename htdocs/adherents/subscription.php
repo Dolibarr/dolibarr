@@ -665,32 +665,11 @@ if ($rowid > 0)
      */
     if ($action != 'addsubscription' && $action != 'create_thirdparty')
     {
-        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
-        $sql.= " c.rowid as crowid, c.subscription,";
-        $sql.= " c.datec,";
-        $sql.= " c.dateadh as dateh,";
-        $sql.= " c.datef,";
-        $sql.= " c.fk_bank,";
-        $sql.= " b.rowid as bid,";
-        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number";
-        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-        $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
-		$sql.= $db->order($sortfield, $sortorder);
-
-        $result = $db->query($sql);
-        if ($result)
-        {
-            $subscriptionstatic=new Subscription($db);
-
-            $num = $db->num_rows($result);
-            $i = 0;
-
             print '<table class="noborder" width="100%">'."\n";
 
             print '<tr class="liste_titre">';
-            print_liste_field_titre('Ref',$_SERVER["PHP_SELF"],'c.rowid','',$param,'',$sortfield,$sortorder);
+            print '<td>'.$langs->trans("Ref").'</td>';
+            print '<td align="center">'.$langs->trans("MemberType").'</td>';
             print '<td align="center">'.$langs->trans("DateCreation").'</td>';
             print '<td align="center">'.$langs->trans("DateStart").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
@@ -700,42 +679,29 @@ if ($rowid > 0)
                 print '<td align="right">'.$langs->trans("Account").'</td>';
             }
             print "</tr>\n";
-
+            
+            $subscriptionstatic=new SubscriptionPlus($db);
+            $accountline=new AccountLine($db);
             $accountstatic=new Account($db);
-
-            while ($i < $num)
+            foreach ($object->subscriptions as $subscription)
             {
-                $objp = $db->fetch_object($result);
-
-                $subscriptionstatic->ref=$objp->crowid;
-                $subscriptionstatic->id=$objp->crowid;
-
+                
                 print '<tr class="oddeven">';
+                $subscriptionstatic->fetch($subscription->id);
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-                print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
-                print '<td align="right">'.price($objp->subscription).'</td>';
+                print '<td align="center"><a href="'.dol_buildpath('/adherentsplus/type.php?rowid='.$subscription->fk_type.'', 1).'">'.img_object($langs->trans("ShowType"),'group').' '.dol_escape_htmltag($subscription->label)."</a></td>";
+                print '<td align="center">'.dol_print_date($subscription->datec,'dayhour')."</td>\n";
+                print '<td align="center">'.dol_print_date($subscription->dateh,'day')."</td>\n";
+                print '<td align="center">'.dol_print_date($subscription->datef,'day')."</td>\n";
+                print '<td align="right">'.price($subscription->amount).'</td>';
 				if (! empty($conf->banque->enabled))
 				{
 					print '<td align="right">';
-					if ($objp->bid)
-					{
-						$accountstatic->label=$objp->label;
-						$accountstatic->id=$objp->baid;
-						$accountstatic->number=$objp->number;
-						$accountstatic->account_number=$objp->account_number;
-
-						if (! empty($conf->accounting->enabled))
-						{
-							$accountingjournal = new AccountingJournal($db);
-							$accountingjournal->fetch($objp->fk_accountancy_journal);
-
-							$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
-						}
-
-                        $accountstatic->ref=$objp->ref;
-                        print $accountstatic->getNomUrl(1);
+					if ($subscription->fk_bank)
+					{ 
+            $accountline->fetch($subscription->fk_bank);
+						$accountstatic->fetch($accountline->fk_account);
+            print $accountstatic->getNomUrl(1);
                     }
                     else
                     {
@@ -744,7 +710,6 @@ if ($rowid > 0)
                     print '</td>';
                 }
                 print "</tr>";
-                $i++;
             }
             print "</table>";
         }
