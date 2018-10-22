@@ -28,6 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
