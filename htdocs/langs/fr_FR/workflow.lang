@@ -13,6 +13,6 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commer
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée à la validation de la facture client (et si le montant des deux documents est le même)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée au classement payé de la facture client (et si le montant des deux documents est le même)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer la commande source expédiée à la validation d'une expédition (si les quantité des documents sont les mêmes)
-descWORKFLOW_BILL_ON_RECEPTION=Classer la/les réception(s) facturée(s) à la validation d'une facture fournisseur (si la facture est du même montant que la commande)
+descWORKFLOW_BILL_ON_RECEPTION=Classer la/les réception(s) facturée(s) à la validation d'une facture fournisseur 
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique
