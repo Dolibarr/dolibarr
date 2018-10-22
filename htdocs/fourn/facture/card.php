@@ -708,7 +708,6 @@ if (empty($reshook))
 								$date_end=$lines[$i]->date_fin_prevue;
 								if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
 								if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,
@@ -729,7 +728,9 @@ if (empty($reshook))
 									0,
 									$lines[$i]->array_options,
 									$lines[$i]->fk_unit,
-									$lines[$i]->id
+									$lines[$i]->id,
+									0,
+									$lines[$i]->ref_supplier
 								);
 							
 								if ($result < 0)

@@ -327,7 +327,9 @@ if (empty($reshook))
 	    							false,
 									0,
 									null,
-	    							$lines[$i]->rowid
+	    							$lines[$i]->rowid,
+									0,
+									$lines[$i]->ref_supplier
 	    							
 	    					);
 							
