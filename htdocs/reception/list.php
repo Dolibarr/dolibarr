@@ -523,6 +523,14 @@ if ($resql)
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
 	if ($search_company) $param.= "&amp;search_company=".$search_company;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+	if ($search_billed != '' && $search_billed >= 0)$param.= "&amp;search_billed=".$search_billed; 
+	if ($search_town)  $param.= "&amp;search_town=".$search_town;
+	if ($search_zip)  $param.= "&amp;search_zip=".$search_zip;
+	if ($search_state) $param.= "&amp;search_state=".$search_state;
+	if ($viewstatut) $param.= "&amp;viewstatut=".$viewstatut;
+	if ($search_country) $param.= "&amp;search_country=".$search_country; 
+	if ($search_type_thirdparty) $param.= "&amp;search_type_thirdparty=".$search_type_thirdparty;
+	if ($search_ref_supplier) $param.= "&amp;search_ref_supplier=".$search_ref_supplier;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
