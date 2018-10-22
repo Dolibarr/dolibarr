@@ -1003,8 +1003,7 @@ class BookKeeping extends CommonObject
 				}
 			}
 		}
-		$sql.= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
+		$sql.= ' WHERE entity IN (' . getEntity('accountancy') . ')';
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}

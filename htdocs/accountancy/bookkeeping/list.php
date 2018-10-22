@@ -344,7 +344,7 @@ if ($action == 'delmouvconfirm') {
 	}
 }
 
-// Export into a file with format defined into setup
+// Export into a file with format defined into setup (FEC, CSV, ...)
 if ($action == 'export_file') {
 
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
@@ -357,7 +357,9 @@ if ($action == 'export_file') {
 	{
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines);
-		if (!empty($accountancyexport->errors)) {
+
+		if (!empty($accountancyexport->errors))
+		{
 			setEventMessages('', $accountancyexport->errors, 'errors');
 		}
 		exit;
