@@ -331,6 +331,7 @@ NbProducts=No. of products
 ParentProduct=Parent product
 HideChildProducts=Hide variant products
 ShowChildProducts=Show variant products
+NoEditVariants=Go to Parent product card and edit variants price impact in the variants tab
 ConfirmCloneProductCombinations=Would you like to copy all the product variants to the other parent product with the given reference?
 CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
