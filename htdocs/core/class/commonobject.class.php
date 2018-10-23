@@ -3586,7 +3586,7 @@ abstract class CommonObject
 				$totalToShip+=$line->qty_shipped;   // defined for shipment only
             }else if ($line->element == 'commandefournisseurdispatch' && isset($line->qty))
             {
-                if (empty($totalToShip)) $totalToShip=0;    
+                if (empty($totalToShip)) $totalToShip=0;
                 $totalToShip+=$line->qty;   // defined for reception only
 			}
 

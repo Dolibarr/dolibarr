@@ -3187,7 +3187,6 @@ class CommandeFournisseur extends CommonOrder
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 }
 
