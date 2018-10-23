@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,8 @@ if (empty($conf->dol_no_mouse_hover))
 	print '
             	jQuery(document).ready(function () {
 					jQuery(".classfortooltip").tooltip({
-						show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-						hide: { delay: 50 },
+						show: { collision: "flipfit", effect:\'toggle\', delay:75, duration:150 },
+						hide: { delay:10, duration: 20 },
 						tooltipClass: "mytooltip",
 						content: function () {
               				return $(this).prop(\'title\');		/* To force to get title as is */
