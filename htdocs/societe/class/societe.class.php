@@ -2147,7 +2147,10 @@ class Societe extends CommonObject
 
 		$result.=$linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.=($maxlen?dol_trunc($name,$maxlen):$name);
+        if ($withpicto == 4) {
+            $result.= $this->address.'<br>'.$this->zip.'<br>'.$this->town.'<br>'.$this->fk_pays;
+        }
+        elseif ($withpicto != 2) $result.=($maxlen?dol_trunc($name,$maxlen):$name);
 		$result.=$linkend;
 
 		global $action;
