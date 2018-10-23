@@ -6203,7 +6203,7 @@ abstract class CommonObject
 				$InfoFieldList = explode(":", $param_list[0]);
 				$classname=$InfoFieldList[0];
 				$classpath=$InfoFieldList[1];
-				$getnomurlparam=$InfoFieldList[2];
+				$getnomurlparam=(empty($InfoFieldList[2]) ? 3 : $InfoFieldList[2]);
 				if (! empty($classpath))
 				{
 					dol_include_once($InfoFieldList[1]);
@@ -6211,7 +6211,7 @@ abstract class CommonObject
 					{
 						$object = new $classname($this->db);
 						$object->fetch($value);
-						$value=$object->getNomUrl(!empty($getnomurlparam)?$getnomurlparam:3);
+						$value=$object->getNomUrl($getnomurlparam);
 					}
 				}
 				else
