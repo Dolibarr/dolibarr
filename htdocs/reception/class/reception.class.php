@@ -1878,14 +1878,39 @@ class Reception extends CommonObject
             	$result=$this->call_trigger('RECEPTION_UNVALIDATE',$user);
             	if ($result < 0) $error++;
             }
-			if($this->origin == 'order_supplier'){
-				$commande = new CommandeFournisseur($this->db);
-				$commande->fetch($this->origin_id);
-				$commande->setStatus($user,3);
+			if ($this->origin == 'order_supplier')
+			{
+				if (!empty($this->origin) && $this->origin_id > 0)
+				{
+					$this->fetch_origin();
+					$origin = $this->origin;
+					if ($this->$origin->statut == 4)  // If order source of reception is "partially received"
+					{
+						// Check if there is no more reception validated. 
+						$this->$origin->fetchObjectLinked();
+						$setStatut = 1;
+						if (!empty($this->$origin->linkedObjects['reception']))
+						{
+							foreach ($this->$origin->linkedObjects['reception'] as $rcption)
+							{
+								if ($rcption->statut > 0)
+								{
+									$setStatut = 0;
+									break;
+								}
+							}
+							//var_dump($this->$origin->receptions);exit;
+							if ($setStatut)
+							{
+								$this->$origin->setStatut(3); // ordered
+							}
+						}
+					}
+				}
 			}
-			
 
-            if (!$error) {
+
+			if (!$error) {
            		$this->statut=self::STATUS_DRAFT;
             	$this->db->commit();
             	return 1;
