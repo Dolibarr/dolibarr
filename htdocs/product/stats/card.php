@@ -36,11 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("bills");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
 $id		= GETPOST('id','int');         // For this page, id can also be 'all'
 $ref	= GETPOST('ref');
@@ -78,9 +75,9 @@ if (empty($search_year)) $search_year=$currentyear;
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-
 $object = new Product($db);
-if (! $id)
+
+if (! $id && empty($ref))
 {
     llxHeader("",$langs->trans("ProductStatistics"));
 
@@ -138,7 +135,7 @@ if ($result && (! empty($id) || ! empty($ref)))
 
 	dol_fiche_head($head, 'stats', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 
@@ -436,6 +433,6 @@ if (! $id)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

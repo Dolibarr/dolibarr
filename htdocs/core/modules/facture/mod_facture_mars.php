@@ -30,14 +30,26 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_mars extends ModeleNumRefFactures
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefixinvoice='FA';
-	var $prefixreplacement='FR';
-	var $prefixdeposit='AC';
-	var $prefixcreditnote='AV';
-	var $error='';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	
+	public $prefixinvoice='FA';
+
+	public $prefixreplacement='FR';
+
+	public $prefixdeposit='AC';
+
+	public $prefixcreditnote='AV';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
 	/**
 	 * Constructor
 	 */
@@ -48,7 +60,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX;
 		}
 	}
-	
+
 	/**
 	 *  Renvoi la description du modele de numerotation
 	 *
@@ -89,7 +101,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber LIKE '".$this->prefixinvoice."____-%'";
+		$sql.= " WHERE facnumber LIKE '".$db->escape($this->prefixinvoice)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -111,7 +123,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$posindice=8;
 		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber LIKE '".$this->prefixcreditnote."____-%'";
+		$sql.= " WHERE facnumber LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -153,7 +165,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
-		$sql.= " AND entity IN (".getEntity('facture').")";
+		$sql.= " AND entity IN (".getEntity('invoicenumber').")";
 
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
@@ -177,7 +189,7 @@ class mod_facture_mars extends ModeleNumRefFactures
             $sql = "SELECT facnumber as ref";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
-            $sql.= " AND entity IN (".getEntity('facture').")";
+            $sql.= " AND entity IN (".getEntity('invoicenumber').")";
 
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
@@ -216,6 +228,5 @@ class mod_facture_mars extends ModeleNumRefFactures
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
-
 }
 

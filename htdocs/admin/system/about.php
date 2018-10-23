@@ -28,10 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("admin");
-$langs->load("help");
-$langs->load("members");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("help","members","other","admin"));
 
 $action=GETPOST('action','alpha');
 
@@ -196,7 +194,7 @@ if ($showpromotemessage)
     {
         print '<br>';
         print '<br>';
-        
+
         if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
         {
             print $langs->trans("TitleExampleForMajorRelease").':<br>';
@@ -214,7 +212,6 @@ if ($showpromotemessage)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

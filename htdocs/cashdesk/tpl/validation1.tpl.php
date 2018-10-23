@@ -16,9 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("banks");
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","banks"));
 
 // Object $form must de defined
 

@@ -21,20 +21,14 @@
  * \file htdocs/product/ajax/products.php
  * \brief File to return Ajax response on product list request
  */
-if (! defined('NOTOKENRENEWAL'))
-	define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))
-	define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))
-	define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))
-	define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))
-	define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))
-	define('NOCSRFCHECK', '1');
-if (empty($_GET ['keysearch']) && ! defined('NOREQUIREHTML'))
-	define('NOREQUIREHTML', '1');
+
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
 
 require '../../main.inc.php';
 
@@ -51,6 +45,7 @@ $price_by_qty_rowid = GETPOST('pbq', 'int');
 $finished = GETPOST('finished', 'int');
 $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
+$hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
 
 /*
@@ -192,7 +187,7 @@ else
 
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', 0, $warehouseStatus);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}

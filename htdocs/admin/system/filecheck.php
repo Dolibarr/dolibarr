@@ -3,6 +3,7 @@
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,8 @@ $error=0;
  * View
  */
 
+@set_time_limit(300);
+
 llxHeader();
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
@@ -72,7 +75,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
+$xmlshortfile = GETPOST('xmlshortfile','alpha')?GETPOST('xmlshortfile','alpha'):'/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX)?'':$conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml';
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote');
@@ -83,8 +86,8 @@ if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signa
 
 
 // Test if remote test is ok
-$enableremotecheck = True;
-if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || ! empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) $enableremotecheck=False;
+$enableremotecheck = true;
+if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || ! empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) $enableremotecheck=false;
 $enableremotecheck = true;
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
@@ -140,7 +143,7 @@ if (GETPOST('target') == 'remote')
     if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     {
         $xmlfile = $xmlarray['content'];
-        //print "eee".$xmlfile."eee";
+        //print "xmlfilestart".$xmlfile."xmlfileend";
         $xml = simplexml_load_string($xmlfile);
     }
     else
@@ -152,7 +155,7 @@ if (GETPOST('target') == 'remote')
 }
 
 
-if ($xml)
+if (! $error && $xml)
 {
     $checksumconcat = array();
     $file_list = array();
@@ -212,7 +215,7 @@ if ($xml)
 
         // Defined qualified files (must be same than into generate_filelist_xml.php)
         $regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-        $regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install)$';  // Exclude dirs
+        $regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
         $scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
         // Fill file_list with files in signature, new files, modified files
@@ -304,7 +307,7 @@ if ($xml)
         }
         else
         {
-            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
         $out.='</div>';
@@ -334,7 +337,13 @@ if ($xml)
                 $i++;
                 $out.='<tr class="oddeven">';
                 $out.='<td>'.$i.'</td>' . "\n";
-                $out.='<td>'.$file['filename'].'</td>' . "\n";
+                $out.='<td>'.$file['filename'];
+                $out.=PHP_OS;
+                if (! preg_match('/^win/i',PHP_OS)) {
+                	$htmltext=$langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.'/'.$file['filename']);
+                	$out.=' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm');
+                }
+                $out.='</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
                 $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
@@ -363,11 +372,11 @@ if ($xml)
         // Show warning
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
-            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+            setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
         }
         else
         {
-            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+            setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
         }
     }
     else
@@ -395,18 +404,33 @@ if ($xml)
     var_dump($checksumget);
     var_dump($checksumtoget);
     var_dump($checksumget == $checksumtoget);*/
-    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
-    print $langs->trans("ExpectedChecksum").' = '. ($checksumtoget ? $checksumtoget : $langs->trans("Unknown")) .'<br>';
-    print $langs->trans("CurrentChecksum").' = ';
+
+    $outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
     if ($checksumget == $checksumtoget)
     {
-        if (count($file_list['added'])) print $checksumget.' - <span class="warning">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
-        else print '<span class="ok">'.$checksumget.'</span>';
+    	if (count($file_list['added']))
+    	{
+    		$resultcode = 'warning';
+    		$resultcomment='FileIntegrityIsOkButFilesWereAdded';
+    		$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
+    	}
+    	else
+    	{
+    		$resultcode = 'ok';
+    		$resultcomment='Success';
+    		$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
+    	}
     }
     else
     {
-        print '<span class="error">'.$checksumget.'</span>';
+    	$resultcode = 'error';
+    	$resultcomment='Error';
+    	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
+
+    print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print $langs->trans("ExpectedChecksum").' = '. $outexpectedchecksum .'<br>';
+    print $langs->trans("CurrentChecksum").' = '. $outcurrentchecksum;
 
     print '<br>';
     print '<br>';
@@ -415,52 +439,8 @@ if ($xml)
     print $out;
 }
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 exit($error);
-
-
-/**
- * Function to get list of updated or modified files.
- * $file_list is used as global variable
- *
- * @param	array				$file_list	        Array for response
- * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
- * @param   string   			$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
- * @param   string              $pathref            Path ref (DOL_DOCUMENT_ROOT)
- * @param   array               $checksumconcat     Array of checksum
- * @return  array               			        Array of filenames
- */
-function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
-{
-    $exclude = 'install';
-
-    foreach ($dir->md5file as $file)    // $file is a simpleXMLElement
-    {
-        $filename = $path.$file['name'];
-        $file_list['insignature'][] = $filename;
-
-        //if (preg_match('#'.$exclude.'#', $filename)) continue;
-
-        if (!file_exists($pathref.'/'.$filename))
-        {
-            $file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file);
-        }
-        else
-		{
-            $md5_local = md5_file($pathref.'/'.$filename);
-            if ($md5_local != (string) $file) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file, 'md5'=>(string) $md5_local);
-            $checksumconcat[] = $md5_local;
-		}
-    }
-
-    foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
-
-    return $file_list;
-}
-

@@ -1,26 +1,28 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
+Permission23101 = Lue Ajastettu työ
 Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23103 = Poista Ajastettu työ
+Permission23104 = Suorita Ajastettu työ
 # Admin
 CronSetup= Ajastettujen tehtävien asetusten hallinta
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Tai tietyn tehtävän tarkistamiseen ja ajamiseen
 KeyForCronAccess=Turva avain ajastettujen  tehtävien ajamiseen URL-sta
-FileToLaunchCronJobs=Ajastettujen tehtävien komentorivi
+FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
+CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobProfiles=List of predefined cron job profiles
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
 CronLastOutput=Latest run output
 CronLastResult=Latest result code
 CronCommand=Command
-CronList=Scheduled jobs
+CronList=Ajastetut työt
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job
@@ -41,7 +43,7 @@ CronNoJobs=No jobs registered
 CronPriority=Prioriteetti
 CronLabel=Etiketti
 CronNbRun=Nb. launch
-CronMaxRun=Max nb. launch
+CronMaxRun=Max number launch
 CronEach=Every
 JobFinished=Job launched and finished
 #Page card
@@ -53,27 +55,29 @@ CronSaveSucess=Save successfully
 CronNote=Kommentti
 CronFieldMandatory=Fields %s is mandatory
 CronErrEndDateStartDt=End date cannot be before start date
+StatusAtInstall=Status at module installation
 CronStatusActiveBtn=Enable
 CronStatusInactiveBtn=Poistaa käytöstä
 CronTaskInactive=This job is disabled
 CronId=Id
 CronClassFile=Filename with class
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is <i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is <i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is <i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is <i>fecth</i>
-CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be <i>0, ProductRef</i>
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
 CronCreateJob=Create new Scheduled Job
 CronFrom=Mistä
 # Info
 # Common
 CronType=Job type
-CronType_method=Call method of a Dolibarr Class
+CronType_method=Call method of a PHP Class
 CronType_command=Shell command
-CronCannotLoadClass=Cannot load class %s or object %s
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

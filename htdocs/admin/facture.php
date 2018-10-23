@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load('other');
-$langs->load('bills');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
 if (! $user->admin) accessforbidden();
 
@@ -240,6 +238,32 @@ if ($action == 'setforcedate')
     }
 }
 
+if ($action == 'setDefaultPDFModulesByType')
+{
+    $invoicetypemodels =  GETPOST('invoicetypemodels');
+    
+    if(!empty($invoicetypemodels) && is_array($invoicetypemodels))
+    {
+        $error = 0;
+        
+        foreach ($invoicetypemodels as $type => $value)
+        {
+            $res = dolibarr_set_const($db, 'FACTURE_ADDON_PDF_'.intval($type),$value,'chaine',0,'',$conf->entity);
+            if (! $res > 0) $error++;
+        }
+        
+        if (! $error)
+        {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        }
+        else
+        {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
+    
+   
+}
 
 
 /*
@@ -253,7 +277,7 @@ llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configurat
 $form=new Form($db);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
 
 $head = invoice_admin_prepare_head();
@@ -284,8 +308,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-        	$var=true;
-
             while (($file = readdir($handle))!==false)
             {
                 if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
@@ -316,7 +338,6 @@ foreach ($dirmodels as $reldir)
 
                         if ($module->isEnabled())
                         {
-                            $var = !$var;
                             print '<tr class="oddeven"><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_facture_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
@@ -470,7 +491,8 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
+$activatedModels = array();
+
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -507,7 +529,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
@@ -587,6 +608,47 @@ foreach ($dirmodels as $reldir)
 }
 print '</table>';
 
+if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
+{
+    /*
+     *  Document templates generators
+     */
+    print '<br>';
+    print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"),'','');
+    print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+    print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
+    print '<table id="default-pdf-modules-by-type-table" class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Type").'</td>';
+    print '<td>'.$langs->trans("Name").'</td>';
+    print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+    print "</tr>\n";
+    
+    $listtype=array(
+        Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
+        Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+        Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+        Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+    );
+    if (! empty($conf->global->INVOICE_USE_SITUATION))
+    {
+        $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
+    }
+    
+    foreach ($listtype as $type => $trans)
+    {
+        $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
+        $current = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+        print '<tr >';
+        print '<td>'.$trans.'</td>';
+        print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current,0,0, 0).'</td>';
+        print "</tr>\n";
+    }
+    
+    print '</table>';
+    print "</form>";
+}
 
 /*
  *  Modes de reglement
@@ -598,7 +660,6 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
 print '<table class="noborder" width="100%">';
-$var=True;
 
 print '<tr class="liste_titre">';
 print '<td>';
@@ -662,7 +723,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " WHERE clos = 0";
 $sql.= " AND courant = 1";
 $sql.= " AND entity IN (".getEntity('bank_account').")";
-$var=True;
+
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -695,10 +756,8 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-$var=true;
 
 // Force date validation
-$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
@@ -711,18 +770,17 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" /
 print "</td></tr>\n";
 print '</form>';
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
-$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename='INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -744,7 +802,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />';
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftBill"), $htmltext);
+print $form->textwithpicto($langs->trans("WatermarkOnDraftBill"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td>';
 print '<td><input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
 print '</td><td align="right">';
@@ -794,7 +852,6 @@ print '</table>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,6 +1,12 @@
 <!-- BEGIN TEMPLATE resource_view.tpl.php -->
 <?php
-//var_dump($linked_resources);
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $form= new Form($db);
 
@@ -30,19 +36,18 @@ else
 
 if( (array) $linked_resources && count($linked_resources) > 0)
 {
-	$var=true;
 
 	foreach ($linked_resources as $linked_resource)
 	{
-		
+
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'],$linked_resource['resource_type']);
-		
+
 		//$element_id = $linked_resource['rowid'];
-		
+
 		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
 		{
 
-			print '<form class="tagtr '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'?element='.$element.'&element_id='.$element_id.'" method="POST">';
+			print '<form class="tagtr oddeven" action="'.$_SERVER["PHP_SELF"].'?element='.$element.'&element_id='.$element_id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="action" value="update_linked_resource" />';
@@ -62,7 +67,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			if ($linked_resource['rowid'] == GETPOST('lineid'))
 				$style='style="background: orange;"';
 
-			print '<form class="tagtr '.($var==true?"pair":"impair").'" '.$style.'>';
+			print '<form class="tagtr oddeven" '.$style.'>';
 
 			print '<div class="tagtd">';
 			print $object_resource->getNomUrl(1);
@@ -96,7 +101,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 }
 else {
-	print '<form class="tagtr '.($var==true?"pair":"impair").'">';
+	print '<form class="tagtr oddeven">';
 	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
 	print '<div class="tagtd opacitymedium"></div>';
 	print '<div class="tagtd opacitymedium"></div>';

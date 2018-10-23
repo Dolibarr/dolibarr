@@ -32,11 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("exports");
-$langs->load("other");
-$langs->load("users");
-$langs->load("companies");
-$langs->load("projects");
+// Load translation files required by the page
+$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -63,15 +60,18 @@ $entitytoicon = array(
 	'product'      => 'product',
     'virtualproduct'=>'product',
 	'subproduct'   => 'product',
-    'warehouse'    => 'stock',
-    'batch'        => 'stock',
+	'product_supplier_ref'      => 'product',
+	'warehouse'    => 'stock',
+	'batch'        => 'stock',
+	'stockbatch'   => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
     'shipment_line'=> 'sending',
     'reception'=> 'sending',
     'reception_line'=> 'sending',
-    'expensereport'=> 'trip',
+	'expensereport'=> 'trip',
     'expensereport_line'=> 'trip',
+	'holiday'      => 'holiday',
     'contract_line' => 'contract',
     'translation'  => 'generic'
 );
@@ -99,9 +99,12 @@ $entitytolang = array(
 	'product'      => 'Product',
 	'virtualproduct'  => 'AssociatedProducts',
 	'subproduct'      => 'SubProduct',
-    'service'      => 'Service',
+	'product_supplier_ref'      => 'SupplierPrices',
+	'service'      => 'Service',
     'stock'        => 'Stock',
-    'batch'        => 'Batch',
+	'movement'	   => 'StockMovement',
+	'batch'        => 'Batch',
+	'stockbatch'   => 'StockDetailPerBatch',
 	'warehouse'    => 'Warehouse',
 	'category'     => 'Category',
 	'other'        => 'Other',
@@ -114,7 +117,8 @@ $entitytolang = array(
 	'action'       => 'Event',
 	'expensereport'=> 'ExpenseReport',
 	'expensereport_line'=> 'ExpenseReportLine',
-    'contract'     => 'Contract',
+	'holiday'      => 'TitreRequestCP',
+	'contract'     => 'Contract',
     'contract_line'=> 'ContractLine',
     'translation'  => 'Translation'
 );
@@ -446,7 +450,7 @@ if ($step == 1 || ! $datatoexport)
 
     print '<table class="notopnoleftnoright" width="100%">';
 
-    print $langs->trans("SelectExportDataSet").'<br>';
+    print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
 
     // Affiche les modules d'exports
     print '<table class="noborder" width="100%">';
@@ -550,7 +554,8 @@ if ($step == 2 && $datatoexport)
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectExportFields").' ';
-    $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+    if(empty($conf->global->EXPORTS_SHARE_MODELS))$htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1,$user->id);
+	else $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
     print ' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
@@ -582,18 +587,16 @@ if ($step == 2 && $datatoexport)
 	//    $this->array_export_entities[0]=$module->export_fields_entities[$r];
 	//    $this->array_export_alias[0]=$module->export_fields_alias[$r];
 
-    $var=true;
     $i = 0;
 
     foreach($fieldsarray as $code=>$label)
     {
-
         print '<tr class="oddeven">';
 
         $i++;
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td class="nowrap">';
@@ -776,7 +779,6 @@ if ($step == 3 && $datatoexport)
 	// Select request if all fields are selected
 	$sqlmaxforexport=$objexport->build_sql(0, array(), array());
 
-	$var=true;
 	$i = 0;
 	// on boucle sur les champs
 	foreach($fieldsarray as $code => $label)
@@ -785,7 +787,7 @@ if ($step == 3 && $datatoexport)
 
 		$i++;
 		$entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-		$entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+		$entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
 		$entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
 		print '<td class="nowrap">';
@@ -974,13 +976,12 @@ if ($step == 4 && $datatoexport)
     //print '<td>'.$langs->trans("FieldsTitle").'</td>';
     print '</tr>';
 
-    $var=true;
     foreach($array_selected as $code=>$value)
     {
         print '<tr class="oddeven">';
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td class="nowrap">';
@@ -1071,7 +1072,7 @@ if ($step == 4 && $datatoexport)
 		print '<td>'.$langs->trans("ExportModelName").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
-		$var=false;
+
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1081,16 +1082,15 @@ if ($step == 4 && $datatoexport)
     	$sql = "SELECT rowid, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql.= " WHERE type = '".$datatoexport."'";
+		if(empty($conf->global->EXPORTS_SHARE_MODELS))$sql.=" AND fk_user=".$user->id;
 		$sql.= " ORDER BY rowid";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$var=false;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
@@ -1225,11 +1225,10 @@ if ($step == 5 && $datatoexport)
 
     print $langs->trans("NowClickToGenerateToBuildExportFile").'<br>';
 
-    // Liste des formats d'exports disponibles
-    $var=true;
+    // List of available export formats
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
+    print '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
     print '<td>'.$langs->trans("LibraryUsed").'</td>';
     print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>'."\n";
@@ -1244,13 +1243,14 @@ if ($step == 5 && $datatoexport)
     		unset($liste[$key]);
     	}
 
-
         print '<tr class="oddeven">';
-        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
+        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
-	    print '<td>'.$form->textwithpicto($label,$text).'</td>';
-        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td><td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td></tr>'."\n";
+	    print $form->textwithpicto($label,$text).'</td>';
+        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
+        print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
+        print '</tr>'."\n";
     }
     print '</table>';
 

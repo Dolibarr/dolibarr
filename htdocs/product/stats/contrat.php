@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("contracts");
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('contracts', 'products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -46,11 +45,13 @@ $hookmanager->initHooks(array('productstatscontract'));
 
 $mesg = '';
 
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
@@ -90,7 +91,7 @@ if ($id > 0 || ! empty($ref))
         print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -102,7 +103,7 @@ if ($id > 0 || ! empty($ref))
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-        show_stats_for_company($product,$socid);
+        $nboflines = show_stats_for_company($product,$socid);
 
 		print "</table>";
 
@@ -119,7 +120,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'",1,0).") as nb_running,";
 		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')",1,0).') as nb_late,';
 		$sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-		$sql.= " c.rowid as rowid, c.date_contrat, c.statut as statut,";
+		$sql.= " c.rowid as rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut as statut,";
 		$sql.= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -131,9 +132,22 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " AND cd.fk_product =".$product->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
-		$sql.= " GROUP BY c.rowid, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
+		$sql.= " GROUP BY c.rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
 		$sql.= $db->order($sortfield, $sortorder);
-		$sql.= $db->plimit($conf->liste_limit +1, $offset);
+
+		//Calcul total qty and amount for global if full scan list
+		$total_ht=0;
+		$total_qty=0;
+
+		// Count total nb of records
+		$totalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$result = $db->query($sql);
+			$totalofrecords = $db->num_rows($result);
+		}
+
+		$sql .= $db->plimit($limit + 1, $offset);
 
 		$result = $db->query($sql);
 		if ($result)
@@ -145,6 +159,7 @@ if ($id > 0 || ! empty($ref))
                 $option .= '&amp;search_month=' . $search_month;
             if (! empty($search_year))
                 $option .= '&amp;search_year=' . $search_year;
+            if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
 
             print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
             if (! empty($sortfield))
@@ -156,7 +171,7 @@ if ($id > 0 || ! empty($ref))
                 $option .= '&amp;page=' . $page;
             }
 
-			print_barre_liste($langs->trans("Contrats"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
+            print_barre_liste($langs->trans("Contrats"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$product->id, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit);
 
 			$i = 0;
             print '<div class="div-table-responsive">';
@@ -168,29 +183,32 @@ if ($id > 0 || ! empty($ref))
 			print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
 			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($staticcontratligne->LibStatut(0,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
-			print_liste_field_titre($staticcontratligne->LibStatut(4,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
-			print_liste_field_titre($staticcontratligne->LibStatut(5,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(0,3),$_SERVER["PHP_SELF"],"",'','','align="center" width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(4,3),$_SERVER["PHP_SELF"],"",'','','align="center" width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(5,3),$_SERVER["PHP_SELF"],"",'','','align="center" width="16"',$sortfield,$sortorder,'maxwidthsearch ');
 			print "</tr>\n";
 
-			$contratstatic=new Contrat($db);
+			$contracttmp=new Contrat($db);
 
 			if ($num > 0)
 			{
-				$var=True;
-				while ($i < $num && $i < $conf->liste_limit)
+				while ($i < min($num, $limit))
 				{
 					$objp = $db->fetch_object($result);
 
+					$contracttmp->id = $objp->rowid;
+					$contracttmp->ref = $objp->ref;
+					$contracttmp->ref_customer = $objp->ref_customer;
+					$contracttmp->ref_supplier = $objp->ref_supplier;
 
 					print '<tr class="oddeven">';
-					print '<td><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
-					print $objp->rowid;
-					print "</a></td>\n";
+					print '<td>';
+					print $contracttmp->getNomUrl(1);
+					print "</td>\n";
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
-					print dol_print_date($db->jdate($objp->date_contrat))."</td>";
+					print dol_print_date($db->jdate($objp->date_contrat), 'dayhour')."</td>";
 					//print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					//print '<td align="right">';
 					print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
@@ -218,6 +236,6 @@ else
 	dol_print_error();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

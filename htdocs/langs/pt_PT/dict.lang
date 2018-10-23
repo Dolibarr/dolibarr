@@ -1,11 +1,12 @@
 # Dolibarr language file - Source file is en_US - dict
 CountryFR=França
 CountryBE=Belgica
-CountryIT=Italia
+CountryIT=Itália
 CountryES=Espanha
 CountryDE=Alemanha
 CountryCH=Suiça
-CountryGB=Grã-Bretanha
+# Warning, country code GB is for United Kingdom. UK Does not exists as country code in ISO standard.
+CountryGB=Reino Unido
 CountryUK=Reino Unido
 CountryIE=Irlanda
 CountryCN=China
@@ -250,9 +251,9 @@ CountryMF=Saint Martin
 ##### Civilities #####
 CivilityMME=Sra.
 CivilityMR=Sr.
-CivilityMLE=Dr.
-CivilityMTRE=Eng.
-CivilityDR=Doutor
+CivilityMLE=Doutor
+CivilityMTRE=Mestre
+CivilityDR=Dr.
 ##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dólar UA
@@ -325,3 +326,32 @@ PaperFormatCAP3=Formato P3 Canadá
 PaperFormatCAP4=Formato P4 Canadá
 PaperFormatCAP5=Formato P5 Canadá
 PaperFormatCAP6=Formato P6 Canadá
+#### Expense report categories ####
+ExpAutoCat=Carro
+ExpCycloCat=Ciclomotor
+ExpMotoCat=Moto
+ExpAuto3CV=3 CV
+ExpAuto4CV=4 CV
+ExpAuto5CV=5 CV
+ExpAuto6CV=6 CV
+ExpAuto7CV=7 CV
+ExpAuto8CV=8 CV
+ExpAuto9CV=9 CV
+ExpAuto10CV=10 CV
+ExpAuto11CV=11 CV
+ExpAuto12CV=12 CV
+ExpAuto3PCV=3 CV ou mais
+ExpAuto4PCV=4 CV ou mais
+ExpAuto5PCV=5 CV ou mais
+ExpAuto6PCV=6 CV ou mais
+ExpAuto7PCV=7 CV ou mais
+ExpAuto8PCV=8 CV ou mais
+ExpAuto9PCV=9 CV ou mais
+ExpAuto10PCV=10 CV ou mais
+ExpAuto11PCV=11 CV ou mais
+ExpAuto12PCV=12 CV ou mais
+ExpAuto13PCV=13 CV ou mais
+ExpCyclo=Capacidade inferior a 50cm3
+ExpMoto12CV=Moto 1 ou 2 CV
+ExpMoto345CV=Moto 3, 4 ou 5 CV
+ExpMoto5PCV=Moto 5 CV ou mais

@@ -25,7 +25,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","install","users","other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -40,14 +41,10 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1 || $page == null) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -99,7 +96,7 @@ $usefilter=0;
 $listofsessions=listOfSessions();
 $num=count($listofsessions);
 
-print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'', $num, ($num?$num:''),'setup');		// Do not show numer (0) if no session found (it means we can't know)
 
 $savehandler=ini_get("session.save_handler");
 $savepath=ini_get("session.save_path");
@@ -137,12 +134,8 @@ if ($savehandler == 'files')
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	$var=True;
-
 	foreach ($listofsessions as $key => $sessionentry)
 	{
-
-
 		print '<tr class="oddeven">';
 
 		// Login
@@ -212,5 +205,6 @@ print '</div>';
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

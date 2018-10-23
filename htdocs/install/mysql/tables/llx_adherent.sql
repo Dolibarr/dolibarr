@@ -46,7 +46,16 @@ create table llx_adherent
   state_id         integer,
   country          integer,
   email            varchar(255),
+
   skype            varchar(255),
+  twitter          varchar(255),                        		--
+  facebook         varchar(255),                        		--
+  instagram        varchar(255),                        		--
+  snapchat         varchar(255),                        		--
+  googleplus       varchar(255),                        		--
+  youtube          varchar(255),                        		--
+  whatsapp         varchar(255),                        		--
+
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),

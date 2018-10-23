@@ -24,8 +24,8 @@
 
 require '../main.inc.php';
 
-$langs->load("companies");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","other"));
 
 // Security check
 $socid=0;
@@ -46,10 +46,11 @@ $text=$langs->trans("Tools");
 print load_fiche_titre($text);
 
 // Show description of content
-print $langs->trans("ToolsDesc").'<br><br>';
+print '<div class="justify">'.$langs->trans("ToolsDesc").'</div><br><br>';
 
 
-
+// Show logo
+print '<div class="center"><div class="logo_setup"></div></div>';
 
 
 llxFooter();

@@ -29,14 +29,39 @@
  */
 class PriceGlobalVariable
 {
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
-    var $id;
-    var $code;
-    var $description;
-    var $value;
-    public $table_element = "c_price_global_variable";
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+    /**
+	 * @var int ID
+	 */
+	public $id;
+
+    public $code;
+
+    /**
+	 * @var string description
+	 */
+	public $description;
+
+    public $value;
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_global_variable";
 
     /**
      *  Constructor
@@ -46,7 +71,6 @@ class PriceGlobalVariable
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -74,7 +98,7 @@ class PriceGlobalVariable
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -125,7 +149,7 @@ class PriceGlobalVariable
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -173,7 +197,7 @@ class PriceGlobalVariable
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -196,7 +220,7 @@ class PriceGlobalVariable
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -243,7 +267,7 @@ class PriceGlobalVariable
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid = ".$rowid;
 
-            dol_syslog(get_class($this)."::delete");
+            dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
             if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         }
@@ -253,7 +277,7 @@ class PriceGlobalVariable
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -306,7 +330,7 @@ class PriceGlobalVariable
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " ORDER BY code";
 
-        dol_syslog(get_class($this)."::listGlobalVariables");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('compta');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
 $id =GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
@@ -46,15 +44,15 @@ $confirm=GETPOST('confirm', 'alpha');
 // Security check
 $fieldname = (! empty($ref)?'ref':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldname);
+$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','fk_user_author',$fieldname);
 
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
 $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="b.dateo,b.rowid";
-if ($page < 0) { $page = 0 ; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+if (empty($page) || $page == -1) { $page = 0; }
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $dir=$conf->bank->dir_output.'/checkdeposits/';
@@ -276,7 +274,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 {
 	if ($object->fetch($id) > 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$langs->load("other");
 
@@ -389,7 +387,7 @@ if ($action == 'new')
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
-	print $form->select_date($filterdate,'fd',0,0,1,'',1,1,1);
+	print $form->selectDate($filterdate, 'fd', 0, 0, 1, '', 1, 1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
@@ -490,53 +488,55 @@ if ($action == 'new')
 
 		if (count($lines[$bid]))
 		{
-    		foreach ($lines[$bid] as $lid => $value)
-    		{
-    			$account_id = $bid;
-    			if (! isset($accounts[$bid]))
-    				$accounts[$bid]=0;
-    			$accounts[$bid] += 1;
+			foreach ($lines[$bid] as $lid => $value)
+			{
+				//$account_id = $bid; FIXME not used
 
-    			print '<tr class="oddeven">';
-    			print '<td>'.dol_print_date($value["date"],'day').'</td>';
-    			print '<td>'.$value["numero"]."</td>\n";
-    			print '<td>'.$value["emetteur"]."</td>\n";
-    			print '<td>'.$value["banque"]."</td>\n";
-    			print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+				// FIXME $accounts[$bid] is a label !
+				/*if (! isset($accounts[$bid]))
+					$accounts[$bid]=0;
+				$accounts[$bid] += 1;*/
 
-    			// Link to payment
-    			print '<td align="center">';
-    			$paymentstatic->id=$value["paymentid"];
-    			$paymentstatic->ref=$value["paymentid"];
-    			if ($paymentstatic->id)
-    			{
-    				print $paymentstatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
-    			// Link to bank transaction
-    			print '<td align="center">';
-    			$accountlinestatic->rowid=$value["id"];
-    			if ($accountlinestatic->rowid)
-    			{
-    				print $accountlinestatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
+				print '<tr class="oddeven">';
+				print '<td>'.dol_print_date($value["date"],'day').'</td>';
+				print '<td>'.$value["numero"]."</td>\n";
+				print '<td>'.$value["emetteur"]."</td>\n";
+				print '<td>'.$value["banque"]."</td>\n";
+				print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 
-    			print '<td align="center">';
-    			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
-    			print '</td>' ;
-    			print '</tr>';
+				// Link to payment
+				print '<td align="center">';
+				$paymentstatic->id=$value["paymentid"];
+				$paymentstatic->ref=$value["paymentid"];
+				if ($paymentstatic->id)
+				{
+					print $paymentstatic->getNomUrl(1);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
+				// Link to bank transaction
+				print '<td align="center">';
+				$accountlinestatic->rowid=$value["id"];
+				if ($accountlinestatic->rowid)
+				{
+					print $accountlinestatic->getNomUrl(1);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
 
-    			$i++;
-    		}
+				print '<td align="center">';
+				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+				print '</td>' ;
+				print '</tr>';
+
+				$i++;
+			}
 		}
 		print "</table>";
         print '</div>';
@@ -562,7 +562,7 @@ else
 	$accountstatic=new Account($db);
 	$accountstatic->fetch($object->account_id);
 
-	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -587,7 +587,7 @@ else
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setdate">';
-        $form->select_date($object->date_bordereau,'datecreate_','','','',"setdate");
+        print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         print '</form>';
     }
@@ -688,10 +688,12 @@ else
         {
     		while ($objp = $db->fetch_object($resql))
     		{
-    			$account_id = $objp->bid;
-    			if (! isset($accounts[$objp->bid]))
+    			//$account_id = $objp->bid; FIXME not used
+
+    			// FIXME $accounts[$objp->bid] is a label
+    			/*if (! isset($accounts[$objp->bid]))
     				$accounts[$objp->bid]=0;
-    			$accounts[$objp->bid] += 1;
+    			$accounts[$objp->bid] += 1;*/
 
     			print '<tr class="oddeven">';
     			print '<td align="center">'.$i.'</td>';
@@ -805,8 +807,6 @@ if ($action != 'new')
 	}
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -33,9 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 if (! $user->rights->fournisseur->facture->lire) accessforbidden();
 
-$langs->load("companies");
-$langs->load("bills");
-
+$langs->loadLangs(array("companies", "bills"));
 
 $socid=GETPOST('socid','int');
 $option = GETPOST('option');
@@ -141,7 +139,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if (dol_strlen(GETPOST('sf_re')) > 0)
 	{
-		$sql .= " AND f.ref_supplier LIKE '%".GETPOST('sf_re')."%'";
+		$sql .= " AND f.ref_supplier LIKE '%".$db->escape(GETPOST('sf_re'))."%'";
 	}
 
 	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
@@ -223,7 +221,6 @@ if ($user->rights->fournisseur->facture->lire)
 
 		if ($num > 0)
 		{
-			$var=True;
 			$total_ht=0;
 			$total_ttc=0;
 			$total_paid=0;

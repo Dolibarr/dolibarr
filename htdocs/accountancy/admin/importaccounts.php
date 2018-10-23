@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com> 
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,22 +18,18 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/importaccounts.php
+ * \file        htdocs/accountancy/admin/importaccounts.php
  * \ingroup		Advanced accountancy
  * \brief 		Page import accounting account
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("main");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","accountancy"));
 
 // Security check
 if (! $user->admin)
@@ -87,7 +83,7 @@ if ($_POST["action"] == 'import') {
 				$accounting->pcg_type = $monType;
 				$accounting->pcg_subtype = $monSubType;
 				$accounting->active = 1;
-				
+
 				$result = $accounting->create($user);
 				if ($result > 0) {
 					setEventMessages($langs->trans("AccountingAccountAdd"), null, 'mesgs');
@@ -105,7 +101,7 @@ if ($_POST["action"] == 'import') {
 	print '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
 }
 
-// list accounting account from product 
+// list accounting account from product
 
 $sql = "(SELECT p.rowid as product_id, p.accountancy_code_sell as accounting ";
 $sql .= " FROM  " . MAIN_DB_PREFIX . "product as p ";
@@ -141,7 +137,6 @@ if ($result) {
 	$form = new Form($db);
 	$formaccounting = new FormAccounting($db);
 
-	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		print '<tr class="oddeven">';
@@ -177,14 +172,15 @@ if ($result) {
 		print '</tr>';
 		$i ++;
 	}
-	
+
 	print '<tr><td colspan="8">&nbsp;</td></tr><tr><td colspan="8" align="center"><input type="submit" class="butAction" value="' . $langs->trans("Import") . '"></td></tr>';
-	
+
 	print '</table>';
 	print '</form>';
 } else {
 	print $db->error();
 }
 
+// End of page
 llxFooter();
 $db->close();

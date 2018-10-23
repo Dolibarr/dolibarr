@@ -35,15 +35,13 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-$langs->load("main");
-$langs->load("errors");
-
+$langs->loadLangs(array("main", "errors"));
 
 // Global variables
 $version=DOL_VERSION;
@@ -186,8 +184,13 @@ if ($result >= 0)
 			foreach($ldapgroup[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] as $key => $userdn) {
 				if($key === 'count') continue;
 				if(empty($userList[$userdn])) { // Récupération de l'utilisateur
-					$userFilter = explode(',', $userdn);
-					$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
+					// Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+					if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS === 'memberUid'){
+						$userKey = array($userdn);
+					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets
+						$userFilter = explode(',', $userdn);
+						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
+					}
 					if(!is_array($userKey)) continue;
 
 					$fuser = new User($db);

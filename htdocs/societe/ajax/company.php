@@ -28,7 +28,6 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
 require '../../main.inc.php';
 
@@ -74,7 +73,6 @@ else
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$langs->load("companies");
-	$langs->load("main");
 
 	top_httphead();
 
@@ -89,7 +87,7 @@ else
 
 	if (! $searchkey) return;
 
-	$form = new Form($db);
+	if (! is_object($form)) $form = new Form($db);
 	$arrayresult=$form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson);
 
 	$db->close();

@@ -1,5 +1,5 @@
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2009-2017 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2009-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,16 +89,16 @@ div.soustitre {
 	body {
 		margin: 15px 4px 4px;
 	}
-	
-	input, input[type=text], input[type=password], select, textarea     { 
-		min-width: 20px; 
+
+	input, input[type=text], input[type=password], select, textarea     {
+		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
     	padding: .4em .1em;
     	border: 1px solid #BBB;
     	/* max-width: inherit; why this ? */
      }
-     
+
     .hideonsmartphone { display: none; }
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
@@ -120,13 +120,13 @@ div.soustitre {
     	padding-left: 0;
     	padding-right: 0;
 	}
-	
+
 	table.main-inside {
 		padding-left: 1px;
 		padding-right: 1px;
 		line-height: 20px;
 	}
-	
+
 	span.titre {
 	    font-size: 90%;
 	    font-weight: normal;
@@ -146,7 +146,7 @@ input:disabled
 	padding: 0 0 0 0;
 	margin: 0 0 0 0;
 	color: #AAA !important;
-	cursor: not-allowed !important; 
+	cursor: not-allowed !important;
 }
 
 input[type=submit] {
@@ -199,7 +199,7 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
-table.listofchoices, tr.listofchoices, td.listofchoices {
+table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	border-collapse: collapse;
     padding: 4px;
     color: #000000;
@@ -207,15 +207,12 @@ table.listofchoices, tr.listofchoices, td.listofchoices {
 	line-height: 18px;
 }
 
-tr.listofchoices {
-    height: 42px;	
-}
 .listofchoicesdesc {
 	color: #999 !important;
 }
 .blinkwait {
 	font-weight: bold;
-	text-decoration:blink !important;	
+	text-decoration:blink !important;
 }
 
 .installchoices table tr td  {
@@ -230,7 +227,7 @@ tr.listofchoices {
 div.ok {
 	color: #114466;
 }
-font.ok {
+span.ok {
 	color: #114466;
 }
 
@@ -238,7 +235,7 @@ font.ok {
 div.warning {
 	color: #777711;
 }
-font.warning {
+span.warning {
 	color: #777711;
 }
 
@@ -249,7 +246,7 @@ div.error {
 	padding: 0.2em 0.2em 0.2em 0;
 	margin: 0.5em 0 0.5em 0;
 }
-font.error {
+span.error {
 	color: #550000;
 	font-weight: bold;
 }

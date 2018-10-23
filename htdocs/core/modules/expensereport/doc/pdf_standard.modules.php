@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro     <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2016 Philippe Grand	 	 <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2018 Philippe Grand	 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,23 +38,78 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
+	/**
+     * @var string model name
+     */
+    public $name;
 
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
 
-    var $emetteur;	// Objet societe qui emet
+	/**
+     * @var string document type
+     */
+    public $type;
+
+    /**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+
+	/**
+	 * Issuer
+	 * @var Company object that emits
+	 */
+	public $emetteur;
 
 
 	/**
@@ -64,11 +119,10 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("trips");
-		$langs->load("projects");
+		// Translations
+		$langs->loadLangs(array("main", "trips", "projects"));
 
 		$this->db = $db;
 		$this->name = "";
@@ -108,8 +162,8 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxdate=88;
 		$this->posxtype=107;
 		$this->posxprojet=120;
-		$this->posxtva=136;
-		$this->posxup=152;
+		$this->posxtva=138;
+		$this->posxup=154;
 		$this->posxqty=168;
 		$this->postotalttc=178;
         if (empty($conf->projet->enabled)) {
@@ -136,7 +190,8 @@ class pdf_standard extends ModeleExpenseReport
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		Object		$object				Object to generate
@@ -149,16 +204,15 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("trips");
-		$outputlangs->load("projects");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
 		$nblignes = count($object->lines);
 
@@ -214,7 +268,7 @@ class pdf_standard extends ModeleExpenseReport
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
 			    // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -262,10 +316,14 @@ class pdf_standard extends ModeleExpenseReport
 				}
 				if ($notetoshow)
 				{
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
 					$tab_top = 95;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-               		$pdf->writeHTMLCell(190, 3, $this->posxpiece-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxpiece-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -299,7 +357,7 @@ class pdf_standard extends ModeleExpenseReport
                     $curY = $nexY;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-					
+
                     // Accountancy piece
                     $pdf->SetXY($this->posxpiece, $curY);
                     $pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
@@ -324,10 +382,18 @@ class pdf_standard extends ModeleExpenseReport
                         $nextColumnPosX = $this->posxprojet;
                     }
 
-					$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
+                    $expensereporttypecode = $object->lines[$i]->type_fees_code;
+                    $expensereporttypecodetoshow = $outputlangs->transnoentities($expensereporttypecode);
+                    if ($expensereporttypecodetoshow == $expensereporttypecode)
+                    {
+                    	$expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
+                    }
+                    $expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);	// 10 is too much
+
+                    $pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
                     // Project
-					if (! empty($conf->projet->enabled)) 
+					if (! empty($conf->projet->enabled))
 					{
                         $pdf->SetFont('','', $default_font_size - 1);
                         $pdf->SetXY($this->posxprojet, $curY);
@@ -429,7 +495,7 @@ class pdf_standard extends ModeleExpenseReport
 				}
 
 				$pdf->SetFont('','', 10);
-				
+
             	// Show total area box
 				$posy=$bottomlasttab+5;
 				$pdf->SetXY(100, $posy);
@@ -474,6 +540,8 @@ class pdf_standard extends ModeleExpenseReport
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -500,11 +568,11 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf,$langs,$hookmanager;
+		global $conf, $langs, $hookmanager;
 
-		$outputlangs->load("main");
-		$outputlangs->load("trips");
-		$outputlangs->load("companies");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "trips", "companies"));
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
@@ -583,7 +651,7 @@ class pdf_standard extends ModeleExpenseReport
    		$pdf->SetFont('','B', $default_font_size + 2);
    		$pdf->SetTextColor(111,81,124);
 		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $object->getLibStatut(0), '', 'R');
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
@@ -710,7 +778,6 @@ class pdf_standard extends ModeleExpenseReport
 				}
 			}
 		}
-
    	}
 
 	/**
@@ -729,7 +796,7 @@ class pdf_standard extends ModeleExpenseReport
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
 		global $conf;
-		
+
 		// Force to disable hidetop and hidebottom
 		$hidebottom=0;
 		if ($hidetop) $hidetop=-1;
@@ -787,7 +854,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 		}
 
-        if (!empty($conf->projet->enabled)) 
+        if (!empty($conf->projet->enabled))
         {
             // Project
             $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
@@ -851,6 +918,4 @@ class pdf_standard extends ModeleExpenseReport
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'EXPENSEREPORT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

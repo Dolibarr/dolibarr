@@ -35,14 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled))
 {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("other");
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'companies', 'compta', 'bills'));
 
 $id = GETPOST('id','int');
 $action = GETPOST('action','aZ09');
@@ -78,7 +76,7 @@ $modulepart='tax';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+require_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
@@ -87,6 +85,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
     if ($result < 0)
         setEventMessages($object->error, $object->errors, 'errors');
 }
+
 
 /*
  * View
@@ -125,7 +124,7 @@ if ($object->id)
         } else {
             $morehtmlref.='';
         }
-	}		
+	}
 	$morehtmlref.='</div>';
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
@@ -137,7 +136,7 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    // Construit liste des fichiers
+    // Build file list
     $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
     $totalsize=0;
     foreach($filearray as $key => $file)
@@ -149,17 +148,18 @@ if ($object->id)
     print '<table class="border" width="100%">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
     print '</table>';
 
     print '</div>';
-    
+
     print '<div class="clearboth"></div>';
-    
+
     dol_fiche_end();
 
     $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
+    $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
@@ -168,7 +168,6 @@ else
     print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

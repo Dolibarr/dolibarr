@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("admin");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "cashdesk"));
 
 
 /*
@@ -85,13 +85,12 @@ $formproduct=new FormProduct($db);
 
 llxHeader('',$langs->trans("CashDeskSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'title_setup');
 print '<br>';
 
 
 // Mode
-$var=true;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
@@ -103,7 +102,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',1,0,1,array(),0);
+print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3) AND s.status = 1',1,0,1,array(),0);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
@@ -162,7 +161,6 @@ if (! empty($conf->stock->enabled))
 
 if (! empty($conf->service->enabled))
 {
-    $var=! $var;
     print '<tr class="oddeven"><td>';
     print $langs->trans("CashdeskShowServices");
     print '<td colspan="2">';
@@ -173,7 +171,6 @@ if (! empty($conf->service->enabled))
 // Use Dolibarr Receipt Printer
 if (! empty($conf->receiptprinter->enabled))
 {
-    $var=! $var;
     print '<tr class="oddeven"><td>';
     print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
     print '<td colspan="2">';
@@ -188,5 +185,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print "</form>\n";
 
+// End of page
 llxFooter();
 $db->close();

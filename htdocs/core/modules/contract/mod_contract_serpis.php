@@ -28,11 +28,32 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_serpis extends ModelNumRefContracts
 {
-	var $version='dolibarr';
-	var $prefix='CT';
-	var $error='';
-	var $nom='Serpis';
-	var $code_auto=1;
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	public $prefix='CT';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Serpis';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Serpis';
+
+	public $code_auto=1;
 
 
 	/**
@@ -72,7 +93,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -105,7 +126,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
@@ -132,16 +153,17 @@ class mod_contract_serpis extends ModelNumRefContracts
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$objforref	contract object
+	 *	@param	Object		$objforref  contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
 	function contract_get_num($objsoc,$objforref)
 	{
+        // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

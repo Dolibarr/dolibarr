@@ -98,7 +98,8 @@ class Projects extends DolibarrApi
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of project objects
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -179,7 +180,7 @@ class Projects extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of project
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -205,7 +206,8 @@ class Projects extends DolibarrApi
     }
 
     /**
-     * Get tasks of a project
+     * Get tasks of a project.
+     * See also API /tasks
      *
      * @param int   $id                     Id of project
      * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)
@@ -213,7 +215,8 @@ class Projects extends DolibarrApi
      *
      * @url	GET {id}/tasks
      */
-    function getLines($id, $includetimespent=0) {
+    function getLines($id, $includetimespent=0)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->lire) {
 		  	throw new RestException(401);
 		  }
@@ -255,7 +258,8 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function getRoles($id, $userid=0) {
+    function getRoles($id, $userid=0)
+    {
         global $db;
 
         if(! DolibarrApiAccess::$user->rights->projet->lire) {
@@ -299,7 +303,8 @@ class Projects extends DolibarrApi
      * @return int
      */
     /*
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -342,7 +347,7 @@ class Projects extends DolibarrApi
       );
 
       if ($updateRes > 0) {
-        return $this->get($id)->line->rowid;
+        return $updateRes;
 
       }
       return false;
@@ -361,7 +366,8 @@ class Projects extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -417,7 +423,8 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = NULL) {
+    function put($id, $request_data = null)
+    {
       if(! DolibarrApiAccess::$user->rights->projet->creer) {
 		  	throw new RestException(401);
 		  }
@@ -435,7 +442,7 @@ class Projects extends DolibarrApi
             $this->project->$field = $value;
         }
 
-        if($this->project->update(DolibarrApiAccess::$user, 0) > 0)
+        if($this->project->update(DolibarrApiAccess::$user) >= 0)
         {
             return $this->get($id);
         }
@@ -476,7 +483,6 @@ class Projects extends DolibarrApi
                 'message' => 'Project deleted'
             )
         );
-
     }
 
     /**
@@ -513,7 +519,7 @@ class Projects extends DolibarrApi
 
 		$result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-		    throw new RestException(500, 'Error nothing done. May be object is already validated');
+		    throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Project: '.$this->project->error);
@@ -534,7 +540,8 @@ class Projects extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 

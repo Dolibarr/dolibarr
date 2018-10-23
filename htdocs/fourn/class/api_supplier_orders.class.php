@@ -46,8 +46,8 @@ class SupplierOrders extends DolibarrApi
      */
     function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->order = new CommandeFournisseur($this->db);
     }
 
@@ -68,11 +68,11 @@ class SupplierOrders extends DolibarrApi
 		}
 
         $result = $this->order->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
+		if ( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -96,7 +96,8 @@ class SupplierOrders extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -186,7 +187,7 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of supplier order
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401, "Insuffisant rights");
@@ -222,7 +223,7 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401);
@@ -316,7 +317,7 @@ class SupplierOrders extends DolibarrApi
 
     	$result = $this->order->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
     	if ($result == 0) {
-    		throw new RestException(500, 'Error nothing done. May be object is already validated');
+    		throw new RestException(304, 'Error nothing done. May be object is already validated');
     	}
     	if ($result < 0) {
     		throw new RestException(500, 'Error when validating Order: '.$this->order->error);
@@ -336,11 +337,16 @@ class SupplierOrders extends DolibarrApi
      * @param   Object  $object    Object to clean
      * @return  array              Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
+        unset($object->barcode_type);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_coder);
 
         return $object;
     }

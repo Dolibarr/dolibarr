@@ -48,4 +48,4 @@ SmsInfoNumero= (Muoto kansainvälinen eli +33899701761)
 DelayBeforeSending=Viive ennen lähettämistä (min)
 SmsNoPossibleSenderFound=Lähettäjää ei ole saatavilla. Tarkista SMS asetukset.
 SmsNoPossibleRecipientFound=Ei tavoite käytettävissä. Tarkista asetukset oman SMS tarjoaja.
-
+DisableStopIfSupported=Disable STOP message (if supported)

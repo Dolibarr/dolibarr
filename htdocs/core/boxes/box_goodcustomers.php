@@ -38,7 +38,11 @@ class box_goodcustomers extends ModeleBoxes
 	var $boxlabel="BoxGoodCustomers";
 	var $depends = array("societe");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $enabled = 1;
 
 	var $info_box_head = array();
@@ -155,7 +159,6 @@ class box_goodcustomers extends ModeleBoxes
 				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
-
 	}
 
 	/**

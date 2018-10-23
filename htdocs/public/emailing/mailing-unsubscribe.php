@@ -35,13 +35,17 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no 
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 
 require '../../main.inc.php';
@@ -49,8 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 global $user, $conf, $langs;
 
-$langs->load("main");
-$langs->load("mails");
+$langs->loadLangs(array("main", "mails"));
 
 $tag=GETPOST('tag');
 $unsuscrib=GETPOST('unsuscrib');

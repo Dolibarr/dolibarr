@@ -17,7 +17,8 @@
 
 use Luracast\Restler\RestException;
 
-//require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -33,7 +34,7 @@ class Contacts extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
-		'lastname'
+		'lastname',
 	);
 
 	/**
@@ -95,13 +96,14 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-     * @param string   	$thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return array                        Array of contact objects
      *
 	 * @throws RestException
-	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+     */
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -121,6 +123,7 @@ class Contacts extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX . "socpeople_extrafields as te ON te.fk_object = t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			// We need this table joined to the select in order to filter by sale
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
@@ -193,7 +196,8 @@ class Contacts extends DolibarrApi
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
 	 */
-	function post($request_data = NULL) {
+    function post($request_data = null)
+    {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -218,7 +222,8 @@ class Contacts extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+    function put($id, $request_data = null)
+    {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -253,7 +258,8 @@ class Contacts extends DolibarrApi
 	 * @param   int     $id Contact ID
 	 * @return  integer
 	 */
-	function delete($id) {
+    function delete($id)
+    {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer)
 		{
 			throw new RestException(401, 'No permission to delete contacts');
@@ -273,15 +279,16 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Create useraccount object from contact
+	 * Create an user account object from contact (external user)
 	 *
-	 * @param   int   $id   Id of contact
+	 * @param   int   	$id   Id of contact
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of user
 	 *
 	 * @url	POST {id}/createUser
 	 */
-	function createUser($id, $request_data = NULL) {
+    function createUser($id, $request_data = null)
+    {
 	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 	    //throw new RestException(401);
 	    //}
@@ -335,10 +342,50 @@ class Contacts extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-    	require_once DOL_DOCUMENT_ROOT.'/categories/class/api_categories.class.php';
-    	$categories = new Categories();	// TODO Use Categories object not API object
-        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'contact', $id);
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
+    }
+
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object)
+    {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->total_ht);
+    	unset($object->total_tva);
+    	unset($object->total_localtax1);
+    	unset($object->total_localtax2);
+    	unset($object->total_ttc);
+
+    	unset($object->note);
+    	unset($object->lines);
+    	unset($object->thirdparty);
+
+    	return $object;
     }
 
 	/**
@@ -348,7 +395,8 @@ class Contacts extends DolibarrApi
 	 * @return  array
 	 * @throws RestException
 	 */
-	function _validate($data) {
+    function _validate($data)
+    {
 		$contact = array();
 		foreach (Contacts::$FIELDS as $field)
 		{
@@ -356,6 +404,7 @@ class Contacts extends DolibarrApi
 				throw new RestException(400, "$field field missing");
 			$contact[$field] = $data[$field];
 		}
+
 		return $contact;
 	}
 }

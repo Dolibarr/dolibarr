@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -30,10 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->load("companies");
-$langs->load("mails");
-$langs->load("admin");
-$langs->load("other");
+$langs->loadLangs(array("companies", "mails", "admin", "other"));
 
 $socid = GETPOST("socid",'int');
 $action = GETPOST('action','aZ09');
@@ -210,12 +207,14 @@ if ($result > 0)
     print "\n";
 
     // Help
-    print '<br>'.$langs->trans("NotificationsDesc");
+    print '<div class="opacitymedium">';
+    print $langs->trans("NotificationsDesc");
     print '<br>'.$langs->trans("NotificationsDescUser");
     print '<br>'.$langs->trans("NotificationsDescContact");
     print '<br>'.$langs->trans("NotificationsDescGlobal");
+	print '</div>';
 
-    print '<br><br><br>'."\n";
+    print '<br><br>'."\n";
 
 
     // Add notification form
@@ -430,6 +429,11 @@ if ($result > 0)
     {
         $result = $db->query($sql);
         $nbtotalofrecords = $db->num_rows($result);
+        if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+        {
+        	$page = 0;
+        	$offset = 0;
+        }
     }
 
     $sql.= $db->plimit($limit+1, $offset);
@@ -525,7 +529,6 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -39,7 +39,11 @@ class box_external_rss extends ModeleBoxes
     var $boxlabel="BoxLastRssInfos";
     var $depends = array("externalrss");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $paramdef;	// Params of box definition (not user params)
 
     var $info_box_head = array();
@@ -82,7 +86,7 @@ class box_external_rss extends ModeleBoxes
 
 		$keyforparamurl="EXTERNAL_RSS_URLRSS_".$site;
 		$keyforparamtitle="EXTERNAL_RSS_TITLE_".$site;
-		
+
 		// Get RSS feed
 		$url=$conf->global->$keyforparamurl;
 
@@ -106,7 +110,7 @@ class box_external_rss extends ModeleBoxes
                 'text' => $title,
                 'sublink' => $link,
                 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")),
-                'subpicto'=>'object_bookmark',
+                'subpicto'=>'help',
             );
 		}
 
@@ -194,6 +198,5 @@ class box_external_rss extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

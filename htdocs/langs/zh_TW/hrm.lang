@@ -13,5 +13,5 @@ DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Function list
 # Module
 Employees=Employees
-Employee=Employee
+Employee=員工
 NewEmployee=New employee

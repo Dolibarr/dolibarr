@@ -30,29 +30,55 @@
 
 
 /**
- *	Events class
+ *  Events class
  */
 class Events // extends CommonObject
 {
-	public $element='events';				//!< Id that identify managed objects
-	public $table_element='events';		//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='events';
 
-	var $id;
-	var $db;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='events';
 
-	var $error;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $tms;
-	var $type;
-	var $entity;
-	var $dateevent;
-	var $description;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	// List of all events supported by triggers
-	var $eventstolog=array(
-		array('id'=>'USER_LOGIN',             'test'=>1),
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $tms;
+	public $type;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
+
+	public $dateevent;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	// List of all Audit/Security events supported by triggers
+	public $eventstolog=array(
+		/*array('id'=>'USER_LOGIN',             'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED',      'test'=>1),
-	    array('id'=>'USER_LOGOUT',            'test'=>1),
+	    array('id'=>'USER_LOGOUT',            'test'=>1),*/
 		array('id'=>'USER_CREATE',            'test'=>1),
 		array('id'=>'USER_MODIFY',            'test'=>1),
 		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
@@ -96,7 +122,6 @@ class Events // extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 
@@ -126,12 +151,12 @@ class Events // extends CommonObject
 		$sql.= "fk_user,";
 		$sql.= "description";
 		$sql.= ") VALUES (";
-		$sql.= " '".$this->type."',";
+		$sql.= " '".$this->db->escape($this->type)."',";
 		$sql.= " ".$conf->entity.",";
-		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
-		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
+		$sql.= " '".$this->db->escape($_SERVER['REMOTE_ADDR'])."',";
+		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".$this->db->escape(dol_trunc($_SERVER['HTTP_USER_AGENT'],250))."'":'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
-		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
+		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
 		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";
 		$sql.= ")";
 
@@ -280,5 +305,4 @@ class Events // extends CommonObject
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
 	}
-
 }

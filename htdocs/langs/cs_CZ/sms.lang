@@ -48,4 +48,4 @@ SmsInfoNumero= (Mezinárodním formátu, tj.: 33899701761)
 DelayBeforeSending=Prodleva před odesláním (minuty)
 SmsNoPossibleSenderFound=Žádný odesilatel k dispozici. Zkontrolujte nastavení vašeho poskytovatele SMS.
 SmsNoPossibleRecipientFound=Žádný cíl k dispozici. Zkontrolujte nastavení poskytovatele služeb SMS.
-
+DisableStopIfSupported=Disable STOP message (if supported)

@@ -70,6 +70,7 @@
 
 UPDATE llx_user set api_key = null where api_key = '';
 
+UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
@@ -93,7 +94,11 @@ delete from llx_livraison where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
 delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
+
+delete from llx_rights_def where perms IS NULL;
 delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
+delete from llx_usergroup_rights where fk_usergroup not in (select rowid from llx_usergroup);
+delete from llx_usergroup_rights where fk_id not in (select id from llx_rights_def);
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
@@ -120,6 +125,8 @@ delete from llx_societe_extrafields where fk_object not in (select rowid from ll
 delete from llx_adherent_extrafields where fk_object not in (select rowid from llx_adherent);
 delete from llx_product_extrafields where fk_object not in (select rowid from llx_product);
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
+
+UPDATE llx_product SET datec = tms WHERE datec IS NULL;
 
 
 -- Clean stocks
@@ -168,7 +175,7 @@ delete from llx_categorie_fournisseur where fk_categorie not in (select rowid fr
 delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type = 2);
 delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
 delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
-delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 5);
+delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 6);
 
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
@@ -240,7 +247,7 @@ update llx_product set barcode = null where barcode in ('', '-1', '0');
 update llx_societe set barcode = null where barcode in ('', '-1', '0');
 
 
--- Sequence to removed duplicated values of llx_links. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of llx_links. Use several times if you still have duplicate.
 drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
 create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
@@ -249,7 +256,7 @@ delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_
 drop table tmp_links_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_product. Use several times if you still have duplicate.
 drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
@@ -258,13 +265,22 @@ update llx_product set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_product_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_societe. Use serveral times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_societe. Use several times if you still have duplicate.
 drop table tmp_societe_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
 --select * from tmp_societe_double;
 update llx_societe set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_societe_double);
 drop table tmp_societe_double;
+
+
+-- Sequence to removed duplicated values of llx_accounting_account. Use several times if you still have duplicate.
+drop table tmp_accounting_account_double;
+--select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
+create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
+--select * from tmp_accounting_account_double;
+delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
+drop table tmp_accounting_account_double;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
@@ -332,6 +348,8 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 --update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 --update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 
+update llx_propal set fk_statut = 1 where fk_statut = -1;
+
 delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
 
 
@@ -374,6 +392,11 @@ drop table tmp_bank_url_expense_user;
 
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
@@ -402,7 +425,41 @@ drop table tmp_bank_url_expense_user;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_facture_fourn set date_lim_reglement = null where DATE(STR_TO_DATE(date_lim_reglement, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_facture_fourn set date_lim_reglement = null where DATE(STR_TO_DATE(date_lim_reglement, '%Y-%m-%d')) IS NULL;
+
 
 -- Backport a change of value into the hourly rate. 
 -- update llx_projet_task_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
+
+
+-- select * from llx_facturedet as fd, llx_product as p where fd.fk_product = p.rowid AND fd.product_type != p.fk_product_type;
+update llx_facturedet set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
+update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
+
+update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
+update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
+ 
+ 
+UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
+
+ 
+-- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
+-- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
+
+
+
+-- Note to migrate from old counter aquarium to new one
+-- drop table tmp;
+-- create table tmp select rowid, code_client, concat(substr(code_client, 1, 6),'-0',substr(code_client, 8, 5)) as code_client2 from llx_societe where code_client like 'CU____-____';
+-- update llx_societe as s set code_client = (select code_client2 from tmp as t where t.rowid = s.rowid) where code_client like 'CU____-____';
+-- drop table tmp;
+-- create table tmp select rowid, code_fournisseur, concat(substr(code_fournisseur, 1, 6),'-0',substr(code_fournisseur, 8, 5)) as code_fournisseur2 from llx_societe where code_fournisseur like 'SU____-____';
+-- select * from tmp;
+-- update llx_societe as s set s.code_fournisseur = (select code_fournisseur2 from tmp as t where t.rowid = s.rowid) where s.code_fournisseur like 'SU____-____';
+-- update llx_societe set code_compta =  concat('411', substr(code_client, 3, 2),substr(code_client, 8, 5)) where client in (1,2,3) and code_compte is not null;
+-- update llx_societe set code_compta_fournisseur =  concat('401', substr(code_fournisseur, 3, 2),substr(code_fournisseur, 8, 5)) where fournisseur in (1,2,3) and code_fournisseur is not null;
+
 

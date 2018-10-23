@@ -136,7 +136,7 @@ switch ($action)
 				$cond_reglement_id = 0;
 				break;
 			case 'ESP':
-				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
 				$note .= $langs->trans("Received").' : '.$obj_facturation->montantEncaisse()." ".$conf->currency."\n";
@@ -145,11 +145,11 @@ switch ($action)
 				$note .= '--------------------------------------'."\n\n";
 				break;
 			case 'CB':
-				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				break;
 			case 'CHQ':
-				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				break;
 		}
@@ -215,6 +215,8 @@ switch ($action)
 		$invoice->note_private=$note;
 		$invoice->cond_reglement_id=$cond_reglement_id;
 		$invoice->mode_reglement_id=$mode_reglement_id;
+		$invoice->module_source = 'cashdesk';
+		$invoice->pos_source = '0';
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
@@ -253,7 +255,7 @@ switch ($action)
 			}
 			else
 			{
-				setEventMessage($invoice->error, $invoice->errors, 'errors');
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
 			    $error++;
 			}
 
@@ -324,7 +326,7 @@ switch ($action)
                     	{
                     		// We set status to payed
                     		$result=$invoice->set_paid($user);
-                  			//print 'eeeee';exit;
+                  			//print 'set paid';exit;
                     	}
 
                     }

@@ -59,7 +59,9 @@ class UserTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -77,7 +79,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         global $conf,$user,$langs,$db;
 
         if (! empty($conf->global->MAIN_MODULE_LDAP)) { print "\n".__METHOD__." module LDAP must be disabled.\n"; die(); }
-        
+
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
         print __METHOD__."\n";
@@ -271,6 +273,32 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
+
+    /**
+     * testUserAddPermission
+     *
+     * @param   Object  $id      User
+     * @return  void
+     * @depends testUserDelete
+     * The depends says test is run only if previous is ok
+     */
+    public function testUserAddPermission($id)
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$localobject=new User($this->savdb);
+    	$result=$localobject->fetch(1);			// Other tests use the user id 1
+    	$result=$localobject->addrights(0, 'supplier_proposal');
+
+    	print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+    	return $result;
+    }
+
 
 
     /**

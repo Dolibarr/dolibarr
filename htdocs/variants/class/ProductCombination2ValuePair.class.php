@@ -52,10 +52,15 @@ class ProductCombination2ValuePair
 	 */
 	public $fk_prod_attr_val;
 
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct(DoliDB $db)
+    {
+        $this->db = $db;
+    }
 
 	/**
 	 * Translates this class to a human-readable string

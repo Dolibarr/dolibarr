@@ -22,8 +22,8 @@ CREATE TABLE llx_accounting_bookkeeping
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
   doc_date              date NOT NULL,				-- FEC:PieceDate
-  doc_type              varchar(30) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
-  doc_ref               varchar(300) NOT NULL,		-- 					| facture_client/reglement_client/... reference number
+  doc_type              varchar(30) NOT NULL,		-- 					| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
+  doc_ref               varchar(300) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/... reference number
   fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid
   fk_docdet             integer NOT NULL,			-- 					| facture_client/reglement_client/... line rowid
   thirdparty_code       varchar(32),                -- Third party code (customer or supplier) when record is saved (may help debug) 
@@ -40,14 +40,17 @@ CREATE TABLE llx_accounting_bookkeeping
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
+  date_lim_reglement    datetime DEFAULT NULL,		-- 					| date limite de reglement
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
   tms                   timestamp,					--					| date last modification 
-  import_key            varchar(14),
+  fk_user               integer NULL,               -- The id of user that validate the accounting source document
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
-  piece_num             integer NOT NULL,			-- FEC:EcritureNum
+  piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting source document
   validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
-  date_validated        datetime					-- FEC:ValidDate
+  date_validated        datetime,					-- FEC:ValidDate
+  import_key            varchar(14),
+  extraparams	        varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;
