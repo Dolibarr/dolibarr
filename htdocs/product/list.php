@@ -866,7 +866,7 @@ if ($resql)
 			// Stock real
 			if (! empty($arrayfields['p.stock']['checked']))
 			{
-				print '<td align="right">';
+				print '<td align="right" class="nowraponall">';
 				if ($obj->fk_product_type != 1)
 				{
 					if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
@@ -878,7 +878,7 @@ if ($resql)
 			// Stock virtual
 			if (! empty($arrayfields['stock_virtual']['checked']))
 			{
-				print '<td align="right">';
+				print '<td align="right" class="nowraponall">';
 				if ($obj->fk_product_type != 1)
 				{
 					if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
