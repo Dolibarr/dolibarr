@@ -25,6 +25,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php";
 //require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 //require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
@@ -185,10 +186,10 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= " ".(! isset($this->status)?'NULL':"'".$this->db->escape($this->status)."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'")."";
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
 		$sql.= " ".(! isset($this->fk_reception)?'NULL':"'".$this->fk_reception."'")."";
 		$sql.= ")";
-
+		
 		$this->db->begin();
 
 	   	dol_syslog(__METHOD__, LOG_DEBUG);
@@ -221,6 +222,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
+				
 				if ($result < 0)
 				{
 					$error++;

@@ -348,7 +348,7 @@ if (empty($reshook))
 					$sellbydate = str_replace('/','-',$sellby);
 					
 					
-					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate),strtotime($sellbydate), GETPOST($batch, 'alpha'));
+					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate),strtotime($sellbydate), GETPOST($batch, 'alpha'));		
 					if ($ret < 0)
 					{
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -2248,7 +2248,7 @@ else if ($id || $ref)
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
+		$formmail->setSubstitFromObject($object,$langs);
 		$formmail->substit['__RECEPTIONREF__']=$object->ref;
 		$formmail->substit['__RECEPTIONTRACKNUM__']=$object->tracking_number;
 		$formmail->substit['__RECEPTIONTRACKNUMURL__']=$object->tracking_url;

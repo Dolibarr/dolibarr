@@ -264,7 +264,7 @@ class Reception extends CommonObject
 				for ($i = 0; $i < $num; $i++)
 				{
 					$this->lines[$i]->fk_reception = $this->id;
-
+					
 					if (! $this->lines[$i]->create($user) > 0)
 					{
 						$error++;
@@ -1025,7 +1025,7 @@ class Reception extends CommonObject
 		}
 
 	}
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Load lines
 	 *
@@ -1033,6 +1033,7 @@ class Reception extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		// phpcs:enable
 		global $db;
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
@@ -1056,9 +1057,8 @@ class Reception extends CommonObject
 					$line->subprice = $obj->subprice;
 					$line->multicurrency_subprice = $obj->multicurrency_subprice;
 					$line->remise_percent = $obj->remise_percent;
-					$line->label = $obj->label;
+					$line->label = !empty($obj->label)?$obj->label:$line->product->label;
 					$line->ref_supplier = $obj->ref;
-					
 				}else {
 					$line->qty_asked = 0;
 					$line->description = '';
@@ -1260,7 +1260,8 @@ class Reception extends CommonObject
 		}
 
 	}
-
+	
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Set the planned delivery date
 	 *
@@ -1270,6 +1271,7 @@ class Reception extends CommonObject
 	 */
 	function set_date_livraison($user, $date_livraison)
 	{
+		// phpcs:enable
 		if ($user->rights->reception->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
@@ -1294,7 +1296,7 @@ class Reception extends CommonObject
 			return -2;
 		}
 	}
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
 	 *
@@ -1302,6 +1304,7 @@ class Reception extends CommonObject
 	 */
 	function fetch_delivery_methods()
 	{
+		// phpcs:enable
 		global $langs;
 		$this->meths = array();
 
@@ -1320,7 +1323,7 @@ class Reception extends CommonObject
 			}
 		}
 	}
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Fetch all deliveries method and return an array. Load array this->listmeths.
      *
@@ -1329,6 +1332,7 @@ class Reception extends CommonObject
      */
     function list_delivery_methods($id='')
     {
+		// phpcs:enable
         global $langs;
 
         $this->listmeths = array();
@@ -1355,6 +1359,7 @@ class Reception extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Update/create delivery method.
      *
@@ -1364,6 +1369,7 @@ class Reception extends CommonObject
      */
     function update_delivery_method($id='')
     {
+		// phpcs:enable
         if ($id=='')
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
@@ -1382,7 +1388,8 @@ class Reception extends CommonObject
         }
         if ($resql < 0) dol_print_error($this->db,'');
     }
-
+	
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Activate delivery method.
      *
@@ -1392,13 +1399,15 @@ class Reception extends CommonObject
      */
     function activ_delivery_method($id)
     {
+		// phpcs:enable
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
         $sql.= ' WHERE rowid='.$id;
 
         $resql = $this->db->query($sql);
 
     }
-
+	
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  DesActivate delivery method.
      *
@@ -1408,6 +1417,7 @@ class Reception extends CommonObject
      */
     function disable_delivery_method($id)
     {
+		// phpcs:enable
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
         $sql.= ' WHERE rowid='.$id;
 
@@ -1598,7 +1608,7 @@ class Reception extends CommonObject
 		    return -1;
 		}
 	}
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
 	 *
@@ -1606,6 +1616,7 @@ class Reception extends CommonObject
 	 */
 	function set_billed()
 	{
+		// phpcs:enable
 	    global $user;
 		$error=0;
 
@@ -1768,6 +1779,7 @@ class Reception extends CommonObject
 	}
 	
 	
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 /**
      *	Set draft status
      *
@@ -1776,6 +1788,7 @@ class Reception extends CommonObject
      */
     function set_draft($user)
     {
+		// phpcs:enable
         global $conf,$langs;
 
         $error=0;

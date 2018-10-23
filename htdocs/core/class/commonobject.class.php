@@ -4225,6 +4225,7 @@ abstract class CommonObject
 			}else {
 				$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
 			}
+			
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end))
 			{
