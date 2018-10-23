@@ -526,7 +526,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
          */
 
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
-        $sql.= ' f.datef as df, f.fk_soc as socid';
+        $sql.= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
@@ -578,6 +578,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
                 print '<td align="center">'.$langs->trans('Date').'</td>';
+                print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
                 if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
                 if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
                 if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$multicurrencyalreadypayedlabel.'</td>';
@@ -629,7 +630,25 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     // Date
                     print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
-
+                    
+                    // Date Max Payment
+                    if ($objp->dlr > 0 )
+                    {
+                        print '<td align="center">';
+                        print dol_print_date($db->jdate($objp->dlr), 'day');
+                        
+                        if ($invoice->hasDelay())
+                        {
+                            print img_warning($langs->trans('Late'));
+                        }
+                        
+                        print '</td>';
+                    }
+                    else
+                    {
+                        print '<td align="center"><b>--</b></td>';
+                    }
+                    
                     // Currency
                     if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
 
