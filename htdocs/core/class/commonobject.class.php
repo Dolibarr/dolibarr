@@ -6219,6 +6219,7 @@ abstract class CommonObject
 					return 'Error bad setup of extrafield';
 				}
 			}
+			else $value='';
 		}
 		elseif ($type == 'text' || $type == 'html')
 		{
