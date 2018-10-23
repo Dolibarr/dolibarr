@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Thibault FOUCART			<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1043,6 +1044,141 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
+// Payment on customer invoice
+if ($source == 'donation')
+{
+	$found=true;
+	$langs->load("don");
+
+	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+
+	$donation=new Don($db);
+	$result=$donation->fetch($ref);
+	if ($result <= 0)
+	{
+		$mesg=$donation->error;
+		$error++;
+	}
+	else
+	{
+		$result=$donation->fetch_thirdparty($donation->socid);
+
+		$object = $donation;
+	}
+
+	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+	{
+		$amount=price2num($donation->amount);//- $donation->getSommePaiement())
+		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+		$amount=price2num($amount);
+	}
+
+	$fulltag='DON='.$donation->id.'.CUS='.$donation->thirdparty->id;
+	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
+	$fulltag=dol_string_unaccent($fulltag);
+
+	// Creditor
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
+	print '</td></tr>'."\n";
+
+	// Debitor
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$donation->thirdparty->name.'</b>';
+
+	// Object
+	$text='<b>'.$langs->trans("PaymentDonationRef",$donation->ref).'</b>';
+	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($donation->ref).'">';
+ 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($donation->id).'">';
+	$directdownloadlink = $donation->getLastMainDocLink('don');
+	if ($directdownloadlink)
+	{
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($invoice->last_main_doc,'');
+		print $langs->trans("DownloadDocument").'</a>';
+	}
+	print '</td></tr>'."\n";
+
+	// Amount
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentAmount");
+	if (empty($amount) && empty($object->paye)) print ' ('.$langs->trans("ToComplete").')';
+	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	if (empty($object->paye))
+	{
+		if (empty($amount) || ! is_numeric($amount))
+		{
+			print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"), 'MT').'">';
+		}
+		else {
+			print '<b>'.price($amount).'</b>';
+			print '<input type="hidden" name="amount" value="'.$amount.'">';
+			print '<input type="hidden" name="newamount" value="'.$amount.'">';
+		}
+		// Currency
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+		print '<input type="hidden" name="currency" value="'.$currency.'">';
+	}
+	else
+	{
+		print price($object->total_ttc, 1, $langs);
+	}
+	print '</td></tr>'."\n";
+
+	// Tag
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+	print '</td></tr>'."\n";
+
+	// Add download link
+	if ($download > 0)
+	{
+		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
+		print '</td><td class="CTableRow'.($var?'1':'2').'">';
+		print $invoice->getDirectExternalLink(1);
+		print '</td></tr>'."\n";
+	}
+
+	// Shipping address
+	$shipToName=$donation->thirdparty->name;
+	$shipToStreet=$donation->thirdparty->address;
+	$shipToCity=$donation->thirdparty->town;
+	$shipToState=$donation->thirdparty->state_code;
+	$shipToCountryCode=$donation->thirdparty->country_code;
+	$shipToZip=$donation->thirdparty->zip;
+	$shipToStreet2='';
+	$phoneNum=$donation->thirdparty->phone;
+	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
+	{
+		print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+		print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+		print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+		print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+		print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+		print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+	}
+	else
+	{
+		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+	}
+	if (is_object($donation->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$donation->thirdparty->id.'">'."\n";
+	print '<input type="hidden" name="email" value="'.$donation->thirdparty->email.'">'."\n";
+	print '<input type="hidden" name="vatnumber" value="'.$donation->thirdparty->tva_intra.'">'."\n";
+	$labeldesc=$langs->trans("Don").' '.$donation->ref;
+	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
+}
+
 // Payment on contract line
 if ($source == 'contractline')
 {
@@ -1559,11 +1695,139 @@ if (preg_match('/^dopayment/',$action))
 		print '<input type="hidden" name="email" value="'.GETPOST('email','alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id','int').'" />';
     print '<input type="hidden" name="dol_id" value="'.GETPOST('dol_id','int').'" />';
-        
-		print '
+    
+    print '
 	    <table id="dolpaymenttable" summary="Payment form" class="center">
-	    <tbody><tr><td class="textpublicpayment">
+	    <tbody><tr class="textpublicpayment"><td  colspan="7">
+      <DIV id="payment-request-button"><!-- A Stripe Element will be inserted here. --></DIV><BR><BR></TD></TR>';
+      
 
+
+
+    	$service = 'StripeTest'; 
+
+
+
+	$servicestatus = 0; 
+	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha')) 
+	{ 
+		$service = 'StripeLive'; 
+		$servicestatus = 1; 
+	} 
+			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+			$stripe = new Stripe($db); 
+
+	    $stripeacc = $stripe->getStripeAccount($service);
+     $listofsources = array();
+		if (is_object($stripe))
+		{
+			try {
+        $thirdparty = new Societe($db); 
+        $thirdparty->fetch(GETPOST('thirdparty_id','int')); 
+				$customerstripe=$stripe->customerStripe($thirdparty, $stripeacc, $servicestatus);
+				if ($customerstripe->id) {
+					$listofsources=$customerstripe->sources->data;
+				}
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
+			}
+		} 		// Show remote sources (not already shown as local source)
+    
+		if (is_array($listofsources) && count($listofsources))
+		{
+			foreach ($listofsources as $src)
+			{
+				if (! empty($arrayofstripecard[$src->id])) continue;	// Already in previous list
+				$nbremote++;
+				print '<tr class="textpublicpayment">';
+					print '<td><INPUT id="'.$src->id.'" onclick="ShowHideDiv()" type="radio" name="modepayment" value="'.$src->id.'" ';
+if ($customerstripe->default_source == $src->id){print ' checked ';}
+print '>';
+					print '</td>';
+				print '<td>';
+				if ($src->object=='card')
+				{
+					print img_credit_card($src->brand);
+				}
+				elseif ($src->object=='source' && $src->type=='card')
+				{
+					print img_credit_card($src->card->brand);
+				}
+				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				{
+					print '<span class="fa fa-university fa-2x fa-fw"></span>';
+				}
+				print'</td><td valign="middle">';
+				if ($src->object=='card')
+				{
+					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
+					print '</td><td>';
+					if ($src->country)
+					{
+						$img=picto_from_langcode($src->country);
+						print $img?$img.' ':'';
+						print getCountry($src->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='source' && $src->type=='card')
+				{
+					print $src->owner->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '</td><td>';
+				 	if ($src->card->country)
+					{
+						$img=picto_from_langcode($src->card->country);
+						print $img?$img.' ':'';
+						print getCountry($src->card->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				{
+					print 'info sepa';
+					print '</td><td>';
+					if ($src->sepa_debit->country)
+					{
+							$img=picto_from_langcode($src->sepa_debit->country);
+							print $img?$img.' ':'';
+							print getCountry($src->sepa_debit->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				print '</td>';
+				// Default
+				print '<td align="center" width="50">';
+				if (($customerstripe->default_source != $src->id))
+				{
+					//print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
+					//print img_picto($langs->trans("Default"),'off');
+					//print '</a>';
+				} else {
+					print img_picto($langs->trans("Default"),'on');
+				}
+				print '</td>';
+				print '</tr>';
+			}
+		}
+      print '<tr class="textpublicpayment">';
+					print '<td><INPUT id="CdDbt" onclick="ShowHideDiv()" type="radio" name="modepayment" value="src_newcard" ';
+if ($nbremote == 0){print ' checked ';}
+print '>';
+				print '</td>';
+				print '<td >';
+					print '<span class="fa fa-credit-card-alt fa-2x fa-fw"></span>';
+				print'</td><td colspan="5">';
+			  print $langs->trans("NewCard");
+				print '</td></tr>';
+      print '<tr id="CardForm" class="textpublicpayment" style="display: none"><td colspan="7">
+      <div class="form-row left">
+	    <label for="card-element">
+	    '.$langs->trans("OwnerName").'
+	    </label>
+      <INPUT id="owner-name" value="" type="text" onchange="ShowHideDiv()" placeholder="owner of source" >
+      </DIV>
 	    <div class="form-row left">
 	    <label for="card-element">
 	    '.$langs->trans("CreditOrDebitCard").'
@@ -1573,146 +1837,164 @@ if (preg_match('/^dopayment/',$action))
 	    </div>
 	    <!-- Used to display form errors -->
 	    <div id="card-errors" role="alert"></div>
-	    </div>
-	    <br>
+	    </div><INPUT id="savethesourcecard" type="checkbox" name="savethesource" value="1" > '.$langs->trans("SaveSource");
+	    print '</td></tr>';
+      print '<tr class="textpublicpayment"><td colspan="7"><br>
 	    <button class="butAction" id="buttontopay">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>
-
-	    </form>
-
-	    <script src="https://js.stripe.com/v3/"></script>
-
+	    </form>';
+	    print '<script src="https://js.stripe.com/v3/"></script>
 	    <script type="text/javascript" language="javascript">';
-
 		?>
 
-	    // Create a Stripe client.
-	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+	  // Create a Stripe client
+	  var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; ?>');
 
-	    // Create an instance of Elements
-	    var elements = stripe.elements();
+var montant = <?php echo $amount*100; ?>;
+var ref = '<?php echo $REF; ?>';
+if (montant >= '100'){
+var paymentRequest = stripe.paymentRequest({
+  country: 'FR',
+  currency: 'eur',
+  total: {
+    label: ref,
+    amount: montant,     
+  },
 
-	    // Custom styling can be passed to options when creating an Element.
-	    // (Note that this demo uses a wider set of styles than the guide below.)
-	    var style = {
-	      base: {
-	        color: '#32325d',
-	        lineHeight: '24px',
-	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-	        fontSmoothing: 'antialiased',
-	        fontSize: '16px',
-	        '::placeholder': {
-	          color: '#aab7c4'
-	        }
-	      },
-	      invalid: {
-	        color: '#fa755a',
-	        iconColor: '#fa755a'
-	      }
-	    };
+});
+}
 
-	    // Create an instance of the card Element
-	    var card = elements.create('card', {style: style});
+function ShowHideDiv() {
 
-	    // Add an instance of the card Element into the `card-element` <div>
-	    card.mount('#card-element');
+var CdDbt = document.getElementById("CdDbt");
+var CardForm = document.getElementById("CardForm");  
+if (CardForm){
+CardForm.style.display = CdDbt.checked ? "block" : "none";
+}
 
-	    // Handle real-time validation errors from the card Element.
-	    card.addEventListener('change', function(event) {
-	      var displayError = document.getElementById('card-errors');
-	      if (event.error) {
-	        displayError.textContent = event.error.message;
-	      } else {
-	        displayError.textContent = '';
-	      }
-	    });
+var ownerinf = document.getElementById('owner-name').value;
+var ownerInfo = {
+  owner: {
+      name: ownerinf,
+  },
+};
 
-	    // Handle form submission
-	    var form = document.getElementById('payment-form');
-	    console.log(form);
-	    form.addEventListener('submit', function(event) {
-	      event.preventDefault();
-			<?php
-			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
-			{
-			?>
-				/* Use token */
-				stripe.createToken(card).then(function(result) {
-			        if (result.error) {
-			          // Inform the user if there was an error
-			          var errorElement = document.getElementById('card-errors');
-			          errorElement.textContent = result.error.message;
-			        } else {
-			          // Send the token to your server
-			          stripeTokenHandler(result.token);
-			        }
-				});
-			<?php
-			}
-			else											// Ask credit card with 3DS test
-			{
-			?>
-				/* Use 3DS source */
-				stripe.createSource(card).then(function(result) {
-				    if (result.error) {
-				      // Inform the user if there was an error
-				      var errorElement = document.getElementById('card-errors');
-				      errorElement.textContent = result.error.message;
-				    } else {
-				      // Send the source to your server
-				      stripeSourceHandler(result.source);
-				    }
-				});
-			<?php
-			}
-			?>
-	    });
+    // Create an instance of Elements
+    var elements = stripe.elements();
 
+    // Custom styling can be passed to options when creating an Element.
+    // (Note that this demo uses a wider set of styles than the guide below.)
+    var style = {
+      base: {
+        color: '#32325d',
+        lineHeight: '24px',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#aab7c4'
+        }
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a'
+      }
+    };
 
-		/* Insert the Token into the form so it gets submitted to the server */
-	    function stripeTokenHandler(token) {
-	      // Insert the token ID into the form so it gets submitted to the server
-	      var form = document.getElementById('payment-form');
-	      var hiddenInput = document.createElement('input');
-	      hiddenInput.setAttribute('type', 'hidden');
-	      hiddenInput.setAttribute('name', 'stripeToken');
-	      hiddenInput.setAttribute('value', token.id);
-	      form.appendChild(hiddenInput);
+    // Create an instance of the card Element
+    var card = elements.create('card', {style: style});
 
-	      // Submit the form
-	      jQuery('#buttontopay').hide();
-	      jQuery('#hourglasstopay').show();
-	      console.log("submit token");
-	      form.submit();
-	    }
+    // Add an instance of the card Element into the `card-element` <div>
+    card.mount('#card-element');
 
-		/* Insert the Source into the form so it gets submitted to the server */
-		function stripeSourceHandler(source) {
-		  // Insert the source ID into the form so it gets submitted to the server
-		  var form = document.getElementById('payment-form');
-		  var hiddenInput = document.createElement('input');
-		  hiddenInput.setAttribute('type', 'hidden');
-		  hiddenInput.setAttribute('name', 'stripeSource');
-		  hiddenInput.setAttribute('value', source.id);
-		  form.appendChild(hiddenInput);
+    // Handle real-time validation errors from the card Element.
+    card.addEventListener('change', function(event) {
+      var displayError = document.getElementById('card-errors');
+      if (event.error) {
+        displayError.textContent = event.error.message;
+      } else {
+        displayError.textContent = '';
+      }
+    });
+    
+    // Handle form submission   
+var form = document.getElementById('payment-form');
+form.addEventListener('submit', function(event) { 
 
-		  // Submit the form
-	      jQuery('#buttontopay').hide();
-	      jQuery('#hourglasstopay').show();
-	      console.log("submit source");
-		  form.submit();
-		}
+if (CdDbt.checked) {
+event.preventDefault();
+document.getElementById("owner-name").required = true;
+stripe.createSource(card, ownerInfo).then(function(result) {
+if (result.error) {
+var errorElement = document.getElementById('card-errors');
+errorElement.textContent = result.error.message;
+    } else {
+stripeSourceHandler(result.source);
+    }
+  });
+} else { 
+stripeSourceHandler(event);}
 
+});
+}
+
+function stripeSourceHandler(source) {
+  // Insert the source ID into the form so it gets submitted to the server
+  var form = document.getElementById('payment-form');
+  var hiddenInput = document.createElement('input');
+  hiddenInput.setAttribute('type', 'hidden');
+  hiddenInput.setAttribute('name', 'stripeSource');
+  hiddenInput.setAttribute('value', source.id);
+  form.appendChild(hiddenInput);
+
+      // Submit the form
+      jQuery('#buttontopay').hide();
+      jQuery('#hourglasstopay').show();
+      console.log("submit");
+      form.submit();
+    }
+
+window.onload=ShowHideDiv;      
+    
+var elements = stripe.elements();
+var prButton = elements.create('paymentRequestButton', {
+  paymentRequest: paymentRequest,
+});
+
+paymentRequest.canMakePayment().then(function(result) {
+  if (result) {
+jQuery('#else').show();
+prButton.mount('#payment-request-button');
+  } else {
+document.getElementById('payment-request-button').style.display = 'none';
+  }
+});
+
+paymentRequest.on('token', function(ev) {
+
+ev.complete('success');
+var form = document.getElementById('payment-form');
+var hiddenInput = document.createElement('input');
+hiddenInput.setAttribute('type', 'hidden');
+hiddenInput.setAttribute('name', 'paymenttoken');
+hiddenInput.setAttribute('value', ev.token.id);
+form.appendChild(hiddenInput);
+ $(document).ready(function(){
+    $(window).scrollTop(0);
+});
+
+      // Submit the form
+      jQuery('#buttontopay').hide();
+      jQuery('#hourglasstopay').show();
+      console.log("submit");
+      form.submit();
+});    
 
 	    <?php
 		print '</script>';
 	}
 }
-
-
 htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
-
 llxFooter('', 'public');
-
 $db->close();
