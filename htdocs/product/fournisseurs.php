@@ -678,6 +678,15 @@ SCRIPT;
 						print '</tr>';
 					}
 				}
+				
+				// Product packaging
+				if (!empty($conf->global->PRODUIT_FOURN_PACKAGING))
+				{
+				    print '<tr>';
+				    print '<td>'.$langs->trans('FournProductPackaging').'</td>';
+				    print '<td><input class="flat" name="packaging" size="4" value="'.($rowid ? $object->packaging : 1).'"></td>';
+				    print '</tr>';
+				}
 
 				// Product description of the supplier
 				if (! empty($conf->global->PRODUIT_FOURN_TEXTS))
