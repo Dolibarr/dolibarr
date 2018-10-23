@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - other
 NumberingShort=Nr
+MessageKO=Nachrichtenseite für abgebrochene Zahlung
 Notify_FICHINTER_ADD_CONTACT=Kontakt zu Einsatz hinzugefügt
 Notify_FICHINTER_VALIDATE=Eingriff freigegeben
 Notify_FICHINTER_SENTBYMAIL=Service per E-Mail versendet
@@ -7,12 +8,6 @@ Notify_COMPANY_SENTBYMAIL=Von Geschäftspartner-Karte gesendete Mails
 Notify_FICHEINTER_VALIDATE=Eingriff freigegeben
 TotalSizeOfAttachedFiles=Gesamtgrösse der angehängten Dateien/Dokumente
 MaxSize=Maximalgrösse
-PredefinedMailTestHtml=Dies ist ein (HTML)-<b>Test</b> Mail (das Wort Test muss in Fettschrift erscheinen). <br> Die beiden Zeilen sollteb durch eine Zeilenschaltung getrennt sein.
-PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Bitte entnehmen Sie dem Anhang unser Angebot __PROPREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
-PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Bitte entnehmen Sie dem Anhang die Bestellung __ORDERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
-PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Bitte entnehmen Sie dem Anhang die Bestellung __ORDERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
-PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Als Anlage erhalten Sie unsere Lieferung __ SHIPPINGREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
-PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Anbei finden Sie die Intervention __ FICHINTERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüssen\n\n__SIGNATURE__
 ChooseYourDemoProfil=Bitte wählen Sie das Demo-Profil das Ihrem Einsatzgebiet am ehesten entspricht
 ModifiedById=Letzte Änderung durch User
 ModifiedByLogin=Letzte Änderung durch Userlogin

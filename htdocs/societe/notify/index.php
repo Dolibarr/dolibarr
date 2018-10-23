@@ -23,8 +23,7 @@
  */
 
 require '../../main.inc.php';
-$langs->load("companies");
-$langs->load("banks");
+$langs->loadLangs(array("companies", "banks"));
 
 // S�curit� acc�s client
 if ($user->societe_id > 0)
@@ -85,12 +84,10 @@ if ($result)
 	print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"c.lastname","","",'valign="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"a.titre","","",'valign="center"',$sortfield,$sortorder);
 	print "</tr>\n";
-	$var=True;
+
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-
-
 
 		print '<tr class="oddeven">';
 		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
@@ -107,6 +104,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

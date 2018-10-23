@@ -31,9 +31,11 @@ create table llx_paiement
   fk_paiement      integer NOT NULL,
   num_paiement     varchar(50),
   note             text,
+  ext_payment_id   varchar(128),						-- external id of payment (for example Stripe charge id)
+  ext_payment_site varchar(128),						-- name of external paymentmode (for example 'stripe')
   fk_bank          integer NOT NULL DEFAULT 0,
   fk_user_creat    integer,								-- utilisateur qui a cree l'info
   fk_user_modif    integer,								-- utilisateur qui a modifie l'info
-  statut           smallint DEFAULT 0 NOT NULL,		-- Satut, 0 ou 1, 1 n'est plus supprimable
+  statut           smallint DEFAULT 0 NOT NULL,			-- Satut, 0 ou 1, 1 n'est plus supprimable
   fk_export_compta integer DEFAULT 0 NOT NULL			-- fk_export_compta 0 pas exporte
 )ENGINE=innodb;

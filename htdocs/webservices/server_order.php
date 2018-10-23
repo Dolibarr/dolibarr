@@ -22,14 +22,13 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK")) define("NOCSRFCHECK",'1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -116,7 +115,8 @@ $line_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
-if (count($extrafields)>0) {
+$extrafield_line_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -127,7 +127,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_line_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-$line_fields=array_merge($line_fields,$extrafield_line_array);
+if (is_array($extrafield_line_array)) $line_fields=array_merge($line_fields,$extrafield_line_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -215,7 +215,8 @@ $order_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('commande',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -226,7 +227,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	else {$type='xsd:string';}
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-$order_fields=array_merge($order_fields,$extrafield_array);
+if (is_array($extrafield_array)) $order_fields=array_merge($order_fields,$extrafield_array);
 
 $server->wsdl->addComplexType(
 		'order',
@@ -658,7 +659,7 @@ function createOrder($authentication,$order)
 {
 	global $db,$conf,$langs;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 	$now=dol_now();
 

@@ -37,7 +37,11 @@ class box_commandes extends ModeleBoxes
     var $boxlabel="BoxLastCustomerOrders";
     var $depends = array("commande");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
     var $info_box_head = array();
@@ -136,7 +140,7 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax100"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $societestatic->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -198,6 +202,5 @@ class box_commandes extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

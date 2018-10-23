@@ -25,7 +25,7 @@ create table llx_socpeople
   tms				timestamp,
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
-  ref_ext           varchar(128),                               -- reference into an external system (not used by dolibarr)
+  ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)
   civility			varchar(6),
   lastname			varchar(50),
   firstname			varchar(50),
@@ -41,8 +41,17 @@ create table llx_socpeople
   phone_mobile		varchar(30),
   fax				varchar(30),
   email				varchar(255),
+  
   jabberid			varchar(255),
   skype				varchar(255),
+  twitter			varchar(255),                        		--
+  facebook			varchar(255),                        		--
+  instagram                varchar(255),                        		--
+  snapchat                 varchar(255),                        		--
+  googleplus               varchar(255),                        		--
+  youtube                  varchar(255),                        		--
+  whatsapp                 varchar(255),                        		--
+  
   photo				varchar(255),
   no_email			smallint NOT NULL DEFAULT 0,
   priv				smallint NOT NULL DEFAULT 0,

@@ -39,14 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
 
-$langs->load("main");
-$langs->load("other");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("paybox");
-$langs->load("paypal");
-$langs->load("stripe");
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 /*$source=GETPOST('source');
 $ref=GETPOST('ref');
@@ -84,7 +77,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paybox');
 
 
 $head='';
-if (! empty($conf->global->PAYBOX_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -105,7 +98,7 @@ $fulltag            = $FULLTAG;
 // Set by newpayment.php
 $paymentType        = $_SESSION['PaymentType'];
 $currencyCodeType   = $_SESSION['currencyCodeType'];
-$FinalPaymentAmt    = $_SESSION["Payment_Amount"];
+$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 // From env
 $ipaddress          = $_SESSION['ipaddress'];
 
@@ -115,7 +108,8 @@ dol_syslog("Call newpaymentok with token=".$onlinetoken." paymentType=".$payment
 
 print $langs->trans("YourPaymentHasBeenRecorded")."<br><br>\n";
 
-if (! empty($conf->global->PAYBOX_MESSAGE_OK)) print $conf->global->PAYBOX_MESSAGE_OK;
+$key='ONLINE_PAYMENT_MESSAGE_OK';
+if (! empty($conf->global->$key)) print $conf->global->$key;
 
 
 // Appel des triggers
@@ -125,11 +119,12 @@ $result=$interface->run_triggers('PAYBOX_PAYMENT_OK',$object,$user,$langs,$conf)
 if ($result < 0) { $error++; $errors=$interface->errors; }
 // Fin appel triggers
 
+$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
 // Send an email
-if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
+if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
 {
-	$sendto=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
+	$sendto=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
 	// Define $urlwithroot
 	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -148,15 +143,14 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 	    else $appli.=" ".DOL_VERSION;
 	}
 	else $appli.=" ".DOL_VERSION;
-	
+
 	$urlback=$_SERVER["REQUEST_URI"];
 	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
-	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 	$content="";
 	if (! empty($tmptag['MEM']))
 	{
 		$langs->load("members");
-		$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+		$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 		$content.=$langs->trans("PaymentSubscription")."<br>\n";
 		$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
 		$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
@@ -192,7 +186,7 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 
 print "\n</div>\n";
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

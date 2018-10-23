@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
- * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,43 +29,45 @@ if (isset($parameters['showblocbydefault'])) $hide=(empty($parameters['showblocb
 if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
 
 ?>
+<!-- BEGIN PHP TEMPLATE bloc_showhide.tpl.php -->
 
-<!-- BEGIN PHP TEMPLATE BLOC SHOW/HIDE -->
+<?php
+print '<script type="text/javascript">'."\n";
+print '$(document).ready(function() {'."\n";
+print '$("#hide-'.$blocname.'").click(function(){'."\n";
+print '		setShowHide(0);'."\n";
+print '		$("#'.$blocname.'_bloc").hide("blind", {direction: "vertical"}, 300).removeClass("nohideobject");'."\n";
+print '		$(this).hide();'."\n";
+print '		$("#show-'.$blocname.'").show();'."\n";
+print '});'."\n";
 
-<script type="text/javascript">
-$(document).ready(function() {
-	$("#hide-<?php echo $blocname ?>").click(function(){
-		setShowHide(0);
-		$("#<?php echo $blocname ?>_bloc").hide("blind", {direction: "vertical"}, 300).removeClass("nohideobject");
-		$(this).hide();
-		$("#show-<?php echo $blocname ?>").show();
-	});
-	$("#show-<?php echo $blocname ?>").click(function(){
-		setShowHide(1);
-		$("#<?php echo $blocname ?>_bloc").show("blind", {direction: "vertical"}, 300).addClass("nohideobject");
-		$(this).hide();
-		$("#hide-<?php echo $blocname ?>").show();
-	});
-	function setShowHide(status) {
-		var id			= <?php echo $object->id; ?>;
-		var element		= '<?php echo $object->element; ?>';
-		var htmlelement	= '<?php echo $blocname ?>';
-		var type		= 'showhide';
+print '$("#show-'.$blocname.'").click(function(){'."\n";
+print '		setShowHide(1);'."\n";
+print '		$("#'.$blocname.'_bloc").show("blind", {direction: "vertical"}, 300).addClass("nohideobject");'."\n";
+print '		$(this).hide();'."\n";
+print '		$("#hide-'.$blocname.'").show();'."\n";
+print '});'."\n";
 
-		$.get("<?php echo dol_buildpath('/core/ajax/extraparams.php', 1); ?>?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);
-	}
-});
-</script>
+print 'function setShowHide(status) {'."\n";
+print '		var id			= '.$object->id.";\n";
+print "		var element		= '".$object->element."';\n";
+print "		var htmlelement	= '".$blocname."';\n";
+print '		var type		= "showhide";'."\n";
+print '		$.get("'.dol_buildpath('/core/ajax/extraparams.php', 1);
+print '?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);'."\n";
+print '}'."\n";
 
-<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-<?php echo $blocname ?>" class="linkobject<?php echo ($hide ? ' hideobject' : ''); ?>"><?php echo img_picto('', '1uparrow.png'); ?></div>
-<div style="float:right; position: relative; top: 3px; right:5px;" id="show-<?php echo $blocname ?>" class="linkobject<?php echo ($hide ? '' : ' hideobject'); ?>"><?php echo img_picto('', '1downarrow.png'); ?></div>
-<div id="<?php echo $blocname ?>_title" class="liste_titre"><?php echo $title; ?></div>
+print '});'."\n";
+print '</script>'."\n";
 
-<div id="<?php echo $blocname ?>_bloc" class="<?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
+print '<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-'.$blocname.'"';
+print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1uparrow.png').'</div>'."\n";
+print '<div style="float:right; position: relative; top: 3px; right:5px;" id="show-'.$blocname.'"';
+print ' class="linkobject'.($hide ? '' : ' hideobject').'">'.img_picto('', '1downarrow.png').'</div>'."\n";
+print '<div id="'.$blocname.'_title" class="liste_titre">'.$title.'</div>'."\n";
+print '<div id="'.$blocname.'_bloc" class="'.($hide ? 'hideobject' : 'nohideobject').'">'."\n";
 
-<?php include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php'; ?>
-
-</div>
-<br>
-
+include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php';
+print '</div><br>';
+?>
 <!-- END PHP TEMPLATE BLOC SHOW/HIDE -->

@@ -21,7 +21,7 @@ create table llx_projet
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc           integer,
-  datec            date,						-- date creation project
+  datec            datetime,					-- date creation project
   tms              timestamp,
   dateo            date,						-- date start project
   datee            date,						-- date end project
@@ -41,7 +41,8 @@ create table llx_projet
   note_public      text,
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
   opp_amount       double(24,8),
-  budget_amount    double(24,8),				
+  budget_amount    double(24,8),
+  bill_time        integer DEFAULT 0,			-- Set to 1 if time spent must be converted into invoices				
   model_pdf        varchar(255),
   import_key	   varchar(14)					-- Import key
 )ENGINE=innodb;

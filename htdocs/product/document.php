@@ -37,13 +37,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
 
-$langs->load("other");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'products'));
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+$action = GETPOST('action','alpha');
+$confirm= GETPOST('confirm','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -93,7 +93,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	//Delete line if product propal merge is linked to a file
+	// Delete line if product propal merge is linked to a file
 	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 	{
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
@@ -197,7 +197,7 @@ if ($object->id)
     print $hookmanager->resPrint;
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
@@ -213,7 +213,7 @@ if ($object->id)
 	}
 
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
@@ -227,7 +227,7 @@ if ($object->id)
     print '<table class="border tableforfield" width="100%">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
     print '</table>';
 
     print '</div>';
@@ -288,11 +288,11 @@ if ($object->id)
 
     			print  '<tr class="liste_titre"><td>';
 
-    			$delauft_lang = empty($lang_id) ? $langs->getDefaultLang() : $lang_id;
+    			$default_lang = empty($lang_id) ? $langs->getDefaultLang() : $lang_id;
 
     			$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
-			    print Form::selectarray('lang_id', $langs_available, $delauft_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
+			    print Form::selectarray('lang_id', $langs_available, $default_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
     			if ($conf->global->MAIN_MULTILANGS) {
     				print  '<input type="submit" class="button" name="refresh" value="' . $langs->trans('Refresh') . '">';
@@ -301,25 +301,18 @@ if ($object->id)
     			print  '</td></tr>';
     		}
 
-    		$style = 'impair';
     		foreach ($filearray as $filetoadd)
     		{
     			if ($ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION) == 'pdf')
     			{
-    				if ($style == 'pair') {
-    					$style = 'impair';
-    				} else {
-    					$style = 'pair';
-    				}
-
     				$checked = '';
     				$filename = $filetoadd['name'];
 
     				if ($conf->global->MAIN_MULTILANGS)
     				{
-    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines))
+    					if (array_key_exists($filetoadd['name'] . '_' . $default_lang, $filetomerge->lines))
     					{
-    						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
+    						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $default_lang);
     						$checked = ' checked ';
     					}
     				}
@@ -331,7 +324,7 @@ if ($object->id)
     					}
     				}
 
-    				print  '<tr class="' . $style . '"><td>';
+    				print  '<tr class="oddeven"><td>';
     				print  '<input type="checkbox" ' . $checked . ' name="filetoadd[]" id="filetoadd" value="' . $filetoadd['name'] . '">' . $filename . '</input>';
     				print  '</td></tr>';
     			}
@@ -346,13 +339,12 @@ if ($object->id)
     		print  '</form>';
     	}
     }
-
 }
 else
 {
 	print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
 $db->close();

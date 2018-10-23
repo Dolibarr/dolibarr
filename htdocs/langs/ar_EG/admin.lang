@@ -1,0 +1,35 @@
+# Dolibarr language file - Source file is en_US - admin
+Foundation=مؤسسة
+Version=إصدار
+VersionExperimental=تجريبي
+VersionDevelopment=تطوير
+VersionRecommanded=موصى به
+SessionId=هوية المتصل
+SessionSaveHandler=معالج لتوفير دورات
+SessionSavePath=موقع تخزين الدورة
+PurgeSessions=انهاء الجلسات
+NoSessionListWithThisHandler=.الخاص بك لا يسمح بسرد كافة الجلسات على التوالي PHP معالج حفظ الدورات و تكوينها في
+LockNewSessions=اغلاق الدخول للمتصلين الجدد
+ConfirmLockNewSessions=هل تريد منع اي اتصال جديد للبرنامج منك. فقط المستخدم <b>%s</b> سيكون قادر على الاتصال بعد ذلك
+UnlockNewSessions=الغاء حظر الاتصال
+YourSession=جلستك
+Sessions=جلسات المستخدمين
+WebUserGroup=مستخدم\\مجموعة خادم الويب
+NoSessionFound=إن صلاحيات لغة بي اتش بي تمنعك من اظهار الجلسات الحالية. قد تكون الوجهة (<b>%s</b>)محمية
+DBStoringCharset=ضبط الحروف في قاعدة البيانات لحفظ المعلومات
+DBSortingCharset=ضبط الحروف في قاعدة البيانات لحفظ المعلومات
+WarningModuleNotActive=إن الوحدة <b>%s</b> لابد أن تكون مفعلة
+WarningOnlyPermissionOfActivatedModules=أن الصلاحيات المرتبطة بالوحدات المفعلة فقط تظهر هنا. تستطيع تفعيل وحدات أخرى من: الرئيسية ثم التنصيب ثم صفحة الوحدات
+DolibarrSetup=تثبيت أو ترقية البرنامج
+InternalUsers=مستخدمون داخليون
+ExternalUsers=مستخدمون خارجيون
+SetupArea=منطقة التنصيب
+FormToTestFileUploadForm=نموذج تجربة رفع الملفات (تبعا للتنصيب)
+AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+Module25Name=أمر شراء
+Module25Desc=إدارة أوامر الشراء
+Module700Name=تبرعات
+Module1780Name=الأوسمة/التصنيفات
+Permission81=قراءة أوامر الشراء

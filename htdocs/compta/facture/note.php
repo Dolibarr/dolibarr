@@ -33,8 +33,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("companies");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills'));
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');
@@ -78,21 +78,21 @@ if ($id > 0 || ! empty($ref))
 	$object->fetch_thirdparty();
 
     $head = facture_prepare_head($object);
-	
+
     $totalpaye = $object->getSommePaiement();
-    
+
     dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
     // Invoice content
 
-    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
     $morehtmlref='<div class="refidno">';
     // Ref customer
     $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
     $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
     // Thirdparty
-    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
     // Project
     if (! empty($conf->projet->enabled))
     {
@@ -134,15 +134,14 @@ if ($id > 0 || ! empty($ref))
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
-	
+
+
 	$cssclass="titlefield";
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

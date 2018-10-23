@@ -27,8 +27,8 @@
  * @since 2008-03-04
  */
 
-require_once('../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php');
-require_once('../../htdocs/includes/tecnickcom/tcpdf/tcpdf.php');
+require_once '../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php';
+require_once '../../htdocs/includes/tecnickcom/tcpdf/tcpdf.php';
 
 // create new PDF document
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -101,7 +101,7 @@ $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
 //set auto page breaks
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+$pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);
 
 //set image scale factor
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);

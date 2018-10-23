@@ -22,11 +22,11 @@
  *		\brief      Page de bilan
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 if (!$user->rights->banque->lire)
   accessforbidden();
@@ -41,6 +41,9 @@ if (!$user->rights->banque->lire)
 function valeur($sql)
 {
 	global $db;
+
+	$valeur = 0;
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -89,5 +92,6 @@ print "<tr class=\"oddeven\"><td>".$langs->trans("BankBalance")."</td><td align=
 
 print "</table>";
 
+// End of page
 llxFooter();
 $db->close();

@@ -34,7 +34,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('bills');
+$langs->loadLangs(array("companies", "bills"));
 
 $id = GETPOST("facid",'int')?GETPOST("facid",'int'):GETPOST("id",'int');
 $ref = GETPOST("ref",'alpha');
@@ -67,7 +67,7 @@ $head = facturefourn_prepare_head($object);
 $titre=$langs->trans('SupplierInvoice');
 dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, 'bill');
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 $morehtmlref='<div class="refidno">';
 // Ref supplier
@@ -125,6 +125,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

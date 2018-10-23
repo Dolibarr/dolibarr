@@ -37,8 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModelePDFFactures extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -48,6 +52,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='invoice';
@@ -61,11 +66,14 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 }
 
 /**
- *	Classe mere des modeles de numerotation des references de facture
+ *  Classe mere des modeles de numerotation des references de facture
  */
 abstract class ModeleNumRefFactures
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * Return if a module can be used or not

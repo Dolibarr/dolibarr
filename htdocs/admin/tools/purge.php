@@ -86,7 +86,7 @@ if (! empty($conf->syslog->enabled))
 	$filelogparam=$filelog;
 	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
 	{
-	   $filelogparam ='<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+	   $filelogparam ='<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
 	   $filelogparam.=basename($filelog);
 	   $filelogparam.='">'.$filelog.'</a>';
 	}
@@ -119,7 +119,6 @@ if (preg_match('/^confirm/i',$choice))
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

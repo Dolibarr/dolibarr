@@ -173,10 +173,21 @@ class Segment implements IteratorAggregate, Countable
     */
     public function macroReplace($text)
     {
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         global $langs;
 
-        $patterns=array('/__CURRENTDAY__/','/__CURRENTDAYTEXT__/','/__CURRENTMONTHSHORT__/','/__CURRENTMONTH__/','/__CURRENTYEAR__/');
-        $values=array(date('j'), $langs->trans(date('l')), $langs->trans(date('M')), $langs->trans(date('F')), date('Y'));
+        $hoy = dol_getdate(dol_now('tzuser'));
+        $dateinonemontharray = dol_get_next_month($hoy['mon'], $hoy['year']);
+        $nextMonth = $dateinonemontharray['month'];
+
+        $patterns=array( '/__CURRENTDAY__/u','/__CURENTWEEKDAY__/u',
+                         '/__CURRENTMONTH__/u','/__CURRENTMONTHLONG__/u',
+                         '/__NEXTMONTH__/u','/__NEXTMONTHLONG__/u',
+                         '/__CURRENTYEAR__/u','/__NEXTYEAR__/u' );
+        $values=array( $hoy['mday'], $langs->transnoentitiesnoconv($hoy['weekday']),
+                       $hoy['mon'], $langs->transnoentitiesnoconv($hoy['month']),
+                       $nextMonth, monthArray($langs)[$nextMonth],
+                       $hoy['year'], $hoy['year']+1 );
 
         $text=preg_replace($patterns, $values, $text);
 

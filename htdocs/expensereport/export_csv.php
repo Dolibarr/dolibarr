@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +26,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadlangs(array('users', 'trips'));
 
 if(!$user->rights->expensereport->export_csv) {
    accessforbidden();
@@ -114,7 +115,7 @@ if (isset($_POST['action']))
 {
 	if($_POST['action'] == 'export')
 	{
-		$select_date = $_POST['annee'].'-'.$_POST['mois'];
+		$dateselected = $_POST['annee'].'-'.$_POST['mois'];
 
 		//var_dump($conf->expensereport->dir_output.'/export/');
 		if (!file_exists($conf->expensereport->dir_output.'/export/'))
@@ -122,7 +123,7 @@ if (isset($_POST['action']))
 			dol_mkdir($conf->expensereport->dir_output.'/export/');
 		}
 
-		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$select_date.'.csv';
+		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$dateselected.'.csv';
 		$outputlangs = $langs;
 		$outputlangs->charset_output = 'UTF-8';
 
@@ -183,7 +184,7 @@ if (isset($_POST['action']))
 			fwrite($open,$ligne);
 			fclose($open);
 
-			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$select_date.'.csv" target="_blank">Télécharger le fichier expensereport-'.$select_date.'.csv</a>';
+			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
 
 		} else {
 
@@ -195,6 +196,6 @@ if (isset($_POST['action']))
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

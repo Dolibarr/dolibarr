@@ -44,7 +44,7 @@ class EventDispatcher
     public function __call($eventName, $params)
     {
         if (0 === strpos($eventName, 'on')) {
-            if (!@is_array($this->listeners[$eventName]))
+            if (!isset($this->listeners[$eventName]) || !is_array($this->listeners[$eventName]))
                 $this->listeners[$eventName] = array();
             $this->listeners[$eventName][] = $params[0];
         }

@@ -31,8 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("companies");
-$langs->load("projects");
+$langs->loadLangs(array("companies", "projects"));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -124,31 +123,29 @@ if ($socid)
      * Barre d'action
      */
 
-    print '<div class="tabsAction">';
+    /*print '<div class="tabsAction">';
 
     if (! empty($conf->projet->enabled))
     {
     	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
-    	{
-        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-    	}
+    	{*/
+        	$addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+    /*	}
     	else
     	{
         	print '<a class="butActionRefused" href="#">'.$langs->trans("AddProject").'</a>';
     	}
     }
 
-    print '</div>';
-
+    print '</div>'; */
 
     print '<br>';
 
 
-    // Projects list
-    $result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
+	// Projects list
+	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

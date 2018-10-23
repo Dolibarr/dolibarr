@@ -4,6 +4,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017      	Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2017       ATM-CONSULTING		<contact@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@
 function facture_prepare_head($object)
 {
 	global $db, $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -62,7 +63,7 @@ function facture_prepare_head($object)
 	    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	    $sql .= " WHERE pfd.fk_facture = ".$object->id;
         $resql=$db->query($sql);
-        if ($resql) 
+        if ($resql)
         {
             $obj=$db->fetch_object($resql);
             if ($obj) $nbStandingOrders = $obj->nb;
@@ -152,16 +153,32 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facture_rec_cust_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoicesRec");
+	$head[$h][2] = 'attributesrec';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_rec_cust_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
+	$head[$h][2] = 'attributeslinesrec';
+	$h++;
+
 	complete_head_from_modules($conf,$langs,null,$head,$h,'invoice_admin','remove');
 
 	return $head;
 }
 
 
+/**
+ * Return array head with list of tabs to view object informations.
+ *
+ * @param   Facture     $object     Invoice object
+ * @return array                    head array with tabs
+ */
 function invoice_rec_prepare_head($object)
 {
 	global $db, $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -180,5 +197,3 @@ function invoice_rec_prepare_head($object)
 
 	return $head;
 }
-
-

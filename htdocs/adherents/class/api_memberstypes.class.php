@@ -31,7 +31,7 @@ class MembersTypes extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'label'
+        'label',
     );
 
     /**
@@ -86,7 +86,8 @@ class MembersTypes extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -97,7 +98,7 @@ class MembersTypes extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('adherent').')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('member_type').')';
 
         // Add sql filters
         if ($sqlfilters)
@@ -204,9 +205,13 @@ class MembersTypes extends DolibarrApi
         // If there is no error, update() returns the number of affected rows
         // so if the update is a no op, the return value is zero.
         if ($membertype->update(DolibarrApiAccess::$user) >= 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $membertype->error);
+        }
     }
 
     /**
@@ -267,12 +272,10 @@ class MembersTypes extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
-
-        unset($object->cotisation);
-        unset($object->libelle);
 
         unset($object->array_options);
         unset($object->linkedObjectsIds);
@@ -317,5 +320,4 @@ class MembersTypes extends DolibarrApi
 
         return $object;
     }
-
 }

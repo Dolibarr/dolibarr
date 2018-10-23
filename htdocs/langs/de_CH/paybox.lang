@@ -3,5 +3,4 @@ ThisIsInformationOnPayment=Informationen zu der vorzunehmenden Zahlunge
 YourPaymentHasBeenRecorded=Hiermit Bestätigen wir die Zahlung ausgeführt wurde. Vielen Dank.
 YourPaymentHasNotBeenRecorded=Die Zahlung wurde abgebrochen und nicht ausgeführt. Vielen Dank.
 PAYBOX_CGI_URL_V2=Url für das Paybox Zahlungsmodul "CGI Modul"
-MessageKO=Nachrichtenseite für abgebrochene Zahlung
 PAYBOX_PAYONLINE_SENDEMAIL=Status-Email nach einer Zahlung (erfolgreich oder nicht)

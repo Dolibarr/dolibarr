@@ -96,6 +96,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
 
     /**
      * Init phpunit tests.
+     * @return void
      */
     protected function setUp()
     {
@@ -127,6 +128,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
 
     /**
      * End phpunit tests.
+     * @return void
      */
     protected function tearDown()
     {

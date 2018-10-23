@@ -37,10 +37,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_usergroup_odt extends ModelePDFUserGroup
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+   * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+   */
+	public $phpmin = array(5, 4);
+
+	/**
+   * Dolibarr version of the loaded document
+   * @public string
+   */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -50,10 +63,10 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load translation files required by the page
+    $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -97,8 +110,8 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 	{
 		global $conf,$langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("errors","companies"));
 
 		$form = new Form($this->db);
 
@@ -192,6 +205,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -205,7 +219,8 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc,$hookmanager;
+        // phpcs:enable
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
 		{
@@ -226,10 +241,8 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "companies", "bills", "dict"));
 
 		if ($conf->user->dir_output)
 		{
@@ -389,7 +402,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				foreach($tmparray as $key=>$value)
 				{
-					try 
+					try
 					{
 						if (preg_match('/logo$/',$key)) // Image
 						{
@@ -408,34 +421,46 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				// Replace tags of lines
 				try
 				{
-					$listlines = $odfHandler->setSegment('lines');
-					foreach ($object->members as $u)
+					$foundtagforlines = 1;
+					try {
+						$listlines = $odfHandler->setSegment('lines');
+					}
+					catch(OdfException $e)
 					{
-						$tmparray=$this->get_substitutionarray_each_var_object($u,$outputlangs);
-						unset($tmparray['object_pass']);
-						unset($tmparray['object_pass_indatabase']);
-						complete_substitutions_array($tmparray, $outputlangs, $object, $user, "completesubstitutionarray_users");
-						// Call the ODTSubstitutionLine hook
-						$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$u);
-						$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-						foreach($tmparray as $key => $val)
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					}
+					if ($foundtagforlines)
+					{
+						foreach ($object->members as $u)
 						{
-							try
+							$tmparray=$this->get_substitutionarray_each_var_object($u,$outputlangs);
+							unset($tmparray['object_pass']);
+							unset($tmparray['object_pass_indatabase']);
+							complete_substitutions_array($tmparray, $outputlangs, $object, $user, "completesubstitutionarray_users");
+							// Call the ODTSubstitutionLine hook
+							$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$u);
+							$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+							foreach($tmparray as $key => $val)
 							{
-								if(!is_array($val)) {
-									$listlines->setVars($key, $val, true, 'UTF-8');
+								try
+								{
+									if(!is_array($val)) {
+										$listlines->setVars($key, $val, true, 'UTF-8');
+									}
+								}
+								catch(OdfException $e)
+								{
+								}
+								catch(SegmentException $e)
+								{
 								}
 							}
-							catch(OdfException $e)
-							{
-							}
-							catch(SegmentException $e)
-							{
-							}
+							$listlines->merge();
 						}
-						$listlines->merge();
+						$odfHandler->mergeSegment($listlines);
 					}
-					$odfHandler->mergeSegment($listlines);
 				}
 				catch(OdfException $e)
 				{
@@ -443,7 +468,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 					dol_syslog($this->error, LOG_WARNING);
 					return -1;
 				}
-				
+
 				// Replace labels translated
 				$tmparray=$outputlangs->get_translations_for_substitutions();
 				foreach($tmparray as $key=>$value)
@@ -485,6 +510,8 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;   // Success
 			}
 			else
@@ -496,6 +523,4 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 		return -1;
 	}
-
 }
-

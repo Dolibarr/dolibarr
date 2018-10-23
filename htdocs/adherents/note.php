@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("companies");
-$langs->load("members");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills"));
 
 $action=GETPOST('action','alpha');
 $id=GETPOST('id','int');
@@ -74,12 +73,12 @@ if ($id)
 	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
 	dol_banner_tab($object, 'rowid', $linkback);
-    
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
@@ -120,6 +119,6 @@ if ($id)
 
 }
 
-
+// End of page
 llxFooter();
 $db->close();

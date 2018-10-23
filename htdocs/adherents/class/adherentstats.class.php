@@ -32,6 +32,9 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
  */
 class AdherentStats extends Stats
 {
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element;
 
     var $socid;
@@ -79,9 +82,10 @@ class AdherentStats extends Stats
 	 * Return the number of proposition by month for a given year
 	 *
      * @param   int		$year       Year
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of nb each month
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -93,7 +97,7 @@ class AdherentStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getNbByMonth($year, $sql);
+		return $this->_getNbByMonth($year, $sql, $format);
 	}
 
 	/**
@@ -116,12 +120,13 @@ class AdherentStats extends Stats
 	}
 
 	/**
-	 * Return the number of subscriptions by month for a given year 
+	 * Return the number of subscriptions by month for a given year
 	 *
      * @param   int		$year       Year
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of amount each month
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -133,7 +138,7 @@ class AdherentStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getAmountByMonth($year, $sql);
+		return $this->_getAmountByMonth($year, $sql, $format);
 	}
 
 	/**
@@ -176,5 +181,4 @@ class AdherentStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
-
 }

@@ -26,6 +26,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
@@ -33,22 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("companies");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm');
+
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-$backtopage=GETPOST("backtopage");
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 $result=restrictedArea($user,'stock');
@@ -58,9 +59,14 @@ $hookmanager->initHooks(array('warehousecard','globalcard'));
 
 $object = new Entrepot($db);
 
+
 /*
  * Actions
  */
+
+$usercanread = (($user->rights->stock->lire));
+$usercancreate = (($user->rights->stock->creer));
+$usercandelete = (($user->rights->stock->supprimer));
 
 // Ajout entrepot
 if ($action == 'add' && $user->rights->stock->creer)
@@ -110,12 +116,12 @@ if ($action == 'add' && $user->rights->stock->creer)
 // Delete warehouse
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
 {
-	$object->fetch($_REQUEST["id"]);
+	$object->fetch(GETPOST('id','int'));
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
 	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php');
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
@@ -163,6 +169,11 @@ if ($cancel == $langs->trans("Cancel"))
 }
 
 
+// Actions to build doc
+$upload_dir = $conf->stock->dir_output;
+$permissioncreate = $user->rights->stock->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 
 /*
  * View
@@ -172,6 +183,7 @@ $productstatic=new Product($db);
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 $formcompany=new FormCompany($db);
+$formfile = new FormFile($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("WarehouseCard"),$help_url);
@@ -259,13 +271,14 @@ if ($action == 'create')
 else
 {
     $id=GETPOST("id",'int');
-	if ($id)
+	if ($id > 0 || $ref)
 	{
 		$object = new Entrepot($db);
-		$result = $object->fetch($id);
-		if ($result < 0)
+		$result = $object->fetch($id, $ref);
+		if ($result <= 0)
 		{
-			dol_print_error($db);
+			print 'No record found';
+			exit;
 		}
 
 		/*
@@ -275,7 +288,7 @@ else
 		{
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
 
 			$formconfirm = '';
 
@@ -285,12 +298,11 @@ else
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
-			if (! $formconfirm) {
-			    $parameters = array();
-			    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-			    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-			}
+			// Call Hook formConfirm
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 			// Print form confirm
 			print $formconfirm;
@@ -305,7 +317,7 @@ else
             $shownav = 1;
             if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-        	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'libelle', $morehtmlref);
+        	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
         	print '<div class="fichecenter">';
         	print '<div class="fichehalfleft">';
@@ -443,7 +455,7 @@ else
 			$totalunit=0;
 			$totalvalue=$totalvaluesell=0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql.= " ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
@@ -457,7 +469,6 @@ else
 			{
 				$num = $db->num_rows($resql);
 				$i = 0;
-				$var=True;
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
@@ -484,10 +495,11 @@ else
 					print '<tr class="oddeven">';
 					print "<td>";
 					$productstatic->id=$objp->rowid;
-                    $productstatic->ref = $objp->ref;
-                    $productstatic->label = $objp->produit;
+					$productstatic->ref = $objp->ref;
+					$productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					$productstatic->entity=$objp->entity;
+					$productstatic->status_batch=$objp->tobatch;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
 
@@ -651,7 +663,49 @@ else
 	}
 }
 
+/*
+ * Documents generes
+ */
 
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+	$modulepart='stock';
+
+	if ($action != 'create' && $action != 'edit' && $action != 'delete')
+	{
+		print '<br/>';
+	    print '<div class="fichecenter"><div class="fichehalfleft">';
+	    print '<a name="builddoc"></a>'; // ancre
+
+	    // Documents
+	    $objectref = dol_sanitizeFileName($object->ref);
+	    $relativepath = $comref . '/' . $objectref . '.pdf';
+	    $filedir = $conf->stock->dir_output . '/' . $objectref;
+	    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+	    $genallowed=$usercanread;
+	    $delallowed=$usercancreate;
+	    $modulepart = 'stock';
+
+	    print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+	    $somethingshown=$formfile->numoffiles;
+
+	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+	    $MAXEVENT = 10;
+
+	    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
+	    $morehtmlright.= $langs->trans("SeeAll");
+	    $morehtmlright.= '</a>';
+
+	    // List of actions on element
+	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	    $formactions = new FormActions($db);
+	    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+
+	    print '</div></div></div>';
+	}
+}
+
+// End of page
 llxFooter();
-
 $db->close();

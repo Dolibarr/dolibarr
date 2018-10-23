@@ -54,11 +54,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load('orders');
-$langs->load('companies');
-$langs->load('other');
-$langs->load('suppliers');
-$langs->load('supplier_proposal');
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
 
 
 /*
@@ -68,9 +65,7 @@ $langs->load('supplier_proposal');
 $form=new Form($db);
 $formpropal=new FormPropal($db);
 
-$langs->load('propal');
-$langs->load('other');
-$langs->load("companies");
+$langs->loadLangs(array('propal', 'other', 'companies'));
 
 if ($mode == 'customer')
 {
@@ -329,7 +324,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -347,7 +342,6 @@ print '<div style="clear:both"></div>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

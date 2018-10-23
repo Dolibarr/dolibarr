@@ -344,6 +344,7 @@ class SMTPs
 		$_aryToList = $this->getTO();
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attempt a connection to mail server
 	 *
@@ -351,6 +352,7 @@ class SMTPs
 	 */
 	function _server_connect()
 	{
+        // phpcs:enable
 		// Default return value
 		$_retVal = true;
 
@@ -358,8 +360,11 @@ class SMTPs
 		// This is done here because '@fsockopen' will not give me this
 		// information if it failes to connect because it can't find the HOST
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
 		// @CHANGE LDR
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -373,7 +378,7 @@ class SMTPs
 		{
 			//See if we can connect to the SMTP server
 			if ($this->socket = @fsockopen(
-    			$this->getHost(),       // Host to 'hit', IP or domain
+    			preg_replace('@tls://@i','',$this->getHost()),       // Host to 'hit', IP or domain
     			$this->getPort(),       // which Port number to use
     			$this->errno,           // actual system level error
     			$this->errstr,          // and any text that goes with the error
@@ -403,6 +408,7 @@ class SMTPs
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
@@ -410,22 +416,35 @@ class SMTPs
 	 */
 	function _server_authenticate()
 	{
+        // phpcs:enable
 		global $conf;
 
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-		if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+
+		if ($usetls) $host='tls://'.$host;
+
+		$hosth = $host;
+
+		if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
 		{
-		    $host=preg_replace('@tls://@i','',$host);	// Remove prefix
-		    $host='tls://'.$host;
+			// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+			$hosth = $this->getFrom('addr');
+			$hosth = preg_replace('/^.*</', '', $hosth);
+			$hosth = preg_replace('/>.*$/', '', $hosth);
+			$hosth = preg_replace('/.*@/', '', $hosth);
 		}
-		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
+
+		if ( $_retVal = $this->socket_send_str('EHLO ' . $hosth, '250') )
 		{
-			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+			if ($usetls)
 			{
 			    /*
 			    The following dialog illustrates how a client and server can start a TLS STARTTLS session
@@ -443,7 +462,7 @@ class SMTPs
                 // Second pass EHLO
                 C: EHLO client-domain.com
                 S: 250-server-domain.com
-                S: 250 AUTH LOGIN			    
+                S: 250 AUTH LOGIN
 			    C: <continues by sending an SMTP command
 			    */
 				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
@@ -470,7 +489,7 @@ class SMTPs
 					$this->_setErr(132, 'STARTTLS connection failed.');
 					return $_retVal;
 				}
-				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time 
+				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
 				{
@@ -508,6 +527,8 @@ class SMTPs
 	 */
 	function sendMsg($_bolTestMsg = false, $_bolDebug = false)
 	{
+		global $conf;
+
 		/**
 		 * Default return value
 		 */
@@ -528,9 +549,24 @@ class SMTPs
 			{
 				// Send the RFC821 specified HELO.
 				$host=$this->getHost();
+				$usetls = preg_match('@tls://@i',$host);
+
 				$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
-				$_retVal = $this->socket_send_str('HELO ' . $host, '250');
+				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+
+				$hosth = $host;
+
+				if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
+				{
+					// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+					$hosth = $this->getFrom('addr');
+					$hosth = preg_replace('/^.*</', '', $hosth);
+					$hosth = preg_replace('/>.*$/', '', $hosth);
+					$hosth = preg_replace('/.*@/', '', $hosth);
+				}
+
+				$_retVal = $this->socket_send_str('HELO ' . $hosth, '250');
 			}
 
 			// Well, did we get to the server?
@@ -615,7 +651,7 @@ class SMTPs
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
@@ -623,8 +659,8 @@ class SMTPs
 		if ( ! empty ($_strConfigPath) )
 		{
 			// If the path is not valid, this will NOT generate an error,
-			// it will simply return FALSE.
-			if ( ! @include ( $_strConfigPath ) )
+			// it will simply return false.
+			if ( ! @include $_strConfigPath)
 			{
 				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
 				$_retVal = false;
@@ -1004,6 +1040,7 @@ class SMTPs
 		$this->_msgRecipients = $aryHost;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of the various parts of an email address
 	 * This assumes a well formed address:
@@ -1022,6 +1059,7 @@ class SMTPs
 	 */
 	function _strip_email($_strAddr)
 	{
+        // phpcs:enable
 		// Keep the orginal
 		$_aryEmail['org'] = $_strAddr;
 
@@ -1055,6 +1093,7 @@ class SMTPs
 		return $_aryEmail;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of bares addresses for use with 'RCPT TO:'
 	 * This is a "build as you go" method. Each time this method is called
@@ -1064,6 +1103,7 @@ class SMTPs
 	 */
 	function get_RCPT_list()
 	{
+        // phpcs:enable
 		/**
 		 * An array of bares addresses for use with 'RCPT TO:'
 		 */
@@ -1085,6 +1125,7 @@ class SMTPs
 		return $_RCPT_list;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of addresses for a specific type; TO, CC or BCC
 	 *
@@ -1093,6 +1134,7 @@ class SMTPs
 	 */
 	function get_email_list($_which = null)
 	{
+        // phpcs:enable
 		// We need to know which address segment to pull
 		if ( $_which )
 		{
@@ -1133,7 +1175,6 @@ class SMTPs
 			$this->_setErr(102, 'eMail type not defined.');
 			return false;
 		}
-
 	}
 
 	/**
@@ -1251,8 +1292,11 @@ class SMTPs
         */
 
 		$host=$this->getHost();
+		$usetls = preg_match('@tls://@i',$host);
+
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
+		$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
 		$host=dol_getprefix('email');
 
@@ -1272,6 +1316,7 @@ class SMTPs
 		{
 			$_header .= 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
 		}
+		if (! empty($_SERVER['REMOTE_ADDR'])) $_header .= "X-RemoteAddr: " . $_SERVER['REMOTE_ADDR']. "\r\n";
 		if ( $this->getMoreInHeader() )
 		    $_header .= $this->getMoreInHeader();     // Value must include the "\r\n";
 
@@ -1324,7 +1369,9 @@ class SMTPs
 		$strContentAltText = '';
 		if ($strType == 'html')
 		{
-			$strContentAltText = html_entity_decode(strip_tags($strContent));
+			// Similar code to forge a text from html is also in CMailFile.class.php
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/"," ", $strContent);
+			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
 		}
 
@@ -1374,7 +1421,7 @@ class SMTPs
 			$content = 'Content-Type: ' . $_msgData['mimeType'] . '; charset="' . $this->getCharSet() . '"' . "\r\n"
 			. 'Content-Transfer-Encoding: ' . $this->getTransEncodeType() . "\r\n"
 			. 'Content-Disposition: inline'  . "\r\n"
-			. 'Content-Description: message' . "\r\n";
+			. 'Content-Description: Message' . "\r\n";
 
 			if ( $this->getMD5flag() )
 			$content .= 'Content-MD5: ' . $_msgData['md5'] . "\r\n";
@@ -1423,7 +1470,7 @@ class SMTPs
 						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Transfer-Encoding: base64' . "\r\n"
-						.  'Content-Description: File Attachment' . "\r\n";
+						.  'Content-Description: ' . $_data['fileName'] ."\r\n";
 
 						if ( $this->getMD5flag() )
 						$content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
@@ -1612,7 +1659,7 @@ class SMTPs
 	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
-	function setPriority ( $_value = 3 )
+	function setPriority( $_value = 3 )
 	{
 		if ( ( is_numeric($_value) ) &&
 		( ( $_value >= 0 ) && ( $_value <= 5 ) ) )
@@ -1708,37 +1755,41 @@ class SMTPs
 		else if ($type == 'alternative') return $this->_smtpsAlternativeBoundary;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions
 	 *
 	 * @param	Handler		$socket			Socket handler
-	 * @param	string		$response		Response
+	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
 	function server_parse($socket, $response)
 	{
+        // phpcs:enable
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
 		$server_response = '';
+
         // avoid infinite loop
         $limit=0;
 
-		while ( substr($server_response,3,1) != ' ' && $limit<100)
+		while (substr($server_response,3,1) != ' ' && $limit<100)
 		{
-			if( !( $server_response = fgets($socket, 256) ) )
+			if (! ($server_response = fgets($socket, 256)))
 			{
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
+				break;
 			}
             $limit++;
 		}
 
-		if( !( substr($server_response, 0, 3) == $response ) )
+		if (! (substr($server_response, 0, 3) == $response))
 		{
 			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
 			$_retVal = false;
@@ -1747,6 +1798,7 @@ class SMTPs
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Send str
 	 *
@@ -1757,6 +1809,7 @@ class SMTPs
 	 */
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{
+        // phpcs:enable
 		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
 		fputs($this->socket, $_strSend . $CRLF);
 		if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
@@ -1774,12 +1827,14 @@ class SMTPs
 	 * @param  int    $_errNum  Error Code Number
 	 * @param  string $_errMsg  Error Message
 	 * @return void
-	 */
-	function _setErr ( $_errNum, $_errMsg )
-	{
-		$this->_smtpsErrors[] = array( 'num' => $_errNum,
-                                       'msg' => $_errMsg );
-	}
+     */
+    function _setErr( $_errNum, $_errMsg )
+    {
+        $this->_smtpsErrors[] = array(
+            'num' => $_errNum,
+            'msg' => $_errMsg,
+        );
+    }
 
 	/**
 	 * Returns errors codes and messages for Class
@@ -1790,15 +1845,16 @@ class SMTPs
 	{
 		$_errMsg = array();
 
-		foreach ( $this->_smtpsErrors as $_err => $_info )
+		if (is_array($this->_smtpsErrors))
 		{
-			$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			foreach ( $this->_smtpsErrors as $_err => $_info )
+			{
+				$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			}
 		}
 
 		return implode("\n", $_errMsg);
 	}
-
-
 }
 
 
@@ -2006,4 +2062,3 @@ class SMTPs
  *  - basic shell with some commets
  *
  */
-

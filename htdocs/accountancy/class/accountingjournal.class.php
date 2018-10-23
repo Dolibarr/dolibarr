@@ -26,16 +26,45 @@
  */
 class AccountingJournal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='accounting_journal';
-	public $table_element='accounting_journal';
-	public $fk_element = '';
-	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $rowid;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='accounting_journal';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = '';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 0;
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'generic';
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
 
 	public $code;
-	public $label;
-	public $nature;		// 0:various operations, 1:sale, 2:purchase, 3:bank, 4:expense-report, 9: has-new
+
+	/**
+     * @var string Accounting Journal label
+     */
+    public $label;
+
+	public $nature;		// 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
 	public $active;
 
 	public $lines;
@@ -45,7 +74,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 		$this->db = $db;
 	}
 
@@ -58,6 +88,8 @@ class AccountingJournal extends CommonObject
 	 */
 	function fetch($rowid = null, $journal_code = null)
 	{
+		global $conf;
+
 		if ($rowid || $journal_code)
 		{
 			$sql = "SELECT rowid, code, label, nature, active";
@@ -65,8 +97,11 @@ class AccountingJournal extends CommonObject
 			$sql .= " WHERE";
 			if ($rowid) {
 				$sql .= " rowid = " . (int) $rowid;
-			} elseif ($journal_code) {
+			}
+			elseif ($journal_code)
+			{
 				$sql .= " code = '" . $this->db->escape($journal_code) . "'";
+				$sql .= " AND entity  = " . $conf->entity;
 			}
 
 			dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
@@ -111,7 +146,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+    function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    {
 		$sql = "SELECT rowid, code, label, nature, active";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
@@ -187,9 +223,6 @@ class AccountingJournal extends CommonObject
 
 		$url = DOL_URL_ROOT . '/accountancy/admin/journals_list.php?id=35';
 
-		$picto = 'billr';
-		$label='';
-
 		$label = '<u>' . $langs->trans("ShowAccountingJournal") . '</u>';
 		if (! empty($this->code))
 			$label .= '<br><b>'.$langs->trans('Code') . ':</b> ' . $this->code;
@@ -223,9 +256,11 @@ class AccountingJournal extends CommonObject
 		$label_link = $this->code;
 		if ($withlabel) $label_link .= ' - ' . $this->label;
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result .= ' ';
-		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $label_link;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -240,6 +275,7 @@ class AccountingJournal extends CommonObject
 		return $this->LibType($this->nature,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return type of an accounting journal
 	 *
@@ -249,9 +285,10 @@ class AccountingJournal extends CommonObject
 	 */
 	function LibType($nature,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
-		$langs->load("accountancy");
+		$langs->loadLangs(array("accountancy"));
 
 		if ($mode == 0)
 		{

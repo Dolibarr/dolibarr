@@ -350,7 +350,7 @@ ALTER TABLE llx_projet ADD COLUMN opp_amount double(24,8) DEFAULT NULL;
 
 -- Module AskPriceSupplier --
 CREATE TABLE llx_askpricesupplier (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   ref varchar(30) NOT NULL,
   entity integer NOT NULL DEFAULT '1',
   ref_ext varchar(255) DEFAULT NULL,
@@ -389,7 +389,7 @@ CREATE TABLE llx_askpricesupplier (
 ) ENGINE=innodb;
 
 CREATE TABLE llx_askpricesupplierdet (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_askpricesupplier integer NOT NULL,
   fk_parent_line integer DEFAULT NULL,
   fk_product integer DEFAULT NULL,

@@ -28,22 +28,44 @@
  */
 class AccountancySystem
 {
-	var $db;
-	var $error;
-	var $rowid;
-	var $fk_pcg_version;
-	var $pcg_type;
-	var $pcg_subtype;
-	var $label;
-	var $account_number;
-	var $account_parent;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var int ID
+	 */
+	public $rowid;
+
+	/**
+     * @var int ID
+     */
+	public $fk_pcg_version;
+
+	public $pcg_type;
+	public $pcg_subtype;
+
+    /**
+     * @var string Accountancy System label
+     */
+    public $label;
+
+	public $account_number;
+	public $account_parent;
 
 	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db handler
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 		$this->db = $db;
 	}
 
@@ -102,12 +124,13 @@ class AccountancySystem
 	 * @param User $user making insert
 	 * @return int if KO, Id of line if OK
 	 */
-	function create($user) {
+    function create($user)
+    {
 		$now = dol_now();
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_system";
 		$sql .= " (date_creation, fk_user_author, numero, label)";
-		$sql .= " VALUES ('" . $this->db->idate($now) . "'," . $user->id . ",'" . $this->numero . "','" . $this->label . "')";
+		$sql .= " VALUES ('" . $this->db->idate($now) . "'," . $user->id . ",'" . $this->db->escape($this->numero) . "','" . $this->db->escape($this->label) . "')";
 
 		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

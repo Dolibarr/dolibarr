@@ -24,24 +24,43 @@
 
 
 /**
- *		Class to manage different types of events
+ *      Class to manage different types of events
  */
 class CActionComm
 {
-    var $error;
-    var $db;
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-    var $id;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $code;
-    var $type;
-    var $libelle;       // deprecated
-    var $label;
-    var $active;
-    var $color;
-    var $picto;
+    /**
+     * @var int ID
+     */
+    public $id;
 
-    var $type_actions=array();
+    public $code;
+    public $type;
+    public $libelle;       // deprecated
+
+    /**
+     * @var string Type of agenda event label
+     */
+    public $label;
+
+    public $active;
+    public $color;
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
+    public $picto;
+
+    public $type_actions=array();
 
 
     /**
@@ -99,6 +118,7 @@ class CActionComm
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return list of event types: array(id=>label) or array(code=>label)
      *
@@ -107,10 +127,12 @@ class CActionComm
      *  @param	string		$excludetype	Type to exclude ('system' or 'systemauto')
      *  @param	int		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
      *  @param  string      $morefilter     Add more SQL filter
+     *  @param	int			$shortlabel		1=Get short label instead of long label
      *  @return mixed      					Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
      */
-    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='')
+    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='', $shortlabel=0)
     {
+        // phpcs:enable
         global $langs,$conf;
         $langs->load("commercial");
 
@@ -154,11 +176,22 @@ class CActionComm
 
                     if ($qualified)
                     {
+                    	$keyfortrans='';
+                    	$transcode='';
                     	$code=$obj->code;
                     	if ($onlyautoornot > 0 && $code == 'AC_OTH') $code='AC_MANUAL';
                     	if ($onlyautoornot > 0 && $code == 'AC_OTH_AUTO') $code='AC_AUTO';
-                    	$transcode=$langs->trans("Action".$code);
-                        $label = ($transcode!="Action".$code?$transcode:$langs->trans($obj->label));
+                    	if ($shortlabel)
+                    	{
+                    		$keyfortrans="Action".$code.'Short';
+                    		$transcode=$langs->trans($keyfortrans);
+                    	}
+                    	if (empty($keyfortrans) || $keyfortrans == $transcode)
+                    	{
+                    		$keyfortrans="Action".$code;
+                    		$transcode=$langs->trans($keyfortrans);
+                    	}
+                    	$label = (($transcode!=$keyfortrans) ? $transcode : $langs->trans($obj->label));
                         if ($onlyautoornot == -1 && ! empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! preg_match('/auto/i', $code))
                         {
                             $label='&nbsp; '.$label;
@@ -166,7 +199,7 @@ class CActionComm
                             $repcode['AC_NON_AUTO']=$langs->trans("ActionAC_MANUAL");
                         }
                     	$repid[$obj->id] = $label;
-                        $repcode[$obj->code] = $label;
+                    	$repcode[$obj->code] = $label;
                         if ($onlyautoornot > 0 && preg_match('/^module/',$obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
                     }
                     $i++;
@@ -198,5 +231,4 @@ class CActionComm
         $transcode=$langs->trans("Action".$this->code);
         if ($transcode != "Action".$this->code) return $transcode;
     }
-
 }

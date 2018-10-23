@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017	Franck Moreau   <franck.moreau@theobald.com>
+/* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/loan/createecheancier.php
- *		\ingroup    loan
- *		\brief      Schedule card
+ *  \file       htdocs/loan/createschedule.php
+ *  \ingroup    loan
+ *  \brief      Schedule card
  */
 
 require '../main.inc.php';
@@ -33,7 +34,8 @@ $action = GETPOST('action','aZ09');
 $object = new Loan($db);
 $object->fetch($loanid);
 
-$langs->load('loan');
+// Load translation files required by the page
+$langs->loadLangs(array("loan"));
 
 if ($action == 'createecheancier') {
 
@@ -49,7 +51,7 @@ if ($action == 'createecheancier') {
 		$echeance->fk_loan = $object->id;
 		$echeance->datec = dol_now();
 		$echeance->tms = dol_now();
-		$echeance->datepaid = $date;
+		$echeance->datep = $date;
 		$echeance->amount_capital = $mens-$int;
 		$echeance->amount_insurance = 0;
 		$echeance->amount_interest = $int;
@@ -59,7 +61,7 @@ if ($action == 'createecheancier') {
 		$echeance->fk_user_modif = $user->id;
 		$result=$echeance->create($user);
 		if ($result<0) {
-			setEventMessages(null, $echeance->errors,'errors');
+			setEventMessages($echeance->error, $echeance->errors,'errors');
 		}
 		$i++;
 	}
@@ -89,7 +91,7 @@ if ($action == 'updateecheancier') {
 }
 
 $echeance = new LoanSchedule($db);
-$echeance->fetchall($object->id);
+$echeance->fetchAll($object->id);
 
 top_htmlhead('', '');
 $var = ! $var;
@@ -147,11 +149,11 @@ print '</th>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-Print '<th width="10%" align="center">'.$langs->trans("DueDate").'</th>';
+Print '<th width="10%" align="center">'.$langs->trans("Term").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Date").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Amount").'</th>';
 Print '<th width="20%" align="center">'.$langs->trans("InterestAmount").'</th>';
-Print '<th width="40%" align="center">'.$langs->trans("Remain");
+Print '<th width="40%" align="center">'.$langs->trans("CapitalRemain");
 print ' ('.price2num($object->capital).')';
 print '<input type="hidden" name="hi_capital0" id ="hi_capital0" value="'.$object->capital.'">';
 print '</th>';
@@ -163,7 +165,7 @@ if ($object->nbterm > 0 && count($echeance->lines)==0)
 	$capital = $object->capital;
 	while($i <$object->nbterm+1)
 	{
-		$mens = price2num($echeance->calc_mens($capital, $object->rate/100, $object->nbterm-$i+1), 'MT');
+		$mens = price2num($echeance->calcMonthlyPayments($capital, $object->rate/100, $object->nbterm-$i+1), 'MT');
 		$int = ($capital*($object->rate/12))/100;
 		$int = price2num($int, 'MT');
 		$cap_rest = price2num($capital - ($mens-$int), 'MT');
@@ -208,8 +210,6 @@ print '</br>';
 print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();
-
-
-

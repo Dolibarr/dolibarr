@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2016 Juanjo Menent 		<jmenent@2byte.es>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,21 +24,17 @@
  *	\brief      Card of a direct debit
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories','bills','withdrawals'));
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
-
-$langs->load("bills");
-$langs->load("withdrawals");
-
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
@@ -63,6 +60,9 @@ if (! $sortorder) $sortorder='DESC';
 
 $object = new BonPrelevement($db,"");
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+
 
 /*
  * Actions
@@ -70,9 +70,7 @@ $object = new BonPrelevement($db,"");
 
 if ( $action == 'confirm_delete' )
 {
-	$object->fetch($id, $ref);
-
-	$res=$object->delete();
+	$res=$object->delete($user);
 	if ($res > 0)
 	{
 		header("Location: index.php");
@@ -83,8 +81,6 @@ if ( $action == 'confirm_delete' )
 // Seems to no be used and replaced with $action == 'infocredit
 if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
 {
-	$object->fetch($id, $ref);
-
 	$res=$object->set_credite();
 	if ($res >= 0)
 	{
@@ -96,8 +92,6 @@ if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
 if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$object->fetch($id, $ref);
 
 	$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
@@ -132,7 +126,6 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 // Set direct debit order to credited, create payment and close invoices
 if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 {
-	$object->fetch($id, $ref);
 	$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
 	$error = $object->set_infocredit($user, $dt);
@@ -156,8 +149,6 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref)
 {
-	$object->fetch($id, $ref);
-
 	$head = prelevement_prepare_head($object);
 	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
@@ -172,7 +163,9 @@ if ($id > 0 || $ref)
 
 	}*/
 
-	dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -244,13 +237,13 @@ if ($id > 0 || $ref)
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="infotrans">';
-		print '<table class="border" width="100%">';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
-		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransData").'</td><td>';
-		print $form->select_date('','','','','',"userfile",1,1);
+		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
+		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
 		print '</td></tr>';
-		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode",$object->methodes_trans);
 		print '</td></tr>';
 /*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
@@ -260,6 +253,7 @@ if ($id > 0 || $ref)
 		print '</table><br>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
+		print '<br>';
 	}
 
 	if (! empty($object->date_trans) && $object->date_credit == 0 && $user->rights->prelevement->bons->credit && $action=='setcredited')
@@ -267,16 +261,17 @@ if ($id > 0 || $ref)
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="infocredit">';
-		print '<table class="border" width="100%">';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
-		print '<tr '.$bc[false].'><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->select_date('','','','','',"infocredit",1,1);
+		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
+		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
 		print '</form>';
+		print '<br>';
 	}
 
 
@@ -324,6 +319,11 @@ if ($id > 0 || $ref)
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
+		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		{
+			$page = 0;
+			$offset = 0;
+		}
 	}
 
 	$sql.= $db->plimit($limit+1, $offset);
@@ -414,13 +414,8 @@ if ($id > 0 || $ref)
 	{
 		dol_print_error($db);
 	}
-
-
-
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

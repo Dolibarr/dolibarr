@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - languages
 LinkANewFile=ربط ملف جديد/ وثيقة
 LinkedFiles=الملفات والمستندات المرتبطة
-NoLinkFound=لا روابط مسجلة
+NoLinkFound=لا يوجد روابط مسجلة
 LinkComplete=تم ربط الملف بنجاح
 ErrorFileNotLinked=لا يمكن ربط الملف
-LinkRemoved=تم إزالة الارتباط  %s
-ErrorFailedToDeleteLink= فشل في إزالة رابط <b>' %s '</b>
-ErrorFailedToUpdateLink= فشل تحديث رابط <b> %s </b>
-URLToLink=URL لربط
+LinkRemoved= الرابط%sتم إزالتة 
+ErrorFailedToDeleteLink= فشل في إزالة الرابط '<b> %s </b>'
+ErrorFailedToUpdateLink= فشل تحديث الرابط '<b> %s </b>'
+URLToLink=الرابط لربطه

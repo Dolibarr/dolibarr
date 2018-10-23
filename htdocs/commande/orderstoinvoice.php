@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville   	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur   	<eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
- * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
- * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
- * Copyright (C) 2012-2018 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2015	   Ferran Marcet			<fmarcet@2byte.es>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Andreu Bisquerra Gaya   <jove@bisquerra.com>
+ * Copyright (C) 2012       David Rodriguez Martinez <davidrm146@gmail.com>
+ * Copyright (C) 2012-2018  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +40,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load('orders');
-$langs->load('deliveries');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array("orders", "deliveries", "companies"));
 
 if (! $user->rights->facture->creer)
 	accessforbidden();
@@ -52,7 +52,7 @@ $action			= GETPOST('action','alpha');
 $confirm		= GETPOST('confirm','alpha');
 $sref			= GETPOST('sref');
 $sref_client	= GETPOST('sref_client');
-$sall			= GETPOST('sall', 'alphanohtml');
+$sall			= trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $socid			= GETPOST('socid','int');
 $selected		= GETPOST('orders_to_invoice');
 $sortfield		= GETPOST("sortfield",'alpha');
@@ -443,7 +443,7 @@ if ($action == 'create' && !$error)
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-	$html->select_date('','','','','',"add",1,1);
+	print $html->selectDate('', '', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -480,7 +480,7 @@ if ($action == 'create' && !$error)
 	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders);
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		$object=new Facture($db);
 		print $object->showOptionals($extrafields,'edit');
@@ -553,7 +553,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	<?php
 
 	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-	$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
+	$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as billed';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -597,8 +597,8 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		$num = $db->num_rows($resql);
 		print load_fiche_titre($title);
 		$i = 0;
-		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
-		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
+		$period=$html->selectDate($date_start,'date_start',0,0,1,'',1,0).' - '.$html->selectDate($date_end,'date_end',0,0,1,'',1,0);
+		$periodely=$html->selectDate($date_starty,'date_start_dely',0,0,1,'',1,0).' - '.$html->selectDate($date_endy,'date_end_dely',0,0,1,'',1,0);
 
 		if (! empty($socid))
 		{
@@ -655,7 +655,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
-		$var=true;
+
 		$generic_commande = new Commande($db);
 
 		while ($i < $num)
@@ -703,7 +703,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			print '</td>';
 
 			// Statut
-			print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
+			print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->billed,5).'</td>';
 
 			// Checkbox
 			print '<td align="center">';
@@ -740,5 +740,6 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 }
 
+// End of page
 llxFooter();
 $db->close();

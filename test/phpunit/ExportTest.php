@@ -130,31 +130,31 @@ class ExportTest extends PHPUnit_Framework_TestCase
     public function testExportOther()
     {
         global $conf,$user,$langs,$db;
-    
+
         $model='csv';
-    
+
         // Creation of class to export using model ExportXXX
         $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
         $file = "export_".$model.".modules.php";
         $classname = "Export".$model;
         require_once $dir.$file;
         $objmodel = new $classname($this->db);
-    
+
         // First test without option USE_STRICT_CSV_RULES
         unset($conf->global->USE_STRICT_CSV_RULES);
-        
+
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, 'A simple string');
-        
+
         $valtotest='A string with , and ; inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with , and ; inside"');
-        
+
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
@@ -166,48 +166,47 @@ class ExportTest extends PHPUnit_Framework_TestCase
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
-        
+
         $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
-        
+
         // Same tests with strict mode
         $conf->global->USE_STRICT_CSV_RULES=1;
-        
+
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, 'A simple string');
-        
+
         $valtotest='A string with , and ; inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with , and ; inside"');
-        
+
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with "" inside"');
-        
+
         $valtotest='A string with " inside and '."\r\n".' carriage returns';
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
-        
+
         $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
-        
     }
-    
+
     /**
      * Test export function for a personalized dataset
      *
@@ -355,5 +354,4 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
         return true;
     }
-    
 }

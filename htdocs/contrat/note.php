@@ -24,15 +24,15 @@
  *      \brief      Fiche de notes sur un contrat
  */
 
-require ("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("companies");
-$langs->load("contracts");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'contracts'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -48,6 +48,10 @@ $object = new Contrat($db);
 $object->fetch($id,$ref);
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
+
 
 
 /*
@@ -78,7 +82,7 @@ if ($id > 0 || ! empty($ref))
 
     // Contract card
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
     $morehtmlref='';
@@ -143,7 +147,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border" width="100%">';
 
-     
+
     // Ligne info remises tiers
     print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
     if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
@@ -165,9 +169,9 @@ if ($id > 0 || ! empty($ref))
     print '</tr>';
 
 	print "</table>";
-	
+
 	print '</div>';
-	
+
 	//print '<br>';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';

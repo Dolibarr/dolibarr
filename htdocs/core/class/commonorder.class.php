@@ -73,7 +73,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Quantity
-	 * @var int
+	 * @var float
 	 */
 	public $qty;
 
@@ -144,6 +144,5 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
-
 }
 

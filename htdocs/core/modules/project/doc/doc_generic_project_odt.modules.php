@@ -53,10 +53,23 @@ if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
  */
 class doc_generic_project_odt extends ModelePDFProjects
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -66,10 +79,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("companies", "main"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -103,6 +116,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -113,6 +127,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$resarray=array(
@@ -133,13 +148,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element,true);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
-		
+
 		return $resarray;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -149,6 +165,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_tasks($task,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$resarray = array(
@@ -168,18 +185,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 		'task_note_private'=>$task->note_private,
 		'task_note_public'=>$task->note_public
 		);
-		
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label($task->table_element,true);
 		$task->fetch_optionals($task->id,$extralabels);
-		
+
 		$resarray = $this->fill_substitutionarray_with_extrafields($task,$resarray,$extrafields,'task',$outputlangs);
-		
+
 		return $resarray;
-		
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -189,6 +206,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_project_contacts($contact,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		$pc='projcontacts_'; // prefix to avoid typos
 
@@ -206,18 +224,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		if ($contact['source']=='external') {
 			$ret[$pc.'isInternal'] = ''; // not internal
-			
+
 			$ct = new Contact($this->db);
 			$ct->fetch($contact['id']);
 			$ret[$pc.'phone_pro'] = $ct->phone_pro;
 			$ret[$pc.'phone_perso'] = $ct->phone_perso;
 			$ret[$pc.'phone_mobile'] = $ct->phone_mobile;
-			
+
 			// fetch external user extrafields
-			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields=new ExtraFields($this->db);
 			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
-			$extrafields_num = $ct->fetch_optionals($ct->id, $extralabels);
+			$extrafields_num = $ct->fetch_optionals();
 			//dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: ===== Number of Extrafields found: ".$extrafields_num, LOG_DEBUG);
 			foreach($ct->array_options as $efkey => $efval) {
 				dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: +++++ Extrafield ".$efkey." => ".$efval, LOG_DEBUG);
@@ -225,7 +243,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			}
 		} elseif ($contact['source']=='internal') {
 			$ret[$pc.'isInternal'] = '1'; // this is an internal user
-		
+
 			$ct = new User($this->db);
 			$ct->fetch($contact['id']);
 			$ret[$pc.'phone_pro'] = $ct->office_phone;
@@ -236,6 +254,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return $ret;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -245,6 +264,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_project_file($file,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -254,6 +274,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -263,6 +284,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_project_reference($refdetail,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -276,6 +298,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -285,6 +308,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_tasksressource($taskressource,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
@@ -298,6 +322,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -307,6 +332,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_taskstime($tasktime,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -325,6 +351,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -334,6 +361,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function get_substitutionarray_task_file($file,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		return array(
@@ -354,8 +382,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf,$langs;
 
-		$langs->load("companies");
-		$langs->load("errors");
+		// Load translation files required by the page
+        $langs->loadLangs(array("companies","errors"));
 
 		$form = new Form($this->db);
 
@@ -433,6 +461,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return $texte;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -443,6 +472,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
@@ -464,10 +494,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("projects");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
 		{
@@ -537,6 +565,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
         			// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
@@ -580,24 +609,25 @@ class doc_generic_project_odt extends ModelePDFProjects
 				//print exit;
 
 
-
-
-				// Make substitutions into odt of user info
+				// Define substitution array
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-                // retrieve contact information for use in project as contact_xxx tags
-        		$array_project_contact = array();
-        		if ($usecontact)
-            			$array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in project as contact_xxx tags
+				$array_project_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_project_contact);
+				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_project_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+
 				// Call the ODTSubstitution hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -932,109 +962,109 @@ class doc_generic_project_odt extends ModelePDFProjects
 								'title' => "ListProposalsAssociatedProject",
 								'class' => 'Propal',
 								'table' => 'propal',
-								'test' => $conf->propal->enabled && $user->rights->propale->lire 
+								'test' => $conf->propal->enabled && $user->rights->propale->lire
 						),
 						'order' => array(
 								'title' => "ListOrdersAssociatedProject",
 								'class' => 'Commande',
 								'table' => 'commande',
-								'test' => $conf->commande->enabled && $user->rights->commande->lire 
+								'test' => $conf->commande->enabled && $user->rights->commande->lire
 						),
 						'invoice' => array(
 								'title' => "ListInvoicesAssociatedProject",
 								'class' => 'Facture',
 								'table' => 'facture',
-								'test' => $conf->facture->enabled && $user->rights->facture->lire 
+								'test' => $conf->facture->enabled && $user->rights->facture->lire
 						),
 						'invoice_predefined' => array(
 								'title' => "ListPredefinedInvoicesAssociatedProject",
 								'class' => 'FactureRec',
 								'table' => 'facture_rec',
-								'test' => $conf->facture->enabled && $user->rights->facture->lire 
+								'test' => $conf->facture->enabled && $user->rights->facture->lire
 						),
 						'proposal_supplier' => array(
 								'title' => "ListSupplierProposalsAssociatedProject",
 								'class' => 'SupplierProposal',
 								'table' => 'supplier_proposal',
-								'test' => $conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire 
+								'test' => $conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire
 						),
 						'order_supplier' => array(
 								'title' => "ListSupplierOrdersAssociatedProject",
 								'table' => 'commande_fournisseur',
 								'class' => 'CommandeFournisseur',
-								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire 
+								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire
 						),
 						'invoice_supplier' => array(
 								'title' => "ListSupplierInvoicesAssociatedProject",
 								'table' => 'facture_fourn',
 								'class' => 'FactureFournisseur',
-								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire 
+								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire
 						),
 						'contract' => array(
 								'title' => "ListContractAssociatedProject",
 								'class' => 'Contrat',
 								'table' => 'contrat',
-								'test' => $conf->contrat->enabled && $user->rights->contrat->lire 
+								'test' => $conf->contrat->enabled && $user->rights->contrat->lire
 						),
 						'intervention' => array(
 								'title' => "ListFichinterAssociatedProject",
 								'class' => 'Fichinter',
 								'table' => 'fichinter',
 								'disableamount' => 1,
-								'test' => $conf->ficheinter->enabled && $user->rights->ficheinter->lire 
+								'test' => $conf->ficheinter->enabled && $user->rights->ficheinter->lire
 						),
 						'shipping' => array(
 								'title' => "ListShippingAssociatedProject",
 								'class' => 'Expedition',
 								'table' => 'expedition',
 								'disableamount' => 1,
-								'test' => $conf->expedition->enabled && $user->rights->expedition->lire 
+								'test' => $conf->expedition->enabled && $user->rights->expedition->lire
 						),
 						'trip' => array(
 								'title' => "ListTripAssociatedProject",
 								'class' => 'Deplacement',
 								'table' => 'deplacement',
 								'disableamount' => 1,
-								'test' => $conf->deplacement->enabled && $user->rights->deplacement->lire 
+								'test' => $conf->deplacement->enabled && $user->rights->deplacement->lire
 						),
 						'expensereport' => array(
 								'title' => "ListExpenseReportsAssociatedProject",
 								'class' => 'ExpenseReportLine',
 								'table' => 'expensereport_det',
-								'test' => $conf->expensereport->enabled && $user->rights->expensereport->lire 
+								'test' => $conf->expensereport->enabled && $user->rights->expensereport->lire
 						),
 						'donation' => array(
 								'title' => "ListDonationsAssociatedProject",
 								'class' => 'Don',
 								'table' => 'don',
-								'test' => $conf->don->enabled && $user->rights->don->lire 
+								'test' => $conf->don->enabled && $user->rights->don->lire
 						),
 						'loan' => array(
 								'title' => "ListLoanAssociatedProject",
 								'class' => 'Loan',
 								'table' => 'loan',
-								'test' => $conf->loan->enabled && $user->rights->loan->read 
+								'test' => $conf->loan->enabled && $user->rights->loan->read
 						),
 						'chargesociales' => array(
 								'title' => "ListSocialContributionAssociatedProject",
 								'class' => 'ChargeSociales',
 								'table' => 'chargesociales',
 								'urlnew' => DOL_URL_ROOT . '/compta/sociales/card.php?action=create&projectid=' . $id,
-								'test' => $conf->tax->enabled && $user->rights->tax->charges->lire 
+								'test' => $conf->tax->enabled && $user->rights->tax->charges->lire
 						),
 						'stock_mouvement' => array(
 								'title' => "ListMouvementStockProject",
 								'class' => 'MouvementStock',
 								'table' => 'stock_mouvement',
-								'test' => ($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)) 
+								'test' => ($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
 						),
 						'agenda' => array(
 								'title' => "ListActionsAssociatedProject",
 								'class' => 'ActionComm',
 								'table' => 'actioncomm',
 								'disableamount' => 1,
-								'test' => $conf->agenda->enabled && $user->rights->agenda->allactions->lire 
-						) 
+								'test' => $conf->agenda->enabled && $user->rights->agenda->allactions->lire
+						)
 				);
 
 				//Insert reference
@@ -1053,7 +1083,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$elementarray = $object->get_element_list($keyref, $tablename);
 							if (count($elementarray)>0 && is_array($elementarray))
 							{
-								$var=true;
 								$total_ht = 0;
 								$total_ttc = 0;
 								$num=count($elementarray);
@@ -1170,6 +1199,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;   // Success
 			}
 			else
@@ -1181,5 +1212,4 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		return -1;
 	}
-
 }

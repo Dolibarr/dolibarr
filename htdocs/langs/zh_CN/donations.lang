@@ -31,3 +31,4 @@ DONATION_ART200=从CGI显示200笔
 DONATION_ART238=从CGI显示238笔
 DONATION_ART885=从CGI显示885笔
 DonationPayment=捐赠付款
+DonationValidated=Donation %s validated

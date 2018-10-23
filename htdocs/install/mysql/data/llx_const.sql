@@ -41,10 +41,11 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_S
 insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_HANDLERS','["mod_syslog_file"]','chaine','Which logger to use',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_FILE','DOL_DATA_ROOT/dolibarr.log','chaine','Directory where to write log file',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_LEVEL','7','chaine','Level of debug info to show',0,0);
-
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0,0);
 
 -- Hidden but specific to one entity 
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_ENABLE_OVERWRITE_TRANSLATION','1','chaine','Enable translation overwrite',0,1);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_ENABLE_DEFAULT_VALUES','1','chaine','Enable default value overwrite',0,1);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0,1);
 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',0,1);
@@ -56,12 +57,11 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 --
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_SHORTLIST_LIMIT','3','chaine','Longueur maximum des listes courtes (fiche client)',0,0);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SHOW_WORKBOARD','1','yesno','Affichage tableau de bord de travail Dolibarr',0,0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_STANDARD','eldy_menu.php','chaine','Menu manager for internal users',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_STANDARD','eldy_menu.php','chaine','Menu manager for external users',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_SMARTPHONE','eldy_menu.php','chaine','Menu manager for internal users using smartphones',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_SMARTPHONE','eldy_menu.php','chaine','Menu manager for external users using smartphones',0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENU_STANDARD','eldy_menu.php','chaine','Menu manager for internal users',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENUFRONT_STANDARD','eldy_menu.php','chaine','Menu manager for external users',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENU_SMARTPHONE','eldy_menu.php','chaine','Menu manager for internal users using smartphones',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MENUFRONT_SMARTPHONE','eldy_menu.php','chaine','Menu manager for external users using smartphones',0,0);
 
 
 --
@@ -90,8 +90,9 @@ insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_
 
 --
 -- ODT Path
----
-insert into llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0);
-insert into llx_const (name, entity, value, type, visible) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0);
-insert into llx_const (name, entity, value, type, visible) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0);
-insert into llx_const (name, entity, value, type, visible) VALUES ('USER_ADDON_PDF_ODT_PATH', 1, 'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0);
+--
+insert into llx_const (name, value, type, visible, entity) VALUES ('PRODUCT_ADDON_PDF_ODT_PATH',   'DOL_DATA_ROOT/doctemplates/products', 'chaine', 0, 1);
+insert into llx_const (name, value, type, visible, entity) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH',  'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, 1);
+insert into llx_const (name, value, type, visible, entity) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, 1);
+insert into llx_const (name, value, type, visible, entity) VALUES ('USER_ADDON_PDF_ODT_PATH',      'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, 1);
+

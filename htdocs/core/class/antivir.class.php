@@ -26,15 +26,29 @@
  */
 
 /**
- *      \class      AntiVir
- *      \brief      Class to scan for virus
+ *      Class to scan for virus
  */
 class AntiVir
 {
-	var $error;
-	var $errors;
-	var $output;
-	var $db;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string Used to return message
+	 */
+	public $output;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
 	 *  Constructor
@@ -46,6 +60,7 @@ class AntiVir
 		$this->db=$db;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
@@ -56,16 +71,17 @@ class AntiVir
 	 */
 	function dol_avscan_file($file)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$return = 0;
 
 		if (preg_match('/\.virus$/i', $file))
 		{
-		    $this->errors='File has an extension saying file is a virus';
-		    return -97;		    
+		    $this->errors[] = 'File has an extension saying file is a virus';
+		    return -97;
 		}
-		
+
 		$fullcommand=$this->getCliCommand($file);
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
         $fullcommand.=' 2>&1';      // This is to get error output
@@ -168,6 +184,4 @@ class AntiVir
 
 		return $ret;
 	}
-
 }
-

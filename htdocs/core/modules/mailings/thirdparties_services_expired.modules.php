@@ -29,7 +29,12 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
     var $require_module=array('contrat');
     var $picto='company';
-    var $db;
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
     var $arrayofproducts=array();
 
 
@@ -73,6 +78,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  This is the main function that returns the array of emails
      *
@@ -82,6 +88,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+        // phpcs:enable
         $target = array();
 
         // ----- Your code start here -----
@@ -213,7 +220,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
     {
         global $langs;
 
-        $s='';
+        $s=$langs->trans("ProductOrService");
         $s.='<select name="filter" class="flat">';
         if (count($this->arrayofproducts)) $s.='<option value="0">&nbsp;</option>';
         else $s.='<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
@@ -236,6 +243,4 @@ class mailing_thirdparties_services_expired extends MailingTargets
     {
         return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
     }
-
 }
-

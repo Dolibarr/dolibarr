@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/address.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'commercial'));
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -52,7 +52,7 @@ $object = new Address($db);
  */
 
 // Cancel
-if (GETPOST("cancel") && ! empty($backtopage))
+if (GETPOST('cancel','alpha') && ! empty($backtopage))
 {
 	header("Location: ".$backtopage);
 	exit;

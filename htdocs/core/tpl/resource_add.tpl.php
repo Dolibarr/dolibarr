@@ -9,7 +9,7 @@ if (empty($conf) || ! is_object($conf))
 }
 
 
-require_once(DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php');
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 $form = new Form($db);
 $formresources = new FormResource($db);
@@ -28,7 +28,7 @@ $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_typ
 $out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div>';
 $out .= '<div class="tagtd">';
 $events=array();
-$out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2);
+$out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2,null);
 $out .= '</div>';
 
 $out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->selectyesno('busy',(isset($_POST['busy'])?$_POST['busy']:1),1).'</div>';

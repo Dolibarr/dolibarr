@@ -20,6 +20,12 @@ source_file = htdocs/langs/en_US/agenda.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.assets]
+file_filter = htdocs/langs/<lang>/assets.lang
+source_file = htdocs/langs/en_US/assets.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.banks]
 file_filter = htdocs/langs/<lang>/banks.lang
 source_file = htdocs/langs/en_US/banks.lang
@@ -29,6 +35,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.bills]
 file_filter = htdocs/langs/<lang>/bills.lang
 source_file = htdocs/langs/en_US/bills.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.blockedlog]
+file_filter = htdocs/langs/<lang>/blockedlog.lang
+source_file = htdocs/langs/en_US/blockedlog.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -149,12 +161,6 @@ type = MOZILLAPROPERTIES
 [dolibarr.hrm]
 file_filter = htdocs/langs/<lang>/hrm.lang
 source_file = htdocs/langs/en_US/hrm.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
-[dolibarr.incoterm]
-file_filter = htdocs/langs/<lang>/incoterm.lang
-source_file = htdocs/langs/en_US/incoterm.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -353,6 +359,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.supplier_proposal]
 file_filter = htdocs/langs/<lang>/supplier_proposal.lang
 source_file = htdocs/langs/en_US/supplier_proposal.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.ticket]
+file_filter = htdocs/langs/<lang>/ticket.lang
+source_file = htdocs/langs/en_US/ticket.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

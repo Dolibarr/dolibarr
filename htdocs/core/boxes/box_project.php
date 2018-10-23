@@ -23,7 +23,7 @@
  *  \ingroup    projet
  *  \brief      Module to show Projet activity of the current Year
  */
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box to show last projet
@@ -34,7 +34,12 @@ class box_project extends ModeleBoxes
 	var $boximg="object_projectpub";
 	var $boxlabel;
 	//var $depends = array("projet");
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
 	var $param;
 
 	var $info_box_head = array();
@@ -49,8 +54,9 @@ class box_project extends ModeleBoxes
     function __construct($db,$param='')
     {
         global $user, $langs;
-        $langs->load("boxes");
-        $langs->load("projects");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array('boxes', 'projects'));
 
         $this->db = $db;
         $this->boxlabel="Projects";
@@ -80,7 +86,7 @@ class box_project extends ModeleBoxes
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
 
-		    include_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+		    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		    $projectstatic = new Project($this->db);
 
 		    $socid=$user->societe_id;
@@ -110,22 +116,18 @@ class box_project extends ModeleBoxes
                 while ($i < min($num, $max)) {
                     $objp = $db->fetch_object($result);
 
-                    $tooltip = $langs->trans('Project') . ': ' . $objp->ref;
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => 'object_project'.($objp->public?'pub':''),
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
-                    );
+                    $projectstatic->id = $objp->rowid;
+                    $projectstatic->ref = $objp->ref;
+                    $projectstatic->title = $objp->title;
+                    $projectstatic->public = $objp->public;
 
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => '',
-                        'text' => $objp->ref,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
+                        'text' => $projectstatic->getNomUrl(1),
+                    	'asis' => 1
                     );
 
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$i][] = array(
                         'td' => '',
                         'text' => $objp->title,
                     );
@@ -137,28 +139,28 @@ class box_project extends ModeleBoxes
 					$resultTask = $db->query($sql);
 					if ($resultTask) {
 						$objTask = $db->fetch_object($resultTask);
-                        $this->info_box_contents[$i][3] = array(
+                        $this->info_box_contents[$i][] = array(
                             'td' => 'class="right"',
                             'text' => $objTask->nb."&nbsp;".$langs->trans("Tasks"),
                         );
 						if ($objTask->nb  > 0)
-                            $this->info_box_contents[$i][4] = array(
+                            $this->info_box_contents[$i][] = array(
                                 'td' => 'class="right"',
                                 'text' => round($objTask->totprogress/$objTask->nb, 0)."%",
                             );
 						else
-							$this->info_box_contents[$i][4] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+							$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
 					} else {
-						$this->info_box_contents[$i][3] = array('td' => 'class="right"', 'text' => round(0));
-						$this->info_box_contents[$i][4] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+						$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => round(0));
+						$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
 					}
 
 					$i++;
 				}
 				if ($max < $num)
 				{
-				    $this->info_box_contents[$i][0] = array('td' => 'colspan="5"', 'text' => '...');
+				    $this->info_box_contents[$i][] = array('td' => 'colspan="5"', 'text' => '...');
 				    $i++;
 				}
 			}
@@ -166,29 +168,23 @@ class box_project extends ModeleBoxes
 
 
 		// Add the sum à the bottom of the boxes
-        $this->info_box_contents[$i][0] = array(
-            'tr' => 'class="liste_total"',
-            'td' => 'align="left" ',
-            'text' => "&nbsp;",
-       );
-        $this->info_box_contents[$i][1] = array(
+        $this->info_box_contents[$i][] = array(
             'td' => '',
             'text' => $langs->trans("Total")."&nbsp;".$textHead,
              'text' => "&nbsp;",
         );
-        $this->info_box_contents[$i][2] = array(
+        $this->info_box_contents[$i][] = array(
             'td' => 'align="right" ',
             'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
         );
-        $this->info_box_contents[$i][3] = array(
+        $this->info_box_contents[$i][] = array(
             'td' => 'align="right" ',
             'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
         );
-        $this->info_box_contents[$i][4] = array(
+        $this->info_box_contents[$i][] = array(
             'td' => '',
             'text' => "&nbsp;",
         );
-
 	}
 
 	/**

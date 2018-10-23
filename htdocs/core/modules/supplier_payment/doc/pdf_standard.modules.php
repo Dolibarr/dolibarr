@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoice/pdf/pdf_canelle.modules.php
+ *	\file       htdocs/core/modules/supplier_invoice/doc/pdf_standard.modules.php
  *	\ingroup    fournisseur
- *	\brief      Class file to generate the supplier invoices with the canelle model
+ *	\brief      Class file to generate the supplier invoice payment file with the standard model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
@@ -34,27 +34,82 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
 
 /**
- *	Class to generate the supplier invoices with the canelle model
+ *	Class to generate the supplier invoices payment file with the standard model
  */
 class pdf_standard extends ModelePDFSuppliersPayments
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
+	/**
+     * @var string model name
+     */
+    public $name;
 
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
 
-	var $emetteur;	// Objet societe qui emet
+	/**
+     * @var string document type
+     */
+    public $type;
+
+    /**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 
 	/**
@@ -64,10 +119,10 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("bills");
+		// Load translation files required by the page
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "standard";
@@ -97,7 +152,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->posxtotalht=80;
 		$this->posxtva=90;
 		$this->posxtotalttc=180;
-		
+
 		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
@@ -114,10 +169,15 @@ class pdf_standard extends ModelePDFSuppliersPayments
         $this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
+
+		// Recupere emetteur
+		$this->emetteur=$mysoc;
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
 	}
 
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		PaiementFourn		$object				Id of object to generate
@@ -127,27 +187,19 @@ class pdf_standard extends ModelePDFSuppliersPayments
      *  @param		int					$hidedesc			Do not show desc
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
-	 */
+     */
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc,$hookmanager;
-
-		// Get source company
-		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-		if (! is_object($object->thirdparty)) $object->thirdparty=$mysoc;	// If fetch_thirdparty fails, object has no socid (specimen)
-		$this->emetteur=$object->thirdparty;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+        // phpcs:enable
+		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("suppliers");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "suppliers", "companies", "bills", "dict", "products"));
+
 		$object->factures = array();
 
 		if ($conf->fournisseur->payment->dir_output)
@@ -172,7 +224,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					}
 				}
 			}
-			
+
 			$total = $object->montant;
 
 			// Definition of $dir and $file
@@ -228,7 +280,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -264,7 +316,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				// Incoterm
 				$height_incoterms = 0;
-				
+
 				$height_note=0;
 
 				$iniY = $tab_top + 7;
@@ -332,15 +384,15 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					}
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
-					
+
 					// ref fourn
 					$pdf->SetXY($this->posxreffacturefourn, $curY);
 					$pdf->MultiCell($this->posxreffacturefourn-$this->posxup-0.8, 3, $object->lines[$i]->ref_supplier, 0, 'L', 0);
-					
+
 					// ref facture fourn
 					$pdf->SetXY($this->posxreffacture, $curY);
 					$pdf->MultiCell($this->posxreffacture-$this->posxup-0.8, 3, $object->lines[$i]->ref, 0, 'L', 0);
-					
+
 					// type
 					$pdf->SetXY($this->posxtype, $curY);
 					$pdf->MultiCell($this->posxtype-$this->posxup-0.8, 3, $object->lines[$i]->type, 0, 'L', 0);
@@ -348,15 +400,15 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					// Total ht
 					$pdf->SetXY($this->posxtotalht, $curY);
 					$pdf->MultiCell($this->posxtotalht-$this->posxup-0.8, 3, price($object->lines[$i]->total_ht), 0, 'R', 0);
-					
+
 					// Total tva
 					$pdf->SetXY($this->posxtva, $curY);
 					$pdf->MultiCell($this->posxtva-$this->posxup-0.8, 3, price($object->lines[$i]->total_tva), 0, 'R', 0);
-					
+
 					// Total TTC line
                     $pdf->SetXY($this->posxtotalttc, $curY);
                     $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxtotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R', 0);
-					
+
 
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
@@ -421,7 +473,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				// Affiche zone cheèque
 				$posy=$this->_tableau_cheque($pdf, $object, $bottomlasttab, $outputlangs);
-				
+
 				// Affiche zone totaux
 				//$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
@@ -442,6 +494,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -457,6 +511,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -468,51 +523,51 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetFillColor(255,255,255);
-		
+
 		// N° payment
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->MultiCell(30, 4, 'N° '.$outputlangs->transnoentities("Payment"), 0, 'L', 1);
-		
+
 		// Ref payment
 		$pdf->SetXY($this->marge_gauche + 30, $posy);
 		$pdf->MultiCell(50, 4, $object->ref, 0, 'L', 1);
-		
+
 		// Total payments
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 50, $posy);
 		$pdf->MultiCell(50, 4, price($object->montant), 0, 'R', 1);
 		$posy += 20;
-		
+
 		// translate amount
 		$currency = $conf->currency;
 		$translateinletter = strtoupper(dol_convertToWord($object->montant,$outputlangs,$currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
 		$posy += 8;
-		
+
 		// To
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
-		
+
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
 		$pdf->MultiCell(35, 4, str_pad(price($object->montant). ' '.$currency,18,'*',STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
-		
-		
+
+
 		// City
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
 		$pdf->MultiCell(150, 4, $mysoc->town, 0, 'L', 1);
 		$posy += 4;
-		
+
 		// Date
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
 		$pdf->MultiCell(150, 4, date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y"), 0, 'L', 1);
-		
 	}
 
 
@@ -547,7 +602,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$titre = strtoupper($mysoc->town).', le '.date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y");
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top-6);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
-		
+
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
@@ -558,7 +613,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Output Rect
 		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
-
 	}
 
 
@@ -573,12 +627,11 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $langs,$conf,$mysoc;
+		global $langs, $conf, $mysoc;
 
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("orders");
-		$outputlangs->load("companies");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills"));
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Do not add the BACKGROUND as this is for suppliers
@@ -680,17 +733,17 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
-			// Show sender
+			// Show payer
 			$posy=42;
 			$posx=$this->marge_gauche;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
-/*
+
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("PayedBy").":", 0, 'L');
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
@@ -707,28 +760,12 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
-*/
-
-			// If BILLING contact defined on invoice, we use it
-			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('internal','BILLING');
-			if (count($arrayidcontact) > 0)
-			{
-				$usecontact=true;
-				$result=$object->fetch_contact($arrayidcontact[0]);
-			}
-
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
-				$thirdparty = $object->contact;
-			} else {
-				$thirdparty = $object->thirdparty;
-			}
+			// Payed
+			$thirdparty = $object->thirdparty;
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$thirdparty,((!empty($object->contact))?$object->contact:null),$usecontact,'target',$object);
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,((!empty($object->contact))?$object->contact:null),$usecontact,'target',$object);
 
 			// Show recipient
 			$widthrecbox=90;
@@ -741,7 +778,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
-			$pdf->MultiCell($widthrecbox, 5, "",0,'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("PayedTo").":",0,'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 			// Show recipient name
@@ -773,6 +810,4 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

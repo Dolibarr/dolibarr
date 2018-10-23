@@ -33,10 +33,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("facture");
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("facture","orders","sendings","companies"));
 
 $id		= GETPOST('id', 'int');
 $ref	= GETPOST('ref', 'alpha');
@@ -140,7 +138,7 @@ if ($id > 0 || ! empty($ref))
 		$object->fetch_thirdparty();
 
 		$head = ordersupplier_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), 0, 'order');
+		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');
 
 		// Supplier order card
 
@@ -203,6 +201,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

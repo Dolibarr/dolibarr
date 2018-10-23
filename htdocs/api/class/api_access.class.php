@@ -59,8 +59,7 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public static $user = '';
 
-    // @codingStandardsIgnoreStart
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * Check access
 	 *
@@ -69,6 +68,7 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public function __isAllowed()
 	{
+        // phpcs:enable
 		global $conf, $db;
 
 		$login = '';
@@ -83,10 +83,10 @@ class DolibarrApiAccess implements iAuthenticate
 
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
-		if (isset($_GET['api_key']))
+		if (isset($_GET['api_key']))	// For backward compatibility
 		{
 		    // TODO Add option to disable use of api key on url. Return errors if used.
-		    $api_key = $_GET['api_key'];                         // For backward compatibility
+		    $api_key = $_GET['api_key'];
 		}
 		if (isset($_GET['DOLAPIKEY']))
 		{
@@ -166,6 +166,7 @@ class DolibarrApiAccess implements iAuthenticate
 	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * @return string string to be used with WWW-Authenticate header
 	 * @example Basic
@@ -174,9 +175,9 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public function __getWWWAuthenticateString()
     {
+        // phpcs:enable
         return '';
     }
-    // @codingStandardsIgnoreEnd
 
 	/**
 	 * Verify access
@@ -196,6 +197,5 @@ class DolibarrApiAccess implements iAuthenticate
         return $requires
             ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
             : true;
-
     }
 }

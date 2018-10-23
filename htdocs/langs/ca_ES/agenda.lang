@@ -12,6 +12,7 @@ Event=Esdeveniment
 Events=Esdeveniments
 EventsNb=Nombre d'esdeveniments
 ListOfActions=Llista d'esdeveniments
+EventReports=Informes d'esdeveniments
 Location=Localització
 ToUserOfGroup=A qualsevol usuari del grup
 EventOnFullDay=Esdeveniment per tot el dia
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Defineix aqui els esdeveniments pels que vols que Dolibarr
 AgendaSetupOtherDesc= Aquesta pàgina permet configurar algunes opcions que permeten exportar una vista de la seva agenda Dolibar a un calendari extern (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Aquesta pàgina permet configurar calendaris externs per a la seva visualització en l'agenda de Dolibarr.
 ActionsEvents=Esdeveniments per a què Dolibarr crei una acció de forma automàtica
+EventRemindersByEmailNotEnabled=Els recordatoris d'esdeveniments per correu electrònic no estaven habilitats en la configuració del mòdul d'Agenda.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tercer %s creat
 ContractValidatedInDolibarr=Contracte %s validat
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Soci %s validat
 MemberModifiedInDolibarr=Soci %s modificat
 MemberResiliatedInDolibarr=Membre %s acabat
 MemberDeletedInDolibarr=Soci %s eliminat
-MemberSubscriptionAddedInDolibarr=Subscripció del soci %s afegida
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Expedició %s validada
 ShipmentClassifyClosedInDolibarr=Expedició %s classificada com a facturada
 ShipmentUnClassifyCloseddInDolibarr=Expedició %s classificada com a reoberta
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Comanda %s aprovada
 OrderRefusedInDolibarr=Comanda %s rebutjada
 OrderBackToDraftInDolibarr=Comanda %s tornada a estat esborrany
 ProposalSentByEMail=Pressupost %s enviat per e-mail
+ContractSentByEMail=Enviat per correu electrònic el contracte %s
 OrderSentByEMail=Comanda de client %s enviada per e-mail
 InvoiceSentByEMail=Factura a client %s enviada per e-mail
 SupplierOrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
@@ -78,6 +83,14 @@ InvoiceDeleted=Factura esborrada
 PRODUCT_CREATEInDolibarr=Producte %s creat
 PRODUCT_MODIFYInDolibarr=Producte %s modificat
 PRODUCT_DELETEInDolibarr=Producte %s eliminat
+EXPENSE_REPORT_CREATEInDolibarr=Creat l'informe de despeses %s
+EXPENSE_REPORT_VALIDATEInDolibarr=S'ha validat l'informe de despeses %s
+EXPENSE_REPORT_APPROVEInDolibarr=Aprovat l'informe de despeses %s
+EXPENSE_REPORT_DELETEInDolibarr=Esborrat l'informe de despeses %s
+EXPENSE_REPORT_REFUSEDInDolibarr=Rebutjat l'informe de despeses %s
+PROJECT_CREATEInDolibarr=Projecte %s creat
+PROJECT_MODIFYInDolibarr=Projecte %s modificat
+PROJECT_DELETEInDolibarr=S'ha eliminat el projecte %s
 ##### End agenda events #####
 AgendaModelModule=Plantilles de documents per esdeveniments
 DateActionStart=Data d'inici
@@ -87,6 +100,7 @@ AgendaUrlOptions3=<b>logina=%s</b> ​​per a restringir insercions a les accio
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció d'accions que no pertanyen a l'usuari <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> per excloure l'acció automàtica.
 AgendaShowBirthdayEvents=Mostra aniversaris dels contactes
 AgendaHideBirthdayEvents=Oculta aniversaris dels contactes
 Busy=Ocupat
@@ -98,7 +112,7 @@ ExportCal=Exportar calendari
 ExtSites=Calendaris externs
 ExtSitesEnableThisTool=Mostrar calendaris externs (definint a la configuració global) a l'agenda. No afecta als calendaris externs definits per l'usuari
 ExtSitesNbOfAgenda=Nombre de calendaris
-AgendaExtNb=Calendari nº %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=Url d'accés a l'arxiu. ical
 ExtSiteNoLabel=Sense descripció
 VisibleTimeRange=Rang de temps visible

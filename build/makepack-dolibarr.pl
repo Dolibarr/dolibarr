@@ -22,7 +22,7 @@ $PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
 $PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
 
 
-#@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
+#@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
 "SF"=>"git ssh rsync",
@@ -37,7 +37,7 @@ $PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/dolibarr.org/httpd
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
 "DEB"=>"dpkg",
-"APS"=>"zip",
+"FLATPACK"=>"flatpack",
 "EXEDOLIWAMP"=>"ISCC.exe",
 "SNAPSHOT"=>"tar"
 );
@@ -142,7 +142,6 @@ $FILENAMETGZ         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEZIP         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEXZ          = "$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMEDEB         = "see later";
-$FILENAMEAPS         = "$PROJECT-$MAJOR.$MINOR.$BUILD.app";
 $FILENAMEEXEDOLIWAMP = "DoliWamp-$MAJOR.$MINOR.$BUILD";
 # For RPM
 $ARCH='noarch';
@@ -388,7 +387,7 @@ if ($nboftargetok) {
 	#-----------------------
 	if ($CHOOSEDTARGET{'-CHKSUM'})
 	{
-	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filecheck_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
+	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filelist_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
 	  	print $ret."\n";
 	  	# Copy to final dir
@@ -560,7 +559,7 @@ if ($nboftargetok) {
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/adapters`;		# Keep this removal in case we embed libraries
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/samples`;		# Keep this removal in case we embed libraries
-        #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;					# _source must be kept into tarball for official debian, not for the rest
    	    
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/select2/release.sh`;
@@ -692,7 +691,7 @@ if ($nboftargetok) {
 			print "Go to directory $BUILDROOT\n";
 			$olddir=getcwd();
 			chdir("$BUILDROOT");
-			$cmd= "xz -9 -r $BUILDROOT/$FILENAMEAPS.xz \*";
+			$cmd= "xz -9 -r $BUILDROOT/$FILENAMEXZ.xz \*";
 			print $cmd."\n";
 			$ret= `$cmd`;
 			chdir("$olddir");
@@ -769,8 +768,8 @@ if ($nboftargetok) {
 			$cmd="cp -pr '$BUILDROOT/$PROJECT' '$BUILDROOT/$FILENAMETGZ2'";
 			$ret=`$cmd`;
 
-			# Removed files we don't need
-			$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
+			# Removed files we don't need (already removed before)
+			#$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
 
 			print "Set permissions on files/dir\n";
 			$ret=`chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;
@@ -919,8 +918,8 @@ if ($nboftargetok) {
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mike42/escpos-php/LICENSE.md`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mobiledetect/mobiledetectlib/LICENSE.txt`;
 			
-			# Removed files we don't need
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
+			# Removed files we don't need (already removed)
+			#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
 			
 			# Rename upstream changelog to match debian rules
 			$ret=`mv $BUILDROOT/$PROJECT.tmp/ChangeLog $BUILDROOT/$PROJECT.tmp/changelog`;
@@ -982,7 +981,7 @@ if ($nboftargetok) {
 			$ret=`chmod 755 $BUILDROOT/$PROJECT.tmp/debian/rules`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/actions_mymodule.class.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_myobject.class.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_mymodule.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/myobject.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/core/modules/modMyModule.class.php`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
@@ -1033,92 +1032,6 @@ if ($nboftargetok) {
 			next;
 		}
 		
-		if ($target eq 'APS') 
-		{
-			$NEWDESTI=$DESTI;
-			if ($NEWDESTI =~ /stable/)
-			{
-				mkdir($DESTI.'/package_aps');
-				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
-			} 
-			
-			$newbuild = $BUILD;
-			$newbuild =~ s/(dev|alpha)/0/gi;                # dev
-			$newbuild =~ s/beta/1/gi;                       # beta
-			$newbuild =~ s/rc./2/gi;                        # rc
-			if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-			# now newbuild is 0-0 or 0-3 for example
-			$REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
-			if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
-			print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
-			
-			print "Remove target $FILENAMEAPS.zip...\n";
-			unlink "$NEWDESTI/$FILENAMEAPS.zip";
-
-			#rmdir "$BUILDROOT/$PROJECT.tmp";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp`;
-			print "Create directory $BUILDROOT/$PROJECT.tmp\n";
-			$ret=`mkdir -p "$BUILDROOT/$PROJECT.tmp"`;
-			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
-			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
-			$ret=`$cmd`;
-
-			print "Remove other files\n";
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/deb`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/dmg`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/doap`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/exe`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/live`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/patch`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/rpm`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/zip`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/build/perl`;
-
-            $APSVERSION="1.2";
-            print "Create APS files $BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml\n";
-            open (SPECFROM,"<$BUILDROOT/$PROJECT/build/aps/APP-META-$APSVERSION.xml") || die "Error";
-            open (SPECTO,">$BUILDROOT/$PROJECT.tmp/$PROJECT/APP-META.xml") || die "Error";
-            while (<SPECFROM>) {
-                $newbuild = $BUILD;
-                $newbuild =~ s/(dev|alpha)/0/gi;                # dev
-                $newbuild =~ s/beta/1/gi;                       # beta
-                $newbuild =~ s/rc./2/gi;                        # rc
-                if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale
-                # now newbuild is 0-0 or 0-3 for example
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
-                $_ =~ s/__RELEASE__/$RPMSUBVERSION/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-            print "Version set to $MAJOR.$MINOR.$newbuild\n";
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/build/aps/configure.php\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/scripts/configure.php\"";
-            $ret=`$cmd`;
-            $cmd="cp -pr \"$BUILDROOT/$PROJECT/doc/images\" \"$BUILDROOT/$PROJECT.tmp/$PROJECT/images\"";
-            $ret=`$cmd`;
- 
-            print "Remove other files\n";
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/dev`;
-            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/$PROJECT/doc`;
-            
-            print "Build APP-LIST.xml files\n";
-            
-            print "Compress $BUILDROOT/$PROJECT.tmp/$PROJECT into $FILENAMEAPS.zip...\n";
- 
-            print "Go to directory $BUILDROOT/$PROJECT.tmp\/$PROJECT\n";
-            $olddir=getcwd();
-            chdir("$BUILDROOT\/$PROJECT.tmp\/$PROJECT");
-            $cmd= "zip -9 -r $BUILDROOT/$FILENAMEAPS.zip \*";
-            print $cmd."\n";
-            $ret= `$cmd`;
-            chdir("$olddir");
-                        
-    		# Move to final dir
-            print "Move $BUILDROOT/$FILENAMEAPS.zip to $NEWDESTI/$FILENAMEAPS.zip\n";
-            $ret=`mv "$BUILDROOT/$FILENAMEAPS.zip" "$NEWDESTI/$FILENAMEAPS.zip"`;
-            next;
-    	}
-
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;
