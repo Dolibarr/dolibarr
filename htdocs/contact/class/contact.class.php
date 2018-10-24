@@ -893,6 +893,7 @@ class Contact extends CommonObject
 		$sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.=" WHERE ec.fk_c_type_contact = tc.rowid";
 		$sql.=" AND fk_socpeople = ". $this->id;
+		$sql.=" AND tc.source = 'external'";
 		$sql.=" GROUP BY tc.element";
 
 		dol_syslog(get_class($this)."::load_ref_elements", LOG_DEBUG);
