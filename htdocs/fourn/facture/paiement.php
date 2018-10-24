@@ -473,14 +473,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	             * Autres factures impayees
 	             */
 	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df,';
-	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
+	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am, f.date_lim_reglement as dlr';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 	            $sql.= " WHERE f.entity = ".$conf->entity;
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef';
+	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef, f.date_lim_reglement';
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
@@ -511,6 +511,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print '<td>'.$langs->trans('Invoice').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
+	                    print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
 	                    if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 						if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
@@ -569,7 +570,25 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
-
+	                        
+	                        // Date Max Payment
+	                        if ($objp->dlr > 0 )
+	                        {
+	                            print '<td align="center">';
+	                            print dol_print_date($db->jdate($objp->dlr), 'day');
+	                            
+	                            if ($invoice->hasDelay())
+	                            {
+	                                print img_warning($langs->trans('Late'));
+	                            }
+	                            
+	                            print '</td>';
+	                        }
+	                        else
+	                        {
+	                            print '<td align="center"><b>--</b></td>';
+	                        }
+	                        
 	                        // Multicurrency
 	                        if (!empty($conf->multicurrency->enabled))
 	                        {
@@ -661,7 +680,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    {
 	                        // Print total
 	                        print '<tr class="liste_total">';
-	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+	                        print '<td colspan="4" align="left">'.$langs->trans('TotalTTC').':</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';

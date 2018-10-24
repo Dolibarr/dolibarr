@@ -714,10 +714,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show payments table
-     *
+   *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
@@ -726,11 +725,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
-	    // phpcs:enable
 	}
 
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -742,7 +738,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
-	    // phpcs:enable
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -918,7 +913,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	}
 
 
-	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
 	 *	Show total to pay
 	 *
 	 *	@param	TCPDF		$pdf           Object PDF
@@ -930,7 +925,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-	    // phpcs:enable
 	    global $conf,$mysoc;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
