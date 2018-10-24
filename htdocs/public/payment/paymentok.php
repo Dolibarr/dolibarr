@@ -630,9 +630,9 @@ if ($ispaymentok)
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_paiement = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->payment_id = $TRANSACTIONID;
-				$paiement->payment_site = $paymentmethod;
-        
+				$paiement->ext_payment_id = $TRANSACTIONID;
+				$paiement->ext_payment_site = $paymentmethod;
+
 				if (! $error)
 				{
 					$paiement_id = $paiement->create($user, 1);    // This include closing invoices and regenerating documents
@@ -653,8 +653,8 @@ if ($ispaymentok)
 				{
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
 
 					if ($bankaccountid > 0)
 					{
@@ -873,8 +873,8 @@ else
     if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
     // TODO Remove local option to keep only the generic one ?
     if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
 
     // Send an email
     if ($sendemail)
