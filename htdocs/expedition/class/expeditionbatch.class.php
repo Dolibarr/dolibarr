@@ -39,6 +39,7 @@ class ExpeditionLineBatch extends CommonObject
 	var $eatby;
 	var $batch;
 	var $qty;
+	var $dluo_qty; // deprecated, use qty
 	var $entrepot_id;
 	var $fk_origin_stock;
 	var $fk_expeditiondet;
@@ -121,7 +122,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':("'".$this->db->idate($this->sellby))."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':("'".$this->db->idate($this->eatby))."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':("'".$this->db->escape($this->batch)."'")).",";
-		$sql.= " ".(! isset($this->qty)?'NULL':$this->qty).",";
+		$sql.= " ".(! isset($this->qty)?((! isset($this->dluo_qty))?'NULL':$this->dluo_qty):$this->qty).","; // dluo_qty deprecated, use qty
 		$sql.= " ".(! isset($this->fk_origin_stock)?'NULL':$this->fk_origin_stock);
 		$sql.= ")";
 
@@ -221,6 +222,7 @@ class ExpeditionLineBatch extends CommonObject
 				$tmp->id = $obj->rowid;
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;
 				$tmp->fk_expeditiondet = $obj->fk_expeditiondet;
+				$tmp->dluo_qty = $obj->qty; // dluo_qty deprecated, use qty
 				$tmp->qty = $obj->qty;
 
 				$ret[]=$tmp;

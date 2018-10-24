@@ -243,10 +243,10 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param	Contact 		$object        	contact
+	 * @param	Contact 	$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
-	 * @param   array_key	$array_key	    Name of the key for return array
-	 * @return	array of substitution key->code
+	 * @param   array		$array_key	    Name of the key for return array
+	 * @return	array 						Array of substitution key->code
 	 */
     function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
     {
@@ -582,9 +582,9 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   Expedition			$object             Main object to use as data source
+     * @param   Expedition		$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   array_key		$array_key	        Name of the key for return array
+     * @param   array			$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
     function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
@@ -807,7 +807,7 @@ abstract class CommonDocGenerator
 	/**
 	 * Rect pdf
 	 *
-	 * @param	PDF		$pdf			Object PDF
+	 * @param	TCPDF	$pdf			Object PDF
 	 * @param	float	$x				Abscissa of first point
 	 * @param	float	$y		        Ordinate of first point
 	 * @param	float	$l				??
