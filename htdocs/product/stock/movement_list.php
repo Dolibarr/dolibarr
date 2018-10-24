@@ -103,7 +103,7 @@ $arrayfields=array(
     'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
     'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
     'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
-    'm.label'=>array('label'=>$langs->trans("LabelMovement"), 'checked'=>1),
+    'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
     'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1),
     'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),

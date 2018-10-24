@@ -161,7 +161,7 @@ if ($action == 'createmovements')
 	if (! GETPOST("label"))
 	{
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("MovementLabel"), null, 'errors');
 	}
 
 	$db->begin();
@@ -451,7 +451,7 @@ print '<table class="noborder" width="100%">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td>'.$langs->trans("LabelMovement").'</td>';
+	print '<td>'.$langs->trans("MovementLabel").'</td>';
 	print '<td>';
 	print '<input type="text" name="label" class="quatrevingtpercent" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
