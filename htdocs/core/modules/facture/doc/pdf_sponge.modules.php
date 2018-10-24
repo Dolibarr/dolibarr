@@ -159,7 +159,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
      *  Function to build pdf onto disk
      *
      *  @param		Object		$object				Object to generate
@@ -172,6 +172,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+	    // phpcs:enable
 	    global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
 	    if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -846,7 +847,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *  Show payments table
 	 *
      *  @param	PDF			$pdf           Object PDF
@@ -857,6 +858,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf;
 
         $sign=1;
@@ -986,7 +988,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		PDF			$pdf     		Object PDF
@@ -997,6 +999,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1143,7 +1146,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *	Show total to pay
 	 *
 	 *	@param	PDF			$pdf           Object PDF
@@ -1155,6 +1158,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf,$mysoc;
 
         $sign=1;
@@ -1838,7 +1842,8 @@ class pdf_sponge extends ModelePDFFactures
      *      @param	int			   $hideref			Do not show ref
 	 *      @return	null
 	 */
-	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
+	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+	{
 
 	    global $conf, $hookmanager;
 

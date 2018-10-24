@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014-2018	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014-2018 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
@@ -1109,30 +1109,33 @@ if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $
 {
 	print "\n" . '<div class="tabsAction">' . "\n";
 
-	if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-	{
-    	if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
-    	}
-	}
+    if ($object->isVariant()) {
+		if ($user->rights->produit->creer || $user->rights->service->creer) {
+			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEditVariants")).'">'.$langs->trans("UpdateDefaultPrice").'</a></div>';
+		}
+	} else {
+		if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+			}
+		}
 
-	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-	{
-	    if ($user->rights->produit->creer || $user->rights->service->creer) {
-	 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
-	  	}
-	}
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+			}
+		}
 
-	if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
-	{
-	    if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&amp;id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
-    	}
+		if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&amp;id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
+			}
 
-	    if ($user->rights->produit->creer || $user->rights->service->creer) {
-    		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
-    	}
-	}
+			if ($user->rights->produit->creer || $user->rights->service->creer) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
+			}
+		}
+    }
 
 	print "\n</div>\n";
 }

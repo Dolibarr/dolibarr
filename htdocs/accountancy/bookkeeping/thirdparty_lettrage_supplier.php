@@ -4,6 +4,7 @@
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  */
 
 /**
- * \file accountancy/bookkeeping/thirdparty_lettrage_supplier.php
+ * \file    htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
  * \ingroup Advanced accountancy
  * \brief Tab to setup lettering
  */
@@ -92,7 +93,7 @@ if ($result<0)
 }
 
 $form = new Form($db);
-$BookKeeping = new lettering($db);
+$BookKeeping = new Lettering($db);
 $formaccounting = new FormAccounting($db);
 
 /*
