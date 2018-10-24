@@ -983,7 +983,7 @@ if ($resql)
         if (! empty($arrayfields['p.ref']['checked']))
         {
 	        // Product ref
-	        print '<td>';
+	        print '<td class="nowraponall">';
 	        print $productstatic->getNomUrl(1,'stock',16);
 	        print "</td>\n";
         }
@@ -1000,7 +1000,7 @@ if ($resql)
         }
         if (! empty($arrayfields['m.batch']['checked']))
         {
-	    	print '<td align="center">';
+	    	print '<td class="center nowraponall">';
 	    	if ($productlot->id > 0) print $productlot->getNomUrl(1);
 	    	else print $productlot->batch;		// the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 	    	print '</td>';
@@ -1053,7 +1053,7 @@ if ($resql)
         if (! empty($arrayfields['origin']['checked']))
         {
         	// Origin of movement
-        	print '<td>'.$origin.'</td>';
+        	print '<td class="nowraponall">'.$origin.'</td>';
         }
         if (! empty($arrayfields['m.value']['checked']))
         {
