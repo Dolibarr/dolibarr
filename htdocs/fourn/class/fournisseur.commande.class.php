@@ -1622,6 +1622,7 @@ class CommandeFournisseur extends CommonOrder
                         {
                             $coeff = intval($qty/$prod->packaging) + 1;
                             $qty = $prod->packaging * $coeff;
+                            setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
                         }
                     }
                 }
@@ -2489,7 +2490,7 @@ class CommandeFournisseur extends CommonOrder
      */
     public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise=0, $ref_supplier='')
     {
-    	global $mysoc, $conf;
+    	global $mysoc, $conf, $langs;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2556,6 +2557,7 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $coeff = intval($qty/$prod->packaging) + 1;
                         $qty = $prod->packaging * $coeff;
+                        setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
                     }
                 }
             }
