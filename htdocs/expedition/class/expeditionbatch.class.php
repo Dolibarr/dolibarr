@@ -119,7 +119,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':("'".$this->db->idate($this->sellby))."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':("'".$this->db->idate($this->eatby))."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':("'".$this->db->escape($this->batch)."'")).",";
-		$sql.= " ".(! isset($this->qty)?(! isset($this->dluo_qty)?'NULL':$this->dluo_qty):$this->qty).","; // dluo_qty deprecated, use qty
+		$sql.= " ".(! isset($this->qty)?((! isset($this->dluo_qty))?'NULL':$this->dluo_qty):$this->qty).","; // dluo_qty deprecated, use qty
 		$sql.= " ".(! isset($this->fk_origin_stock)?'NULL':$this->fk_origin_stock);
 		$sql.= ")";
 
