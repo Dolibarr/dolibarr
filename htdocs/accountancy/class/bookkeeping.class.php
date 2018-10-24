@@ -785,7 +785,8 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql) && (empty($limit) || $i < min($limit, $num))) {
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -817,6 +818,8 @@ class BookKeeping extends CommonObject
 				$line->date_creation = $obj->date_creation;
 
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -914,7 +917,8 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql) && (empty($limit) || $i < min($limit, $num))) {
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -943,6 +947,8 @@ class BookKeeping extends CommonObject
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -1021,7 +1027,7 @@ class BookKeeping extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
-			while (($obj = $this->db->fetch_object($resql)) && ($i < min($limit, $num)))
+			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num)))
 			{
 				$line = new BookKeepingLine();
 
