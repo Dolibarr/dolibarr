@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/product/stock/mouvement.php
+ *	\file       htdocs/product/stock/movement_list.php
  *	\ingroup    stock
  *	\brief      Page to list stock movements
  */
@@ -385,7 +385,7 @@ if ($action == "transfert_stock" && ! $cancel)
                 }
                 else
                 {
-                    header("Location: mouvement.php?id=".$object->id);
+                    header("Location: movement_list.php?id=".$object->id);
                     exit;
                 }
             }
@@ -1028,7 +1028,7 @@ if ($resql)
         {
 	        // Inventory code
 	        print '<td>'.'<a href="'
-								.DOL_URL_ROOT.'/product/stock/mouvement.php'
+								.DOL_URL_ROOT.'/product/stock/movement_list.php'
 								.'?id='.$objp->entrepot_id
 								.'&amp;search_inventorycode='.$objp->inventorycode
 							    .'&amp;search_type_mouvement='.$objp->type_mouvement

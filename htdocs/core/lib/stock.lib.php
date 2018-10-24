@@ -39,7 +39,7 @@ function stock_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("StockMovements");
 	$head[$h][2] = 'movements';
 	$h++;

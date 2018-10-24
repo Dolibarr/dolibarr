@@ -381,7 +381,7 @@ if ($resql)
 			print $product->stock_theorique;
 			print '</td>';
 		}
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';
         print '<td align="right" class="nowrap">'.$product->LibStatut($objp->tobuy,5,1).'</td>';
 		print '<td></td>';
