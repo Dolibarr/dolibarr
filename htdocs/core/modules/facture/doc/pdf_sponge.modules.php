@@ -849,7 +849,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
 	 *  Show payments table
 	 *
      *  @param	PDF			$pdf           Object PDF
@@ -860,7 +860,6 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
-	    // phpcs:enable
 		global $conf;
 
         $sign=1;
@@ -989,7 +988,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		PDF			$pdf     		Object PDF
@@ -1000,7 +999,6 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
-	    // phpcs:enable
 		global $conf;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1147,7 +1145,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
 	 *	Show total to pay
 	 *
 	 *	@param	PDF			$pdf           Object PDF
@@ -1159,7 +1157,6 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-	    // phpcs:enable
 		global $conf,$mysoc;
 
         $sign=1;
@@ -1827,9 +1824,6 @@ class pdf_sponge extends ModelePDFFactures
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
-
-
 
 	/**
 	 *   	Define Array Column Field
