@@ -52,7 +52,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'delete')
 {
 	$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
-	$ret = $form->form_confirm(
+	print $form->formconfirm(
 			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
 			$langs->trans('DeleteFile'),
 			$langs->trans('ConfirmDeleteFile'),
@@ -61,7 +61,6 @@ if ($action == 'delete')
 			0,
 			1
 	);
-	if ($ret == 'html') print '<br>';
 }
 
 $formfile=new FormFile($db);
