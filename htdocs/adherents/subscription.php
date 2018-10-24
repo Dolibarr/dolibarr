@@ -680,7 +680,7 @@ if ($rowid > 0)
             }
             print "</tr>\n";
             
-            $subscriptionstatic=new SubscriptionPlus($db);
+            $subscriptionstatic=new Subscription($db);
             $accountline=new AccountLine($db);
             $accountstatic=new Account($db);
             foreach ($object->subscriptions as $subscription)
