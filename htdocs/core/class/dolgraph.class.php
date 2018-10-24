@@ -1027,9 +1027,10 @@ class DolGraph
 		else
 		{
 			// Add code to support tooltips
+		    // TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
 			$this->stringtoshow.='
 			function showTooltip_'.$tag.'(x, y, contents) {
-				$(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
+				$(\'<div class="graph-tooltip-inner" id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
 					position: \'absolute\',
 					display: \'none\',
 					top: y + 10,
@@ -1041,7 +1042,7 @@ class DolGraph
 					\'font-weight\': \'bold\',
 					width: 200,
 					opacity: 0.80
-				}).appendTo("body").fadeIn(20);
+				}).appendTo("body").fadeIn(100);
 			}
 
 			var previousPoint = null;
@@ -1083,11 +1084,12 @@ class DolGraph
 				$color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 				$this->stringtoshow.='{ ';
 				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
-				if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->stringtoshow.='lines: { show: true, fill: false }, ';
+				if (isset($this->type[$i]) && $this->type[$i] == 'lines') $this->stringtoshow.='lines: { show: true, fill: false }, points: { show: true }, ';
 				$this->stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
 			}
-			$this->stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
+			// shadowSize: 0 -> Drawing is faster without shadows
+			$this->stringtoshow.="\n".' ], { series: { shadowSize: 0, stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
 
 			// Xaxis
 			$this->stringtoshow.=', xaxis: { ticks: ['."\n";
@@ -1106,7 +1108,7 @@ class DolGraph
 			// Background color
 			$color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
 			$color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
-			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#d0d0d0\', tickColor  : \'#f3f3f3\' }'."\n";
+			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#f3f3f3\', tickColor  : \'#f3f3f3\' }'."\n";
 			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow.='});'."\n";
 			$this->stringtoshow.='}'."\n";
