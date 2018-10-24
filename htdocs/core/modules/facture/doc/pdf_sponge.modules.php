@@ -8,6 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ class pdf_sponge extends ModelePDFFactures
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.3 = array(5, 3)
      */
 	public $phpmin = array(5, 2);
@@ -159,7 +160,8 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		Object		$object				Object to generate
@@ -170,7 +172,7 @@ class pdf_sponge extends ModelePDFFactures
      *  @param		int			$hideref			Do not show ref
      *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	public function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 	    // phpcs:enable
 	    global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
@@ -801,15 +803,15 @@ class pdf_sponge extends ModelePDFFactures
 	            }
 
 	            // Affiche zone infos
-	            $posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+	            $posy=$this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
 
 	            // Affiche zone totaux
-	            $posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+	            $posy=$this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 	            // Affiche zone versements
 	            if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
 	            {
-	                $posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+	                $posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
 	            }
 
 	            // Pied de page
@@ -856,7 +858,7 @@ class pdf_sponge extends ModelePDFFactures
      *  @param  Translate	$outputlangs    Object langs for output
      *  @return int             			<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
 	    // phpcs:enable
 		global $conf;
@@ -984,7 +986,6 @@ class pdf_sponge extends ModelePDFFactures
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 
@@ -997,7 +998,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
 	    // phpcs:enable
 		global $conf;
@@ -1156,7 +1157,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 	    // phpcs:enable
 		global $conf,$mysoc;
@@ -1536,8 +1537,6 @@ class pdf_sponge extends ModelePDFFactures
 		if (empty($hidetop)){
 			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 		}
-
-
 	}
 
 	/**
@@ -1842,9 +1841,8 @@ class pdf_sponge extends ModelePDFFactures
      *      @param	int			   $hideref			Do not show ref
 	 *      @return	null
 	 */
-	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
-	{
-
+    function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    {
 	    global $conf, $hookmanager;
 
 	    // Default field style for content
@@ -2031,8 +2029,5 @@ class pdf_sponge extends ModelePDFFactures
 	    {
 	        $this->cols = $hookmanager->resArray;
 	    }
-
 	}
-
-
 }
