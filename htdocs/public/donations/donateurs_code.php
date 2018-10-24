@@ -99,7 +99,6 @@ if ($resql)
 			$i++;
 		}
 		print "</table>";
-
 	}
 	else
 	{

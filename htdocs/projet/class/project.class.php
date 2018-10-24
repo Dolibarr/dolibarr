@@ -1501,7 +1501,6 @@ class Project extends CommonObject
 							$tab_conv_child_parent[$tasktoclone->id] =  $new_task_id;
 						}
 				    }
-
 			    }
 
 			    //Parse all clone node to be sure to update new parent
@@ -1959,7 +1958,6 @@ class Project extends CommonObject
 	        }
 
 	        $this->db->free($result);
-
 	    }
 	    else
 	    {

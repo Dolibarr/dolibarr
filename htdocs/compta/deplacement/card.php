@@ -421,7 +421,6 @@ else if ($id)
             if ($action == 'delete')
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
-
             }
 
             $soc = new Societe($db);

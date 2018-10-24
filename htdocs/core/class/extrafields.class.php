@@ -1392,7 +1392,6 @@ class ExtraFields
 							}
 
 							$data[$obj->rowid]=$labeltoshow;
-
 						} else {
 							if (! $notrans) {
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1421,7 +1420,6 @@ class ExtraFields
 					$this->db->free($resql);
 
 					$out=$form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
-
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
@@ -1715,7 +1713,6 @@ class ExtraFields
 					}
 				}
 				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-
 			} else {
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
 			}

@@ -696,7 +696,6 @@ if ($action == 'create' || $action == 'adduserldap')
 					}
 					$liste[$key] = $label;
 				}
-
 			}
 			else
 			{
@@ -2593,7 +2592,6 @@ else
 
 		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close();
 	}
-
 }
 
 if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))

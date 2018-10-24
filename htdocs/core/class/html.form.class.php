@@ -4685,7 +4685,6 @@ class Form
 					$out.= '</option>';
 				}
 			}
-
 		}
 
 		$out.= '</select>';
@@ -6958,7 +6957,6 @@ class Form
 				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
 				$ret.='</table>';
 			}
-
 		}
 		else dol_print_error('','Call of showphoto with wrong parameters modulepart='.$modulepart);
 

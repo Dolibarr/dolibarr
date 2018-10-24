@@ -1108,7 +1108,6 @@ class DolGraph
 			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow.='});'."\n";
 			$this->stringtoshow.='}'."\n";
-
 		}
 
 		$this->stringtoshow.='plotWithOptions_'.$tag.'();'."\n";

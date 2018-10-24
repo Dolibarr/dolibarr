@@ -219,7 +219,6 @@ if ($result)
 
             $i++;
         }
-
     }
     else
     {

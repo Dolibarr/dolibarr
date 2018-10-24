@@ -173,7 +173,6 @@ class modStock extends DolibarrModules
 		$this->rights[9][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[9][4] = 'inventory_advance';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[9][5] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
 		}
 
 		// Main menu entries

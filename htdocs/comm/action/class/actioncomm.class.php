@@ -401,7 +401,6 @@ class ActionComm extends CommonObject
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-
 					}
 				}
 			}
@@ -937,7 +936,6 @@ class ActionComm extends CommonObject
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-
 					}
 				}
 			}

@@ -680,7 +680,6 @@ class FactureFournisseur extends CommonInvoice
                     $this->error=$this->db->lasterror();
                     return -3;
                 }
-
             }
             else
             {
@@ -3152,7 +3151,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 
             $this->db->commit();
             return $this->id;
-
         }
         else
         {

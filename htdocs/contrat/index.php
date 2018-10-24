@@ -279,7 +279,6 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				print '</tr>';
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
-
 			}
 		}
 		else
@@ -365,7 +364,6 @@ if ($result)
 	$db->free($result);
 
 	print "</table>";
-
 }
 else
 {
@@ -444,7 +442,6 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
-
 }
 else
 {
@@ -523,7 +520,6 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
-
 }
 else
 {
@@ -603,7 +599,6 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
-
 }
 else
 {

@@ -322,7 +322,6 @@ if ($resql) {
 	}
 	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
-
 } else {
 	print $db->lasterror(); // Show last sql error
 }
@@ -406,7 +405,6 @@ if ($resql2) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
 } else {
 	// $modecompta != 'CREANCES-DETTES'
 	// "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an

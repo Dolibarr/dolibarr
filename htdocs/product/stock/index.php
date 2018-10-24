@@ -97,7 +97,6 @@ if ($result)
             $i++;
         }
         $db->free($result);
-
     }
     print "</table>";
 }

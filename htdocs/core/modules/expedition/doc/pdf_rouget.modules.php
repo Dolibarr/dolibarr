@@ -730,7 +730,6 @@ class pdf_rouget extends ModelePdfExpedition
 
 	    	$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
-
 		}
 
 		// Total Weight
@@ -834,7 +833,6 @@ class pdf_rouget extends ModelePdfExpedition
 				$pdf->SetXY($this->posxtotalht-1, $tab_top+1);
 				$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 2, $outputlangs->transnoentities("TotalHT"),'','C');
 			}
-
 		}
 	}
 

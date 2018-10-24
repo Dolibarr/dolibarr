@@ -147,7 +147,6 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
             }
         }
 	}
-
 }
 
 

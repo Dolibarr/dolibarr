@@ -634,7 +634,6 @@ function getFormeJuridiqueLabel($code)
         {
             return $langs->trans("NotDefined");
         }
-
     }
 }
 

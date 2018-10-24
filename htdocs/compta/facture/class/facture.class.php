@@ -2465,7 +2465,6 @@ class Facture extends CommonInvoice
     				else $this->situation_final = 1;
 
 				$this->setFinal($user);
-
                 }
 			}
 		}
@@ -4713,7 +4712,6 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->db->commit();
 			return $this->id;
-
 		}
 		else
 		{

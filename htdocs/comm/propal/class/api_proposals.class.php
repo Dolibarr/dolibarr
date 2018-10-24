@@ -700,7 +700,6 @@ class Proposals extends DolibarrApi
 			if (!isset($data[$field]))
 				throw new RestException(400, "$field field missing");
 			$propal[$field] = $data[$field];
-
 		}
 		return $propal;
 	}

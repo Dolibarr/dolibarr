@@ -89,7 +89,6 @@ if ($action == 'confirm_rejet')
 				header("Location: ligne.php?id=".$id);
 				exit;
 			}
-
 		}
 		else
 		{

@@ -498,7 +498,6 @@ class ProjectStats extends Stats
 			} else {
 				$res[$key]=array($total_row[0],0);
 			}
-
 		}
 		// var_dump($res);print '<br>';
 		return $res;

@@ -182,7 +182,6 @@ if ($result)
       print '</tr>';
 	  $i++;
 	}
-
     }
   else
     {

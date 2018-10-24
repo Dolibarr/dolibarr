@@ -340,7 +340,6 @@ else
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
-
 	}
 
 	/*
@@ -349,7 +348,6 @@ else
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
-
 	}
 
 	/*
@@ -553,7 +551,6 @@ if ($action == 'new')
 		print '</div><br>';
 		print '</form>';
 	}
-
 }
 else
 {
@@ -787,7 +784,6 @@ if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $u
 if ($user->societe_id == 0 && ! empty($object->id) && $user->rights->banque->cheque)
 {
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
-
 }
 print '</div>';
 

@@ -1730,7 +1730,6 @@ class SupplierProposal extends CommonObject
                 {
                     $result = $this->updateOrCreatePriceFournisseur($user);
                 }
-
             }
             if ($statut == 4)
             {
@@ -2138,11 +2137,8 @@ class SupplierProposal extends CommonObject
                     $cluser->fetch($obj->fk_user_cloture);
                     $this->user_cloture     = $cluser;
                 }
-
-
             }
             $this->db->free($result);
-
         }
         else
         {

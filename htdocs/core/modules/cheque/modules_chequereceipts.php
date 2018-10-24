@@ -209,7 +209,6 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-
 	}
 	else
 	{

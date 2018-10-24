@@ -568,9 +568,7 @@ else
             print '</table>'."\n";
             print '</div>';
         }
-
 	}
-
 }
 
 print '<script type="text/javascript">

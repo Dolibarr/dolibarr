@@ -720,7 +720,6 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
-
 				}
 				catch(OdfException $e)
 				{

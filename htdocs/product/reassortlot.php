@@ -421,7 +421,6 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-
 }
 else
 {

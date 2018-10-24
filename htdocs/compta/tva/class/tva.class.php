@@ -800,7 +800,6 @@ class Tva extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

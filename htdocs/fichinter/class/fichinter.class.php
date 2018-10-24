@@ -882,7 +882,6 @@ class Fichinter extends CommonObject
 					$muser->fetch($obj->fk_user_modification);
 					$this->user_modification   = $muser;
 				}
-
 			}
 			$this->db->free($resql);
 		}

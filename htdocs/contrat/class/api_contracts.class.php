@@ -287,7 +287,6 @@ class Contracts extends DolibarrApi
 
         if ($updateRes > 0) {
             return $updateRes;
-
         }
         return false;
     }
@@ -673,7 +672,6 @@ class Contracts extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $contrat[$field] = $data[$field];
-
         }
         return $contrat;
     }

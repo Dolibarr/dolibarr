@@ -313,7 +313,6 @@ if ($result) {
 	        $catotal_ht+=$obj->amount;
 	        $catotal+=$obj->amount_ttc;
 	        $i++;
-
 	}
 } else {
 	dol_print_error($db);

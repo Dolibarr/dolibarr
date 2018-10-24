@@ -191,7 +191,6 @@ if ($result)
 
             $i++;
         }
-
     }
     else
     {

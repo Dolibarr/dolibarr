@@ -1160,7 +1160,6 @@ if (empty($reshook))
 				unset($fk_projet);
 
 				unset($date);
-
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1552,7 +1551,6 @@ else
 					$userfee->fetch($user->id);
 					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
-
 				}
 
 				// Other attributes
@@ -2225,17 +2223,13 @@ else
 				print '</form>';
 
 				dol_fiche_end();
-
 			} // end edit or not edit
-
 		}	// end of if result
 		else
 		{
 			dol_print_error($db);
 		}
-
 	} //fin si id > 0
-
 }
 
 /*
@@ -2449,7 +2443,6 @@ if ($action != 'presend')
 	$somethingshown = $formactions->showactions($object, 'expensereport', null);
 
 	print '</div></div></div>';
-
 }
 
 // Presend form

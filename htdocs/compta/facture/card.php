@@ -744,7 +744,6 @@ if (empty($reshook))
 				{
 					$error++;
 				}
-
 			}
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
 			{
@@ -765,7 +764,6 @@ if (empty($reshook))
 						break;
 					}
 				}
-
 			}
 
 			if (empty($error))
@@ -1000,15 +998,11 @@ if (empty($reshook))
 							                $line->multicurrency_total_ht  = $line->multicurrency_total_ht  - $prevLine->multicurrency_total_ht;
 							                $line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
 							                $line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
-
-
 							            }
 							        }
 
 							        // prorata
 							        $line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
-
-
 							    }
 							}
 
@@ -1040,7 +1034,6 @@ if (empty($reshook))
 
 						$object->update_price(1);
 					}
-
 				}
 
 				if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
@@ -1342,7 +1335,6 @@ if (empty($reshook))
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
-
 						}
 						else
 						{
@@ -1489,7 +1481,6 @@ if (empty($reshook))
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 							$error++;
 						}
-
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -2363,7 +2354,6 @@ if (empty($reshook))
                                 $line->situation_percent = $line->situation_percent - $maxPrevSituationPercent;
 
                                 if($line->update()<0) $errors++;
-
 	                        }
 	                    }
 	                }
@@ -2693,7 +2683,6 @@ if ($action == 'create')
 		print ajax_combobox('fac_replacement');
 		print ajax_combobox('fac_avoir');
 		print ajax_combobox('situations');
-
 	}
 
 	if ($origin == 'contrat')
@@ -3660,7 +3649,6 @@ else if ($id > 0 || ! empty($ref))
 	{
 		$payment_id = GETPOST('paiement_id');
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
-
 	}
 
 	// Confirmation de la suppression d'une ligne produit
@@ -4236,7 +4224,6 @@ else if ($id > 0 || ! empty($ref))
 	            print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
 	            print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
 	            print '</tr>';
-
 	        }
 
 	        $total_global_ht += $total_next_ht;

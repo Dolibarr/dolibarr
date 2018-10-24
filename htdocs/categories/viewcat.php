@@ -168,7 +168,6 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 			setEventMessages($object->error,$object->errors,'errors');
 		}
 	}
-
 }
 
 

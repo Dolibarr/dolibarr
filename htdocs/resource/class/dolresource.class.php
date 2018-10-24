@@ -384,7 +384,6 @@ class Dolresource extends CommonObject
 				if($obj->element_id && $obj->element_type) {
 					$this->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
 				}
-
     		}
     		$this->db->free($resql);
 
@@ -646,7 +645,6 @@ class Dolresource extends CommonObject
 					if($obj->element_id && $obj->element_type)
 						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
         			$this->lines[] = $line;
-
    				}
    				$this->db->free($resql);
    			}

@@ -368,7 +368,6 @@ class ChargeSociales extends CommonObject
             {
                 return 0;
             }
-
         }
         else
         {
@@ -627,7 +626,6 @@ class ChargeSociales extends CommonObject
             }
 
             $this->db->free($result);
-
         }
         else
         {

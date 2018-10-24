@@ -402,7 +402,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 				        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				        $height_note=$posyafter-$tab_top_newpage;
 				        $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note+1);
-
 				    }
 				    else // No pagebreak
 				    {
@@ -424,7 +423,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				            $posyafter = $tab_top_newpage;
 				        }
-
 				    }
 
 				    $tab_height = $tab_height - $height_note;
@@ -1028,7 +1026,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
 							}
 						}
 					}

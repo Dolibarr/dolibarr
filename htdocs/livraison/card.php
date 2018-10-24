@@ -241,7 +241,6 @@ if ($action == 'update_extras_line')
 			$error++;
 		}
 	}
-
 }
 
 
@@ -357,7 +356,6 @@ else
 			{
 				$expedition_id = GETPOST("expid");
 				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
-
 			}
 
 			/*
@@ -366,7 +364,6 @@ else
 			if ($action == 'valid')
 			{
 				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
-
 			}
 
 

@@ -165,7 +165,6 @@ class PaymentExpenseReport extends CommonObject
 			{
 				$error++;
 			}
-
 		}
 
 		if ($totalamount != 0 && ! $error)

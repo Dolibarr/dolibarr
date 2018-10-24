@@ -1364,7 +1364,6 @@ if (empty($reshook))
 	$upload_dir = $conf->propal->multidir_output[$object->entity];
 	$permissioncreate=$usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
 }
 
 
@@ -1777,7 +1776,6 @@ if ($action == 'create')
 
 		print '</table>';
 	}
-
 } elseif ($object->id > 0) {
 	/*
 	 * Show object in view mode
@@ -1825,7 +1823,6 @@ if ($action == 'create')
 		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, '', 1, 250);
-
 	}
 
 	// Confirm delete
