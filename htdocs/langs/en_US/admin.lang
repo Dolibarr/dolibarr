@@ -620,7 +620,7 @@ Module50000Name=PayBox
 Module50000Desc=Offer customers a PayBox online payment page (credit/debit cards). This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
 Module50100Name=Point of sales
 Module50100Desc=Point of sales module (POS).
-Module50150Name=Point of salesaa
+Module50150Name=Point of sales
 Module50150Desc=Point of sales module (Touch screen POS).
 Module50200Name=Paypal
 Module50200Desc=Offer customers a PayPal online payment page (PayPal account or credit/debit cards). This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
@@ -925,7 +925,7 @@ BackToModuleList=Back to modules list
 BackToDictionaryList=Back to list of Dictionaries
 TypeOfRevenueStamp=Type of tax stamp
 VATManagement=VAT Management
-VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the VAT rate follows the active standard rule:<br>If the seller is not subject to VAT, then VAT defaults to 0. End of rule.<br><p>If the (seller's country = buyer's country), then the VAT by default equals the VAT of the product in the seller's country. End of rule.</p><p>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependant on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to their customs office in their country and not to the seller. End of rule.</p><p>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT by defaults to the VAT of the seller's country. End of rule.</p><p>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.</p><p>In any other case the proposed default is VAT=0. End of rule.</p>
+VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the VAT rate follows the active standard rule:<br>If the seller is not subject to VAT, then VAT defaults to 0. End of rule.<br>If the (seller's country = buyer's country), then the VAT by default equals the VAT of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependant on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to their customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT by defaults to the VAT of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is VAT=0. End of rule.
 VATIsNotUsedDesc=By default the proposed VAT is 0 which can be used for cases like associations, individuals or small companies.
 VATIsUsedExampleFR=In France, it means companies or organizations having a real fiscal system (Simplified real or normal real).  A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organizations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
@@ -943,16 +943,16 @@ LocalTax2IsNotUsedDesc=Do not use other type of tax (other than VAT)
 LocalTax2Management=Third type of tax
 LocalTax2IsUsedExample=
 LocalTax2IsNotUsedExample=
-LocalTax1ManagementES= RE Management
-LocalTax1IsUsedDescES= The RE rate by default when creating prospects, invoices, orders etc. follow the active standard rule:<br>If the buyer is not subjected to RE, RE by default=0. End of rule.<br>If the buyer is subjected to RE then the RE by default. End of rule.<br>
-LocalTax1IsNotUsedDescES= By default the proposed RE is 0. End of rule.
-LocalTax1IsUsedExampleES= In Spain they are professionals subject to some specific sections of the Spanish IAE.
-LocalTax1IsNotUsedExampleES= In Spain they are professional and societies and subject to certain sections of the Spanish IAE.
-LocalTax2ManagementES= IRPF Management
-LocalTax2IsUsedDescES= The RE rate by default when creating prospects, invoices, orders etc. follow the active standard rule:<br>If the seller is not subjected to IRPF, then IRPF by default=0. End of rule.<br>If the seller is subjected to IRPF then the IRPF by default. End of rule.<br>
-LocalTax2IsNotUsedDescES= By default the proposed IRPF is 0. End of rule.
-LocalTax2IsUsedExampleES= In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
-LocalTax2IsNotUsedExampleES= In Spain they are businesses not subject to tax system of modules.
+LocalTax1ManagementES=RE Management
+LocalTax1IsUsedDescES=The RE rate by default when creating prospects, invoices, orders etc. follow the active standard rule:<br>If the buyer is not subjected to RE, RE by default=0. End of rule.<br>If the buyer is subjected to RE then the RE by default. End of rule.<br>
+LocalTax1IsNotUsedDescES=By default the proposed RE is 0. End of rule.
+LocalTax1IsUsedExampleES=In Spain they are professionals subject to some specific sections of the Spanish IAE.
+LocalTax1IsNotUsedExampleES=In Spain they are professional and societies and subject to certain sections of the Spanish IAE.
+LocalTax2ManagementES=IRPF Management
+LocalTax2IsUsedDescES=The IRPF rate by default when creating prospects, invoices, orders etc. follow the active standard rule:<br>If the seller is not subjected to IRPF, then IRPF by default=0. End of rule.<br>If the seller is subjected to IRPF then the IRPF by default. End of rule.<br>
+LocalTax2IsNotUsedDescES=By default the proposed IRPF is 0. End of rule.
+LocalTax2IsUsedExampleES=In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
+LocalTax2IsNotUsedExampleES=In Spain they are businesses not subject to tax system of modules.
 CalcLocaltax=Reports on local taxes
 CalcLocaltax1=Sales - Purchases
 CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
@@ -1007,7 +1007,7 @@ MessageLogin=Login page message
 LoginPage=Login page
 BackgroundImageLogin=Background image
 PermanentLeftSearchForm=Permanent search form on left menu
-DefaultLanguage=Default language to use (variant)
+DefaultLanguage=Default language to use (language code)
 EnableMultilangInterface=Enable multilingual interface
 EnableShowLogo=Show logo on left menu
 CompanyInfo=Company/Organization
@@ -1821,3 +1821,4 @@ DisabledResourceLinkUser=Disable feature to link a resource to users
 DisabledResourceLinkContact=Disable feature to link a resource to contacts
 ConfirmUnactivation=Confirm module reset
 OnMobileOnly=On small screen (smartphone) only
+DisableProspectCustomerType=Disable the "Prospect + Customer" third party type (so third party must be Prospect or Customer but can't be both)

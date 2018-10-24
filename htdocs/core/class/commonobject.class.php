@@ -399,6 +399,12 @@ abstract class CommonObject
 	public $firstname;
 	public $civility_id;
 
+	// Dates
+	public $date_creation;			// Date creation
+	public $date_validation;		// Date validation
+	public $date_modification;		// Date last change (tms field)
+
+
 
 	// No constructor as it is an abstract class
 
@@ -4810,6 +4816,7 @@ abstract class CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$this->array_options = array();
 				$numrows=$this->db->num_rows($resql);
 				if ($numrows)
 				{
@@ -6196,6 +6203,7 @@ abstract class CommonObject
 				$InfoFieldList = explode(":", $param_list[0]);
 				$classname=$InfoFieldList[0];
 				$classpath=$InfoFieldList[1];
+				$getnomurlparam=(empty($InfoFieldList[2]) ? 3 : $InfoFieldList[2]);
 				if (! empty($classpath))
 				{
 					dol_include_once($InfoFieldList[1]);
@@ -6203,7 +6211,7 @@ abstract class CommonObject
 					{
 						$object = new $classname($this->db);
 						$object->fetch($value);
-						$value=$object->getNomUrl(3);
+						$value=$object->getNomUrl($getnomurlparam);
 					}
 				}
 				else
@@ -6212,6 +6220,7 @@ abstract class CommonObject
 					return 'Error bad setup of extrafield';
 				}
 			}
+			else $value='';
 		}
 		elseif ($type == 'text' || $type == 'html')
 		{

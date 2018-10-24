@@ -870,6 +870,8 @@ NewLeadOrProject=New lead or project
 Rights=Permissions
 LineNb=Line no.
 IncotermLabel=Incoterms
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Supplier lettering
 # Week day
 Monday=Monday
 Tuesday=Tuesday

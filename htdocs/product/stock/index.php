@@ -143,7 +143,7 @@ if ($resql)
 		print '<th>'.$langs->trans("EatByDate").'</th>';
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
-	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></th>';
+	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
 
 	$i=0;

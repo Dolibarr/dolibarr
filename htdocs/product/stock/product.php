@@ -716,9 +716,9 @@ if ($id > 0 || $ref)
 			print '<tr><td class="tdtop">' . $langs->trans("LastMovement") . '</td><td>';
 			if ($lastmovementdate) {
 				print dol_print_date($lastmovementdate, 'dayhour') . ' ';
-				print '(<a href="' . DOL_URL_ROOT . '/product/stock/mouvement.php?idproduct=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+				print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
 			} else {
-				print '<a href="' . DOL_URL_ROOT . '/product/stock/mouvement.php?idproduct=' . $object->id . '">' . $langs->trans("None") . '</a>';
+				print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("None") . '</a>';
 			}
 			print "</td></tr>";
 		}

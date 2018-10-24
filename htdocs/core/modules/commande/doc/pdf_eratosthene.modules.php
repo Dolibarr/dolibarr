@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2004-2014  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2008       Raphael Bertrand	<raphael.bertrand@resultic.fr>
+/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2017-2018  Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/commande/doc/pdf_einstein.modules.php
+ *	\file       htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
  *	\ingroup    commande
- *	\brief      File of Class to generate PDF orders with template Einstein
+ *	\brief      Fichier de la classe permettant de generer les commandes au modele Eratosthène
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -38,9 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Class to generate PDF orders with template Einstein
+ *	Classe to generate PDF orders with template Eratosthene
  */
-class pdf_einstein extends ModelePDFCommandes
+class pdf_eratosthene extends ModelePDFCommandes
 {
     /**
      * @var DoliDb Database handler
@@ -68,57 +68,26 @@ class pdf_einstein extends ModelePDFCommandes
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.3 = array(5, 3)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 2);
 
 	/**
      * Dolibarr version of the loaded document
      * @public string
      */
-	public $version = 'dolibarr';
+	public $version = 'development';
 
-	/**
-     * @var int page_largeur
-     */
     public $page_largeur;
-
-    /**
-     * @var int page_hauteur
-     */
     public $page_hauteur;
-
-    /**
-     * @var array format
-     */
     public $format;
-
-    /**
-     * @var int marge_gauche
-     */
 	public $marge_gauche;
-
-	/**
-     * @var int marge_droite
-     */
 	public $marge_droite;
-
-	/**
-     * @var int marge_haute
-     */
 	public $marge_haute;
-
-	/**
-     * @var int marge_basse
-     */
 	public $marge_basse;
 
-	/**
-	 * Issuer
-	 * @var Company object that emits
-	 */
-    public $emetteur;
+    public $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -134,8 +103,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$langs->loadLangs(array("main", "bills", "products"));
 
 		$this->db = $db;
-		$this->name = "einstein";
-		$this->description = $langs->trans('PDFEinsteinDescription');
+		$this->name = "eratosthene";
+		$this->description = $langs->trans('PDFEratostheneDescription');
 		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Dimension page
@@ -149,13 +118,13 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Display logo
-		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Display payment mode
-		$this->option_condreg = 1;                 // Display payment terms
-		$this->option_codeproduitservice = 1;      // Display product-service code
-		$this->option_multilang = 1;               // Available in several languages
-		$this->option_escompte = 0;                // Displays if there has been a discount
+		$this->option_logo = 1;                    // Affiche logo
+		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
+		$this->option_modereg = 1;                 // Affiche mode reglement
+		$this->option_condreg = 1;                 // Affiche conditions reglement
+		$this->option_codeproduitservice = 1;      // Affiche code produit-service
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
+		$this->option_escompte = 0;                // Affiche si il y a eu escompte
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
@@ -168,33 +137,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		if($conf->global->PRODUCT_USE_UNITS)
-		{
-			$this->posxtva=101;
-			$this->posxup=118;
-			$this->posxqty=135;
-			$this->posxunit=151;
-		}
-		else
-		{
-			$this->posxtva=110;
-			$this->posxup=126;
-			$this->posxqty=145;
-		}
-		$this->posxdiscount=162;
-		$this->postotalht=174;
-		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxtva=$this->posxup;
-		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
-		if ($this->page_largeur < 210) // To work with US executive format
-		{
-			$this->posxpicture-=20;
-			$this->posxtva-=20;
-			$this->posxup-=20;
-			$this->posxqty-=20;
-			$this->posxunit-=20;
-			$this->posxdiscount-=20;
-			$this->postotalht-=20;
-		}
+
 
 		$this->tva=array();
 		$this->localtax1=array();
@@ -203,7 +146,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->atleastonediscount=0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to build pdf onto disk
      *
@@ -215,16 +158,16 @@ class pdf_einstein extends ModelePDFCommandes
      *  @param		int			$hideref			Do not show ref
      *  @return     int             			    1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-        // phpcs:enable
+	    // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load translation files required by the page
+		// Translations
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
 		$nblignes = count($object->lines);
@@ -277,7 +220,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
+		        $heightforfooter = $this->marge_basse + (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)?12:22);	// Height reserved to output the footer (value include bottom margin)
 
                 if (class_exists('TCPDF'))
                 {
@@ -305,14 +248,14 @@ class pdf_einstein extends ModelePDFCommandes
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
-				// Positionne $this->atleastonediscount si on a au moins une remise
-				for ($i = 0 ; $i < $nblignes ; $i++)
-				{
-					if ($object->lines[$i]->remise_percent)
-					{
-						$this->atleastonediscount++;
-					}
+				/// Does we have at least one line with discount $this->atleastonediscount
+				foreach ($object->lines as $line) {
+				    if ($line->remise_percent){
+				        $this->atleastonediscount = true;
+				        break;
+				    }
 				}
+
 				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
@@ -370,31 +313,138 @@ class pdf_einstein extends ModelePDFCommandes
 						if (! empty($salerepobj->signature)) $notetoshow=dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+
+				$pagenb = $pdf->getPage();
 				if ($notetoshow)
 				{
+				    $tab_width = $this->page_largeur-$this->marge_gauche-$this->marge_droite;
+				    $pageposbeforenote = $pagenb;
+
+				    $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+				    complete_substitutions_array($substitutionarray, $outputlangs, $object);
+				    $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
 					$tab_top -= 2;
 
-					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+				    $pdf->startTransaction();
 
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($notetoshow), 0, 1);
-					$nexY = $pdf->GetY();
-					$height_note=$nexY-$tab_top;
+				    $pdf->SetFont('','', $default_font_size - 1);
+				    $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+				    // Description
+				    $pageposafternote=$pdf->getPage();
+				    $posyafter = $pdf->GetY();
 
-					// Rect prend une longueur en 3eme param
-					$pdf->SetDrawColor(192,192,192);
-					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+				    if($pageposafternote>$pageposbeforenote )
+				    {
+				        $pdf->rollbackTransaction(true);
 
-					$tab_top = $nexY+6;
+				        // prepar pages to receive notes
+				        while ($pagenb < $pageposafternote) {
+				            $pdf->AddPage();
+				            $pagenb++;
+				            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+				            // $this->_pagefoot($pdf,$object,$outputlangs,1);
+				            $pdf->setTopMargin($tab_top_newpage);
+				            // The only function to edit the bottom margin of current page to set it.
+				            $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+				        }
+
+				        // back to start
+				        $pdf->setPage($pageposbeforenote);
+				        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+				        $pdf->SetFont('','', $default_font_size - 1);
+				        $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+				        $pageposafternote=$pdf->getPage();
+
+				        $posyafter = $pdf->GetY();
+
+				        if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+20)))	// There is no space left for total+free text
+				        {
+				            $pdf->AddPage('','',true);
+				            $pagenb++;
+				            $pageposafternote++;
+				            $pdf->setPage($pageposafternote);
+				            $pdf->setTopMargin($tab_top_newpage);
+				            // The only function to edit the bottom margin of current page to set it.
+				            $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+				            //$posyafter = $tab_top_newpage;
+				        }
+
+
+				        // apply note frame to previus pages
+				        $i = $pageposbeforenote;
+				        while ($i < $pageposafternote) {
+				            $pdf->setPage($i);
+
+
+				            $pdf->SetDrawColor(128,128,128);
+				            // Draw note frame
+				            if($i>$pageposbeforenote){
+				                $height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter);
+				                $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note + 1);
+				            }
+				            else{
+				                $height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
+				                $pdf->Rect($this->marge_gauche, $tab_top-1, $tab_width, $height_note + 1);
+				            }
+
+				            // Add footer
+				            $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+				            $this->_pagefoot($pdf,$object,$outputlangs,1);
+
+				            $i++;
+				        }
+
+				        // apply note frame to last page
+				        $pdf->setPage($pageposafternote);
+				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+				        $height_note=$posyafter-$tab_top_newpage;
+				        $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note+1);
+
+				    }
+				    else // No pagebreak
+				    {
+				        $pdf->commitTransaction();
+				        $posyafter = $pdf->GetY();
+				        $height_note=$posyafter-$tab_top;
+				        $pdf->Rect($this->marge_gauche, $tab_top-1, $tab_width, $height_note+1);
+
+
+				        if($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+20)) )
+				        {
+				            // not enough space, need to add page
+				            $pdf->AddPage('','',true);
+				            $pagenb++;
+				            $pageposafternote++;
+				            $pdf->setPage($pageposafternote);
+				            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+
+				            $posyafter = $tab_top_newpage;
+				        }
+
+				    }
+
+				    $tab_height = $tab_height - $height_note;
+				    $tab_top = $posyafter +6;
+				}
+				else
+				{
+					$height_note=0;
 				}
 
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
+				// Use new auto collum system
+				$this->prepareArrayColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
+
 				// Loop on each lines
+				$pageposbeforeprintlines=$pdf->getPage();
+				$pagenb = $pageposbeforeprintlines;
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
@@ -410,39 +460,42 @@ class pdf_einstein extends ModelePDFCommandes
 
 					$showpricebeforepagebreak=1;
 
-					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
-					$pageposafter=$pdf->getPage();
-					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					if($this->getColumnStatus('desc'))
 					{
-						$pdf->rollbackTransaction(true);
-						$pageposafter=$pageposbefore;
-						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc);
-						$pageposafter=$pdf->getPage();
-						$posyafter=$pdf->GetY();
-						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
-						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
-							{
-								$pdf->AddPage('','',true);
-								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pageposafter+1);
-							}
-						}
-						else
-						{
-							// We found a page break
-							$showpricebeforepagebreak=0;
-						}
+    					$pdf->startTransaction();
+    					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
+    					$pageposafter=$pdf->getPage();
+    					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+    					{
+    						$pdf->rollbackTransaction(true);
+    						$pageposafter=$pageposbefore;
+    						//print $pageposafter.'-'.$pageposbefore;exit;
+    						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+    						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
+    						$pageposafter=$pdf->getPage();
+    						$posyafter=$pdf->GetY();
+    						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+    						{
+    							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+    							{
+    								$pdf->AddPage('','',true);
+    								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+    								//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+    								$pdf->setPage($pageposafter+1);
+    							}
+    						}
+    						else
+    						{
+    							// We found a page break
+    							$showpricebeforepagebreak=0;
+    						}
+    					}
+    					else	// No pagebreak
+    					{
+    						$pdf->commitTransaction();
+    					}
+    					$posYAfterDescription=$pdf->GetY();
 					}
-					else	// No pagebreak
-					{
-						$pdf->commitTransaction();
-					}
-					$posYAfterDescription=$pdf->GetY();
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -459,52 +512,67 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
-					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
+					if ($this->getColumnStatus('vat'))
 					{
-						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
-						$pdf->SetXY($this->posxtva-5, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva+4, 3, $vat_rate, 0, 'R');
+					    $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
+					    $this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
+					    $nexY = max($pdf->GetY(),$nexY);
 					}
 
 					// Unit price before discount
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
+					if ($this->getColumnStatus('subprice'))
+					{
+					    $up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
+					    $this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
+					    $nexY = max($pdf->GetY(),$nexY);
+					}
 
 					// Quantity
-					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY($this->posxqty, $curY);
 					// Enough for 6 chars
-					if($conf->global->PRODUCT_USE_UNITS)
+					if ($this->getColumnStatus('qty'))
 					{
-						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
-					}
-					else
-					{
-						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					    $qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
+					    $this->printStdColumnContent($pdf, $curY, 'qty', $qty);
+					    $nexY = max($pdf->GetY(),$nexY);
 					}
 
+
 					// Unit
-					if($conf->global->PRODUCT_USE_UNITS)
+					if ($this->getColumnStatus('unit'))
 					{
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
-						$pdf->SetXY($this->posxunit, $curY);
-						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+					    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+					    $this->printStdColumnContent($pdf, $curY, 'unit', $unit);
+					    $nexY = max($pdf->GetY(),$nexY);
 					}
 
 					// Discount on line
-					$pdf->SetXY($this->posxdiscount, $curY);
-					if ($object->lines[$i]->remise_percent)
+					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent)
 					{
-						$pdf->SetXY($this->posxdiscount-2, $curY);
-						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
+					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
+					    $this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
+					    $nexY = max($pdf->GetY(),$nexY);
 					}
 
 					// Total HT line
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
+					if ($this->getColumnStatus('totalexcltax'))
+					{
+					    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+					    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+					    $nexY = max($pdf->GetY(),$nexY);
+					}
+
+
+					$parameters=array(
+					    'object' => $object,
+					    'i' => $i,
+					    'pdf' =>& $pdf,
+					    'curY' =>& $curY,
+					    'nexY' =>& $nexY,
+					    'outputlangs' => $outputlangs,
+					    'hidedetails' => $hidedetails
+					);
+					$reshook=$hookmanager->executeHooks('printPDFline',$parameters,$this);    // Note that $object may have been modified by hook
+
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
@@ -558,7 +626,7 @@ class pdf_einstein extends ModelePDFCommandes
 					while ($pagenb < $pageposafter)
 					{
 						$pdf->setPage($pagenb);
-						if ($pagenb == 1)
+						if ($pagenb == $pageposbeforeprintlines)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						}
@@ -574,7 +642,7 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
-						if ($pagenb == 1)
+					    if ($pagenb == $pageposafter)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						}
@@ -592,23 +660,23 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 
 				// Show square
-				if ($pagenb == 1)
+				if ($pagenb == $pageposbeforeprintlines)
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 				else
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 				$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				$posy=$this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
 				/*
 				if ($deja_regle)
 				{
-					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+					$posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
 				}
 				*/
 
@@ -646,23 +714,19 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show payments table
-     *
+   *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
-        // phpcs:enable
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -672,9 +736,8 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
-        // phpcs:enable
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -850,7 +913,6 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -861,9 +923,8 @@ class pdf_einstein extends ModelePDFCommandes
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-        // phpcs:enable
 	    global $conf,$mysoc;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -888,7 +949,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (! empty($object->remise)?$object->remise:0), 0, $outputlangs), 0, 'R', 1);
 
@@ -1125,7 +1186,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
 		global $conf;
 
@@ -1156,72 +1217,30 @@ class pdf_einstein extends ModelePDFCommandes
 		// Output Rect
 		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
-		if (empty($hidetop))
+
+		foreach ($this->cols as $colKey => $colDef)
 		{
+		    if(!$this->getColumnStatus($colKey)) continue;
+
+		    // get title label
+		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
+
+		    // Add column separator
+		    if(!empty($colDef['border-left'])){
+		        $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+		    }
+
+		    if (empty($hidetop))
+		    {
+		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
+
+		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
+		      $pdf->MultiCell($textWidth,2,$colDef['title']['label'],'',$colDef['title']['align']);
+		    }
+		}
+
+		if (empty($hidetop)){
 			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
-
-			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
-		}
-
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
-		{
-			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			if (empty($hidetop))
-			{
-				$pdf->SetXY($this->posxtva-3, $tab_top+1);
-				$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
-			}
-		}
-
-		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxup-1, $tab_top+1);
-			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
-		}
-
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			if($conf->global->PRODUCT_USE_UNITS)
-			{
-				$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
-			}
-			else
-			{
-				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
-			}
-		}
-
-		if($conf->global->PRODUCT_USE_UNITS) {
-			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
-			if (empty($hidetop)) {
-				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
-					'C');
-			}
-		}
-
-		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			if ($this->atleastonediscount)
-			{
-				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
-			}
-		}
-
-		if ($this->atleastonediscount)
-		{
-			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
-		}
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->postotalht-1, $tab_top+1);
-			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
 		}
 	}
 
@@ -1235,11 +1254,11 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="PdfOrderTitle")
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="PdfOrderTitle")
 	{
 		global $conf,$langs,$hookmanager;
 
-		// Load traductions files requiredby by page
+		// Translations
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1446,10 +1465,211 @@ class pdf_einstein extends ModelePDFCommandes
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
+	private function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+	}
+
+
+
+	/**
+	 *   	Define Array Column Field
+	 *
+	 *   	@param	object			$object    		common object
+	 *   	@param	Translate		$outputlangs    langs
+	 *      @param	int				$hidedetails	Do not show line details
+	 *      @param	int				$hidedesc		Do not show desc
+	 *      @param	int				$hideref		Do not show ref
+	 *      @return	null
+	 */
+    public function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    {
+	    global $conf, $hookmanager;
+
+	    // Default field style for content
+	    $this->defaultContentsFieldsStyle = array(
+	        'align' => 'R', // R,C,L
+	        'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	    );
+
+	    // Default field style for content
+	    $this->defaultTitlesFieldsStyle = array(
+	        'align' => 'C', // R,C,L
+	        'padding' => array(0.5,0,0.5,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	    );
+
+	    /*
+	     * For exemple
+	     $this->cols['theColKey'] = array(
+	     'rank' => $rank, // int : use for ordering columns
+	     'width' => 20, // the column width in mm
+	     'title' => array(
+	     'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+	     'label' => ' ', // the final label : used fore final generated text
+	     'align' => 'L', // text alignement :  R,C,L
+	     'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	     ),
+	     'content' => array(
+	     'align' => 'L', // text alignement :  R,C,L
+	     'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	     ),
+	     );
+	     */
+
+	    $rank=0; // do not use negative rank
+	    $this->cols['desc'] = array(
+	        'rank' => $rank,
+	        'width' => false, // only for desc
+	        'status' => true,
+	        'title' => array(
+	            'textkey' => 'Designation', // use lang key is usefull in somme case with module
+	            'align' => 'L',
+	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+	            // 'label' => ' ', // the final label
+	            'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        ),
+	        'content' => array(
+	            'align' => 'L',
+	        ),
+	    );
+
+	    $rank = $rank + 10;
+	    $this->cols['photo'] = array(
+	        'rank' => $rank,
+	        'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Photo',
+	            'label' => ' '
+	        ),
+	        'content' => array(
+	            'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        ),
+	        'border-left' => false, // remove left line separator
+	    );
+
+	    if (! empty($conf->global->MAIN_GENERATE_ORDERS_WITH_PICTURE))
+	    {
+	        $this->cols['photo']['status'] = true;
+	    }
+
+
+	    $rank = $rank + 10;
+	    $this->cols['vat'] = array(
+	        'rank' => $rank,
+	        'status' => false,
+	        'width' => 16, // in mm
+	        'title' => array(
+	            'textkey' => 'VAT'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
+
+	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
+	    {
+	        $this->cols['vat']['status'] = true;
+	    }
+
+	    $rank = $rank + 10;
+	    $this->cols['subprice'] = array(
+	        'rank' => $rank,
+	        'width' => 19, // in mm
+	        'status' => true,
+	        'title' => array(
+	            'textkey' => 'PriceUHT'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
+
+	    $rank = $rank + 10;
+	    $this->cols['qty'] = array(
+	        'rank' => $rank,
+	        'width' => 16, // in mm
+	        'status' => true,
+	        'title' => array(
+	            'textkey' => 'Qty'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
+
+	    $rank = $rank + 10;
+	    $this->cols['progress'] = array(
+	        'rank' => $rank,
+	        'width' => 19, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Progress'
+	        ),
+	        'border-left' => false, // add left line separator
+	    );
+
+	    if($this->situationinvoice)
+	    {
+	        $this->cols['progress']['status'] = true;
+	    }
+
+	    $rank = $rank + 10;
+	    $this->cols['unit'] = array(
+	        'rank' => $rank,
+	        'width' => 11, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Unit'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
+	    if($conf->global->PRODUCT_USE_UNITS){
+	        $this->cols['unit']['status'] = true;
+	    }
+
+	    $rank = $rank + 10;
+	    $this->cols['discount'] = array(
+	        'rank' => $rank,
+	        'width' => 13, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'ReductionShort'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
+	    if ($this->atleastonediscount){
+	        $this->cols['discount']['status'] = true;
+	    }
+
+	    $rank = $rank + 10;
+	    $this->cols['totalexcltax'] = array(
+	        'rank' => $rank,
+	        'width' => 26, // in mm
+	        'status' => true,
+	        'title' => array(
+	            'textkey' => 'TotalHT'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
+
+
+	    $parameters=array(
+	        'object' => $object,
+	        'outputlangs' => $outputlangs,
+	        'hidedetails' => $hidedetails,
+	        'hidedesc' => $hidedesc,
+	        'hideref' => $hideref
+	    );
+
+	    $reshook=$hookmanager->executeHooks('defineColumnField',$parameters,$this);    // Note that $object may have been modified by hook
+	    if ($reshook < 0)
+	    {
+	        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	    }
+	    elseif (empty($reshook))
+	    {
+	        $this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
+	    }
+	    else
+	    {
+	        $this->cols = $hookmanager->resArray;
+	    }
 	}
 }
