@@ -1032,11 +1032,13 @@ class DolGraph
 				$(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
 					position: \'absolute\',
 					display: \'none\',
-					top: y + 5,
-					left: x + 5,
-					border: \'1px solid #ddd\',
-					padding: \'2px\',
-					\'background-color\': \'#ffe\',
+					top: y + 10,
+					left: x + 15,
+					border: \'1px solid #000\',
+					padding: \'5px\',
+					\'background-color\': \'#000\',
+					\'color\': \'#fff\',
+					\'font-weight\': \'bold\',
 					width: 200,
 					opacity: 0.80
 				}).appendTo("body").fadeIn(20);
@@ -1080,7 +1082,7 @@ class DolGraph
 				if ($i > $firstlot) $this->stringtoshow.=', '."\n";
 				$color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 				$this->stringtoshow.='{ ';
-				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
 				if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->stringtoshow.='lines: { show: true, fill: false }, ';
 				$this->stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
@@ -1104,7 +1106,7 @@ class DolGraph
 			// Background color
 			$color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
 			$color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
-			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] } }'."\n";
+			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#d0d0d0\', tickColor  : \'#f3f3f3\' }'."\n";
 			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow.='});'."\n";
 			$this->stringtoshow.='}'."\n";
