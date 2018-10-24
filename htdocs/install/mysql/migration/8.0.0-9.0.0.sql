@@ -54,6 +54,7 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_f
 
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
+ALTER TABLE llx_stock_mouvement ADD COLUMN fk_project integer;
 
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 

@@ -478,11 +478,11 @@ if (! empty($search_movement))      $sql.= natural_search('m.label', $search_mov
 if (! empty($search_inventorycode)) $sql.= natural_search('m.inventorycode', $search_inventorycode);
 if (! empty($search_product_ref))   $sql.= natural_search('p.ref', $search_product_ref);
 if (! empty($search_product))       $sql.= natural_search('p.label', $search_product);
-if ($search_warehouse > 0)          $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
+if ($search_warehouse != '' && $search_warehouse != '-1')          $sql.= natural_search('e.rowid', $search_warehouse, 2);
 if (! empty($search_user))          $sql.= natural_search('u.login', $search_user);
 if (! empty($search_batch))         $sql.= natural_search('m.batch', $search_batch);
 if ($search_qty != '')				$sql.= natural_search('m.value', $search_qty, 1);
-if ($search_type_mouvement)	$sql.= " AND m.type_mouvement = '".$db->escape($search_type_mouvement)."'";
+if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql.= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -843,13 +843,14 @@ if ($resql)
 	    // Type of movement
 	    print '<td class="liste_titre" align="center">';
 	    //print '<input class="flat" type="text" size="3" name="search_type_mouvement" value="'.dol_escape_htmltag($search_type_mouvement).'">';
-		print '<select name="search_type_mouvement">';
+		print '<select id="search_type_mouvement" name="search_type_mouvement" class="maxwidth150">';
 		print '<option value="" '.(($search_type_mouvement=="")?'selected="selected"':'').'></option>';
-		print '<option value="0" '.(($search_type_mouvement=="0")?'selected="selected"':'').'>0</option>';
-		print '<option value="1" '.(($search_type_mouvement=="1")?'selected="selected"':'').'>1</option>';
-		print '<option value="2" '.(($search_type_mouvement=="2")?'selected="selected"':'').'>2</option>';
-		print '<option value="3" '.(($search_type_mouvement=="3")?'selected="selected"':'').'>3</option>';
+		print '<option value="0" '.(($search_type_mouvement=="0")?'selected="selected"':'').'>'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</option>';
+		print '<option value="1" '.(($search_type_mouvement=="1")?'selected="selected"':'').'>'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</option>';
+		print '<option value="2" '.(($search_type_mouvement=="2")?'selected="selected"':'').'>'.$langs->trans('StockDecrease').'</option>';
+		print '<option value="3" '.(($search_type_mouvement=="3")?'selected="selected"':'').'>'.$langs->trans('StockIncrease').'</option>';
 		print '</select>';
+		print ajax_combobox('search_type_mouvement');
 		// TODO: add new function $formentrepot->selectTypeOfMovement(...) like
 		// print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
 	    print '</td>';
