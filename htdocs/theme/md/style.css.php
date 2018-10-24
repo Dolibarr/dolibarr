@@ -3018,7 +3018,7 @@ tr.box_titre {
     white-space: nowrap;
 }
 
-tr.box_titre, td.boxclose {
+tr.box_titre td.boxclose {
 	width: 30px;
 }
 img.boxhandle, img.boxclose {
