@@ -1918,7 +1918,7 @@ else if ($id || $ref)
 							// Warehouse source
 							print '<td>' . $formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
 							// Batch number managment
-							if($conf->productbatch->enabled){
+							if($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)){
 								print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 								print $langs->trans('EatByDate').' : ';
 								print $form->select_date($lines[$i]->eatby,'dlc' .$line_id , '', '', 1, ""). '</br>';
