@@ -525,6 +525,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
+					if (!empty($conf->global->PRODUIT_FOURN_PACKAGING) && !empty($qty))
+					{
+					    if (!empty($object->lines[$i]->packaging))
+					    {
+					        $qty = intval($qty/$object->lines[$i]->packaging) . 'x'.intval($object->lines[$i]->packaging);
+					    }
+					}
+					
 					$pdf->SetXY($this->posxqty, $curY);
 					// Enough for 6 chars
 					if($conf->global->PRODUCT_USE_UNITS)

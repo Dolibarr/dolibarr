@@ -397,7 +397,7 @@ class CommandeFournisseur extends CommonOrder
     	$sql.= " l.date_start, l.date_end,";
     	$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
     	if (!empty($conf->global->PRODUIT_FOURN_PACKAGING))
-    	    $sql.= ", pfp.rowid as fk_pfp";
+    	    $sql.= ", pfp.rowid as fk_pfp, pfp.packaging";
     	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
     	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
     	if (!empty($conf->global->PRODUIT_FOURN_PACKAGING))
@@ -452,7 +452,10 @@ class CommandeFournisseur extends CommonOrder
     			$line->ref_fourn           = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
     			$line->ref_supplier        = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
     			if (!empty($conf->global->PRODUIT_FOURN_PACKAGING))
+    			{
     			    $line->fk_fournprice = $objp->fk_pfp;
+    			    $line->packaging     = $objp->packaging;
+    			}
     			
     			$line->date_start          = $this->db->jdate($objp->date_start);
     			$line->date_end            = $this->db->jdate($objp->date_end);
