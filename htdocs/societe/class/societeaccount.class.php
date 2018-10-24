@@ -288,8 +288,6 @@ class SocieteAccount extends CommonObject
 	 */
 	public function getCustomerAccount($id, $site, $status=0)
 	{
-		global $conf;
-
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
@@ -298,7 +296,7 @@ class SocieteAccount extends CommonObject
 		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
 		//$sql.= " ORDER BY sa.key_account DESC";
 
-		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the system customer id of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
