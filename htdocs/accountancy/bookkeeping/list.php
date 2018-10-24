@@ -145,6 +145,8 @@ $arrayfields=array(
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 );
 
+if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
+
 
 /*
  * Actions
