@@ -197,8 +197,8 @@ $head = categories_prepare_head($object,$type);
 
 
 dol_fiche_head($head, 'card', $title, -1, 'category');
-
-$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
+$backtopage=(GETPOST('backtopage') ? GETPOST('backtopage'):DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
+$backtopage = '<a href="'.$backtopage.'\">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter=" type = ".$object->type;
 $object->ref = $object->label;
 $morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
@@ -209,7 +209,7 @@ foreach ($ways as $way)
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'label', $linkback, ($user->societe_id?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $backtopage, ($user->societe_id?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
 
 
 /*
