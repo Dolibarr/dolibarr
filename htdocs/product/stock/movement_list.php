@@ -43,7 +43,7 @@ if (! empty($conf->projet->enabled))
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks'));
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 // Security check
