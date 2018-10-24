@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2016  Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016  Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017  Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2016-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,6 +79,7 @@ $search_direction = GETPOST('search_direction', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
+$search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -138,10 +139,13 @@ $arrayfields=array(
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
 	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
+	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 );
+
+if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
 
 
 /*
@@ -176,6 +180,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_date_modification_end = '';
 	$search_debit = '';
 	$search_credit = '';
+	$search_lettering_code = '';
 }
 
 // Must be after the remove filter action, before the export.
@@ -272,6 +277,10 @@ if (! empty($search_credit)) {
 	$filter['t.credit'] = $search_credit;
 	$param .= '&search_credit=' . urlencode($search_credit);
 }
+if (! empty($search_lettering_code)) {
+	$filter['t.lettering_code'] = $search_lettering_code;
+	$param .= '&search_lettering_code=' . urlencode($search_lettering_code);
+ }
 
 
 if ($action == 'delbookkeeping') {
@@ -548,6 +557,13 @@ if (! empty($arrayfields['t.credit']['checked']))
 	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
 	print '</td>';
 }
+// Lettering code
+if (! empty($arrayfields['t.lettering_code']['checked']))
+{
+	print '<td class="liste_titre center">';
+	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="' . $search_lettering_code . '"/>';
+	print '</td>';
+}
 // Code journal
 if (! empty($arrayfields['t.code_journal']['checked']))
 {
@@ -597,6 +613,7 @@ if (! empty($arrayfields['t.subledger_account']['checked']))	print_liste_field_t
 if (! empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -680,6 +697,13 @@ if ($num > 0)
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
 			$totalarray['totalcredit'] += $line->credit;
+		}
+
+		// Lettering code
+		if (! empty($arrayfields['t.lettering_code']['checked']))
+		{
+			print '<td align="center">' . $line->lettering_code . '</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Journal code
