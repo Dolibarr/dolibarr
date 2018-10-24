@@ -579,8 +579,10 @@ if ($resql)
 
         print '<table class="border" width="100%">';
 
+        print '<tr>';
+
         // Description
-        print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
+        print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
         $calcproductsunique=$object->nb_different_products();
         $calcproducts=$object->nb_products();
@@ -966,7 +968,7 @@ if ($resql)
 			$origin = '';
 		}
 
-        print "<tr>";
+        print '<tr class="oddeven">';
         // Id movement
         if (! empty($arrayfields['m.rowid']['checked']))
         {
