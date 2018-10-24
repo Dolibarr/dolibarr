@@ -3556,7 +3556,6 @@ class Product extends CommonObject
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
