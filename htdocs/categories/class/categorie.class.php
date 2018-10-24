@@ -76,6 +76,10 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 	);
+
+    /**
+	 * @var array Code mapping from ID
+	 */
 	public static $MAP_ID_TO_CODE = array(
 		0 => 'product',
 		1 => 'supplier',
@@ -104,7 +108,8 @@ class Categorie extends CommonObject
         'bank_account' => 'account',
         'project'  => 'project',
 	);
-	/**
+
+    /**
 	 * @var array Category tables mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -120,7 +125,8 @@ class Categorie extends CommonObject
         'bank_account'=> 'account',
         'project'  => 'project',
 	);
-	/**
+
+    /**
 	 * @var array Object class mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -136,7 +142,8 @@ class Categorie extends CommonObject
 		'bank_account'  => 'Account',
         'project'  => 'Project',
 	);
-	/**
+
+    /**
 	 * @var array Object table mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -199,7 +206,14 @@ class Categorie extends CommonObject
 	 */
 	public $type;
 
-	public $cats = array();			// Categories table in memory
+	/**
+	 * @var array Categories table in memory
+	 */
+	public $cats = array();
+
+    /**
+	 * @var array Mother of table
+	 */
 	public $motherof = array();
 
 	/**
@@ -1360,7 +1374,7 @@ class Categorie extends CommonObject
 	 * @param   string|int	$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
 	 * @param   string 		$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
 	 *                      	    labels, 'id'= Get array of category IDs
-	 * @return  mixed           	Array of category objects or < 0 if KO
+	 * @return  array|int           Array of category objects or < 0 if KO
 	 */
 	function containing($id, $type, $mode='object')
 	{

@@ -88,13 +88,6 @@ class ActionComm extends CommonObject
      */
     public $label;
 
-    /**
-     * @var string
-     * @deprecated Use $label
-     * @see label
-     */
-    public $libelle;
-
     public $datec;			// Date creation record (datec)
     public $datem;			// Date modification record (tms)
 
@@ -351,7 +344,7 @@ class ActionComm extends CommonObject
         $sql.= ($code?("'".$code."'"):"null").", ";
         $sql.= ((isset($this->socid) && $this->socid > 0) ? $this->socid:"null").", ";
         $sql.= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project:"null").", ";
-        $sql.= " '".$this->db->escape($this->note)."', ";
+        $sql.= " '".$this->db->escape($this->note_private?$this->note_private:$this->note)."', ";
         $sql.= ((isset($this->contactid) && $this->contactid > 0) ? $this->contactid:"null").", ";
         $sql.= (isset($user->id) && $user->id > 0 ? $user->id:"null").", ";
         $sql.= ($userownerid>0 ? $userownerid:"null").", ";
@@ -621,6 +614,7 @@ class ActionComm extends CommonObject
                 $this->datem   				= $this->db->jdate($obj->datem);
 
                 $this->note					= $obj->note;
+                $this->note_private			= $obj->note;
                 $this->percentage			= $obj->percentage;
 
                 $this->authorid             = $obj->fk_user_author;
@@ -870,7 +864,7 @@ class ActionComm extends CommonObject
         $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
         $sql.= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->db->escape($this->durationp)."'":"null");	// deprecated
-        $sql.= ", note = ".($this->note ? "'".$this->db->escape($this->note)."'":"null");
+        $sql.= ", note = '".$this->db->escape($this->note_private?$this->note_private:$this->note)."'";
         $sql.= ", fk_project =". ($this->fk_project > 0 ? $this->fk_project:"null");
         $sql.= ", fk_soc =". ($socid > 0 ? $socid:"null");
         $sql.= ", fk_contact =". ($contactid > 0 ? $contactid:"null");

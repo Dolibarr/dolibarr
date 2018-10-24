@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2017  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2015-2017  Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file		htdocs/accountancy/class/bookkeeping.class.php
- *	\ingroup	Advanced accountancy
- *	\brief		File of class to manage Ledger (General Ledger and Subledger)
+ * \file        htdocs/accountancy/class/bookkeeping.class.php
+ * \ingroup     Advanced accountancy
+ * \brief       File of class to manage Ledger (General Ledger and Subledger)
  */
 
 // Class
@@ -785,7 +785,8 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql) && (empty($limit) || $i < min($limit, $num))) {
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -817,6 +818,8 @@ class BookKeeping extends CommonObject
 				$line->date_creation = $obj->date_creation;
 
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -862,6 +865,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
+		$sql .= " t.lettering_code,";
 		$sql .= " t.montant,";
 		$sql .= " t.sens,";
 		$sql .= " t.fk_user_author,";
@@ -914,7 +918,8 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql) && (empty($limit) || $i < min($limit, $num))) {
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -934,6 +939,7 @@ class BookKeeping extends CommonObject
 				$line->credit = $obj->credit;
 				$line->montant = $obj->montant;
 				$line->sens = $obj->sens;
+				$line->lettering_code = $obj->lettering_code;
 				$line->fk_user_author = $obj->fk_user_author;
 				$line->import_key = $obj->import_key;
 				$line->code_journal = $obj->code_journal;
@@ -943,6 +949,8 @@ class BookKeeping extends CommonObject
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -1021,7 +1029,7 @@ class BookKeeping extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
-			while (($obj = $this->db->fetch_object($resql)) && ($i < min($limit, $num)))
+			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num)))
 			{
 				$line = new BookKeepingLine();
 

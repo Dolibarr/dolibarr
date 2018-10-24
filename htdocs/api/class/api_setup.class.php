@@ -122,7 +122,7 @@ class Setup extends DolibarrApi
      * @param string    $filter     To filter the countries by name
      * @param string    $lang       Code of the language the label of the countries must be translated to
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of countries
+     * @return array                List of countries
      *
      * @url     GET dictionary/countries
      *

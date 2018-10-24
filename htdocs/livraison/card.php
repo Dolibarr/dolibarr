@@ -292,6 +292,7 @@ elseif ($action == 'remove_file')
 }
 */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 /*
  *	View

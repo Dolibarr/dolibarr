@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +19,27 @@
  */
 
 /**
- * \file accountancy/class/bookkeeping.class.php
- * \ingroup Advanced accountancy
- * \brief 	File of class for lettering
+ * \file      	htdocs/accountancy/class/lettering.class.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		File of class for lettering
  */
+
 include_once DOL_DOCUMENT_ROOT . "/accountancy/class/bookkeeping.class.php";
 include_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
 include_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
 
 /**
- * Class lettering
+ * Class Lettering
  */
-class lettering extends BookKeeping
+class Lettering extends BookKeeping
 {
 	/**
-	 * lettrageTiers
+	 * letteringThirdparty
 	 *
 	 * @param int $socid Thirdparty id
 	 * @return int 1 OK, <0 error
 	 */
-	public function lettrageTiers($socid)
+	public function letteringThirdparty($socid)
 	{
 		global $conf;
 
@@ -46,6 +48,7 @@ class lettering extends BookKeeping
 		$object = new Societe($this->db);
 		$object->id = $socid;
 		$object->fetch($socid);
+
 
 		if ($object->code_compta == '411CUSTCODE') {
 			$object->code_compta = '';
@@ -229,7 +232,7 @@ class lettering extends BookKeeping
 	 * @param boolean $notrigger no trigger
  	 * @return number
 	 */
-	public function updateLettrage($ids = array(), $notrigger = false)
+	public function updateLettering($ids = array(), $notrigger = false)
 	{
 		$error = 0;
 		$lettre = 'AAA';

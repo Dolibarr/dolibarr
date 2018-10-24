@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ if ($modulepart == 'ecm')
 	$fullpathselecteddir=$conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened=$conf->ecm->dir_output.'/'.($preopened != '/' ? $preopened : '');
 }
-if ($modulepart == 'medias')
+elseif ($modulepart == 'medias')
 {
 	$fullpathselecteddir=$dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened=$dolibarr_main_data_root.'/medias/'.($preopened != '/' ? $preopened : '');
@@ -96,7 +97,7 @@ if ($modulepart == 'ecm')
 {
 	if (! $user->rights->ecm->read) accessforbidden();
 }
-if ($modulepart == 'medias')
+elseif ($modulepart == 'medias')
 {
 	// Always allowed
 }
@@ -349,7 +350,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 	{
 		$files = @scandir($fullpathselecteddir);
 
-		if ($files)
+		if (! empty($files))
 		{
 			natcasesort($files);
 			if (count($files) > 2)    /* The 2 accounts for . and .. */

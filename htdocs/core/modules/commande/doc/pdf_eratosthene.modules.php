@@ -160,7 +160,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-        // phpcs:enable
+	    // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -714,7 +714,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 	}
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *  Show payments table
      *
 	 *  @param	TCPDF		$pdf     		Object PDF
@@ -725,10 +725,12 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
+	    
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
@@ -739,6 +741,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -914,7 +917,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *	Show total to pay
 	 *
 	 *	@param	TCPDF		$pdf           Object PDF
@@ -926,6 +929,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 	    global $conf,$mysoc;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

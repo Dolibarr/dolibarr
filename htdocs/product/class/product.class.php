@@ -3529,6 +3529,36 @@ class Product extends CommonObject
 		return $nb;
 	}
 
+
+	/**
+	 * Return if loaded product is a variant
+	 *
+	 * @return int
+	 */
+	function isVariant()
+	{
+		global $conf;
+		if (!empty($conf->variants->enabled)) {
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "product_attribute_combination WHERE fk_product_child = " . $this->id . " AND entity IN (" . getEntity('product') . ")";
+
+			$query = $this->db->query($sql);
+
+			if ($query) {
+				if (!$this->db->num_rows($query)) {
+					return false;
+				}
+				return true;
+			} else {
+				dol_print_error($this->db);
+				return -1;
+			}
+
+		} else {
+			return false;
+		}
+
+	}
+
 	/**
 	 *  Return all parent products for current product (first level only)
 	 *

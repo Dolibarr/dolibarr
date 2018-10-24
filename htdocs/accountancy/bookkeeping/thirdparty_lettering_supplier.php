@@ -3,7 +3,8 @@
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2018 Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,11 @@
  */
 
 /**
- * \file accountancy/bookkeeping/thirdparty_lettrage_supplier.php
- * \ingroup Advanced accountancy
- * \brief Tab to setup lettering
+ * \file    	htdocs/accountancy/bookkeeping/thirdparty_lettrage_supplier.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Tab to setup lettering
  */
-
-// Dolibarr environment
 require '../../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
@@ -36,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta"));
+$langs->loadLangs(array("compta","accountancy"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -63,11 +61,10 @@ $search_year = GETPOST("search_year",'int');
 $search_doc_type = GETPOST("search_doc_type",'alpha');
 $search_doc_ref = GETPOST("search_doc_ref",'alpha');
 
-$lettering = GETPOST('lettering');
+$lettering = GETPOST('lettering', 'alpha');
 if (!empty($lettering)) {
 	$action=$lettering;
 }
-$toselect = GETPOST('toselect','array');
 
 // Did we click on purge search criteria ?
 // All tests are required to be compatible with all browsers
@@ -83,6 +80,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 $socid = GETPOST("socid", 'int');
 // if ($user->societe_id) $socid=$user->societe_id;
 
+$lettering = new Lettering($db);
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
@@ -91,104 +89,53 @@ if ($result<0)
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
-$form = new Form($db);
-$BookKeeping = new lettering($db);
-$formaccounting = new FormAccounting($db);
 
 /*
  * Action
  */
 if ($action == 'lettering') {
 
-	$result = $BookKeeping->updateLettrage($toselect);
+	$result = $lettering->updateLettering($toselect);
 
-	// var_dump($result);
 	if ($result < 0) {
-		setEventMessages('', $BookKeeping->errors, 'errors');
-		$error ++;
+		setEventMessages('', $lettering->errors, 'errors');
+		$error++;
 	}
 }
 
 if ($action == 'autolettrage') {
 
-	$result = $BookKeeping->lettrageTiers($socid);
+	$result = $lettering->letteringThirdparty($socid);
 
 	if ($result < 0) {
-		setEventMessages('', $BookKeeping->errors, 'errors');
-		$error ++;
+		setEventMessages('', $lettering->errors, 'errors');
+		$error++;
 	}
 }
 
-$title = 'AccountancyLettrage';
-
-llxHeader('', $title);
-
-
-$param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if (!empty($search_year)) $param.='&search_year='.$search_year;
-if (!empty($socid)) $param.='&socid='.$socid;
-if (!empty($search_doc_type)) $param.='&search_doc_type='.$search_doc_type;
-if (!empty($search_doc_ref)) $param.='&search_doc_ref='.$search_doc_ref;
-
 
 /*
- * Display tabs
+ * View
  */
+
+$form = new Form($db);
+$formaccounting = new FormAccounting($db);
+
+$title=$object->name." - ".$langs->trans('TabLetteringSupplier');
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
+
 $head = societe_prepare_head($object);
 
 dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-dol_fiche_head($head, 'accounting_supplier', $langs->trans("ThirdParty"), 0, 'company');
+dol_fiche_head($head, 'lettering_supplier', $langs->trans("ThirdParty"), 0, 'company');
 
-print '<table width="100%" class="border">';
-print '<tr><td width="30%">' . $langs->trans("ThirdPartyName") . '</td><td width="70%" colspan="3">';
-$object->next_prev_filter = "te.fournisseur = 1";
-print $form->showrefnav($object, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '');
-print '</td></tr>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
-{
-	print '<tr><td>' . $langs->trans('Prefix') . '</td><td colspan="3">' . $object->prefix_comm . '</td></tr>';
-}
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-print '<tr>';
-print '<td class="nowrap">' . $langs->trans("SupplierCode") . '</td><td colspan="3">';
-print $object->code_fournisseur;
-if ($object->check_codefournisseur() != 0)
-	print ' <font class="error">(' . $langs->trans("WrongSupplierCode") . ')</font>';
-print '</td>';
-print '</tr>';
-
-print '<tr>';
-print '<td>';
-print $form->editfieldkey("SupplierAccountancyCode", 'supplieraccountancycode', $object->code_compta_fournisseur, $object, $user->rights->societe->creer);
-print '</td><td colspan="3">';
-print $form->editfieldval("SupplierAccountancyCode", 'supplieraccountancycode', $object->code_compta_fournisseur, $object, $user->rights->societe->creer);
-print '</td>';
-print '</tr>';
-
-// Address
-print '<tr><td valign="top">' . $langs->trans("Address") . '</td><td colspan="3">';
-dol_print_address($object->address, 'gmap', 'thirdparty', $object->id);
-print '</td></tr>';
-
-// Zip / Town
-print '<tr><td class="nowrap">' . $langs->trans("Zip") . ' / ' . $langs->trans("Town") . '</td><td colspan="3">' . $object->zip . (($object->zip && $object->town) ? ' / ' : '') . $object->town . '</td>';
-print '</tr>';
-
-// Country
-print '<tr><td>' . $langs->trans("Country") . '</td><td colspan="3">';
-// $img=picto_from_langcode($object->country_code);
-$img = '';
-if ($object->isInEEC())
-	print $form->textwithpicto(($img ? $img . ' ' : '') . $object->country, $langs->trans("CountryIsInEEC"), 1, 0);
-else
-	print ($img ? $img . ' ' : '') . $object->country;
-print '</td></tr>';
-
-print '</table>';
+dol_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
@@ -252,21 +199,19 @@ if ($resql) {
 	print_liste_field_titre("Doctype", $_SERVER["PHP_SELF"], "bk.doc_type","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("Docdate", $_SERVER["PHP_SELF"], "bk.doc_date","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("Docref", $_SERVER["PHP_SELF"], "bk.doc_ref","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Labelcompte", $_SERVER["PHP_SELF"], "bk.label_compte","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("LabelAccount", $_SERVER["PHP_SELF"], "bk.label_compte","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "bk.debit","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "bk.credit","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bk.montant","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Sens", $_SERVER["PHP_SELF"], "bk.sens","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Solde", $_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
-	print '<td></td>';
+	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print '<td><input type="text" name="search_doc_type" value="' . $search_doc_type . '"></td>';
 	print '<td><input type="text" name="search_year" value="' . $search_year . '"></td>';
 	print '<td><input type="text" name="search_doc_refe" value="' . $search_doc_ref . '"></td>';
-	print '<td colspan="7">&nbsp;</td>';
+	print '<td colspan="6">&nbsp;</td>';
 	print '<td align="right">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
@@ -277,12 +222,8 @@ if ($resql) {
 	$tmp = '';
 	while ($obj = $db->fetch_object($resql)) {
 
-		if ($tmp != $obj->lettering_code || empty($tmp))
-			$tmp = $obj->lettering_code;
-
-			if ($tmp != $obj->lettering_code || empty($obj->lettering_code))
-
-		$solde += ($obj->credit - $obj->debit);
+		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
+		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
 
 		print '<tr class="oddeven">';
 
@@ -290,45 +231,44 @@ if ($resql) {
 			print '<td><a href="' . dol_buildpath('/accountancy/bookkeeping/card.php', 1) . '?piece_num=' . $obj->piece_num . '">';
 			print img_edit();
 			print '</a>&nbsp;' . $obj->doc_type . '</td>' . "\n";
-		} else
+		} else {
 			print '<td>' . $obj->doc_type . '</td>' . "\n";
+		}
 
 		print '<td>' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 		print '<td>' . $obj->doc_ref . '</td>';
 		print '<td>' . $obj->label_compte . '</td>';
-		print '<td>' . price($obj->debit) . '</td>';
-		print '<td>' . price($obj->credit) . '</td>';
-		print '<td>' . price($obj->montant) . '</td>';
-		print '<td>' . $obj->sens . '</td>';
-		print '<td>' . $obj->code_journal . '</td>';
-		print '<td>' . round($solde, 2) . '</td>';
+		print '<td align="right">' . price($obj->debit) . '</td>';
+		print '<td align="right">' . price($obj->credit) . '</td>';
+		print '<td align="right">' . price(round($solde, 2)) . '</td>';
+		print '<td align="center">' . $obj->code_journal . '</td>';
 
 		if (empty($obj->lettering_code)) {
 			print '<td class="nowrap" align="center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
 		} else
-			print '<td>' . $obj->lettering_code . '</td>';
+			print '<td align="center">' . $obj->lettering_code . '</td>';
 
 		print "</tr>\n";
 	}
 
 	print '<tr class="oddeven">';
-
-	print '<td colspan="4">Mouvement totaux</td>' . "\n";
-	print '<td><strong>' . price($debit) . '</strong></td>';
-	print '<td><strong>' . price($credit) . '</strong></td>';
+	print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
+	print '<td align="right"><strong>' . price($debit) . '</strong></td>';
+	print '<td align="right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="5"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
-	print '<td colspan="9">Solde Comptable</td>' . "\n";
-	print '<td><strong>' . price($credit - $debit) . '</strong></td>';
-	print '<td colspan="5"></td>';
+	print '<td align="right" colspan="4">'.$langs->trans("Balancing").':</td>' . "\n";
+	print '<td colspan="2">&nbsp;</td>';
+	print '<td align="right"><strong>' . price($credit - $debit) . '</strong></td>';
+	print '<td colspan="3"></td>';
 	print "</tr>\n";
 
 	print "</table>";
 
-	print '<input class="butAction" type="submit" value="lettering" name="lettering" id="lettering">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '&action=autolettrage">'.$langs->trans('AccountancyAutoLettering').'</a>';
+	print '<input class="butAction" type="submit" value="' . $langs->trans('AccountancyLettering') . '" name="lettering" id="lettering">';
+	//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '&action=autolettrage">'.$langs->trans('AccountancyAutoLettering').'</a>';
 	print "</form>";
 	$db->free($resql);
 } else {

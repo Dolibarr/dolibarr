@@ -132,7 +132,7 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	public function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-        // phpcs:enable
+	  // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -875,7 +875,7 @@ class pdf_cyan extends ModelePDFPropales
 		}
 	}
 
-    /**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *  Show payments table
 	 *
      *  @param	TCPDF		$pdf           Object PDF
@@ -886,10 +886,11 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
@@ -900,6 +901,7 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 

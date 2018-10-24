@@ -174,7 +174,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-        // phpcs:enable
+	    // phpcs:enable
 	    global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
 	    if (! is_object($outputlangs)) $outputlangs=$langs;
@@ -849,7 +849,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *  Show payments table
 	 *
      *  @param	PDF			$pdf           Object PDF
@@ -860,6 +860,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf;
 
         $sign=1;
@@ -988,7 +989,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		PDF			$pdf     		Object PDF
@@ -999,6 +1000,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	private function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1145,7 +1147,7 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 
-	/**
+	/** phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	 *	Show total to pay
 	 *
 	 *	@param	PDF			$pdf           Object PDF
@@ -1157,6 +1159,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	private function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+	    // phpcs:enable
 		global $conf,$mysoc;
 
         $sign=1;
