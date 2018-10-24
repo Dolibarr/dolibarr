@@ -157,6 +157,7 @@ if (empty($reshook))
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
 		$supplier_description = GETPOST('supplier_description', 'alpha');
+		$packaging = GETPOST('packaging', 'int');
 
 		if ($tva_tx == '')
 		{
@@ -219,6 +220,9 @@ if (empty($reshook))
             }
         }
 
+        if (empty($packaging)) $packaging = 1;
+        $object->packaging = $packaging;
+
 		if (! $error)
 		{
 			$db->begin();
@@ -248,9 +252,10 @@ if (empty($reshook))
 				$result=$supplier->fetch($id_fourn);
 				if (isset($_POST['ref_fourn_price_id']))
 					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
-
+					$object->packaging = $packaging;
+					
 				$newprice = price2num(GETPOST("price","alpha"));
-
+				
                 if ($conf->multicurrency->enabled)
                 {
                 	$multicurrency_tx = price2num(GETPOST("multicurrency_tx",'alpha'));
@@ -787,6 +792,7 @@ SCRIPT;
 				print_liste_field_titre("DiscountQtyMin",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("NbDaysToDelivery",$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("ReputationForThisProduct",$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
+				if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) print_liste_field_titre("PackagingForThisProduct",$_SERVER["PHP_SELF"],"pfp.packaging","",$param,'align="center"',$sortfield,$sortorder);
 				print_liste_field_titre('');
 				print "</tr>\n";
 
@@ -866,7 +872,15 @@ SCRIPT;
 						if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
 							print $object->reputations[$productfourn->supplier_reputation];
 						}
-						print'</td>';
+						print '</td>';
+
+						// Packaging
+						if (!empty($conf->global->PRODUIT_FOURN_PACKAGING))
+						{
+    						print '<td align="center">';
+    						print price($productfourn->packaging);
+    						print '</td>';
+						}
 
 						if (is_object($hookmanager))
 						{

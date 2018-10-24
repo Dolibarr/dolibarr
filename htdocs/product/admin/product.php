@@ -164,7 +164,7 @@ if ($action == 'other')
 	    $resql = $db->query($sql_test);
 	    if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') // if the field does not exist, we create it
 	    {
-	        $sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN pakaging double(24,8) DEFAULT 1";
+	        $sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1";
 	        $resql_new = $db->query($sql_new);
 	    }
 	}

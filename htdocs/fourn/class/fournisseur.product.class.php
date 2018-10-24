@@ -321,6 +321,7 @@ class ProductFournisseur extends Product
 			$sql.= " charges = ".$charges.",";           // deprecated
 			$sql.= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null').",";
 			$sql.= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'");
+			if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) $sql.= ", packaging = ".(empty($this->packaging) ? 1 : $this->packaging);
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
@@ -364,8 +365,9 @@ class ProductFournisseur extends Product
                 // Add price for this quantity to supplier
                 $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price(";
                 $sql.= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
-                $sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
-                $sql .= " values(";
+                $sql.= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation";
+                if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) $sql.= ", packaging";
+                $sql .= ") values(";
                 $sql.= (isset($multicurrency_buyprice)?"'".$this->db->escape(price2num($multicurrency_buyprice))."'":'null').",";
                 $sql.= (isset($multicurrency_unitBuyPrice)?"'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'":'null').",";
                 $sql.= (isset($multicurrency_tx)?"'".$this->db->escape($multicurrency_tx)."'":'1').",";
@@ -390,6 +392,7 @@ class ProductFournisseur extends Product
                 $sql .= $conf->entity . ",";
                 $sql .= $delivery_time_days . ",";
                 $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'");
+                if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) $sql.= ", ".(empty($this->packaging) ? 1 : $this->db->escape($this->packaging)) ;
                 $sql .= ")";
 
                 $idinserted = 0;
@@ -469,6 +472,7 @@ class ProductFournisseur extends Product
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.info_bits as fourn_tva_npr, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
         $sql.= " pfp.supplier_reputation";
+        if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) $sql.= ", pfp.packaging";
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
@@ -502,6 +506,7 @@ class ProductFournisseur extends Product
                 $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
                 $this->supplier_reputation      = $obj->supplier_reputation;
                 $this->default_vat_code         = $obj->default_vat_code;
+                if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) $this->packaging                = $obj->packaging;
 
                 $this->fourn_multicurrency_price       = $obj->multicurrency_price;
                 $this->fourn_multicurrency_unitprice   = $obj->multicurrency_unitprice;
@@ -562,6 +567,7 @@ class ProductFournisseur extends Product
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
+        if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) $sql.= ", pfp.packaging";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
@@ -602,7 +608,9 @@ class ProductFournisseur extends Product
                 $prodfourn->id						= $prodid;
                 $prodfourn->fourn_tva_npr					= $record["info_bits"];
                 $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
-				$prodfourn->supplier_reputation    = $record["supplier_reputation"];
+				$prodfourn->supplier_reputation     = $record["supplier_reputation"];
+				if (!empty($conf->global->PRODUIT_FOURN_PACKAGING)) 
+				    $prodfourn->packaging               = $record["packaging"];
 
                 $prodfourn->fourn_multicurrency_price       = $record["multicurrency_price"];
                 $prodfourn->fourn_multicurrency_unitprice   = $record["multicurrency_unitprice"];
