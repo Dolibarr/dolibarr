@@ -44,6 +44,13 @@ class MouvementStock extends CommonObject
 	public $product_id;
 	public $warehouse_id;
 	public $qty;
+
+	/**
+	 * @var int Type of movement
+	 * 0=input (stock increase by a stock transfer), 1=output (stock decrease after by a stock transfer),
+	 * 2=output (stock decrease), 3=input (stock increase)
+	 * Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
+	 */
 	public $type;
 
 	public $tms = '';

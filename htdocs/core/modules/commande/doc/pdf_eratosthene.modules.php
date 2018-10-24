@@ -716,7 +716,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 	/**
 	 *  Show payments table
-     *
+   *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
@@ -726,7 +726,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 	private function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
 	}
-
 
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
@@ -1177,7 +1176,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1479,10 +1478,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *   	Define Array Column Field
 	 *
 	 *   	@param	object			$object    		common object
-	 *   	@param	outputlangs		$outputlangs    langs
-	 *      @param	int			   $hidedetails		Do not show line details
-	 *      @param	int			   $hidedesc		Do not show desc
-	 *      @param	int			   $hideref			Do not show ref
+	 *   	@param	Translate		$outputlangs    langs
+	 *      @param	int				$hidedetails	Do not show line details
+	 *      @param	int				$hidedesc		Do not show desc
+	 *      @param	int				$hideref		Do not show ref
 	 *      @return	null
 	 */
     public function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
