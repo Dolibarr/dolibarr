@@ -553,7 +553,8 @@ if ($action == 'new')
 
 				// Link to bank transaction
 				print '<td align="center">';
-				$accountlinestatic->rowid=$value["id"];
+				$accountlinestatic->rowid = 0;
+				if ($value["typeline"] !== "payment") $accountlinestatic->rowid=$value["id"];
 				if ($accountlinestatic->rowid)
 				{
 					print $accountlinestatic->getNomUrl(1);

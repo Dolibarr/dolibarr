@@ -719,8 +719,10 @@ class RemiseCheque extends CommonObject
 	                }
 	                else
 	                {
+	                    $bank_line_id = $ret;
+	                    
 	                    // Update bankentry created
-	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET fk_bordereau = ".$this->id." WHERE rowid = ".$ret;
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET fk_bordereau = ".$this->id." WHERE rowid = ".$bank_line_id;
 	                    $res = $this->db->query($sql);
 	                    if(!$res)
 	                    {
@@ -730,7 +732,7 @@ class RemiseCheque extends CommonObject
 	                    }
 	                    
 	                    // Update payments
-	                    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_bank = ".$ret." WHERE rowid in (".implode(",", $TPaymentToUpdate).")";
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_bank = ".$bank_line_id." WHERE rowid in (".implode(",", $TPaymentToUpdate).")";
 	                    $res = $this->db->query($sql);
 	                    if(!$res)
 	                    {
@@ -740,7 +742,7 @@ class RemiseCheque extends CommonObject
 	                    }
 	                    
 	                    // update lines
-	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_chequedet SET fk_bank = ".$ret." WHERE rowid in (".implode(",", $TLinesToUpdate).")";
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_chequedet SET fk_bank = ".$bank_line_id." WHERE rowid in (".implode(",", $TLinesToUpdate).")";
 	                    $res = $this->db->query($sql);
 	                    if(!$res)
 	                    {
@@ -748,6 +750,17 @@ class RemiseCheque extends CommonObject
 	                        $this->errors[] = "RemiseCheque::createBankEntry update lines error : " . $this->db->lasterror;
 	                        dol_syslog("RemiseCheque::createBankEntry update lines error : " . $this->db->lasterror, LOG_ERR);
 	                    }
+	                    
+	                    // add bank_url to link the bankentry to the bordereau
+	                    $url=DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id=';
+	                    $result=$account->add_url_line($bank_line_id, $this->id, $url, $this->ref, 'cheque_deposit');
+	                    if ($result <= 0)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry add bank_url for payment $payment_id error : " . $this->db->lasterror;
+	                        dol_print_error("RemiseCheque::createBankEntry add bank_url for payment $payment_id error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                    
 	                }
 	            }
 	            else
