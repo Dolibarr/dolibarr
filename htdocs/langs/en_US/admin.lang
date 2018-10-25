@@ -924,22 +924,22 @@ SetupNotSaved=Setup not saved
 BackToModuleList=Back to modules list
 BackToDictionaryList=Back to list of Dictionaries
 TypeOfRevenueStamp=Type of tax stamp
-VATManagement=VAT Management
-VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the VAT rate follows the active standard rule:<br>If the seller is not subject to VAT, then VAT defaults to 0. End of rule.<br>If the (seller's country = buyer's country), then the VAT by default equals the VAT of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependant on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to their customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT by defaults to the VAT of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is VAT=0. End of rule.
-VATIsNotUsedDesc=By default the proposed VAT is 0 which can be used for cases like associations, individuals or small companies.
-VATIsUsedExampleFR=In France, it means companies or organizations having a real fiscal system (Simplified real or normal real).  A system in which VAT is declared.
-VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organizations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
+VATManagement=Sale Tax Management
+VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the Sale Tax rate follows the active standard rule:<br>If the seller is not subject to Sale tax, then Sale tax defaults to 0. End of rule.<br>If the (seller's country = buyer's country), then the Sale tax by default equals the Sale tax of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default Sale tax is 0. This rule is dependant on the seller's country - please consult with your accountant. The Sale tax should be paid by the buyer to their customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community Sale tax number) then the Sale tax by defaults to the Sale tax of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community Sale tax number), then the Sale tax is 0 by default. End of rule.<br>In any other case the proposed default is Sale tax=0. End of rule.
+VATIsNotUsedDesc=By default the proposed Sale tax is 0 which can be used for cases like associations, individuals or small companies.
+VATIsUsedExampleFR=In France, it means companies or organizations having a real fiscal system (Simplified real or normal real).  A system in which Sale tax is declared.
+VATIsNotUsedExampleFR=In France, it means associations that are non Sale tax declared or companies, organizations or liberal professions that have chosen the micro enterprise fiscal system (Sale tax in franchise) and paid a franchise Sale tax without any Sale tax declaration.  This choice will display the reference "Non applicable Sale tax - art-293B of CGI" on invoices.
 ##### Local Taxes #####
 LTRate=Rate
 LocalTax1IsNotUsed=Do not use second tax
-LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
-LocalTax1IsNotUsedDesc=Do not use other type of tax (other than VAT)
+LocalTax1IsUsedDesc=Use a second type of tax (other than first one)
+LocalTax1IsNotUsedDesc=Do not use other type of tax (other than first one)
 LocalTax1Management=Second type of tax
 LocalTax1IsUsedExample=
 LocalTax1IsNotUsedExample=
 LocalTax2IsNotUsed=Do not use third tax
-LocalTax2IsUsedDesc=Use a third type of tax (other than VAT)
-LocalTax2IsNotUsedDesc=Do not use other type of tax (other than VAT)
+LocalTax2IsUsedDesc=Use a third type of tax (other than first one)
+LocalTax2IsNotUsedDesc=Do not use other type of tax (other than first one)
 LocalTax2Management=Third type of tax
 LocalTax2IsUsedExample=
 LocalTax2IsNotUsedExample=
