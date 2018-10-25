@@ -1319,6 +1319,88 @@ if (empty($reshook))
 		exit();
 	}
 
+	// add lines from objectlinked
+	if($action == 'import_lines_from_object'
+	    && $user->rights->commande->creer
+	    && $object->statut == Commande::STATUS_DRAFT
+	  )
+	{
+	    $fromElement = GETPOST('fromelement');
+	    $fromElementid = GETPOST('fromelementid');
+	    $importLines = GETPOST('line_checkbox');
+	    
+	    if(!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+	    {
+	        if($fromElement == 'commande')
+	        {
+	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'OrderLine';
+	        }
+	        elseif($fromElement == 'propal')
+	        {
+	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'PropaleLigne';
+	        }
+	        $nextRang = count($object->lines) + 1;
+	        $importCount = 0;
+	        $error = 0;
+	        foreach($importLines as $lineId)
+	        {
+	            $lineId = intval($lineId);
+	            $originLine = new $lineClassName($db);
+	            if(intval($fromElementid) > 0 && $originLine->fetch( $lineId ) > 0)
+	            {
+	                $originLine->fetch_optionals($lineId);
+	                $desc = $originLine->desc;
+	                $pu_ht = $originLine->subprice;
+	                $qty = $originLine->qty;
+	                $txtva = $originLine->tva_tx;
+	                $txlocaltax1 = $originLine->localtax1_tx;
+	                $txlocaltax2 = $originLine->localtax2_tx;
+	                $fk_product = $originLine->fk_product;
+	                $remise_percent = $originLine->remise_percent;
+	                $date_start = $originLine->date_start;
+	                $date_end = $originLine->date_end;
+	                $ventil = 0;
+	                $info_bits = $originLine->info_bits;
+	                $fk_remise_except = $originLine->fk_remise_except;
+	                $price_base_type='HT';
+	                $pu_ttc=0;
+	                $type = $originLine->product_type;
+	                $rang=$nextRang++;
+	                $special_code = $originLine->special_code;
+	                $origin = $originLine->element;
+	                $origin_id = $originLine->id;
+	                $fk_parent_line=0;
+	                $fk_fournprice=$originLine->fk_fournprice;
+	                $pa_ht = $originLine->pa_ht;
+	                $label = $originLine->label;
+	                $array_options = $originLine->array_options;
+	                $situation_percent = 100;
+	                $fk_prev_id = '';
+	                $fk_unit = $originLine->fk_unit;
+	                $pu_ht_devise = $originLine->multicurrency_subprice;
+	                
+	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label,$array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
+	                
+	                if($res > 0){
+	                    $importCount++;
+	                }else{
+	                    $error++;
+	                }
+	            }
+	            else{
+	                $error++;
+	            }
+	        }
+	        
+	        if($error)
+	        {
+	            setEventMessages($langs->trans('ErrorsOnXLines',$error), null, 'errors');
+	        }
+	    }
+	}
+	
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
@@ -2639,7 +2721,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+			
+			$compatibleImportElementsList = false;
+			if($user->rights->commande->creer
+			    && $object->statut == Commande::STATUS_DRAFT)
+			{
+			    $compatibleImportElementsList = array('commande','propal'); // import from linked elements
+			}
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
 
 			// Show online payment link
 			$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
