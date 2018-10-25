@@ -1152,7 +1152,7 @@ class Account extends CommonObject
 				$solde = $obj->amount;
 			}
 			$this->db->free($resql);
-			return $solde;
+			return price2num($solde, 'MU');
 		}
 	}
 

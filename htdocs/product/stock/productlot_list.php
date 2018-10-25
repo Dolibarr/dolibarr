@@ -47,6 +47,7 @@ $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $myparam	= GETPOST('myparam','alpha');
+$toselect = GETPOST('toselect', 'array');
 
 
 $search_entity=GETPOST('search_entity','int');
@@ -152,7 +153,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_import_key='';
 	$search_date_creation='';
 	$search_date_update='';
-	$toselect='';
+	$toselect=array();
 	$search_array_options=array();
 }
 
