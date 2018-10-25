@@ -592,7 +592,7 @@ if ($id == 10)
  * Actions
  */
 
-if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
+if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha'))
 {
     $search_country_id = '';
     $search_code = '';

@@ -44,11 +44,22 @@ class MouvementStock extends CommonObject
 	public $product_id;
 	public $warehouse_id;
 	public $qty;
+
+	/**
+	 * @var int Type of movement
+	 * 0=input (stock increase by a stock transfer), 1=output (stock decrease after by a stock transfer),
+	 * 2=output (stock decrease), 3=input (stock increase)
+	 * Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
+	 */
 	public $type;
 
 	public $tms = '';
 	public $datem = '';
 	public $price;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
 
 	/**
@@ -56,7 +67,11 @@ class MouvementStock extends CommonObject
      */
     public $label;
 
+    /**
+     * @var int ID
+     */
 	public $fk_origin;
+
 	public $origintype;
 	public $inventorycode;
 	public $batch;
@@ -993,7 +1008,7 @@ class MouvementStock extends CommonObject
 		$label.= '<br><b>' . $langs->trans('Qty') . ':</b> ' .$this->qty;
 		$label.= '</div>';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
+		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
 		$link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
 		$link.= '>';
 		$linkend='</a>';

@@ -1596,13 +1596,13 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 $cachecontacts[$event->contact->id]=$contact;
                             }
                             else $contact=$cachecontacts[$event->contact->id];
-                            if ($linerelatedto) $linerelatedto.=' / ';
+                            if ($linerelatedto) $linerelatedto.='&nbsp;';
                             if (! empty($contact->id)) $linerelatedto.=$contact->getNomUrl(1,'',0);
                         }
                         if (! empty($event->fk_element) && $event->fk_element > 0 && ! empty($event->elementtype) && ! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))
                         {
                             include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-                            if ($linerelatedto) $linerelatedto.=' / ';
+                            if ($linerelatedto) $linerelatedto.='<br>';
                             $linerelatedto.=dolGetElementUrl($event->fk_element,$event->elementtype,1);
                         }
                         if ($linerelatedto) print '<br>'.$linerelatedto;

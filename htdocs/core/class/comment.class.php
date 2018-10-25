@@ -47,6 +47,9 @@ class Comment extends CommonObject
 
 	public $datec;
 
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
 
 	/**

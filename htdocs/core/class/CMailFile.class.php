@@ -117,7 +117,7 @@ class CMailFile
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 */
-	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='',$sendcontext='standard',$replyto='')
+	function __construct($subject, $to, $from, $msg, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=0, $errors_to='', $css='', $trackid='', $moreinheader='', $sendcontext='standard', $replyto='')
 	{
 		global $conf, $dolibarr_main_data_root;
 
@@ -569,7 +569,8 @@ class CMailFile
 				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
 			}
 
-			if(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+			if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
+			{
 				$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
 				$this->addr_cc = '';
 				$this->addr_bcc = '';
@@ -1349,10 +1350,10 @@ class CMailFile
 		// Build the list of image extensions
 		$extensions = array_keys($this->image_types);
 
-
+		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches);  // If "xxx.ext" or 'xxx.ext' found
 
-		if ($matches)
+		if (! empty($matches))
 		{
 			$i=0;
 			foreach ($matches[1] as $full)

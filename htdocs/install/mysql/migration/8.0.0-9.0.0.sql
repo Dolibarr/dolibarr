@@ -35,6 +35,7 @@ ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version    FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accounting_system (pcg_version);
 
 ALTER TABLE llx_facture ADD COLUMN module_source varchar(32);
+ALTER TABLE llx_facture ADD COLUMN pos_source varchar(32);
 
 create table llx_facture_rec_extrafields
 (
@@ -53,6 +54,7 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_f
 
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
+ALTER TABLE llx_stock_mouvement ADD COLUMN fk_project integer;
 
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 
@@ -67,10 +69,15 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_DELETE','Contract deleted','Executed when a contract is deleted','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention is deleted','Executed when a intervention is deleted','ficheinter',35);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',204);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
 
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
 
 ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
+
+ALTER TABLE llx_paiement ADD COLUMN ext_payment_id varchar(128);
+ALTER TABLE llx_paiement ADD COLUMN ext_payment_site varchar(128);
 
 ALTER TABLE llx_societe ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN facebook varchar(255) after skype;

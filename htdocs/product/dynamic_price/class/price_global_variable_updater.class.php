@@ -60,7 +60,12 @@ class PriceGlobalVariableUpdater
 	public $description;
 
     public $parameters;
+
+    /**
+     * @var int ID
+     */
     public $fk_variable;
+
     public $update_interval;				//!< Interval in mins
     public $next_update;					//!< Next update timestamp
     public $last_status;

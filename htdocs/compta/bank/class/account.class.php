@@ -54,7 +54,7 @@ class Account extends CommonObject
 	/**
 	 * @var	int		Use id instead of rowid
 	 * @deprecated
-	 * @see id
+	 * @see $id
 	 */
 	public $rowid;
 
@@ -171,6 +171,10 @@ class Account extends CommonObject
 	 * @var string
 	 */
 	public $account_number;
+
+	/**
+     * @var int ID
+     */
 	public $fk_accountancy_journal;
 
 	/**
@@ -1182,7 +1186,7 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		return $solde;
+		return price2num($solde, 'MU');
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -1704,16 +1708,37 @@ class AccountLine extends CommonObject
     public $label;
 
     public $note;
+
+    /**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_rappro;
+
+	/**
+     * @var int ID
+     */
 	public $fk_type;
+
 	public $rappro;        // Is it conciliated
 	public $num_releve;    // If conciliated, what is bank statement
 	public $num_chq;       // Num of cheque
 	public $bank_chq;      // Bank of cheque
-	public $fk_bordereau;  // Id of cheque receipt
 
-	public $fk_account;            // Id of bank account
+	/**
+     * @var int ID of cheque receipt
+     */
+	public $fk_bordereau;
+
+	/**
+     * @var int ID of bank account
+     */
+	public $fk_account;
+
 	public $bank_account_label;    // Label of bank account
 
     /**
@@ -1981,11 +2006,12 @@ class AccountLine extends CommonObject
 	/**
 	 *	Update conciliation field
 	 *
-	 *	@param	User	$user		Objet user making update
-	 *	@param 	int		$cat		Category id
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	User	$user			Objet user making update
+	 *	@param 	int		$cat			Category id
+	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function update_conciliation(User $user, $cat)
+	function update_conciliation(User $user, $cat, $conciliated=1)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2003,9 +2029,9 @@ class AccountLine extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
-		$sql.= " rappro = 1";
+		$sql.= " rappro = ".$conciliated;
 		$sql.= ", num_releve = '".$this->db->escape($this->num_releve)."'";
-		$sql.= ", fk_user_rappro = ".$user->id;
+		if ($conciliated) $sql.= ", fk_user_rappro = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);

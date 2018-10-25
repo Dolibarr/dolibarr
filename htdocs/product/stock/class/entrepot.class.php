@@ -69,10 +69,19 @@ class Entrepot extends CommonObject
 
 	public $statut;
 	public $lieu;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	//! Code Postal
 	public $zip;
 	public $town;
+
+	/**
+     * @var int ID
+     */
 	public $fk_parent;
 
 	// List of short language codes for status

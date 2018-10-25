@@ -81,7 +81,12 @@ class ActionCommReminder extends CommonObject
 		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"m, h, d, w",),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
 	public $dateremind;
 	public $typeremind;
 
@@ -92,7 +97,12 @@ class ActionCommReminder extends CommonObject
 
 	public $offsetvalue;
 	public $offsetunit;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 

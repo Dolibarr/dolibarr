@@ -26,7 +26,7 @@
  *
  * @return array head array with tabs
  */
-function AssetsAdminPrepareHead()
+function asset_admin_prepare_head()
 {
 	global $langs, $conf;
 
@@ -70,7 +70,7 @@ function AssetsAdminPrepareHead()
  *
  * @return array head array with tabs
  */
-function AssetsPrepareHead()
+function asset_prepare_head()
 {
 	global $langs, $conf;
 

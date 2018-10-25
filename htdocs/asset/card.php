@@ -203,7 +203,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
 	$res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = AssetsPrepareHead($object);
+	$head = asset_prepare_head($object);
 	dol_fiche_head($head, 'card', $langs->trans("Asset"), -1, 'generic');
 
 	$formconfirm = '';

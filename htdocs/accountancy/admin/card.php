@@ -73,25 +73,28 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number');
+			$account_number = GETPOST('account_number','string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number'));
+			$account_number = clean_account(GETPOST('account_number','string'));
 		}
 
-		if (GETPOST('account_parent') <= 0) {
+		if (GETPOST('account_parent','int') <= 0)
+		{
 			$account_parent = 0;
-		} else {
+		}
+		else
+		{
 			$account_parent = GETPOST('account_parent','int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
-		$object->pcg_type = GETPOST('pcg_type');
-		$object->pcg_subtype = GETPOST('pcg_subtype');
+		$object->pcg_type = GETPOST('pcg_type','alpha');
+		$object->pcg_subtype = GETPOST('pcg_subtype','alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
-		$object->account_category = GETPOST('account_category');
+		$object->account_category = GETPOST('account_category','alpha');
 		$object->label = GETPOST('label', 'alpha');
 		$object->active = 1;
 
@@ -135,25 +138,28 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number');
+			$account_number = GETPOST('account_number','string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number'));
+			$account_number = clean_account(GETPOST('account_number','string'));
 		}
 
-		if (GETPOST('account_parent') <= 0) {
+		if (GETPOST('account_parent','int') <= 0)
+		{
 			$account_parent = 0;
-		} else {
+		}
+		else
+		{
 			$account_parent = GETPOST('account_parent','int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
-		$object->pcg_type = GETPOST('pcg_type');
-		$object->pcg_subtype = GETPOST('pcg_subtype');
+		$object->pcg_type = GETPOST('pcg_type','alpha');
+		$object->pcg_subtype = GETPOST('pcg_subtype','alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
-		$object->account_category = GETPOST('account_category');
+		$object->account_category = GETPOST('account_category','alpha');
 		$object->label = GETPOST('label', 'alpha');
 
 		$result = $object->update($user);

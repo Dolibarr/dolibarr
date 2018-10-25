@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,9 +70,25 @@ class PaymentVarious extends CommonObject
     public $label;
 
 	public $accountancy_code;
+
+	/**
+     * @var int ID
+     */
 	public $fk_project;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 
@@ -104,9 +121,9 @@ class PaymentVarious extends CommonObject
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_author=trim($this->fk_user_author);
-		$this->fk_user_modif=trim($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		$this->db->begin();
 
@@ -304,9 +321,9 @@ class PaymentVarious extends CommonObject
 		$this->amount=price2num(trim($this->amount));
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_author=trim($this->fk_user_author);
-		$this->fk_user_modif=trim($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		// Check parameters
 		if (! $this->label)
@@ -518,26 +535,26 @@ class PaymentVarious extends CommonObject
 		elseif ($mode == 2)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		elseif ($mode == 3)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 		elseif ($mode == 4)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		elseif ($mode == 5)
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			elseif ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			elseif ($statut==2 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 	}
 

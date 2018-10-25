@@ -572,6 +572,8 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
  */
 function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $lastday=0)
 {
+	global $conf;
+
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
@@ -583,10 +585,31 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 	{
 		$ferie=false;
 		$countryfound=0;
+		$includesaturdayandsunday=1;
 
 		$jour  = date("d", $timestampStart);
 		$mois  = date("m", $timestampStart);
 		$annee = date("Y", $timestampStart);
+
+
+		// Check into var $conf->global->HOLIDAY_MORE_DAYS   MM-DD,YYYY-MM-DD, ...
+		if (! empty($conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS))
+		{
+			$arrayofdaystring=explode(',',$conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS);
+			foreach($arrayofdaystring as $daystring)
+			{
+				$tmp=explode('-',$daystring);
+				if ($tmp[2])
+				{
+					if ($tmp[0] == $annee && $tmp[1] == $mois && $tmp[2] == $jour) $ferie=true;
+				}
+				else
+				{
+					if ($tmp[0] == $mois && $tmp[1] == $jour) $ferie=true;
+				}
+			}
+		}
+
 		if ($countrycode == 'FR')
 		{
 			$countryfound=1;
@@ -649,12 +672,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$mois_pentecote = date("m", $date_pentecote);
 			if($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie=true;
 			// "Pentecote"
-
-			// Calul des samedis et dimanches
-			$jour_julien = unixtojd($timestampStart);
-			$jour_semaine = jddayofweek($jour_julien, 0);
-			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			// Samedi (6) et dimanche (0)
 		}
 
 		// Pentecoste and Ascensione in Italy go to the sunday after: isn't holiday.
@@ -681,12 +698,18 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$mois_paques = date("m", $date_paques);
 			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
 			// Paques
+		}
 
-			// Calul des samedis et dimanches
-			$jour_julien = unixtojd($timestampStart);
-			$jour_semaine = jddayofweek($jour_julien, 0);
-			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			//Samedi (6) et dimanche (0)
+		if ($countrycode == 'IN')
+		{
+			$countryfound=1;
+
+			if($jour == 1 && $mois == 1) $ferie=true; // New Year's Day
+			if($jour == 26 && $mois == 1) $ferie=true; // Republic Day
+			if($jour == 1 && $mois == 5) $ferie=true; // May Day
+			if($jour == 15 && $mois == 8) $ferie=true; // Independence Day
+			if($jour == 2 && $mois == 10) $ferie=true; // Gandhi Jayanti
+			if($jour == 25 && $mois == 12) $ferie=true; // Christmas
 		}
 
 		if ($countrycode == 'ES')
@@ -724,12 +747,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$mois_viernes = date("m", $date_viernes);
 			if($jour_viernes == $jour && $mois_viernes == $mois) $ferie=true;
 			//Viernes Santo
-
-			// Calul des samedis et dimanches
-			$jour_julien = unixtojd($timestampStart);
-			$jour_semaine = jddayofweek($jour_julien, 0);
-			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			//Samedi (6) et dimanche (0)
 		}
 
 		if ($countrycode == 'AT')
@@ -811,22 +828,15 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 		    $mois_fronleichnam = date("m", $date_fronleichnam);
 		    if($jour_fronleichnam == $jour && $mois_fronleichnam == $mois) $ferie=true;
 		    // Fronleichnam
-
-		    // Calul des samedis et dimanches
-		    $jour_julien = unixtojd($timestampStart);
-		    $jour_semaine = jddayofweek($jour_julien, 0);
-		    if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-		    //Samedi (6) et dimanche (0)
 		}
 
-		// Cas pays non defini
-		if (! $countryfound)
+		// If we have to include saturday and sunday
+		if ($includesaturdayandsunday)
 		{
-			// Calul des samedis et dimanches
 			$jour_julien = unixtojd($timestampStart);
 			$jour_semaine = jddayofweek($jour_julien, 0);
 			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			//Samedi (6) et dimanche (0)
+			//Saturday (6) and Sunday (0)
 		}
 
 		// On incremente compteur

@@ -13,6 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2189,50 +2190,52 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 }
 
 /**
- * Show Skype link
+ * Show social network link
  *
- * @param	string		$skype			Skype to show (only skype, without 'Name of recipient' before)
+ * @param	string		$value			Skype to show (only skype, without 'Name of recipient' before)
  * @param	int 		$cid 			Id of contact if known
  * @param	int 		$socid 			Id of third party if known
- * @param	int 		$addlink		0=no link to create action
- * @param	int			$max			Max number of characters to show
+ * @param	string 		$type			'skype','facebook',...
  * @return	string						HTML Link
  */
-function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
+function dol_print_socialnetworks($value,$cid,$socid,$type)
 {
 	global $conf,$user,$langs;
 
-	$newskype=$skype;
+	$newskype=$value;
 
-	if (empty($skype)) return '&nbsp;';
+	if (empty($value)) return '&nbsp;';
 
-	if (! empty($addlink))
+	if (! empty($type))
 	{
-		$newskype =img_picto($langs->trans("Skype"), 'object_skype.png');
-		$newskype.= '&nbsp;';
-		$newskype.=dol_trunc($skype,$max);
-		$newskype.= '&nbsp;';
-		$newskype.='<a href="skype:';
-		$newskype.=dol_trunc($skype,$max);
-		$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$skype.'" title="'.$langs->trans("Call").'&nbsp;'.$skype.'">';
-		$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
-		$newskype.='</a>&nbsp;&nbsp;&nbsp;<a href="skype:';
-		$newskype.=dol_trunc($skype,$max);
-		$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$skype.'" title="'.$langs->trans("Chat").'&nbsp;'.$skype.'">';
-		$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
-		$newskype.='</a>';
-
-		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		$newskype ='<div class="divsocialnetwork inline-block valignmiddle">';
+		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
+		$newskype.=$value;
+		if ($type == 'skype')
 		{
-			$type='AC_SKYPE'; $link='';
-			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			$newskype='<div class="divskype nowrap">'.$newskype.($link?' '.$link:'').'</div>';
+			$newskype.= '&nbsp;';
+			$newskype.='<a href="skype:';
+			$newskype.=$value;
+			$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
+			$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
+			$newskype.='</a><a href="skype:';
+			$newskype.=$value;
+			$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
+			$newskype.='<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
+			$newskype.='</a>';
 		}
+		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type=='skype')
+		{
+			$addlink='AC_SKYPE'; $link='';
+			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
+			$newskype.=($link?' '.$link:'');
+		}
+		$newskype.='</div>';
 	}
 	else
 	{
 		$langs->load("errors");
-		$newskype.=img_warning($langs->trans("ErrorBadSkype",$skype));
+		$newskype.=img_warning($langs->trans("ErrorBadSocialNetworkValue",$value));
 	}
 	return $newskype;
 }
@@ -3151,11 +3154,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow')
-			)) {
+				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
+				'skype','twitter','facebook'
+			)
+		)) {
 			$fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
-			$marginleftonlyshort = 0;
+			$marginleftonlyshort = 2;
 			if ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
 				$facolor = '#999';
@@ -3237,12 +3242,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
 				$facolor = '#444';
+				$marginleftonlyshort=0;
 			}
 
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
 				$morecss.= ($morecss?' ':'').$reg[1];
 			}
-			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?'marginleftonlyshort':'marginleftonly').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:'').'>';
+			$enabledisablehtml = '<span class="fa '.$fakey.' '.($marginleftonlyshort?($marginleftonlyshort==1?'marginleftonlyshort':'marginleftonly'):'').' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:'').'>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
@@ -4565,6 +4571,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
  * 									'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
+ *									Numeric = Nb of digits for rounding
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
  *	@return	string					Amount with universal numeric format (Example: '99.99999') or unchanged text if conversion fails. If amount is null or '', it returns ''.
  *
@@ -4615,7 +4622,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 		if ($rounding == 'MU')     $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_UNIT;
 		elseif ($rounding == 'MT') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_TOT;
 		elseif ($rounding == 'MS') $nbofdectoround=empty($conf->global->MAIN_MAX_DECIMALS_STOCK)?5:$conf->global->MAIN_MAX_DECIMALS_STOCK;
-		elseif (is_numeric($rounding))  $nbofdectoround=$rounding; 	// For admin info page
+		elseif (is_numeric($rounding))  $nbofdectoround=$rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
@@ -5982,6 +5989,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 			$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
 			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
 			if (is_object($object) && $object->element == 'member')
@@ -6044,6 +6052,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__MEMBER_PHONE__']=$msgishtml?dol_htmlentitiesbr($object->phone):$object->phone;
 			$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
 			$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
+			$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
+			$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
+			$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
+			$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE__']        = dol_print_date($object->last_subscription_date, 'dayrfc');
+			$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_START__']  = dol_print_date($object->last_subscription_date_start, 'dayrfc');
+			$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_END__']    = dol_print_date($object->last_subscription_date_end, 'dayrfc');
 
 			if (is_object($object) && $object->element == 'societe')
 			{
@@ -6212,7 +6226,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
  *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
  *  @param	Translate	$outputlangs			Output language
  * 	@return string  		    				Output string after substitutions
- *  @see	complete_substitutions_array
+ *  @see	complete_substitutions_array, getCommonSubstitutionArray
  */
 function make_substitutions($text, $substitutionarray, $outputlangs=null)
 {
@@ -7013,11 +7027,12 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 	// No need to make a return $head. Var is modified as a reference
 	if (! empty($hookmanager))
 	{
-		$parameters=array('object' => $object, 'mode' => $mode, 'head'=>$head);
-		$reshook=$hookmanager->executeHooks('completeTabsHead',$parameters);
+		$parameters=array('object' => $object, 'mode' => $mode, 'head' => $head);
+		$reshook=$hookmanager->executeHooks('completeTabsHead', $parameters);
 		if ($reshook > 0)
 		{
 			$head = $hookmanager->resArray;
+            $h = count($head);
 		}
 	}
 }

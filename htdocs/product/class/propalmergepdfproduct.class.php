@@ -647,11 +647,24 @@ class PropalmergepdfproductLine
 	 */
 	public $id;
 
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
 	public $file_name;
 	public $lang;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_mod;
+
 	public $datec='';
 	public $tms='';
 	public $import_key;

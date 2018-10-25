@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,9 @@ class Task extends CommonObject
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
+	/**
+     * @var int ID parent task
+     */
     public $fk_task_parent;
 
     /**
@@ -67,10 +71,24 @@ class Task extends CommonObject
 	public $date_start;
 	public $date_end;
 	public $progress;
+
+	/**
+     * @var int ID
+     */
 	public $fk_statut;
+
 	public $priority;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_valid;
+
 	public $rang;
 
 	public $timespent_min_date;
@@ -323,7 +341,7 @@ class Task extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
 		if (isset($this->ref)) $this->ref=trim($this->ref);
-		if (isset($this->fk_task_parent)) $this->fk_task_parent=trim($this->fk_task_parent);
+		if (isset($this->fk_task_parent)) $this->fk_task_parent = (int) $this->fk_task_parent;
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->description)) $this->description=trim($this->description);
 		if (isset($this->duration_effective)) $this->duration_effective=trim($this->duration_effective);
@@ -688,12 +706,12 @@ class Task extends CommonObject
 
 		$this->fk_projet='';
 		$this->ref='TK01';
-		$this->fk_task_parent='';
+		$this->fk_task_parent=null;
 		$this->label='Specimen task TK01';
 		$this->duration_effective='';
-		$this->fk_user_creat='';
+		$this->fk_user_creat=null;
 		$this->progress='25';
-		$this->fk_statut='';
+		$this->fk_statut=null;
 		$this->note='This is a specimen task not';
 	}
 

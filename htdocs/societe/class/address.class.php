@@ -47,7 +47,12 @@ class Address
 
 	public $socid;
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $country_id;
@@ -522,7 +527,12 @@ class AddressLine
     public $label;
 
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $country_id;

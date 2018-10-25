@@ -696,6 +696,9 @@ textarea.centpercent {
 	height: 28px;
 	vertical-align: middle;
 }
+.divsocialnetwork:not(:first-child) {
+    padding-left: 20px;
+}
 div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
@@ -3268,7 +3271,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats130 {
     width: 158px;
     height: 48px;
-    padding: 3px
+    padding: 3px;
 }
 .boxstats {
     padding: 3px;

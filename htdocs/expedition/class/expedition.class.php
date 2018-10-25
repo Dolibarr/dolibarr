@@ -50,6 +50,9 @@ class Expedition extends CommonObject
 	 */
 	public $element="shipping";
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element="fk_expedition";
 
 	/**
@@ -62,7 +65,11 @@ class Expedition extends CommonObject
 	 */
 	public $table_element_line="expeditiondet";
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -451,7 +458,7 @@ class Expedition extends CommonObject
 		{
 			if ($detbatch->entrepot_id)
 			{
-				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->dluo_qty;
+				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
 			}
 		}
 		// create shipment lines
@@ -974,7 +981,7 @@ class Expedition extends CommonObject
 						$this->error=$linebatch->error;
 						return -1;
 					}
-					$linebatch->dluo_qty=$value['q'];
+					$linebatch->qty=$value['q'];
 					$tab[]=$linebatch;
 
 					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
@@ -983,7 +990,7 @@ class Expedition extends CommonObject
 						$prod_batch = new Productbatch($this->db);
 						$prod_batch->fetch($value['id_batch']);
 
-						if ($prod_batch->qty < $linebatch->dluo_qty)
+						if ($prod_batch->qty < $linebatch->qty)
 						{
 							$langs->load("errors");
 							$this->errors[]=$langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $prod_batch->fk_product);
@@ -1207,7 +1214,7 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						foreach($lotArray as $lot)
 						{
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->dluo_qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);  // Price is set to 0, because we don't want to see WAP changed
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch);  // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0)
 							{
 								$error++;$this->errors=$this->errors + $mouvS->errors;
@@ -2336,6 +2343,9 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element='expeditiondet';
 
+	/**
+     * @var int ID
+     */
 	public $fk_origin_line;
 
 	/**
@@ -2641,7 +2651,7 @@ class ExpeditionLigne extends CommonObjectLine
 					$this->errors[]='ErrorBadParameters';
 					$error++;
 				}
-				$qty = price2num($this->detail_batch[0]->dluo_qty);
+				$qty = price2num($this->detail_batch[0]->qty);
 			}
 		}
 		else if (! empty($this->detail_batch))
@@ -2655,7 +2665,7 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[]='ErrorBadParameters';
 				$error++;
 			}
-			$qty = price2num($this->detail_batch->dluo_qty);
+			$qty = price2num($this->detail_batch->qty);
 		}
 
 		// check parameters
@@ -2693,7 +2703,7 @@ class ExpeditionLigne extends CommonObjectLine
 				{
 					if ($expedition_batch_id != $lot->id)
 					{
-						$remainingQty += $lot->dluo_qty;
+						$remainingQty += $lot->qty;
 					}
 				}
 				$qty += $remainingQty;
@@ -2721,7 +2731,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$error++;
 					}
 				}
-				if (! $error && $this->detail_batch->dluo_qty > 0)
+				if (! $error && $this->detail_batch->qty > 0)
 				{
 					// create lot expedition line
 					if (isset($lot->id))
@@ -2731,7 +2741,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->eatby = $lot->eatby;
 						$shipmentLot->sellby = $lot->sellby;
 						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
-						$shipmentLot->dluo_qty = $this->detail_batch->dluo_qty;
+						$shipmentLot->qty = $this->detail_batch->qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
 						if ($shipmentLot->create($this->id) < 0)
 						{

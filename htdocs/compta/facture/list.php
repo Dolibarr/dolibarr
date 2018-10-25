@@ -422,7 +422,7 @@ if ($filtre)
 }
 if ($search_ref) $sql .= natural_search('f.facnumber', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
-if ($search_type != '') $sql.=" AND f.type IN (".$db->escape($search_type).")";
+if ($search_type != '' && $search_type != '-1') $sql.=" AND f.type IN (".$db->escape($search_type).")";
 if ($search_project) $sql .= natural_search('p.ref', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
@@ -458,7 +458,7 @@ if ($search_month > 0)
 	if ($search_year > 0 && empty($search_day))
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
 	else if ($search_year > 0 && ! empty($search_day))
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $serch_year))."'";
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 	else
 	$sql.= " AND date_format(f.datef, '%m') = '".$search_month."'";
 }

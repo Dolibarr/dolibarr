@@ -284,8 +284,9 @@ class Utils
 			}
 
 			$errormsg='';
+			$handle = '';
 
-			// Debut appel methode execution
+			// Start call method to execute dump
 			$fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
 			$fullcommandclear=$command." ".$paramclear." 2>&1";
 			if ($compression == 'none') $handle = fopen($outputfile, 'w');

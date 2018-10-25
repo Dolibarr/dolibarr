@@ -66,6 +66,7 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -103,7 +104,7 @@ class Societe extends CommonObject
 	 * Thirdparty name
 	 * @var string
 	 * @deprecated Use $name instead
-	 * @see name
+	 * @see $name
 	 */
 	public $nom;
 
@@ -119,7 +120,12 @@ class Societe extends CommonObject
 	public $name_alias;
 
 	public $particulier;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 
@@ -148,21 +154,21 @@ class Societe extends CommonObject
 	 * State code
 	 * @var string
 	 * @deprecated Use state_code instead
-	 * @see state_code
+	 * @see $state_code
 	 */
 	public $departement_code;
 
 	/**
 	 * @var string
 	 * @deprecated Use state instead
-	 * @see state
+	 * @see $state
 	 */
 	public $departement;
 
 	/**
 	 * @var string
 	 * @deprecated Use country instead
-	 * @see country
+	 * @see $country
 	 */
 	public $pays;
 
@@ -275,7 +281,12 @@ class Societe extends CommonObject
 	public $remise_supplier_percent;
 	public $mode_reglement_supplier_id;
 	public $cond_reglement_supplier_id;
+
+	/**
+     * @var int ID
+     */
 	public $fk_prospectlevel;
+
 	public $name_bis;
 
 	//Log data
@@ -353,7 +364,7 @@ class Societe extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated Note is split in public and private notes
-	 * @see note_public, note_private
+	 * @see $note_public, $note_private
 	 */
 	public $note;
 
@@ -443,12 +454,20 @@ class Societe extends CommonObject
 	public $array_options;
 
 	// Incoterms
+	/**
+     * @var int ID
+     */
 	public $fk_incoterms;
+
 	public $location_incoterms;
 	public $libelle_incoterms;  //Used into tooltip
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 
 
@@ -1052,10 +1071,26 @@ class Societe extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				unset($this->country_code);		// We clean this because it may have been changed after an update of country_id
-				unset($this->country);
-				unset($this->state_code);
-				unset($this->state);
+				if (is_object($this->oldcopy))	// If we have information on old values
+				{
+					if ($this->oldcopy->country_id != $this->country_id)
+					{
+						unset($this->country_code);
+						unset($this->country);
+					}
+					if ($this->oldcopy->state_id != $this->state_id)
+					{
+						unset($this->state_code);
+						unset($this->state);
+					}
+				}
+				else
+				{
+					unset($this->country_code);	// We clean this, in the doubt, because it may have been changed after an update of country_id
+					unset($this->country);
+					unset($this->state_code);
+					unset($this->state);
+				}
 
 				$nbrowsaffected = $this->db->affected_rows($resql);
 
@@ -1708,10 +1743,13 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
+
 			$discount->discount_type=$discount_type;
-			$discount->amount_ht=price2num($remise,'MT');
-			$discount->amount_tva=price2num($remise*$tva_tx/100,'MT');
-			$discount->amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
+
+			$discount->amount_ht=$discount->multicurrency_amount_ht=price2num($remise,'MT');
+			$discount->amount_tva=$discount->multicurrency_amount_tva=price2num($remise*$tva_tx/100,'MT');
+			$discount->amount_ttc=$discount->multicurrency_amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
+
 			$discount->tva_tx=price2num($tva_tx,'MT');
 			$discount->description=$desc;
 
@@ -1950,24 +1988,33 @@ class Societe extends CommonObject
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
+			$code = '';
 			if (($this->client) && (! empty ( $this->code_client ))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
 				)
 			)
-			$code = $this->code_client . ' - ';
+			{
+				$code = $this->code_client . ' - ';
+			}
 
 			if (($this->fournisseur) && (! empty ( $this->code_fournisseur ))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
 				)
 			)
-			$code .= $this->code_fournisseur . ' - ';
+			{
+				$code .= $this->code_fournisseur . ' - ';
+			}
 
 			if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
+			{
 				$name =$code.' '.$name;
+			}
 			else
+			{
 				$name =$code;
+			}
 		}
 
 		if (!empty($this->name_alias)) $name .= ' ('.$this->name_alias.')';
@@ -3150,8 +3197,12 @@ class Societe extends CommonObject
 		// Define if third party is treated as company (or not) when nature is unknown
 		$isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
 		if (! empty($this->tva_intra)) $isacompany=1;
-		else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_PRIVATE'))) $isacompany=0;
-		else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE','TE_GROUP'))) $isacompany=1;
+		else if (! empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
+		{
+			// TODO Add a field is_a_company into dictionary
+			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) $isacompany=0;
+			else $isacompany=1;
+		}
 
 		return $isacompany;
 	}
@@ -3312,6 +3363,7 @@ class Societe extends CommonObject
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
 		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
 		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
+		$this->object=empty($conf->global->MAIN_INFO_SOCIETE_OBJECT)?'':$conf->global->MAIN_INFO_SOCIETE_OBJECT;
 
 		$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 

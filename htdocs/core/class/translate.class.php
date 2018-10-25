@@ -655,11 +655,12 @@ class Translate
 	 *  @param  string	$param2     chaine de param2
 	 *  @param  string	$param3     chaine de param3
 	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
-	function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
+	function transnoentities($key, $param1='', $param2='', $param3='', $param4='', $param5='')
 	{
-		return $this->convToOutputCharset($this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4));
+		return $this->convToOutputCharset($this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4, $param5));
 	}
 
 
@@ -675,9 +676,10 @@ class Translate
 	 *  @param  string	$param2     chaine de param2
 	 *  @param  string	$param3     chaine de param3
 	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string
 	 */
-	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
+	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='', $param5='')
 	{
 		global $conf;
 
@@ -700,7 +702,7 @@ class Translate
             if (! preg_match('/^Format/',$key))
             {
             	//print $str;
-           		$str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+           		$str=sprintf($str, $param1, $param2, $param3, $param4, $param5);	// Replace %s and %d except for FormatXXX strings.
             }
 
             return $str;

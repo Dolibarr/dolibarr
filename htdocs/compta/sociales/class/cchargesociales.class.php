@@ -48,7 +48,12 @@ class Cchargesociales
 	public $deductible;
 	public $active;
 	public $code;
+
+	/**
+     * @var int ID
+     */
 	public $fk_pays;
+
 	public $module;
 	public $accountancy_code;
 

@@ -47,7 +47,11 @@ class Contact extends CommonObject
 	 */
 	public $table_element='socpeople';
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -889,6 +893,7 @@ class Contact extends CommonObject
 		$sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.=" WHERE ec.fk_c_type_contact = tc.rowid";
 		$sql.=" AND fk_socpeople = ". $this->id;
+		$sql.=" AND tc.source = 'external'";
 		$sql.=" GROUP BY tc.element";
 
 		dol_syslog(get_class($this)."::load_ref_elements", LOG_DEBUG);

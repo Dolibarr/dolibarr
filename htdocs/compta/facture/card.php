@@ -695,6 +695,9 @@ if (empty($reshook))
 					$amount_ht[$line->tva_tx] += $line->total_ht;
 					$amount_tva[$line->tva_tx] += $line->total_tva;
 					$amount_ttc[$line->tva_tx] += $line->total_ttc;
+					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
 					$i ++;
 				}
 			}
@@ -750,6 +753,9 @@ if (empty($reshook))
 					$discount->amount_ht = abs($amount_ht[$tva_tx]);
 					$discount->amount_tva = abs($amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 					$discount->tva_tx = abs($tva_tx);
 
 					$result = $discount->create($user);
@@ -1536,6 +1542,7 @@ if (empty($reshook))
 					{
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
+						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals($line->id);
 						$line->situation_percent =  $line->get_prev_progress($object->id); // get good progress including credit note
 
@@ -2877,7 +2884,8 @@ if ($action == 'create')
 	// Standard invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp='<input type="radio" id="radio_standard" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked' : '') . '> ';
-	$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
+	$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
+	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print $desc;
 	print '</div></div>';
 
@@ -2896,7 +2904,8 @@ if ($action == 'create')
     		});
     		</script>';
 
-			$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceDeposit"), $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
+			$tmp  = $tmp.'<label for="radio_deposit" >'.$langs->trans("InvoiceDeposit").'</label>';
+			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
 			print '<table class="nobordernopadding"><tr><td>';
 			print $desc;
 			print '</td>';
@@ -2920,8 +2929,9 @@ if ($action == 'create')
 		{
 			// First situation invoice
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
-			$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceFirstSituationAsk"), $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+			$tmp='<input id="radio_situation invoice" type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
+			$tmp  = $tmp.'<label for="radio_situation invoice" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
+			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 			print '</div></div>';
 
@@ -2931,7 +2941,7 @@ if ($action == 'create')
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
 			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) $tmp.=' disabled';
 			$tmp.= '> ';
-			$text = $tmp.$langs->trans("InvoiceSituationAsk") . ' ';
+			$text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
 			$text .= '<select class="flat" id="situations" name="situations">';
 			$text .= $opt;
 			$text .= '</select>';
@@ -2955,7 +2965,7 @@ if ($action == 'create')
     			});
     		});
     		</script>';
-			$text = $tmp.$langs->trans("InvoiceReplacementAsk") . ' ';
+			$text = '<label>'.$tmp.$langs->trans("InvoiceReplacementAsk") . '</label>';
 			$text .= '<select class="flat" name="fac_replacement" id="fac_replacement"';
 			if (! $options)
 				$text .= ' disabled';
@@ -2976,13 +2986,14 @@ if ($action == 'create')
 	{
 		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 		$tmp='<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
-		$text = $tmp.$langs->trans("InvoiceReplacement") . ' ';
+		$text = '<label>'.$tmp.$langs->trans("InvoiceReplacement") . '</label> ';
 		$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
 		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
 		print $desc;
 		print '</div></div>';
 	}
-
+	
+	
 	if (empty($origin))
 	{
 		if ($socid > 0)
@@ -3009,7 +3020,7 @@ if ($action == 'create')
     				});
     			});
     			</script>';
-				$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk") . ' ';
+				$text = '<label>'.$tmp.$langs->transnoentities("InvoiceAvoirAsk") . '</label> ';
 				// $text.='<input type="text" value="">';
 				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
 				if (! $optionsav)
@@ -3038,7 +3049,7 @@ if ($action == 'create')
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) $tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
 			else $tmp='<input type="radio" name="type" id="radio_creditnote" value="2" > ';
-			$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
+			$text = '<label>'.$tmp.$langs->trans("InvoiceAvoir") . '</label> ';
 			$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 			print $desc;
@@ -3049,7 +3060,7 @@ if ($action == 'create')
 	// Template invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp='<input type="radio" name="type" id="radio_template" value="0" disabled> ';
-	$text = $tmp.$langs->trans("RepeatableInvoice") . ' ';
+	$text = '<label>'.$tmp.$langs->trans("RepeatableInvoice") . '</label> ';
 	//$text.= '('.$langs->trans("YouMustCreateStandardInvoiceFirst").') ';
 	$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3);
 	print $desc;
@@ -3057,6 +3068,41 @@ if ($action == 'create')
 
 	print '</div>';
 
+	
+	if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
+	{
+    	// Add auto select default document model
+    	$listtType=array(Facture::TYPE_STANDARD,Facture::TYPE_REPLACEMENT,Facture::TYPE_CREDIT_NOTE,Facture::TYPE_DEPOSIT,Facture::TYPE_SITUATION);
+    	$jsListType='';
+    	foreach ($listtType as $type)
+    	{
+    	    $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
+    	    $curent = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+    	    $jsListType.=(!empty($jsListType)?',':'').'"'.$type.'":"'.$curent.'"';
+    	}
+    	
+    	print '<script type="text/javascript" language="javascript">
+        		$(document).ready(function() {
+                    var listType = {'.$jsListType.'};
+        			$("[name=\'type\'").change(function() {
+        				if($( this ).prop("checked"))
+                        {
+                            if(($( this ).val() in listType))
+                            {
+                                $("#model").val(listType[$( this ).val()]);
+                            }
+                            else
+                            {
+                                $("#model").val("'.$conf->global->FACTURE_ADDON_PDF.'");
+                            }
+                        }
+        			});
+        		});
+        		</script>';
+	}
+	
+	
+	
 	print '</td></tr>';
 
 	if ($socid > 0)
@@ -3147,7 +3193,14 @@ if ($action == 'create')
 	print '<td colspan="2">';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 	$liste = ModelePDFFactures::liste_modeles($db);
-	print $form->selectarray('model', $liste, $conf->global->FACTURE_ADDON_PDF);
+	if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)){ // Hidden conf
+	   $paramkey='FACTURE_ADDON_PDF_'.$object->type;
+	   $curent = !empty($conf->global->$paramkey)?$conf->global->$paramkey:$conf->global->FACTURE_ADDON_PDF;
+	}
+	else{
+	   $curent = $conf->global->FACTURE_ADDON_PDF;
+	}
+	print $form->selectarray('model', $liste, $curent);
 	print "</td></tr>";
 
 	// Multicurrency
@@ -3253,8 +3306,7 @@ if ($action == 'create')
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1);
 		// We check if Origin document (id and type is known) has already at least one invoice attached to it
 		$objectsrc->fetchObjectLinked($originid,$origin,'','facture');
-		$cntinvoice=count($objectsrc->linkedObjects['facture']);
-		if ($cntinvoice>=1)
+		if (is_array($objectsrc->linkedObjects['facture']) && count($objectsrc->linkedObjects['facture']) >= 1)
 		{
 			setEventMessages('WarningBillExist', null, 'warnings');
 			echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';

@@ -216,6 +216,7 @@ switch ($action)
 		$invoice->cond_reglement_id=$cond_reglement_id;
 		$invoice->mode_reglement_id=$mode_reglement_id;
 		$invoice->module_source = 'cashdesk';
+		$invoice->pos_source = '0';
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...

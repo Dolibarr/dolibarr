@@ -76,10 +76,24 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $processing;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_mod;
+
 	public $nbrun;
 	public $libname;
 	public $test;					// A test condition to know if job is visible/qualified
@@ -1379,9 +1393,22 @@ class Cronjobline
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_mod;
+
 	public $note;
 	public $nbrun;
 	public $libname;

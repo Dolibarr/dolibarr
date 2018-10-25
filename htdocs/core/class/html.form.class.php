@@ -58,15 +58,20 @@ class Form
 	 */
 	public $error='';
 
-	var $num;
+    /**
+     * @var string[]    Array of error strings
+     */
+    public $errors = array();
+
+	public $num;
 
 	// Cache arrays
-	var $cache_types_paiements=array();
-	var $cache_conditions_paiements=array();
-	var $cache_availability=array();
-	var $cache_demand_reason=array();
-	var $cache_types_fees=array();
-	var $cache_vatrates=array();
+	public $cache_types_paiements=array();
+	public $cache_conditions_paiements=array();
+	public $cache_availability=array();
+	public $cache_demand_reason=array();
+	public $cache_types_fees=array();
+	public $cache_vatrates=array();
 
 
 	/**
@@ -663,15 +668,16 @@ class Form
 	 *  @param  string	$htmloption     	Options html on select object
 	 *  @param	integer	$maxlength			Max length for labels (0=no limit)
 	 *  @param	string	$morecss			More css class
-	 *  @param	string	$usecodeaskey		'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	string	$usecodeaskey		''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
 	 *  @param	int		$showempty			Show empty choice
-	 *  @param	int		$disablefavorites	Disable favorites
+	 *  @param	int		$disablefavorites	1=Disable favorites,
+	 *  @param	int		$addspecialentries	1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 *  @return string           			HTML string with select
 	 */
-	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1, $disablefavorites=0)
+	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1, $disablefavorites=0, $addspecialentries=0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf,$langs,$mysoc;
 
 		$langs->load("dict");
 
@@ -713,9 +719,25 @@ class Form
 				if (empty($disablefavorites)) array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
 				else $countryArray = dol_sort_array($countryArray, 'label');
 
+				if ($showempty)
+				{
+					$out.='<option value="">&nbsp;</option>'."\n";
+				}
+
+				if ($addspecialentries)	// Add dedicated entries for groups of countries
+				{
+					//if ($showempty) $out.= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+					$out.= '<option value="special_allnotme"'.($selected == 'special_allnotme' ? ' selected' : '').'>'.$langs->trans("CountriesExceptMe", $langs->transnoentitiesnoconv("Country".$mysoc->country_code)).'</option>';
+					$out.= '<option value="special_eec"'.($selected == 'special_eec' ? ' selected' : '').'>'.$langs->trans("CountriesInEEC").'</option>';
+					if ($mysoc->isInEEC()) $out.= '<option value="special_eecnotme"'.($selected == 'special_eecnotme' ? ' selected' : '').'>'.$langs->trans("CountriesInEECExceptMe", $langs->transnoentitiesnoconv("Country".$mysoc->country_code)).'</option>';
+					$out.= '<option value="special_noteec"'.($selected == 'special_noteec' ? ' selected' : '').'>'.$langs->trans("CountriesNotInEEC").'</option>';
+					$out.= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+				}
+
 				foreach ($countryArray as $row)
 				{
-					if (empty($showempty) && empty($row['rowid'])) continue;
+					//if (empty($showempty) && empty($row['rowid'])) continue;
+					if (empty($row['rowid'])) continue;
 
 					if (empty($disablefavorites) && $row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
@@ -2049,6 +2071,12 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
 		}
+		
+		// include search in supplier ref
+		if(!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF))
+		{
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+		}
 
 		//Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
@@ -2102,6 +2130,7 @@ class Form
 				if ($i > 0) $sql.=" AND ";
 				$sql.="(p.ref LIKE '".$db->escape($prefix.$crit)."%' OR p.label LIKE '".$db->escape($prefix.$crit)."%'";
 				if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$db->escape($prefix.$crit)."%'";
+				if (! empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) $sql.=" OR pfp.ref_fourn LIKE '".$db->escape($prefix.$crit)."%'";
 				$sql.=")";
 				$i++;
 			}
@@ -3051,7 +3080,10 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$label=($langs->trans("DemandReasonType".$obj->code)!=("DemandReasonType".$obj->code)?$langs->trans("DemandReasonType".$obj->code):($obj->label!='-'?$obj->label:''));
+				$label=($obj->label!='-'?$obj->label:'');
+				if ($langs->trans("DemandReasonType".$obj->code) != ("DemandReasonType".$obj->code)) $label = $langs->trans("DemandReasonType".$obj->code); // So translation key DemandReasonTypeSRC_XXX will work
+				if ($langs->trans($obj->code) != $obj->code) $label=$langs->trans($obj->code);																// So translation key SRC_XXX will work
+
 				$tmparray[$obj->rowid]['id']   =$obj->rowid;
 				$tmparray[$obj->rowid]['code'] =$obj->code;
 				$tmparray[$obj->rowid]['label']=$label;
@@ -3100,7 +3132,8 @@ class Form
 			{
 				print '<option value="'.$arraydemandreason['id'].'">';
 			}
-			print $arraydemandreason['label'];
+			$label=$arraydemandreason['label'];	// Translation of label was already done into the ->loadCacheInputReason
+			print $langs->trans($label);
 			print '</option>';
 		}
 		print '</select>';
@@ -3470,13 +3503,19 @@ class Form
 
 			while($res = $this->db->fetch_object($resql))
 			{
+			    $unitLabel = $res->label;
+			    if (! empty($langs->tab_translate['unit'.$res->code]))	// check if Translation is available before
+			    {
+			        $unitLabel = $langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label;
+			    }
+			    
 				if ($selected == $res->rowid)
 				{
-					$return.='<option value="'.$res->rowid.'" selected>'.($langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label).'</option>';
+				    $return.='<option value="'.$res->rowid.'" selected>'.$unitLabel.'</option>';
 				}
 				else
 				{
-					$return.='<option value="'.$res->rowid.'">'.($langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label).'</option>';
+				    $return.='<option value="'.$res->rowid.'">'.$unitLabel.'</option>';
 				}
 			}
 			$return.='</select>';
@@ -3696,6 +3735,7 @@ class Form
 	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
 	{
         // phpcs:enable
+        dol_syslog(__METHOD__ . ': using form_confirm is deprecated. Use formconfim instead.', LOG_WARNING);
 		print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
 	}
 
@@ -3723,7 +3763,7 @@ class Form
 	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice='', $useajax=0, $height=200, $width=500, $disableformtag=0)
+	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice='', $useajax=0, $height=210, $width=500, $disableformtag=0)
 	{
 		global $langs,$conf;
 		global $useglobalvars;
@@ -3873,7 +3913,7 @@ class Form
 			$formconfirm.= ($question ? '<div class="confirmmessage">'.img_help('','').' '.$question . '</div>': '');
 			$formconfirm.= '</div>'."\n";
 
-			$formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
+			$formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
 			$formconfirm.= '<script type="text/javascript">'."\n";
 			$formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
@@ -3944,11 +3984,11 @@ class Form
             });
             });
             </script>';
-			$formconfirm.= "<!-- end ajax form_confirm -->\n";
+			$formconfirm.= "<!-- end ajax formconfirm -->\n";
 		}
 		else
 		{
-			$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
+			$formconfirm.= "\n<!-- begin formconfirm page=".$page." -->\n";
 
 			if (empty($disableformtag)) $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
 
@@ -3982,7 +4022,7 @@ class Form
 			if (empty($disableformtag)) $formconfirm.= "</form>\n";
 			$formconfirm.= '<br>';
 
-			$formconfirm.= "<!-- end form_confirm -->\n";
+			$formconfirm.= "<!-- end formconfirm -->\n";
 		}
 
 		return $formconfirm;

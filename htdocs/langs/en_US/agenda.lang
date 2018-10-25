@@ -1,12 +1,12 @@
-# Dolibarr language file - Source file is en_US - agenda 
+# Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID event
 Actions=Events
 Agenda=Agenda
 TMenuAgenda=Agenda
 Agendas=Agendas
 LocalAgenda=Internal calendar
-ActionsOwnedBy=Event owned by 
-ActionsOwnedByShort=Owner 
+ActionsOwnedBy=Event owned by
+ActionsOwnedByShort=Owner
 AffectedTo=Assigned to
 Event=Event
 Events=Events
@@ -31,8 +31,8 @@ ViewWeek=Week view
 ViewPerUser=Per user view
 ViewPerType=Per type view
 AutoActions= Automatic filling
-AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked, only manual actions will be included in logged and visible into agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved. 
-AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
+AgendaAutoActionDesc= Here you can define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow exports of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
 ActionsEvents=Events for which Dolibarr will create an action in agenda automatically
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
@@ -111,7 +111,7 @@ DefaultWorkingHours=Default working hours in day (Example: 9-18)
 # External Sites ical
 ExportCal=Export calendar
 ExtSites=Import external calendars
-ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Number of calendars
 AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL to access .ical file

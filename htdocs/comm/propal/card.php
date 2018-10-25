@@ -348,13 +348,13 @@ if (empty($reshook))
 			// If we select proposal to clone during creation (when option PROPAL_CLONE_ON_CREATE_PAGE is on)
 			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
 			{
-				if ($object->fetch(GETPOST('copie_propal')) > 0) {
+				if ($object->fetch(GETPOST('copie_propal','int')) > 0) {
 					$object->ref = GETPOST('ref');
 					$object->datep = $datep;
 					$object->date_livraison = $date_delivery;
 					$object->availability_id = GETPOST('availability_id');
 					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address');
+					$object->fk_delivery_address = GETPOST('fk_address','int');
 					$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 					$object->duree_validite = $duration;
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
@@ -362,9 +362,9 @@ if (empty($reshook))
 					$object->fk_account = GETPOST('fk_account', 'int');
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
-					$object->socid = GETPOST('socid');
-					$object->contactid = GETPOST('contactid');
-					$object->fk_project = GETPOST('projectid');
+					$object->socid = GETPOST('socid','int');
+					$object->contactid = GETPOST('contactid','int');
+					$object->fk_project = GETPOST('projectid','int');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
 					$object->note_private = GETPOST('note_private','none');
@@ -391,8 +391,8 @@ if (empty($reshook))
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->contactid = GETPOST('contactid');
-				$object->fk_project = GETPOST('projectid');
+				$object->contactid = GETPOST('contactid','int');
+				$object->fk_project = GETPOST('projectid','int');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note_private = GETPOST('note_private','none');
@@ -566,6 +566,16 @@ if (empty($reshook))
 						}
 					}
 
+					if (! empty($conf->global->PROPOSAL_AUTO_ADD_AUTHOR_AS_CONTACT))
+					{
+						$result = $object->add_contact($user->id, 'SALESREPFOLL', 'internal');
+						if ($result < 0)
+						{
+							$error++;
+							setEventMessages($langs->trans("ErrorFailedToAddUserAsContact"), null, 'errors');
+						}
+					}
+
 					if (! $error)
 					{
 						$db->commit();
@@ -610,11 +620,22 @@ if (empty($reshook))
 	// Classify billed
 	else if ($action == 'classifybilled' && $usercanclose)
 	{
+		$db->begin();
+
 		$result=$object->cloture($user, 4, '');
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
 		}
 	}
 
@@ -628,11 +649,22 @@ if (empty($reshook))
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == Propal::STATUS_VALIDATED)
 			{
+				$db->begin();
+
 				$result=$object->cloture($user, GETPOST('statut','int'), GETPOST('note_private','none'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				}
+
+				if (! $error)
+				{
+					$db->commit();
+				}
+				else
+				{
+					$db->rollback();
 				}
 			}
 		}
@@ -644,11 +676,22 @@ if (empty($reshook))
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
 		{
+			$db->begin();
+
 			$result=$object->reopen($user, 1);
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
+			}
+
+			if (! $error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
 			}
 		}
 	}
@@ -932,6 +975,7 @@ if (empty($reshook))
 				// Add custom code and origin country into description
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
 				{
+					$tmptxt = '(';
 					// Define output language
 					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$outputlangs = $langs;

@@ -75,6 +75,8 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
+	$db->begin();
+
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml'),'chaine',0,'',$conf->entity);
@@ -173,11 +175,24 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START",'int'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "FACTURE_TVAOPTION", GETPOST("optiontva",'aZ09'),'chaine',0,'',$conf->entity);
+	// Sale tax options
+	$usevat = GETPOST("optiontva",'aZ09');
+	$uselocaltax1 = GETPOST("optionlocaltax1",'aZ09');
+	$uselocaltax2 = GETPOST("optionlocaltax2",'aZ09');
+	if ($uselocaltax1 == 'localtax1on' && ! $usevat)
+	{
+		setEventMessages($langs->trans("IfYouUseASecondTaxYouMustSetYouUseTheMainTax"), null, 'errors');
+		$error++;
+	}
+	if ($uselocaltax2 == 'localtax2on' && ! $usevat)
+	{
+		setEventMessages($langs->trans("IfYouUseAThirdTaxYouMustSetYouUseTheMainTax"), null, 'errors');
+		$error++;
+	}
 
-	// Local taxes
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", GETPOST("optionlocaltax1",'aZ09'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", GETPOST("optionlocaltax2",'aZ09'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_TVAOPTION", $usevat,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2,'chaine',0,'',$conf->entity);
 
 	if($_POST["optionlocaltax1"]=="localtax1on")
 	{
@@ -202,6 +217,15 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2','aZ09'),'chaine',0,'',$conf->entity);
 		}
 		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2",'aZ09'),'chaine',0,'',$conf->entity);
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 
 	if ($action != 'updateedit' && ! $error)
@@ -586,7 +610,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -595,7 +619,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -1024,7 +1048,7 @@ else
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -1034,7 +1058,7 @@ else
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 

@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_einstein.modules.php
  *	\ingroup    commande
- *	\brief      Fichier de la classe permettant de generer les commandes au modele Einstein
+ *	\brief      File of Class to generate PDF orders with template Einstein
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe to generate PDF orders with template Einstein
+ *	Class to generate PDF orders with template Einstein
  */
 class pdf_einstein extends ModelePDFCommandes
 {
@@ -149,13 +149,13 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode reglement
-		$this->option_condreg = 1;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 0;                // Affiche si il y a eu escompte
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1;                 // Display payment mode
+		$this->option_condreg = 1;                 // Display payment terms
+		$this->option_codeproduitservice = 1;      // Display product-service code
+		$this->option_multilang = 1;               // Available in several languages
+		$this->option_escompte = 0;                // Displays if there has been a discount
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
@@ -1261,26 +1261,29 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
-		if ($this->emetteur->logo)
+		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO))
 		{
-			if (is_readable($logo))
+			$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+			if ($this->emetteur->logo)
 			{
-			    $height=pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
+				if (is_readable($logo))
+				{
+				    $height=pdf_getHeightForLogo($logo);
+				    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
+				}
+				else
+				{
+					$pdf->SetTextColor(200,0,0);
+					$pdf->SetFont('','B', $default_font_size -2);
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+				}
 			}
 			else
 			{
-				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B', $default_font_size -2);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+				$text=$this->emetteur->name;
+				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 			}
-		}
-		else
-		{
-			$text=$this->emetteur->name;
-			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 		$pdf->SetFont('','B', $default_font_size + 3);

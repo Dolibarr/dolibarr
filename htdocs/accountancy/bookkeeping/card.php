@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2017 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta"));
@@ -49,12 +50,21 @@ if ($user->societe_id > 0) {
 
 $mesg = '';
 
-$account_number = GETPOST('account_number','alphanohtml');
+$accountingaccount = new AccountingAccount($db);
+$accountingjournal = new AccountingJournal($db);
+
+$accountingaccount_number = GETPOST('accountingaccount_number','alphanohtml');
+$accountingaccount->fetch(null, $accountingaccount_number, true);
+$accountingaccount_label = $accountingaccount->label;
+
+$journal_code = GETPOST('code_journal','alpha');
+$accountingjournal->fetch(null, $journal_code);
+$journal_label = $accountingjournal->label;
+
 $subledger_account = GETPOST('subledger_account','alphanohtml');
 if ($subledger_account == - 1) {
 	$subledger_account = null;
 }
-$label_compte = GETPOST('label_compte','alphanohtml');
 $label_operation= GETPOST('label_operation','alphanohtml');
 $debit = price2num(GETPOST('debit','alpha'));
 $credit = price2num(GETPOST('credit','alpha'));
@@ -80,7 +90,7 @@ if ($action == "confirm_update") {
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action='update';
 	}
-	if (empty($account_number) || $account_number == '-1')
+	if (empty($accountingaccount_number) || $accountingaccount_number == '-1')
 	{
 		$error++;
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
@@ -96,9 +106,9 @@ if ($action == "confirm_update") {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			$object->numero_compte = $account_number;
+			$object->numero_compte = $accountingaccount_number;
 			$object->subledger_account = $subledger_account;
-			$object->label_compte = $label_compte;
+			$object->label_compte = $accountingaccount_label;
 			$object->label_operation= $label_operation;
 			$object->debit = $debit;
 			$object->credit = $credit;
@@ -139,7 +149,7 @@ else if ($action == "add") {
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action='';
 	}
-	if (empty($account_number) || $account_number == '-1')
+	if (empty($accountingaccount_number) || $accountingaccount_number == '-1')
 	{
 		$error++;
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
@@ -149,9 +159,9 @@ else if ($action == "add") {
 	if (! $error) {
 		$object = new BookKeeping($db);
 
-		$object->numero_compte = $account_number;
+		$object->numero_compte = $accountingaccount_number;
 		$object->subledger_account = $subledger_account;
-		$object->label_compte = $label_compte;
+		$object->label_compte = $accountingaccount_label;
 		$object->label_operation= $label_operation;
 		$object->debit = $debit;
 		$object->credit = $credit;
@@ -159,7 +169,8 @@ else if ($action == "add") {
 		$object->doc_type = GETPOST('doc_type','alpha');
 		$object->piece_num = $piece_num;
 		$object->doc_ref = GETPOST('doc_ref','alpha');
-		$object->code_journal = GETPOST('code_journal','alpha');
+		$object->code_journal = $journal_code;
+		$object->journal_label = $journal_label;
 		$object->fk_doc = GETPOST('fk_doc','alpha');
 		$object->fk_docdet = GETPOST('fk_docdet','alpha');
 
@@ -212,12 +223,12 @@ else if ($action == "confirm_create") {
 
 	$object = new BookKeeping($db);
 
-	if (! GETPOST('code_journal','alpha') || GETPOST('code_journal','alpha') == '-1') {
+	if (! $journal_code || $journal_code == '-1') {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
 		$action='create';
 		$error++;
 	}
-	if (! GETPOST('next_num_mvt'))
+	if (! GETPOST('next_num_mvt', 'alpha'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumPiece")), null, 'errors');
 		$error++;
@@ -232,7 +243,8 @@ else if ($action == "confirm_create") {
 		$object->doc_type = GETPOST('doc_type','alpha');
 		$object->piece_num = GETPOST('next_num_mvt','alpha');
 		$object->doc_ref = GETPOST('doc_ref','alpha');
-		$object->code_journal = GETPOST('code_journal','alpha');
+		$object->code_journal = $journal_code;
+		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
 		$object->montant = 0;
@@ -253,7 +265,7 @@ else if ($action == "confirm_create") {
 }
 
 if ($action == 'setdate') {
-	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
+	$datedoc = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 	$result = $object->updateByMvt($piece_num,'doc_date',$db->idate($datedoc),$mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -267,8 +279,8 @@ if ($action == 'setdate') {
 }
 
 if ($action == 'setjournal') {
-	$journaldoc = trim(GETPOST('code_journal','alpha'));
-	$result = $object->updateByMvt($piece_num, 'code_journal', $journaldoc, $mode);
+	$result = $object->updateByMvt($piece_num, 'code_journal', $journal_code, $mode);
+	$result = $object->updateByMvt($piece_num, 'journal_label', $journal_label, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -312,7 +324,6 @@ if ($action == 'valid') {
 
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
-$accountjournal = new AccountingJournal($db);
 
 llxHeader('', $langs->trans("CreateMvts"));
 
@@ -357,7 +368,7 @@ if ($action == 'create')
 
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Codejournal") . '</td>';
-	print '<td>' . $formaccounting->select_journal(GETPOST('code_journal'),'code_journal',0,1,array(),1,1) . '</td>';
+	print '<td>' . $formaccounting->select_journal($journal_code,'code_journal',0,0,1,1) . '</td>';
 	print '</tr>';
 
 	print '<tr>';
@@ -460,7 +471,7 @@ if ($action == 'create')
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-		print $object->code_journal ;
+			print $object->code_journal ;
 		}
 		print '</td>';
 		print '</tr>';
@@ -590,7 +601,6 @@ if ($action == 'create')
 
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
-				print_liste_field_titre("LabelAccount");
 				print_liste_field_titre("LabelOperation");
 				print_liste_field_titre("Debit", "", "", "", "", 'align="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'align="right"');
@@ -605,7 +615,7 @@ if ($action == 'create')
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<td>';
-						print $formaccounting->select_account($line->numero_compte, 'account_number', 1, array (), 1, 1, '');
+						print $formaccounting->select_account($line->numero_compte, 'accountingaccount_number', 1, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
@@ -619,7 +629,6 @@ if ($action == 'create')
 							print '<input type="text" name="subledger_account" value="'.$line->subledger_account.'">';
 						}
 						print '</td>';
-						print '<td><input type="text" class="minwidth100" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $line->label_operation. '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
@@ -628,9 +637,9 @@ if ($action == 'create')
 						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
 						print '</td>';
 					} else {
-						print '<td>' . length_accountg($line->numero_compte) . '</td>';
+						$accountingaccount->fetch(null, $line->numero_compte, true);
+						print '<td>' . $accountingaccount->getNomUrl(0,1,1,'',0) . '</td>';
 						print '<td>' . length_accounta($line->subledger_account) . '</td>';
-						print '<td>' . $line->label_compte . '</td>';
 						print '<td>' . $line->label_operation. '</td>';
 						print '<td align="right">' . price($line->debit) . '</td>';
 						print '<td align="right">' . price($line->credit) . '</td>';
@@ -663,7 +672,7 @@ if ($action == 'create')
 				if ($action == "" || $action == 'add') {
 					print '<tr class="oddeven">';
 					print '<td>';
-					print $formaccounting->select_account($account_number, 'account_number', 1, array (), 1, 1, '');
+					print $formaccounting->select_account($accountingaccount_number, 'accountingaccount_number', 1, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
 					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
@@ -677,7 +686,6 @@ if ($action == 'create')
 						print '<input type="text" name="subledger_account" value="">';
 					}
 					print '</td>';
-					print '<td><input type="text" class="minwidth100" name="label_compte" value=""/></td>';
 					print '<td><input type="text" class="minwidth200" name="label_operation" value=""/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';

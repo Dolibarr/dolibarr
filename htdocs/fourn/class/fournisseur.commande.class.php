@@ -128,10 +128,20 @@ class CommandeFournisseur extends CommonOrder
 	public $note_private;
     public $note_public;
     public $model_pdf;
+
+    /**
+     * @var int ID
+     */
     public $fk_project;
+
     public $cond_reglement_id;
     public $cond_reglement_code;
+
+    /**
+     * @var int ID
+     */
     public $fk_account;
+
     public $mode_reglement_id;
     public $mode_reglement_code;
     public $user_author_id;
@@ -157,7 +167,11 @@ class CommandeFournisseur extends CommonOrder
     public $linked_objects=array();
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
     public $fk_multicurrency;
+
     public $multicurrency_code;
     public $multicurrency_tx;
     public $multicurrency_total_ht;
@@ -3154,7 +3168,14 @@ class CommandeFournisseurLigne extends CommonOrderLine
     public $fk_commande;
 
     // From llx_commande_fournisseurdet
+    /**
+     * @var int ID
+     */
     public $fk_parent_line;
+
+    /**
+     * @var int ID
+     */
     public $fk_facture;
 
     /**
