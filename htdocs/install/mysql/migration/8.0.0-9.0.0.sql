@@ -155,8 +155,4 @@ ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bordereau (fk_
 ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bank (fk_bank);
 ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_paiement (fk_paiement);
 
-INSERT INTO llx_bordereau_chequedet (fk_bordereau, fk_bank, fk_paiement, type_line, emetteur, amount, num_chq, banque, datec)
-SELECT b.fk_bordereau, b.rowid as fk_bank, IF(ISNULL(p.rowid), 0, p.rowid) as fk_paiement, 'bank' as type_line, b.emetteur, b.amount, b.num_chq, b.banque, b.datec
-FROM llx_bank as b
-LEFT JOIN llx_paiement as p ON p.fk_bank=b.rowid
-WHERE b.fk_bordereau <> 0
+INSERT INTO llx_bordereau_chequedet (fk_bordereau, fk_bank, fk_paiement, type_line, emetteur, amount, num_chq, banque, datec) SELECT b.fk_bordereau, b.rowid as fk_bank, IF(ISNULL(p.rowid), 0, p.rowid) as fk_paiement, 'bank' as type_line, b.emetteur, b.amount, b.num_chq, b.banque, b.datec FROM llx_bank as b LEFT JOIN llx_paiement as p ON p.fk_bank=b.rowid WHERE b.fk_bordereau <> 0
