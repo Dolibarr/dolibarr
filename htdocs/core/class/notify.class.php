@@ -65,6 +65,7 @@ class Notify
 	// Les codes actions sont definis dans la table llx_notify_def
 
 	// codes actions supported are
+	// @TODO defined also into interface_50_modNotificiation_Notificiation.class.php
 	public $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
@@ -76,7 +77,11 @@ class Notify
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_REFUSE',
-		'SHIPPING_VALIDATE'
+		'SHIPPING_VALIDATE',
+		'EXPENSE_REPORT_VALIDATE',
+		'EXPENSE_REPORT_APPROVE',
+		'HOLIDAY_VALIDATE',
+		'HOLIDAY_APPROVE'
 	);
 
 
@@ -340,22 +345,27 @@ class Notify
 		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
 
+		$sql = '';
+
 		// Check notification per third party
-		$sql = "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
-		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-		$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-		$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
-		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
-		$sql.= " AND n.fk_soc = s.rowid";
-		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-		else $sql.= " AND a.code = '".$notifcode."'";	// New usage
-		$sql .= " AND s.rowid = ".$object->socid;
+		if ($object->socid > 0)
+		{
+			$sql.= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
+			$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+			$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+			$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
+			$sql.= " ".MAIN_DB_PREFIX."societe as s";
+			$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+			$sql.= " AND n.fk_soc = s.rowid";
+			if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+			else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+			$sql .= " AND s.rowid = ".$object->socid;
+
+			$sql.= "\nUNION\n";
+		}
 
 		// Check notification per user
-		$sql.= "\nUNION\n";
-
 		$sql.= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
@@ -363,7 +373,7 @@ class Notify
 		$sql.= " ".MAIN_DB_PREFIX."notify_def as n";
 		$sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
 		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-		else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+		else $sql.= " AND a.code = '".$this->db->escape($notifcode)."'";	// New usage
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -472,6 +482,26 @@ class Notify
 								$dir_output = $conf->expedition->dir_output.'/sending/';
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
+								break;
+							case 'EXPENSE_REPORT_VALIDATE':
+								$dir_output = $conf->expensereport->dir_output;
+								$object_type = 'expensereport';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated",$newref);
+								break;
+							case 'EXPENSE_REPORT_APPROVE':
+								$dir_output = $conf->expensereport->dir_output;
+								$object_type = 'expensereport';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved",$newref);
+								break;
+							case 'HOLIDAY_VALIDATE':
+								$dir_output = $conf->holiday->dir_output;
+								$object_type = 'holiday';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated",$newref);
+								break;
+							case 'HOLIDAY_APPROVE':
+								$dir_output = $conf->holiday->dir_output;
+								$object_type = 'holiday';
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved",$newref);
 								break;
 						}
 						$ref = dol_sanitizeFileName($newref);
@@ -662,6 +692,26 @@ class Notify
 						$dir_output = $conf->expedition->dir_output.'/sending/';
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
+						break;
+					case 'EXPENSE_REPORT_VALIDATE':
+						$dir_output = $conf->expensereport->dir_output;
+						$object_type = 'expensereport';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportValidated",$newref);
+						break;
+					case 'EXPENSE_REPORT_APPROVE':
+						$dir_output = $conf->expensereport->dir_output;
+						$object_type = 'expensereport';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpenseReportApproved",$newref);
+						break;
+					case 'HOLIDAY_VALIDATE':
+						$dir_output = $conf->holiday->dir_output;
+						$object_type = 'holiday';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayValidated",$newref);
+						break;
+					case 'HOLIDAY_APPROVE':
+						$dir_output = $conf->holiday->dir_output;
+						$object_type = 'holiday';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved",$newref);
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);

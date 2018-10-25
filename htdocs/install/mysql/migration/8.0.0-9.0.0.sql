@@ -69,6 +69,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_DELETE','Contract deleted','Executed when a contract is deleted','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention is deleted','Executed when a intervention is deleted','ficheinter',35);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',204);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
 
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
 

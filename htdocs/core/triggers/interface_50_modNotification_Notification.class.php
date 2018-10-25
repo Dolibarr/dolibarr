@@ -44,6 +44,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public $picto = 'email';
 
+	// @TODO Defined also into notify.class.php)
 	public $listofmanagedevents=array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
@@ -55,8 +56,12 @@ class InterfaceNotification extends DolibarrTriggers
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_REFUSE',
-		'SHIPPING_VALIDATE'
-   	);
+		'SHIPPING_VALIDATE',
+		'EXPENSE_REPORT_VALIDATE',
+		'EXPENSE_REPORT_APPROVE',
+		'HOLIDAY_VALIDATE',
+		'HOLIDAY_APPROVE'
+	);
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -112,7 +117,7 @@ class InterfaceNotification extends DolibarrTriggers
 
 				$qualified=0;
 				// Check is this event is supported by notification module
-				if (in_array($obj->code,$this->listofmanagedevents)) $qualified=1;
+				if (in_array($obj->code, $this->listofmanagedevents)) $qualified=1;
 				// Check if module for this event is active
 				if ($qualified)
 				{
@@ -125,7 +130,7 @@ class InterfaceNotification extends DolibarrTriggers
 					elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) $qualified=0;
 					elseif ($element == 'shipping' && empty($conf->expedition->enabled)) $qualified=0;
 					elseif ($element == 'member' && empty($conf->adherent->enabled)) $qualified=0;
-					elseif (! in_array($element,array('order_supplier','invoice_supplier','withdraw','shipping','member')) && empty($conf->$element->enabled)) $qualified=0;
+					elseif (! in_array($element,array('order_supplier','invoice_supplier','withdraw','shipping','member','expensereport')) && empty($conf->$element->enabled)) $qualified=0;
 				}
 
 				if ($qualified)
