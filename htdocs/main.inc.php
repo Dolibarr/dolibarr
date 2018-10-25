@@ -1191,7 +1191,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (! defined('DISABLE_FONT_AWSOME'))
 		{
 			print '<!-- Includes CSS for font awesome -->'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/font-awesome.min.css'.($ext?'?'.$ext:'').'">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/all.min.css'.($ext?'?'.$ext:'').'">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/v4-shims.min.css'.($ext?'?'.$ext:'').'">'."\n";
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -1540,7 +1541,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 			$text ='<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 			//$text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
-			$text.='<span class="fa fa-print atoplogin"></span>';
+			$text.='<span class="fas fa-print atoplogin"></span>';
 			$text.='</a>';
 			$toprightmenu.=@Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 		}

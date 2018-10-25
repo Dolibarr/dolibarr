@@ -862,9 +862,7 @@ select.flat.selectlimit {
 .fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
 	color: #055;
 }
-.fa-trash, .fa-crop, .fa-pencil {
-	font-size: 1.4em;
-}
+
 .fa-15 {
 	font-size: 1.5em;
 }
@@ -2019,7 +2017,6 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
-	font-weight: normal !important;
 }
 .login_block_getinfo {
 	text-align: center;
@@ -2029,7 +2026,6 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
-	font-weight: normal !important;
 }
 .alogin, .alogin:hover {
 	font-weight: normal !important;
@@ -2053,7 +2049,6 @@ img.login, img.printer, img.entity {
 	width: 16px;
     height: 16px;
     border-radius: 8px;
-    background-size: contain;
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
