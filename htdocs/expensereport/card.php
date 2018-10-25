@@ -356,7 +356,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     			// SUBJECT
-    			$subject = $langs->transnoentities("ExpenseReportWaitingForApproval");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForApproval");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -472,7 +475,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
    			    // SUBJECT
-    			$subject = $langs->transnoentities("ExpenseReportWaitingForReApproval");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForReApproval");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -594,7 +600,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
    			    // SUBJECT
-       			$subject = $langs->transnoentities("ExpenseReportApproved");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportApproved");
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -713,7 +722,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     		    // SUBJECT
-       			$subject = $langs->transnoentities("ExpenseReportRefused");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportRefused");
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -842,7 +854,10 @@ if (empty($reshook))
 	    			    $filename=array(); $filedir=array(); $mimetype=array();
 
 	    			    // SUBJECT
-	    				$subject = $langs->transnoentities("ExpenseReportCanceled");
+	    			    $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+	    			    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+	    			    $subject = $societeName." - ".$langs->transnoentities("ExpenseReportCanceled");
 
 	    				// CONTENT
 	    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -1008,18 +1023,14 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     		    // SUBJECT
-    			$subject = $langs->transnoentities("ExpenseReportPaid");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportPaid");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
     			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
-
-        		// CONTENT
-        		$message = "Bonjour {$destinataire->firstname},\n\n";
-        		$message.= "Votre note de frais \"{$object->ref}\" vient d'être payée.\n";
-        		$message.= "- Payeur : {$expediteur->firstname} {$expediteur->lastname}\n";
-        		$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-        		$message.= "Bien cordialement,\n' SI";
 
         		// Generate pdf before attachment
         		$object->setDocModel($user,"");
