@@ -598,6 +598,234 @@ class Holiday extends CommonObject
 		}
 	}
 
+
+	/**
+	 *	Validate leave request
+	 *
+	 *  @param	User	$user        	User that validate
+	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int         			<0 if KO, >0 if OK
+	 */
+	function validate($user=null, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
+
+		$sql.= " description= '".$this->db->escape($this->description)."',";
+
+		if(!empty($this->date_debut)) {
+			$sql.= " date_debut = '".$this->db->idate($this->date_debut)."',";
+		} else {
+			$error++;
+		}
+		if(!empty($this->date_fin)) {
+			$sql.= " date_fin = '".$this->db->idate($this->date_fin)."',";
+		} else {
+			$error++;
+		}
+		$sql.= " halfday = ".$this->halfday.",";
+		if(!empty($this->statut) && is_numeric($this->statut)) {
+			$sql.= " statut = ".$this->statut.",";
+		} else {
+			$error++;
+		}
+		if(!empty($this->fk_validator)) {
+			$sql.= " fk_validator = '".$this->db->escape($this->fk_validator)."',";
+		} else {
+			$error++;
+		}
+		if(!empty($this->date_valid)) {
+			$sql.= " date_valid = '".$this->db->idate($this->date_valid)."',";
+		} else {
+			$sql.= " date_valid = NULL,";
+		}
+		if(!empty($this->fk_user_valid)) {
+			$sql.= " fk_user_valid = '".$this->db->escape($this->fk_user_valid)."',";
+		} else {
+			$sql.= " fk_user_valid = NULL,";
+		}
+		if(!empty($this->date_refuse)) {
+			$sql.= " date_refuse = '".$this->db->idate($this->date_refuse)."',";
+		} else {
+			$sql.= " date_refuse = NULL,";
+		}
+		if(!empty($this->fk_user_refuse)) {
+			$sql.= " fk_user_refuse = '".$this->db->escape($this->fk_user_refuse)."',";
+		} else {
+			$sql.= " fk_user_refuse = NULL,";
+		}
+		if(!empty($this->date_cancel)) {
+			$sql.= " date_cancel = '".$this->db->idate($this->date_cancel)."',";
+		} else {
+			$sql.= " date_cancel = NULL,";
+		}
+		if(!empty($this->fk_user_cancel)) {
+			$sql.= " fk_user_cancel = '".$this->db->escape($this->fk_user_cancel)."',";
+		} else {
+			$sql.= " fk_user_cancel = NULL,";
+		}
+		if(!empty($this->detail_refuse)) {
+			$sql.= " detail_refuse = '".$this->db->escape($this->detail_refuse)."'";
+		} else {
+			$sql.= " detail_refuse = NULL";
+		}
+
+		$sql.= " WHERE rowid= ".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('HOLIDAY_VALIDATE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::validate ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+
+	/**
+	 *	Approve leave request
+	 *
+	 *  @param	User	$user        	User that approve
+	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return int         			<0 if KO, >0 if OK
+	 */
+	function approve($user=null, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
+
+		$sql.= " description= '".$this->db->escape($this->description)."',";
+
+		if(!empty($this->date_debut)) {
+			$sql.= " date_debut = '".$this->db->idate($this->date_debut)."',";
+		} else {
+			$error++;
+		}
+		if(!empty($this->date_fin)) {
+			$sql.= " date_fin = '".$this->db->idate($this->date_fin)."',";
+		} else {
+			$error++;
+		}
+		$sql.= " halfday = ".$this->halfday.",";
+		if(!empty($this->statut) && is_numeric($this->statut)) {
+			$sql.= " statut = ".$this->statut.",";
+		} else {
+			$error++;
+		}
+		if(!empty($this->fk_validator)) {
+			$sql.= " fk_validator = '".$this->db->escape($this->fk_validator)."',";
+		} else {
+			$error++;
+		}
+		if(!empty($this->date_valid)) {
+			$sql.= " date_valid = '".$this->db->idate($this->date_valid)."',";
+		} else {
+			$sql.= " date_valid = NULL,";
+		}
+		if(!empty($this->fk_user_valid)) {
+			$sql.= " fk_user_valid = '".$this->db->escape($this->fk_user_valid)."',";
+		} else {
+			$sql.= " fk_user_valid = NULL,";
+		}
+		if(!empty($this->date_refuse)) {
+			$sql.= " date_refuse = '".$this->db->idate($this->date_refuse)."',";
+		} else {
+			$sql.= " date_refuse = NULL,";
+		}
+		if(!empty($this->fk_user_refuse)) {
+			$sql.= " fk_user_refuse = '".$this->db->escape($this->fk_user_refuse)."',";
+		} else {
+			$sql.= " fk_user_refuse = NULL,";
+		}
+		if(!empty($this->date_cancel)) {
+			$sql.= " date_cancel = '".$this->db->idate($this->date_cancel)."',";
+		} else {
+			$sql.= " date_cancel = NULL,";
+		}
+		if(!empty($this->fk_user_cancel)) {
+			$sql.= " fk_user_cancel = '".$this->db->escape($this->fk_user_cancel)."',";
+		} else {
+			$sql.= " fk_user_cancel = NULL,";
+		}
+		if(!empty($this->detail_refuse)) {
+			$sql.= " detail_refuse = '".$this->db->escape($this->detail_refuse)."'";
+		} else {
+			$sql.= " detail_refuse = NULL";
+		}
+
+		$sql.= " WHERE rowid= ".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::approve", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('HOLIDAY_APPROVE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::approve ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
 	/**
 	 *	Update database
 	 *

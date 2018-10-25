@@ -356,7 +356,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     			// SUBJECT
-    			$subject = $langs->transnoentities("ExpenseReportWaitingForApproval");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForApproval");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -375,7 +378,7 @@ if (empty($reshook))
     			*/
 
     			// PREPARE SEND
-    			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+    			$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
     			if ($mailfile)
     			{
@@ -472,7 +475,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
    			    // SUBJECT
-    			$subject = $langs->transnoentities("ExpenseReportWaitingForReApproval");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForReApproval");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -496,7 +502,7 @@ if (empty($reshook))
 
 
     			// PREPARE SEND
-    			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+    			$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
     			if ($mailfile)
     			{
@@ -594,7 +600,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
    			    // SUBJECT
-       			$subject = $langs->transnoentities("ExpenseReportApproved");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportApproved");
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -615,7 +624,7 @@ if (empty($reshook))
     			}
     			*/
 
-        		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+        		$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
        			if ($mailfile)
        			{
@@ -713,7 +722,10 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     		    // SUBJECT
-       			$subject = $langs->transnoentities("ExpenseReportRefused");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportRefused");
 
        			// CONTENT
        			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
@@ -735,7 +747,7 @@ if (empty($reshook))
     			*/
 
         		// PREPARE SEND
-        		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+        		$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
         		if ($mailfile)
         		{
@@ -788,126 +800,136 @@ if (empty($reshook))
     }
 
     //var_dump($user->id == $object->fk_user_validator);exit;
-    if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha')=="yes" && GETPOST('detail_cancel', 'alpha') && $id > 0 && $user->rights->expensereport->creer)
+    if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
     {
-    	$object = new ExpenseReport($db);
-    	$object->fetch($id);
-
-    	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
+    	if (! GETPOST('detail_cancel', 'alpha'))
     	{
-    		$result = $object->set_cancel($user, GETPOST('detail_cancel', 'alpha'));
-
-    		if ($result > 0)
-    		{
-    			// Define output language
-    			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-    			{
-    				$outputlangs = $langs;
-    				$newlang = '';
-    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
-    				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-    				if (! empty($newlang)) {
-    					$outputlangs = new Translate("", $conf);
-    					$outputlangs->setDefaultLang($newlang);
-    				}
-    				$model=$object->modelpdf;
-    				$ret = $object->fetch($id); // Reload to get new records
-
-    				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-    			}
-    		}
-
-    		if ($result > 0)
-    		{
-    			// Send mail
-
-    			// TO
-    			$destinataire = new User($db);
-    			$destinataire->fetch($object->fk_user_author);
-    			$emailTo = $destinataire->email;
-
-    			// FROM
-    			$expediteur = new User($db);
-    			$expediteur->fetch($object->fk_user_cancel);
-    			$emailFrom = $expediteur->email;
-
-    			if ($emailFrom && $emailTo)
-    			{
-    			    $filename=array(); $filedir=array(); $mimetype=array();
-
-    			    // SUBJECT
-    				$subject = $langs->transnoentities("ExpenseReportCanceled");
-
-    				// CONTENT
-    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $_POST['detail_cancel'], $link);
-
-    				// Rebuilt pdf
-    				/*
-    				$object->setDocModel($user,"");
-    				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
-
-    				if($resultPDF
-    				{
-    					// ATTACHMENT
-    					$filename=array(); $filedir=array(); $mimetype=array();
-    					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-    					array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
-    					array_push($mimetype,"application/pdf");
-    				}
-    				*/
-
-        			// PREPARE SEND
-        			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
-
-        			if ($mailfile)
-        			{
-        				// SEND
-        				$result=$mailfile->sendfile();
-        				if ($result)
-        				{
-        					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
-        					setEventMessages($mesg, null, 'mesgs');
-        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-        					exit;
-        				}
-        				else
-        				{
-        					$langs->load("other");
-        					if ($mailfile->error)
-        					{
-        						$mesg='';
-        						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-        						$mesg.='<br>'.$mailfile->error;
-        						setEventMessages($mesg, null, 'errors');
-        					}
-        					else
-        					{
-        						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
-        					}
-        				}
-        			}
-        			else
-        			{
-        				setEventMessages($mailfile->error,$mailfile->errors,'errors');
-        				$action='';
-        			}
-    			}
-    			else
-    			{
-    			    setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
-    			    $action='';
-    			}
-    		}
-    		else
-    		{
-    			setEventMessages($langs->trans("FailedToSetToCancel"), null, 'warnings');
-    			$action='';
-    		}
+    		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
     	}
     	else
     	{
-    		setEventMessages($object->error, $object->errors, 'errors');
+	    	$object = new ExpenseReport($db);
+	    	$object->fetch($id);
+
+	    	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
+	    	{
+	    		$result = $object->set_cancel($user, GETPOST('detail_cancel', 'alpha'));
+
+	    		if ($result > 0)
+	    		{
+	    			// Define output language
+	    			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	    			{
+	    				$outputlangs = $langs;
+	    				$newlang = '';
+	    				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+	    				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	    				if (! empty($newlang)) {
+	    					$outputlangs = new Translate("", $conf);
+	    					$outputlangs->setDefaultLang($newlang);
+	    				}
+	    				$model=$object->modelpdf;
+	    				$ret = $object->fetch($id); // Reload to get new records
+
+	    				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	    			}
+	    		}
+
+	    		if ($result > 0)
+	    		{
+	    			// Send mail
+
+	    			// TO
+	    			$destinataire = new User($db);
+	    			$destinataire->fetch($object->fk_user_author);
+	    			$emailTo = $destinataire->email;
+
+	    			// FROM
+	    			$expediteur = new User($db);
+	    			$expediteur->fetch($object->fk_user_cancel);
+	    			$emailFrom = $expediteur->email;
+
+	    			if ($emailFrom && $emailTo)
+	    			{
+	    			    $filename=array(); $filedir=array(); $mimetype=array();
+
+	    			    // SUBJECT
+	    			    $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+	    			    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+	    			    $subject = $societeName." - ".$langs->transnoentities("ExpenseReportCanceled");
+
+	    				// CONTENT
+	    				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+	    				$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), GETPOST('detail_cancel','alpha'), $link);
+
+	    				// Rebuilt pdf
+	    				/*
+	    				$object->setDocModel($user,"");
+	    				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+
+	    				if($resultPDF
+	    				{
+	    					// ATTACHMENT
+	    					$filename=array(); $filedir=array(); $mimetype=array();
+	    					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+	    					array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+	    					array_push($mimetype,"application/pdf");
+	    				}
+	    				*/
+
+	        			// PREPARE SEND
+	        			$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+
+	        			if ($mailfile)
+	        			{
+	        				// SEND
+	        				$result=$mailfile->sendfile();
+	        				if ($result)
+	        				{
+	        					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+	        					setEventMessages($mesg, null, 'mesgs');
+	        					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+	        					exit;
+	        				}
+	        				else
+	        				{
+	        					$langs->load("other");
+	        					if ($mailfile->error)
+	        					{
+	        						$mesg='';
+	        						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+	        						$mesg.='<br>'.$mailfile->error;
+	        						setEventMessages($mesg, null, 'errors');
+	        					}
+	        					else
+	        					{
+	        						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+	        					}
+	        				}
+	        			}
+	        			else
+	        			{
+	        				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+	        				$action='';
+	        			}
+	    			}
+	    			else
+	    			{
+	    			    setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
+	    			    $action='';
+	    			}
+	    		}
+	    		else
+	    		{
+	    			setEventMessages($langs->trans("FailedToSetToCancel"), null, 'warnings');
+	    			$action='';
+	    		}
+	    	}
+	    	else
+	    	{
+	    		setEventMessages($object->error, $object->errors, 'errors');
+	    	}
     	}
     }
 
@@ -1001,25 +1023,21 @@ if (empty($reshook))
     			$filename=array(); $filedir=array(); $mimetype=array();
 
     		    // SUBJECT
-    			$subject = $langs->transnoentities("ExpenseReportPaid");
+    			$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+    			if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+    			$subject = $societeName." - ".$langs->transnoentities("ExpenseReportPaid");
 
     			// CONTENT
     			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
     			$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
-
-        		// CONTENT
-        		$message = "Bonjour {$destinataire->firstname},\n\n";
-        		$message.= "Votre note de frais \"{$object->ref}\" vient d'être payée.\n";
-        		$message.= "- Payeur : {$expediteur->firstname} {$expediteur->lastname}\n";
-        		$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-        		$message.= "Bien cordialement,\n' SI";
 
         		// Generate pdf before attachment
         		$object->setDocModel($user,"");
         		$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
         		// PREPARE SEND
-        		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+        		$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
         		if ($mailfile)
         		{
@@ -1589,49 +1607,49 @@ else
 
 				if ($action == 'save')
 				{
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
 				}
 
 				if ($action == 'save_from_refuse')
 				{
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
 				}
 
 				if ($action == 'delete')
 				{
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
 				}
 
 				if ($action == 'validate')
 				{
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
 				}
 
 				if ($action == 'paid')
 				{
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
 				}
 
 				if ($action == 'cancel')
 				{
-					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
-					$formconfirm=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
+					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>'<strong>'.$langs->trans("Comment").'</strong>','name'=>"detail_cancel",'size'=>"50",'value'=>""));
+					$formconfirm=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
 				}
 
 				if ($action == 'brouillonner')
 				{
-				    $formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
+				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
 				}
 
 				if ($action == 'refuse')		// Deny
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
 				}
 
 				if ($action == 'delete_line')
 				{
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid','int'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid','int'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 				}
 
 				// Print form confirm

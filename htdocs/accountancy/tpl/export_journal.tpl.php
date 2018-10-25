@@ -37,7 +37,26 @@ header('Content-Type: text/csv');
 
 if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == "11") // Specific filename for FEC model export
 {
-	$completefilename = $siren . "FEC" . $search_date_end . $endaccountingperiod . "." . $format;
+
+	// FEC format is defined here: https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000027804775&cidTexte=LEGITEXT000006069583&dateTexte=20130802&oldAction=rechCodeArticle
+	if (empty($search_date_end))
+	{
+		// TODO Get the max date into bookeeping table
+		$search_date_end = dol_now();
+	}
+	$datetouseforfilename = $search_date_end;
+	$tmparray=dol_getdate($datetouseforfilename);
+	$fiscalmonth=empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START;
+	// Define end of month to use
+	if ($tmparray['mon'] <= $fiscalmonth) $tmparray['mon']=$fiscalmonth;
+	else {
+		$tmparray['mon']  = $fiscalmonth;
+		$tmparray['year']++;
+	}
+
+	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
+
+	$completefilename = $siren . "FEC" . $endaccountingperiod . "." . $format;
 }
 else
 {

@@ -54,7 +54,7 @@ class Account extends CommonObject
 	/**
 	 * @var	int		Use id instead of rowid
 	 * @deprecated
-	 * @see id
+	 * @see $id
 	 */
 	public $rowid;
 
@@ -1186,7 +1186,7 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		return $solde;
+		return price2num($solde, 'MU');
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

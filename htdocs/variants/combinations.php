@@ -318,6 +318,66 @@ if (! empty($id) || ! empty($ref))
 
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
 
+	print '<div class="fichecenter">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield" width="100%">';
+
+    // TVA
+    print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
+
+    $positiverates='';
+    if (price2num($object->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($object->tva_tx);
+    if (price2num($object->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax1_tx);
+    if (price2num($object->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($object->localtax2_tx);
+    if (empty($positiverates)) $positiverates='0';
+    echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+    /*
+    if ($object->default_vat_code)
+    {
+        print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
+    }
+    else print vatrate($object->tva_tx, true, $object->tva_npr, true);*/
+    print '</td></tr>';
+
+    // Price
+    print '<tr><td>' . $langs->trans("SellingPrice") . '</td><td>';
+    if ($object->price_base_type == 'TTC') {
+        print price($object->price_ttc) . ' ' . $langs->trans($object->price_base_type);
+    } else {
+        print price($object->price) . ' ' . $langs->trans($object->price_base_type);
+    }
+    print '</td></tr>';
+
+    // Price minimum
+    print '<tr><td>' . $langs->trans("MinPrice") . '</td><td>';
+    if ($object->price_base_type == 'TTC') {
+        print price($object->price_min_ttc) . ' ' . $langs->trans($object->price_base_type);
+    } else {
+        print price($object->price_min) . ' ' . $langs->trans($object->price_base_type);
+    }
+    print '</td></tr>';
+
+	// Weight
+	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+	if ($object->weight != '')
+	{
+		print $object->weight." ".measuring_units_string($object->weight_units,"weight");
+	}
+	else
+	{
+		print '&nbsp;';
+	}
+	print "</td></tr>\n";
+
+
+
+
+	print "</table>\n";
+
+	print '</div>';
+	print '<div style="clear:both"></div>';
+
 	dol_fiche_end();
 
 

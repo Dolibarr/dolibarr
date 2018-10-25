@@ -1071,10 +1071,26 @@ class Societe extends CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				unset($this->country_code);		// We clean this because it may have been changed after an update of country_id
-				unset($this->country);
-				unset($this->state_code);
-				unset($this->state);
+				if (is_object($this->oldcopy))	// If we have information on old values
+				{
+					if ($this->oldcopy->country_id != $this->country_id)
+					{
+						unset($this->country_code);
+						unset($this->country);
+					}
+					if ($this->oldcopy->state_id != $this->state_id)
+					{
+						unset($this->state_code);
+						unset($this->state);
+					}
+				}
+				else
+				{
+					unset($this->country_code);	// We clean this, in the doubt, because it may have been changed after an update of country_id
+					unset($this->country);
+					unset($this->state_code);
+					unset($this->state);
+				}
 
 				$nbrowsaffected = $this->db->affected_rows($resql);
 
@@ -1727,10 +1743,13 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
+
 			$discount->discount_type=$discount_type;
-			$discount->amount_ht=price2num($remise,'MT');
-			$discount->amount_tva=price2num($remise*$tva_tx/100,'MT');
-			$discount->amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
+
+			$discount->amount_ht=$discount->multicurrency_amount_ht=price2num($remise,'MT');
+			$discount->amount_tva=$discount->multicurrency_amount_tva=price2num($remise*$tva_tx/100,'MT');
+			$discount->amount_ttc=$discount->multicurrency_amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
+
 			$discount->tva_tx=price2num($tva_tx,'MT');
 			$discount->description=$desc;
 
@@ -3344,6 +3363,7 @@ class Societe extends CommonObject
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
 		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
 		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
+		$this->object=empty($conf->global->MAIN_INFO_SOCIETE_OBJECT)?'':$conf->global->MAIN_INFO_SOCIETE_OBJECT;
 
 		$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 

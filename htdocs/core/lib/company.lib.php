@@ -6,11 +6,11 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es>
+ * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,18 +154,18 @@ function societe_prepare_head(Societe $object)
 		// Tab to accountancy
 		if (! empty($conf->accounting->enabled) && $object->client>0)
 		{
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabAccountingCustomer");
-			$head[$h][2] = 'accounting';
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_customer.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabLetteringCustomer");
+			$head[$h][2] = 'lettering_customer';
 			$h++;
 		}
 
 		// Tab to accountancy
 		if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
 		{
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage_supplier.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabAccountingSupplier");
-			$head[$h][2] = 'accounting_supplier';
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_supplier.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabLetteringSupplier");
+			$head[$h][2] = 'lettering_supplier';
 			$h++;
 		}
 	}

@@ -154,6 +154,8 @@ class RemiseCheque extends CommonObject
 
 		$now=dol_now();
 
+		dol_syslog("RemiseCheque::Create start", LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (";
@@ -310,11 +312,13 @@ class RemiseCheque extends CommonObject
         if (! $this->errno)
         {
             $this->db->commit();
+            dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->id;
         }
         else
         {
             $this->db->rollback();
+            dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->errno;
         }
 	}

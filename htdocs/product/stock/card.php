@@ -384,7 +384,7 @@ else
 			if ($lastmovementdate)
 			{
 			    print dol_print_date($lastmovementdate,'dayhour').' ';
-			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
+			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 			}
 			else
 			{
