@@ -6555,7 +6555,7 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *  @see    dol_htmloutput_errors
  *  @see    setEventMessages
  */
-function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
+function dol_htmloutput_mesg($mesgstring = '',$mesgarray = [], $style = 'ok', $keepembedded=0)
 {
 	if (empty($mesgstring) && (! is_array($mesgarray) || count($mesgarray) == 0)) return;
 
