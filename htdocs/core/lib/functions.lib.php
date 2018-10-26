@@ -7094,54 +7094,60 @@ function printCommonFooter($zone='private')
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-				foreach($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
+				if (!empty($user->default_values[$relativepathstring]['focus']))
 				{
-					$qualified = 0;
-					if ($defkey != '_noquery_')
+					foreach($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
 					{
-						$tmpqueryarraytohave=explode('&', $defkey);
-						$foundintru=0;
-						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						$qualified = 0;
+						if ($defkey != '_noquery_')
 						{
-							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							$tmpqueryarraytohave=explode('&', $defkey);
+							$foundintru=0;
+							foreach($tmpqueryarraytohave as $tmpquerytohave)
+							{
+								if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							}
+							if (! $foundintru) $qualified=1;
+							//var_dump($defkey.'-'.$qualified);
 						}
-						if (! $foundintru) $qualified=1;
-						//var_dump($defkey.'-'.$qualified);
-					}
-					else $qualified = 1;
+						else $qualified = 1;
 
-					if ($qualified)
-					{
-						foreach($defval as $paramkey => $paramval)
+						if ($qualified)
 						{
-							// Add property 'required' on input
-							print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
+							foreach($defval as $paramkey => $paramval)
+							{
+								// Add property 'required' on input
+								print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
+							}
 						}
 					}
 				}
-				foreach($user->default_values[$relativepathstring]['mandatory'] as $defkey => $defval)
+				if (!empty($user->default_values[$relativepathstring]['mandatory']))
 				{
-					$qualified = 0;
-					if ($defkey != '_noquery_')
+					foreach($user->default_values[$relativepathstring]['mandatory'] as $defkey => $defval)
 					{
-						$tmpqueryarraytohave=explode('&', $defkey);
-						$foundintru=0;
-						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						$qualified = 0;
+						if ($defkey != '_noquery_')
 						{
-							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							$tmpqueryarraytohave=explode('&', $defkey);
+							$foundintru=0;
+							foreach($tmpqueryarraytohave as $tmpquerytohave)
+							{
+								if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							}
+							if (! $foundintru) $qualified=1;
+							//var_dump($defkey.'-'.$qualified);
 						}
-						if (! $foundintru) $qualified=1;
-						//var_dump($defkey.'-'.$qualified);
-					}
-					else $qualified = 1;
+						else $qualified = 1;
 
-					if ($qualified)
-					{
-						foreach($defval as $paramkey => $paramval)
+						if ($qualified)
 						{
-							// Add property 'required' on input
-							print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-							print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";		// required on a select works only if key is "", this does not happen in Dolibarr
+							foreach($defval as $paramkey => $paramval)
+							{
+								// Add property 'required' on input
+								print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";		// required on a select works only if key is "", this does not happen in Dolibarr
+							}
 						}
 					}
 				}
