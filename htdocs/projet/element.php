@@ -451,7 +451,7 @@ $listofreferent=array(
 	'disableamount'=>0,
 	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
 	'lang'=>'salaries',
-	'buttonnew'=>'AddSalariesPayment',
+	'buttonnew'=>'AddSalaryPayment',
 	'testnew'=>$user->rights->salaries->write,
 	'test'=>$conf->salaries->enabled && $user->rights->salaries->read),
 'variouspayment'=>array(
@@ -872,7 +872,9 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print img_picto($langs->trans('Unlink'), 'unlink');
+						print '</a>';
 					}
 				}
 				print "</td>\n";
