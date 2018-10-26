@@ -202,8 +202,6 @@ class ProductStockEntrepot extends CommonObject
 				$this->seuil_stock_alerte = $obj->seuil_stock_alerte;
 				$this->desiredstock = $obj->desiredstock;
 				$this->import_key = $obj->import_key;
-
-
 			}
 
 			// Retreive all extrafield

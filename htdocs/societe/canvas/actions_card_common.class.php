@@ -258,7 +258,6 @@ abstract class ActionsCardCommon
                     $this->tpl['localtax'].= '</td><tr>';
                 }
             }
-
         }
         else
         {

@@ -515,7 +515,6 @@ class MyObject extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

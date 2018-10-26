@@ -1223,7 +1223,6 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 					$outmore.='<a class="tabimage'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				else
 					$outmore.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
-
 			}
 			else if (! empty($links[$i][1]))
 			{
@@ -3925,7 +3924,6 @@ function dol_print_error($db='',$error='',$errors=null)
 			$out.='> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
 			$out.='> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->transnoentities("ErrorNoRequestInError"))."\n";
 			$out.='> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
-
 		}
 		$syslog.=", sql=".$db->lastquery();
 		$syslog.=", db_error=".$db->lasterror();
@@ -4987,7 +4985,6 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		else
 		{
 			return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
-
 		}
 	}
 
@@ -5109,8 +5106,6 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		else
 		{
 			// TODO Read default product vat according to countrycode and product
-
-
 		}
 	}
 
@@ -5593,7 +5588,6 @@ function dolGetFirstLineOfText($text, $nboflines=1)
 		{
 			$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
 			$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
-
 		}
 		else
 		{

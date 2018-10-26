@@ -407,7 +407,6 @@ if ($id > 0 || ! empty($ref))
 						{
 							print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
 							print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
-
 						}
 						else{
 							print '<td>'.$nb_of_subproduct.'</td>';
@@ -634,7 +633,6 @@ if ($id > 0 || ! empty($ref))
 					}
 					$i++;
 				}
-
 			}
 			else
 			{

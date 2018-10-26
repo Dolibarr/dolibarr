@@ -518,7 +518,6 @@ class SocieteAccount extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

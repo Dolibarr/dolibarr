@@ -451,7 +451,6 @@ if ($result)
                 $receipt=new RemiseCheque($db);
                 $receipt->fetch($objp->receiptid);
                 print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);
-
             }
             print '</td>';
         }
@@ -682,7 +681,6 @@ if ($result)
 
 			print '</form>';
         }
-
     }
 
     $db->free($result);

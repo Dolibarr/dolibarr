@@ -718,7 +718,6 @@ class FormFile
 				$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
 				$out.= $hookmanager->resPrint;
 			}
-
 		}
 
 		// Get list of files
@@ -848,7 +847,6 @@ class FormFile
 			{
 				$out.='<tr><td colspan="'.(3+($addcolumforpicto?1:0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
 			}
-
 		}
 
 		if ($headershown)

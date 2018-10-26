@@ -746,7 +746,6 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             }
         }
     }
-
 }
 
 
@@ -1347,23 +1346,19 @@ else
 
                     print '</div>';
                 }
-
             } else {
                 print '<div class="tabBar">';
                 print $langs->trans('ErrorUserViewCP');
                 print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
                 print '</div>';
             }
-
         } else {
             print '<div class="tabBar">';
             print $langs->trans('ErrorIDFicheCP');
             print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
             print '</div>';
         }
-
     }
-
 }
 
 // End of page

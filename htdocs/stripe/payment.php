@@ -350,7 +350,6 @@ if (empty($reshook))
 
 				$facture->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
-
 		}
 
 		if (! $error)

@@ -1165,7 +1165,6 @@ else
 			print '</div>';
 
 			dol_fiche_end();
-
 		}
 		else
 		{

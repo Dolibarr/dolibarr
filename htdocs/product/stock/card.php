@@ -332,7 +332,6 @@ else
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
-
 			}
 
 			// Description
@@ -567,7 +566,6 @@ else
                 print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
-
 			}
 			else
 			{
@@ -658,7 +656,6 @@ else
 			print '</div>';
 
 			print '</form>';
-
 		}
 	}
 }

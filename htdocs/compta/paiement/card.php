@@ -197,7 +197,6 @@ dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'p
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
 }
 
 /*
@@ -207,7 +206,6 @@ if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
 }
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';

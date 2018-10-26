@@ -781,7 +781,6 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 					$result=$tmpresult;
 				}
 				if ($result < 0) break;
-
 			}
 		}
 		closedir($dir_handle);

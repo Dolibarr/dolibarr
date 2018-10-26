@@ -113,7 +113,6 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
     }
-
 }
 
 print json_encode($eventfound);

@@ -408,7 +408,6 @@ class Expedition extends CommonObject
 						$this->db->rollback();
 						return -1*$error;
 					}
-
 				}
 				else
 				{
@@ -785,7 +784,6 @@ class Expedition extends CommonObject
 				$this->error=$this->db->error();
 				return -2;
 			}
-
 		}
 
 		// Change status of order to "shipment in process"
@@ -2154,7 +2152,6 @@ class Expedition extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror;
@@ -2281,7 +2278,6 @@ class Expedition extends CommonObject
 					$error++;
 				}
    			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror();

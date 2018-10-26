@@ -269,7 +269,6 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-
 }
 else if ($action != 'add')
 {

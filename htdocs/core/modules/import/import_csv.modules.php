@@ -466,7 +466,6 @@ class ImportCsv extends ModeleImports
                                             }
                                         }
                                     }
-
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
                                 {

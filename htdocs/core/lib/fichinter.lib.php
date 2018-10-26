@@ -76,7 +76,6 @@ function fichinter_prepare_head($object)
 				foreach($resources as $resource_obj)
 				{
 					$linked_resources = $object->getElementResources('fichinter',$object->id,$resource_obj);
-
 				}
 			}
 		}

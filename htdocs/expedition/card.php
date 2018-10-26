@@ -316,7 +316,6 @@ if (empty($reshook))
 					unset($_POST["options_" . $key]);
 				}
 			}
-
 	    }
 
 	    //var_dump($batch_line[2]);
@@ -859,7 +858,6 @@ if (empty($reshook))
 	$mode='emailfromshipment';
 	$trackid='shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 }
 
 
@@ -1421,7 +1419,6 @@ if ($action == 'create')
 
 										print '<!-- Show details of stock -->';
 										print '('.$stock.')';
-
 									}
 									else
 									{
@@ -1522,7 +1519,6 @@ if ($action == 'create')
 								}
 							}
 						}
-
 					}
 					if ($subj == 0) // Line not shown yet, we show it
 					{
@@ -1669,13 +1665,11 @@ else if ($id || $ref)
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
-
 		}
 		// Confirm cancelation
 		if ($action == 'annuler')
 		{
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
-
 		}
 
 		// Call Hook formConfirm
@@ -1826,7 +1820,6 @@ else if ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-
 		}
 		else
 		{
@@ -1864,7 +1857,6 @@ else if ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-
 		}
 		else
 		{
@@ -2536,7 +2528,6 @@ else if ($id || $ref)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
-
 		}
 
 		print '</div>';

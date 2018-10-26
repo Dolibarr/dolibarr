@@ -605,7 +605,6 @@ elseif (! empty($holiday->holiday) && !empty($mysoc->country_id))
 		print '</td>';
 
 		print '</tr>'."\n";
-
 	}
 }
 

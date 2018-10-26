@@ -409,7 +409,6 @@ if ($projectid > 0) {
         dol_fiche_end();
 
         $object = $savobject;
-
     } else {
         print "ErrorRecordNotFound";
     }

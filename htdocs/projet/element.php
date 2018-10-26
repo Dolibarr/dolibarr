@@ -489,7 +489,6 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 if(!empty($hookmanager->resArray)) {
 
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
-
 }
 
 if ($action=="addelement")

@@ -524,7 +524,6 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</div>';
 
 	print '</form>';
-
 }
 else if ($id > 0 || ! empty($ref))
 {

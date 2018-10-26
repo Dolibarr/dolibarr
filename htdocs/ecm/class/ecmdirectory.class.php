@@ -680,7 +680,6 @@ class EcmDirectory // extends CommonObject
 					}
 				}
 				$i++;
-
 			}
 		}
 		else

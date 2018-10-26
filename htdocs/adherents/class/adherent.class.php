@@ -2509,7 +2509,6 @@ class Adherent extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2738,7 +2737,6 @@ class Adherent extends CommonObject
 								$nbok++;
 
 								// TODO Add event email sent for member
-
 							}
 						}
 						else

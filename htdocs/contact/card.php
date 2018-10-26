@@ -1113,7 +1113,6 @@ else
                 else $text.=$langs->trans("UserWillBeInternalUser");
             }
             print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
-
         }
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -1282,7 +1281,6 @@ else
         }
 
         print "</div>";
-
     }
 }
 

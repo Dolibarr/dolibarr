@@ -479,7 +479,6 @@ class pdf_standard extends ModeleExpenseReport
 						$pagenb++;
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
-
 				}
 
 				// Show square

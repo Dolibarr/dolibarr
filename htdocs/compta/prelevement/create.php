@@ -161,7 +161,6 @@ if ($nb) {
         } else {
             print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">' . $langs->trans("CreateAll") . "</a>\n";
 		}
-
 		}
 		else
 		{

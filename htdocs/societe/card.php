@@ -371,7 +371,6 @@ if (empty($reshook))
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
             $error++;
-
         }
 
         if (! $error)
@@ -1377,7 +1376,6 @@ else
             print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
             print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
             print '</td></tr>';
-
         }
         elseif($mysoc->localtax1_assuj=="1")
         {
@@ -1973,7 +1971,6 @@ else
                     print '</span>';
                 }
                 print '</td></tr>';
-
             }
             elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
             {
@@ -1986,7 +1983,6 @@ else
                     print '</span>';
                 }
                 print '</td></tr>';
-
             }
             elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
             {
@@ -2380,7 +2376,6 @@ else
 			            print '<td>'.$object->localtax1_value.'</td>';
 			        }
 			        print '</tr></form>';
-
 			    }
 			}
 			elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
@@ -2403,7 +2398,6 @@ else
 			            print '<td>'.$object->localtax2_value.'</td>';
 			        }
 			        print '</tr></form>';
-
 			    }
 			}
         }
@@ -2729,7 +2723,6 @@ else
 		$trackid = 'thi'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-
     }
 }
 

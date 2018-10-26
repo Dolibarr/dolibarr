@@ -611,7 +611,6 @@ class Societe extends CommonObject
 				$this->db->rollback();
 				return $result;
 			}
-
 		}
 		else
 		{
@@ -1001,7 +1000,6 @@ class Societe extends CommonObject
 					$sql .=",localtax1_value =".$this->localtax1_value;
 				}
 				else $sql .=",localtax1_value =0.000";
-
 			}
 			else $sql .=",localtax1_value =0.000";
 
@@ -1012,7 +1010,6 @@ class Societe extends CommonObject
 					$sql .=",localtax2_value =".$this->localtax2_value;
 				}
 				else $sql .=",localtax2_value =0.000";
-
 			}
 			else $sql .=",localtax2_value =0.000";
 
@@ -3177,7 +3174,6 @@ class Societe extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

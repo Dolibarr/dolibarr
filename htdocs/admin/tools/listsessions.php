@@ -170,7 +170,6 @@ if ($savehandler == 'files')
 		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
 	print "</table>";
-
 }
 else
 {

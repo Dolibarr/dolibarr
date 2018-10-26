@@ -439,7 +439,6 @@ if (function_exists("ldap_connect"))
 			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
 		}
 	}
-
 }
 
 // End of page

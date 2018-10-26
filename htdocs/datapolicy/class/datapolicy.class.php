@@ -204,7 +204,6 @@ Class DataPolicy extends Contact
      			$resultmasssend .= $langs->trans("MailSent") . ': ' . $sendto . "<br>";
      			$contact->array_options['options_datapolicy_send'] = date('Y-m-d', time());
      			$contact->update($contact->id);
-
      		} else {
      			dol_print_error($db);
      		}
@@ -348,7 +347,6 @@ Class DataPolicy extends Contact
     			$resultmasssend .= $langs->trans("MailSent") . ': ' . $sendto . "<br>";
     			$adherent->array_options['options_datapolicy_send'] = date('Y-m-d', time());
     			$adherent->update($user);
-
     		} else {
     			dol_print_error($db);
     		}

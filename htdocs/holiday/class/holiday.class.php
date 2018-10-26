@@ -1721,7 +1721,6 @@ class Holiday extends CommonObject
 					$this->error="Error ".$this->db->lasterror();
 					return -1;
 				}
-
 			}
 			else
 			{
@@ -1763,7 +1762,6 @@ class Holiday extends CommonObject
 					return -1;
 				}
 			}
-
 		}
 		else
 		{ // Si faux donc return array

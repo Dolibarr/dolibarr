@@ -1144,7 +1144,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 									}
 									$listlines->merge();
 								}
-
 							}
 						}
 						$odfHandler->mergeSegment($listlines);

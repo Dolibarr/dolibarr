@@ -234,28 +234,23 @@ elseif ($event->type == 'payout.paid') {
 elseif ($event->type == 'charge.succeeded') {
 
 	//TODO: create fees
-
 }
 elseif ($event->type == 'customer.source.created') {
 
 	//TODO: save customer's source
-
 }
 elseif ($event->type == 'customer.source.updated') {
 
 	//TODO: update customer's source
-
 }
 elseif ($event->type == 'customer.source.delete') {
 
 	//TODO: delete customer's source
-
 }
 elseif ($event->type == 'charge.failed') {
 
 	$subject = 'Your payment has been received: '.$event->data->object->id.'';
 	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
 

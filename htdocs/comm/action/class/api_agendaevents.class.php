@@ -309,7 +309,6 @@ class AgendaEvents extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $event[$field] = $data[$field];
-
         }
         return $event;
     }

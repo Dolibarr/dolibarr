@@ -328,7 +328,6 @@ switch ($action)
                     		$result=$invoice->set_paid($user);
                   			//print 'set paid';exit;
                     	}
-
                     }
 				}
 				else

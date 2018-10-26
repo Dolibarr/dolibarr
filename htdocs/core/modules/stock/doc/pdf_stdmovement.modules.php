@@ -713,7 +713,6 @@ class pdf_stdmovement extends ModelePDFMovement
 					// Total Qty
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $totalunit, 0, 'R', 0);
-
 				}
 				else
 				{

@@ -719,7 +719,6 @@ class ExpenseReport extends CommonObject
                     $auser->fetch($obj->fk_user_approve);
                     $this->user_approve   = $auser;
                 }
-
             }
             $this->db->free($resql);
         }
@@ -891,7 +890,6 @@ class ExpenseReport extends CommonObject
                 print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_TTC).'</td>';
                 print '<td>&nbsp;</td>';
                 print '</tr>';
-
             }
             else
             {

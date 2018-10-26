@@ -2006,7 +2006,6 @@ class Contrat extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2476,7 +2475,6 @@ class Contrat extends CommonObject
 				if ($reshook < 0)
 					$error ++;
 			}
-
 		}
 
 		unset($this->context['createfromclone']);
@@ -2860,7 +2858,6 @@ class ContratLigne extends CommonObjectLine
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->fk_fournprice, $obj->pa_ht);
 				$this->pa_ht = $marginInfos[0];
 				$this->fk_unit     = $obj->fk_unit;
-
 			}
 			$this->db->free($resql);
 
