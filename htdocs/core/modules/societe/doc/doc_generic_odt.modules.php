@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -276,6 +278,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				//print $odfHandler->__toString()."\n";
@@ -323,9 +326,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 				}
                 				catch(OdfException $e)
                 				{
+									dol_syslog($e->getMessage(), LOG_INFO);
                 				}
                 				catch(SegmentException $e)
                 				{
+									dol_syslog($e->getMessage(), LOG_INFO);
                 				}
                 			}
                 			$listlines->merge();
@@ -367,9 +372,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
 						// setVars failed, probably because key not found
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -380,8 +386,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -393,8 +400,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
@@ -413,6 +421,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					   $odfHandler->saveToDisk($file);
 					}catch (Exception $e){
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
