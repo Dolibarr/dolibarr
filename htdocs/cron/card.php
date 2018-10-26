@@ -679,13 +679,14 @@ else
 	print $langs->trans('CronDtNextLaunch');
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
-	//print '<strong>';
 	if (! $object->status) print $langs->trans("Disabled");
 	elseif (!empty($object->datenextrun)) { print img_picto('','object_calendarday').' '.dol_print_date($object->datenextrun,'dayhoursec');}
-	else {print $langs->trans('CronNone');}
-	//print '</strong>';
-	if ($object->maxnbrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("Finished"));
-	if ($object->datenextrun && $object->datenextrun < $now) print img_warning($langs->trans("Late"));
+	else { print $langs->trans('CronNone'); }
+	if ($object->status == Cronjob::STATUS_ENABLED)
+	{
+		if ($object->maxrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("MaxRunReached"));
+		elseif ($object->datenextrun && $object->datenextrun < $now) print img_warning($langs->trans("Late"));
+	}
 	print "</td></tr>";
 
 	print '</table>';

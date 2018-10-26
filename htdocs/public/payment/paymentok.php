@@ -201,34 +201,50 @@ if (! empty($conf->paypal->enabled))
 		        $resArray=getDetails($onlinetoken);
 		        //var_dump($resarray);
 
-		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
-		        $resArray=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
-
 		        $ack = strtoupper($resArray["ACK"]);
 		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 		        {
+		        	// Nothing to do
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+		        }
+		        else
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING);
+		        }
+
+		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
+		        $resArray2=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+		        //var_dump($resarray);
+
+		        $ack = strtoupper($resArray2["ACK"]);
+		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+
 		        	$object->source		= $source;
 		        	$object->ref		= $ref;
 		        	$object->payerID	= $payerID;
 		        	$object->fulltag	= $fulltag;
-		        	$object->resArray	= $resArray;
+		        	$object->resArray	= $resArray2;
 
 		            // resArray was built from a string like that
 		            // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
-		            $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
-		            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
-		            $TAXAMT=urldecode($resArray["TAXAMT"]);
-		            $NOTE=urldecode($resArray["NOTE"]);
+		            $PAYMENTSTATUS=urldecode($resArray2["PAYMENTSTATUS"]);   // Should contains 'Completed'
+		            $TRANSACTIONID=urldecode($resArray2["TRANSACTIONID"]);
+		            $TAXAMT=urldecode($resArray2["TAXAMT"]);
+		            $NOTE=urldecode($resArray2["NOTE"]);
 
 		            $ispaymentok=true;
 		        }
 		        else
 		        {
+		        	dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING);
+
 		            //Display a user friendly Error on the page using any of the following error information returned by PayPal
-		            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
-		            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
-		            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
-		            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
+		            $ErrorCode = urldecode($resArray2["L_ERRORCODE0"]);
+		            $ErrorShortMsg = urldecode($resArray2["L_SHORTMESSAGE0"]);
+		            $ErrorLongMsg = urldecode($resArray2["L_LONGMESSAGE0"]);
+		            $ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 		        }
 		    }
 		    else
@@ -534,7 +550,9 @@ if ($ispaymentok)
 							$listofmimes=array(dol_mimetype($file));
 						}
 
-						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1);
+						$moreinheader='X-Dolibarr-Info: send_an_email by public/payment/paymentok.php'."\r\n";
+
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, "", $moreinheader);
 
 						if ($result < 0)
 						{
@@ -800,6 +818,11 @@ if ($ispaymentok)
 		$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 		$content.="<br>\n";
 		$content.="tag=".$fulltag."<br>\ntoken=".$onlinetoken."<br>\npaymentType=".$paymentType."<br>\ncurrencycodeType=".$currencyCodeType."<br>\npayerId=".$payerID."<br>\nipaddress=".$ipaddress."<br>\nFinalPaymentAmt=".$FinalPaymentAmt."<br>\n";
+
+		if (! empty($ErrorCode))         $content.="ErrorCode = ".$ErrorCode."<br>\n";
+		if (! empty($ErrorShortMsg))     $content.="ErrorShortMsg = ".$ErrorShortMsg."<br>\n";
+		if (! empty($ErrorLongMsg))      $content.="ErrorLongMsg = ".$ErrorLongMsg."<br>\n";
+		if (! empty($ErrorSeverityCode)) $content.="ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
 
 		$ishtml=dol_textishtml($content);	// May contain urls
 

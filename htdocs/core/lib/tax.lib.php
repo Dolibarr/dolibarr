@@ -172,7 +172,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     	$sql.= " AND (d.product_type = 0";                              // Limit to products
     	$sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of products
-    	$sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+    	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
     	$sql.= " ORDER BY d.rowid, d.".$fk_facture;
     }
     else
@@ -213,7 +213,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
     	$sql.= " AND (d.product_type = 0";                              // Limit to products
     	$sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of products
-    	$sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+    	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
     	$sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
     }
 
@@ -320,7 +320,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     	$sql.= " AND (d.product_type = 1";                              // Limit to services
     	$sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
-    	$sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+    	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
     	$sql.= " ORDER BY d.rowid, d.".$fk_facture;
     }
     else
@@ -361,7 +361,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
     	$sql.= " AND (d.product_type = 1";                              		// Limit to services
     	$sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
-    	$sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+    	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
     	$sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
     }
 
@@ -465,7 +465,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
     	$sql.= " AND (d.product_type = -1";
     	$sql.= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)";       // enhance detection of service
-    	$sql.= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
+    	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
     	$sql.= " ORDER BY e.rowid";
 
     	if (! $sql)
@@ -641,7 +641,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
         $sql.= " AND (d.product_type = 0";                              // Limit to products
         $sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of products
-        $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+        if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
         $sql.= " ORDER BY d.rowid, d.".$fk_facture;
     }
     else
@@ -682,7 +682,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
     	if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
     	$sql.= " AND (d.product_type = 0";                              // Limit to products
     	$sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of products
-    	$sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+    	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
     	$sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
     }
 
@@ -789,7 +789,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
         $sql.= " AND (d.product_type = 1";                              // Limit to services
         $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
-        $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+        if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
         $sql.= " ORDER BY d.rowid, d.".$fk_facture;
     }
     else
@@ -830,7 +830,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
         $sql.= " AND (d.product_type = 1";                              		// Limit to services
         $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
-        $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
+        if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
         $sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
     }
 
@@ -934,7 +934,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		$sql.= " AND (d.product_type = -1";
 		$sql.= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)";       // enhance detection of service
-		$sql.= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
+		if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql.= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
 		$sql.= " ORDER BY e.rowid";
 
 		if (! $sql)

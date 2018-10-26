@@ -573,6 +573,8 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
  */
 function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $lastday=0)
 {
+	global $conf;
+
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
@@ -588,6 +590,26 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 		$jour  = date("d", $timestampStart);
 		$mois  = date("m", $timestampStart);
 		$annee = date("Y", $timestampStart);
+
+
+		// Check into var $conf->global->HOLIDAY_MORE_DAYS   MM-DD,YYYY-MM-DD, ...
+		if (! empty($conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS))
+		{
+			$arrayofdaystring=explode(',',$conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS);
+			foreach($arrayofdaystring as $daystring)
+			{
+				$tmp=explode('-',$daystring);
+				if ($tmp[2])
+				{
+					if ($tmp[0] == $annee && $tmp[1] == $mois && $tmp[2] == $jour) $ferie=true;
+				}
+				else
+				{
+					if ($tmp[0] == $mois && $tmp[1] == $jour) $ferie=true;
+				}
+			}
+		}
+
 		if ($countrycode == 'FR')
 		{
 			$countryfound=1;

@@ -361,7 +361,7 @@ if ($sql_select)
 {
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
-	
+
 	$num = $db->num_rows($resql);
 
 	$param="&socid=".$socid."&type_element=".$type_element;
@@ -384,7 +384,7 @@ if ($sql_select)
     print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
     print '</td>';
     print '<td class="liste_titre nowrap center">'; // date
-    print $formother->select_month($month?$month:-1,'month',1);
+    print $formother->select_month($month?$month:-1, 'month', 1, 0, 'valignmiddle');
     $formother->select_year($year?$year:-1,'year',1, 20, 1);
     print '</td>';
     print '<td class="liste_titre" align="center">';

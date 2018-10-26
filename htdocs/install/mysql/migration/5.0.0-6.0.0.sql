@@ -466,6 +466,7 @@ new_pmp double DEFAULT 0
 )ENGINE=InnoDB;
 
 ALTER TABLE llx_inventory ADD COLUMN datec datetime DEFAULT NULL;
+ALTER TABLE llx_inventory ADD COLUMN tms timestamp;
 
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_tms (tms);
 ALTER TABLE llx_inventory ADD INDEX idx_inventory_datec (datec);

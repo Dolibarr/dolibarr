@@ -242,6 +242,7 @@ $sql.= " t.status,";
 $sql.= " t.fk_user_author,";
 $sql.= " t.fk_user_mod,";
 $sql.= " t.note,";
+$sql.= " t.maxrun,";
 $sql.= " t.nbrun,";
 $sql.= " t.libname,";
 $sql.= " t.test";
@@ -252,12 +253,12 @@ if ($search_status == 2) $sql.= " AND t.status = 2";
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
-		$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+		$sql.= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
 	}
 }
 $sqlwhere = array();
 if (!empty($module_name)) {
-	$sqlwhere[]='(t.module_name='.$module_name.')';
+	$sqlwhere[]='(t.module_name='.$db->escape($module_name).')';
 }
 if (count($sqlwhere)>0) {
 	$sql.= " WHERE ".implode(' AND ',$sqlwhere);
@@ -519,9 +520,15 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datenextrun)) {
+		if (!empty($obj->datenextrun)) {
+			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) print '<span class="opacitymedium">';
-			print dol_print_date($db->jdate($obj->datenextrun),'dayhour');
+			print dol_print_date($datenextrun,'dayhoursec');
+			if ($obj->status == Cronjob::STATUS_ENABLED)
+			{
+				if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) print img_warning($langs->trans("MaxRunReached"));
+				elseif ($datenextrun && $datenextrun < $now) print img_warning($langs->trans("Late"));
+			}
 			if (empty($obj->status)) print '</span>';
 		}
 		print '</td>';

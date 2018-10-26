@@ -39,7 +39,7 @@ $action=GETPOST('action','aZ09');
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', '', '', 'payment');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new PaymentSalary($db);
 

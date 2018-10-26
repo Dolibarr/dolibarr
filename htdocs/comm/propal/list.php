@@ -490,7 +490,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$i = 0;
@@ -990,7 +990,7 @@ if ($resql)
 	}
 
 	// Show total line
-		if (isset($totalarray['totalhtfield'])
+	if (isset($totalarray['totalhtfield'])
  	   || isset($totalarray['totalvatfield'])
  	   || isset($totalarray['totalttcfield'])
  	   || isset($totalarray['totalamfield'])

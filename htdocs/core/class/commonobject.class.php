@@ -1151,8 +1151,8 @@ abstract class CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.= " WHERE ec.element_id = ".$id;
 		$sql.= " AND ec.fk_socpeople = c.rowid";
-		if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
-		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('socpeople').")";
+		if ($source == 'internal') $sql.= " AND c.entity IN (".getEntity('user').")";
+		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe').")";
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
@@ -2848,6 +2848,7 @@ abstract class CommonObject
 		// Special case
 		if ($origin == 'order') $origin='commande';
 		if ($origin == 'invoice') $origin='facture';
+		if ($origin == 'invoice_template') $origin='facturerec';
 
 		$this->db->begin();
 
@@ -4726,6 +4727,7 @@ abstract class CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$this->array_options = array();
 				$numrows=$this->db->num_rows($resql);
 				if ($numrows)
 				{
@@ -4851,6 +4853,9 @@ abstract class CommonObject
 			   		}
 			   	}
 
+				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
+				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
 			   	switch ($attributeType)
 			   	{
 			   		case 'int':
@@ -4864,6 +4869,21 @@ abstract class CommonObject
 			   				$new_array_options[$key] = null;
 			   			}
 			 			break;
+					case 'double':
+						$value = price2num($value);
+						if (!is_numeric($value) && $value!='')
+						{
+							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+							$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
+							return -1;
+						}
+						elseif ($value=='')
+						{
+							$new_array_options[$key] = null;
+						}
+						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+						$new_array_options[$key] = $value;
+						break;
 			 		/*case 'select':	// Not required, we chosed value='0' for undefined values
              			if ($value=='-1')
              			{
@@ -5058,6 +5078,9 @@ abstract class CommonObject
 			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
 
+			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
+			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
 			switch ($attributeType)
 			{
 				case 'int':
@@ -5070,6 +5093,21 @@ abstract class CommonObject
 					{
 						$this->array_options["options_".$key] = null;
 					}
+					break;
+				case 'double':
+					$value = price2num($value);
+					if (!is_numeric($value) && $value!='')
+					{
+						dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+						$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
+						return -1;
+					}
+					elseif ($value=='')
+					{
+						$this->array_options["options_".$key] = null;
+					}
+					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+					$this->array_options["options_".$key] = $value;
 					break;
 			 	/*case 'select':	// Not required, we chosed value='0' for undefined values
              		if ($value=='-1')

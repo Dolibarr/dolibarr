@@ -986,16 +986,21 @@ class BookKeeping extends CommonObject
 		}
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $this->db->fetch_object($resql) ) {
+			$i = 0;
+			while (($obj = $this->db->fetch_object($resql)) && ($i < min($limit, $num)))
+			{
 				$line = new BookKeepingLine();
 
 				$line->numero_compte = $obj->numero_compte;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 				$this->lines[] = $line;
+
+				$i++;
 			}
 			$this->db->free($resql);
 

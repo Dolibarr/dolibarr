@@ -296,7 +296,9 @@ if ($action == 'add')
 
             	if ($subjecttosend && $texttosend)
             	{
-            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1);
+            		$moreinheader='X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
             	}
             	/*if ($result < 0)
             	{

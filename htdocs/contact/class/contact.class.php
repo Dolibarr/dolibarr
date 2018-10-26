@@ -856,6 +856,7 @@ class Contact extends CommonObject
 		$sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.=" WHERE ec.fk_c_type_contact = tc.rowid";
 		$sql.=" AND fk_socpeople = ". $this->id;
+		$sql.=" AND tc.source = 'external'";
 		$sql.=" GROUP BY tc.element";
 
 		dol_syslog(get_class($this)."::load_ref_elements", LOG_DEBUG);
@@ -1050,9 +1051,9 @@ class Contact extends CommonObject
 	function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+		$sql.= " WHERE mc.fk_mailing=m.rowid AND mc.email = '".$this->db->escape($this->email)."' ";
+		$sql.= " AND m.entity IN (".getEntity($this->element).") AND mc.statut NOT IN (-1,0)";      // -1 error, 0 not sent, 1 sent with success
 
 		$resql=$this->db->query($sql);
 		if ($resql)

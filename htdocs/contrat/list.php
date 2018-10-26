@@ -107,7 +107,6 @@ $fieldstosearchall = array(
 	'c.ref_customer'=>'RefCustomer',
 	'c.ref_supplier'=>'RefSupplier',
 	's.nom'=>"ThirdParty",
-	'cd.description'=>'Description',
 	'c.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
@@ -252,7 +251,7 @@ else if ($year > 0)
 	$sql.= " AND c.date_contrat BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_name) $sql .= natural_search('s.nom', $search_name);
-if ($search_email) $sql .= natural_search('s.email', $search_name);
+if ($search_email) $sql .= natural_search('s.email', $search_email);
 if ($search_contract) $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
 if (!empty($search_ref_customer)) $sql .= natural_search(array('c.ref_customer'), $search_ref_customer);
 if (!empty($search_ref_supplier)) $sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);

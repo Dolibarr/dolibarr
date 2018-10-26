@@ -504,7 +504,7 @@ if (empty($reshook))
 
 	// Action update
 	else if (
-		($action == 'settracking_number' 
+		($action == 'settracking_number'
 		|| $action == 'settracking_url'
 		|| $action == 'settrueWeight'
 		|| $action == 'settrueWidth'
@@ -649,7 +649,7 @@ if (empty($reshook))
 						$qty = "qtyl".$detail_batch->fk_expeditiondet.'_'.$detail_batch->id;
 						$batch_id = GETPOST($batch,'int');
 						$batch_qty = GETPOST($qty, 'int');
-						if (! empty($batch_id) && ($batch_id != $detail_batch->fk_origin_stock || $batch_qty != $detail_batch->dluo_qty))
+						if (! empty($batch_id) && ($batch_id != $detail_batch->fk_origin_stock || $batch_qty != $detail_batch->qty))
 						{
 							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0)	// $line is ExpeditionLine
 							{
@@ -666,7 +666,7 @@ if (empty($reshook))
 								$line->detail_batch->batch = $lotStock->batch;
 								$line->detail_batch->id = $detail_batch->id;
 								$line->detail_batch->entrepot_id = $lotStock->warehouseid;
-								$line->detail_batch->dluo_qty = $batch_qty;
+								$line->detail_batch->qty = $batch_qty;
 								if ($line->update($user) < 0) {
 									setEventMessages($line->error, $line->errors, 'errors');
 									$error++;
@@ -720,7 +720,7 @@ if (empty($reshook))
 									$line->detail_batch->fk_origin_stock = $batch_id;
 									$line->detail_batch->batch = $lotStock->batch;
 									$line->detail_batch->entrepot_id = $lotStock->warehouseid;
-									$line->detail_batch->dluo_qty = $batch_qty;
+									$line->detail_batch->qty = $batch_qty;
 									if ($line->update($user) < 0) {
 										setEventMessages($line->error, $line->errors, 'errors');
 										$error++;
@@ -741,7 +741,7 @@ if (empty($reshook))
 								$line->detail_batch[0]->fk_origin_stock = $batch_id;
 								$line->detail_batch[0]->batch = $lotStock->batch;
 								$line->detail_batch[0]->entrepot_id = $lotStock->warehouseid;
-								$line->detail_batch[0]->dluo_qty = $batch_qty;
+								$line->detail_batch[0]->qty = $batch_qty;
 								if ($object->create_line_batch($line, $line->array_options) < 0)
 								{
 									setEventMessages($object->error, $object->errors, 'errors');
@@ -1306,6 +1306,7 @@ if ($action == 'create')
 					{
 					    // Product need lot
 						print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
+						print '<!-- Case product need lot -->';
 
 						$staticwarehouse=new Entrepot($db);
 						if ($warehouse_id > 0) $staticwarehouse->fetch($warehouse_id);
@@ -1323,7 +1324,7 @@ if ($action == 'create')
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch))
 						{
-							foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)
+							foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch)	// $dbatch is instance of Productbatch
 							{
 								//var_dump($dbatch);
 								$batchStock = + $dbatch->qty;		// To get a numeric
@@ -1344,7 +1345,7 @@ if ($action == 'create')
 								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
 								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
-								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
+								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 								$detail.= '<br>';
 								print $detail;
 
@@ -1503,11 +1504,11 @@ if ($action == 'create')
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
 
-									//print $line->fk_product.' - '.$dbatch->batch;
+									//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
 									print $langs->trans("Batch").': ';
 									$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
 									if ($result > 0) print $productlotObject->getNomUrl(1);
-									else print 'TableLotIncompleteRunRepair';
+									else print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
 									print ' ('.$dbatch->qty.')';
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
@@ -1576,7 +1577,7 @@ if ($action == 'create')
 					$srcLine = new OrderLine($db);
 					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
 					$line = new ExpeditionLigne($db);
-					$line->fetch_optionals($line->id);
+					//$line->fetch_optionals($line->id);
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
@@ -2242,7 +2243,7 @@ else if ($id || $ref)
 					{
 						print '<tr>';
 						// Qty to ship or shipped
-						print '<td>' . '<input name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->dluo_qty.'">' . '</td>';
+						print '<td>' . '<input name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->qty.'">' . '</td>';
 						// Batch number managment
 						if ($lines[$i]->entrepot_id == 0)
 						{
@@ -2354,12 +2355,12 @@ else if ($id || $ref)
 						if ($lines[$i]->product_tobatch)
 						{
 							$detail = '';
-							foreach ($lines[$i]->detail_batch as $dbatch)
+							foreach ($lines[$i]->detail_batch as $dbatch)	// $dbatch is instance of ExpeditionLineBatch
 							{
 								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
 								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
-								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
+								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 								$detail.= '<br>';
 							}
 							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);

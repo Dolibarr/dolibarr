@@ -1097,6 +1097,18 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 				continue;
 			}
 
+			if ($objectclass == "Task" && $objecttmp->hasChildren() > 0)
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET fk_task_parent = 0 WHERE fk_task_parent = ".$objecttmp->id;
+				$res = $db->query($sql);
+
+				if (!$res)
+				{
+					setEventMessage('ErrorRecordParentingNotModified', 'errors');
+					$error++;
+				}
+			}
+
 			if (in_array($objecttmp->element, array('societe', 'member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
 			else $result = $objecttmp->delete($user);
 

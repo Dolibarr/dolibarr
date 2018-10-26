@@ -732,7 +732,7 @@ while ($i < min($num,$limit))
 	// Job position
 	if (! empty($arrayfields['p.poste']['checked']))
 	{
-		print '<td>'.dol_trunc($obj->poste,20).'</td>';
+		print '<td class="tdoverflowmax100">'.$obj->poste.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Zip

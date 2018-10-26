@@ -115,15 +115,16 @@ function versiondolibarrarray()
  *  Install process however does not use it.
  *  Note that Sql files must have all comments at start of line.
  *
- *	@param		string	$sqlfile		Full path to sql file
- * 	@param		int		$silent			1=Do not output anything, 0=Output line for update page
- * 	@param		int		$entity			Entity targeted for multicompany module
- *	@param		int		$usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- *	@param		string	$handler		Handler targeted for menu
- *	@param 		string	$okerror		Family of errors we accept ('default', 'none')
- * 	@return		int						<=0 if KO, >0 if OK
+ *	@param		string	$sqlfile					Full path to sql file
+ * 	@param		int		$silent						1=Do not output anything, 0=Output line for update page
+ * 	@param		int		$entity						Entity targeted for multicompany module
+ *	@param		int		$usesavepoint				1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ *	@param		string	$handler					Handler targeted for menu
+ *	@param 		string	$okerror					Family of errors we accept ('default', 'none')
+ *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
+ * 	@return		int									<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$okerror='default')
+function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $offsetforchartofaccount=0)
 {
     global $db, $conf, $langs, $user;
 
@@ -252,6 +253,18 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
             $arraysql[$i]=$newsql;
+        }
+
+        if ($offsetforchartofaccount > 0)
+        {
+        	// Replace lines
+        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
+        	// with
+        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401 + 200100000, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
+        	$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
+        	$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
+        	//var_dump($newsql);
+        	$arraysql[$i] = $newsql;
         }
     }
 
@@ -1706,7 +1719,7 @@ function email_admin_prepare_head()
 	}
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-	$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+	$head[$h][1] = $langs->trans("EMailTemplates");
 	$head[$h][2] = 'templates';
 	$h++;
 
