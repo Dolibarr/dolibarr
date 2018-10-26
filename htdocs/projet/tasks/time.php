@@ -399,13 +399,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             print nl2br($projectstatic->description);
             print '</td></tr>';
 
-            // Bill time ?
-            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-            print yn($projectstatic->bill_time);
-            print '</td></tr>';
+            // Bill time
+            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            {
+	            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+	            print yn($projectstatic->bill_time);
+	            print '</td></tr>';
+            }
 
             // Categories
-            if($conf->categorie->enabled) {
+            if ($conf->categorie->enabled) {
                 print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id,'project',1);
                 print "</td></tr>";

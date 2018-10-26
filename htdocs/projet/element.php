@@ -217,6 +217,14 @@ print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
 
+// Bill time
+if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+{
+	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+	print yn($object->bill_time);
+	print '</td></tr>';
+}
+
 // Categories
 if($conf->categorie->enabled) {
     print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -686,8 +694,8 @@ foreach ($listofreferent as $key => $value)
 // and the final balance
 print '<tr class="liste_total">';
 print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td align="right" >'.price($balance_ht).'</td>';
-print '<td align="right" >'.price($balance_ttc).'</td>';
+print '<td align="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td align="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
 print "</table>";
