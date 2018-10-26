@@ -704,7 +704,7 @@ class DolGraph
 		// Create graph
 		$classname='';
 		if (! isset($this->type[0]) || $this->type[0] == 'bars')  $classname='BarPlot';    // Only one type (first one) is supported by artichow
-		else if ($this->type[0] == 'lines') $classname='LinePlot';
+		else if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint') $classname='LinePlot';
 		else $classname='TypeUnknown';
 		include_once ARTICHOW_PATH.$classname.'.class.php';
 
@@ -809,7 +809,7 @@ class DolGraph
 				$plot->SetYMin($this->MinValue);
 			}
 
-			if ($this->type[0] == 'lines')
+			if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')
 			{
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorbis=new Color(min($this->datacolor[$i][0]+20,255),min($this->datacolor[$i][1]+20,255),min($this->datacolor[$i][2]+20,255),60);
@@ -840,8 +840,8 @@ class DolGraph
 			// solve a bug in Artichow with UTF8
 			if (count($this->Legend))
 			{
-				if ($this->type[0] == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
-				if ($this->type[0] == 'lines') $group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
+				if ($this->type[0] == 'bars')  										$group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
+				if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')	$group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
 			}
 			$group->add($plot);
 
@@ -880,7 +880,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_jflot($file,$fileurl)
+	private function draw_jflot($file, $fileurl)
 	{
         // phpcs:enable
 		global $artichow_defaultfont;
@@ -1084,7 +1084,7 @@ class DolGraph
 				$color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 				$this->stringtoshow.='{ ';
 				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
-				if (isset($this->type[$i]) && $this->type[$i] == 'lines') $this->stringtoshow.='lines: { show: true, fill: false }, points: { show: true }, ';
+				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow.='lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
 				$this->stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
 			}
@@ -1108,7 +1108,7 @@ class DolGraph
 			// Background color
 			$color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
 			$color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
-			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#f3f3f3\', tickColor  : \'#f3f3f3\' }'."\n";
+			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#eee\', tickColor  : \'#f3f3f3\' }'."\n";
 			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow.='});'."\n";
 			$this->stringtoshow.='}'."\n";
