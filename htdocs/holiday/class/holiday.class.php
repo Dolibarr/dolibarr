@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,7 +189,7 @@ class Holiday extends CommonObject
 				$mybool|=@include_once $dir.$file;
 			}
 
-			if (! $mybool)
+			if ($mybool === false)
 			{
 				dol_print_error('',"Failed to include file ".$file);
 				return '';
