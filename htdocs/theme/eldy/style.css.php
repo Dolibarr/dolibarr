@@ -1856,7 +1856,7 @@ foreach($mainmenuusedarray as $val)
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 13px;
+	font-size: 14px;
 	vertical-align: middle;
 }
 .login_table_title {
