@@ -12,6 +12,7 @@
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2280,9 +2281,8 @@ class FactureFournisseur extends CommonInvoice
             $mybool|=@include_once $dir.$file;
         }
 
-        if (! $mybool)
-        {
-        	dol_print_error('',"Failed to include file ".$file);
+        if ($mybool === false) {
+        	dol_print_error('', "Failed to include file ".$file);
         	return '';
         }
 
