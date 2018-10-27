@@ -933,23 +933,23 @@ if ($action == 'create' || $action == 'adduserldap')
 
 
 	// Address
-	print '<tr><td class="tdtop titlefieldcreate">'.fieldLabel('Address','address').'</td>';
+	print '<tr><td class="tdtop titlefieldcreate">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print $object->address;
 	print '</textarea></td></tr>';
 
 	// Zip
-	print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+	print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 	print '</td></tr>';
 
 	// Town
-	print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+	print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
 	print '</td></tr>';
 
 	// Country
-	print '<tr><td>'.fieldLabel('Country','selectcountry_id').'</td><td class="maxwidthonsmartphone">';
+	print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 	print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id));
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
@@ -957,7 +957,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// State
 	if (empty($conf->global->USER_DISABLE_STATE))
 	{
-		print '<tr><td>'.fieldLabel('State','state_id').'</td><td class="maxwidthonsmartphone">';
+		print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 		print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
 		print '</td></tr>';
 	}
@@ -1090,7 +1090,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Categories
 	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 	{
-		print '<tr><td>' . fieldLabel('Categories', 'usercats') . '</td><td colspan="3">';
+		print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
 		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
 			null, '90%' );
@@ -2136,7 +2136,7 @@ else
 
 		   	// Employee
 		   	print '<tr>';
-		   	print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
+		   	print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
 		   	print $form->selectyesno("employee",$object->employee,1);
 		   	print '</td></tr>';
 
@@ -2162,23 +2162,23 @@ else
 
 
 			// Address
-			print '<tr><td class="tdtop titlefield">'.fieldLabel('Address','address').'</td>';
+			print '<tr><td class="tdtop titlefield">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 			print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
 
 			// Zip
-			print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 			print '</td></tr>';
 
 			// Town
-			print '<tr><td>'.fieldLabel('Town','town').'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
 			print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			print '</td></tr>';
 
 			// Country
-			print '<tr><td>'.fieldLabel('Country','selectcounty_id').'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td>';
 			print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td></tr>';
@@ -2186,7 +2186,7 @@ else
 			// State
 			if (empty($conf->global->USER_DISABLE_STATE))
 			{
-				print '<tr><td class="tdoverflow">'.fieldLabel('State','state_id').'</td><td>';
+				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
 				print '</td></tr>';
 			}
@@ -2356,7 +2356,7 @@ else
 			// Categories
 			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
 			{
-				print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
+				print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td>';
 				print '<td>';
 				$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, null, null, null, 1 );
 				$c = new Categorie( $db );

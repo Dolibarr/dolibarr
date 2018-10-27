@@ -227,7 +227,7 @@ if (empty($reshook))
                 $action = 'create';
 			} else {
 				// Categories association
-				$contcats = GETPOST( 'contcats', 'array');
+				$contcats = GETPOST('contcats', 'array');
 				$object->setCategories($contcats);
 			}
         }
@@ -383,10 +383,10 @@ if (empty($reshook))
 				// First we delete all categories association
 				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_contact';
 				$sql .= ' WHERE fk_socpeople = ' . $object->id;
-				$db->query( $sql );
+				$db->query($sql);
 
 				// Then we add the associated categories
-				$categories = GETPOST( 'contcats', 'array');
+				$categories = GETPOST('contcats', 'array');
 				$object->setCategories($categories);
 
                 $object->old_lastname='';
@@ -669,19 +669,19 @@ else
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
-            		print '<tr><td><label for="skype">'.fieldLabel('Skype','skype').'</label></td>';
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
             	}
             	// Twitter
             	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
             	{
-            		print '<tr><td><label for="twitter">'.fieldLabel('Twitter','twitter').'</label></td>';
+            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
             	}
             	// Facebook
             	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
             	{
-            		print '<tr><td><label for="facebook">'.fieldLabel('Facebook','facebook').'</label></td>';
+            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
             	}
             }
@@ -694,10 +694,9 @@ else
 
 			// Categories
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
-				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, 'parent', null, null, 1 );
-				print $form->multiselectarray( 'contcats', $cate_arbo, GETPOST( 'contcats', 'array' ), null, null, null,
-					null, '90%' );
+				print '<tr><td>' . $form->editfieldkey('Categories', 'contcats', '', $object, 0) . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+				print $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
 
@@ -938,19 +937,19 @@ else
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
-            		print '<tr><td><label for="skype">'.fieldLabel('Skype','skype').'</label></td>';
+            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
             		print '<td><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
             	}
             	// Twitter
             	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
             	{
-            		print '<tr><td><label for="twitter">'.fieldLabel('Twitter','twitter').'</label></td>';
+            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
             		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
             	}
             	// Facebook
             	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
             	{
-            		print '<tr><td><label for="facebook">'.fieldLabel('Facebook','facebook').'</label></td>';
+            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
             		print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
             	}
             }
@@ -980,16 +979,16 @@ else
             print '</td></tr>';
 
 			// Categories
-			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
-				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td>';
+			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+				print '<tr><td>' . $form->editfieldkey('Categories', 'contcats', '', $object, 0) . '</td>';
 				print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
-				$c = new Categorie( $db );
-				$cats = $c->containing( $object->id, 'contact' );
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, null, null, null, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, 'contact');
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray( 'contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				print $form->multiselectarray('contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				print "</td></tr>";
 			}
 
@@ -1101,10 +1100,10 @@ else
             $password=$generated_password;
 
             // Create a form array
-            $formquestion=array(
-            array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
-            array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
-            //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
+            $formquestion = array(
+                array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
+                array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
+                //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
             );
             $text=$langs->trans("ConfirmCreateContact").'<br>';
             if (! empty($conf->societe->enabled))
@@ -1176,7 +1175,7 @@ else
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">' . $langs->trans("Categories") . '</td>';
 			print '<td colspan="3">';
-			print $form->showCategories( $object->id, 'contact', 1 );
+			print $form->showCategories($object->id, 'contact', 1);
 			print '</td></tr>';
 		}
 
