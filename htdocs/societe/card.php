@@ -12,6 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1742,7 +1743,7 @@ else
 			}
 
             // Name
-            print '<tr><td class="titlefieldcreate">'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0, 'string', '', 1).'</td>';
 	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
@@ -1752,7 +1753,7 @@ else
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
-                print '<tr><td>'.fieldLabel('Prefix','prefix').'</td><td colspan="3">';
+                print '<tr><td>'.$form->editfieldkey('Prefix', 'prefix', '', $object, 0).'</td><td colspan="3">';
                 // It does not change the prefix mode using the auto numbering prefix
                 if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $object->prefix_comm)
                 {
@@ -1767,14 +1768,14 @@ else
             }
 
             // Prospect/Customer
-            print '<tr><td>'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
+            print '<tr><td>'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	        print '<td class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
             print '<option value="0"'.($object->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
             print '</select></td>';
-            print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td>';
+            print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 
             print '<table class="nobordernopadding"><tr><td>';
             if ((!$object->code_client || $object->code_client == -1) && $modCodeClient->code_auto)
@@ -1805,13 +1806,13 @@ else
             	|| (! empty($conf->supplier_proposal->enabled) && ! empty($user->rights->supplier_proposal->lire)))
             {
                 print '<tr>';
-                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td class="maxwidthonsmartphone">';
+                print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td class="maxwidthonsmartphone">';
                 print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
                 print '<td>';
                 if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
                 {
-                	print fieldLabel('SupplierCode','supplier_code');
+                	print $form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0);
                 }
                 print '</td><td>';
                 if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
@@ -1844,31 +1845,31 @@ else
             // Barcode
             if (! empty($conf->barcode->enabled))
             {
-                print '<tr><td class="tdtop">'.fieldLabel('Gencod','barcode').'</td>';
+                print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 	            print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
                 print '</td></tr>';
             }
 
             // Status
-            print '<tr><td>'.fieldLabel('Status','status').'</td><td colspan="3">';
+            print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
             print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$object->status);
             print '</td></tr>';
 
             // Address
-            print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+            print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	        print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 
             // Zip / Town
-            print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
+            print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
             print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth50onsmartphone');
-            print '</td><td>'.fieldLabel('Town','town').'</td><td>';
+            print '</td><td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
             print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
 
             // Country
-            print '<tr><td>'.fieldLabel('Country','selectcounty_id').'</td><td colspan="3">';
+            print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
             print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
@@ -1878,11 +1879,11 @@ else
             {
                 if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
-                    print '<tr><td>'.fieldLabel('Region-State','state_id').'</td><td colspan="3">';
+                    print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3">';
                 }
                 else
                 {
-                    print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                    print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
                 }
 
                 print $formcompany->select_state($object->state_id,$object->country_code);
@@ -1890,9 +1891,9 @@ else
             }
 
             // EMail / Web
-            print '<tr><td>'.fieldLabel('EMail','email',(! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+            print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
 	        print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
-            print '<tr><td>'.fieldLabel('Web','url').'</td>';
+            print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
 
 	        if (! empty($conf->socialnetworks->enabled))
@@ -1900,27 +1901,27 @@ else
 	        	// Skype
 	        	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
 	        	{
-	        		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
+	        		print '<tr><td>'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</td>';
 	        		print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
 	        	}
 	        	// Twitter
 	        	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
 	        	{
-	        		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
+	        		print '<tr><td>'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</td>';
 	        		print '<td colspan="3"><input type="text" name="twitter" id="twitter" value="'.$object->twitter.'"></td></tr>';
 	        	}
 	        	// Facebook
 	        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
 	        	{
-	        		print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
+	        		print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
 	        		print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
 	        	}
 	        }
 
             // Phone / Fax
-            print '<tr><td>'.fieldLabel('Phone','phone').'</td>';
+            print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
 	        print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
-            print '<td>'.fieldLabel('Fax','fax').'</td>';
+            print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	        print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
             // Prof ids
@@ -1935,12 +1936,8 @@ else
 	                if (($j % 2) == 0) print '<tr>';
 
 	                $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-	                if (empty($conf->global->$idprof_mandatory) || ! $object->isACompany())
-	                    print '<td>'.fieldLabel($idprof,$key).'</td><td>';
-                    else
-	                    print '<td><span class="fieldrequired">'.fieldLabel($idprof,$key).'</td><td>';
-
-	                print $formcompany->get_input_id_prof($i,$key,$object->$key,$object->country_code);
+	                print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', ! (empty($conf->global->$idprof_mandatory) || ! $object->isACompany())).'</td><td>';
+	                print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
                     print '</td>';
                     if (($j % 2) == 1) print '</tr>';
                     $j++;
@@ -1950,7 +1947,7 @@ else
             if ($j % 2 == 1) print '<td colspan="2"></td></tr>';
 
             // VAT is used
-            print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td colspan="3">';
+            print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td><td colspan="3">';
             print $form->selectyesno('assujtva_value',$object->tva_assuj,1);
             print '</td></tr>';
 
@@ -1958,7 +1955,7 @@ else
             //TODO: Place into a function to control showing by country or study better option
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
-                print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td>';
+                print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td>';
                 print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
@@ -1968,7 +1965,7 @@ else
                 }
                 print '</td>';
 
-                print '<td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
+                print '<td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td>';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if  (! isOnlyOneLocalTax(2))
                 {
@@ -1980,7 +1977,7 @@ else
             }
             elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
             {
-                print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td colspan="3">';
+                print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td colspan="3">';
                 print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
@@ -1992,7 +1989,7 @@ else
             }
             elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
             {
-                print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td colspan="3">';
+                print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td colspan="3">';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if(! isOnlyOneLocalTax(2))
                 {
@@ -2004,7 +2001,7 @@ else
             }
 
             // VAT Code
-            print '<tr><td>'.fieldLabel('VATIntra','intra_vat').'</td>';
+            print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
             print '<td colspan="3">';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
@@ -2034,29 +2031,29 @@ else
             print '</tr>';
 
             // Type - Size
-            print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">';
+            print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
-            print '<td>'.fieldLabel('Staff','effectif_id').'</td><td class="maxwidthonsmartphone">';
+            print '<td>'.$form->editfieldkey('Staff', 'effectif_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td class="maxwidthonsmartphone" colspan="3">';
+            print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td><td class="maxwidthonsmartphone" colspan="3">';
             print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
             // Capital
-            print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
+            print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
 	        print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
 	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
 			// Assign a Name
             print '<tr>';
-            print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
+            print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
 			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
 			$arrayselected = GETPOST('commercial', 'array');
@@ -2067,7 +2064,7 @@ else
             // Default language
             if (! empty($conf->global->MAIN_MULTILANGS))
             {
-                print '<tr><td>'.fieldLabel('DefaultLang','default_lang').'</td><td colspan="3">'."\n";
+                print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
                 print $formadmin->select_language($object->default_lang,'default_lang',0,0,1);
                 print '</td>';
                 print '</tr>';
@@ -2077,7 +2074,7 @@ else
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 			{
 				// Customer
-				print '<tr class="visibleifcustomer"><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
+				print '<tr class="visibleifcustomer"><td>' . $form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0) . '</td>';
 				print '<td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
 				$c = new Categorie($db);
@@ -2090,7 +2087,7 @@ else
 				print "</td></tr>";
 
 				// Supplier
-				print '<tr class="visibleifsupplier"><td>' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td>';
+				print '<tr class="visibleifsupplier"><td>' . $form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0) . '</td>';
 				print '<td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
 				$c = new Categorie($db);
@@ -2107,7 +2104,7 @@ else
 			if (! empty($conf->multicurrency->enabled))
 			{
 				print '<tr>';
-				print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
 				print '</td></tr>';
@@ -2124,9 +2121,9 @@ else
 
             // Webservices url/key
             if (!empty($conf->syncsupplierwebservices->enabled)) {
-                print '<tr><td>'.fieldLabel('WebServiceURL','webservices_url').'</td>';
+                print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
                 print '<td><input type="text" name="webservices_url" id="webservices_url" size="32" value="'.$object->webservices_url.'"></td>';
-                print '<td>'.fieldLabel('WebServiceKey','webservices_key').'</td>';
+                print '<td>'.$form->editfieldkey('WebServiceKey', 'webservices_key', '', $object, 0).'</td>';
                 print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
             }
 
@@ -2134,7 +2131,7 @@ else
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td>'.fieldLabel('IncotermLabel','incoterm_id').'</td>';
+				print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
 	            print '<td colspan="3" class="maxwidthonsmartphone">';
 	            print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
@@ -2142,7 +2139,7 @@ else
 
             // Logo
             print '<tr class="hideonsmartphone">';
-            print '<td>'.fieldLabel('Logo','photoinput').'</td>';
+            print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
             print '<td colspan="3">';
             if ($object->logo) print $form->showphoto('societe',$object);
             $caneditfield=1;
@@ -2530,7 +2527,7 @@ else
 		if (! empty($conf->multicurrency->enabled))
 		{
 			print '<tr>';
-			print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 	        print '<td>';
 	        print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code,1) : '';
 			print '</td></tr>';

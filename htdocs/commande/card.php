@@ -420,7 +420,7 @@ if (empty($reshook))
 
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
-						// Note that $action and $object may have be modified by hook
+						// Note that $action and $object may be modified by hook
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action);
 						if ($reshook < 0) {
 							$error++;
