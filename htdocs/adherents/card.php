@@ -1017,7 +1017,7 @@ else
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 		{
-			print '<tr><td>' . fieldLabel('Categories', 'memcars') . '</td><td>';
+			print '<tr><td>' .$form->editfieldkey("Categories", 'memcats', '', $object, 0) . '</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
 			print $form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
 			print "</td></tr>";
@@ -1140,7 +1140,7 @@ else
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="login" class="minwidth300" maxlength="50" value="'.(isset($_POST["login"])?GETPOST("login",'alpha',2):$object->login).'"></td></tr>';
 		}
 
-	// Password
+		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.(isset($_POST["pass"])?GETPOST("pass",'',2):$object->pass).'"></td></tr>';
@@ -1267,7 +1267,7 @@ else
 		// Categories
 		if (! empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
 		{
-			print '<tr><td>' . fieldLabel('Categories', 'memcats') . '</td>';
+			print '<tr><td>' . $form->editfieldkey("Categories", 'memcats', '', $object, 0) . '</td>';
 			print '<td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
 			$c = new Categorie($db);
@@ -1620,11 +1620,8 @@ else
 		if (! empty($conf->societe->enabled))
 		{
 			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans("LinkedToDolibarrThirdParty");
-			print '</td>';
-			if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
-			print '</tr></table>';
+			$editenable = $user->rights->adherent->creer;
+			print $form->editfieldkey('LinkedToDolibarrThirdParty', 'thirdparty', '', $object, $editenable);
 			print '</td><td colspan="2" class="valeur">';
 			if ($action == 'editthirdparty')
 			{
@@ -1658,19 +1655,8 @@ else
 
 		// Login Dolibarr
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans("LinkedToDolibarrUser");
-		print '</td>';
-		if ($action != 'editlogin' && $user->rights->adherent->creer)
-		{
-			print '<td align="right">';
-			if ($user->rights->user->user->creer)
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a>';
-			}
-			print '</td>';
-		}
-		print '</tr></table>';
+		$editenable = $user->rights->adherent->creer && $user->rights->user->user->creer;
+		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, $editenable);
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editlogin')
 		{

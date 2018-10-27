@@ -106,7 +106,8 @@ $permissionedit = $user->rights->commande->creer; 		// Used by the include of ac
  */
 
 $parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -419,10 +420,11 @@ if (empty($reshook))
 
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
-						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-						// modified by hook
-						if ($reshook < 0)
+						// Note that $action and $object may have be modified by hook
+						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action);
+						if ($reshook < 0) {
 							$error++;
+						}
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -1669,7 +1671,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	// Other attributes
 	$parameters = array('objectsrc' => $objectsrc, 'socid'=>$socid);
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
+	// Note that $action and $object may be modified by hook
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
@@ -1969,7 +1972,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Call Hook formConfirm
 		$parameters = array('lineid' => $lineid);
-		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		// Note that $action and $object may be modified by hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
 		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
@@ -2095,7 +2099,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Delivery date planed
 		print '<tr><td>';
-		$editenable = $user->rights->commande->creer && $object->statut == Commande::STATUS_DRAFT;
+		$editenable = $user->rights->commande->creer;
 		print $form->editfieldkey("DateDeliveryPlanned", 'date_livraison', '', $object, $editenable);
 		print '</td><td>';
 		if ($action == 'editdate_livraison') {
@@ -2420,7 +2424,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$object->formAddObjectLine(1, $mysoc, $soc);
 
 				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				// Note that $action and $object may be modified by hook
+				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action);
 			}
 		}
 		print '</table>';
@@ -2437,8 +2442,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<div class="tabsAction">';
 
 			$parameters = array();
-			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																									  // modified by hook
+			// Note that $action and $object may be modified by hook
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
 				// Send
 				if ($object->statut > Commande::STATUS_DRAFT) {
