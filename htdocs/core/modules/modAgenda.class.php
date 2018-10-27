@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *

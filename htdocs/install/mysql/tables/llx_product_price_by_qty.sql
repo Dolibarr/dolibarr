@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
--- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2012		Maxime Kohlhaas			<maxime.kohlhaas@atm-consulting.fr>
 --
