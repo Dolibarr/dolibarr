@@ -376,7 +376,14 @@ class FactureFournisseur extends CommonInvoice
                             $this->lines[$i]->fk_product,
                             'HT',
                             (! empty($this->lines[$i]->info_bits)?$this->lines[$i]->info_bits:''),
-                            $this->lines[$i]->product_type
+                            $this->lines[$i]->product_type,
+                            $this->lines[$i]->remise_percent,
+                            false,
+                            $this->lines[$i]->date_start,
+                            $this->lines[$i]->date_end,
+                            $this->lines[$i]->array_options,
+                            $this->lines[$i]->fk_unit,
+                            $this->lines[$i]->pu_ht_devise
                         );
                     }
                     else
