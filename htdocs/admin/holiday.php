@@ -513,7 +513,6 @@ print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
-
 }
 
 
