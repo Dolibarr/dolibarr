@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +72,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$refreshaction='refresh_'.$this->boxcode;
 
+		$langs->load("orders");
+
 		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		//$commandestatic=new Commande($db);
 
@@ -94,8 +97,6 @@ class box_graph_orders_permonth extends ModeleBoxes
 		}
 
 		if ($user->rights->commande->lire) {
-		    $langs->load("orders");
-
 		    $param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 		    $param_nbyear = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_nbyear';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
@@ -109,9 +110,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$nbyear = GETPOST($param_nbyear, 'int');
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
-			}
-			else
-			{
+			} else {
 				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 				$endyear = $tmparray['year'];
 				$nbyear = $tmparray['nbyear'];
@@ -136,8 +135,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 			$langs->load('orders');
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($shownb) {
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+            if ($shownb) {
+                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
 
                 $labels1 = array();
                 $datas1 = array();
@@ -145,22 +144,22 @@ class box_graph_orders_permonth extends ModeleBoxes
                 $bgdatacolor=array();
                 $px1 = new DolChartJs();
                 foreach ($data1 as $data) {
-					$labels1[] = $data[0];
-					for ($i=0; $i<$nbyear; $i++) {
-                    	$datacolor[$i][] = $px1->datacolor[$i];
-                    	$bgdatacolor[$i][] = $px1->bgdatacolor[$i];
-                    	$datas1[$i][] = $data[$i+1];
-					}
-				}
-				$dataset = array();
-				for ($i=0; $i<$nbyear; $i++) {
-					$dataset[] = array(
-						'label' => $langs->trans("NumberOfOrders").' '.($startyear+$i),
-						'backgroundColor' => $datacolor[$i],
-						'borderColor' => $bgdatacolor[$i],
-						'data' => $datas1[$i],
-					);
-				}
+                    $labels1[] = $data[0];
+                    for ($i=0; $i<$nbyear; $i++) {
+                        $datacolor[$i][] = $px1->datacolor[$i];
+                        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
+                        $datas1[$i][] = $data[$i+1];
+                    }
+                }
+                $dataset = array();
+                for ($i=0; $i<$nbyear; $i++) {
+                    $dataset[] = array(
+                        'label' => $langs->trans("NumberOfOrders").' '.($startyear+$i),
+                        'backgroundColor' => $datacolor[$i],
+                        'borderColor' => $bgdatacolor[$i],
+                        'data' => $datas1[$i],
+                    );
+                }
                 $px1->element('idboxgraphboxnborderspermonth')
                     ->setType('bar')
                     ->setLabels($labels1)
@@ -183,8 +182,9 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot) {
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<300?2:0));
-				$labels2 = array();
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+
+                $labels2 = array();
                 $datas2 = array();
                 $datacolor=array();
                 $bgdatacolor=array();
@@ -192,22 +192,22 @@ class box_graph_orders_permonth extends ModeleBoxes
                 $px2 = new DolChartJs();
 
                 foreach ($data2 as $data) {
-                	$labels2[] = $data[0];
-					for ($i=0; $i<$nbyear; $i++) {
-                    	$datacolor[$i][] = $px2->datacolor[$i];
-                    	$bgdatacolor[$i][] = $px2->bgdatacolor[$i];
-                    	$datas2[$i][] = $data[$i+1];
-					}
-				}
-				$dataset = array();
-				for ($i=0; $i<$nbyear; $i++) {
-					$dataset[] = array(
-						'label' => $langs->trans("AmountOfOrdersHT").' '.($startyear+$i),
-						'backgroundColor' => $datacolor[$i],
-						'borderColor' => $bgdatacolor[$i],
-						'data' => $datas2[$i],
-					);
-				}
+                    $labels2[] = $data[0];
+                    for ($i=0; $i<$nbyear; $i++) {
+                        $datacolor[$i][] = $px2->datacolor[$i];
+                        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
+                        $datas2[$i][] = $data[$i+1];
+                    }
+                }
+                $dataset = array();
+                for ($i=0; $i<$nbyear; $i++) {
+                    $dataset[] = array(
+                        'label' => $langs->trans("AmountOfOrdersHT").' '.($startyear+$i),
+                        'backgroundColor' => $datacolor[$i],
+                        'borderColor' => $bgdatacolor[$i],
+                        'data' => $datas2[$i],
+                    );
+                }
                 $px2->element('idboxgraphboxamountorderspermonth')
                     ->setType('bar')
                     ->setLabels($labels2)
@@ -226,16 +226,14 @@ class box_graph_orders_permonth extends ModeleBoxes
                         )
                     )
                 );
-			}
+            }
 
-			if (empty($conf->use_javascript_ajax))
-			{
+            if (empty($conf->use_javascript_ajax)) {
 				$langs->load("errors");
 				$mesg=$langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
 			}
 
-			if (! $mesg)
-			{
+			if (! $mesg) {
 				$stringtoshow='';
 				$stringtoshow.='<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
@@ -287,7 +285,6 @@ class box_graph_orders_permonth extends ModeleBoxes
 					'text' => $mesg
 				);
 			}
-
 		}
 		else {
 			$this->info_box_contents[0][0] = array(

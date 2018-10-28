@@ -74,6 +74,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		//$facturestatic=new Facture($db);
+        $langs->load("bills");
 
 		$text = $langs->trans("BoxCustomersInvoicesPerMonth",$max);
 		$this->info_box_head = array(
@@ -139,7 +140,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			$height = '25';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
-            $langs->load("bills");
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($shownb) {
@@ -151,22 +151,22 @@ class box_graph_invoices_permonth extends ModeleBoxes
                 $bgdatacolor=array();
                 $px1 = new DolChartJs();
                 foreach ($data1 as $data) {
-					$labels1[] = $data[0];
-					for ($i=0; $i<$nbyear; $i++) {
-                    	$datacolor[$i][] = $px1->datacolor[$i];
-                    	$bgdatacolor[$i][] = $px1->bgdatacolor[$i];
-                    	$datas1[$i][] = $data[$i+1];
-					}
-				}
-				$dataset = array();
-				for ($i=0; $i<$nbyear; $i++) {
-					$dataset[] = array(
-						'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
-						'backgroundColor' => $datacolor[$i],
-						'borderColor' => $bgdatacolor[$i],
-						'data' => $datas1[$i],
-					);
-				}
+                    $labels1[] = $data[0];
+                    for ($i=0; $i<$nbyear; $i++) {
+                        $datacolor[$i][] = $px1->datacolor[$i];
+                        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
+                        $datas1[$i][] = $data[$i+1];
+                    }
+                }
+                $dataset = array();
+                for ($i=0; $i<$nbyear; $i++) {
+                    $dataset[] = array(
+                        'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
+                        'backgroundColor' => $datacolor[$i],
+                        'borderColor' => $bgdatacolor[$i],
+                        'data' => $datas1[$i],
+                    );
+                }
                 $px1->element('idboxgraphboxnbinvoicespermonth')
                     ->setType('bar')
                     ->setLabels($labels1)
@@ -199,22 +199,22 @@ class box_graph_invoices_permonth extends ModeleBoxes
                 $px2 = new DolChartJs();
 
                 foreach ($data2 as $data) {
-                	$labels2[] = $data[0];
-					for ($i=0; $i<$nbyear; $i++) {
-                    	$datacolor[$i][] = $px2->datacolor[$i];
-                    	$bgdatacolor[$i][] = $px2->bgdatacolor[$i];
-                    	$datas2[$i][] = $data[$i+1];
-					}
-				}
-				$dataset = array();
-				for ($i=0; $i<$nbyear; $i++) {
-					$dataset[] = array(
-						'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),
-						'backgroundColor' => $datacolor[$i],
-						'borderColor' => $bgdatacolor[$i],
-						'data' => $datas2[$i],
-					);
-				}
+                    $labels2[] = $data[0];
+                    for ($i=0; $i<$nbyear; $i++) {
+                        $datacolor[$i][] = $px2->datacolor[$i];
+                        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
+                        $datas2[$i][] = $data[$i+1];
+                    }
+                }
+                $dataset = array();
+                for ($i=0; $i<$nbyear; $i++) {
+                    $dataset[] = array(
+                        'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),
+                        'backgroundColor' => $datacolor[$i],
+                        'borderColor' => $bgdatacolor[$i],
+                        'data' => $datas2[$i],
+                    );
+                }
                 $px2->element('idboxgraphboxamountinvoicespermonth')
                     ->setType('bar')
                     ->setLabels($labels2)
@@ -263,20 +263,17 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
-				if ($shownb && $showtot)
-				{
+				if ($shownb && $showtot) {
 					$stringtoshow.='<div class="fichecenter">';
 					$stringtoshow.='<div class="fichehalfleft">';
 				}
 				if ($shownb) $stringtoshow.=$px1->renderChart();
-				if ($shownb && $showtot)
-				{
+				if ($shownb && $showtot) {
 					$stringtoshow.='</div>';
 					$stringtoshow.='<div class="fichehalfright">';
 				}
 				if ($showtot) $stringtoshow.=$px2->renderChart();
-				if ($shownb && $showtot)
-				{
+				if ($shownb && $showtot) {
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
@@ -285,17 +282,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
                     'td' => 'align="center" class="nohover"',
                     'textnoformat'=>$stringtoshow,
                 );
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(
+            } else {
+                $this->info_box_contents[0][0] = array(
                     'tr'=>'class="oddeven nohover"',
                     'td' => 'align="left" class="nohover"',
                     'maxlength' => 500,
                     'text' => $mesg,
                 );
 			}
-
 		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'align="left" class="nohover opacitymedium"',

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,7 +287,6 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 					'text' => $mesg
 				);
 			}
-
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
