@@ -184,7 +184,7 @@ class box_graph_product_distribution extends ModeleBoxes
                         'responsive' => true,
                         'maintainAspectRatio' => false,
                         'legend' => array(
-                            'display' => false,
+                            'display' => true,
                             'position' => 'right',
                         ),
                         'title' => array(
@@ -241,7 +241,7 @@ class box_graph_product_distribution extends ModeleBoxes
                         'responsive' => true,
                         'maintainAspectRatio' => false,
                         'legend' => array(
-                            'display' => false,
+                            'display' => true,
                             'position' => 'right',
                         ),
                         'title' => array(
@@ -300,7 +300,7 @@ class box_graph_product_distribution extends ModeleBoxes
                         'responsive' => true,
                         'maintainAspectRatio' => false,
                         'legend' => array(
-                            'display' => false,
+                            'display' => true,
                             'position' => 'right',
                         ),
                         'title' => array(
@@ -358,24 +358,19 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='</form>';
 			$stringtoshow.='</div>';
 
-			if ($nbofgraph == 1)
-			{
+			if ($nbofgraph == 1) {
 				if ($showinvoicenb) $stringtoshow.= $px1->renderchart();
-				else if ($showpropalnb) $stringtoshow.= $px2->renderchart();
+				elseif ($showpropalnb) $stringtoshow.= $px2->renderchart();
 				else $stringtoshow.= $px3->renderchart();
-			}
-			if ($nbofgraph == 2)
-			{
+			} elseif ($nbofgraph == 2) {
 				$stringtoshow.='<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				if ($showinvoicenb) $stringtoshow.= $px1->renderchart();
-				else if ($showpropalnb) $stringtoshow.= $px2->renderchart();
+				elseif ($showpropalnb) $stringtoshow.= $px2->renderchart();
 				$stringtoshow.='</div><div class="fichehalfright">';
 				if ($showordernb) $stringtoshow.= $px3->renderchart();
-				else if ($showpropalnb) $stringtoshow.= $px2->renderchart();
+				elseif ($showpropalnb) $stringtoshow.= $px2->renderchart();
 				$stringtoshow.='</div></div></div>';
-			}
-			if ($nbofgraph == 3)
-			{
+			} elseif ($nbofgraph == 3) {
 				$stringtoshow.='<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
 				$stringtoshow .= $px1->renderchart();
 				$stringtoshow .= '</div><div class="fichehalfright">';

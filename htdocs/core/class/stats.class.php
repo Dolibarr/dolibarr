@@ -39,7 +39,7 @@ abstract class Stats
 	 * @param 	int		$endyear		Start year
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     *	@param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array					Array of values
 	 */
 	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
@@ -57,20 +57,21 @@ abstract class Stats
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	    }
 
-		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
+		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').(int) $endyear.'-'.(int) $startyear.'-'.$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
 		$newmask='0644';
 
 		$nowgmt = dol_now();
 
 		$foundintocache=0;
-		if ($cachedelay > 0)
-		{
+		if ($cachedelay > 0) {
 			$filedate=dol_filemtime($newpathofdestfile);
-			if ($filedate >= ($nowgmt - $cachedelay))
-			{
-				$foundintocache=1;
-
-				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+			if ($filedate >= ($nowgmt - $cachedelay)) {
+				if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+					$foundintocache = 0;
+				} else {
+					$foundintocache = 1;
+					$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
+				}
 			}
 			else
 			{
@@ -85,21 +86,24 @@ abstract class Stats
 		}
 		else
 		{
-			$year=$startyear;
-			while ($year <= $endyear)
-			{
+			$year = $startyear;
+			while ($year <= $endyear) {
 				$datay[$year] = $this->getNbByMonth($year, $format);
+				if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+					// generate random to test
+					for ($j=0; $j<12;$j++){
+						$datay[$year][$j][1] = 12+rand(10,30);
+					}
+				}
 				$year++;
 			}
 
 			$data = array();
 
-			for ($i = 0 ; $i < 12 ; $i++)
-			{
+			for ($i = 0 ; $i < 12 ; $i++) {
 				$data[$i][]=$datay[$endyear][$i][0];
 				$year=$startyear;
-				while($year <= $endyear)
-				{
+				while($year <= $endyear) {
 					$data[$i][]=$datay[$year][$i][1];
 					$year++;
 				}
@@ -107,7 +111,7 @@ abstract class Stats
 		}
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1) && empty($conf->global->GRAPH_DATA_GENERATE_RANDOM))
 		{
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
@@ -138,7 +142,7 @@ abstract class Stats
 	 */
 	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
 	{
-		global $conf,$user,$langs;
+		global $conf, $user, $langs;
 
         if ($startyear > $endyear) return -1;
 
@@ -151,20 +155,21 @@ abstract class Stats
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
 
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').(int) $endyear.'-'.(int) $startyear.'-'.$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
         $newmask='0644';
 
         $nowgmt = dol_now();
 
         $foundintocache=0;
-        if ($cachedelay > 0)
-        {
+        if ($cachedelay > 0) {
         	$filedate=dol_filemtime($newpathofdestfile);
-        	if ($filedate >= ($nowgmt - $cachedelay))
-        	{
-        		$foundintocache=1;
-
-        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+        	if ($filedate >= ($nowgmt - $cachedelay)) {
+				if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+					$foundintocache = 0;
+				} else {
+					$foundintocache = 1;
+					$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+				}
         	}
         	else
         	{
@@ -177,13 +182,16 @@ abstract class Stats
         {
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
-        }
-        else
-		{
-			$year=$startyear;
-			while($year <= $endyear)
-			{
+        } else {
+			$year = $startyear;
+			while($year <= $endyear) {
 				$datay[$year] = $this->getAmountByMonth($year, $format);
+				if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+					// generate random to test
+					for ($j=0; $j<12;$j++){
+						$datay[$year][$j][1] = 12+rand(1000,300000);
+					}
+				}
 				$year++;
 			}
 
@@ -202,7 +210,7 @@ abstract class Stats
 		}
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1) && empty($conf->global->GRAPH_DATA_GENERATE_RANDOM))
 		{
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
@@ -228,7 +236,7 @@ abstract class Stats
 	 * @param	int		$startyear		End year
 	 * @return 	array					Array of values
 	 */
-	function getAverageByMonthWithPrevYear($endyear,$startyear)
+	function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
         if ($startyear > $endyear) return -1;
 
@@ -264,15 +272,14 @@ abstract class Stats
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @return 	array					Array of values
 	 */
-	function getAllByProductEntry($year,$cachedelay=0)
+	function getAllByProductEntry($year, $cachedelay=0)
 	{
 		global $conf,$user,$langs;
 
         $datay=array();
 
         // Search into cache
-        if (! empty($cachedelay))
-        {
+        if (! empty($cachedelay)) {
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
@@ -288,9 +295,12 @@ abstract class Stats
         	$filedate=dol_filemtime($newpathofdestfile);
         	if ($filedate >= ($nowgmt - $cachedelay))
         	{
-        		$foundintocache=1;
-
-        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+				if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+					$foundintocache = 0;
+				} else {
+        			$foundintocache=1;
+					$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+				}
         	}
         	else
         	{
@@ -306,8 +316,18 @@ abstract class Stats
         }
         else
 		{
-			$data=$this->getAllByProduct($year);
-			//					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+			$data = $this->getAllByProduct($year);
+			if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+				//var_dump($data);
+				$nb = 12 - count($data);
+				for ($i=0; $i<$nb;$i++) {
+					$data[] = array(
+						'0' => 'PRODUIT'.$i,
+						'1' => rand(1, 100),
+					);
+				}
+			}
+			//$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 		}
 
 		// Save cache file
