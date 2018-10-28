@@ -750,6 +750,7 @@ LinkToIntervention=Link to intervention
 CreateDraft=Create draft
 SetToDraft=Back to draft
 ClickToEdit=Click to edit
+ClickToRefresh=Click to refresh
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
 EditHTMLSource=Edit HTML Source
