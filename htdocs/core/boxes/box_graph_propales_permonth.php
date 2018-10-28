@@ -132,9 +132,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 			$stats = new PropaleStats($this->db, $socid, 0);
 
-			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($shownb) {
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+            // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+            if ($shownb) {
+                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
 
                 $labels1 = array();
                 $datas1 = array();
@@ -162,20 +162,26 @@ class box_graph_propales_permonth extends ModeleBoxes
                     ->setType('bar')
                     ->setLabels($labels1)
                     ->setDatasets($dataset)
-                    ->setSize(array('width' => $width, 'height' => $height))
-                    ->setOptions(array(
-                        'responsive' => true,
-                        'maintainAspectRatio' => false,
-                        'legend' => array(
-                            'display' => true,
-                            'position' => 'bottom',
-                        ),
-                        'title' => array(
-                            'display' => true,
-                            'text' => $langs->transnoentitiesnoconv("NumberOfProposalsByMonth"),
+                    ->setSize(
+                        array(
+                            'width' => $width,
+                            'height' => $height
                         )
                     )
-                );
+                    ->setOptions(
+                        array(
+                            'responsive' => true,
+                            'maintainAspectRatio' => false,
+                            'legend' => array(
+                                'display' => true,
+                                'position' => 'bottom',
+                            ),
+                            'title' => array(
+                                'display' => true,
+                                'text' => $langs->transnoentitiesnoconv("NumberOfProposalsByMonth"),
+                            )
+                        )
+                    );
             }
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)

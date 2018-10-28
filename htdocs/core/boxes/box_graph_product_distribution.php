@@ -140,106 +140,98 @@ class box_graph_product_distribution extends ModeleBoxes
 		$width = ($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
 		$height = '25';
 
-		if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire)) {
+        if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire) && $showinvoicenb) {
+            // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+            $langs->load("bills");
+            include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
-			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showinvoicenb) {
-				$langs->load("bills");
-				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
+            $mode='customer';
+            $stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
+            $data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+            if (empty($data1)) {
+                $data1 = array(array(0=>$langs->trans("None"), 1=>1));
+            }
 
-                $showpointvalue = 1;
-                $nocolor = 0;
-				$mode='customer';
-				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-				$data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
-				if (empty($data1)) {
-					$showpointvalue=0;
-					$nocolor=1;
-					$data1 = array(array(0=>$langs->trans("None"), 1=>1));
-				}
-                // $filenamenb = $dir."/prodserforinvoice-".$year.".png";
-                // $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';
+            $labels1 = array();
+            $datas1 = array();
+            foreach ($data1 as $data) {
+                $labels1[] = $data[0];
+                $datas1[] = $data[1];
+            }
 
-                $labels1 = array();
-                $datas1 = array();
-                foreach ($data1 as $data) {
-                    $labels1[] = $data[0];
-                    $datas1[] = $data[1];
-                }
-
-                $px1 = new DolChartJs();
-                $px1->element('idboxgraphboxbycustomer')
-                    ->setType('pie')
-                    ->setLabels($labels1)
-                    ->setDatasets(
+            $px1 = new DolChartJs();
+            $px1->element('idboxgraphboxbycustomer')
+                ->setType('pie')
+                ->setLabels($labels1)
+                ->setDatasets(
+                    array(
                         array(
-                            array(
-                                'backgroundColor' => $px1->datacolor,
-                                'borderColor' => $px1->bgdatacolor,
-                                'data' => $datas1,
-                            ),
-                        )
-                    )
-                    ->setSize(array('width' => $width, 'height' => $height))
-                    ->setOptions(array(
-                        'responsive' => true,
-                        'maintainAspectRatio' => false,
-                        'legend' => array(
-                            'display' => true,
-                            'position' => 'right',
+                            'backgroundColor' => $px1->datacolor,
+                            'borderColor' => $px1->bgdatacolor,
+                            'data' => $datas1,
                         ),
-                        'title' => array(
-                            'display' => true,
-                            'text' => $langs->transnoentitiesnoconv("BoxProductDistributionFor", $paramtitle, $langs->transnoentitiesnoconv("Invoices")),
-                        )
                     )
+                )
+                ->setSize(array('width' => $width, 'height' => $height))
+                ->setOptions(array(
+                    'responsive' => true,
+                    'maintainAspectRatio' => false,
+                    'legend' => array(
+                        'display' => true,
+                        'position' => 'right',
+                    ),
+                    'title' => array(
+                        'display' => true,
+                        'text' => $langs->transnoentitiesnoconv("BoxProductDistributionFor", $paramtitle, $langs->transnoentitiesnoconv("Invoices")),
+                    )
+                )
+            );
+        }
+
+        if (! empty($conf->propal->enabled) && ! empty($user->rights->propale->lire) && $showpropalnb) {
+            // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+            $langs->load("propal");
+            include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
+
+            $stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
+            $data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+            if (empty($data2)) {
+                $data2 = array(
+                    array(
+                        0 => $langs->trans("None"),
+                        1 => 1,
+                    ),
                 );
-			}
-		}
+            }
 
-		if (! empty($conf->propal->enabled) && ! empty($user->rights->propale->lire))
-		{
-			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showpropalnb)
-			{
-				$langs->load("propal");
-				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
+            $labels2 = array();
+            $datas2 = array();
+            foreach ($data2 as $data) {
+                $labels2[] = $data[0];
+                $datas2[] = $data[1];
+            }
 
-                $showpointvalue = 1;
-                $nocolor = 0;
-				$stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
-				$data2 = $stats_proposal->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
-				if (empty($data2)) {
-					$showpointvalue = 0;
-					$nocolor = 1;
-					$data2=array(array(0=>$langs->trans("None"), 1=>1));
-				}
-
-				//$filenamenb = $dir."/prodserforpropal-".$year.".png";
-                //$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=proposalstats&amp;file=prodserforpropal-'.$year.'.png';
-
-                $labels2 = array();
-                $datas2 = array();
-                foreach ($data2 as $data) {
-                    $labels2[] = $data[0];
-                    $datas2[] = $data[1];
-                }
-
-                $px2 = new DolChartJs();
-                $px2->element('idboxgraphprodbyproposal')
-                    ->setType('pie')
-                    ->setLabels($labels2)
-                    ->setDatasets(
+            $px2 = new DolChartJs();
+            $px2->element('idboxgraphprodbyproposal')
+                ->setType('pie')
+                ->setLabels($labels2)
+                ->setDatasets(
+                    array(
                         array(
-                            array(
-                                'backgroundColor' => $px2->datacolor,
-                                'borderColor' => $px2->bgdatacolor,
-                                'data' => $datas2,
-                            ),
-                        )
+                            'backgroundColor' => $px2->datacolor,
+                            'borderColor' => $px2->bgdatacolor,
+                            'data' => $datas2,
+                        ),
                     )
-                    ->setSize(array('width' => $width, 'height' => $height))
-                    ->setOptions(array(
+                )
+                ->setSize(
+                    array(
+                        'width' => $width,
+                        'height' => $height
+                    )
+                )
+                ->setOptions(
+                    array(
                         'responsive' => true,
                         'maintainAspectRatio' => false,
                         'legend' => array(
@@ -252,53 +244,54 @@ class box_graph_product_distribution extends ModeleBoxes
                         )
                     )
                 );
-			}
-		}
+        }
 
-		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
-		{
-			$langs->load("orders");
+        if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire) && $showordernb) {
+            // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+            $langs->load("orders");
 
-			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showordernb)
-			{
-				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
-                $showpointvalue = 1;
-                $nocolor = 0;
-				$mode='customer';
-				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-				$data3 = $stats_order->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
-				if (empty($data3)) {
-					$showpointvalue = 0;
-					$nocolor = 1;
-					$data3=array(array(0=>$langs->trans("None"), 1=>1));
-				}
-
-				//$filenamenb = $dir."/prodserfororder-".$year.".png";
-				//$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=prodserfororder-'.$year.'.png';
-                $labels3 = array();
-                $datas3 = array();
-                foreach ($data3 as $data) {
-                    $labels3[] = $data[0];
-                    $datas3[] = $data[1];
-                }
-
-                $px3 = new DolChartJs();
-                $px3->element('idboxgraphboxbyorder')
-                    ->setType('pie')
-                    ->setLabels($labels3)
-                    ->setDatasets(
-                        array(
-                            array(
-                                'backgroundColor' => $px3->datacolor,
-                                'borderColor' => $px3->bgdatacolor,
-                                'data' => $datas3,
-                            ),
-                        )
+            $mode='customer';
+            $stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
+            $data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+            if (empty($data3)) {
+                $data3=array(
+                    array(
+                        0 => $langs->trans("None"),
+                        1 => 1
                     )
-                    ->setSize(array('width' => $width, 'height' => $height))
-                    ->setOptions(array(
+                );
+            }
+
+            $labels3 = array();
+            $datas3 = array();
+            foreach ($data3 as $data) {
+                $labels3[] = $data[0];
+                $datas3[] = $data[1];
+            }
+
+            $px3 = new DolChartJs();
+            $px3->element('idboxgraphboxbyorder')
+                ->setType('pie')
+                ->setLabels($labels3)
+                ->setDatasets(
+                    array(
+                        array(
+                            'backgroundColor' => $px3->datacolor,
+                            'borderColor' => $px3->bgdatacolor,
+                            'data' => $datas3,
+                        ),
+                    )
+                )
+                ->setSize(
+                    array(
+                        'width' => $width,
+                        'height' => $height
+                    )
+                )
+                ->setOptions(
+                    array(
                         'responsive' => true,
                         'maintainAspectRatio' => false,
                         'legend' => array(
@@ -307,26 +300,23 @@ class box_graph_product_distribution extends ModeleBoxes
                         ),
                         'title' => array(
                             'display' => true,
-                            'text' => $langs->transnoentitiesnoconv("BoxProductDistributionFor", $paramtitle, $langs->transnoentitiesnoconv("Orders")),
-                        )
+                            'text' => $langs->transnoentitiesnoconv("BoxProductDistributionFor", $paramtitle, $langs->transnoentitiesnoconv("Orders")
+                        ),
                     )
-                );
-			}
-		}
+                )
+            );
+        }
 
-		if (empty($nbofgraph))
-		{
-		    $langs->load("errors");
-		    $mesg=$langs->trans("ReadPermissionNotAllowed");
-		}
-		if (empty($conf->use_javascript_ajax))
-		{
-			$langs->load("errors");
-			$mesg=$langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
-		}
+        if (empty($nbofgraph)) {
+            $langs->load("errors");
+            $mesg=$langs->trans("ReadPermissionNotAllowed");
+        }
+        if (empty($conf->use_javascript_ajax)) {
+            $langs->load("errors");
+            $mesg = $langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
+        }
 
-		if (! $mesg)
-		{
+		if (! $mesg) {
 			$stringtoshow='';
 			$stringtoshow.='<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
@@ -340,18 +330,15 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow.='<input type="hidden" name="page_y" value="">';
 			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
-			if (! empty($conf->facture->enabled) || ! empty($user->rights->facture->lire))
-			{
+			if (! empty($conf->facture->enabled) || ! empty($user->rights->facture->lire)) {
 				$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked':'').'> '.$langs->trans("ForCustomersInvoices");
 				$stringtoshow.=' &nbsp; ';
 			}
-			if (! empty($conf->propal->enabled) || ! empty($user->rights->propale->lire))
-			{
+			if (! empty($conf->propal->enabled) || ! empty($user->rights->propale->lire)) {
 				$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked':'').'> '.$langs->trans("ForProposals");
 				$stringtoshow.='&nbsp;';
 			}
-			if (! empty($conf->commande->enabled) || ! empty($user->rights->commande->lire))
-			{
+			if (! empty($conf->commande->enabled) || ! empty($user->rights->commande->lire)) {
 				$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked':'').'> '.$langs->trans("ForCustomersOrders");
 			}
 			$stringtoshow.='<br>';
@@ -382,14 +369,12 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow .= $px3->renderchart();
 				$stringtoshow .= '</div></div>';
 			}
-			$this->info_box_contents[0][0] = array(
+            $this->info_box_contents[0][0] = array(
                 'tr'=>'class="oddeven nohover"',
                 'td' => 'align="center" class="nohover"',
                 'textnoformat'=>$stringtoshow,
             );
-		}
-		else
-		{
+		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'align="left" class="nohover opacitymedium"',
 				'maxlength'=>500,
