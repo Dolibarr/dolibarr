@@ -144,6 +144,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb) {
+				$langs->load("bills");
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
                 $showpointvalue = 1;
@@ -201,6 +202,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb)
 			{
+				$langs->load("propal");
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
                 $showpointvalue = 1;
