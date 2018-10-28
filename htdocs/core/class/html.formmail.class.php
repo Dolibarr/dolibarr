@@ -845,6 +845,13 @@ class FormMail extends Form
 				$out.= '<td>'.$langs->trans("MailFile").'</td>';
 
 				$out.= '<td>';
+
+				// If a template was selected, we use setup of template to define if join file checkbox is selected or not.
+				if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+				{
+					$this->withmaindocfile = ($arraydefaultmessage->joinfiles ? -1 : 1);
+				}
+
 				if (! empty($this->withmaindocfile))
 				{
 					if ($this->withmaindocfile == 1)
