@@ -34,9 +34,7 @@ if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 if (! defined('DOL_URL_ROOT'))
 	define('DOL_URL_ROOT', $pos);	// URL racine relative
 
-$langs->load("other");
-$langs->load("help");
-
+$langs->loadLangs(array("other", $langs->load("help")));
 
 /*
  * View

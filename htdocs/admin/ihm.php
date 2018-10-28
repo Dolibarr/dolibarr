@@ -240,7 +240,7 @@ if ($action == 'edit')	// Edit
 
 	// Default language
 	print '<tr><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300');
+	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 2);
 	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';

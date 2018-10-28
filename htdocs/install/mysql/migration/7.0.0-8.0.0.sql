@@ -60,6 +60,7 @@ DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 
 -- drop old postgresql unique key
+-- VPGSQL8.2 ALTER TABLE llx_usergroup_rights DROP CONSTRAINT llx_usergroup_rights_fk_usergroup_fk_id_key;
 -- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key;
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;

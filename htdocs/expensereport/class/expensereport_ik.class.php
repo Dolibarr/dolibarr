@@ -39,6 +39,9 @@ class ExpenseReportIk extends CoreObject
 	 */
 	public $table_element='expensereport_ik';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_expense_ik';
 
 	/**

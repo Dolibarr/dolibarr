@@ -477,7 +477,6 @@ if (empty($reshook))
                     $action = 'edit';
                 }
             }
-
         }
     }
 
@@ -1943,7 +1942,6 @@ else
 
             dol_fiche_end();
         }
-
     }
     else if ($action != 'create')
     {

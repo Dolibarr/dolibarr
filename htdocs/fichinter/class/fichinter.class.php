@@ -82,8 +82,16 @@ class Fichinter extends CommonObject
 	 */
 	public $description;
 
+	/**
+     * @var int ID
+     */
 	public $fk_contrat = 0;
+
+	/**
+     * @var int ID
+     */
 	public $fk_project = 0;
+
 	public $extraparams=array();
 
 	public $lines = array();
@@ -874,7 +882,6 @@ class Fichinter extends CommonObject
 					$muser->fetch($obj->fk_user_modification);
 					$this->user_modification   = $muser;
 				}
-
 			}
 			$this->db->free($resql);
 		}
@@ -967,7 +974,8 @@ class Fichinter extends CommonObject
 
 					if (! dol_delete_file($file,0,0,0,$this)) // For triggers
 					{
-						$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+						$langs->load("errors");
+						$this->error=$langs->trans("ErrorFailToDeleteFile",$file);
 						return 0;
 					}
 				}
@@ -975,7 +983,8 @@ class Fichinter extends CommonObject
 				{
 					if (! dol_delete_dir_recursive($dir))
 					{
-						$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+						$langs->load("errors");
+						$this->error=$langs->trans("ErrorFailToDeleteDir",$dir);
 						return 0;
 					}
 				}
@@ -1358,7 +1367,11 @@ class FichinterLigne extends CommonObjectLine
 	public $error='';
 
 	// From llx_fichinterdet
+	/**
+     * @var int ID
+     */
 	public $fk_fichinter;
+
 	public $desc;          	// Description ligne
 	public $datei;           // Date intervention
 	public $duration;        // Duree de l'intervention

@@ -378,7 +378,6 @@ function getListActionCommType($authentication)
 				 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'actioncommtypes'=>$resultarray);
-
 			}
 			else
 			{

@@ -32,8 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->load("orders");
-$langs->load("companies");
+$langs->loadLangs(array("orders", "companies"));
 
 $id=GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
 $ref=GETPOST('ref','alpha');

@@ -40,7 +40,10 @@ class AntiVir
 	 */
 	public $errors = array();
 
-	var $output;
+	/**
+	 * @var string Used to return message
+	 */
+	public $output;
 
 	/**
      * @var DoliDB Database handler.

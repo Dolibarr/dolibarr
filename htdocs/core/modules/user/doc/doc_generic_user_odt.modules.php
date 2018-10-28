@@ -48,9 +48,9 @@ class doc_generic_user_odt extends ModelePDFUser
 	public $phpmin = array(5, 4);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @public string
-     */
+   * Dolibarr version of the loaded document
+   * @public string
+   */
 	public $version = 'dolibarr';
 
 
@@ -64,7 +64,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+    $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";

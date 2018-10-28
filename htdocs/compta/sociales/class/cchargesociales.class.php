@@ -48,7 +48,12 @@ class Cchargesociales
 	public $deductible;
 	public $active;
 	public $code;
+
+	/**
+     * @var int ID
+     */
 	public $fk_pays;
+
 	public $module;
 	public $accountancy_code;
 
@@ -196,8 +201,6 @@ class Cchargesociales
 				$this->fk_pays = $obj->fk_pays;
 				$this->module = $obj->module;
 				$this->accountancy_code = $obj->accountancy_code;
-
-
 			}
 			$this->db->free($resql);
 

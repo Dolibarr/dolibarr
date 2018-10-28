@@ -108,5 +108,4 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			print '</ul>';
 		}
 	}
-
 }

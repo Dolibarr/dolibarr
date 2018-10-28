@@ -546,7 +546,6 @@ if (($action=="create") || ($action=="edit"))
 	print "</div>";
 
 	print "</form>\n";
-
 }
 else
 {

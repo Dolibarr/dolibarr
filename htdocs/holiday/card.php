@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 // Get parameters
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id);
 
 // Protection if external user
@@ -214,7 +215,7 @@ if ($action == 'update')
     $object->fetch($id);
 
 	// If under validation
-    if ($object->statut == 1)
+    if ($object->statut == Holiday::STATUS_DRAFT)
     {
         // If this is the requestor or has read/write rights
         if ($cancreate)
@@ -298,7 +299,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	$object->fetch($id);
 
     // If this is a rough draft, approved, canceled or refused
-	if ($object->statut == 1 || $object->statut == 4 || $object->statut == 5)
+	if ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED)
 	{
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
 		if ($candelete)
@@ -325,18 +326,20 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	}
 }
 
-// Si envoi de la demande
+// Action validate (+ send email for approval)
 if ($action == 'confirm_send')
 {
     $object = new Holiday($db);
     $object->fetch($id);
 
     // Si brouillon et créateur
-    if($object->statut == 1 && $cancreate)
+    if($object->statut == Holiday::STATUS_DRAFT && $cancreate)
     {
-        $object->statut = 2;
+    	$object->oldcopy = dol_clone($object);
 
-        $verif = $object->update($user);
+    	$object->statut = Holiday::STATUS_VALIDATED;
+
+        $verif = $object->validate($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($verif > 0)
@@ -435,13 +438,15 @@ if ($action == 'confirm_valid')
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = utilisateur
-    if ($object->statut == 2 && $user->id == $object->fk_validator)
+    if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator)
     {
+    	$object->oldcopy = dol_clone($object);
+
         $object->date_valid = dol_now();
         $object->fk_user_valid = $user->id;
-        $object->statut = 3;
+        $object->statut = Holiday::STATUS_APPROVED;
 
-        $verif = $object->update($user);
+        $verif = $object->approve($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($verif > 0)
@@ -530,11 +535,11 @@ if ($action == 'confirm_refuse' && GETPOST('confirm','alpha') == 'yes')
         $object->fetch($id);
 
         // Si statut en attente de validation et valideur = utilisateur
-        if ($object->statut == 2 && $user->id == $object->fk_validator)
+        if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator)
         {
             $object->date_refuse = dol_print_date('dayhour', dol_now());
             $object->fk_user_refuse = $user->id;
-            $object->statut = 5;
+            $object->statut = Holiday::STATUS_REFUSED;
             $object->detail_refuse = GETPOST('detail_refuse','alphanohtml');
 
             $verif = $object->update($user);
@@ -615,7 +620,7 @@ if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
     $object->fetch($id);
 
     $oldstatus = $object->statut;
-    $object->statut = 1;
+    $object->statut = Holiday::STATUS_DRAFT;
 
     $result = $object->update($user);
     if ($result < 0)
@@ -646,18 +651,18 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
-    if (($object->statut == 2 || $object->statut == 3) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || ! empty($user->rights->holiday->write_all)))
+    if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || ! empty($user->rights->holiday->write_all)))
     {
     	$db->begin();
 
     	$oldstatus = $object->statut;
         $object->date_cancel = dol_now();
         $object->fk_user_cancel = $user->id;
-        $object->statut = 4;
+        $object->statut = Holiday::STATUS_CANCELED;
 
         $result = $object->update($user);
 
-        if ($result >= 0 && $oldstatus == 3)	// holiday was already validated, status 3, so we must increase back sold
+        if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED)	// holiday was already validated, status 3, so we must increase back sold
         {
         	// Calculcate number of days consummed
         	$nbopenedday=num_open_day($object->date_debut_gmt,$object->date_fin_gmt,0,1,$object->halfday);
@@ -741,7 +746,6 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             }
         }
     }
-
 }
 
 
@@ -757,7 +761,7 @@ $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->tran
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
+if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $action == 'create')
 {
     // Si l'utilisateur n'a pas le droit de faire une demande
     if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
@@ -994,9 +998,9 @@ else
     else
     {
         // Affichage de la fiche d'une demande de congés payés
-        if ($id > 0)
+        if (($id > 0) || $ref)
         {
-            $object->fetch($id);
+        	$result = $object->fetch($id, $ref);
 
             $valideur = new User($db);
             $valideur->fetch($object->fk_validator);
@@ -1060,7 +1064,7 @@ else
 
                 $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-                dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+                dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 
                 print '<div class="fichecenter">';
@@ -1256,7 +1260,7 @@ else
                 }
 
                 // Si envoi en validation
-                if ($action == 'sendToValidate' && $object->statut == 1)
+                if ($action == 'sendToValidate' && $object->statut == Holiday::STATUS_DRAFT)
                 {
                 	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                 }
@@ -1287,10 +1291,10 @@ else
                 }
 
 
-                if ($action == 'edit' && $object->statut == 1)
+                if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT)
                 {
                     print '<div align="center">';
-                    if ($cancreate && $object->statut == 1)
+                    if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
                     }
@@ -1342,23 +1346,19 @@ else
 
                     print '</div>';
                 }
-
             } else {
                 print '<div class="tabBar">';
                 print $langs->trans('ErrorUserViewCP');
                 print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
                 print '</div>';
             }
-
         } else {
             print '<div class="tabBar">';
             print $langs->trans('ErrorIDFicheCP');
             print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
             print '</div>';
         }
-
     }
-
 }
 
 // End of page

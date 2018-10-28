@@ -65,9 +65,7 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_p
 $form=new Form($db);
 $formpropal=new FormPropal($db);
 
-$langs->load('propal');
-$langs->load('other');
-$langs->load("companies");
+$langs->loadLangs(array('propal', 'other', 'companies'));
 
 if ($mode == 'customer')
 {
@@ -278,6 +276,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -320,7 +319,7 @@ foreach ($data as $val)
 }
 
 print '</table>';
-
+print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 

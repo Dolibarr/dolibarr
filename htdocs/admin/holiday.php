@@ -297,8 +297,13 @@ foreach ($dirmodels as $reldir)
 
 print '</table><br>';
 
+
+
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+
 /*
- *  Documents models for Contracts
+ *  Documents models for Holidays
  */
 
 print load_fiche_titre($langs->trans("TemplatePDFHolidays"),'','');
@@ -455,9 +460,9 @@ foreach ($dirmodels as $reldir)
 print '</table>';
 print "<br>";
 
+
 /*
  * Other options
- *
  */
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -508,6 +513,8 @@ print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
+}
+
 
 dol_fiche_end();
 

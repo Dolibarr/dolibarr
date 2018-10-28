@@ -146,7 +146,6 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), -1
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
 }
 
 /*

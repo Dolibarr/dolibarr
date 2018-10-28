@@ -55,7 +55,7 @@ class modTicket extends DolibarrModules
         // It is used to group modules in module setup page
         $this->family = "crm";
         // Module position in the family
-        $this->module_position = 500;
+        $this->module_position = '60';
         // Module label (no space allowed)
         // used if translation string 'ModuleXXXName' not found
         // (where XXX is value of numeric property 'numero' of module)

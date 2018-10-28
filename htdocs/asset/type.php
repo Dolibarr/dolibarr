@@ -356,7 +356,6 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 		print '</td></tr>';
-
 	}
 	else // For external software
 	{
@@ -732,7 +731,6 @@ if ($rowid > 0)
 		{
 			dol_print_error($db);
 		}
-
 	}
 
 	/* ************************************************************************** */
@@ -782,7 +780,6 @@ if ($rowid > 0)
 			print '<td>';
 			print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 			print '</td></tr>';
-
 		}
 		else // For external software
 		{

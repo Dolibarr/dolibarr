@@ -1,5 +1,6 @@
 <?php
-/*  Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,10 +146,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
     if ($display_ticket) {
         // Confirmation close
         if ($action == 'close') {
-            $ret = $form->form_confirm($_SERVER["PHP_SELF"] . "?track_id=" . $track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
-            if ($ret == 'html') {
-                print '<br>';
-            }
+            print $form->form_confirm($_SERVER["PHP_SELF"] . "?track_id=" . $track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
         }
 
         print '<div id="form_view_ticket">';

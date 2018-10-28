@@ -121,7 +121,6 @@ class RemiseCheque extends CommonObject
 				{
 					$this->ref         = $obj->ref;
 				}
-
 			}
 			$this->db->free($resql);
 
@@ -152,6 +151,8 @@ class RemiseCheque extends CommonObject
 
 		$now=dol_now();
 
+		dol_syslog("RemiseCheque::Create start", LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (";
@@ -178,7 +179,6 @@ class RemiseCheque extends CommonObject
 		$sql.= ", ''";
 		$sql.= ")";
 
-		dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -195,7 +195,6 @@ class RemiseCheque extends CommonObject
 				$sql.= " SET ref='(PROV".$this->id.")'";
 				$sql.= " WHERE rowid=".$this->id."";
 
-				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql)
 				{
@@ -242,13 +241,12 @@ class RemiseCheque extends CommonObject
 						if($linetoremise==$lineid) $checkremise=true;
 					}
 
-					if($checkremise==true)
+					if ($checkremise)
 					{
 						$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 						$sql.= " SET fk_bordereau = ".$this->id;
 						$sql.= " WHERE rowid = ".$lineid;
 
-						dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 						$resql = $this->db->query($sql);
 						if (!$resql)
 						{
@@ -284,11 +282,13 @@ class RemiseCheque extends CommonObject
         if (! $this->errno)
         {
             $this->db->commit();
+            dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->id;
         }
         else
         {
             $this->db->rollback();
+            dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->errno;
         }
 	}

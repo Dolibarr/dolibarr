@@ -44,13 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
-$langs->load("main");
-$langs->load("other");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("errors");
-$langs->load("paybox");     // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
 
 $action=GETPOST('action','alpha');
 
@@ -126,7 +120,6 @@ $creditor = $mysoc->name;
 if ($action == 'dosign')
 {
     // TODO
-
 }
 
 
@@ -262,8 +255,6 @@ if ($source == 'proposal')
 	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
 	print '</td></tr>'."\n";
-
-
 }
 
 

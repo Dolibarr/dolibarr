@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010  Jean Heimburger			<jean@tiaris.info>
- * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2017  Alexandre Spangaro		<aspangaro@zendsi.com>
- * Copyright (C) 2013-2016  Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016  Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2014       Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,10 +61,16 @@ $now = dol_now();
 if ($user->societe_id > 0)
 	accessforbidden();
 
+$hookmanager->initHooks(array('sellsjournal'));
+$parameters=array();
 
 /*
  * Actions
  */
+
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+
+$accountingaccount = new AccountingAccount($db);
 
 // Get informations of journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -313,8 +319,12 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
-					$bookkeeping->subledger_label = '';    // TODO To complete
+					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+
+					$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
+					$bookkeeping->label_compte = $accountingaccount->label;
+
 					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
@@ -355,7 +365,6 @@ if ($action == 'writebookkeeping') {
 			foreach ( $tabht[$key] as $k => $mt ) {
 				//if ($mt) {
 					// get compte id and label
-					$accountingaccount = new AccountingAccount($db);
 					if ($accountingaccount->fetch(null, $k, true)) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -369,6 +378,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_compte = $accountingaccount->label;
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
@@ -428,6 +438,10 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
+
+						$accountingaccount->fetch($k, null, true);
+						$bookkeeping->label_compte = $accountingaccount->label;
+
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
@@ -486,7 +500,6 @@ if ($action == 'writebookkeeping') {
 				break;  // Break in the foreach
 			}
 		}
-
 	}
 
 	$tabpay = $tabfac;

@@ -443,7 +443,6 @@ if (function_exists("ldap_connect"))
 					}
 					$liste[$key] = $label;
 				}
-
 			}
 			else
 		   {

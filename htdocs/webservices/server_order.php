@@ -749,7 +749,6 @@ function createOrder($authentication,$order)
 		{
 			dol_syslog("Webservice server_order:: order creation failed", LOG_ERR);
 			$error++;
-
 		}
 
 		if ($order['status'] == 1)   // We want order to have status validated
@@ -777,7 +776,6 @@ function createOrder($authentication,$order)
 			$errorcode='KO';
 			$errorlabel=$newobject->error;
 		}
-
 	}
 
 	if ($error)
@@ -831,7 +829,6 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 					// Define output language
 					$outputlangs = $langs;
 					$order->generateDocument($order->modelpdf, $outputlangs);
-
 				}
 				else
 				{
@@ -848,7 +845,6 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 				$errorcode='KO';
 				$errorlabel=$newobject->error;
 			}
-
 		}
 		else
 		{
@@ -857,7 +853,6 @@ function validOrder($authentication,$id='',$id_warehouse=0)
 			$errorcode='KO';
 			$errorlabel=$newobject->error;
 		}
-
 	}
 
 	if ($error)
@@ -926,7 +921,6 @@ function updateOrder($authentication,$order)
 						// Define output language
 						$outputlangs = $langs;
 						$object->generateDocument($order->modelpdf, $outputlangs);
-
 					}
 				}
 				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);

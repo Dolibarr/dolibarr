@@ -138,7 +138,12 @@ class FactureFournisseur extends CommonInvoice
     public $propalid;
     public $cond_reglement_id;
     public $cond_reglement_code;
+
+    /**
+     * @var int ID
+     */
     public $fk_account;
+
     public $mode_reglement_id;
     public $mode_reglement_code;
 
@@ -153,21 +158,31 @@ class FactureFournisseur extends CommonInvoice
 	 */
     public $fournisseur;
 
-	//Incorterms
+	/**
+     * @var int ID Incorterms
+     */
     public $fk_incoterms;
+
     public $location_incoterms;
     public $libelle_incoterms;  //Used into tooltip
 
     public $extraparams=array();
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
     public $fk_multicurrency;
+
     public $multicurrency_code;
     public $multicurrency_tx;
     public $multicurrency_total_ht;
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
     //! id of source invoice if replacement invoice or credit note
+    /**
+     * @var int ID
+     */
     public $fk_facture_source;
 
     /**
@@ -665,7 +680,6 @@ class FactureFournisseur extends CommonInvoice
                     $this->error=$this->db->lasterror();
                     return -3;
                 }
-
             }
             else
             {
@@ -2722,18 +2736,32 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $total_ttc;
 	public $total_localtax1;
 	public $total_localtax2;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
 	public $product_type;
 	public $product_label;
 	public $info_bits;
+
+	/**
+     * @var int ID
+     */
 	public $fk_parent_line;
+
 	public $special_code;
 	public $rang;
 	public $localtax1_type;
 	public $localtax2_type;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_subprice;
 	public $multicurrency_total_ht;
@@ -3123,7 +3151,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 
             $this->db->commit();
             return $this->id;
-
         }
         else
         {

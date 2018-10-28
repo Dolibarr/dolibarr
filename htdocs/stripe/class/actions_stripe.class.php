@@ -109,7 +109,6 @@ class ActionsStripeconnect
 				$this->resprints.= $langs->trans("NoStripe");
 			}
 			$this->resprints.= '</td></tr>';
-
 		}
 		elseif (is_object($object) && $object->element == 'member'){
 			$this->resprints.= '<tr><td>';

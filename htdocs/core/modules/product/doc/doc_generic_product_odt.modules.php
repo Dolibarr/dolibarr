@@ -240,6 +240,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->produit->dir_output)

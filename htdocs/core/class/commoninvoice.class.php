@@ -62,7 +62,7 @@ abstract class CommonInvoice extends CommonObject
     const TYPE_SITUATION = 5;
 
 	/**
-	 * Draft
+	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
 
@@ -587,7 +587,7 @@ abstract class CommonInvoice extends CommonObject
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi une date limite de reglement de facture en fonction des
-	 *	conditions de reglements de la facture et date de facturation
+	 *	conditions de reglements de la facture et date de facturation.
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
 	 *  @return     date     			       	Date limite de reglement si ok, <0 si ko
@@ -602,7 +602,7 @@ abstract class CommonInvoice extends CommonObject
         $cdr_type=0;
         $cdr_decalage=0;
 
-		$sqltemp = 'SELECT c.type_cdr,c.nbjour,c.decalage';
+		$sqltemp = 'SELECT c.type_cdr, c.nbjour, c.decalage';
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
 		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
 		else {
@@ -631,12 +631,18 @@ abstract class CommonInvoice extends CommonObject
 
 		/* Definition de la date limite */
 
-		// 1 : ajout du nombre de jours
-		$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
-
-		// 2 : application de la regle "fin de mois"
-		if ($cdr_type == 1)
+		// 0 : ajout du nombre de jours
+		if ($cdr_type == 0)
 		{
+			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
+			$datelim += ($cdr_decalage * 3600 * 24);
+		}
+		// 1 : application de la regle "fin de mois"
+		elseif ($cdr_type == 1)
+		{
+			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
 			$mois=date('m', $datelim);
 			$annee=date('Y', $datelim);
 			if ($mois == 12)
@@ -651,23 +657,24 @@ abstract class CommonInvoice extends CommonObject
 			// On se deplace au debut du mois suivant, et on retire un jour
 			$datelim=dol_mktime(12,0,0,$mois,1,$annee);
 			$datelim -= (3600 * 24);
-		}
-		elseif($cdr_type == 2 && !empty($cdr_nbjour)) // Application de la règle, le N du mois courant ou suivant
-		{
 
-			$date_piece = dol_mktime(0,0,0,date('m', $this->date),date('d', $this->date),date('Y', $this->date)); // Sans les heures minutes et secondes
-			$date_lim_current = dol_mktime(0,0,0,date('m', $this->date),$cdr_nbjour,date('Y', $this->date)); // Sans les heures minutes et secondes
-			$date_lim_next = strtotime(date('Y-m-d', $date_lim_current).' +1month');
+			$datelim += ($cdr_decalage * 3600 * 24);
+		}
+		// 2 : application de la règle, le N du mois courant ou suivant
+		elseif ($cdr_type == 2 && !empty($cdr_decalage))
+		{
+			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
+
+			$date_piece = dol_mktime(0, 0, 0, date('m', $datelim),date('d', $datelim),date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_lim_current = dol_mktime(0, 0, 0, date('m', $datelim), $cdr_decalage, date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_lim_next = dol_time_plus_duree($date_lim_current, 1, 'm');	// Add 1 month
 
 			$diff = $date_piece - $date_lim_current;
 
-			if($diff < 0) $datelim = $date_lim_current;
+			if ($diff < 0) $datelim = $date_lim_current;
 			else $datelim = $date_lim_next;
-
 		}
-
-		// 3 : application du decalage
-		$datelim += ($cdr_decalage * 3600 * 24);
+		else return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
 
 		return $datelim;
 	}

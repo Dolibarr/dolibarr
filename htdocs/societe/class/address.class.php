@@ -39,10 +39,20 @@ class Address
 	public $id;
 
 	public $type;
-	public $label;
+
+	/**
+     * @var string Address label
+     */
+    public $label;
+
 	public $socid;
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $country_id;
@@ -128,7 +138,6 @@ class Address
 				$this->db->rollback();
 				return -2;
 			}
-
 		}
 		else
 		{
@@ -486,7 +495,6 @@ class Address
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -510,9 +518,19 @@ class AddressLine
 
 	public $date_creation;
 	public $date_modification;
-	public $label;
+
+	/**
+     * @var string stock movements label
+     */
+    public $label;
+
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $country_id;

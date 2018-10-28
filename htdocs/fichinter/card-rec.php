@@ -60,7 +60,7 @@ $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 if ($page == -1)
 	$page = 0 ;
 
-$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if ($sortorder == "")
@@ -420,7 +420,6 @@ if ($action == 'create') {
 				$i++;
 			}
 			$db->free($result);
-
 		} else
 			print $db->error();
 		print "</table>";
@@ -439,7 +438,6 @@ if ($action == 'create') {
 	}
 	else
 		dol_print_error('', "Error, no invoice ".$object->id);
-
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'title_commercial.png');
 	dol_fiche_head('');
@@ -574,11 +572,9 @@ if ($action == 'create') {
 						print $contratstatic->getNomUrl(0, '', 1);
 					} else
 						print "&nbsp;";
-
 				}
 				print '</td>';
 				print '</tr>';
-
 			}
 			print "</table>";
 			print '</div>';
@@ -775,7 +771,6 @@ if ($action == 'create') {
 			print '</div>';
 		} else
 			print $langs->trans("ErrorRecordNotFound");
-
 	} else {
 		/*
 		 *  List mode

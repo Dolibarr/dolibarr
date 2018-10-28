@@ -127,9 +127,13 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-  public $fk_soc;
+    public $fk_soc;
 
-	public $label;
+	/**
+     * @var string company payment mode label
+     */
+    public $label;
+
 	public $bank;
 	public $code_banque;
 	public $code_guichet;
@@ -157,7 +161,12 @@ class CompanyPaymentMode extends CommonObject
 	public $preapproval_key;
 	public $total_amount_of_all_payments;
 	public $stripe_card_ref;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $starting_date;
 	public $ending_date;
 	public $datec;
@@ -552,7 +561,6 @@ class CompanyPaymentMode extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

@@ -117,7 +117,6 @@ else {
 	print '<td class="maxwidthonsmartphone" colspan="4">';
 	print $form->select_produits('','id','',20,0,1,2,'',1, array(), 0, 'All');
 	print '</td></tr>';
-
 }
 
 // Categories
@@ -316,7 +315,6 @@ if ($result)
 			$cumul_achat += $objp->buying_price;
 			$cumul_vente += $objp->selling_price;
 		}
-
 	}
 
 	// affichage totaux marges

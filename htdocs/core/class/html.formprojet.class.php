@@ -235,7 +235,7 @@ class FormProjets
 						}
 						else if ($obj->fk_statut == 2)
 						{
-							if ($discard_close == 2) $disabled=1;
+							if ($discard_closed == 2) $disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Closed");
 						}
 						else if ( empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
@@ -490,7 +490,7 @@ class FormProjets
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$linkedtothirdparty=false;
-		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','chargesociales'))) $linkedtothirdparty=true;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','payment_salary','payment_various','chargesociales'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
 
@@ -532,6 +532,9 @@ class FormProjets
 			case 'stock_mouvement':
 				$sql = 'SELECT t.rowid, t.label as ref';
 				$projectkey='fk_origin';
+				break;
+			case "payment_salary":
+				$sql = "SELECT t.rowid, t.num_payment as ref";	// TODO In a future fill and use real ref field
 				break;
 			case "payment_various":
 				$sql = "SELECT t.rowid, t.num_payment as ref";
@@ -626,10 +629,16 @@ class FormProjets
 			if ($num > 0)
 			{
 				$sellist = '<select class="flat oppstatus'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-				if ($showempty) $sellist.= '<option value="-1">&nbsp;</option>';    // Without &nbsp, strange move of screen when switching value
-				if ($showallnone) $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>--'.$langs->trans("OnlyOpportunitiesShort").'--</option>';
-				if ($showallnone) $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>--'.$langs->trans("OpenedOpportunitiesShort").'--</option>';
-				if ($showallnone) $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>--'.$langs->trans("NotAnOpportunityShort").'--</option>';
+				if ($showempty) {
+                    // Without &nbsp, strange move of screen when switching value
+                    $sellist.= '<option value="-1">&nbsp;</option>';
+                }
+				if ($showallnone) {
+                    $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>-- '.$langs->trans("OnlyOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>-- '.$langs->trans("OpenedOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="notopenedopp"'.($preselected == 'notopenedopp'?' selected="selected"':'').'>-- '.$langs->trans("NotOpenedOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>-- '.$langs->trans("NotAnOpportunityShort").' --</option>';
+                }
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);

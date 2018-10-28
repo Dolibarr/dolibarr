@@ -425,7 +425,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					    if (empty($actiontypecode)) $actiontypecode='AC_OTH_AUTO'; // Event insert into agenda automatically
 
 						$object->socid			= $sendtosocid;	   // To link to a company
-						$object->sendtoid		= $sendtoid;	   // To link to contacts/addresses. This is an array.
+						$object->sendtoid		= $sendtoid;	   // To link to contact addresses. This is an array.
 						$object->actiontypecode	= $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg		= $actionmsg;      // Long text
 						$object->actionmsg2		= $actionmsg2;     // Short text
@@ -496,5 +496,4 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}
-
 }

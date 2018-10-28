@@ -36,8 +36,11 @@ class Stripe extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-  public $fk_soc;
+    public $fk_soc;
 
+    /**
+     * @var int ID
+     */
 	public $fk_key;
 
 	/**
@@ -119,8 +122,6 @@ class Stripe extends CommonObject
 	 */
 	public function getStripeCustomerAccount($id, $status=0)
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		$societeaccount = new SocieteAccount($this->db);
 		return $societeaccount->getCustomerAccount($id, 'stripe', $status);		// Get thirdparty cus_...
@@ -186,10 +187,21 @@ class Stripe extends CommonObject
 			{
 				$dataforcustomer = array(
 					"email" => $object->email,
-					"business_vat_id" => $object->tva_intra,
 					"description" => $object->name,
 					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
+
+				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
+
+				$taxinfo = array('type'=>'vat');
+				if ($vatcleaned)
+				{
+					$taxinfo["tax_id"] = $vatcleaned;
+				}
+				// We force data to "null" if not defined as expected by Stripe
+				if (empty($vatcleaned)) $taxinfo=null;
+
+				$dataforcustomer["tax_info"] = $taxinfo;
 
 				//$a = \Stripe\Stripe::getApiKey();
 				//var_dump($a);var_dump($key);exit;
@@ -272,7 +284,6 @@ class Stripe extends CommonObject
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
-
 				}
 				elseif ($createifnotlinkedtostripe)
 				{

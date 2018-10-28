@@ -76,4 +76,4 @@ WelcomeOnOnlineSignaturePage=Welcome to the page to accept commercial proposals 
 ThisScreenAllowsYouToSignDocFrom=This screen allow you to accept and sign, or refuse, a quote/commercial proposal
 ThisIsInformationOnDocumentToSign=This is information on document to accept or refuse
 SignatureProposalRef=Signature of quote/commercial proposal %s
-FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled  
+FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled

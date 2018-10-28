@@ -83,6 +83,7 @@ class html_cerfafr extends ModeleDon
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "donations"));
 
 		$currency = !empty($currency) ? $currency : $conf->currency;

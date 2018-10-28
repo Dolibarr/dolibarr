@@ -38,9 +38,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('bills');
-$langs->load('other');
-$langs->load("companies");
+$langs->loadLangs(array('bills', 'other', 'companies'));
 
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
@@ -159,7 +157,6 @@ if ($object->id > 0)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-
 	}
 
 	print '<table class="border" width="100%">';

@@ -54,7 +54,7 @@ class modHoliday extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "hr";
-		$this->module_position = 30;
+		$this->module_position = '30';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -95,28 +95,28 @@ class modHoliday extends DolibarrModules
 		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 		$r=0;
-		
+
 		$this->const[$r][0] = "HOLIDAY_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_holiday_madonna";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des congés';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "HOLIDAY_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "celebrate";
 		$this->const[$r][3] = 'Name of PDF model of holiday';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "HOLIDAY_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/holiday";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		// Array to add new pages in new tabs
 		//$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');	// We avoid to get one tab for each module. RH data are already in RH tab.
 		$this->tabs[] = array();  					// To add a new tab identified by code tabname1

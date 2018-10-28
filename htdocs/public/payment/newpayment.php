@@ -410,23 +410,26 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$stripeToken = GETPOST("stripeToken",'alpha');
 	$email = GETPOST("email",'alpha');
 	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
-	$vatnumber = GETPOST('vatnumber','alpha');
+	$dol_type=(GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
+  	$dol_id=GETPOST('dol_id', 'int');
+  	$vatnumber = GETPOST('vatnumber','alpha');
+	$savesource=GETPOSTISSET('savesource')?GETPOST('savesource', 'int'):1;
 
-	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("thirdparty_id = ".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST email = ".$email, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST thirdparty_id = ".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
 	$error = 0;
 
 	try {
 		$metadata = array(
-			'dol_version'=>DOL_VERSION,
-			'dol_entity'=>$conf->entity,
+			'dol_version' => DOL_VERSION,
+			'dol_entity'  => $conf->entity,
+			'dol_company' => $mysoc->name,		// Usefull when using multicompany
 			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
 		);
-		if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
-		if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+
 		if (! empty($thirdparty_id)) $metadata["dol_thirdparty_id"] = $thirdparty_id;
 
 		if ($thirdparty_id > 0)
@@ -441,7 +444,6 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				$servicestatus = 1;
 			}
 
-
 			$thirdparty = new Societe($db);
 			$thirdparty->fetch($thirdparty_id);
 
@@ -452,7 +454,11 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
 			// Create Stripe card from Token
-			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+			if ($savesource) {
+				$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+			} else {
+				$card = $stripeToken;
+			}
 
 			if (empty($card))
 			{
@@ -463,17 +469,21 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			}
 			else
 			{
+				if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+				if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+				if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
+
 				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
 				$charge = \Stripe\Charge::create(array(
 					'amount'   => price2num($amountstripe, 'MU'),
 					'currency' => $currency,
 					'capture'  => true,							// Charge immediatly
-					'description' => 'Stripe payment: '.$FULLTAG,
-					'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
+					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+					'metadata' => $metadata,
 					'customer' => $customer->id,
 					'source' => $card,
 					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-				),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
+				),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -486,15 +496,29 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 		}
 		else
 		{
+			$vatcleaned = $vatnumber ? $vatnumber : null;
+
+			$taxinfo = array('type'=>'vat');
+			if ($vatcleaned)
+			{
+				$taxinfo["tax_id"] = $vatcleaned;
+			}
+			// We force data to "null" if not defined as expected by Stripe
+			if (empty($vatcleaned)) $taxinfo=null;
+
 			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
 			$customer = \Stripe\Customer::create(array(
 				'email' => $email,
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
-				'business_vat_id' => ($vatnumber?$vatnumber:null),
+				'tax_info' => $taxinfo,
 				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 			));
 			// Return $customer = array('id'=>'cus_XXXX', ...)
+
+			if (! empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+			if (! empty($dol_id))        $metadata["dol_id"] = $dol_id;
+			if (! empty($dol_type))      $metadata["dol_type"] = $dol_type;
 
 			// The customer was just created with a source, so we can make a charge
 			// with no card defined, the source just used for customer creation will be used.
@@ -504,10 +528,10 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'amount'   => price2num($amountstripe, 'MU'),
 				'currency' => $currency,
 				'capture'  => true,							// Charge immediatly
-				'description' => 'Stripe payment: '.$FULLTAG,
-				'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
+				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+				'metadata' => $metadata,
 				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-			),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
+			),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{
@@ -596,7 +620,6 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 		header("Location: ".$urlok);
 		exit;
 	}
-
 }
 
 
@@ -800,7 +823,7 @@ if ($source == 'order')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='ORD='.$order->ref.'.CUS='.$order->thirdparty->id;
+	$fulltag='ORD='.$order->id.'.CUS='.$order->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($order->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -822,6 +845,7 @@ if ($source == 'order')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
+  	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink)
 	{
@@ -919,7 +943,7 @@ if ($source == 'invoice')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='INV='.$invoice->ref.'.CUS='.$invoice->thirdparty->id;
+	$fulltag='INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
 	//$fulltag.='.NAM='.strtr($invoice->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -941,6 +965,7 @@ if ($source == 'invoice')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
+ 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($invoice->id).'">';
 	$directdownloadlink = $invoice->getLastMainDocLink('facture');
 	if ($directdownloadlink)
 	{
@@ -1100,7 +1125,7 @@ if ($source == 'contractline')
 		$amount=price2num($amount);
 	}
 
-	$fulltag='COL='.$contractline->ref.'.CON='.$contract->ref.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	$fulltag='COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -1139,6 +1164,7 @@ if ($source == 'contractline')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
+	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($contractline->id).'">';
 	$directdownloadlink = $contract->getLastMainDocLink('contract');
 	if ($directdownloadlink)
 	{
@@ -1413,7 +1439,7 @@ if ($action != 'dopayment')
 	{
 		if ($source == 'invoice' && $object->paye)
 		{
-			print '<br><br>'.$langs->trans("InvoicePaid");
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
 		else
 		{
@@ -1545,7 +1571,6 @@ if (preg_match('/^dopayment/',$action))
 	    <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
-
 	    <!-- Used to display form errors -->
 	    <div id="card-errors" role="alert"></div>
 	    </div>
@@ -1556,8 +1581,6 @@ if (preg_match('/^dopayment/',$action))
 
 	    </form>
 
-
-	    <script src="https://js.stripe.com/v2/"></script>
 	    <script src="https://js.stripe.com/v3/"></script>
 
 	    <script type="text/javascript" language="javascript">';

@@ -30,9 +30,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
 
-$langs->load("main");
-$langs->load("install");
-$langs->load("other");
+$langs->loadLangs(array("main", "install", "other"));
 
 $conf->dol_hide_topmenu=GETPOST('dol_hide_topmenu','int');
 $conf->dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int');

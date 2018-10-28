@@ -122,24 +122,22 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 		$return='000001';
 
-		$field='';$where='';
-		if ($type == 0)
-		{
+		$field='';
+        $where='';
+        $prefix = '';
+		if ($type == 0) {
 			$field = 'code_client';
+            $prefix = $this->prefixcustomer;
 			//$where = ' AND client in (1,2)';
-		}
-		else if ($type == 1)
-		{
+		} elseif ($type == 1) {
 			$field = 'code_fournisseur';
+            $prefix = $this->prefixsupplier;
 			//$where = ' AND fournisseur = 1';
-		}
-		else return -1;
+		} else {
+            return -1;
+        }
 
-
-		if ($type == 0) $prefix=$this->prefixcustomer;
-		if ($type == 1) $prefix=$this->prefixsupplier;
-
-		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
+        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
 		$posindice=8;
         $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";

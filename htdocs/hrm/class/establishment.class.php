@@ -49,7 +49,12 @@ class Establishment extends CommonObject
 	 */
 	public $fk_element = 'fk_establishment';
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
     public $picto='building';
 
     /**
@@ -68,10 +73,19 @@ class Establishment extends CommonObject
 	public $rowid;
 
 	public $name;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
-	public $status;		// 0=open, 1=closed
+
+	/**
+	 * @var int Status 0=open, 1=closed
+	 */
+	public $status;
 
 	/**
 	 * @var int Entity

@@ -576,7 +576,6 @@ else
 		if ($action == 'delete')
 		{
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-
 		}
 
 		// Print form confirm
@@ -766,7 +765,6 @@ else
 		}
 
 		print '</div>';
-
 	}
 
 	/* ************************************************************************** */
@@ -1033,7 +1031,6 @@ else
 
 		print '</form>';
 	}
-
 }
 
 // End of page

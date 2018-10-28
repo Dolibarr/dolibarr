@@ -6,11 +6,11 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es>
+ * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,18 +154,18 @@ function societe_prepare_head(Societe $object)
 		// Tab to accountancy
 		if (! empty($conf->accounting->enabled) && $object->client>0)
 		{
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabAccountingCustomer");
-			$head[$h][2] = 'accounting';
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_customer.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabLetteringCustomer");
+			$head[$h][2] = 'lettering_customer';
 			$h++;
 		}
 
 		// Tab to accountancy
 		if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
 		{
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage_supplier.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabAccountingSupplier");
-			$head[$h][2] = 'accounting_supplier';
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_supplier.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabLetteringSupplier");
+			$head[$h][2] = 'lettering_supplier';
 			$h++;
 		}
 	}
@@ -634,7 +634,6 @@ function getFormeJuridiqueLabel($code)
         {
             return $langs->trans("NotDefined");
         }
-
     }
 }
 
@@ -1285,7 +1284,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Conf		       $conf		   Object conf
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
- * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur
+ * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource
  * 		@param	Contact		       $objcon		   Object contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
@@ -1302,6 +1301,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
     global $form;
 
     global $param;
+
+    dol_include_once('/comm/action/class/actioncomm.class.php');
 
     // Check parameters
     if (! is_object($filterobj) && ! is_object($objcon)) dol_print_error('','BadParameter');
@@ -1330,9 +1331,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
+        	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
+        	$sql.= " ON er.resource_type = 'dolresource'";
+        	$sql.= " AND er.element_id = a.id";
+        	$sql.= " AND er.resource_id = ".$filterobj->id;
+        }
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
+
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
@@ -1351,6 +1359,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
+        //TODO check how ot work with new table actioncomm_resources and multiple contact affectation
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         // Condition on actioncode
         if (! empty($actioncode))
@@ -1387,6 +1396,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             {
                 $obj = $db->fetch_object($resql);
 
+                $contactaction = new ActionComm($db);
+                $contactaction->id=$obj->id;
+                $result = $contactaction->fetchResources();
+                if ($result<0) {
+                	dol_print_error($db);
+                	setEventMessage("company.lib::show_actions_done Error fetch ressource",'errors');
+                }
+
                 //if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
                 //elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
                 $tododone='';
@@ -1408,6 +1425,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                     'userphoto'=>$obj->user_photo,
 
                     'contact_id'=>$obj->fk_contact,
+                	'socpeopleassigned' => $contactaction->socpeopleassigned,
             		'lastname'=>$obj->lastname,
             		'firstname'=>$obj->firstname,
             		'fk_element'=>$obj->fk_element,
@@ -1552,7 +1570,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('');
-		$out.=getTitleFieldOfList($langs->trans("ActionOnContact"), 0, $_SERVER["PHP_SELF"], 'a.fk_contact', '', $param, '', $sortfield, $sortorder);
+		$out.=getTitleFieldOfList($langs->trans("ActionOnContact"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
 		$out.='</tr>';
@@ -1671,10 +1689,28 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                 $contactstatic->firstname=$histo[$key]['firstname'];
                 $contactstatic->id=$histo[$key]['contact_id'];
                 $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
-            }
-            else
-            {
-                $out.='<td>&nbsp;</td>';
+            } elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
+				$out .= '<td>';
+				foreach ( $histo[$key]['socpeopleassigned'] as $cid => $Tab ) {
+					$contact = new Contact($db);
+					$result = $contact->fetch($cid);
+
+					if ($result < 0)
+						dol_print_error($db, $contact->error);
+
+					if ($result > 0) {
+						$out .= $contact->getNomUrl(1);
+						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+							if (! empty($contact->phone_pro))
+								$out .= '(' . dol_print_phone($contact->phone_pro) . ')';
+						}
+						$out .= '<div class="paddingright"></div>';
+					}
+				}
+				$out .= '</td>';
+			}
+            else {
+            	$out.='<td>&nbsp;</td>';
             }
 
             // Status

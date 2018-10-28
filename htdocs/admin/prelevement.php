@@ -465,7 +465,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var = false;
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
@@ -511,7 +510,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	{
 	    $num = $db->num_rows($resql);
 	    $i = 0;
-	    $var = false;
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);

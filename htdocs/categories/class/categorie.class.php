@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,10 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 	);
+
+    /**
+	 * @var array Code mapping from ID
+	 */
 	public static $MAP_ID_TO_CODE = array(
 		0 => 'product',
 		1 => 'supplier',
@@ -103,7 +108,8 @@ class Categorie extends CommonObject
         'bank_account' => 'account',
         'project'  => 'project',
 	);
-	/**
+
+    /**
 	 * @var array Category tables mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -119,7 +125,8 @@ class Categorie extends CommonObject
         'bank_account'=> 'account',
         'project'  => 'project',
 	);
-	/**
+
+    /**
 	 * @var array Object class mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -135,7 +142,8 @@ class Categorie extends CommonObject
 		'bank_account'  => 'Account',
         'project'  => 'Project',
 	);
-	/**
+
+    /**
 	 * @var array Object table mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -161,6 +169,9 @@ class Categorie extends CommonObject
 	 */
 	public $table_element='categorie';
 
+	/**
+     * @var int ID
+     */
 	public $fk_parent;
 
 	/**
@@ -195,7 +206,14 @@ class Categorie extends CommonObject
 	 */
 	public $type;
 
-	public $cats = array();			// Categories table in memory
+	/**
+	 * @var array Categories table in memory
+	 */
+	public $cats = array();
+
+    /**
+	 * @var array Mother of table
+	 */
 	public $motherof = array();
 
 	/**
@@ -647,7 +665,6 @@ class Categorie extends CommonObject
 			    $this->db->rollback();
 			    return -2;
 			}
-
 		}
 		else
 		{
@@ -802,7 +819,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sortorder	Sort order
 	 * @param	int		$limit		Limit for list
 	 * @param	int		$page		Page number
-	 * @return	array				Array of categories
+	 * @return	array|int			Array of categories, 0 if no cat, -1 on error
 	 */
 	function getListForItem($id, $type='customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -971,7 +988,7 @@ class Categorie extends CommonObject
 	 * @param   string 	$type        	Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
 	 * @param   int    	$markafterid 	Removed all categories including the leaf $markafterid in category tree.
 	 *
-	 * @return  array               	Array of categories. this->cats and this->motherof are set.
+	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
 	function get_full_arbo($type, $markafterid=0)
 	{
@@ -1123,7 +1140,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@param	int			$type		Type of category (0, 1, ...)
 	 *	@param	boolean		$parent		Just parent categories if true
-	 *	@return	array					Table of Object Category
+	 *	@return	array|int				Table of Object Category, -1 on error
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
@@ -1356,7 +1373,7 @@ class Categorie extends CommonObject
 	 * @param   string|int	$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
 	 * @param   string 		$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
 	 *                      	    labels, 'id'= Get array of category IDs
-	 * @return  mixed           	Array of category objects or < 0 if KO
+	 * @return  array|int           Array of category objects or < 0 if KO
 	 */
 	function containing($id, $type, $mode='object')
 	{
@@ -1438,7 +1455,7 @@ class Categorie extends CommonObject
  	 * 	@param		string		$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
 	 * 	@param		boolean		$exact		Exact string search (true/false)
 	 * 	@param		boolean		$case		Case sensitive (true/false)
-	 * 	@return		array					Array of category id
+	 * 	@return		array|int				Array of category id, -1 if error
 	 */
 	function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
@@ -1792,7 +1809,6 @@ class Categorie extends CommonObject
 	            {
 	                $this->label		= $obj->label;
 	                $this->description	= $obj->description;
-
 	            }
 	            $this->multilangs["$obj->lang"]["label"]		= $obj->label;
 	            $this->multilangs["$obj->lang"]["description"]	= $obj->description;

@@ -60,11 +60,9 @@ else
         if ( $tab[$i]['remise_percent'] > 0 ) {
 
             $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
-
         } else {
 
             $remise_percent = '';
-
         }
 
         $remise = $tab[$i]['remise'];

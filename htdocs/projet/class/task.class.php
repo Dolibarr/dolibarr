@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,9 @@ class Task extends CommonObject
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
+	/**
+     * @var int ID parent task
+     */
     public $fk_task_parent;
 
     /**
@@ -61,37 +65,51 @@ class Task extends CommonObject
 	 */
 	public $description;
 
-	var $duration_effective;		// total of time spent on this task
-	var $planned_workload;
-	var $date_c;
-	var $date_start;
-	var $date_end;
-	var $progress;
-	var $fk_statut;
-	var $priority;
-	var $fk_user_creat;
-	var $fk_user_valid;
-	var $rang;
+	public $duration_effective;		// total of time spent on this task
+	public $planned_workload;
+	public $date_c;
+	public $date_start;
+	public $date_end;
+	public $progress;
 
-	var $timespent_min_date;
-	var $timespent_max_date;
-	var $timespent_total_duration;
-	var $timespent_total_amount;
-	var $timespent_nblinesnull;
-	var $timespent_nblines;
+	/**
+     * @var int ID
+     */
+	public $fk_statut;
+
+	public $priority;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_valid;
+
+	public $rang;
+
+	public $timespent_min_date;
+	public $timespent_max_date;
+	public $timespent_total_duration;
+	public $timespent_total_amount;
+	public $timespent_nblinesnull;
+	public $timespent_nblines;
 	// For detail of lines of timespent record, there is the property ->lines in common
 
 	// Var used to call method addTimeSpent(). Bad practice.
-	var $timespent_id;
-	var $timespent_duration;
-	var $timespent_old_duration;
-	var $timespent_date;
-	var $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
-	var $timespent_withhour;		// 1 = we entered also start hours for timesheet line
-	var $timespent_fk_user;
-	var $timespent_note;
+	public $timespent_id;
+	public $timespent_duration;
+	public $timespent_old_duration;
+	public $timespent_date;
+	public $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
+	public $timespent_withhour;		// 1 = we entered also start hours for timesheet line
+	public $timespent_fk_user;
+	public $timespent_note;
 
-	var $comments = array();
+	public $comments = array();
 
 	public $oldcopy;
 
@@ -323,7 +341,7 @@ class Task extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
 		if (isset($this->ref)) $this->ref=trim($this->ref);
-		if (isset($this->fk_task_parent)) $this->fk_task_parent=trim($this->fk_task_parent);
+		if (isset($this->fk_task_parent)) $this->fk_task_parent = (int) $this->fk_task_parent;
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->description)) $this->description=trim($this->description);
 		if (isset($this->duration_effective)) $this->duration_effective=trim($this->duration_effective);
@@ -688,12 +706,12 @@ class Task extends CommonObject
 
 		$this->fk_projet='';
 		$this->ref='TK01';
-		$this->fk_task_parent='';
+		$this->fk_task_parent=null;
 		$this->label='Specimen task TK01';
 		$this->duration_effective='';
-		$this->fk_user_creat='';
+		$this->fk_user_creat=null;
 		$this->progress='25';
-		$this->fk_statut='';
+		$this->fk_statut=null;
 		$this->note='This is a specimen task not';
 	}
 
@@ -1550,7 +1568,6 @@ class Task extends CommonObject
 			{
 				$clone_task->date_end			= $now + $clone_task->date_end - $orign_project_dt_start;
 			}
-
 		}
 
 		if (!$clone_prog)

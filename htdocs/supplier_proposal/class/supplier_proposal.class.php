@@ -60,6 +60,9 @@ class SupplierProposal extends CommonObject
 	 */
 	public $table_element_line='supplier_proposaldet';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
     public $fk_element='fk_supplier_proposal';
 
     public $picto='propal';
@@ -163,7 +166,11 @@ class SupplierProposal extends CommonObject
     public $specimen;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
@@ -1723,7 +1730,6 @@ class SupplierProposal extends CommonObject
                 {
                     $result = $this->updateOrCreatePriceFournisseur($user);
                 }
-
             }
             if ($statut == 4)
             {
@@ -2131,11 +2137,8 @@ class SupplierProposal extends CommonObject
                     $cluser->fetch($obj->fk_user_cloture);
                     $this->user_cloture     = $cluser;
                 }
-
-
             }
             $this->db->free($result);
-
         }
         else
         {
@@ -2709,9 +2712,21 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $id;
 
+	/**
+     * @var int ID
+     */
     public $fk_supplier_proposal;
+
+    /**
+     * @var int ID
+     */
     public $fk_parent_line;
+
     public $desc;          	// Description ligne
+
+    /**
+     * @var int ID
+     */
     public $fk_product;		// Id produit predefini
 
 	/**
@@ -2730,11 +2745,19 @@ class SupplierProposalLine extends CommonObjectLine
     public $tva_tx;
     public $subprice;
     public $remise_percent;
+
+    /**
+     * @var int ID
+     */
     public $fk_remise_except;
 
     public $rang = 0;
 
+    /**
+     * @var int ID
+     */
 	public $fk_fournprice;
+
 	public $pa_ht;
 	public $marge_tx;
 	public $marque_tx;
@@ -2808,7 +2831,11 @@ class SupplierProposalLine extends CommonObjectLine
     public $ref_supplier;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_subprice;
 	public $multicurrency_total_ht;

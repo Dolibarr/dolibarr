@@ -47,7 +47,11 @@ class AdherentType extends CommonObject
 	 */
 	public $picto = 'group';
 
-	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string
@@ -56,8 +60,10 @@ class AdherentType extends CommonObject
 	 */
 	public $libelle;
 
-	/** @var string Label */
-	public $label;
+	/**
+     * @var string Adherent type label
+     */
+    public $label;
 
 	/**
 	 * @var int Subsription required (0 or 1)

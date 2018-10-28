@@ -52,6 +52,9 @@ class EcmDirectory // extends CommonObject
      */
     public $label;
 
+    /**
+     * @var int ID
+     */
 	public $fk_parent;
 
 	/**
@@ -62,7 +65,15 @@ class EcmDirectory // extends CommonObject
 	public $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	public $date_c;
 	public $date_m;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_m;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_c;
 
 	/**
@@ -669,7 +680,6 @@ class EcmDirectory // extends CommonObject
 					}
 				}
 				$i++;
-
 			}
 		}
 		else

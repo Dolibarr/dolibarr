@@ -56,7 +56,12 @@ class PaymentSalary extends CommonObject
 	public $datep;
 	public $datev;
 	public $amount;
+
+	/**
+     * @var int ID
+     */
 	public $fk_project;
+
 	public $type_payment;
 	public $num_payment;
 
@@ -67,8 +72,20 @@ class PaymentSalary extends CommonObject
 
 	public $datesp;
 	public $dateep;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 
@@ -470,7 +487,6 @@ class PaymentSalary extends CommonObject
 	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
 	            if ($result < 0) $error++;
 	            // End call triggers
-
 			}
 			else $error++;
 

@@ -240,7 +240,6 @@ if ($id > 0 || ! empty($ref))
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-
 	} else {
 		print "ErrorRecordNotFound";
 	}

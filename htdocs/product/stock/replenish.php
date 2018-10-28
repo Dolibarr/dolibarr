@@ -190,6 +190,7 @@ if ($action == 'order' && isset($_POST['valid']))
             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
             $sql.= " WHERE fk_soc = ".$suppliersid[$i];
             $sql.= " AND source = 42 AND fk_statut = 0";
+            $sql.= " AND entity IN (".getEntity('commande_fournisseur').")";
             $sql.= " ORDER BY date_creation DESC";
             $resql = $db->query($sql);
             if($resql && $db->num_rows($resql) > 0) {

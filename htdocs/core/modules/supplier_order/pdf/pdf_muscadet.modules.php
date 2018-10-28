@@ -110,7 +110,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 	/**
 	 * Issuer
-	 * @var Objet societe qui emet
+	 * @var Company object that emits
 	 */
 	public $emetteur;
 
@@ -291,7 +291,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
-
 			}
 
 			if (file_exists($dir))

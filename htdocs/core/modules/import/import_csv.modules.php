@@ -466,7 +466,6 @@ class ImportCsv extends ModeleImports
                                             }
                                         }
                                     }
-
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
                                 {
@@ -633,6 +632,7 @@ class ImportCsv extends ModeleImports
 				//print 'listfields='.$listfields.'<br>listvalues='.$listvalues.'<br>';
 
 				// If no error for this $alias/$tablename, we have a complete $listfields and $listvalues that are defined
+				// so we can try to make the insert or update now.
 				if (! $errorforthistable)
 				{
 					//print "$alias/$tablename/$listfields/$listvalues<br>";
@@ -644,7 +644,7 @@ class ImportCsv extends ModeleImports
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
-							if (empty($lastinsertid)) {
+							if (empty($lastinsertid)) {	// No insert done yet for a parent table
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
 
 								$data = array_combine($listfields, $listvalues);
@@ -680,10 +680,11 @@ class ImportCsv extends ModeleImports
 									$error++;
 								}
 							} else {
-								// We have a last INSERT ID. Check if we have a row referencing this foreign key.
+								// We have a last INSERT ID (got by previous pass), so we check if we have a row referencing this foreign key.
 								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make
 								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
-								// may already exists. So we rescan the extrafield table to be know if record exists or not for the rowid.
+								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
+								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
 
 								if(empty($keyfield)) $keyfield = 'rowid';

@@ -160,7 +160,6 @@ if (empty($reshook))
 		setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
 		$error++;
 	}
-
 }
 
 

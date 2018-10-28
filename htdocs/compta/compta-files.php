@@ -1,7 +1,6 @@
-
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,9 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file       htdocs/compta/recap-compta.php
- *      \ingroup    compta
- *  \brief      Page de fiche recap customer
+ *  \file       htdocs/compta/compta-files.php
+ *  \ingroup    compta
+ *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -30,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+
 restrictedArea($user,'banque');
+
 $langs->load("companies");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 $date_start =GETPOST('date_start','alpha');
@@ -67,15 +68,22 @@ $arrayfields=array(
     'date'=>array('label'=>"Date", 'checked'=>1),
     //...
 );
+
+
 /*
  * Actions
  */
+
 //$parameters = array('socid' => $id);
 //$reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 //if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+
+
 /*
- * Fetch the lines/files from db /
+ * View
  */
+
 $filesarray=array();
 $result=false;
 if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
@@ -176,7 +184,6 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
          }
      }
      $db->free($resd);
-
 }
 /*
  * cleanup of old ZIP
@@ -285,7 +292,6 @@ if ($result)
                 print '<td></td>';
                 print "</tr>\n";
                 }
-
         }
 print "</table>";
 print   '<form name="dl" action="?action=dl" method="POST" >'."\n\t\t\t";

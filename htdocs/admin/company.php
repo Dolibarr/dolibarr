@@ -75,6 +75,8 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
+	$db->begin();
+
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml'),'chaine',0,'',$conf->entity);
@@ -173,11 +175,24 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START",'int'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "FACTURE_TVAOPTION", GETPOST("optiontva",'aZ09'),'chaine',0,'',$conf->entity);
+	// Sale tax options
+	$usevat = GETPOST("optiontva",'aZ09');
+	$uselocaltax1 = GETPOST("optionlocaltax1",'aZ09');
+	$uselocaltax2 = GETPOST("optionlocaltax2",'aZ09');
+	if ($uselocaltax1 == 'localtax1on' && ! $usevat)
+	{
+		setEventMessages($langs->trans("IfYouUseASecondTaxYouMustSetYouUseTheMainTax"), null, 'errors');
+		$error++;
+	}
+	if ($uselocaltax2 == 'localtax2on' && ! $usevat)
+	{
+		setEventMessages($langs->trans("IfYouUseAThirdTaxYouMustSetYouUseTheMainTax"), null, 'errors');
+		$error++;
+	}
 
-	// Local taxes
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", GETPOST("optionlocaltax1",'aZ09'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", GETPOST("optionlocaltax2",'aZ09'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_TVAOPTION", $usevat,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2,'chaine',0,'',$conf->entity);
 
 	if($_POST["optionlocaltax1"]=="localtax1on")
 	{
@@ -202,6 +217,15 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2','aZ09'),'chaine',0,'',$conf->entity);
 		}
 		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2",'aZ09'),'chaine',0,'',$conf->entity);
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 
 	if ($action != 'updateedit' && ! $error)
@@ -328,20 +352,20 @@ if ($action == 'edit' || $action == 'updateedit')
 	// Name
 
 	print '<tr class="oddeven"><td class="fieldrequired"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-	print '<input name="nom" id="name" class="minwidth200" value="'. ($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM: GETPOST("nom",'nohtml')) . '" autofocus="autofocus"></td></tr>'."\n";
+	print '<input name="nom" id="name" class="minwidth200" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM: GETPOST("nom",'nohtml')) . '" autofocus="autofocus"></td></tr>'."\n";
 
 	// Addresse
 
 	print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
-	print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS: GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml')) . '</textarea></td></tr>'."\n";
+	print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS:GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml')) . '</textarea></td></tr>'."\n";
 
 
 	print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
-	print '<input class="minwidth100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'. ($conf->global->MAIN_INFO_SOCIETE_ZIP?$conf->global->MAIN_INFO_SOCIETE_ZIP: GETPOST("MAIN_INFO_SOCIETE_ZIP",'alpha')) . '"></td></tr>'."\n";
+	print '<input class="minwidth100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP?$conf->global->MAIN_INFO_SOCIETE_ZIP:GETPOST("MAIN_INFO_SOCIETE_ZIP",'alpha')) . '"></td></tr>'."\n";
 
 
 	print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
-	print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth100" id="MAIN_INFO_SOCIETE_TOWN" value="'. ($conf->global->MAIN_INFO_SOCIETE_TOWN?$conf->global->MAIN_INFO_SOCIETE_TOWN: GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml')) . '"></td></tr>'."\n";
+	print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth100" id="MAIN_INFO_SOCIETE_TOWN" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN?$conf->global->MAIN_INFO_SOCIETE_TOWN:GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml')) . '"></td></tr>'."\n";
 
 	// Country
 
@@ -363,29 +387,29 @@ if ($action == 'edit' || $action == 'updateedit')
 
 
 	print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-	print '<input name="tel" id="phone" value="'. $conf->global->MAIN_INFO_SOCIETE_TEL . '"></td></tr>';
+	print '<input name="tel" id="phone" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TEL) . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 
 	print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-	print '<input name="fax" id="fax" value="'. $conf->global->MAIN_INFO_SOCIETE_FAX . '"></td></tr>';
+	print '<input name="fax" id="fax" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_FAX) . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 
 	print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-	print '<input name="mail" id="email" class="minwidth200" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
+	print '<input name="mail" id="email" class="minwidth200" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL) . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 	// Web
 	print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
-	print '<input name="web" id="web" class="minwidth300" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
+	print '<input name="web" id="web" class="minwidth300" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_WEB) . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 	// Barcode
 	if (! empty($conf->barcode->enabled)) {
 
 		print '<tr class="oddeven"><td><label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
-		print '<input name="barcode" id="barcode" class="minwidth150" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
+		print '<input name="barcode" id="barcode" class="minwidth150" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_GENCOD) . '"></td></tr>';
 		print '</td></tr>';
 	}
 
@@ -424,19 +448,19 @@ if ($action == 'edit' || $action == 'updateedit')
 	// Managing Director(s)
 
 	print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-	print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="' . $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '"></td></tr>';
+	print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="' . dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS) . '"></td></tr>';
 
 	// GDPR contact
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 	print '</td><td>';
-	print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="' . $conf->global->MAIN_INFO_GDPR . '"></td></tr>';
+	print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="' . dol_escape_htmltag($conf->global->MAIN_INFO_GDPR) . '"></td></tr>';
 
 	// Capital
 
 	print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-	print '<input name="capital" id="capital" class="minwidth100" value="' . $conf->global->MAIN_INFO_CAPITAL . '"></td></tr>';
+	print '<input name="capital" id="capital" class="minwidth100" value="' . dol_escape_htmltag($conf->global->MAIN_INFO_CAPITAL) . '"></td></tr>';
 
 	// Juridical Status
 
@@ -455,7 +479,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<tr class="oddeven"><td><label for="profid1">'.$langs->transcountry("ProfId1",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="siren" id="profid1" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '') . '">';
+			print '<input name="siren" id="profid1" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '') . '">';
 		}
 		else
 		{
@@ -471,7 +495,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<tr class="oddeven"><td><label for="profid2">'.$langs->transcountry("ProfId2",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="siret" id="profid2" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '' ) . '">';
+			print '<input name="siret" id="profid2" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '' ) . '">';
 		}
 		else
 		{
@@ -487,7 +511,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<tr class="oddeven"><td><label for="profid3">'.$langs->transcountry("ProfId3",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="ape" id="profid3" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '') . '">';
+			print '<input name="ape" id="profid3" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '') . '">';
 		}
 		else
 		{
@@ -503,7 +527,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<tr class="oddeven"><td><label for="profid4">'.$langs->transcountry("ProfId4",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="rcs" id="profid4" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '') . '">';
+			print '<input name="rcs" id="profid4" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '') . '">';
 		}
 		else
 		{
@@ -519,7 +543,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<tr class="oddeven"><td><label for="profid5">'.$langs->transcountry("ProfId5",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '') . '">';
+			print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '') . '">';
 		}
 		else
 		{
@@ -535,7 +559,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<tr class="oddeven"><td><label for="profid6">'.$langs->transcountry("ProfId6",$mysoc->country_code).'</label></td><td>';
 		if (! empty($mysoc->country_code))
 		{
-			print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '') . '">';
+			print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '') . '">';
 		}
 		else
 		{
@@ -547,7 +571,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	// TVA Intra
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-	print '<input name="tva" id="intra_vat" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
+	print '<input name="tva" id="intra_vat" class="minwidth200" value="' . dol_escape_htmltag(! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
 	print '</td></tr>';
 
 	// Object of the company
@@ -586,7 +610,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -595,7 +619,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -1024,7 +1048,7 @@ else
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 
@@ -1034,7 +1058,7 @@ else
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
-	print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
+	if ($mysoc->country_code == 'FR') print "<tr><td><i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i></td></tr>\n";
 	print "</table>";
 	print "</td></tr>\n";
 

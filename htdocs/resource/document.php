@@ -135,7 +135,6 @@ if ($object->id)
     $permission = $user->rights->resource->write;
 
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
 }
 else
 {

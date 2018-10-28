@@ -213,7 +213,9 @@ if ($forgetpasslink || $helpcenterlink)
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 15px;">';
 	if ($forgetpasslink) {
-		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">';
+		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
+		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
 		echo '</a>';
 	}

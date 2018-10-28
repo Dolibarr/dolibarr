@@ -62,8 +62,8 @@ $search_current_account_valid = GETPOST('search_current_account_valid', 'alpha')
 if ($search_current_account_valid == '') $search_current_account_valid='withoutvalidaccount';
 
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
-$btn_changeaccount = GETPOST('changeaccount');
-$btn_changetype = GETPOST('changetype');
+$btn_changeaccount = GETPOST('changeaccount', 'alpha');
+$btn_changetype = GETPOST('changetype', 'alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST("sortfield",'alpha');
@@ -173,7 +173,6 @@ if ($action == 'update') {
 
 				$cpt++;
 			}
-
 		}
 
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');

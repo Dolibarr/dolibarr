@@ -51,8 +51,17 @@ class Subscription extends CommonObject
 	public $datem;				// Date modification
 	public $dateh;				// Subscription start date (date subscription)
 	public $datef;				// Subscription end date
+
+	/**
+     * @var int ID
+     */
 	public $fk_adherent;
+
 	public $amount;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
 
 
@@ -407,7 +416,6 @@ class Subscription extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

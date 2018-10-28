@@ -60,6 +60,9 @@ class ActionsTicket
     public $template_dir;
     public $template;
 
+    /**
+     * @var string ticket action label
+     */
     public $label;
 
     /**
@@ -67,6 +70,9 @@ class ActionsTicket
 	 */
 	public $description;
 
+	/**
+     * @var int ID
+     */
     public $fk_statut;
 
     /**

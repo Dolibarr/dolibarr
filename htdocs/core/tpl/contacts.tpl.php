@@ -199,12 +199,12 @@ if ($permission) {
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->fetch($tab[$i]['id']);
-				echo $userstatic->getNomUrl(-1);
+				echo $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1);
+				echo $contactstatic->getNomUrl(1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			?>
 		</div>

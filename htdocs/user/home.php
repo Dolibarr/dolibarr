@@ -150,7 +150,7 @@ if ($resql)
 		$companystatic->canvas=$obj->canvas;
 
 		print '<tr class="oddeven">';
-		print '<td>';
+		print '<td class="nowraponall">';
         print $fuserstatic->getNomUrl(-1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{

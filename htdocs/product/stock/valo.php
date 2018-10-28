@@ -128,7 +128,6 @@ if ($result)
         print '<td align="right">'.price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
         print '<td align="right">&nbsp;</td>';
         print "</tr>\n";
-
     }
 
     $db->free($result);
@@ -150,7 +149,6 @@ if ($result)
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
         print '<br><img src="'.$url.'">';
     }
-
 }
 else
 {

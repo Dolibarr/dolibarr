@@ -104,8 +104,8 @@ class ExpenseReport extends CommonObject
         END ACTIONS
     */
 
-   /**
-	 * Draft
+    /**
+	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
 
@@ -719,7 +719,6 @@ class ExpenseReport extends CommonObject
                     $auser->fetch($obj->fk_user_approve);
                     $this->user_approve   = $auser;
                 }
-
             }
             $this->db->free($resql);
         }
@@ -891,7 +890,6 @@ class ExpenseReport extends CommonObject
                 print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_TTC).'</td>';
                 print '<td>&nbsp;</td>';
                 print '</tr>';
-
             }
             else
             {
@@ -2416,22 +2414,41 @@ class ExpenseReportLine
 	 */
 	public $error='';
 
-    var $rowid;
-    var $comments;
-    var $qty;
-    var $value_unit;
-    var $date;
+    /**
+	 * @var int ID
+	 */
+	public $rowid;
 
-    var $fk_c_type_fees;
-    var $fk_c_exp_tax_cat;
-    var $fk_projet;
-    var $fk_expensereport;
+    public $comments;
+    public $qty;
+    public $value_unit;
+    public $date;
 
-    var $type_fees_code;
-    var $type_fees_libelle;
+    /**
+     * @var int ID
+     */
+    public $fk_c_type_fees;
 
-    var $projet_ref;
-    var $projet_title;
+    /**
+     * @var int ID
+     */
+    public $fk_c_exp_tax_cat;
+
+    /**
+     * @var int ID
+     */
+    public $fk_projet;
+
+    /**
+     * @var int ID
+     */
+    public $fk_expensereport;
+
+    public $type_fees_code;
+    public $type_fees_libelle;
+
+    public $projet_ref;
+    public $projet_title;
 
     var $vatrate;
     var $total_ht;

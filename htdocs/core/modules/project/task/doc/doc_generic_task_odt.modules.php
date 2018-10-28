@@ -56,9 +56,9 @@ class doc_generic_task_odt extends ModelePDFTask
 {
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 	/**
    * @var array() Minimum version of PHP required by module.
@@ -445,6 +445,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
@@ -719,7 +720,6 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
-
 				}
 				catch(OdfException $e)
 				{

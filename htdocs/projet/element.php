@@ -217,6 +217,14 @@ print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
 
+// Bill time
+if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+{
+	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+	print yn($object->bill_time);
+	print '</td></tr>';
+}
+
 // Categories
 if($conf->categorie->enabled) {
     print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -451,7 +459,7 @@ $listofreferent=array(
 	'disableamount'=>0,
 	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
 	'lang'=>'salaries',
-	'buttonnew'=>'AddSalariesPayment',
+	'buttonnew'=>'AddSalaryPayment',
 	'testnew'=>$user->rights->salaries->write,
 	'test'=>$conf->salaries->enabled && $user->rights->salaries->read),
 'variouspayment'=>array(
@@ -489,7 +497,6 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 if(!empty($hookmanager->resArray)) {
 
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
-
 }
 
 if ($action=="addelement")
@@ -548,11 +555,8 @@ if (! $showdatefilter)
 
 // Show balance for whole project
 
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("proposals");
-$langs->load("margins");
+$langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
+
 if (!empty($conf->stock->enabled)) $langs->load('stocks');
 
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
@@ -621,6 +625,10 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
 				}
+				if ($key == 'propal')
+				{
+					if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
+				}
 
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
 
@@ -686,8 +694,8 @@ foreach ($listofreferent as $key => $value)
 // and the final balance
 print '<tr class="liste_total">';
 print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td align="right" >'.price($balance_ht).'</td>';
-print '<td align="right" >'.price($balance_ttc).'</td>';
+print '<td align="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td align="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
 print "</table>";
@@ -872,7 +880,9 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print img_picto($langs->trans('Unlink'), 'unlink');
+						print '</a>';
 					}
 				}
 				print "</td>\n";
