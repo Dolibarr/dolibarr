@@ -93,7 +93,8 @@ if ($id > 0 || ! empty($ref))
 // Security check
 $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', null, (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
+$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', null, $isdraft);
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_dellink.inc.php

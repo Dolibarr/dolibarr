@@ -115,7 +115,8 @@ $permissiontoedit = $user->rights->facture->creer; // Used by the include of act
 // Security check
 $fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
 if ($user->societe_id) $socid = $user->societe_id;
-$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, null, (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0));
+$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, null, $isdraft);
 
 
 /*
