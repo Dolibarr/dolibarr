@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 /**
  *  Description and activation class for module dav
  */
-class modDav extends DolibarrModules
+class modEmailCollector extends DolibarrModules
 {
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
@@ -44,7 +44,7 @@ class modDav extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 50310;
+		$this->numero = 50320;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'dav';
 
@@ -59,12 +59,12 @@ class modDav extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuledavName' not found (MyModue is name of module).
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuledavDesc' not found (MyModue is name of module).
-		$this->description = "davDescription";
+		$this->description = "EmailCollectorDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "davDescription";
+		$this->descriptionlong = "EmailCollectorDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'dolibarr';
+		$this->version = 'development';
 		// Key used in llx_const table to save module status enabled/disabled (where DAV is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -80,10 +80,10 @@ class modDav extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/dav/temp","/dav/subdir");
-		$this->dirs = array("/dav/temp","/dav/public","/dav/private");
+		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into dav/admin directory, to use to setup module.
-		$this->config_page_url = array("dav.php");
+		$this->config_page_url = array("emailcollector.php");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
