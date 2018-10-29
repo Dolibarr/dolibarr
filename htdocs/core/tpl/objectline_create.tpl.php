@@ -646,8 +646,19 @@ jQuery(document).ready(function() {
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 
 		jQuery('#trlinefordates').show();
-
+		<?php 
+		if (!empty($conf->global->EDIT_PREDEF_PRICEHT))
+		{
+		?>
+			// get the HT price for the product and display it
+			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch', { 'id': $(this).val(), 'socid' : <?php print $object->socid; ?> }, function(data) {
+				jQuery("#price_ht").val(data.price_ht);
+			},
+			'json');
+				
 		<?php
+		}
+		
 		if (! empty($usemargins) && $user->rights->margins->creer)
 		{
 			$langs->load('stocks');
@@ -831,7 +842,10 @@ function setforpredef() {
 
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-	jQuery("#price_ht").val('').hide();
+	<?php if (empty($conf->global->EDIT_PREDEF_PRICEHT))
+	{?>
+		jQuery("#price_ht").val('').hide();
+    <?php }?>
 	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#fourn_ref").hide();

@@ -155,6 +155,9 @@ if ($action == 'other')
 	        $resql_new = $db->query($sql_new);
 	    }
 	}
+	
+	$value = GETPOST('activate_EditPredifinedPriceHT','alpha');
+	$res = dolibarr_set_const($db, "EDIT_PREDEF_PRICEHT", $value,'chaine',0,'',$conf->entity);
 }
 
 if ($action == 'specimen') // For products
@@ -674,6 +677,14 @@ if (! empty($conf->fournisseur->enabled))
     print '</td>';
     print '</tr>';
 }
+
+// Activate price ht edition for predefined product on line add
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("EditPredifinedPriceHTAbility").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_EditPredifinedPriceHT",$conf->global->EDIT_PREDEF_PRICEHT,1);
+print '</td>';
+print '</tr>';
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {

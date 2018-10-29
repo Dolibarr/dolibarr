@@ -1447,6 +1447,7 @@ ServiceSetup=Services module setup
 ProductServiceSetup=Products and Services modules setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
 ViewProductDescInFormAbility=Display product descriptions in forms (otherwise as popup tooltip)
+EditPredifinedPriceHTAbility=Add the ability to edit price ht before adding a line on documents
 MergePropalProductCard=Activate in product/service Attached Files tab an option to merge product PDF document to proposal PDF azur if product/service is in the proposal
 ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in the language of the third party
 UseSearchToSelectProductTooltip=Also if you have a large number of products (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
