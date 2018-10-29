@@ -1333,7 +1333,7 @@ class ExtraFields
 					// current object id can be use into filter
 					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
 						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
-					} else {
+					} else if (preg_match("#^.*list.php$#",$_SERVER["DOCUMENT_URI"])) {
 						// Pattern for word=$ID$
 						$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 						
@@ -1359,7 +1359,7 @@ class ExtraFields
 						}
 						
 						// Si l'on a un AND ou un OR, avant ou après
-						preg_match(  '#(AND|OR|) *(' . $word .   ') *(AND|OR|)#'  ,$InfoFieldList[4],$matchCondition);
+						preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
 						while(!empty($matchCondition[0])) {
 							// If the two sides differ but are not empty
 							if (! empty($matchCondition[1]) && ! empty($matchCondition[3]) && $matchCondition[1] != $matchCondition[3] ) {
@@ -1369,7 +1369,7 @@ class ExtraFields
 							else {
 								if (! empty($matchCondition[1])) {
 									$boolCond =(( $matchCondition[1] == "AND" )?' AND 1 ':' OR 0 ');
-									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond.$matchCondition[3] ,$InfoFieldList[4]);
+									$InfoFieldList[4]=str_replace($matchCondition[0],$boolCond.$matchCondition[3],$InfoFieldList[4]);
 								}
 								else if (! empty($matchCondition[3])) {
 									$boolCond =(( $matchCondition[3] == "AND" )?' 1 AND ':' 0 OR');
@@ -1381,8 +1381,11 @@ class ExtraFields
 							}
 							
 							// Si l'on a un AND ou un OR, avant ou après
-							preg_match(  '#(AND|OR|) *(' . $word .   ') *(AND|OR|)#'  ,$InfoFieldList[4],$matchCondition);
+							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
 						}
+					}
+					else { 
+						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
 					}
 
 					// We have to join on extrafield table
