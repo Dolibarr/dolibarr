@@ -402,6 +402,7 @@ if (! $error && $massaction == 'confirm_presend')
 						$trackid.=$objecttmp->id;
 					}
 					//var_dump($filepath);
+					//var_dump($trackid);exit;
 
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
