@@ -3118,7 +3118,7 @@ else
 
 	            // Delete
 				$isErasable=$object->is_erasable();
-				if ($action != 'confirm_edit' && ($user->rights->fournisseur->facture->supprimer || $isErasable == 1))	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
+				if ($action != 'confirm_edit' && ($user->rights->fournisseur->facture->supprimer || ($user->rights->fournisseur->facture->creer && $isErasable == 1)))	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 	            {
 	            	//var_dump($isErasable);
 	            	if ($isErasable == -4) {

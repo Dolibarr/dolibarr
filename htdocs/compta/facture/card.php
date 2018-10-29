@@ -4812,7 +4812,7 @@ else if ($id > 0 || ! empty($ref))
 
 			// Delete
 			$isErasable = $object->is_erasable();
-			if ($user->rights->facture->supprimer || $isErasable == 1)	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
+			if ($user->rights->facture->supprimer || ($user->rights->facture->creer && $isErasable == 1))	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 			{
 				//var_dump($isErasable);
 				if ($isErasable == -4) {
