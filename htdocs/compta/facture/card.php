@@ -959,7 +959,7 @@ if (empty($reshook))
 
 							if($facture_source->type == Facture::TYPE_SITUATION)
 							{
-							    $source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id 
+							    $source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 							    $line->fk_prev_id  = $line->id; // Credit note line need to be linked to the situation invoice it is create from
 
 							    if(!empty($facture_source->tab_previous_situation_invoice))
@@ -1543,8 +1543,8 @@ if (empty($reshook))
 						$line->origin_id = $line->id;
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals($line->id);
-						$line->situation_percent =  $line->get_prev_progress($object->id); // get good progress including credit note 
-						
+						$line->situation_percent =  $line->get_prev_progress($object->id); // get good progress including credit note
+
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
 						if ($line->fk_remise_except)
 						{
@@ -4811,9 +4811,9 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Delete
-			if ($user->rights->facture->supprimer)
+			$isErasable = $object->is_erasable();
+			if ($user->rights->facture->supprimer || $isErasable == 1)		// isErasable = 1 means draft (draft can always be deleted with no need of permissions)
 			{
-				$isErasable = $object->is_erasable();
 				//var_dump($isErasable);
 				if ($isErasable == -4) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
