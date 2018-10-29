@@ -74,6 +74,7 @@ if (! $error && $massaction == 'confirm_presend')
 	{
 		$thirdparty=new Societe($db);
 		if ($objecttmp->element == 'expensereport') $thirdparty=new User($db);
+		if ($objecttmp->element == 'holiday')       $thirdparty=new User($db);
 
 		$objecttmp=new $objectclass($db);
 		foreach($toselect as $toselectid)
@@ -84,9 +85,9 @@ if (! $error && $massaction == 'confirm_presend')
 			{
 				$listofobjectid[$toselectid]=$toselectid;
 				$thirdpartyid=($objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid);
-				if ($objecttmp->element == 'societe') $thirdpartyid=$objecttmp->id;
+				if ($objecttmp->element == 'societe')       $thirdpartyid=$objecttmp->id;
 				if ($objecttmp->element == 'expensereport') $thirdpartyid=$objecttmp->fk_user_author;
-				if ($objecttmp->element == 'holiday') $thirdpartyid=$objecttmp->fk_user;
+				if ($objecttmp->element == 'holiday')       $thirdpartyid=$objecttmp->fk_user;
 				$listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
 				$listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
 			}
@@ -327,7 +328,7 @@ if (! $error && $massaction == 'confirm_presend')
 				$message = GETPOST('message','none');
 
 				$sendtobcc = GETPOST('sendtoccc');
-				if ($objectclass == 'Propale') 				$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
+				if ($objectclass == 'Propal') 				$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
 				if ($objectclass == 'Commande') 			$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO));
 				if ($objectclass == 'Facture') 				$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO));
 				if ($objectclass == 'Supplier_Proposal') 	$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO));
@@ -380,11 +381,31 @@ if (! $error && $massaction == 'confirm_presend')
 					$filename = $attachedfiles['names'];
 					$mimetype = $attachedfiles['mimes'];
 
+					// Define the trackid when emails sent from the mass action
+					if ($oneemailperrecipient)
+					{
+						$trackid='thi'.$thirdparty->id;
+						if ($objecttmp->element == 'expensereport') $trackid='use'.$thirdparty->id;
+						if ($objecttmp->element == 'holiday') $trackid='use'.$thirdparty->id;
+					}
+					else
+					{
+						$trackid=strtolower(get_class($objecttmp));
+						if (get_class($objecttmp)=='Contrat')  $trackid='con';
+						if (get_class($objecttmp)=='Propal')   $trackid='pro';
+						if (get_class($objecttmp)=='Commande') $trackid='ord';
+						if (get_class($objecttmp)=='Facture')  $trackid='inv';
+						if (get_class($objecttmp)=='Supplier_Proposal')   $trackid='spr';
+						if (get_class($objecttmp)=='CommandeFournisseur') $trackid='sor';
+						if (get_class($objecttmp)=='FactureFournisseur')  $trackid='sin';
+
+						$trackid.=$objecttmp->id;
+					}
 					//var_dump($filepath);
 
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
+					$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
 					if ($mailfile->error)
 					{
 						$resaction.='<div class="error">'.$mailfile->error.'</div>';
