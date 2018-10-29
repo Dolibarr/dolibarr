@@ -529,11 +529,11 @@ class Project extends CommonObject
 
 		if ($type == 'agenda')
         {
-        	$sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project IN (". $ids .")";
+        	$sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project IN (". $ids .") AND entity IN (".getEntity('agenda').")";
         }
         elseif ($type == 'expensereport')
 		{
-            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet IN (". $ids .")";
+            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet IN (". $ids .") AND entity IN (".getEntity('expensereport').")";
 		}
         elseif ($type == 'project_task')
 		{
@@ -545,11 +545,11 @@ class Project extends CommonObject
 		}
 		elseif ($type == 'stock_mouvement')
 		{
-			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . "stock_mouvement as ms WHERE ms.origintype = 'project' AND ms.fk_origin  IN (". $ids .") AND ms.type_mouvement = 1";
+			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . "stock_mouvement as ms WHERE ms.origintype = 'project' AND ms.fk_origin IN (". $ids .") AND ms.type_mouvement = 1";
 		}
         else
 		{
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet IN (". $ids .")";
+            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet IN (". $ids .") AND entity IN (".getEntity($type).")";
 		}
 
 		if ($dates > 0)
@@ -723,10 +723,10 @@ class Project extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      * 		Delete tasks with no children first, then task with children recursively
-     *  
+     *
      *  	@param     	User		$user		User
      *		@return		int				<0 if KO, 1 if OK
      */
@@ -754,7 +754,7 @@ class Project extends CommonObject
         {
             if (count($this->lines)) $this->deleteTasks($this->lines);
         }
-        
+
         return 1;
     }
 
