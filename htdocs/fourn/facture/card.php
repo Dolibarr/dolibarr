@@ -72,11 +72,6 @@ $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (!
 $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-// Security check
-$socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicesuppliercard','globalcard'));
 
@@ -94,6 +89,11 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch_thirdparty();
 	if ($ret < 0) dol_print_error($db,$object->error);
 }
+
+// Security check
+$socid='';
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', null, (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_dellink.inc.php

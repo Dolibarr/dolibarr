@@ -92,11 +92,6 @@ $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : 
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-// Security check
-$fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
-if ($user->societe_id) $socid = $user->societe_id;
-$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
-
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES = 4;
 
@@ -116,6 +111,11 @@ $hookmanager->initHooks(array('invoicecard','globalcard'));
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+
+// Security check
+$fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
+if ($user->societe_id) $socid = $user->societe_id;
+$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, null, (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0));
 
 
 /*
