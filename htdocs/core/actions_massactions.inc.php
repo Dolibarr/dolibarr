@@ -93,7 +93,7 @@ if (! $error && $massaction == 'confirm_presend')
 	}
 
 	// Check mandatory parameters
-	if (empty($user->email))
+	if (GETPOST('fromtype','alpha') === 'user' && empty($user->email))
 	{
 		$error++;
 		setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
