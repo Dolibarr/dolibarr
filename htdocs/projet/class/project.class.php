@@ -533,7 +533,7 @@ class Project extends CommonObject
         }
         elseif ($type == 'expensereport')
 		{
-            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet IN (". $ids .") AND entity IN (".getEntity('expensereport').")";
+            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (". $ids .")";
 		}
         elseif ($type == 'project_task')
 		{
@@ -545,7 +545,7 @@ class Project extends CommonObject
 		}
 		elseif ($type == 'stock_mouvement')
 		{
-			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . "stock_mouvement as ms WHERE ms.origintype = 'project' AND ms.fk_origin IN (". $ids .") AND ms.type_mouvement = 1";
+			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . "stock_mouvement as ms, " . MAIN_DB_PREFIX . "entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (". $ids .") AND ms.type_mouvement = 1";
 		}
         else
 		{
