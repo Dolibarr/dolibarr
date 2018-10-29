@@ -83,9 +83,10 @@ if (! $error && $massaction == 'confirm_presend')
 			if ($result > 0)
 			{
 				$listofobjectid[$toselectid]=$toselectid;
-				$thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+				$thirdpartyid=($objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid);
 				if ($objecttmp->element == 'societe') $thirdpartyid=$objecttmp->id;
 				if ($objecttmp->element == 'expensereport') $thirdpartyid=$objecttmp->fk_user_author;
+				if ($objecttmp->element == 'holiday') $thirdpartyid=$objecttmp->fk_user;
 				$listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
 				$listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
 			}
