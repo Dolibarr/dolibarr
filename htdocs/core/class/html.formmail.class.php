@@ -846,8 +846,12 @@ class FormMail extends Form
 
 				$out.= '<td>';
 
+				if (GETPOSTISSET('sendmail'))
+				{
+					$this->withmaindocfile = (GETPOST('addmaindocfile', 'alpha') ? -1 : 1);
+				}
 				// If a template was selected, we use setup of template to define if join file checkbox is selected or not.
-				if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+				elseif (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
 				{
 					$this->withmaindocfile = ($arraydefaultmessage->joinfiles ? -1 : 1);
 				}
@@ -860,7 +864,7 @@ class FormMail extends Form
 					}
 					if ($this->withmaindocfile == -1)
 					{
-						$out.='<input type="checkbox" name="addmaindocfile" checked="checked" />';
+						$out.='<input type="checkbox" name="addmaindocfile" value="1" checked="checked" />';
 					}
 					$out.=' '.$langs->trans("JoinMainDoc").'.<br>';
 				}
