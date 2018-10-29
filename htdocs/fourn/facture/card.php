@@ -218,19 +218,26 @@ if (empty($reshook))
 		}
 	}
 
-	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
+	elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		$object->fetch($id);
 		$object->fetch_thirdparty();
-		$result=$object->delete($user);
-		if ($result > 0)
+
+		$isErasable=$object->is_erasable();
+
+		if (($user->rights->fournisseur->facture->supprimer && $isErasable > 0)
+			|| ($user->rights->fournisseur->facture->creer && $isErasable == 1))
 		{
-			header('Location: list.php?restore_lastsearch_values=1');
-			exit;
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
+			$result=$object->delete($user);
+			if ($result > 0)
+			{
+				header('Location: list.php?restore_lastsearch_values=1');
+				exit;
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	}
 

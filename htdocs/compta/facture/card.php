@@ -177,7 +177,7 @@ if (empty($reshook))
 	}
 
 	// Delete invoice
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer) {
+	else if ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -190,7 +190,10 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->is_erasable() > 0)
+		$isErasable=$object->is_erasable();
+
+		if (($user->rights->facture->supprimer && $isErasable > 0)
+			|| ($user->rights->facture->creer && $isErasable == 1))
 		{
 			$result = $object->delete($user, 0, $idwarehouse);
 			if ($result > 0) {
