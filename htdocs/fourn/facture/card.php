@@ -3117,9 +3117,9 @@ else
 				}
 
 	            // Delete
-	            if ($action != 'confirm_edit' && $user->rights->fournisseur->facture->supprimer)
+				$isErasable=$object->is_erasable();
+				if ($action != 'confirm_edit' && ($user->rights->fournisseur->facture->supprimer || $isErasable == 1))	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 	            {
-	            	$isErasable=$object->is_erasable();
 	            	//var_dump($isErasable);
 	            	if ($isErasable == -4) {
 	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';

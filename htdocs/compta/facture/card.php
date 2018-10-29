@@ -190,7 +190,7 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->is_erasable())
+		if ($object->is_erasable() > 0)
 		{
 			$result = $object->delete($user, 0, $idwarehouse);
 			if ($result > 0) {
@@ -4812,7 +4812,7 @@ else if ($id > 0 || ! empty($ref))
 
 			// Delete
 			$isErasable = $object->is_erasable();
-			if ($user->rights->facture->supprimer || $isErasable == 1)		// isErasable = 1 means draft (draft can always be deleted with no need of permissions)
+			if ($user->rights->facture->supprimer || $isErasable == 1)	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 			{
 				//var_dump($isErasable);
 				if ($isErasable == -4) {
