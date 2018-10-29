@@ -646,7 +646,7 @@ jQuery(document).ready(function() {
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 
 		jQuery('#trlinefordates').show();
-		<?php 
+		<?php
 		if (!empty($conf->global->EDIT_PREDEF_PRICEHT))
 		{
 		?>
