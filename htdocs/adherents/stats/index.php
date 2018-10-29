@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,118 +27,144 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+//$width = DolGraph::getDefaultGraphSizeForStats('width');
+//$height = DolGraph::getDefaultGraphSizeForStats('height');
+//$width = DolChartjs::getDefaultGraphSizeForStats('width');
+//$height = DolChartjs::getDefaultGraphSizeForStats('height');
+$width = 80;
+$height = 25;
 
-$userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
+$userid = GETPOST('userid', 'int');
+if ($userid < 0) $userid=0;
+$socid = GETPOST('socid', 'int');
+if ($socid < 0) $socid=0;
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
-$result=restrictedArea($user,'adherent','','','cotisation');
+$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = strftime("%Y", time());
-$startyear=$year-2;
-$endyear=$year;
+$nbyear = 3;
+$startyear = $year - $nbyear + 1;
+$endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members"));
+$langs->loadLangs(array("companies", "members"));
 
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
 print load_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
-
-$dir=$conf->adherent->dir_temp;
 
 dol_mkdir($dir);
 
 $stats = new AdherentStats($db, $socid, $userid);
 
 // Build graphic number of object
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
-
-
-$filenamenb = $dir.'/subscriptionsnbinyear-'.$year.'.png';
-$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscriptionsnbinyear-'.$year.'.png';
-
-
-$px1 = new DolGraph();
-$mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-    $px1->SetData($data);
-    $px1->SetPrecisionY(0);
-    $i=$startyear;
-    while ($i <= $endyear)
-    {
-        $legend[]=$i;
-        $i++;
+$labels1 = array();
+$datas1 = array();
+$datacolor=array();
+$bgdatacolor=array();
+$px1 = new DolChartJs();
+foreach ($datas as $data) {
+    $labels1[] = $data[0];
+    for ($i=0; $i<$nbyear; $i++) {
+        $datacolor[$i][] = $px1->datacolor[$i];
+        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
+        $datas1[$i][] = $data[$i+1];
     }
-    $px1->SetLegend($legend);
-    $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
-    $px1->SetWidth($WIDTH);
-    $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfSubscriptions"));
-    $px1->SetShading(3);
-    $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
-    $px1->mode='depth';
-    $px1->SetTitle($langs->trans("NbOfSubscriptions"));
-
-    $px1->draw($filenamenb,$fileurlnb);
 }
+$dataset = array();
+for ($i=0; $i<$nbyear; $i++) {
+    $dataset[] = array(
+        //'label' => $langs->trans("NbOfSubscriptions").' '.($startyear+$i),
+        'label' => $startyear + $i,
+        'backgroundColor' => $datacolor[$i],
+        'borderColor' => $bgdatacolor[$i],
+        'data' => $datas1[$i],
+    );
+}
+$px1->element('subscriptionsnbinyear')
+    ->setType('bar')
+    ->setLabels($labels1)
+    ->setDatasets($dataset)
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("NbOfSubscriptions"),
+        )
+    )
+);
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+$datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
+$labels2 = array();
+$datas2 = array();
+$datacolor=array();
+$bgdatacolor=array();
 
-$filenameamount = $dir.'/subscriptionsamountinyear-'.$year.'.png';
-$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscriptionsamountinyear-'.$year.'.png';
+$px2 = new DolChartJs();
 
-$px2 = new DolGraph();
-$mesg = $px2->isGraphKo();
-if (! $mesg)
-{
-    $px2->SetData($data);
-    $px2->SetPrecisionY(0);
-    $i=$startyear;
-    while ($i <= $endyear)
-    {
-        $legend[]=$i;
-        $i++;
+foreach ($datas as $data) {
+    $labels2[] = $data[0];
+    for ($i=0; $i<$nbyear; $i++) {
+        $datacolor[$i][] = $px2->datacolor[$i];
+        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
+        $datas2[$i][] = $data[$i+1];
     }
-    $px2->SetLegend($legend);
-    $px2->SetMaxValue($px2->GetCeilMaxValue());
-    $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
-    $px2->SetWidth($WIDTH);
-    $px2->SetHeight($HEIGHT);
-    $px2->SetYLabel($langs->trans("AmountOfSubscriptions"));
-    $px2->SetShading(3);
-    $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
-    $px2->mode='depth';
-    $px2->SetTitle($langs->trans("AmountOfSubscriptions"));
-
-    $px2->draw($filenameamount,$fileurlamount);
 }
-
+$dataset = array();
+for ($i=0; $i<$nbyear; $i++) {
+    $dataset[] = array(
+        //'label' => $langs->trans("AmountOfSubscriptions").' '.($startyear+$i),
+        'label' => $startyear + $i,
+        'backgroundColor' => $datacolor[$i],
+        'borderColor' => $bgdatacolor[$i],
+        'data' => $datas2[$i],
+    );
+}
+$px2->element('subscriptionsamountinyear')
+    ->setType('bar')
+    ->setLabels($labels2)
+    ->setDatasets($dataset)
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("AmountOfSubscriptions"),
+        )
+    )
+);
 
 $head = member_stats_prepare_head($adh);
 
@@ -176,12 +203,11 @@ print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
-$oldyear=0;
-foreach ($data as $val)
-{
+$oldyear = 0;
+foreach ($data as $val) {
     $year = $val['year'];
-    while ($oldyear > $year+1)
-    {	// If we have empty year
+    while ($oldyear > $year+1) {
+        // If we have empty year
         $oldyear--;
         print '<tr class="oddeven" height="24">';
         print '<td align="center">';
@@ -201,10 +227,10 @@ foreach ($data as $val)
     //print '</a>';
     print '</td>';
     print '<td align="right">'.$val['nb'].'</td>';
-    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-    print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+    print '<td align="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+    print '<td align="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
     print '</tr>';
-    $oldyear=$year;
+    $oldyear = $year;
 }
 
 print '</table>';
@@ -216,11 +242,12 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-    print $px1->show();
+if ($mesg) {
+    print $mesg;
+} else {
+    print $px1->renderChart();
     print "<br>\n";
-    print $px2->show();
+    print $px2->renderChart();
 }
 print '</td></tr></table>';
 

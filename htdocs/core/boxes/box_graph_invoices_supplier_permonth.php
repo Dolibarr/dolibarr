@@ -156,13 +156,14 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
                 $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
-                        'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
+                        //'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
+                        'label' => $startyear + $i,
                         'backgroundColor' => $datacolor[$i],
                         'borderColor' => $bgdatacolor[$i],
                         'data' => $datas1[$i],
                     );
                 }
-                $px1->element('idboxgraphboxnbinvoicessupplierpermonth')
+                $px1->element('idboxgraphboxnb'.$this->boxcode)
                     ->setType('bar')
                     ->setLabels($labels1)
                     ->setDatasets($dataset)
@@ -204,13 +205,14 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
                 $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
-                        'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),
+                        //'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),
+                        'label' => $startyear + $i,
                         'backgroundColor' => $datacolor[$i],
                         'borderColor' => $bgdatacolor[$i],
                         'data' => $datas2[$i],
                     );
                 }
-                $px2->element('idboxgraphboxamountinvoicessupplierpermonth')
+                $px2->element('idboxgraphboxamount'.$this->boxcode)
                     ->setType('bar')
                     ->setLabels($labels2)
                     ->setDatasets($dataset)

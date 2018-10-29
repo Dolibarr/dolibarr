@@ -310,4 +310,29 @@ class DolChartJs
         }
         return $array;
     }
+
+    /**
+     * getDefaultGraphSizeForStats
+     *
+     * @param   string  $direction      'width' or 'height'
+     * @param   string	$defaultsize    Value we want as default size
+     * @return  int                     Value of width or height to use by default
+     */
+    static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
+    {
+        global $conf;
+
+        if ($direction == 'width') {
+            //var_dump($_SESSION['dol_screen_width']);
+            if (empty($conf->dol_optimize_smallscreen)) {
+                return ($defaultsize ? $defaultsize : '500');
+            } else {
+                return (empty($_SESSION['dol_screen_width']) ? '280' : ($_SESSION['dol_screen_width']-40));
+            }
+        }
+        if ($direction == 'height') {
+            return (empty($conf->dol_optimize_smallscreen)?($defaultsize?$defaultsize:'200'):'160');
+        }
+        return 0;
+    }
 }

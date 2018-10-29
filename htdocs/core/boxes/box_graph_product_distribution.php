@@ -30,9 +30,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
  */
 class box_graph_product_distribution extends ModeleBoxes
 {
-	var $boxcode="productdistribution";
-	var $boximg="object_product";
-	var $boxlabel="BoxProductDistribution";
+	var $boxcode = "productdistribution";
+	var $boximg = "object_product";
+	var $boxlabel= "BoxProductDistribution";
 	var $depends = array("product|service", "facture|propal|commande");
 
     /**
@@ -77,44 +77,53 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		$this->max=$max;
 
-		$refreshaction='refresh_'.$this->boxcode;
+		$refreshaction = 'refresh_'.$this->boxcode;
 
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-		$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
-		$param_showinvoicenb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
-		$param_showpropalnb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
-		$param_showordernb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
-		$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
-		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
-		{
+		$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
+		$param_showinvoicenb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
+		$param_showpropalnb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
+		$param_showordernb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
+		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray)) {
 			$year=GETPOST($param_year,'int');
 			$showinvoicenb=GETPOST($param_showinvoicenb,'alpha');
 			$showpropalnb=GETPOST($param_showpropalnb,'alpha');
 			$showordernb=GETPOST($param_showordernb,'alpha');
-		}
-		else
-		{
+		} else {
 			$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 			$year=$tmparray['year'];
 			$showinvoicenb=$tmparray['showinvoicenb'];
 			$showpropalnb=$tmparray['showpropalnb'];
 			$showordernb=$tmparray['showordernb'];
 		}
-		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) { $showpropalnb=1; $showinvoicenb=1; $showordernb=1; }
+		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) {
+            $showpropalnb=1;
+            $showinvoicenb=1;
+            $showordernb=1;
+        }
 		if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) $showinvoicenb=0;
 		if (empty($conf->propal->enabled) || empty($user->rights->propale->lire)) $showpropalnb=0;
 		if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) $showordernb=0;
 
-		$nowarray=dol_getdate(dol_now(),true);
-		if (empty($year)) $year=$nowarray['year'];
+        if (empty($nbyear) || $nbyear<1) {
+            $nbyear = 1;
+        }
+        if ($nbyear>6) {
+            $nbyear = 6;
+        }
+        $nowarray=dol_getdate(dol_now(),true);
+        if (empty($year)) {
+            $year = $nowarray['year'];
+        }
 
 		$nbofgraph=0;
 		if ($showinvoicenb) $nbofgraph++;
-		if ($showpropalnb)  $nbofgraph++;
-		if ($showordernb)   $nbofgraph++;
+		if ($showpropalnb) $nbofgraph++;
+		if ($showordernb) $nbofgraph++;
 
 		$text = $langs->trans("BoxProductDistribution",$max).' - '.$langs->trans("Year").': '.$year;
 		$this->info_box_head = array(
@@ -137,19 +146,24 @@ class box_graph_product_distribution extends ModeleBoxes
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation
 
-		$width = ($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-		$height = '25';
+        $width = ($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
+        $height = '25';
 
         if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire) && $showinvoicenb) {
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             $langs->load("bills");
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
-            $mode='customer';
+            $mode = 'customer';
             $stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
             $data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
             if (empty($data1)) {
-                $data1 = array(array(0=>$langs->trans("None"), 1=>1));
+                $data1 = array(
+                    array(
+                        0 => $langs->trans("None"),
+                        1 => 1
+                    )
+                );
             }
 
             $labels1 = array();

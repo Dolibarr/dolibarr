@@ -46,21 +46,21 @@ $startyear=$year-2;
 $endyear=$year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members"));
+$langs->loadLangs(array("companies", "members"));
 
 
 /*
  * View
  */
 
-$arrayjs=array('https://www.google.com/jsapi');
+$arrayjs = array('https://www.google.com/jsapi');
 if (! empty($conf->dol_use_jmobile)) $arrayjs=array();
 
-$title=$langs->trans("Statistics");
-if ($mode == 'memberbycountry') $title=$langs->trans("MembersStatisticsByCountries");
-if ($mode == 'memberbystate') $title=$langs->trans("MembersStatisticsByState");
-if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
-if ($mode == 'memberbyregion') $title=$langs->trans("MembersStatisticsByRegion");
+$title = $langs->trans("Statistics");
+if ($mode == 'memberbycountry') $title = $langs->trans("MembersStatisticsByCountries");
+elseif ($mode == 'memberbystate') $title = $langs->trans("MembersStatisticsByState");
+elseif ($mode == 'memberbytown') $title = $langs->trans("MembersStatisticsByTown");
+elseif ($mode == 'memberbyregion') $title = $langs->trans("MembersStatisticsByRegion");
 
 llxHeader('', $title,'','',0,0,$arrayjs);
 
@@ -71,8 +71,7 @@ dol_mkdir($dir);
 if ($mode)
 {
     // Define sql
-    if ($mode == 'memberbycountry')
-    {
+    if ($mode == 'memberbycountry') {
         $label=$langs->trans("Country");
         $tab='statscountry';
 
@@ -83,10 +82,7 @@ if ($mode)
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code";
         //print $sql;
-    }
-
-	if ($mode == 'memberbystate')
-    {
+    } elseif ($mode == 'memberbystate') {
         $label=$langs->trans("Country");
         $label2=$langs->trans("State");
         $tab='statsstate';
@@ -100,9 +96,7 @@ if ($mode)
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, c.nom";
         //print $sql;
-    }
-    if ($mode == 'memberbyregion') //
-    {
+    } elseif ($mode == 'memberbyregion') {
         $label=$langs->trans("Country");
         $label2=$langs->trans("Region"); //département
         $tab='statsregion'; //onglet
@@ -116,9 +110,7 @@ if ($mode)
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, r.nom"; //+
         //print $sql;
-    }
-    if ($mode == 'memberbytown')
-    {
+    } elseif ($mode == 'memberbytown') {
         $label=$langs->trans("Country");
         $label2=$langs->trans("Town");
         $tab='statstown';
@@ -133,64 +125,56 @@ if ($mode)
         //print $sql;
     }
 
-    $langsen=new Translate('',$conf);
+    $langsen = new Translate('', $conf);
     $langsen->setDefaultLang('en_US');
     $langsen->load("dict");
     //print $langsen->trans("Country"."FI");exit;
 
     // Define $data array
     dol_syslog("Count member", LOG_DEBUG);
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num=$db->num_rows($resql);
-        $i=0;
-        while ($i < $num)
-        {
-            $obj=$db->fetch_object($resql);
-            if ($mode == 'memberbycountry')
-            {
-                $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-							'code'=>$obj->code,
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
+    $resql = $db->query($sql);
+    if ($resql) {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num) {
+            $obj = $db->fetch_object($resql);
+            if ($mode == 'memberbycountry') {
+                $data[] = array(
+                    'label' => (($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'code' => $obj->code,
+                    'nb' => $obj->nb,
+                    'lastdate' => $db->jdate($obj->lastdate),
+                );
+            } elseif ($mode == 'memberbyregion') {
+                $data[] = array(
+                    'label' => (($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label2' => ($obj->label2?$obj->label2:$langs->trans("Unknown")),
+                    'nb' => $obj->nb,
+                    'lastdate' => $db->jdate($obj->lastdate),
+                );
+            } elseif ($mode == 'memberbystate') {
+                $data[] = array(
+                    'label' => (($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label2' => ($obj->label2?$obj->label2:$langs->trans("Unknown")),
+                    'nb' => $obj->nb,
+                    'lastdate' => $db->jdate($obj->lastdate),
+                );
+            } elseif ($mode == 'memberbytown') {
+                $data[] = array(
+                    'label' => (($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label_en' => (($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
+                    'label2' => ($obj->label2?$obj->label2:$langs->trans("Unknown")),
+                    'nb' => $obj->nb,
+                    'lastdate' => $db->jdate($obj->lastdate),
                 );
             }
-	    if ($mode == 'memberbyregion') //+
-            {
-                $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
-                );
-	}
-            if ($mode == 'memberbystate')
-            {
-                $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
-                );
-            }
-            if ($mode == 'memberbytown')
-            {
-                $data[]=array('label'=>(($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code)?$langs->trans("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
-                            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
-                            'nb'=>$obj->nb,
-                            'lastdate'=>$db->jdate($obj->lastdate)
-                );
-            }
-
             $i++;
         }
         $db->free($resql);
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -202,19 +186,19 @@ dol_fiche_head($head, $tab, $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title
-if ($mode && ! count($data))
-{
+if ($mode && ! count($data)) {
     print $langs->trans("NoValidatedMemberYet").'<br>';
     print '<br>';
-}
-else
-{
-    if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
-    else if ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
-    else if ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
-    else if ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>';//+
-    else
-    {
+} else {
+    if ($mode == 'memberbycountry') {
+        print $langs->trans("MembersByCountryDesc").'<br>';
+    } elseif ($mode == 'memberbystate') {
+        print $langs->trans("MembersByStateDesc").'<br>';
+    } elseif ($mode == 'memberbytown') {
+        print $langs->trans("MembersByTownDesc").'<br>';
+    } elseif ($mode == 'memberbyregion') {
+        print $langs->trans("MembersByRegion").'<br>';//+
+    } else {
         print $langs->trans("MembersStatisticsDesc").'<br>';
         print '<br>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
@@ -223,17 +207,18 @@ else
         print '<br>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbytown">'.$langs->trans("MembersStatisticsByTown").'</a><br>';
         print '<br>';//+
-	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbyregion">'.$langs->trans("MembersStatisticsByRegion").'</a><br>';//+
+        print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbyregion">'.$langs->trans("MembersStatisticsByRegion").'</a><br>';//+
     }
     print '<br>';
 }
 
 
 // Show graphics
-if (count($arrayjs) && $mode == 'memberbycountry')
-{
+if (count($arrayjs) && $mode == 'memberbycountry') {
     $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
-    if (is_readable($color_file)) include_once $color_file;
+    if (is_readable($color_file)) {
+        include_once $color_file;
+    }
 
     // Assume we've already included the proper headers so just call our script inline
     // More doc: https://developers.google.com/chart/interactive/docs/gallery/geomap?hl=fr-FR
@@ -249,15 +234,19 @@ if (count($arrayjs) && $mode == 'memberbycountry')
 
     // loop and dump
     $i=0;
-    foreach($data as $val)
-    {
-        $valcountry=strtoupper($val['code']);    // Should be ISO-3166 code (faster)
+    foreach($data as $val) {
+        $valcountry = strtoupper($val['code']);    // Should be ISO-3166 code (faster)
         //$valcountry=ucfirst($val['label_en']);
-        if ($valcountry == 'Great Britain') { $valcountry = 'United Kingdom'; }    // fix case of uk (when we use labels)
+        if ($valcountry == 'Great Britain') {
+            // fix case of uk (when we use labels)
+            $valcountry = 'United Kingdom';
+        }
         print "\tdata.setValue(".$i.", 0, \"".$valcountry."\");\n";
         print "\tdata.setValue(".$i.", 1, ".$val['nb'].");\n";
         // Google's Geomap only supports up to 400 entries
-        if ($i >= 400){ break; }
+        if ($i >= 400){
+            break;
+        }
         $i++;
     }
 
@@ -279,8 +268,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
     print '<br>';
 }
 
-if ($mode)
-{
+if ($mode) {
     // Print array / Affiche le tableau
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';

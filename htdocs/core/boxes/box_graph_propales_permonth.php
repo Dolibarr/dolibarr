@@ -152,13 +152,14 @@ class box_graph_propales_permonth extends ModeleBoxes
                 $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
-                        'label' => $langs->trans("NumberOfProposals").' '.($startyear+$i),
+                        //'label' => $langs->trans("NumberOfProposals").' '.($startyear+$i),
+                        'label' => $startyear + $i,
                         'backgroundColor' => $datacolor[$i],
                         'borderColor' => $bgdatacolor[$i],
                         'data' => $datas1[$i],
                     );
                 }
-                $px1->element('idboxgraphboxnbproposalspermonth')
+                $px1->element('idboxgraphboxnb'.$this->boxcode)
                     ->setType('bar')
                     ->setLabels($labels1)
                     ->setDatasets($dataset)
@@ -206,13 +207,14 @@ class box_graph_propales_permonth extends ModeleBoxes
                 $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
-                        'label' => $langs->trans("AmountOfProposalsHT").' '.($startyear+$i),
+                        //'label' => $langs->trans("AmountOfProposalsHT").' '.($startyear+$i),
+                        'label' => $startyear + $i,
                         'backgroundColor' => $datacolor[$i],
                         'borderColor' => $bgdatacolor[$i],
                         'data' => $datas2[$i],
                     );
                 }
-                $px2->element('idboxgraphboxamountproposalspermonth')
+                $px2->element('idboxgraphboxamount'.$this->boxcode)
                     ->setType('bar')
                     ->setLabels($labels2)
                     ->setDatasets($dataset)
@@ -238,46 +240,46 @@ class box_graph_propales_permonth extends ModeleBoxes
 			}
 
 			if (! $mesg) {
-				$stringtoshow='';
-				$stringtoshow.='<script type="text/javascript" language="javascript">
+				$stringtoshow = '';
+				$stringtoshow .= '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();
 						});
 					});
 					</script>';
-				$stringtoshow.= '<div class="center hideobject divboxfilter" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
-				$stringtoshow.= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-				$stringtoshow.= '<input type="hidden" name="action" value="'.$refreshaction.'">';
-				$stringtoshow.= '<input type="hidden" name="page_y" value="">';
-				$stringtoshow.= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,nbyear,shownb,showtot">';
-				$stringtoshow.= '<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked':'').'> '.$langs->trans("NumberOfProposalsByMonth");
-				$stringtoshow.= '&nbsp;&nbsp;';
-				$stringtoshow.= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked':'').'> '.$langs->trans("AmountOfProposalsByMonthHT");
-				$stringtoshow.= '<br>';
-				$stringtoshow.= $langs->trans("NbYear").' <input class="flat" size="4" type="text" name="'.$param_nbyear.'" value="'.$nbyear.'">';
-				$stringtoshow.= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow.= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
-				$stringtoshow.= '</form>';
-				$stringtoshow.= '</div>';
+				$stringtoshow .= '<div class="center hideobject divboxfilter" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
+				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
+				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,nbyear,shownb,showtot">';
+				$stringtoshow .= '<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked':'').'> '.$langs->trans("NumberOfProposalsByMonth");
+				$stringtoshow .= '&nbsp;&nbsp;';
+				$stringtoshow .= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked':'').'> '.$langs->trans("AmountOfProposalsByMonthHT");
+				$stringtoshow .= '<br>';
+				$stringtoshow .= $langs->trans("NbYear").' <input class="flat" size="4" type="text" name="'.$param_nbyear.'" value="'.$nbyear.'">';
+				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow .= '</form>';
+				$stringtoshow .= '</div>';
 				if ($shownb && $showtot) {
-					$stringtoshow.='<div class="fichecenter">';
-					$stringtoshow.='<div class="fichehalfleft">';
+					$stringtoshow .= '<div class="fichecenter">';
+					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) $stringtoshow.=$px1->renderChart();
+				if ($shownb) $stringtoshow .= $px1->renderChart();
 				if ($shownb && $showtot) {
-					$stringtoshow.='</div>';
-					$stringtoshow.='<div class="fichehalfright">';
+					$stringtoshow .= '</div>';
+					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) $stringtoshow.=$px2->renderChart();
+				if ($showtot) $stringtoshow .= $px2->renderChart();
 				if ($shownb && $showtot) {
-					$stringtoshow.='</div>';
-					$stringtoshow.='</div>';
+					$stringtoshow .= '</div>';
+					$stringtoshow .= '</div>';
 				}
 				$this->info_box_contents[0][0] = array(
-					'tr'=>'class="oddeven nohover"',
+					'tr' => 'class="oddeven nohover"',
 					'td' => 'align="center" class="nohover"',
-					'textnoformat'=>$stringtoshow
+					'textnoformat' => $stringtoshow
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(

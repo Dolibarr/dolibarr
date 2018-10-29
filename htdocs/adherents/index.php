@@ -172,8 +172,7 @@ if ($conf->use_javascript_ajax)
     $dataval=array();
     $datalabels=array();
     $i=0;
-    foreach ($AdherentType as $key => $adhtype)
-    {
+    foreach ($AdherentType as $key => $adhtype) {
         $datalabels[]=array($i,$adhtype->getNomUrl(0,dol_size(16)));
         $dataval['draft'][]=array($i,isset($MemberToValidate[$key])?$MemberToValidate[$key]:0);
         $dataval['notuptodate'][]=array($i,isset($MembersValidated[$key])?$MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):0);
@@ -187,20 +186,43 @@ if ($conf->use_javascript_ajax)
     }
     $total = $SommeA + $SommeB + $SommeC + $SommeD;
     $dataseries=array();
-    $dataseries[]=array($langs->trans("MenuMembersNotUpToDate"), round($SommeB));
-    $dataseries[]=array($langs->trans("MenuMembersUpToDate"), round($SommeC));
-    $dataseries[]=array($langs->trans("MembersStatusResiliated"), round($SommeD));
-    $dataseries[]=array($langs->trans("MembersStatusToValid"), round($SommeA));
+    $dataseries[] = array($langs->transnoentities("MenuMembersNotUpToDate"), round($SommeB));
+    $dataseries[] = array($langs->transnoentities("MenuMembersUpToDate"), round($SommeC));
+    $dataseries[] = array($langs->transnoentities("MembersStatusResiliated"), round($SommeD));
+    $dataseries[] = array($langs->transnoentities("MembersStatusToValid"), round($SommeA));
 
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-    $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
-    $dolgraph->setShowPercent(1);
-    $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
-    $dolgraph->draw('idgraphstatus');
-    print $dolgraph->show($total?0:1);
+    $labels1 = array();
+    $datas1 = array();
+    foreach ($dataseries as $data) {
+        $labels1[] = $data[0];
+        $datas1[] = $data[1];
+    }
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+    $px1 = new DolChartJs();
+    $px1->element('idgraphstatus')
+        ->setType('pie')
+        ->setLabels($labels1)
+        ->setDatasets(
+            array(
+                array(
+                    'backgroundColor' => $px1->datacolor,
+                    'borderColor' => $px1->bgdatacolor,
+                    'data' => $datas1,
+                ),
+            )
+        )
+        ->setSize(array('width' => 80, 'height' => 25))
+        ->setOptions(array(
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'legend' => array(
+                'display' => true,
+                'position' => 'right',
+            ),
+        )
+    );
+    print $px1->renderChart();
 
     print '</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';

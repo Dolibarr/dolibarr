@@ -28,8 +28,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_orders_supplier_permonth extends ModeleBoxes
 {
-	var $boxcode="orderssupplierpermonth";
-	var $boximg="object_order";
+	var $boxcode = "orderssupplierpermonth";
+	var $boximg = "object_order";
 	var $boxlabel="BoxSuppliersOrdersPerMonth";
 	var $depends = array("fournisseur");
 
@@ -69,147 +69,175 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 
 		$this->max=$max;
 
-		$refreshaction='refresh_'.$this->boxcode;
+		$refreshaction = 'refresh_'.$this->boxcode;
+
+        $langs->load("orders");
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 		$text = $langs->trans("BoxSuppliersOrdersPerMonth",$max);
 		$this->info_box_head = array(
-				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
-				'target'=>'none'	// Set '' to get target="_blank"
+			'text' => $text,
+			'limit' => dol_strlen($text),
+			'graph' => 1,
+			'sublink' => '',
+			'subtext' => $langs->trans("Filter"),
+			'subpicto' => 'filter.png',
+			'subclass' => 'linkobject boxfilter',
+			'target' => 'none' // Set '' to get target="_blank"
 		);
 
-		$dir=''; 	// We don't need a path because image file will not be saved into disk
-		$prefix='';
 		$socid=0;
 		if ($user->societe_id) $socid=$user->societe_id;
-		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
+		if (! $user->rights->societe->client->voir || $socid) {
+			// If user has no permission to see all, output dir is specific to user
+			$prefix.='private-'.$user->id.'-';
+		}
 
-		if ($user->rights->fournisseur->commande->lire)
-		{
-		    $langs->load("orders");
+		if ($user->rights->fournisseur->commande->lire) {
 
 		    $param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
+			$param_nbyear='DOLUSERCOOKIE_box_'.$this->boxcode.'_nbyear';
 			$param_shownb='DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot='DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
-			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
-			{
+            include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+            $autosetarray = preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+            if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray)) {
 				$endyear=GETPOST($param_year,'int');
+				$nbyear=GETPOST($param_nbyear,'int');
 				$shownb=GETPOST($param_shownb,'alpha');
 				$showtot=GETPOST($param_showtot,'alpha');
-			}
-			else
-			{
+			} else {
 				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 				$endyear=$tmparray['year'];
+				$nbyear=$tmparray['nbyear'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
-			if (empty($shownb) && empty($showtot)) { $shownb=1; $showtot=1; }
-			$nowarray=dol_getdate(dol_now(),true);
-			if (empty($endyear)) $endyear=$nowarray['year'];
-			$startyear=$endyear-1;
-			$mode='supplier';
-			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
-			$HEIGHT='192';
+			if (empty($shownb) && empty($showtot)) {
+				$shownb=1;
+				$showtot=1;
+			}
+            if (empty($nbyear) || $nbyear<1) {
+                $nbyear = 1;
+            }
+            if ($nbyear>6) {
+                $nbyear = 6;
+            }
+            $nowarray = dol_getdate(dol_now(),true);
+            if (empty($endyear)) $endyear=$nowarray['year'];
+            $startyear = $endyear - $nbyear + 1;
+            $mode = 'supplier';
+            $width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
+            $height = '25';
 
 			$stats = new CommandeStats($this->db, $socid, $mode, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($shownb)
-			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+			if ($shownb) {
+                $data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
 
-				$filenamenb = $dir."/".$prefix."orderssuppliernbinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssuppliernbinyear-'.$endyear.'.png';
+                $labels1 = array();
+                $datas1 = array();
+                $datacolor=array();
+                $bgdatacolor=array();
+                $px1 = new DolChartJs();
+                foreach ($data1 as $data) {
+                    $labels1[] = $data[0];
+                    for ($i=0; $i<$nbyear; $i++) {
+                        $datacolor[$i][] = $px1->datacolor[$i];
+                        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
+                        $datas1[$i][] = $data[$i+1];
+                    }
+                }
+                $dataset = array();
+                for ($i=0; $i<$nbyear; $i++) {
+                    $dataset[] = array(
+                        //'label' => $langs->trans("NumberOfOrders").' '.($startyear+$i),
+                        'label' => $startyear + $i,
+                        'backgroundColor' => $datacolor[$i],
+                        'borderColor' => $bgdatacolor[$i],
+                        'data' => $datas1[$i],
+                    );
+                }
+                $px1->element('idboxgraphboxnb'.$this->boxcode)
+                    ->setType('bar')
+                    ->setLabels($labels1)
+                    ->setDatasets($dataset)
+                    ->setSize(array('width' => $width, 'height' => $height))
+                    ->setOptions(array(
+                        'responsive' => true,
+                        'maintainAspectRatio' => false,
+                        'legend' => array(
+                            'display' => true,
+                            'position' => 'bottom',
+                        ),
+                        'title' => array(
+                            'display' => true,
+                            'text' => $langs->transnoentitiesnoconv("NumberOfOrdersByMonth"),
+                        )
+                    )
+                );
+            }
 
-				$px1 = new DolGraph();
-				$mesg = $px1->isGraphKo();
-				if (! $mesg)
-				{
-					$px1->SetData($data1);
-					unset($data1);
-					$px1->SetPrecisionY(0);
-					$i=$startyear;$legend=array();
-					while ($i <= $endyear)
-					{
-						$legend[]=$i;
-						$i++;
-					}
-					$px1->SetLegend($legend);
-					$px1->SetMaxValue($px1->GetCeilMaxValue());
-					$px1->SetWidth($WIDTH);
-					$px1->SetHeight($HEIGHT);
-					$px1->SetYLabel($langs->trans("NumberOfOrders"));
-					$px1->SetShading(3);
-					$px1->SetHorizTickIncrement(1);
-					$px1->SetPrecisionY(0);
-					$px1->SetCssPrefix("cssboxes");
-					$px1->mode='depth';
-					$px1->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+            // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+            if ($showtot) {
+                $data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
 
-					$px1->draw($filenamenb,$fileurlnb);
-				}
-			}
+                $labels2 = array();
+                $datas2 = array();
+                $datacolor=array();
+                $bgdatacolor=array();
 
-			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showtot)
-			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+                $px2 = new DolChartJs();
 
-				$filenamenb = $dir."/".$prefix."orderssupplieramountinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=orderssupplieramountinyear-'.$endyear.'.png';
+                foreach ($data2 as $data) {
+                    $labels2[] = $data[0];
+                    for ($i=0; $i<$nbyear; $i++) {
+                        $datacolor[$i][] = $px2->datacolor[$i];
+                        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
+                        $datas2[$i][] = $data[$i+1];
+                    }
+                }
+                $dataset = array();
+                for ($i=0; $i<$nbyear; $i++) {
+                    $dataset[] = array(
+                        //'label' => $langs->trans("AmountOfOrdersHT").' '.($startyear+$i),
+                        'label' => $startyear + $i,
+                        'backgroundColor' => $datacolor[$i],
+                        'borderColor' => $bgdatacolor[$i],
+                        'data' => $datas2[$i],
+                    );
+                }
+                $px2->element('idboxgraphboxamount'.$this->boxcode)
+                    ->setType('bar')
+                    ->setLabels($labels2)
+                    ->setDatasets($dataset)
+                    ->setSize(array('width' => $width, 'height' => $height))
+                    ->setOptions(array(
+                        'responsive' => true,
+                        'maintainAspectRatio' => false,
+                        'legend' => array(
+                            'display' => true,
+                            'position' => 'bottom',
+                        ),
+                        'title' => array(
+                            'display' => true,
+                            'text' => $langs->transnoentitiesnoconv("AmountOfOrdersByMonthHT"),
+                        )
+                    )
+                );
+            }
 
-				$px2 = new DolGraph();
-				$mesg = $px2->isGraphKo();
-				if (! $mesg)
-				{
-					$px2->SetData($data2);
-					unset($data2);
-					$px2->SetPrecisionY(0);
-					$i=$startyear;$legend=array();
-					while ($i <= $endyear)
-					{
-						$legend[]=$i;
-						$i++;
-					}
-					$px2->SetLegend($legend);
-					$px2->SetMaxValue($px2->GetCeilMaxValue());
-					$px2->SetWidth($WIDTH);
-					$px2->SetHeight($HEIGHT);
-					$px2->SetYLabel($langs->trans("AmountOfOrdersHT"));
-					$px2->SetShading(3);
-					$px2->SetHorizTickIncrement(1);
-					$px2->SetPrecisionY(0);
-					$px2->SetCssPrefix("cssboxes");
-					$px2->mode='depth';
-					$px2->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
-
-					$px2->draw($filenamenb,$fileurlnb);
-				}
-			}
-
-			if (empty($conf->use_javascript_ajax))
-			{
+			if (empty($conf->use_javascript_ajax)) {
 				$langs->load("errors");
 				$mesg=$langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
 			}
 
-			if (! $mesg)
-			{
-				$stringtoshow='';
+			if (! $mesg) {
+				$stringtoshow = '';
 				$stringtoshow.='<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
@@ -217,46 +245,48 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 						});
 					});
 					</script>';
-				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
-				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
-				$stringtoshow.='<input type="hidden" name="page_y" value="">';
-				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';
-				$stringtoshow.='<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked':'').'> '.$langs->trans("NumberOfOrdersByMonth");
-				$stringtoshow.=' &nbsp; ';
-				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked':'').'> '.$langs->trans("AmountOfOrdersByMonthHT");
-				$stringtoshow.='<br>';
-				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
-				$stringtoshow.='</form>';
-				$stringtoshow.='</div>';
-				if ($shownb && $showtot)
-				{
-					$stringtoshow.='<div class="fichecenter">';
-					$stringtoshow.='<div class="fichehalfleft">';
+				$stringtoshow .= '<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
+				$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
+				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
+				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,nbyear,shownb,showtot">';
+				$stringtoshow .= '<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked':'').'> '.$langs->trans("NumberOfOrdersByMonth");
+				$stringtoshow .= ' &nbsp; ';
+				$stringtoshow .= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked':'').'> '.$langs->trans("AmountOfOrdersByMonthHT");
+				$stringtoshow .= '<br>';
+                $stringtoshow .= $langs->trans("NbYear").'<input class="flat" size="4" type="text" name="'.$param_nbyear.'" value="'.$nbyear.'">';
+				$stringtoshow .= $langs->trans("Year").'<input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow .= '</form>';
+				$stringtoshow .= '</div>';
+				if ($shownb && $showtot) {
+					$stringtoshow .= '<div class="fichecenter">';
+					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) $stringtoshow.=$px1->show();
-				if ($shownb && $showtot)
-				{
+				if ($shownb) $stringtoshow .= $px1->renderChart();
+				if ($shownb && $showtot) {
 					$stringtoshow.='</div>';
 					$stringtoshow.='<div class="fichehalfright">';
 				}
-				if ($showtot) $stringtoshow.=$px2->show();
-				if ($shownb && $showtot)
-				{
-					$stringtoshow.='</div>';
-					$stringtoshow.='</div>';
+				if ($showtot) $stringtoshow .= $px2->renderChart();
+				if ($shownb && $showtot) {
+					$stringtoshow .= '</div>';
+					$stringtoshow .= '</div>';
 				}
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+                $this->info_box_contents[0][0] = array(
+                    'tr' => 'class="oddeven nohover"',
+                    'td' => 'align="center" class="nohover"',
+                    'textnoformat' => $stringtoshow
+                );
+			} else {
+				$this->info_box_contents[0][0] = array(
+                    'tr' => 'class="oddeven nohover"',
+                    'td' => 'align="left" class="nohover"',
+                    'maxlength' => 500,
+                    'text' => $mesg
+                );
 			}
-			else
-			{
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="left" class="nohover"',
-    	        										'maxlength'=>500,
-	            										'text' => $mesg);
-			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'align="left" class="nohover opacitymedium"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

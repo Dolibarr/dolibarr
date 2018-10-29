@@ -161,13 +161,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
                 $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
-                        'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
+                        //'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
+                        'label' => $startyear + $i,
                         'backgroundColor' => $datacolor[$i],
                         'borderColor' => $bgdatacolor[$i],
                         'data' => $datas1[$i],
                     );
                 }
-                $px1->element('idboxgraphboxnbinvoicespermonth')
+                $px1->element('idboxgraphboxnb'.$this->boxcode)
                     ->setType('bar')
                     ->setLabels($labels1)
                     ->setDatasets($dataset)
@@ -189,7 +190,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot) {
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
 
                 $labels2 = array();
                 $datas2 = array();
@@ -209,13 +210,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
                 $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
-                        'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),
+                        //'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),
+                        'label' => $startyear + $i,
                         'backgroundColor' => $datacolor[$i],
                         'borderColor' => $bgdatacolor[$i],
                         'data' => $datas2[$i],
                     );
                 }
-                $px2->element('idboxgraphboxamountinvoicespermonth')
+                $px2->element('idboxgraphboxamount'.$this->boxcode)
                     ->setType('bar')
                     ->setLabels($labels2)
                     ->setDatasets($dataset)
