@@ -126,7 +126,8 @@ $sql.= " WHERE d.rowid = c.fk_adherent";
 $sql.= " AND d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '')
 {
-    $sql.= " AND c.dateadh LIKE '".$date_select."%'";
+    $sql.= " AND c.dateadh >= '".$date_select."-01-01 00:00:00'";
+    $sql.= " AND c.dateadh < '".($date_select+1)."-01-01 00:00:00'";
 }
 if ($search_ref)
 {
