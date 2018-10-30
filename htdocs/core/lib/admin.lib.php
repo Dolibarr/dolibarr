@@ -944,7 +944,6 @@ function activateModule($value,$withdeps=1)
                 	$activate = false;
                 	foreach ($modulesdir as $dir)
                 	{
-                		var_dump($modulestring);
                 		if (file_exists($dir.$modulestring.".class.php"))
                 		{
                 			$resarray = activateModule($modulestring);
