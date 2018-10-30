@@ -42,17 +42,17 @@ class pdf_aurore extends ModelePDFSupplierProposal
      * @var DoliDb Database handler
      */
     public $db;
-	
+
 	/**
      * @var string model name
      */
     public $name;
-	
+
 	/**
      * @var string model description (short text)
      */
     public $description;
-	
+
 	/**
      * @var string document type
      */
@@ -60,10 +60,10 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 	/**
      * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2); 
-	
+	public $phpmin = array(5, 4);
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
@@ -74,32 +74,32 @@ class pdf_aurore extends ModelePDFSupplierProposal
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
@@ -120,7 +120,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
 
@@ -160,7 +160,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
-		
+
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
 		    $this->posxtva=101;
@@ -172,7 +172,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		    $this->posxup=126;
 		    $this->posxqty=145;
 		}
-		
+
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxup=$this->posxtva;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -193,7 +193,8 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->atleastonediscount=0;
 	}
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Function to build pdf onto disk
      *
      *  @param		Object		$object				Object to generate
@@ -206,13 +207,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-		
-		// Translations
+
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "supplier_proposal"));
 
 		$nblignes = count($object->lines);
@@ -375,7 +377,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				{
 					$tab_top -= 2;
 
-          $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+                    $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 
@@ -524,7 +526,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					{
 					    $pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');
 					}
-					
+
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS)
 					{
@@ -696,6 +698,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show payments table
 	 *
@@ -707,10 +710,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
+        // phpcs:enable
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -722,6 +726,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -877,6 +882,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -889,6 +895,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -990,7 +997,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
 							}
 						}
 					}
@@ -1232,7 +1238,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		        $pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 		    }
 		}
-		
+
 		if($conf->global->PRODUCT_USE_UNITS) {
 		    $pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 		    if (empty($hidetop)) {
@@ -1273,9 +1279,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf,$langs;
-		
-		// Translations
+		global $conf, $langs;
+
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "bills", "supplier_proposal", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1494,6 +1500,4 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_PROPOSAL_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

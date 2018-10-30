@@ -43,10 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
 
 
-$langs->load("main");
-$langs->load("members");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("main", "members", "companies", "other"));
 
 $id=GETPOST('id','int');
 $object = new Adherent($db);
@@ -116,7 +113,6 @@ if ($id > 0)
 
 		print '</table>';
 	}
-
 }
 
 

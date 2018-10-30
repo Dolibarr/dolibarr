@@ -21,7 +21,7 @@
  *	\brief      Page to show information on a task
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -249,6 +249,6 @@ if ($object->id > 0)
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

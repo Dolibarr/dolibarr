@@ -36,9 +36,13 @@
  */
 abstract class ModelePdfExpedition extends CommonDocGenerator
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -48,6 +52,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='shipping';
@@ -66,7 +71,10 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
  */
 abstract class ModelNumRefExpedition
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/** Return if a model can be used or not
 	 *

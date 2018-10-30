@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/compta/salaries/class/paymentsalary.class.php
- *      \ingroup    salaries
- *      \brief		Class for salaries module payment
+ *  \file       htdocs/compta/salaries/class/paymentsalary.class.php
+ *  \ingroup    salaries
+ *  \brief      Class for salaries module payment
  */
 
 // Put here all includes required by your class file
@@ -31,22 +31,61 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class PaymentSalary extends CommonObject
 {
-	public $element='payment_salary';			//!< Id that identify managed objects
-	public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_salary';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_salary';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='payment';
 
 	public $tms;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user;
+
 	public $datep;
 	public $datev;
 	public $amount;
+
+	/**
+     * @var int ID
+     */
+	public $fk_project;
+
 	public $type_payment;
 	public $num_payment;
-	public $label;
+
+	/**
+     * @var string salary payments label
+     */
+    public $label;
+
 	public $datesp;
 	public $dateep;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
 
 
@@ -60,7 +99,6 @@ class PaymentSalary extends CommonObject
 		$this->db = $db;
 		$this->element = 'payment_salary';
 		$this->table_element = 'payment_salary';
-		return 1;
 	}
 
 	/**
@@ -102,6 +140,7 @@ class PaymentSalary extends CommonObject
 		$sql.= " datep='".$this->db->idate($this->datep)."',";
 		$sql.= " datev='".$this->db->idate($this->datev)."',";
 		$sql.= " amount=".price2num($this->amount).",";
+		$sql.= " fk_projet='".$this->db->escape($this->fk_project)."',";
 		$sql.= " fk_typepayment=".$this->fk_typepayment."',";
 		$sql.= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
@@ -161,6 +200,7 @@ class PaymentSalary extends CommonObject
 		$sql.= " s.datep,";
 		$sql.= " s.datev,";
 		$sql.= " s.amount,";
+		$sql.= " s.fk_projet as fk_project,";
 		$sql.= " s.fk_typepayment,";
 		$sql.= " s.num_payment,";
 		$sql.= " s.label,";
@@ -186,25 +226,26 @@ class PaymentSalary extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
-				$this->ref   = $obj->rowid;
-				$this->tms   = $this->db->jdate($obj->tms);
-				$this->fk_user = $obj->fk_user;
-				$this->datep = $this->db->jdate($obj->datep);
-				$this->datev = $this->db->jdate($obj->datev);
-				$this->amount = $obj->amount;
-				$this->type_payement = $obj->fk_typepayment;
-				$this->num_payment = $obj->num_payment;
-				$this->label = $obj->label;
-				$this->datesp = $this->db->jdate($obj->datesp);
-				$this->dateep = $this->db->jdate($obj->dateep);
-				$this->note  = $obj->note;
-				$this->fk_bank = $obj->fk_bank;
-				$this->fk_user_author = $obj->fk_user_author;
-				$this->fk_user_modif = $obj->fk_user_modif;
-				$this->fk_account = $obj->fk_account;
-				$this->fk_type = $obj->fk_type;
-				$this->rappro  = $obj->rappro;
+				$this->id				= $obj->rowid;
+				$this->ref				= $obj->rowid;
+				$this->tms				= $this->db->jdate($obj->tms);
+				$this->fk_user			= $obj->fk_user;
+				$this->datep			= $this->db->jdate($obj->datep);
+				$this->datev			= $this->db->jdate($obj->datev);
+				$this->amount			= $obj->amount;
+				$this->fk_project		= $obj->fk_project;
+				$this->type_payement	= $obj->fk_typepayment;
+				$this->num_payment		= $obj->num_payment;
+				$this->label			= $obj->label;
+				$this->datesp			= $this->db->jdate($obj->datesp);
+				$this->dateep			= $this->db->jdate($obj->dateep);
+				$this->note				= $obj->note;
+				$this->fk_bank			= $obj->fk_bank;
+				$this->fk_user_author	= $obj->fk_user_author;
+				$this->fk_user_modif	= $obj->fk_user_modif;
+				$this->fk_account		= $obj->fk_account;
+				$this->fk_type			= $obj->fk_type;
+				$this->rappro			= $obj->rappro;
 			}
 			$this->db->free($resql);
 
@@ -276,12 +317,12 @@ class PaymentSalary extends CommonObject
 		$this->fk_user_modif='';
 	}
 
-    /**
-     *  Create in database
-     *
-     *  @param      User	$user       User that create
-     *  @return     int      			<0 if KO, >0 if OK
-     */
+	/**
+	 *  Create in database
+	 *
+	 *  @param      User	$user       User that create
+	 *  @return     int      			<0 if KO, >0 if OK
+	 */
 	function create($user)
 	{
 		global $conf,$langs;
@@ -331,6 +372,7 @@ class PaymentSalary extends CommonObject
 		$sql.= ", datep";
 		$sql.= ", datev";
 		$sql.= ", amount";
+		$sql.= ", fk_projet";
 		$sql.= ", salary";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
@@ -348,6 +390,7 @@ class PaymentSalary extends CommonObject
 		$sql.= ", '".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
+		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
 		$sql.= ", ".($this->salary > 0 ? $this->salary : "null");
 		$sql.= ", ".$this->db->escape($this->type_payment);
 		$sql.= ", '".$this->db->escape($this->num_payment)."'";
@@ -444,7 +487,6 @@ class PaymentSalary extends CommonObject
 	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
 	            if ($result < 0) $error++;
 	            // End call triggers
-
 			}
 			else $error++;
 
@@ -467,6 +509,7 @@ class PaymentSalary extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update link between payment salary and line generate into llx_bank
 	 *
@@ -475,6 +518,7 @@ class PaymentSalary extends CommonObject
 	 */
 	function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_salary SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
@@ -502,12 +546,10 @@ class PaymentSalary extends CommonObject
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
+		$label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
-
-		$picto='payment';
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -566,6 +608,7 @@ class PaymentSalary extends CommonObject
 	    return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -575,6 +618,7 @@ class PaymentSalary extends CommonObject
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 	    $langs->load('compta');
@@ -615,5 +659,4 @@ class PaymentSalary extends CommonObject
 	    }*/
 	    return '';
 	}
-
 }

@@ -273,6 +273,6 @@ if (! empty($conf->accounting->enabled))
 	print '<br><br><span class="opacitymedium">'.$langs->trans("AccountingAccountForSalesTaxAreDefinedInto", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup")).'</span>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

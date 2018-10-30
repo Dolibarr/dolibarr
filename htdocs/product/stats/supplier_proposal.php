@@ -260,5 +260,6 @@ if ($id > 0 || ! empty($ref))
 	dol_print_error();
 }
 
+// End of page
 llxFooter();
 $db->close();

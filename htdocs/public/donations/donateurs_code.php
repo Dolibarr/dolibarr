@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,19 +31,25 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
  *
  * @return	void
  */
-function llxHeaderVierge() { print '<html><title>Export agenda cal</title><body>'; }
+function llxHeaderVierge()
+{
+    print '<html><title>Export agenda cal</title><body>';
+}
 /**
  * Header function
  *
  * @return	void
  */
-function llxFooterVierge() { print '</body></html>'; }
+function llxFooterVierge()
+{
+    print '</body></html>';
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT .'/don/class/don.class.php';
 
 // Security check
-if (empty($conf->don->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->don->enabled)) accessforbidden('', 0, 0, 1);
 
 
 $langs->load("donations");
@@ -65,13 +72,13 @@ if ($resql)
 	if ($num)
 	{
 
-		print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+		print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
-		print '<TR>';
+		print '<tr>';
 		print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
 		print "<td>Date</td>";
-		print "<td align=\"right\">".$langs->trans("Amount")."</TD>";
-		print "</TR>\n";
+		print "<td align=\"right\">".$langs->trans("Amount")."</td>";
+		print "</tr>\n";
 
 		while ($i < $num)
 		{
@@ -92,7 +99,6 @@ if ($resql)
 			$i++;
 		}
 		print "</table>";
-
 	}
 	else
 	{

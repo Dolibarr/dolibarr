@@ -24,7 +24,7 @@
  *	\brief      List all task of a project
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -841,5 +841,6 @@ print '</div>';
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

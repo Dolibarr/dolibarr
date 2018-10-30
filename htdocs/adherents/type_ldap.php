@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("members");
-$langs->load("admin");
-$langs->load("ldap");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members","ldap"));
 
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action','alpha');
@@ -187,5 +186,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

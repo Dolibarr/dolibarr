@@ -32,6 +32,9 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
  */
 class AdherentStats extends Stats
 {
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element;
 
     var $socid;
@@ -178,5 +181,4 @@ class AdherentStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
-
 }

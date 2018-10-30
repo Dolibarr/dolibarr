@@ -36,12 +36,11 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $total=0; $ilink=0;
-$var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass=($var?'pair':'impair');
+    $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
     <tr class="<?php echo $trclass; ?>">

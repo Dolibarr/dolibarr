@@ -95,7 +95,6 @@ if (empty($reshook))
 
 	// Action submit/delete file/link
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
-
 }
 
 $permtoedit = $user->rights->produit->creer;
@@ -122,7 +121,7 @@ if ($object->id)
     print $hookmanager->resPrint;
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 	$totalsize=0;
@@ -156,8 +155,6 @@ if ($object->id)
     $permission = ( $user->rights->produit->creer );
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
-
 }
 else
 {

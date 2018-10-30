@@ -351,5 +351,4 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
     	$this->assertTrue($result, 'result should be true, there is no overlapping');
     }
-
 }

@@ -36,7 +36,11 @@ class box_factures_fourn extends ModeleBoxes
 	var $boxlabel="BoxLastSupplierBills";
 	var $depends = array("facture","fournisseur");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -214,6 +218,5 @@ class box_factures_fourn extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

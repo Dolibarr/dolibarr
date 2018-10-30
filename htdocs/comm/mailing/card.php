@@ -874,7 +874,7 @@ else
 				}
 			}
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright='';
 			$nbtry = $nbok = 0;
@@ -1165,7 +1165,6 @@ else
 			print '</div>';
 
 			dol_fiche_end();
-
 		}
 		else
 		{
@@ -1358,5 +1357,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

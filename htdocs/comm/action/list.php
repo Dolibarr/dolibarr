@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,9 +190,9 @@ $form=new Form($db);
 $userstatic=new User($db);
 $formactions=new FormActions($db);
 
-$nav='';
-$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
-$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav = '';
+$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+$nav .=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 
 $now=dol_now();
 
@@ -438,15 +439,17 @@ if ($resql)
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
+		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);
 		print '</td>';
 	}
 	if (! empty($arrayfields['a.datep2']['checked']))	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
+		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0);
 		print '</td>';
 	}
-	if (! empty($arrayfields['s.nom']['checked']))			print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['s.nom']['checked'])) {
+        print '<td class="liste_titre"></td>';
+    }
 	if (! empty($arrayfields['a.fk_contact']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.fk_element']['checked']))	print '<td class="liste_titre"></td>';
 
@@ -640,7 +643,6 @@ if ($resql)
               		print "&nbsp;";
 		        }
 		        print '</td>';
-
 		}
 
 		// Extra fields
@@ -665,14 +667,12 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-
 }
 else
 {
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

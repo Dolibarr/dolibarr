@@ -213,10 +213,8 @@ if ($id > 0)
     }
 
     print "</div>\n";
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

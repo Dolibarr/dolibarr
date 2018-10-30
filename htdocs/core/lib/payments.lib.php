@@ -25,7 +25,8 @@
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_prepare_head(Paiement $object) {
+function payment_prepare_head(Paiement $object)
+{
 
 	global $langs, $conf;
 
@@ -60,8 +61,8 @@ function payment_prepare_head(Paiement $object) {
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_supplier_prepare_head(Paiement $object) {
-
+function payment_supplier_prepare_head(Paiement $object)
+{
 	global $langs, $conf;
 
 	$h = 0;
@@ -91,7 +92,7 @@ function payment_supplier_prepare_head(Paiement $object) {
 /**
  * Return array of valid payment mode
  *
- * @param	string	$paymentmethod		Filter on this payment method
+ * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
  * @return	array						Array of valid payment method
  */
 function getValidOnlinePaymentMethods($paymentmethod='')
@@ -126,8 +127,9 @@ function showOnlinePaymentUrl($type,$ref)
 {
 	global $conf, $langs;
 
-	$langs->load("payment");
-	$langs->load("paybox");
+	// Load translation files required by the page
+    $langs->loadLangs(array('payment', 'paybox'));
+
 	$servicename='Online';
 
 	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
@@ -230,6 +232,24 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			{
 				$out.='&securekey='.($mode?'<font color="#666666">':'');
 				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + member_ref)";
+				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
+				$out.=($mode?'</font>':'');
+			}
+		}
+	}
+	if ($type == 'donation')
+	{
+		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
+		if ($mode == 1) $out.='donation_ref';
+		if ($mode == 0) $out.=urlencode($ref);
+		$out.=($mode?'</font>':'');
+		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+		{
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			else
+			{
+				$out.='&securekey='.($mode?'<font color="#666666">':'');
+				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + donation_ref)";
 				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
 				$out.=($mode?'</font>':'');
 			}

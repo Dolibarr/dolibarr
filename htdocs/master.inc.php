@@ -80,7 +80,7 @@ if (! empty($dolibarr_main_document_root_alt))
 	{
 		if (preg_match('/^http(s)?:/',$value))
 		{
-			// TODO: Make this a warning rather than an error since the correct value can be derived in most cases
+			// Show error message
 			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
 			print '<b>Error:</b><br>'."\n";
 			print 'Wrong <b>$dolibarr_main_url_root_alt</b> value in <b>conf.php</b> file.<br>'."\n";

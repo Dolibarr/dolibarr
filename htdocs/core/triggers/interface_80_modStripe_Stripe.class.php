@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/core/triggers/interface_50_modStripe_Stripe.class.php
+ *  \file       htdocs/core/triggers/interface_80_modStripe_Stripe.class.php
  *  \ingroup    core
  *  \brief      Fichier
  *  \remarks    Son propre fichier d'actions peut etre cree par recopie de celui-ci:
@@ -35,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceStripe
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     /**
@@ -111,13 +114,12 @@ class InterfaceStripe
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Put here code you want to execute when a Dolibarr business events occurs.
+		// Put here code you want to execute when a Dolibarr business event occurs.
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
-		$langs->load("members");
-		$langs->load("users");
-		$langs->load("mails");
-		$langs->load('other');
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("members","other","users","mails"));
 
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
@@ -145,19 +147,33 @@ class InterfaceStripe
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
-					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// We force data to "null" if empty as expected by Stripe
+					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
+
+					$taxinfo = array('type'=>'vat');
+					if ($vatcleaned)
+					{
+						$taxinfo["tax_id"] = $vatcleaned;
+					}
+					// We force data to "null" if not defined as expected by Stripe
+					if (empty($vatcleaned)) $taxinfo=null;
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
 					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
 					if ($namecleaned != $customer->description) $changerequested++;
-					if ($vatcleaned != $customer->business_vat_id) $changerequested++;
+					if (! isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_info['tax_id']) && is_null($vatcleaned)) $changerequested++;
+					elseif (isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned))
+					{
+						if ($vatcleaned != $customer->tax_info['tax_id']) $changerequested++;
+					}
 
 					if ($changerequested)
 					{
 						if (! empty($object->email)) $customer->email = $object->email;
 						$customer->description = $namecleaned;
-						$customer->business_vat_id = $vatcleaned;
+						if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
+						else $customer->tax_info = $taxinfo;
 
 						$customer->save();
 					}
@@ -184,7 +200,6 @@ class InterfaceStripe
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 
 			// For creation of credit card, we do not create in Stripe automatically
-
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);

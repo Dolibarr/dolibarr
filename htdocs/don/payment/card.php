@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array("bills","banks","companies"));
 
 // Security check
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
@@ -134,7 +133,6 @@ dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
 }
 
 /*
@@ -144,7 +142,6 @@ if ($action == 'valide')
 {
 	$facid = GETPOST('facid','int');
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
 }
 
 

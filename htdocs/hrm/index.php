@@ -24,7 +24,7 @@
  *		\brief      Home page for HRM area.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -236,7 +236,6 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 $i++;
             }
-
         }
         else
         {
@@ -309,7 +308,6 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -382,7 +380,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -397,8 +394,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 print '</div></div></div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

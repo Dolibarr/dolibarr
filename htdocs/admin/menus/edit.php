@@ -28,9 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
-
-$langs->load("admin");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("other","admin"));
 
 if (! $user->admin) accessforbidden();
 
@@ -514,5 +513,6 @@ elseif ($action == 'edit')
     print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE','Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION','8.0.3');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+if (! defined('DOL_VERSION')) define('DOL_VERSION','9.0.0-beta');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
 if (! defined('EURO')) define('EURO',chr(128));
 
@@ -130,8 +130,8 @@ $dolibarr_main_url_root_alt=(empty($dolibarr_main_url_root_alt)?'':trim($dolibar
 $dolibarr_main_document_root=trim($dolibarr_main_document_root);
 $dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':trim($dolibarr_main_document_root_alt));
 
-if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=3306;		// For compatibility with old configs, if not defined, we take 'mysql' type
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// For compatibility with old configs, if not defined, we take 'mysql' type
 
 // Mysql driver support has been removed in favor of mysqli
 if ($dolibarr_main_db_type == 'mysql') $dolibarr_main_db_type = 'mysqli';

@@ -37,7 +37,11 @@ class box_propales extends ModeleBoxes
     var $boxlabel="BoxLastProposals";
     var $depends = array("propal");	// conf->propal->enabled
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $param;
 
     var $info_box_head = array();
@@ -188,6 +192,5 @@ class box_propales extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

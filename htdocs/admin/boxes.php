@@ -488,7 +488,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

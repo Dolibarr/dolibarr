@@ -157,12 +157,12 @@ else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
 	$width=150;
 }
 // Output html code for logo
@@ -313,7 +313,7 @@ if ($ispaymentok)
 		$adht = new AdherentType($db);
 		$object = new Adherent($db);
 
-		$result1 = $object->fetch(0, $tmptag['MEM']);
+		$result1 = $object->fetch($tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
 
 		if ($result1 > 0 && $result2 > 0)
@@ -516,8 +516,9 @@ if ($ispaymentok)
 						// Set output language
 						$outputlangs = new Translate('', $conf);
 						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+						// Load traductions files requiredby by page
 						$outputlangs->loadLangs(array("main", "members"));
-						// Get email content from templae
+						// Get email content from template
 						$arraydefaultmessage=null;
 						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
@@ -587,7 +588,7 @@ if ($ispaymentok)
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
-		$result = $invoice->fetch(0, $tmptag['INV']);
+		$result = $invoice->fetch($tmptag['INV']);
 		if ($result)
 		{
 			$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
@@ -628,7 +629,9 @@ if ($ispaymentok)
 				}
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_paiement = '';
-				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
+				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
+				$paiement->ext_payment_id = $TRANSACTIONID;
+				$paiement->ext_payment_site = $paymentmethod;
 
 				if (! $error)
 				{
@@ -650,8 +653,8 @@ if ($ispaymentok)
 				{
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
 
 					if ($bankaccountid > 0)
 					{
@@ -666,7 +669,7 @@ if ($ispaymentok)
 						}
 						else
 						{
-							$postactionmessages[] = 'Bank entry of payment created';
+							$postactionmessages[] = 'Bank transaction of payment created';
 							$ispostactionok=1;
 						}
 					}
@@ -775,9 +778,9 @@ if ($ispaymentok)
 		}
 		elseif (in_array('INV', array_keys($tmptag)))
 		{
-			$url=$urlwithroot."/compta/facture/card.php?ref=".$tmptag['INV'];
+			$url=$urlwithroot."/compta/facture/card.php?id=".$tmptag['INV'];
 			$content.='<strong>'.$companylangs->trans("Payment")."</strong><br><br>\n";
-			$content.=$companylangs->trans("Invoice").': <strong>'.$tmptag['INV']."</strong><br>\n";
+			$content.=$companylangs->trans("InvoiceId").': <strong>'.$tmptag['INV']."</strong><br>\n";
 			//$content.=$companylangs->trans("ThirdPartyId").': '.$tmptag['CUS']."<br>\n";
 			$content.=$companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		}
@@ -870,8 +873,8 @@ else
     if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
     // TODO Remove local option to keep only the generic one ?
     if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
 
     // Send an email
     if ($sendemail)

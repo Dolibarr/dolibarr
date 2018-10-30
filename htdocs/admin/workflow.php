@@ -187,7 +187,6 @@ if ($nbqualified == 0)
 }
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

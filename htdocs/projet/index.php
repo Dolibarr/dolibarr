@@ -318,7 +318,6 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

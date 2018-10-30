@@ -31,12 +31,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
  */
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
-	var $nom='Aquarium';
-	var $name='Aquarium';
-	var $version='dolibarr';        // 'development', 'experimental', 'dolibarr'
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Aquarium';
 
-	var	$prefixcustomeraccountancycode;
-	var	$prefixsupplieraccountancycode;
+	/**
+	 * @var string model name
+	 */
+	public $name='Aquarium';
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+
+	public	$prefixcustomeraccountancycode;
+
+	public	$prefixsupplieraccountancycode;
 
 
 	/**
@@ -107,6 +122,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
@@ -117,6 +133,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function get_code($db, $societe, $type='')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$i = 0;
@@ -212,4 +229,3 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		}
 	}
 }
-

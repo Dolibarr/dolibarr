@@ -384,7 +384,6 @@ if ($mode == 'overwrite')
 
     print '</table>';
     print '</div>';
-
 }
 
 if ($mode == 'searchkey')
@@ -584,6 +583,6 @@ if (! empty($langcode))
 	dol_set_focus('#transvalue');
 }
 
+// End of page
 llxFooter();
-
 $db->close();

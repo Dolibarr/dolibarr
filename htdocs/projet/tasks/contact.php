@@ -23,7 +23,7 @@
  *	\brief      Actors of a task
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -354,8 +354,6 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
 
-			$var = false;
-
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
@@ -438,7 +436,6 @@ if ($id > 0 || ! empty($ref))
 		print "</tr>\n";
 
 		$companystatic = new Societe($db);
-		$var = true;
 
 		foreach(array('internal','external') as $source)
 		{
@@ -448,9 +445,7 @@ if ($id > 0 || ! empty($ref))
 			$i = 0;
 			while ($i < $num)
 			{
-				$var = !$var;
-
-				print '<tr '.$bc[$var].' valign="top">';
+				print '<tr class="oddeven" valign="top">';
 
 				// Source
 				print '<td align="left">';
@@ -523,7 +518,6 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 		print "</table>";
-
 	}
 	else
 	{
@@ -538,7 +532,6 @@ if (is_object($hookmanager))
 	$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

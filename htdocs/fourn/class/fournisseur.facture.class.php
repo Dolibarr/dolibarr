@@ -5,13 +5,13 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
- * Copyright (C) 2018           Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,16 +41,34 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class FactureFournisseur extends CommonInvoice
 {
-    public $element='invoice_supplier';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='invoice_supplier';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element='facture_fourn';
-    public $table_element_line='facture_fourn_det';
-    public $fk_element='fk_facture_fourn';
+
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line='facture_fourn_det';
+
+    /**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element='fk_facture_fourn';
+
     public $picto='bill';
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -62,8 +80,16 @@ class FactureFournisseur extends CommonInvoice
      */
     protected $table_ref_field = 'ref';
 
-    public $rowid;
-    public $ref;
+    /**
+	 * @var int ID
+	 */
+	public $rowid;
+
+    /**
+	 * @var string Ref
+	 */
+	public $ref;
+
     public $product_ref;
     public $ref_supplier;
     public $socid;
@@ -100,17 +126,24 @@ class FactureFournisseur extends CommonInvoice
     public $total_localtax1=0;
     public $total_localtax2=0;
     public $total_ttc=0;
-    /**
+
+	/**
 	 * @deprecated
 	 * @see note_private, note_public
 	 */
     public $note;
+
     public $note_private;
     public $note_public;
     public $propalid;
     public $cond_reglement_id;
     public $cond_reglement_code;
+
+    /**
+     * @var int ID
+     */
     public $fk_account;
+
     public $mode_reglement_id;
     public $mode_reglement_code;
 
@@ -119,26 +152,37 @@ class FactureFournisseur extends CommonInvoice
 	 * @var SupplierInvoiceLine[]
 	 */
     public $lines = array();
+
 	/**
 	 * @deprecated
 	 */
     public $fournisseur;
 
-	//Incorterms
+	/**
+     * @var int ID Incorterms
+     */
     public $fk_incoterms;
+
     public $location_incoterms;
     public $libelle_incoterms;  //Used into tooltip
 
     public $extraparams=array();
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
     public $fk_multicurrency;
+
     public $multicurrency_code;
     public $multicurrency_tx;
     public $multicurrency_total_ht;
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
     //! id of source invoice if replacement invoice or credit note
+    /**
+     * @var int ID
+     */
     public $fk_facture_source;
 
     /**
@@ -636,7 +680,6 @@ class FactureFournisseur extends CommonInvoice
                     $this->error=$this->db->lasterror();
                     return -3;
                 }
-
             }
             else
             {
@@ -656,13 +699,15 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Load this->lines
      *
-     *	@return     int         1 si ok, < 0 si erreur
+     *  @return     int         1 si ok, < 0 si erreur
      */
     function fetch_lines()
     {
+        // phpcs:enable
     	$this->lines = array();
 
         $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
@@ -881,6 +926,7 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
      *
@@ -889,6 +935,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function insert_discount($idremise)
     {
+        // phpcs:enable
     	global $langs;
 
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1132,8 +1179,9 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *	Tag invoice as a payed invoice
+     *  Tag invoice as a payed invoice
      *
      *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet. Not implementd yet.
@@ -1142,6 +1190,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function set_paid($user, $close_code='', $close_note='')
     {
+        // phpcs:enable
         global $conf,$langs;
         $error=0;
 
@@ -1180,6 +1229,7 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
      *	Fonction utilisee quand un paiement prelevement est refuse,
@@ -1190,6 +1240,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function set_unpaid($user)
     {
+        // phpcs:enable
         global $conf,$langs;
         $error=0;
 
@@ -1391,6 +1442,7 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Set draft status
      *
@@ -1400,6 +1452,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function set_draft($user, $idwarehouse=-1)
     {
+        // phpcs:enable
         global $conf,$langs;
 
         $error=0;
@@ -1955,15 +2008,17 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
 	 *	Renvoi liste des factures remplacables
 	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
 	 *
-	 *	@param		int		$socid		Id societe
+	 *	@param      int		$socid		Id societe
 	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
-	 */
+     */
 	function list_replacable_supplier_invoices($socid=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$return = array();
@@ -2001,6 +2056,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi liste des factures qualifiables pour correction par avoir
 	 *	Les factures qui respectent les regles suivantes sont retournees:
@@ -2011,6 +2067,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	function list_qualified_avoir_supplier_invoices($socid=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$return = array();
@@ -2051,6 +2108,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -2059,6 +2117,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function load_board($user)
     {
+        // phpcs:enable
         global $conf, $langs;
 
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
@@ -2347,13 +2406,15 @@ class FactureFournisseur extends CommonInvoice
         $this->total_ttc      = $xnbp*119.6;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     <0 if KO, >0 if OK
-	 */
+     */
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $conf, $user;
 
 		$this->nb=array();
@@ -2563,7 +2624,14 @@ class FactureFournisseur extends CommonInvoice
  */
 class SupplierInvoiceLine extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facture_fourn_det';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='facture_fourn_det';
 
 	public $oldline;
@@ -2573,6 +2641,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see product_ref
 	 */
 	public $ref;
+
 	/**
 	 * Internal ref
 	 * @var string
@@ -2591,6 +2660,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see label
 	 */
 	public $libelle;
+
 	/**
 	 * Product description
 	 * @var string
@@ -2604,6 +2674,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see subprice
 	 */
 	public $pu_ht;
+
 	public $subprice;
 
 	/**
@@ -2619,6 +2690,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see total_tva
 	 */
 	public $tva;
+
 	public $total_tva;
 
 	/**
@@ -2664,18 +2736,32 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $total_ttc;
 	public $total_localtax1;
 	public $total_localtax2;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
 	public $product_type;
 	public $product_label;
 	public $info_bits;
+
+	/**
+     * @var int ID
+     */
 	public $fk_parent_line;
+
 	public $special_code;
 	public $rang;
 	public $localtax1_type;
 	public $localtax2_type;
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
 	public $fk_multicurrency;
+
 	public $multicurrency_code;
 	public $multicurrency_subprice;
 	public $multicurrency_total_ht;
@@ -2760,10 +2846,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rang       		= $obj->rang;
 		$this->fk_unit           = $obj->fk_unit;
 
-		$this->multicurrency_subprice	= $obj->multicurrency_subprice;
-		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
-		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
-		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
+		$this->multicurrency_subprice = $obj->multicurrency_subprice;
+		$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
+		$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+		$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 		$this->fetch_optionals();
 
@@ -3065,7 +3151,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 
             $this->db->commit();
             return $this->id;
-
         }
         else
         {
@@ -3074,13 +3159,16 @@ class SupplierInvoiceLine extends CommonObjectLine
             return -2;
         }
     }
-            /**
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Mise a jour de l'objet ligne de commande en base
      *
      *  @return		int		<0 si ko, >0 si ok
      */
     function update_total()
     {
+        // phpcs:enable
         $this->db->begin();
 
         // Mise a jour ligne en base

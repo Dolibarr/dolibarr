@@ -177,7 +177,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         	$action = "infos_success";
         } else {
 	    	$object->db->rollback();
-	    	setEventMessage($object->errors, 'errors');
+	    	setEventMessages($object->error, $object->errors, 'errors');
 	    	$action = 'create_ticket';
 	    }
 
@@ -226,8 +226,8 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-                if ($mailfile->error) {
-                    setEventMessage($mailfile->error, 'errors');
+                if ($mailfile->error || $mailfile->errors) {
+                    setEventMessages($mailfile->error, $mailfile->errors, 'errors');
                 } else {
                     $result = $mailfile->sendfile();
                 }
@@ -287,9 +287,9 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 	                }
 	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-	                if ($mailfile->error) {
-	                    setEventMessage($mailfile->error, 'errors');
-	                } else {
+	                if ($mailfile->error || $mailfile->errors) {
+                        setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+                    } else {
 	                    $result = $mailfile->sendfile();
 	                }
 	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -308,10 +308,10 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             	$formmail->remove_attached_files($i);
             }
 
-            setEventMessage($langs->trans('YourTicketSuccessfullySaved'));
+            setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
         }
     } else {
-        setEventMessage($object->errors, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 

@@ -145,7 +145,7 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
@@ -304,13 +304,13 @@ if (empty($reshook))
     if (GETPOST('getcustomercode'))
     {
         // We defined value code_client
-        $_POST["code_client"]="Acompleter";
+        $_POST["customer_code"]="Acompleter";
     }
 
     if (GETPOST('getsuppliercode'))
     {
         // We defined value code_fournisseur
-        $_POST["code_fournisseur"]="Acompleter";
+        $_POST["supplier_code"]="Acompleter";
     }
 
     if($action=='set_localtax1')
@@ -371,7 +371,6 @@ if (empty($reshook))
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
             $error++;
-
         }
 
         if (! $error)
@@ -405,6 +404,8 @@ if (empty($reshook))
 	        $object->country_id				= GETPOST('country_id', 'int');
 	        $object->state_id				= GETPOST('state_id', 'int');
 	        $object->skype					= GETPOST('skype', 'alpha');
+	        $object->twitter				= GETPOST('twitter', 'alpha');
+	        $object->facebook				= GETPOST('facebook', 'alpha');
 	        $object->phone					= GETPOST('phone', 'alpha');
 	        $object->fax					= GETPOST('fax','alpha');
 	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
@@ -416,8 +417,8 @@ if (empty($reshook))
 	        $object->idprof5				= trim(GETPOST('idprof5', 'alpha'));
 	        $object->idprof6				= trim(GETPOST('idprof6', 'alpha'));
 	        $object->prefix_comm			= GETPOST('prefix_comm', 'alpha');
-	        $object->code_client			= GETPOST('code_client', 'alpha');
-	        $object->code_fournisseur		= GETPOST('code_fournisseur', 'alpha');
+	        $object->code_client			= GETPOST('customer_code', 'alpha');
+	        $object->code_fournisseur		= GETPOST('supplier_code', 'alpha');
 	        $object->capital				= GETPOST('capital', 'alpha');
 	        $object->barcode				= GETPOST('barcode', 'alpha');
 
@@ -946,19 +947,21 @@ else
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
 
         if(empty($duplicate_code_error)) {
-	        $object->code_client		= GETPOST('code_client', 'alpha');
+	        $object->code_client		= GETPOST('customer_code', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
         }
 		else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
 		}
 
-        $object->code_fournisseur	= GETPOST('code_fournisseur', 'alpha');
+        $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
         $object->town				= GETPOST('town', 'alpha');
         $object->state_id			= GETPOST('state_id', 'int');
         $object->skype				= GETPOST('skype', 'alpha');
+        $object->twitter			= GETPOST('twitter', 'alpha');
+        $object->facebook			= GETPOST('facebook', 'alpha');
         $object->phone				= GETPOST('phone', 'alpha');
         $object->fax				= GETPOST('fax', 'alpha');
         $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1059,6 +1062,39 @@ else
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
                         });
+
+						init_customer_categ();
+			  			$("#customerprospect").change(function() {
+								init_customer_categ();
+						});
+						function init_customer_categ() {
+								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER)?'1':'0').'))
+								{
+									jQuery(".visibleifcustomer").hide();
+								}
+								else
+								{
+									jQuery(".visibleifcustomer").show();
+								}
+						}
+
+						init_supplier_categ();
+			       		$("#fournisseur").change(function() {
+							init_supplier_categ();
+						});
+						function init_supplier_categ() {
+								console.log("is supplier = "+jQuery("#fournisseur").val());
+								if (jQuery("#fournisseur").val() == 0)
+								{
+									jQuery(".visibleifsupplier").hide();
+								}
+								else
+								{
+									jQuery(".visibleifsupplier").show();
+								}
+						}
+
                         $("#selectcountry_id").change(function() {
                         	document.formsoc.action.value="create";
                         	document.formsoc.submit();
@@ -1154,7 +1190,7 @@ else
         print '<table class="nobordernopadding"><tr><td>';
 		$tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
-        print '<input type="text" name="code_client" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+        print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
         $s=$modCodeClient->getToolTip($langs,$object,0);
         print $form->textwithpicto('',$s,1);
@@ -1182,7 +1218,7 @@ else
 	            print '<table class="nobordernopadding"><tr><td>';
 	            $tmpcode=$object->code_fournisseur;
 	            if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-	            print '<input type="text" name="code_fournisseur" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+	            print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
 	            print '</td><td>';
 	            $s=$modCodeFournisseur->getToolTip($langs,$object,1);
 	            print $form->textwithpicto('',$s,1);
@@ -1240,17 +1276,32 @@ else
             print '</td></tr>';
         }
 
-        // Email web
+        // Email / Web
         print '<tr><td>'.fieldLabel('EMail','email',$conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
-        // Skype
-        if (! empty($conf->skype->enabled))
+        if (! empty($conf->socialnetworks->enabled))
         {
-            print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	        print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
+        	// Skype
+        	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+        	{
+        		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
+        		print '<td colspan="3"><input type="text" name="skype" class="minwidth100" maxlength="80" id="skype" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+        	}
+        	// Twitter
+        	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+        	{
+        		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
+        		print '<td colspan="3"><input type="text" name="twitter" class="minwidth100" maxlength="80" id="twitter" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
+        	}
+        	// Facebook
+        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+        	{
+	        	print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
+	        	print '<td colspan="3"><input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
+        	}
         }
 
         // Phone / Fax
@@ -1325,7 +1376,6 @@ else
             print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
             print $form->selectyesno('localtax2assuj_value',(isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2)?$conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2:0),1);
             print '</td></tr>';
-
         }
         elseif($mysoc->localtax1_assuj=="1")
         {
@@ -1377,11 +1427,12 @@ else
             print '</tr>';
         }
 
-		// Assign a Name
+		// Assign a sale representative
 		print '<tr>';
 		print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
 		print $form->multiselectarray('commercial', $userlist, (count(GETPOST('commercial', 'array')) > 0?GETPOST('commercial', 'array'):(empty($user->rights->societe->client->voir)?array($user->id):array())), null, null, null, null, "90%");
 		print '</td></tr>';
 
@@ -1401,22 +1452,20 @@ else
 			$langs->load('categories');
 
 			// Customer
-			if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
-				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
-					null, "90%");
-				print "</td></tr>";
-			}
+			//if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
+			print '<tr class="visibleifcustomer"><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+			print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+			print "</td></tr>";
+			//}
 
 			// Supplier
-			if ($object->fournisseur) {
-				print '<tr><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-				print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
-					null, "90%");
-				print "</td></tr>";
-			}
+			//if ($object->fournisseur) {
+			print '<tr class="visibleifsupplier"><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
+			print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null, null, "90%");
+			print "</td></tr>";
+			//}
 		}
 
 		// Multicurrency
@@ -1468,11 +1517,6 @@ else
     }
     elseif ($action == 'edit')
     {
-        /*
-         * Edition
-         */
-
-
         //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
@@ -1526,15 +1570,17 @@ else
                 $object->name					= GETPOST('name', 'alpha');
                 $object->prefix_comm			= GETPOST('prefix_comm', 'alpha');
                 $object->client					= GETPOST('client', 'int');
-                $object->code_client			= GETPOST('code_client', 'alpha');
+                $object->code_client			= GETPOST('customer_code', 'alpha');
                 $object->fournisseur			= GETPOST('fournisseur', 'int');
-                $object->code_fournisseur		= GETPOST('code_fournisseur', 'alpha');
+                $object->code_fournisseur		= GETPOST('supplier_code', 'alpha');
                 $object->address				= GETPOST('address', 'alpha');
                 $object->zip					= GETPOST('zipcode', 'alpha');
                 $object->town					= GETPOST('town', 'alpha');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id', 'int'):$mysoc->country_id;
                 $object->state_id				= GETPOST('state_id', 'int');
                 $object->skype					= GETPOST('skype', 'alpha');
+                $object->twitter				= GETPOST('twitter', 'alpha');
+                $object->facebook				= GETPOST('facebook', 'alpha');
                 $object->phone					= GETPOST('phone', 'alpha');
                 $object->fax					= GETPOST('fax', 'alpha');
                 $object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1590,8 +1636,10 @@ else
             	$sub2=0;
             }else{$sub2=1;}
 
-            print "\n".'<script type="text/javascript">';
-            print '$(document).ready(function () {
+            if ($conf->use_javascript_ajax)
+            {
+            	print "\n".'<script type="text/javascript">';
+            	print '$(document).ready(function () {
     			var val='.$sub.';
     			var val2='.$sub2.';
     			if("#localtax1assuj_value".value==undefined){
@@ -1625,19 +1673,44 @@ else
     				}
     			});
 
-               });';
-            print '</script>'."\n";
+				init_customer_categ();
+	  			$("#customerprospect").change(function() {
+					init_customer_categ();
+				});
+       			function init_customer_categ() {
+					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
+					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER)?'1':'0').'))
+					{
+						jQuery(".visibleifcustomer").hide();
+					}
+					else
+					{
+						jQuery(".visibleifcustomer").show();
+					}
+				}
 
+				init_supplier_categ();
+	  			$("#fournisseur").change(function() {
+					init_supplier_categ();
+				});
+       			function init_supplier_categ() {
+					console.log("is supplier = "+jQuery("#fournisseur").val());
+					if (jQuery("#fournisseur").val() == 0)
+					{
+						jQuery(".visibleifsupplier").hide();
+					}
+					else
+					{
+						jQuery(".visibleifsupplier").show();
+					}
+				};
 
-            if ($conf->use_javascript_ajax)
-            {
-                print "\n".'<script type="text/javascript" language="javascript">';
-                print '$(document).ready(function () {
-                			$("#selectcountry_id").change(function() {
-                				document.formsoc.action.value="edit";
-                				document.formsoc.submit();
-                			});
-                       })';
+       			$("#selectcountry_id").change(function() {
+       				document.formsoc.action.value="edit";
+      				document.formsoc.submit();
+        			});
+
+                })';
                 print '</script>'."\n";
             }
 
@@ -1703,16 +1776,16 @@ else
                 $tmpcode=$object->code_client;
                 if (empty($tmpcode) && ! empty($object->oldcopy->code_client)) $tmpcode=$object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
                 if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
-                print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+                print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             }
             else if ($object->codeclient_modifiable())
             {
-            	print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
+            	print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
             }
             else
             {
                 print $object->code_client;
-                print '<input type="hidden" name="code_client" value="'.dol_escape_htmltag($object->code_client).'">';
+                print '<input type="hidden" name="customer_code" value="'.dol_escape_htmltag($object->code_client).'">';
             }
             print '</td><td>';
             $s=$modCodeClient->getToolTip($langs,$object,0);
@@ -1743,16 +1816,16 @@ else
 	                    $tmpcode=$object->code_fournisseur;
 	                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
 	                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-	                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
 	                }
 	                else if ($object->codefournisseur_modifiable())
 	                {
-	                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
 	                }
 	                else
 	              {
 	                    print $object->code_fournisseur;
-	                    print '<input type="hidden" name="code_fournisseur" value="'.$object->code_fournisseur.'">';
+	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
 	                }
 	                print '</td><td>';
 	                $s=$modCodeFournisseur->getToolTip($langs,$object,1);
@@ -1816,12 +1889,27 @@ else
             print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
 
-            // Skype
-            if (! empty($conf->skype->enabled))
-            {
-                print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
-	            print '<td colspan="3"><input type="text" name="skype" id="skype" size="32" value="'.$object->skype.'"></td></tr>';
-            }
+	        if (! empty($conf->socialnetworks->enabled))
+	        {
+	        	// Skype
+	        	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Skype','skype').'</td>';
+	        		print '<td colspan="3"><input type="text" name="skype" id="skype" value="'.$object->skype.'"></td></tr>';
+	        	}
+	        	// Twitter
+	        	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Twitter','twitter').'</td>';
+	        		print '<td colspan="3"><input type="text" name="twitter" id="twitter" value="'.$object->twitter.'"></td></tr>';
+	        	}
+	        	// Facebook
+	        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+	        	{
+	        		print '<tr><td>'.fieldLabel('Facebook','facebook').'</td>';
+	        		print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
+	        	}
+	        }
 
             // Phone / Fax
             print '<tr><td>'.fieldLabel('Phone','phone').'</td>';
@@ -1883,7 +1971,6 @@ else
                     print '</span>';
                 }
                 print '</td></tr>';
-
             }
             elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
             {
@@ -1896,7 +1983,6 @@ else
                     print '</span>';
                 }
                 print '</td></tr>';
-
             }
             elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
             {
@@ -1985,34 +2071,30 @@ else
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 			{
 				// Customer
-				if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
-					print '<tr><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
-					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
-					$arrayselected=array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-					print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
-					print "</td></tr>";
+				print '<tr class="visibleifcustomer"><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
+				print '<td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
+				$arrayselected=array();
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
 				}
+				print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print "</td></tr>";
 
 				// Supplier
-				if ($object->fournisseur) {
-					print '<tr><td>' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td>';
-					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
-					$arrayselected=array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-					print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
-					print "</td></tr>";
+				print '<tr class="visibleifsupplier"><td>' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td>';
+				print '<td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+				$arrayselected=array();
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
 				}
+				print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print "</td></tr>";
 			}
 
 			// Multicurrency
@@ -2294,7 +2376,6 @@ else
 			            print '<td>'.$object->localtax1_value.'</td>';
 			        }
 			        print '</tr></form>';
-
 			    }
 			}
 			elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
@@ -2317,7 +2398,6 @@ else
 			            print '<td>'.$object->localtax2_value.'</td>';
 			        }
 			        print '</tr></form>';
-
 			    }
 			}
         }
@@ -2643,10 +2723,8 @@ else
 		$trackid = 'thi'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-
     }
 }
-
 
 // End of page
 llxFooter();

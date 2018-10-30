@@ -36,11 +36,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 // librarie core
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
-if (! $res) {
-	$res = @include("../../../main.inc.php"); // From "custom" directory
-}
-if (! $res) die("Include of master.inc.php fails");
+require '../../main.inc.php';
 
 // librarie jobs
 dol_include_once("/cron/class/cronjob.class.php");
@@ -48,12 +44,7 @@ dol_include_once("/cron/class/cronjob.class.php");
 global $langs, $conf;
 
 // Language Management
-$langs->load("admin");
-$langs->load("cron");
-
-
-
-
+$langs->loadLangs(array("admin", "cron"));
 
 /*
  * View
@@ -178,7 +169,6 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
-
 		}
 	}
 	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok+$nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";

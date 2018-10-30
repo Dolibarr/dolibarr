@@ -33,9 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 if (! $user->rights->fournisseur->facture->lire) accessforbidden();
 
-$langs->load("companies");
-$langs->load("bills");
-
+$langs->loadLangs(array("companies", "bills"));
 
 $socid=GETPOST('socid','int');
 $option = GETPOST('option');
@@ -296,7 +294,6 @@ if ($user->rights->fournisseur->facture->lire)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 // End of page

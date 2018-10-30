@@ -29,7 +29,12 @@ class ProjectStats extends Stats
 	public $socid;
 	public $year;
 
-	function __construct($db)
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    function __construct($db)
 	{
 		global $conf, $user;
 
@@ -493,7 +498,6 @@ class ProjectStats extends Stats
 			} else {
 				$res[$key]=array($total_row[0],0);
 			}
-
 		}
 		// var_dump($res);print '<br>';
 		return $res;

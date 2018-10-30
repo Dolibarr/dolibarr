@@ -162,11 +162,16 @@ if ($user->rights->user->user->lire || $user->admin) {
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-print $langs->trans("AgendaExtSitesDesc")."<br>\n";
+
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
+print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
 print "<br>\n";
 
 $selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
+
 
 print '<div class="div-table-responsive">';
 print "<table class=\"noborder\" width=\"100%\">";
@@ -210,15 +215,15 @@ while ($i <= $MAXAGENDA)
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
 
 print '<div class="center">';
 print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
 print "</div>";
 
+dol_fiche_end();
+
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

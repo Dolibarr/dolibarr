@@ -443,7 +443,6 @@ if (function_exists("ldap_connect"))
 					}
 					$liste[$key] = $label;
 				}
-
 			}
 			else
 		   {
@@ -470,5 +469,6 @@ if (function_exists("ldap_connect"))
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -152,7 +152,6 @@ if (! empty($conf->product->enabled))
 	$statProducts.= '<tr class="oddeven">';
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][3]).'</td>';
 	$statProducts.= "</tr>";
-
 }
 if (! empty($conf->service->enabled))
 {
@@ -168,7 +167,6 @@ if (! empty($conf->service->enabled))
 	$statServices.= '<tr class="oddeven">';
 	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[1][3]).'</td>';
 	$statServices.= "</tr>";
-
 }
 $total=0;
 if ($type == '0')
@@ -397,8 +395,8 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();
 
 
@@ -457,8 +455,6 @@ function activitytrim($product_type)
 		}
 		$i = 0;
 
-		$var=true;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -466,7 +462,6 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
-
 					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
 					print '<td align=right>'.price($trim2).'</td>';
@@ -500,7 +495,6 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
-
 			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
 			print '<td align=right>'.price($trim2).'</td>';

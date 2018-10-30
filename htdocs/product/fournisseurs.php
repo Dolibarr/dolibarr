@@ -156,6 +156,7 @@ if (empty($reshook))
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
+		$supplier_description = GETPOST('supplier_description', 'alpha');
 
 		if ($tva_tx == '')
 		{
@@ -256,9 +257,9 @@ if (empty($reshook))
                 	$multicurrency_price = price2num(GETPOST("multicurrency_price",'alpha'));
                 	$multicurrency_code = GETPOST("multicurrency_code",'alpha');
 
-                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description);
                 } else {
-                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description);
                 }
 				if ($ret < 0)
 				{
@@ -678,6 +679,23 @@ SCRIPT;
 					}
 				}
 
+				// Product description of the supplier
+				if (! empty($conf->global->PRODUIT_FOURN_TEXTS))
+				{
+				    //WYSIWYG Editor
+				    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
+    				print '<tr>';
+    				print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
+    				print '<td>';
+
+    				$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+    				$doleditor->Create();
+
+    				print '</td>';
+    				print '</tr>';
+				}
+
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$object->id);
@@ -765,12 +783,9 @@ SCRIPT;
 
 				if (is_array($product_fourn_list))
 				{
-					$var=true;
 
 					foreach($product_fourn_list as $productfourn)
 					{
-
-
 						print '<tr class="oddeven">';
 
 						// Supplier
@@ -879,7 +894,6 @@ else
 {
 	print $langs->trans("ErrorUnknown");
 }
-
 
 // End of page
 llxFooter();

@@ -84,6 +84,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 		return $return;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -94,6 +95,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+        // phpcs:enable
 		global $conf, $langs;
 		global $form, $formcompany;
 
@@ -134,6 +136,4 @@ class ActionsCardIndividual extends ActionsCardCommon
 	{
 		return restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
 	}
-
 }
-

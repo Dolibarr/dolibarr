@@ -245,7 +245,7 @@ if ($user->rights->user->user->lire || $user->admin) {
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 
-//print '<div class="underbanner clearboth"></div>';
+print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users
@@ -257,10 +257,18 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 
 print "\n";
+print '<div class="div-table-responsive">';
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
-if ($caneditperms) print '<td>&nbsp</td>';
+if ($caneditperms && empty($objMod->rights_admin_allowed) || empty($object->admin))
+{
+	print '<td align="center" class="nowrap">';
+	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+	print '/';
+	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+	print '</td>';
+}
 print '<td align="center" width="24">&nbsp;</td>';
 print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
@@ -385,6 +393,7 @@ if ($result)
 }
 else dol_print_error($db);
 print '</table>';
+print '</div>';
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('insertExtraFooter',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -393,6 +402,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -290,7 +290,6 @@ if (empty($action) || $action == 'delete_section')
 	if ($action == 'delete_section')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-
 	}
 
 	// Construit fiche  rubrique

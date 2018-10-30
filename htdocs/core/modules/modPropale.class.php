@@ -49,7 +49,7 @@ class modPropale extends DolibarrModules
 		$this->numero = 20;
 
 		$this->family = "crm";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des propositions commerciales";
@@ -63,9 +63,12 @@ class modPropale extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/propale/temp");
 
-		// Dependancies
-		$this->depends = array("modSociete");
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array("modSociete");		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->config_page_url = array("propal.php");
 		$this->langfiles = array("propal","bills","companies","deliveries","products");
 
@@ -280,6 +283,5 @@ class modPropale extends DolibarrModules
 		);
 
 		return $this->_init($sql,$options);
-
 	}
 }

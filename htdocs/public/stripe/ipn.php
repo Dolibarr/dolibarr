@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018 	Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +22,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");		// to work if your module directory is into a subdir of root htdocs directory
-if (! $res) die("Include of main fails");
+require '../../main.inc.php';
 
 if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -36,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect'])){
@@ -43,13 +43,13 @@ if (isset($_GET['connect'])){
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
-    $servicestatus = 0;
+        $servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-    $servicestatus = 1;    
+        $servicestatus = 1;
 	}
 }
 else {
@@ -57,13 +57,13 @@ else {
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
-    $servicestatus = 0;
+        $servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
-    $servicestatus = 1;
+        $servicestatus = 1;
 	}
 }
 $payload = @file_get_contents("php://input");
@@ -88,9 +88,12 @@ catch(\UnexpectedValueException $e) {
 // Do something with $event
 
 http_response_code(200); // PHP 5.4 or greater
+
 $langs->load("main");
+
+// TODO Do we really need a user in setup just to have an name to fill an email topic when it is a technical system notification email
 $user = new User($db);
-$user->fetch(5);
+$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 $user->getrights();
 
 if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc)) {
@@ -115,7 +118,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabl
 		$key=1;
 	}
 	$ret=$mc->switchEntity($key);
-	if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
+	if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
 	if (! $res) die("Include of main fails");
 }
 
@@ -128,12 +131,37 @@ if ($event->type == 'payout.created') {
 
 	if ($result > 0)
 	{
-		// TODO Use CMail and translation
-		$body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." est attendu sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date);
-		$subject = '[NOTIFICATION] Virement programmée';
-		$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>'; // TODO  convert in dolibarr standard
-		mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers);
-		return 1;
+        $subject = '[NOTIFICATION] Stripe payout scheduled';
+        if (!empty($user->email)) {
+            $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
+        } else {
+            $sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+        }
+        $replyto = $sendto;
+        $sendtocc = '';
+        if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+            $sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+        }
+
+        $message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." should arrive in your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+
+        $mailfile = new CMailFile(
+            $subject,
+            $sendto,
+            $replyto,
+            $message,
+            array(),
+            array(),
+            array(),
+            $sendtocc,
+            '',
+            0,
+            -1
+        );
+
+        $ret = $mailfile->sendfile();
+
+        return 1;
 	}
 	else
 	{
@@ -206,61 +234,55 @@ elseif ($event->type == 'payout.paid') {
 elseif ($event->type == 'charge.succeeded') {
 
 	//TODO: create fees
-
 }
 elseif ($event->type == 'customer.source.created') {
 
 	//TODO: save customer's source
-
 }
 elseif ($event->type == 'customer.source.updated') {
 
 	//TODO: update customer's source
-
 }
 elseif ($event->type == 'customer.source.delete') {
 
 	//TODO: delete customer's source
-
 }
 elseif ($event->type == 'charge.failed') {
 
 	$subject = 'Your payment has been received: '.$event->data->object->id.'';
 	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-	//mail('ptibogxiv@msn.com', $subject, 'test', $headers);
-
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
 
-  $fulltag=$event->data->object->metadata->FULLTAG;
+    $fulltag=$event->data->object->metadata->FULLTAG;
 	// Save into $tmptag all metadata
 	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
-  
-  if (! empty($tmptag['ORD'])){
-  $order=new Commande($db);
-	$order->fetch('',$tmptag['ORD']);
-  $origin='order';
-  $item=$order->id;
-  } elseif (! empty($tmptag['INV'])) {
-  $invoice = new Facture($db);
-	$invoice->fetch('',$tmptag['INV']);
-  $origin='invoice';
-  $item=$invoice->id;
-  }
 
-  $stripe=new Stripe($db); 
-  $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-  $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
+    if (! empty($tmptag['ORD'])) {
+        $order=new Commande($db);
+	    $order->fetch('',$tmptag['ORD']);
+        $origin='order';
+        $item=$order->id;
+    } elseif (! empty($tmptag['INV'])) {
+        $invoice = new Facture($db);
+	    $invoice->fetch('',$tmptag['INV']);
+        $origin='invoice';
+        $item=$invoice->id;
+    }
+
+    $stripe=new Stripe($db);
+    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
 	$charge=$stripe->createPaymentStripe($event->data->object->amount/100,$event->data->object->currency,$origin,$item,$event->data->object->id,$stripecu,$stripeacc,$servicestatus);
-  
-	if (isset($charge->id) && $charge->statut=='error'){
+
+	if (isset($charge->id) && $charge->statut=='error') {
 		$msg=$charge->message;
 		$code=$charge->code;
 		$error++;
-	}              
+	}
 	elseif (isset($charge->id) && $charge->statut=='success' && (! empty($tmptag['ORD']))) {
-    //$order=new Commande($db);
-	  //$order->fetch('',$tmptag['ORD']);
+        //$order=new Commande($db);
+	    //$order->fetch('',$tmptag['ORD']);
 		$invoice = new Facture($db);
 		$idinv=$invoice->createFromOrder($order,$user);
 
@@ -276,17 +298,17 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 				$ifverif=$invoice->socid;
 				$currency=$invoice->multicurrency_code;
 				$total=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-			}else{
+			} else {
 				$msg=$invoice->error;
 				$error++;
 			}
-		}else{
+		} else {
 			$msg=$invoice->error;
 			$error++;
 		}
 	}
 
-	if (!$error){
+	if (!$error) {
 		$datepaye = dol_now();
 		$paymentType ="CB";
 		$amounts=array();
@@ -302,10 +324,10 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 		$paiement->note         = '';
 	}
 
-	if (! $error){
+	if (! $error) {
 		$paiement_id=$paiement->create($user, 0);
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($invoice->lines)){
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($invoice->lines)) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
@@ -319,17 +341,17 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 
 			$invoice->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
-		if ($paiement_id < 0){
+		if ($paiement_id < 0) {
 			$msg=$paiement->errors;
 			$error++;
-		}else{
+		} else {
 			if ($event->data->object->metadata->source=='order') {
 				$order->classifyBilled($user);
 			}
 		}
 	}
 
-	if (! $error){
+	if (! $error) {
 		$label='(CustomerInvoicePayment)';
 		if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
 		$paiement->addPaymentToBank($user,'payment',$label,$conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS,'','');
@@ -344,7 +366,6 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 	$body = "";
 	$subject = 'Facture '.$invoice->ref;
 	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-	//mail('ptibogxiv@msn.com', $subject, $body, $headers); TODO  convert in dolibarr standard
 }
 elseif ($event->type == 'customer.deleted') {
 	$db->begin();
@@ -353,4 +374,3 @@ elseif ($event->type == 'customer.deleted') {
 	$db->query($sql);
 	$db->commit();
 }
-

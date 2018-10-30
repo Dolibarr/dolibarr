@@ -4,6 +4,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		J. Fernando Lagrange    <fernando@demo-tic.org>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,11 +100,11 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
 
     if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {
-        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
     }
     elseif (! empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
     {
-        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo);
+        $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
         $width=128;
     }
     elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
@@ -276,8 +277,9 @@ if ($action == 'add')
             	// Set output language
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	// Load traductions files requiredby by page
             	$outputlangs->loadLangs(array("main", "members"));
-            	// Get email content fro mtemplae
+            	// Get email content from template
             	$arraydefaultmessage=null;
             	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
 
@@ -548,7 +550,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     $isempty=1;
     if (count($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
     print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
-    print $form->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
+    print $form->selectarray("type", $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
 else
@@ -563,7 +565,7 @@ $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
     print '<tr class="morphy"><td class="titlefield">'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
-    print $form->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
+    print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
 else
@@ -626,7 +628,7 @@ if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 }
 // Birthday
 print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
-print $form->select_date($birthday,'birth',0,0,1,"newmember",1,0,1);
+print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
 print '</td></tr>'."\n";
 // Photo
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";

@@ -231,7 +231,14 @@ if ($object->id > 0)
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
-    if ($caneditperms) print '<td width="24">&nbsp</td>';
+    if ($caneditperms)
+    {
+    	print '<td align="center" class="nowrap">';
+    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+    	print '/';
+    	print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+    	print '</td>';
+    }
     print '<td align="center" width="24">&nbsp;</td>';
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
@@ -342,5 +349,6 @@ if ($object->id > 0)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();

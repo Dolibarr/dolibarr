@@ -267,7 +267,6 @@ if ($action == 'convert')
 		{
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
-
 	}
 }
 
@@ -293,8 +292,6 @@ if (empty($mysoc->country_code))
 }
 else
 {
-
-	$var=true;
 
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -344,6 +341,6 @@ else
 	print '</form>';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

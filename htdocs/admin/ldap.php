@@ -336,9 +336,9 @@ if (function_exists("ldap_connect"))
 			print $langs->trans("Error").' '.$ldap->error;
 			print '<br>';
 		}
-
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

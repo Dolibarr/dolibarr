@@ -568,7 +568,6 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

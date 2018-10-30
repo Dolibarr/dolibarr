@@ -184,6 +184,6 @@ print '<br>';
 // Include comment tpl view
 include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
 
-
+// End of page
 llxFooter();
 $db->close();

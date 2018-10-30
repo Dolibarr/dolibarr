@@ -35,7 +35,11 @@ class FactureStats extends Stats
     var $socid;
     var $userid;
 
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
+	
     var $from;
     var $field;
     var $where;
@@ -220,7 +224,5 @@ class FactureStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-
-
 }
 

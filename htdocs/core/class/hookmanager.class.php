@@ -29,9 +29,20 @@
  */
 class HookManager
 {
-	var $db;
-	var $error;
-	var $errors=array();
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
     // Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
     var $contextarray=array();
@@ -272,5 +283,4 @@ class HookManager
 
         return ($error?-1:$resaction);
 	}
-
 }

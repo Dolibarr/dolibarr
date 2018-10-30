@@ -63,9 +63,8 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled)
 	$warehouseLink = $warehouse->getNomUrl(1);
 }
 
-
-$langs->load("cashdesk");
-$langs->load("main");
+// Load translation files required by the page
+$langs->loadLangs(array("main","cashdesk"));
 
 print "\n".'<!-- menu.tpl.php -->'."\n";
 print '<div class="menu_bloc">';

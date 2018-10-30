@@ -113,7 +113,6 @@ class modExternalSite extends DolibarrModules
 			'user'=>0
 		);
 		$r++;
-
 	}
 }
 

@@ -33,6 +33,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class FichinterStats extends Stats
 {
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element;
 
 	var $socid;
@@ -207,6 +210,5 @@ class FichinterStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-
 }
 

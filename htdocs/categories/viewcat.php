@@ -168,7 +168,6 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 			setEventMessages($object->error,$object->errors,'errors');
 		}
 	}
-
 }
 
 
@@ -697,6 +696,6 @@ if ($type == Categorie::TYPE_PROJECT)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

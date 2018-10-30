@@ -48,7 +48,7 @@ class modService extends DolibarrModules
 		$this->numero = 53;
 
 		$this->family = "products";
-		$this->module_position = 30;
+		$this->module_position = '30';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Service management";
@@ -62,9 +62,12 @@ class modService extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/product/temp");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");

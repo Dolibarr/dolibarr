@@ -24,9 +24,8 @@
 
 require '../../main.inc.php';
 
-$langs->load("admin");
-$langs->load("user");
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("install","user","admin"));
 
 
 if (!$user->admin)
@@ -249,7 +248,6 @@ if ($resql)
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

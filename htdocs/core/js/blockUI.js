@@ -41,7 +41,7 @@ $(document).ready(function() {
 				'-moz-border-radius':	 '10px',
 				'border-radius': 		 '10px'
 			},
-			
+
 			// styles applied when using $.growlUI
 			dolEventErrorCSS: {
 				width:  	'350px',
@@ -60,7 +60,7 @@ $(document).ready(function() {
 			}
 
 	};*/
-	
+
 	$.dolEventValid = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventValid"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
@@ -73,7 +73,7 @@ $(document).ready(function() {
 			css: $.blockUI.events.dolEventValidCSS
 		});
 	};
-	
+
 	$.dolEventError = function(title, message, timeout, onClose) {
 		var $m = $('<div class="dolEventError"></div>');
 		if (title) $m.append('<h1>'+title+'</h1>');
@@ -87,7 +87,7 @@ $(document).ready(function() {
 		});
 		$('.dolEventError').click($.unblockUI);
 	};
-	
+
 	$.pleaseBePatient = function(message) {
 		$.blockUI({
 			message: message,

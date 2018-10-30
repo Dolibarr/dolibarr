@@ -82,6 +82,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<form method="post" action="index.php?type='.$type.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+
+
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
@@ -173,6 +175,8 @@ foreach($fulltree as $key => $val)
 }
 
 
+//print_barre_liste('', 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, 0, '', 0, $newcardbutton, '', 0, 1, 1);
+
 print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
 if (! empty($conf->use_javascript_ajax))
@@ -205,6 +209,6 @@ print "</table>";
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -123,14 +123,12 @@ if ($result)
     }
     print "</table>";
     $db->free($result);
-
 }
 else
 {
     dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

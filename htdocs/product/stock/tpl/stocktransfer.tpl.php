@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2017 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,10 +115,10 @@ if (empty($conf) || ! is_object($conf))
 
 			print '<tr>';
 			print '<td>'.$langs->trans("EatByDate").'</td><td>';
-			print $form->select_date(($d_eatby?$d_eatby:$pdluo->eatby),'eatby','','',1,"", 1, 0, 1, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
+			print $form->selectDate(($d_eatby?$d_eatby:$pdluo->eatby),'eatby','','',1,"", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
 			print '</td>';
 			print '<td>'.$langs->trans("SellByDate").'</td><td>';
-			print $form->select_date(($d_sellby?$d_sellby:$pdluo->sellby),'sellby','','',1,"", 1, 0, 1, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
+			print $form->selectDate(($d_sellby?$d_sellby:$pdluo->sellby),'sellby','','',1,"", 1, 0, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
 			print '</td>';
 			print '</tr>';
 		}

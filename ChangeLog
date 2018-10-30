@@ -3,6 +3,31 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 9.0.0 compared to 8.0.0 *****
+For Users:
+NEW: Stable module: Website
+NEW: Stable module: WebDAV
+NEW: Stable module: Module Builder
+NEW: Stable module "Skype" has been replaced with module "Social Networks" to support more tools.
+NEW: Experimental module "TakePos"
+NEW: Dolibarr can provide information in page title when multicompany is enabled of not, making
+     Android application like DoliDroid able to provide native features for multicompany module.
+NEW: Compatibility with PHP 7.3
+
+
+For developers:
+* Code changes to be more compatible with PSR2
+* Removed trigger USER_LOGOUT, USER_LOGIN, USER_LOGIN_FAILED (Some hooks are already dedicated for that)
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* If you use some links like viewimages.php?modulepart=mycompany&file=... in you external modules, you must
+  replace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
+  modulepart=mycompany that now works like others).
+
+
+
 ***** ChangeLog for 8.0.2 compared to 8.0.1 *****
 FIX: #8452
 FIX: #9043
@@ -70,18 +95,17 @@ FIX: Table llx_facture_rec_extrafields missing after migration
 
 
 ***** ChangeLog for 8.0.0 compared to 7.0.0 *****
-
 For Users:
 NEW: Experimental module: Ticket
 NEW: Experimental module: WebDAV
-NEW: Accept anonmymous events (no user assigned)
+NEW: Accept anonymous events (no user assigned)
 NEW: Accountancy - Add import on general ledger
 NEW: Accountancy - Show journal name on journal page and hide button draft export (Add an option in admin)
-NEW: Can create event from record card of a company and member
-NEW: Add a button to create Stripe customer from the Payment mode tab
+NEW: Can create event from record card of a company and/or member
+NEW: Add a button to create Stripe customer from the customer Payment mode tab
 NEW: Add accounting account number on product tooltip
-NEW: add any predefined mail content
-NEW: Add arrows to navigate into containers in website module
+NEW: Add any predefined mail content
+NEW: Add arrows to navigate into containers in experimental website module
 NEW: Add a tab to specify accountant/auditor of the company
 NEW: Add Date delivery and Availability on Propals List
 NEW: Add date in goods reception supplier order table
@@ -168,7 +192,7 @@ NEW: Filter export model is now by user
 NEW: Finish implementation of option PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES
 NEW: generalize use of button to create new element from list
 NEW: hidden conf AGENDA_NB_WEEKS_IN_VIEW_PER_USER to set nb weeks to show into per user view
-NEW: hidden conf to assign category to thirparty that are not customer nor prospect nor supplier
+NEW: hidden conf to assign category to thirparty that are neither customer nor prospect or supplier
 NEW: hidden conf to set nb weeks to show into user view
 NEW: hidden option MAIN_DISABLE_FREE_LINES
 NEW: improve way of adding users/sales representative to thirdparty

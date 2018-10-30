@@ -32,9 +32,7 @@
 function propal_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("propal");
-	$langs->load("compta");
-	$langs->load("companies");
+	$langs->loadLangs(array('propal', 'compta', 'companies'));
 
 	$h = 0;
 	$head = array();
@@ -48,6 +46,7 @@ function propal_prepare_head($object)
 	|| (! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
+		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
 		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");

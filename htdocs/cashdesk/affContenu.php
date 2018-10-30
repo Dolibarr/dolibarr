@@ -87,7 +87,7 @@ print '</div>';
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="liste_articles">';
 
-require ('tpl/liste_articles.tpl.php');
+require 'tpl/liste_articles.tpl.php';
 
 print '</div>';
 print '</div>';

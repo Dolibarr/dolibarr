@@ -295,5 +295,6 @@ print '<br>';
 print '<br>';
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

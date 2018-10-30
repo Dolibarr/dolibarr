@@ -194,9 +194,10 @@ function dol_print_file($langs,$filename,$searchalt=0)
  */
 function dol_print_object_info($object, $usetable=0)
 {
-    global $langs,$db;
-    $langs->load("other");
-    $langs->load("admin");
+    global $langs, $db;
+
+    // Load translation files required by the page
+    $langs->loadLangs(array('other', 'admin'));
 
     include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -1167,7 +1168,16 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     return $numFinal;
 }
 
-function get_string_between($string, $start, $end){
+/**
+ * Get string between
+ *
+ * @param   string  $string     String to test
+ * @param   int     $start      Value for start
+ * @param   int     $end        Value for end
+ * @return  string              Return part of string
+ */
+function get_string_between($string, $start, $end)
+{
     $string = " ".$string;
      $ini = strpos($string,$start);
      if ($ini == 0) return "";
@@ -1760,7 +1770,7 @@ function getSoapParams()
 
 
 /**
- * List urls of element
+ * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
  * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', ...)
@@ -1871,7 +1881,11 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 			{
 				$object = new $classname($db);
 				$res=$object->fetch($objectid);
-				if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
+				if ($res > 0) {
+					$ret=$object->getNomUrl($withpicto,$option);
+				} elseif($res==0) {
+					$ret=$langs->trans('Deleted');
+				}
 				unset($object);
 			}
 			else dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
@@ -2193,7 +2207,8 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
  * @param   array $input    Array of products
  * @return  array           Array of combinations
  */
-function cartesianArray(array $input) {
+function cartesianArray(array $input)
+{
     // filter out empty values
     $input = array_filter($input);
 
@@ -2301,8 +2316,9 @@ function getModuleDirForApiClass($module)
  * @param	$max	int	Between 0 and 255
  * @return String
  */
-function random_color_part($min=0,$max=255) {
-	return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
+function random_color_part($min=0,$max=255)
+{
+    return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
 }
 
 /*
@@ -2312,6 +2328,7 @@ function random_color_part($min=0,$max=255) {
  * @param	$max	int	Between 0 and 255
  * @return String
  */
-function random_color($min=0, $max=255) {
-	return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
+function random_color($min=0, $max=255)
+{
+    return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
 }

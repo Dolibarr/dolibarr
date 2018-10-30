@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -27,7 +25,7 @@ use Stripe\BankAccount;
  *       \brief      Home page of bank module
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -428,7 +426,7 @@ foreach ($accounts as $key=>$type)
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))
     {
-        print '<td>'.$obj->getNomUrl(1).'</td>';
+        print '<td class="nowrap">'.$obj->getNomUrl(1).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 
@@ -604,7 +602,6 @@ print "</div>";
 
 print "</form>";
 
-
+// End of page
 llxFooter();
-
 $db->close();

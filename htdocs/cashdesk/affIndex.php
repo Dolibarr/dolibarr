@@ -36,9 +36,8 @@ if ( $_SESSION['uid'] <= 0 )
 	exit;
 }
 
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","compta","cashdesk"));
 
 
 /*

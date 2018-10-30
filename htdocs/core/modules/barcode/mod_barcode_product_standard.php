@@ -33,17 +33,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php'
  */
 class mod_barcode_product_standard extends ModeleNumRefBarCode
 {
-	var $name='Standard';				// Model Name
-	var $code_modifiable;				// Editable code
-	var $code_modifiable_invalide;		// Modified code if it is invalid
-	var $code_modifiable_null;			// Modified code if it is null
-	var $code_null;						// Optional code
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
-	var $code_auto;                     // Automatic Numbering
+	public $name='Standard';				// Model Name
 
-	var $searchcode; // Search string
-	var $numbitcounter; // Number of digits the counter
-	var $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
+	public $code_modifiable;				// Editable code
+
+	public $code_modifiable_invalide;		// Modified code if it is invalid
+
+	public $code_modifiable_null;			// Modified code if it is null
+
+	public $code_null;						// Optional code
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto;                     // Automatic Numbering
+
+	public $searchcode; // Search string
+
+	public $numbitcounter; // Number of digits the counter
+
+	public $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
 
 
 	/**
@@ -223,16 +235,18 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *		Return if a code is used (by other element)
+	 *	Return if a code is used (by other element)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
-	 *		@param	string		$code		Code to check
-	 *		@param	Product		$product	Objet product
-	 *		@return	int						0 if available, <0 if KO
+	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	string		$code		Code to check
+	 *	@param	Product		$product	Objet product
+	 *	@return	int						0 if available, <0 if KO
 	 */
 	function verif_dispo($db, $code, $product)
 	{
+        // phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE barcode = '".$code."'";
 		if ($product->id > 0) $sql.= " AND rowid <> ".$product->id;
@@ -253,9 +267,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		{
 			return -2;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return if a barcode value match syntax
 	 *
@@ -265,6 +279,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	function verif_syntax($codefortest, $typefortest)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$result = 0;
@@ -300,6 +315,4 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $result;
 	}
-
 }
-

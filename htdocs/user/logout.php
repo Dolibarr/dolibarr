@@ -42,10 +42,11 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 global $conf, $langs, $user;
 
 // Appel des triggers
-include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-$interface=new Interfaces($db);
-$result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf);
-if ($result < 0) { $error++; }
+// TODO @deprecated Remove this. Hook must be used, not this trigger.
+//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+//$interface=new Interfaces($db);
+//$result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf);
+//if ($result < 0) { $error++; }
 // Fin appel triggers
 
 // Hooks on logout
@@ -70,13 +71,20 @@ if (GETPOST('dol_no_mouse_hover'))       $url.=(preg_match('/\?/',$url)?'&':'?')
 if (GETPOST('dol_use_jmobile'))          $url.=(preg_match('/\?/',$url)?'&':'?').'dol_use_jmobile=1';
 
 // Destroy session
-$prefix=dol_getprefix('');
+/*$prefix=dol_getprefix('');
 $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
 session_name($sessionname);
 session_destroy();
 dol_syslog("End of session ".$sessionname);
+*/
+dol_syslog("End of session ".session_id());
+if (session_status() === PHP_SESSION_ACTIVE)
+{
+	session_destroy();
+}
+
 
 // Not sure this is required
 unset($_SESSION['dol_login']);

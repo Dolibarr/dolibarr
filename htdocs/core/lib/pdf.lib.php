@@ -261,8 +261,9 @@ function pdf_getHeightForLogo($logo, $url = false)
 /**
  * Function to try to calculate height of a HTML Content
  *
- * @param TCPDF     $pdf            PDF initialized object
- * @param string    $htmlcontent    HTML Contect
+ * @param 	TCPDF     $pdf				PDF initialized object
+ * @param 	string    $htmlcontent		HTML Contect
+ * @return 	int							Height
  * @see getStringHeight
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
@@ -1203,8 +1204,16 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$note=(! empty($object->lines[$i]->note)?$object->lines[$i]->note:'');
 	$dbatch=(! empty($object->lines[$i]->detail_batch)?$object->lines[$i]->detail_batch:false);
 
-	if ($issupplierline) $prodser = new ProductFournisseur($db);
-	else $prodser = new Product($db);
+	if ($issupplierline)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$prodser = new ProductFournisseur($db);
+	}
+	else
+	{
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$prodser = new Product($db);
+	}
 
 	if ($idprod)
 	{
@@ -1282,7 +1291,17 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice.=$desc;
+				if (empty($hidedesc))
+				{
+					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST))
+					{
+						$libelleproduitservice=$desc."\n".$libelleproduitservice;
+					}
+					else
+					{
+						$libelleproduitservice.=$desc;
+					}
+				}
 			}
 			else
 			{
@@ -2086,8 +2105,8 @@ function pdf_getLinkedObjects($object,$outputlangs)
 		}
 		else if ($objecttype == 'shipping')
 		{
-			$outputlangs->load('orders');
-			$outputlangs->load('sendings');
+			$outputlangs->loadLangs(array("orders", "sendings"));
+
 			foreach($objects as $x => $elementobject)
 			{
 			    $order=null;
@@ -2161,4 +2180,3 @@ function pdf_getSizeForImage($realpath)
 	}
 	return array('width'=>$width,'height'=>$height);
 }
-

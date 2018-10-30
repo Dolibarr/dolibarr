@@ -116,7 +116,6 @@ foreach($phparray as $key => $value)
 	print '<br>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -289,5 +289,6 @@ else
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
 $db->close();

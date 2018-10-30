@@ -67,9 +67,11 @@ class modTax extends DolibarrModules
 		$this->config_page_url = array("taxes.php");
 
 		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->conflictwith = array();
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->langfiles = array("compta","bills");
 
 		// Constants
@@ -117,13 +119,10 @@ class modTax extends DolibarrModules
 
 
 		// Menus
-		//-------
-
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
-		//--------
 		$r=0;
 
 		$r++;
@@ -175,7 +174,6 @@ class modTax extends DolibarrModules
 		$this->import_examplevalues_array[$r]=array('t.label'=>"VAT Payment 1st quarter 2016",'t.fk_typepayment'=>"CHQ (must be id or code found into dictionary)",
 		    't.datep'=>"2016-04-02", 't.datev'=>"2016-03-31", 't.amount'=>1000, 't.num_payment'=>'123456'
 		);
-
 	}
 
 

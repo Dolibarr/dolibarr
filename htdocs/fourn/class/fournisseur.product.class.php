@@ -37,49 +37,70 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
  */
 class ProductFournisseur extends Product
 {
-    var $db;
-    var $error;
-
-    var $product_fourn_price_id;  // id of ligne product-supplier
-
-    var $id;                      // product id
-	/**
-	 * @deprecated
-	 * @see ref_supplier
-	 */
-    var $fourn_ref;
-    var $delivery_time_days;
-    var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
-    var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
-
-    var $fourn_id;                //supplier id
-    var $fourn_qty;               // quantity for price (can be set by get_buyprice)
-    var $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
-
-    var $fourn_price;             // price for quantity
-    var $fourn_remise_percent;    // discount for quantity (percent)
-    var $fourn_remise;            // discount for quantity (amount)
-    var $product_fourn_id;        // supplier id
-    var $fk_availability;         // availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
-    var $fourn_unitprice;
-    var $fourn_tva_tx;
-    var $fourn_tva_npr;
-
-    var $fk_supplier_price_expression;
-    var $supplier_reputation;     // reputation of supplier
-    var $reputations=array();     // list of available supplier reputations
-
-    // Multicurreny
-    var $fourn_multicurrency_id;
-    var $fourn_multicurrency_code;
-    var $fourn_multicurrency_tx;
-    var $fourn_multicurrency_price;
-    var $fourn_multicurrency_unitprice;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     /**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    public $product_fourn_price_id;  // id of ligne product-supplier
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    /**
+     * @deprecated
+     * @see ref_supplier
+     */
+    public $fourn_ref;
+    public $delivery_time_days;
+    public $ref_supplier;			  // ref supplier (can be set by get_buyprice)
+    public $desc_supplier;
+    public $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
+
+    public $fourn_id;                //supplier id
+    public $fourn_qty;               // quantity for price (can be set by get_buyprice)
+    public $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
+
+    public $fourn_price;             // price for quantity
+    public $fourn_remise_percent;    // discount for quantity (percent)
+    public $fourn_remise;            // discount for quantity (amount)
+    public $product_fourn_id;        // supplier id
+
+    /**
+     * @var int ID availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
+     */
+    public $fk_availability;
+
+    public $fourn_unitprice;
+    public $fourn_tva_tx;
+    public $fourn_tva_npr;
+
+    /**
+     * @var int ID
+     */
+    public $fk_supplier_price_expression;
+
+    public $supplier_reputation;     // reputation of supplier
+    public $reputations=array();     // list of available supplier reputations
+
+    // Multicurreny
+    public $fourn_multicurrency_id;
+    public $fourn_multicurrency_code;
+    public $fourn_multicurrency_tx;
+    public $fourn_multicurrency_price;
+    public $fourn_multicurrency_unitprice;
+
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
      */
     function __construct($db)
     {
@@ -92,6 +113,7 @@ class ProductFournisseur extends Product
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Remove all prices for this couple supplier-product
      *
@@ -100,6 +122,7 @@ class ProductFournisseur extends Product
      */
     function remove_fournisseur($id_fourn)
     {
+        // phpcs:enable
         $ok=1;
 
         $this->db->begin();
@@ -128,6 +151,7 @@ class ProductFournisseur extends Product
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Remove a price for a couple supplier-product
      *
@@ -136,6 +160,7 @@ class ProductFournisseur extends Product
      */
     function remove_product_fournisseur_price($rowid)
     {
+        // phpcs:enable
         global $conf, $user;
 
         $error=0;
@@ -162,17 +187,17 @@ class ProductFournisseur extends Product
             }
         }
 
-        if (empty($error)){
+        if (empty($error)) {
             $this->db->commit();
             return 1;
-        }else{
+        } else {
             $this->db->rollback();
             return -1;
         }
-
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Modify the purchase price for a supplier
      *
@@ -196,10 +221,12 @@ class ProductFournisseur extends Product
      *    @param  	string		$multicurrency_price_base_type	HT or TTC in currency
      *    @param  	float		$multicurrency_tx	            Rate currency
      *    @param  	string		$multicurrency_code	            Currency code
+     *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
      *    @return	int								<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $localtaxes_array=array(), $newdefaultvatcode='', $multicurrency_buyprice=0, $multicurrency_price_base_type='HT',$multicurrency_tx=1,$multicurrency_code='')
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $localtaxes_array=array(), $newdefaultvatcode='', $multicurrency_buyprice=0, $multicurrency_price_base_type='HT',$multicurrency_tx=1,$multicurrency_code='', $desc_fourn='')
     {
+        // phpcs:enable
         global $conf, $langs;
         //global $mysoc;
 
@@ -270,6 +297,7 @@ class ProductFournisseur extends Product
 	  		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql.= " SET fk_user = " . $user->id." ,";
             $sql.= " ref_fourn = '" . $this->db->escape($ref_fourn) . "',";
+            $sql.= " desc_fourn = '" . $this->db->escape($desc_fourn) . "',";
 			$sql.= " price = ".price2num($buyprice).",";
 			$sql.= " quantity = ".$qty.",";
 			$sql.= " remise_percent = ".$remise_percent.",";
@@ -336,7 +364,7 @@ class ProductFournisseur extends Product
                 // Add price for this quantity to supplier
                 $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price(";
                 $sql.= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
-                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
+                $sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
                 $sql .= " values(";
                 $sql.= (isset($multicurrency_buyprice)?"'".$this->db->escape(price2num($multicurrency_buyprice))."'":'null').",";
                 $sql.= (isset($multicurrency_unitBuyPrice)?"'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'":'null').",";
@@ -347,6 +375,7 @@ class ProductFournisseur extends Product
                 $sql .= " " . $this->id . ",";
                 $sql .= " " . $fourn->id . ",";
                 $sql .= " '" . $this->db->escape($ref_fourn) . "',";
+                $sql .= " '" . $this->db->escape($desc_fourn) . "',";
                 $sql .= " " . $user->id . ",";
                 $sql .= " " . $buyprice . ",";
                 $sql .= " " . $qty . ",";
@@ -424,6 +453,7 @@ class ProductFournisseur extends Product
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    Loads the price information of a provider
      *
@@ -433,10 +463,11 @@ class ProductFournisseur extends Product
      */
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
+        // phpcs:enable
         global $conf;
 
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.info_bits as fourn_tva_npr, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
         $sql.= " pfp.supplier_reputation";
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -456,6 +487,7 @@ class ProductFournisseur extends Product
             	$this->fourn_id					= $obj->fk_soc;
             	$this->fourn_ref				= $obj->ref_fourn; // deprecated
 	            $this->ref_supplier             = $obj->ref_fourn;
+	            $this->desc_supplier            = $obj->desc_fourn;
             	$this->fourn_price				= $obj->price;
             	$this->fourn_charges            = $obj->charges;	// deprecated
             	$this->fourn_qty                = $obj->quantity;
@@ -510,6 +542,7 @@ class ProductFournisseur extends Product
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *    List all supplier prices of a product
      *
@@ -522,10 +555,11 @@ class ProductFournisseur extends Product
      */
     function list_product_fournisseur_price($prodid, $sortfield='', $sortorder='', $limit=0, $offset=0)
     {
+        // phpcs:enable
         global $conf;
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
-        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
+        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -553,6 +587,7 @@ class ProductFournisseur extends Product
                 $prodfourn->product_fourn_id		= $record["product_fourn_id"];
                 $prodfourn->fourn_ref				= $record["ref_fourn"];
                 $prodfourn->ref_supplier			= $record["ref_fourn"];
+                $prodfourn->desc_supplier           = $record["desc_fourn"];
                 $prodfourn->fourn_price				= $record["price"];
                 $prodfourn->fourn_qty				= $record["quantity"];
 				$prodfourn->fourn_remise_percent	= $record["remise_percent"];
@@ -609,6 +644,7 @@ class ProductFournisseur extends Product
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Load properties for minimum price
      *
@@ -619,6 +655,7 @@ class ProductFournisseur extends Product
      */
     function find_min_price_product_fournisseur($prodid, $qty=0, $socid=0)
     {
+        // phpcs:enable
         global $conf;
 
         if (empty($prodid))
@@ -796,6 +833,7 @@ class ProductFournisseur extends Product
         return $thirdparty->getNomUrl($withpicto,$option,$maxlen,$notooltip);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Display price of product
      *
@@ -803,12 +841,13 @@ class ProductFournisseur extends Product
      *  @param  int     $showsuptitle     Show "Supplier" into output string
      *  @param  int     $maxlen           Max length of name
      *  @param  integer $notooltip        1=Disable tooltip
-     *  @param  array   $productFournList  list of ProductFournisseur objects
+     *  @param  array   $productFournList list of ProductFournisseur objects
      *                                    to display in table format.
      *  @return string                    String with supplier price
      */
     function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0, $productFournList=array())
     {
+        // phpcs:enable
         global $langs;
 
         $out = '';
@@ -848,6 +887,4 @@ class ProductFournisseur extends Product
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }
-

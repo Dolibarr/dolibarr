@@ -112,7 +112,7 @@ if (! empty($canvas))
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($id) ? 'rowid' : 'ref');
-$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard','globalcard'));
@@ -477,7 +477,6 @@ if (empty($reshook))
                     $action = 'edit';
                 }
             }
-
         }
     }
 
@@ -689,7 +688,7 @@ if (empty($reshook))
                 if (($result = $propal->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
-                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
                 else
                 {
@@ -732,7 +731,7 @@ if (empty($reshook))
                 if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
-                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
                 else
                 {
@@ -775,7 +774,7 @@ if (empty($reshook))
                 if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
-                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
                 else
                 {
@@ -977,7 +976,7 @@ else
 	        }
 	        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
             $formbarcode = new FormBarCode($db);
-	        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+            print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
@@ -1067,11 +1066,14 @@ else
                 print $formproduct->select_measuring_units("surface_units","surface");
                 print '</td></tr>';
             }
-            // Volume
-            print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
-            print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-            print $formproduct->select_measuring_units("volume_units","volume");
-            print '</td></tr>';
+            if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
+            {
+                // Volume
+                print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
+                print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
+                print $formproduct->select_measuring_units("volume_units","volume");
+                print '</td></tr>';
+            }
         }
 
         // Units
@@ -1340,7 +1342,7 @@ else
 		        }
 		        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 	            $formbarcode = new FormBarCode($db);
-		        print $formbarcode->select_barcode_type($fk_barcode_type, 'fk_barcode_type', 1);
+                print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
@@ -1636,7 +1638,7 @@ else
 				}
                 if ($action == 'editbarcodetype')
                 {
-                    $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
+                    print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
                 }
                 else
                 {
@@ -1940,7 +1942,6 @@ else
 
             dol_fiche_end();
         }
-
     }
     else if ($action != 'create')
     {
@@ -2199,6 +2200,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     print '</div></div></div>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

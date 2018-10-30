@@ -206,4 +206,3 @@ class UserBankAccount extends Account
 		return $rib;
 	}
 }
-

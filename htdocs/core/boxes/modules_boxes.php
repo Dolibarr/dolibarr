@@ -31,7 +31,7 @@
  *
  * Boxes parent class
  */
-class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" boxes
+class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" boxes
 {
 	/**
 	 * @var DoliDB Database handler
@@ -213,7 +213,6 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$var = false;
 
         $cachetime = 900;   // 900 : 15mn
         $cachedir = DOL_DATA_ROOT.'/boxes/temp';
@@ -503,8 +502,6 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		}
 		return $widget;
 	}
-
-
 }
 
 

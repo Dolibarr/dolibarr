@@ -64,7 +64,7 @@ $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
 	$nbfac = $row[0];
-	
+
 	$db->free($result);
 }
 
@@ -85,7 +85,7 @@ print '<td align="center">' . $langs->trans("SeptemberMin") . '</td>';
 print '<td align="center">' . $langs->trans("OctoberMin") . '</td>';
 print '<td align="center">' . $langs->trans("NovemberMin") . '</td>';
 print '<td align="center">' . $langs->trans("DecemberMin") . '</td>';
-print '<td align="center"><b>Total</b></td>';
+print '<td align="center"><strong>Total</strong></td>';
 print '</tr>';
 
 $sql = "SELECT bk.numero_compte AS 'compte',";
@@ -111,11 +111,11 @@ $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
-	
+
 	while ( $i < $num ) {
-		
+
 		$row = $db->fetch_row($resql);
-		
+
 		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[1]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[2]) . '</td>';
@@ -129,9 +129,9 @@ if ($resql) {
 		print '<td align="right" width="6.5%">' . price($row[10]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[11]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[12]) . '</td>';
-		print '<td align="right" width="8%"><b>' . price($row[13]) . '</b></td>';
+		print '<td align="right" width="8%"><strong>' . price($row[13]) . '</strong></td>';
 		print '</tr>';
-		
+
 		$i ++;
 	}
 	$db->free($resql);
@@ -140,5 +140,6 @@ if ($resql) {
 }
 print "</table>\n";
 
+// End of page
 llxFooter();
 $db->close();

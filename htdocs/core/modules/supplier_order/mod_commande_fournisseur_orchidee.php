@@ -32,9 +32,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
  */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Orchidee';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Orchidee';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Orchidee';
 
 
     /**
@@ -44,10 +63,10 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
-		$langs->load("bills");
-		$langs->load("admin");
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","admin"));
 
 		$form = new Form($this->db);
 
@@ -127,6 +146,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Renvoie la reference de commande suivante non utilisee
      *
@@ -136,7 +156,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      */
     function commande_get_num($objsoc=0,$object='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$object);
     }
 }
-

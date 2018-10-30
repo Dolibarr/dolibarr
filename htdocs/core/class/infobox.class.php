@@ -281,6 +281,5 @@ class InfoBox
             return -1;
         }
     }
-
 }
 

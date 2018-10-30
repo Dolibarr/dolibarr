@@ -291,6 +291,6 @@ else dol_print_error($db);
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
 $db->close();

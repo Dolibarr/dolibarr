@@ -343,7 +343,6 @@ dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
-
 }
 
 // Start container of all panels

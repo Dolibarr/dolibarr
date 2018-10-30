@@ -19,7 +19,7 @@
  */
 
 /**
- *     	\file       htdocs/adherents/admin/public.php
+ *     	\file       htdocs/adherents/admin/website.php
  *		\ingroup    member
  *		\brief      File of main public page for member module
  *		\author	    Laurent Destailleur
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("members");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members"));
 
 $action=GETPOST('action', 'alpha');
 
@@ -241,7 +241,6 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

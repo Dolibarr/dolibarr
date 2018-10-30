@@ -20,14 +20,15 @@
 /**
  * Returns an array with the tabs for the "salaries" section
  * It loads tabs from modules looking for the entity salaries
- *  
+ *
  * @param Paiement $object Current salaries object
  * @return array Tabs for the salaries section
  */
-function salaries_prepare_head($object) {
-	
+function salaries_prepare_head($object)
+{
+
 	global $db, $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -57,7 +58,7 @@ function salaries_prepare_head($object) {
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-    
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries', 'remove');
 
 	return $head;

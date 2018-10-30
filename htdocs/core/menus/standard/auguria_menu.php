@@ -28,7 +28,11 @@
  */
 class MenuManager
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $type_user;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                            // To store default target to use onto links
 	var $name="auguria";

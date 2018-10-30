@@ -588,7 +588,7 @@ if ($object->id > 0)
 		$link=DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat.='</div>';
@@ -606,7 +606,7 @@ if ($object->id > 0)
 		$link=DOL_URL_ROOT.'/commande/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat.='</div>';
@@ -624,7 +624,7 @@ if ($object->id > 0)
 		$link=DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat.='</div>';
@@ -640,7 +640,7 @@ if ($object->id > 0)
 		$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstat.='</div>';
@@ -1301,7 +1301,6 @@ if ($object->id > 0)
 
     				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-
     			}
     		}
     	}
@@ -1344,7 +1343,6 @@ if ($object->id > 0)
         // List of done actions
 		show_actions_done($conf,$langs,$db,$object);
 	}
-
 }
 else
 {
@@ -1354,5 +1352,4 @@ else
 
 // End of page
 llxFooter();
-
 $db->close();

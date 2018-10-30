@@ -326,5 +326,6 @@ $token='';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
+// End of page
 llxFooter();
 $db->close();

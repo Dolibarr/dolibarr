@@ -558,6 +558,6 @@ if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>
 
 if ($id && $action == 'create' && $user->rights->user->user->creer) print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

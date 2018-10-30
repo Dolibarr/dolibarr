@@ -28,8 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-$langs->load("products");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("products","other"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');

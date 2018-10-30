@@ -6,7 +6,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'exports'));
-
-$langs->load('other');
+$langs->loadLangs(array('admin', 'exports', 'other'));
 
 if (! $user->admin)
 	accessforbidden();
@@ -73,7 +71,7 @@ dol_fiche_head(
 
 // Setup page goes here
 $form=new Form($db);
-$var=false;
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ExportModel").'</td>'."\n";
@@ -82,8 +80,7 @@ print '<td align="center" width="100"></td>'."\n";
 
 
 // Example with a yes / no select
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("set_EXPORTS_SHARE_MODELS").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">';
@@ -94,9 +91,8 @@ echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</form>';
 print '</td></tr>';
 
-
 print '</table>';
 
+// End of page
 llxFooter();
-
 $db->close();

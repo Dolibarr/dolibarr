@@ -34,8 +34,8 @@ $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
-$langs->load("suppliers");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders"));
 
 
 /*
@@ -432,6 +432,6 @@ print "</table><br>";
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

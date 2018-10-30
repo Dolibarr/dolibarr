@@ -31,13 +31,21 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassNone extends ModeleGenPassword
 {
-	var $id;
-	var $length;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $db;
-	var $conf;
-	var $lang;
-	var $user;
+	public $length;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	public $conf;
+	public $lang;
+	public $user;
 
 
 	/**
@@ -100,6 +108,5 @@ class modGeneratePassNone extends ModeleGenPassword
 	{
 		return 1;
 	}
-
 }
 

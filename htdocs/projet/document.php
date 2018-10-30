@@ -152,13 +152,12 @@ if ($object->id > 0)
 	$permission = ($userWrite > 0);
 	$permtoedit = ($userWrite > 0);
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
 }
 else
 {
 	dol_print_error('','NoRecordFound');
 }
 
+// End of page
 llxFooter();
-
 $db->close();

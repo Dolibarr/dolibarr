@@ -409,7 +409,6 @@ if ($projectid > 0) {
         dol_fiche_end();
 
         $object = $savobject;
-
     } else {
         print "ErrorRecordNotFound";
     }
@@ -701,7 +700,7 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 
 	// Show list of available documents

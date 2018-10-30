@@ -296,5 +296,4 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$result=restrictedArea($user,'societe');
 		$this->assertEquals(1,$result);
     }
-
 }

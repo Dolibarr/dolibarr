@@ -35,7 +35,11 @@ class box_factures extends ModeleBoxes
 	var $boxlabel="BoxLastCustomerBills";
 	var $depends = array("facture");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -189,7 +193,6 @@ class box_factures extends ModeleBoxes
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
-
         } else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'align="left" class="nohover opacitymedium"',
@@ -210,5 +213,4 @@ class box_factures extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }

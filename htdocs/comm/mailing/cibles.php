@@ -66,7 +66,6 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 
 
-
 /*
  * Actions
  */
@@ -306,8 +305,8 @@ if ($object->fetch($id) >= 0)
 			$var = true;
 
 			// Loop on each submodule
-            foreach($modulenames as $modulename)
-            {
+			foreach($modulenames as $modulename)
+			{
 				// Loading Class
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
@@ -330,16 +329,14 @@ if ($object->fetch($id) >= 0)
 				// Si le module mailing est qualifie
 				if ($qualified)
 				{
-					$var = ! $var;
-
 					if ($allowaddtarget)
 					{
-						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form class="oddeven tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 					else
 					{
-					    print '<div '.$bctag[$var].'>';
+					    print '<div class="oddeven tagtr">';
 					}
 
 					print '<div class="tagtd">';
@@ -646,10 +643,8 @@ if ($object->fetch($id) >= 0)
 	}
 
 	print "\n<!-- Fin liste destinataires selectionnes -->\n";
-
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

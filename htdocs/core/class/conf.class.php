@@ -35,8 +35,12 @@ class Conf
 	/** \public */
 	//! To store properties found in conf file
 	var $file;
-	//! Object with database handler
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
 	//! To store properties found into database
 	var $global;
 	//! To store browser info
@@ -178,7 +182,7 @@ class Conf
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
 							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
-							else if (in_array($partname,array('sms'))) $value = $modulename;
+							else if (in_array($partname,array('sms'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
 						}
@@ -679,7 +683,6 @@ class Conf
 				$this->loghandlers[$handler] = $loghandlerinstance;
 			}
 		}
-
 	}
 }
 

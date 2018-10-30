@@ -33,9 +33,28 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_proposal/modules_supplie
  */
 class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Saphir';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -45,7 +64,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      */
 	function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
 		$langs->load("bills");
 
@@ -127,5 +146,4 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		return  $numFinal;
 	}
-
 }

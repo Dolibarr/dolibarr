@@ -47,6 +47,7 @@ class Client extends Societe
         $this->fournisseur = 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Load indicators into this->nb for board
      *
@@ -54,6 +55,7 @@ class Client extends Societe
      */
     function load_state_board()
     {
+        // phpcs:enable
         global $user;
 
         $this->nb=array("customers" => 0,"prospects" => 0);
@@ -88,7 +90,6 @@ class Client extends Societe
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -114,5 +115,4 @@ class Client extends Societe
 		}
 		return 1;
     }
-
 }

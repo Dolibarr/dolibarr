@@ -39,7 +39,11 @@ class box_external_rss extends ModeleBoxes
     var $boxlabel="BoxLastRssInfos";
     var $depends = array("externalrss");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $paramdef;	// Params of box definition (not user params)
 
     var $info_box_head = array();
@@ -194,6 +198,5 @@ class box_external_rss extends ModeleBoxes
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
 

@@ -35,8 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class PaiementFourn extends Paiement
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='payment_supplier';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='paiementfourn';
+
 	public $picto = 'payment';
 
 	var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
@@ -254,7 +262,6 @@ class PaiementFourn extends Paiement
 							$this->error=$this->db->lasterror();
 							$error++;
 						}
-
 					}
 					else
 					{
@@ -497,6 +504,7 @@ class PaiementFourn extends Paiement
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -506,6 +514,7 @@ class PaiementFourn extends Paiement
 	 */
 	function LibStatut($status,$mode=0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		$langs->load('compta');
@@ -761,14 +770,16 @@ class PaiementFourn extends Paiement
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *    	Load the third party of object, from id into this->thirdparty
+	 *  Load the third party of object, from id into this->thirdparty
 	 *
-	 *		@param		int		$force_thirdparty_id	Force thirdparty id
-	 *		@return		int								<0 if KO, >0 if OK
+	 *	@param		int		$force_thirdparty_id	Force thirdparty id
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	function fetch_thirdparty($force_thirdparty_id=0)
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 
 		if (empty($force_thirdparty_id))
@@ -786,5 +797,4 @@ class PaiementFourn extends Paiement
 
 		return parent::fetch_thirdparty($force_thirdparty_id);
 	}
-
 }

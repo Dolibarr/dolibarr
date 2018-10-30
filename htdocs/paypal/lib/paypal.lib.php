@@ -287,7 +287,6 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
 
         return $mesg;
     }
-
 }
 
 /**
@@ -401,7 +400,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	    $urllogo=$urlwithroot."/viewimage.php?modulepart=mycompany&file=".$mysoc->logo;
+	    $urllogo=$urlwithroot."/viewimage.php?modulepart=mycompany&file=".urlencode('logos/'.$mysoc->logo);
 	    $nvpstr = $nvpstr . "&LOGOIMG=" . urlencode($urllogo);
     }
     if (! empty($conf->global->PAYPAL_BRANDNAME))

@@ -182,7 +182,6 @@ if ($result)
       print '</tr>';
 	  $i++;
 	}
-
     }
   else
     {
@@ -210,7 +209,6 @@ if ($langs->file_exists("html/spam.html",0)) {
     print '<br>';
  }
 
-
+// End of page
 llxFooter();
-
 $db->close();

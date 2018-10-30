@@ -174,11 +174,10 @@ function dol_verifyHash($chain, $hash, $type='0')
  *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'level1|level2'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
- *  @param	Canvas	$objcanvas		Object canvas
  * 	@return	int						Always 1, die process if not allowed
  *  @see dol_check_secure_access_document
  */
-function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
+function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
 {
 	global $db, $conf;
 	global $hookmanager;
@@ -663,6 +662,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
     {
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
         $langs=new Translate('',$conf);
+        $langs->setDefaultLang();
     }
 
     $langs->load("errors");

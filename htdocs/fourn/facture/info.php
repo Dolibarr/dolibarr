@@ -34,8 +34,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('companies');
-$langs->load('bills');
+$langs->loadLangs(array("companies", "bills"));
 
 $id = GETPOST("facid",'int')?GETPOST("facid",'int'):GETPOST("id",'int');
 $ref = GETPOST("ref",'alpha');
@@ -126,6 +125,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

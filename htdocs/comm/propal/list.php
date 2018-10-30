@@ -161,6 +161,7 @@ $arrayfields=array(
 	'p.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
 	'p.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
 	'u.login'=>array('label'=>$langs->trans("Author"), 'checked'=>1, 'position'=>10),
+	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -226,7 +227,6 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$toselect='';
 	$search_array_options=array();
 	$search_categ_cus=0;
-
 }
 if ($object_statut != '') $viewstatut=$object_statut;
 
@@ -669,6 +669,10 @@ if ($resql)
 		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
+	if (! empty($arrayfields['sale_representative']['checked']))
+	{
+		print '<td class="liste_titre"></td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -723,6 +727,7 @@ if ($resql)
 	if (! empty($arrayfields['p.total_vat']['checked']))      print_liste_field_titre($arrayfields['p.total_vat']['label'],$_SERVER["PHP_SELF"],'p.tva','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'],$_SERVER["PHP_SELF"],'p.total','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'],$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -945,6 +950,51 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
+		if (! empty($arrayfields['sale_representative']['checked']))
+		{
+			// Sales representatives
+			print '<td>';
+			if ($obj->socid > 0)
+			{
+				$listsalesrepresentatives=$companystatic->getSalesRepresentatives($user);
+				if ($listsalesrepresentatives < 0) dol_print_error($db);
+				$nbofsalesrepresentative=count($listsalesrepresentatives);
+				if ($nbofsalesrepresentative > 3)   // We print only number
+				{
+					print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$companystatic->id.'">';
+					print $nbofsalesrepresentative;
+					print '</a>';
+				}
+				else if ($nbofsalesrepresentative > 0)
+				{
+					$userstatic=new User($db);
+					$j=0;
+					foreach($listsalesrepresentatives as $val)
+					{
+						$userstatic->id=$val['id'];
+						$userstatic->lastname=$val['lastname'];
+						$userstatic->firstname=$val['firstname'];
+						$userstatic->email=$val['email'];
+						$userstatic->statut=$val['statut'];
+						$userstatic->entity=$val['entity'];
+						$userstatic->photo=$val['photo'];
+
+						//print '<div class="float">':
+						print $userstatic->getNomUrl(-2);
+						$j++;
+						if ($j < $nbofsalesrepresentative) print ' ';
+						//print '</div>';
+					}
+				}
+				//else print $langs->trans("NoSalesRepresentativeAffected");
+			}
+			else
+			{
+				print '&nbsp';
+			}
+			print '</td>';
+		}
+
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
@@ -995,22 +1045,35 @@ if ($resql)
  	   || isset($totalarray['totalttcfield'])
  	   || isset($totalarray['totalamfield'])
  	   || isset($totalarray['totalrtpfield'])
+ 	   || isset($totalarray['totalizable'])
  	   )
 	{
 		print '<tr class="liste_total">';
 		$i=0;
 		while ($i < $totalarray['nbfield'])
 		{
-		   $i++;
-		   if ($i == 1)
-		   {
+		    $i++;
+		    if ($i == 1)
+		    {
 				if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
-		   }
-		   elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-		   elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-		   elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
-		   else print '<td></td>';
+		    }
+		    elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
+		    elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+		    elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+		    elseif ($totalarray['totalizable']) {
+                $printed = false;
+                foreach ($totalarray['totalizable'] as $totalizable) {
+                    if ($totalizable['pos']==$i && ! $printed) {
+                        print '<td align="right">'.price($totalizable['total']).'</td>';
+                        $printed = true;
+                    }
+                }
+                if (! $printed) {
+                    print '<td></td>';
+                }
+            }
+		    else print '<td></td>';
 		}
 		print '</tr>';
 	}

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2004-2016 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->projet->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 if (! empty($conf->accounting->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
@@ -332,7 +332,7 @@ if ($action == 'create')
 	print $form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"));
 	print '</td>';
    	print '<td>';
-	print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
 	print '</tr>';
 
@@ -342,7 +342,7 @@ if ($action == 'create')
 	print $langs->trans("DateDue");
 	print '</td>';
 	print '<td>';
-	print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
 	print "</tr>\n";
 
@@ -502,7 +502,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
@@ -514,10 +514,9 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
-		}
-		else {
+		} else {
 			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dol_print_date($object->date_ech,'day')."</td></tr>";
 		}
 
@@ -750,7 +749,6 @@ if ($id > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

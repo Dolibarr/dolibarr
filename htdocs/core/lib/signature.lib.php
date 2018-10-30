@@ -28,8 +28,9 @@ function showOnlineSignatureUrl($type,$ref)
 {
 	global $conf, $langs;
 
-	$langs->load("payment");
-	$langs->load("paybox");
+	// Load translation files required by the page
+    $langs->loadLangs(array("payment","paybox"));
+
 	$servicename='Online';
 
 	$out = img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlineSignature",$servicename).'<br>';

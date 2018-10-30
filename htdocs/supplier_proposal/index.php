@@ -375,6 +375,6 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

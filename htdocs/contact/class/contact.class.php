@@ -37,9 +37,25 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='contact';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='socpeople';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'contact';
 
 
@@ -88,7 +104,7 @@ class Contact extends CommonObject
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
 
-    	public $poste;                 // Position
+    public $poste;                 // Position
 
 	public $socid;					// fk_soc
 	public $statut;				// 0=inactif, 1=actif
@@ -123,9 +139,6 @@ class Contact extends CommonObject
 	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 
-
-
-
 	/**
 	 *	Constructor
 	 *
@@ -137,6 +150,7 @@ class Contact extends CommonObject
 		$this->statut = 1;	// By default, status is enabled
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
@@ -144,6 +158,7 @@ class Contact extends CommonObject
 	 */
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $user;
 
 		$this->nb=array();
@@ -343,6 +358,8 @@ class Contact extends CommonObject
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
+		$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
+		$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -430,6 +447,16 @@ class Contact extends CommonObject
 					$tmpobj->skype = $this->skype;
 					$usermustbemodified++;
 				}
+				if ($tmpobj->twitter != $this->twitter)
+				{
+					$tmpobj->twitter = $this->twitter;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->facebook != $this->facebook)
+				{
+					$tmpobj->facebook = $this->facebook;
+					$usermustbemodified++;
+				}
 				if ($usermustbemodified)
 				{
 					$result=$tmpobj->update($user, 0, 1, 1, 1);
@@ -466,6 +493,7 @@ class Contact extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -477,15 +505,17 @@ class Contact extends CommonObject
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
-		if ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
-		if ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+		elseif ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
+		elseif ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
 		return $dn;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
@@ -493,12 +523,13 @@ class Contact extends CommonObject
 	 */
 	function _load_ldap_info()
 	{
-		global $conf,$langs;
+        // phpcs:enable
+		global $conf, $langs;
 
         $info = array();
 
         // Object classes
-		$info["objectclass"]=explode(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"]=explode(',', $conf->global->LDAP_CONTACT_OBJECT_CLASS);
 
 		$this->fullname=$this->getFullName($langs);
 
@@ -559,6 +590,7 @@ class Contact extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Update field alert birthday
 	 *
@@ -569,6 +601,7 @@ class Contact extends CommonObject
 	 */
 	function update_perso($id, $user=null, $notrigger=0)
 	{
+        // phpcs:enable
 	    $error=0;
 	    $result=false;
 
@@ -673,7 +706,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
@@ -714,7 +747,7 @@ class Contact extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				
+
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
 				$this->departement_code	= $obj->state_code;	       // deprecated
@@ -739,6 +772,8 @@ class Contact extends CommonObject
 				$this->email				= $obj->email;
 				$this->jabberid			= $obj->jabberid;
 				$this->skype				= $obj->skype;
+				$this->twitter				= $obj->twitter;
+				$this->facebook				= $obj->facebook;
 				$this->photo				= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
@@ -840,6 +875,7 @@ class Contact extends CommonObject
     	}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
@@ -851,6 +887,7 @@ class Contact extends CommonObject
 	 */
 	function load_ref_elements()
 	{
+        // phpcs:enable
 		// Compte les elements pour lesquels il est contact
 		$sql ="SELECT tc.element, count(ec.rowid) as nb";
 		$sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -869,9 +906,9 @@ class Contact extends CommonObject
 				if ($obj->nb)
 				{
 					if ($obj->element=='facture')  $this->ref_facturation = $obj->nb;
-					if ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
-					if ($obj->element=='commande') $this->ref_commande = $obj->nb;
-					if ($obj->element=='propal')   $this->ref_propal = $obj->nb;
+					elseif ($obj->element=='contrat')  $this->ref_contrat = $obj->nb;
+					elseif ($obj->element=='commande') $this->ref_commande = $obj->nb;
+					elseif ($obj->element=='propal')   $this->ref_propal = $obj->nb;
 				}
 			}
 			$this->db->free($resql);
@@ -896,8 +933,8 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_lastname       = $obj->lastname;
-		$this->old_firstname      = $obj->firstname;
+		$this->old_lastname = $obj->lastname;
+		$this->old_firstname = $obj->firstname;
 
 		$this->db->begin();
 
@@ -1017,7 +1054,7 @@ class Contact extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                = $obj->rowid;
+				$this->id = $obj->rowid;
 
 				if ($obj->fk_user_creat) {
 					$cuser = new User($this->db);
@@ -1182,6 +1219,7 @@ class Contact extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
@@ -1191,6 +1229,7 @@ class Contact extends CommonObject
 	 */
 	function LibStatut($statut,$mode)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
@@ -1207,7 +1246,6 @@ class Contact extends CommonObject
 		{
 			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
 			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
-
 		}
 		elseif ($mode == 3)
 		{
@@ -1227,6 +1265,7 @@ class Contact extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Return translated label of Public or Private
 	 *
@@ -1235,6 +1274,7 @@ class Contact extends CommonObject
 	 */
 	function LibPubPriv($statut)
 	{
+        // phpcs:enable
 		global $langs;
 		if ($statut=='1') return $langs->trans('ContactPrivate');
 		else return $langs->trans('ContactPublic');
@@ -1339,6 +1379,7 @@ class Contact extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{

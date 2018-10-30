@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
 
 $action=GETPOST('action','alpha');
 
@@ -454,7 +453,6 @@ if ($resql)
 print '</table>';
 print '</div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

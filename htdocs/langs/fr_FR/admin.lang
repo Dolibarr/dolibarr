@@ -651,6 +651,7 @@ Permission32=Créer/modifier les produits
 Permission34=Supprimer les produits
 Permission36=Voir/gérer les produits cachés
 Permission38=Exporter les produits
+Permission39=Outrepasser le prix de vente minimum d'un produit
 Permission41=Lire les projets et tâches (partagés ou dont vous êtes un contact). Permet la saisie de temps passé, par vous et votre hiérarchie (vos subordonnés), sur les tâches assignées.
 Permission42=Créer/modifier les projets (projets partagés et projets pour lesquels je suis contact). Permet aussi de créer des tâches et d'assigner des utilisateurs aux projets et tâches.
 Permission44=Supprimer les projets et tâches (partagés ou dont je suis contact)

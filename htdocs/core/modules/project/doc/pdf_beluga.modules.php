@@ -54,7 +54,11 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 class pdf_beluga extends ModelePDFProjects
 {
-	var $emetteur;	// Objet societe qui emet
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 	/**
 	 *	Constructor
@@ -64,7 +68,7 @@ class pdf_beluga extends ModelePDFProjects
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "projects", "companies"));
 
@@ -110,6 +114,7 @@ class pdf_beluga extends ModelePDFProjects
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
@@ -119,6 +124,7 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	function write_file($object,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
 
         $formproject=new FormProjets($this->db);
@@ -127,10 +133,8 @@ class pdf_beluga extends ModelePDFProjects
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("projects");
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
 		{
@@ -255,7 +259,7 @@ class pdf_beluga extends ModelePDFProjects
 				$iniY = $tab_top + $heightoftitleline + 1;
 				$curY = $tab_top + $heightoftitleline + 1;
 				$nexY = $tab_top + $heightoftitleline + 1;
-				
+
                 $listofreferent=array(
                     'propal'=>array(
                     	'name'=>"Proposals",
@@ -370,8 +374,8 @@ class pdf_beluga extends ModelePDFProjects
 
                     //var_dump("$key, $tablename, $datefieldname, $dates, $datee");
                     $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
-                    
-                    if ($key == 'agenda') 
+
+                    if ($key == 'agenda')
                     {
 //                    	var_dump($elementarray);
                     }
@@ -380,11 +384,11 @@ class pdf_beluga extends ModelePDFProjects
                     if ($num >= 0)
                     {
                         $nexY = $pdf->GetY() + 5;
-                        
+
                         $curY = $nexY;
                         $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
                         $pdf->SetTextColor(0,0,0);
-                          
+
                         $pdf->SetXY($this->posxref, $curY);
                         $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
 
@@ -420,7 +424,7 @@ class pdf_beluga extends ModelePDFProjects
                             $num = count($elementarray);
 
 				// Loop on each lines
-				for ($i = 0; $i < $num; $i ++) 
+				for ($i = 0; $i < $num; $i ++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
@@ -498,10 +502,10 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
 								$pdf->MultiCell(0, 3, '');		// Set interline to 3
 								$pdf->SetTextColor(0,0,0);
-								
+
 								$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 								$curY = $tab_top_newpage + $heightoftitleline + 1;
-								
+
 								// Label
 								$pdf->SetXY($this->posxref, $curY);
 								$posybefore=$pdf->GetY();
@@ -559,7 +563,7 @@ class pdf_beluga extends ModelePDFProjects
 					{
 						$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, (is_object($element->thirdparty)?$element->thirdparty->name:''), 1, 'L');
 					}
-					
+
                                 // Amount without tax
                                 if (empty($value['disableamount'])) {
                                     $pdf->SetXY($this->posxamountht, $curY);
@@ -612,7 +616,7 @@ class pdf_beluga extends ModelePDFProjects
                             $curY = $nexY;
                         }
                     }
-                
+
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -777,7 +781,7 @@ class pdf_beluga extends ModelePDFProjects
 			$pdf->SetXY($posx,$posy);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty->getFullName($outputlangs), '', 'R');
 		}
-		
+
 		$pdf->SetTextColor(0,0,60);
 	}
 
@@ -796,5 +800,4 @@ class pdf_beluga extends ModelePDFProjects
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }

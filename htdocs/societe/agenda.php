@@ -190,7 +190,6 @@ if ($socid > 0)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();
