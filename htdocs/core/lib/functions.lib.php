@@ -6572,7 +6572,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 /**
  *  Get formated error messages to output (Used to show messages on html output).
  *
- *  @param	string	$mesgstring         Error message
+ *  @param  string	$mesgstring         Error message
  *  @param  array	$mesgarray          Error messages array
  *  @param  int		$keepembedded       Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return string                		Return html output
@@ -6580,7 +6580,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @see    dol_print_error
  *  @see    dol_htmloutput_mesg
  */
-function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
+function get_htmloutput_errors($mesgstring='', $mesgarray=array(), $keepembedded=0)
 {
 	return get_htmloutput_mesg($mesgstring, $mesgarray,'error',$keepembedded);
 }
@@ -6590,15 +6590,15 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *
  *	@param	string		$mesgstring		Message string or message key
  *	@param	string[]	$mesgarray      Array of message strings or message keys
- *  @param  string      $style          Which style to use ('ok', 'warning', 'error')
- *  @param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
- *  @return	void
+ *	@param  string      $style          Which style to use ('ok', 'warning', 'error')
+ *	@param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
+ *	@return	void
  *
- *  @see    dol_print_error
- *  @see    dol_htmloutput_errors
- *  @see    setEventMessages
+ *	@see    dol_print_error
+ *	@see    dol_htmloutput_errors
+ *	@see    setEventMessages
  */
-function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
+function dol_htmloutput_mesg($mesgstring = '',$mesgarray = array(), $style = 'ok', $keepembedded=0)
 {
 	if (empty($mesgstring) && (! is_array($mesgarray) || count($mesgarray) == 0)) return;
 
@@ -6652,7 +6652,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @see    dol_print_error
  *  @see    dol_htmloutput_mesg
  */
-function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
+function dol_htmloutput_errors($mesgstring='', $mesgarray=array(), $keepembedded=0)
 {
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
