@@ -306,10 +306,9 @@ class FormProjets
 	 *  @param	int		$disabled			Disabled
 	 *  @param	string	$morecss			More css added to the select component
 	 *  @param	User	$usertofilter		User object to use for filtering
-	 *  @param	int		$forceuserfilter	1=Force individual task user rights even if user has right to see all
 	 *  @return	int							Nbr of project if OK, <0 if KO
 	 */
-	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500', $usertofilter=null, $forceuserfilter=0)
+	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500', $usertofilter=null)
 	{
 		global $user,$conf,$langs;
 
@@ -326,7 +325,7 @@ class FormProjets
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		$projectsListId = false;
-		if (empty($usertofilter->rights->projet->all->lire) || $forceuserfilter)
+		if (empty($usertofilter->rights->projet->all->lire))
 		{
 			$projectstatic=new Project($this->db);
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter,0,1);
