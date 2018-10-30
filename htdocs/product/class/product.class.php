@@ -200,6 +200,12 @@ class Product extends CommonObject
 	public $finished;
 
 	/**
+	 * Show/hide product despite being in the status "for sale" (can used with externals modules)
+	 * @var int
+	 */
+	public $hidden;
+
+	/**
 	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	 * @var int
 	 */
@@ -1864,7 +1870,7 @@ class Product extends CommonObject
 		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, weight, weight_units,";
 		$sql.= " length, length_units, width, width_units, height, height_units,";
-		$sql.= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
+		$sql.= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished, hidden,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
 		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
 		$sql.= " fk_price_expression, price_autogen";
@@ -1897,6 +1903,7 @@ class Product extends CommonObject
 				$this->status						= $obj->tosell;
 				$this->status_buy					= $obj->tobuy;
 				$this->status_batch					= $obj->tobatch;
+				$this->hidden						= $obj->hidden;
 
 				$this->customcode					= $obj->customcode;
 				$this->country_id					= $obj->fk_country;
