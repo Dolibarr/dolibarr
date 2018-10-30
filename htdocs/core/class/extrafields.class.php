@@ -1384,7 +1384,7 @@ class ExtraFields
 							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#',$InfoFieldList[4],$matchCondition);
 						}
 					}
-					else { 
+					else {
 						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
 					}
 
