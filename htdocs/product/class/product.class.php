@@ -200,7 +200,7 @@ class Product extends CommonObject
 	public $finished;
 
 	/**
-	 * Show/hide product despite being in the status "for sale" (can used with externals modules)
+	 * Show/hide product despite being in the status "for sale" (can be used by externals modules)
 	 * @var int
 	 */
 	public $hidden;
