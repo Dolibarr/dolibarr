@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -513,7 +514,6 @@ print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
-
 }
 
 

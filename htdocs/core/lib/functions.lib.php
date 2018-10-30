@@ -115,16 +115,16 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'c_paiement', 'c_payment_term', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
- *  @param	int		$forceentity	Entity id
+ *  @param	object	$currentobject	Current object if needed
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element, $shared=1, $forceentity=null)
+function getEntity($element, $shared=1, $currentobject=null)
 {
 	global $conf, $mc;
 
 	if (is_object($mc))
 	{
-		return $mc->getEntity($element, $shared, $forceentity);
+		return $mc->getEntity($element, $shared, $currentobject);
 	}
 	else
 	{
@@ -3237,6 +3237,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
+			} elseif ($pictowithoutext == 'play') {
+				$fakey = 'fa-play';
+				$facolor = '#444';
 			}
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
@@ -6572,7 +6575,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 /**
  *  Get formated error messages to output (Used to show messages on html output).
  *
- *  @param	string	$mesgstring         Error message
+ *  @param  string	$mesgstring         Error message
  *  @param  array	$mesgarray          Error messages array
  *  @param  int		$keepembedded       Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return string                		Return html output
@@ -6580,7 +6583,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @see    dol_print_error
  *  @see    dol_htmloutput_mesg
  */
-function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
+function get_htmloutput_errors($mesgstring='', $mesgarray=array(), $keepembedded=0)
 {
 	return get_htmloutput_mesg($mesgstring, $mesgarray,'error',$keepembedded);
 }
@@ -6590,15 +6593,15 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *
  *	@param	string		$mesgstring		Message string or message key
  *	@param	string[]	$mesgarray      Array of message strings or message keys
- *  @param  string      $style          Which style to use ('ok', 'warning', 'error')
- *  @param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
- *  @return	void
+ *	@param  string      $style          Which style to use ('ok', 'warning', 'error')
+ *	@param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
+ *	@return	void
  *
- *  @see    dol_print_error
- *  @see    dol_htmloutput_errors
- *  @see    setEventMessages
+ *	@see    dol_print_error
+ *	@see    dol_htmloutput_errors
+ *	@see    setEventMessages
  */
-function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
+function dol_htmloutput_mesg($mesgstring = '',$mesgarray = array(), $style = 'ok', $keepembedded=0)
 {
 	if (empty($mesgstring) && (! is_array($mesgarray) || count($mesgarray) == 0)) return;
 
@@ -6652,7 +6655,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @see    dol_print_error
  *  @see    dol_htmloutput_mesg
  */
-function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
+function dol_htmloutput_errors($mesgstring='', $mesgarray=array(), $keepembedded=0)
 {
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
@@ -7682,7 +7685,7 @@ function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='
 	{
 		$dictvalues[$tablename] = array();
 		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
-		if ($checkentity) $sql.= ' AND entity IN (0,'.getEntity('').')';
+		if ($checkentity) $sql.= ' AND entity IN (0,'.getEntity($tablename).')';
 
 		$resql = $db->query($sql);
 		if ($resql)

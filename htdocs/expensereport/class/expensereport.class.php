@@ -4,6 +4,7 @@
  * Copyright (C) 2015 Alexandre Spangaro  <aspangaro@zendsi.com>
  * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2018 Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1512,7 +1513,7 @@ class ExpenseReport extends CommonObject
 			$classname = $conf->global->EXPENSEREPORT_ADDON;
 
 			// Include file with class
-			$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+			$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir)
 			{
                 $dir = dol_buildpath($reldir."core/modules/expensereport/");
@@ -1521,9 +1522,8 @@ class ExpenseReport extends CommonObject
                 $mybool|=@include_once $dir.$file;
             }
 
-            if (! $mybool)
-            {
-                dol_print_error('',"Failed to include file ".$file);
+            if ($mybool === false) {
+                dol_print_error('', "Failed to include file ".$file);
                 return '';
             }
 

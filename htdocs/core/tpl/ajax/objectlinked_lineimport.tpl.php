@@ -68,7 +68,7 @@ $(document).ready(function(){
 	            modal: true,
 	            height: windowHeight,
 	            width: windowWidth,
-	            title: "<?php echo $langs->trans('LinesToImport'); ?>",
+	            title: "<?php echo $langs->transnoentities('LinesToImport'); ?>",
 	            buttons: {
 	                    "<?php echo $langs->trans('Import'); ?>": function() {
 	                      	$( this ).dialog( "close" );
