@@ -2,7 +2,8 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
-*
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 3 of the License, or
@@ -381,6 +382,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -395,8 +397,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Define substitution array
@@ -433,6 +436,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -465,9 +469,11 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -489,8 +495,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -502,16 +509,18 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 				else {
 					try {
 					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
