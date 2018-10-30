@@ -300,7 +300,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var string[] List of module class names that must be enabled if this module is enabled.
 	 *
-	 * e.g.: array('modAnotherModule', 'modYetAnotherModule')
+	 * e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 */
 	public $depends;
 
