@@ -3237,6 +3237,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
+			} elseif ($pictowithoutext == 'play') {
+				$fakey = 'fa-play';
+				$facolor = '#444';
 			}
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
