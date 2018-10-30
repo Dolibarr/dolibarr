@@ -115,16 +115,16 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'c_paiement', 'c_payment_term', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
- *  @param	int		$forceentity	Entity id
+ *  @param	object	$currentobject	Current object if needed
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element, $shared=1, $forceentity=null)
+function getEntity($element, $shared=1, $currentobject=null)
 {
 	global $conf, $mc;
 
 	if (is_object($mc))
 	{
-		return $mc->getEntity($element, $shared, $forceentity);
+		return $mc->getEntity($element, $shared, $currentobject);
 	}
 	else
 	{
