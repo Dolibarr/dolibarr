@@ -2071,7 +2071,7 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
 		}
-		
+
 		// include search in supplier ref
 		if(!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF))
 		{
@@ -3508,7 +3508,7 @@ class Form
 			    {
 			        $unitLabel = $langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label;
 			    }
-			    
+
 				if ($selected == $res->rowid)
 				{
 				    $return.='<option value="'.$res->rowid.'" selected>'.$unitLabel.'</option>';
@@ -7145,7 +7145,7 @@ class Form
 	}
 
 	/**
-	 * Return HTML to show the select categories of expense category
+	 * Return HTML to show the select of expense categories
 	 *
 	 * @param	string	$selected              preselected category
 	 * @param	string	$htmlname              name of HTML select list
@@ -7161,7 +7161,7 @@ class Form
 		global $db, $conf, $langs, $user;
 
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
-		$sql.= ' AND entity IN (0,'.getEntity('').')';
+		$sql.= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) $sql.= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
 		$sql.= ' ORDER BY label';
 
