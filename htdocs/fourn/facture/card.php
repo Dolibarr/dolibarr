@@ -904,6 +904,9 @@ if (empty($reshook))
 								if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
 								if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
+								// FIXME Missing special_code  into addline and updateline methods
+								$object->special_code = $lines[$i]->special_code;
+								
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,

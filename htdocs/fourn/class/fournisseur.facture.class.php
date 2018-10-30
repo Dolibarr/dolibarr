@@ -357,8 +357,8 @@ class FactureFournisseur extends CommonInvoice
                 dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
                 foreach ($this->lines as $i => $val)
                 {
-                    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
-                    $sql .= ' VALUES ('.$this->id.')';
+                    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn, special_code)';
+                    $sql .= ' VALUES ('.$this->id.','.intval($this->lines[$i]->special_code).')';
 
                     $resql_insert=$this->db->query($sql);
                     if ($resql_insert)
@@ -398,8 +398,8 @@ class FactureFournisseur extends CommonInvoice
 				    //if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
                 	if (! is_object($line)) $line = (object) $line;
 
-                	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
-			        $sql .= ' VALUES ('.$this->id.')';
+                	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn, special_code)';
+			        $sql .= ' VALUES ('.$this->id.','.intval($this->lines[$i]->special_code).')';
 
 			        $resql_insert=$this->db->query($sql);
 			        if ($resql_insert)
