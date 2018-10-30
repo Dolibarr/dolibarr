@@ -736,7 +736,6 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				}
 				$i++;
 			}
-
 		}
 		return $label;
 	}

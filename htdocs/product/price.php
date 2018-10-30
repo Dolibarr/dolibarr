@@ -785,7 +785,6 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
         	else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
         	print '</td></tr>';
 		}
-
 	}
 	else
 	{
@@ -1410,7 +1409,6 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></div>';
 		print '</form>';
-
 	}
 }
 

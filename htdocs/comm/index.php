@@ -521,7 +521,6 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
-
 			}
 
 			$db->free($resql);
@@ -580,7 +579,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 
 				$i++;
 			}
-
 		}
 		else
 		{

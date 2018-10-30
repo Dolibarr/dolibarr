@@ -294,7 +294,6 @@ if ($user->rights->fournisseur->facture->lire)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 // End of page

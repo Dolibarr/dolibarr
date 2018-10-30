@@ -95,7 +95,6 @@ if (empty($reshook))
 
 	// Action submit/delete file/link
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
-
 }
 
 $permtoedit = $user->rights->produit->creer;
@@ -156,8 +155,6 @@ if ($object->id)
     $permission = ( $user->rights->produit->creer );
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
-
 }
 else
 {

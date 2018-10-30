@@ -210,12 +210,10 @@ if ($_POST) {
 			} else {
 				setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 			}
-
 		} else {
 			$db->commit();
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		}
-
 	}
 	elseif ($valueid > 0) {
 
@@ -286,11 +284,9 @@ if ($action === 'confirm_deletecombination') {
 				setEventMessages($langs->trans('ErrorCopyProductCombinations'), null, 'errors');
 			}
 		}
-
 	} else {
 		setEventMessages($langs->trans('ErrorDestinationProductNotFound'), null, 'errors');
 	}
-
 }
 
 

@@ -1841,7 +1841,6 @@ class BookKeeping extends CommonObject
 			}
 
 			return $obj->label;
-
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);

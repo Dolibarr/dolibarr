@@ -300,7 +300,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * @var string[] List of module class names that must be enabled if this module is enabled.
 	 *
-	 * e.g.: array('modAnotherModule', 'modYetAnotherModule')
+	 * e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
 	 */
 	public $depends;
 
@@ -1175,7 +1175,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							dol_syslog(get_class($this)."::insert_boxes", LOG_DEBUG);
 							$resql=$this->db->query($sql);
 							if (! $resql) $err++;
-
 						}
 						if (! $err && ! preg_match('/newboxdefonly/',$option))
 						{
@@ -1384,7 +1383,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 							$resql=$this->db->query($sql);
 							if (! $resql) $err++;
-
 						}
 
 						if (! $err)
@@ -1739,7 +1737,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									break;
 								}
 								else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
-
 							}
 
 							$this->db->free($resqlinsert);
@@ -1791,7 +1788,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$user->clearrights();
 					$user->getrights();
 				}
-
 			}
 			$this->db->free($resql);
 		}

@@ -256,7 +256,6 @@ if (empty($reshook))
     $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
     $permissioncreate = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
 }
 
 
@@ -414,7 +413,6 @@ if (empty($action))
     $somethingshown=$formfile->numoffiles;
 
     print '</div>';
-
 }
 
 // End of page

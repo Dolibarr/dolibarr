@@ -897,7 +897,6 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
     {
         dol_print_error($db);
     }
-
 }
 
 

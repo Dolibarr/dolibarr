@@ -200,8 +200,6 @@ class Cpaiement
 				$this->active = $obj->active;
 				$this->accountancy_code = $obj->accountancy_code;
 				$this->module = $obj->module;
-
-
 			}
 			$this->db->free($resql);
 

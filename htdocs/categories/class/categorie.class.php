@@ -665,7 +665,6 @@ class Categorie extends CommonObject
 			    $this->db->rollback();
 			    return -2;
 			}
-
 		}
 		else
 		{
@@ -1810,7 +1809,6 @@ class Categorie extends CommonObject
 	            {
 	                $this->label		= $obj->label;
 	                $this->description	= $obj->description;
-
 	            }
 	            $this->multilangs["$obj->lang"]["label"]		= $obj->label;
 	            $this->multilangs["$obj->lang"]["description"]	= $obj->description;

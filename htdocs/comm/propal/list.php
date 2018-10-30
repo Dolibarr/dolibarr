@@ -227,7 +227,6 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$toselect='';
 	$search_array_options=array();
 	$search_categ_cus=0;
-
 }
 if ($object_statut != '') $viewstatut=$object_statut;
 

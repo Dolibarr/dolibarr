@@ -193,7 +193,6 @@ class box_factures extends ModeleBoxes
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
-
         } else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'align="left" class="nohover opacitymedium"',

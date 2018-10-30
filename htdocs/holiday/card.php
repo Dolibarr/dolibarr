@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 // Get parameters
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id);
 
 // Protection if external user
@@ -325,7 +326,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	}
 }
 
-// Si envoi de la demande
+// Action validate (+ send email for approval)
 if ($action == 'confirm_send')
 {
     $object = new Holiday($db);
@@ -745,7 +746,6 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             }
         }
     }
-
 }
 
 
@@ -761,7 +761,7 @@ $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->tran
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
+if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $action == 'create')
 {
     // Si l'utilisateur n'a pas le droit de faire une demande
     if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
@@ -998,9 +998,9 @@ else
     else
     {
         // Affichage de la fiche d'une demande de congés payés
-        if ($id > 0)
+        if (($id > 0) || $ref)
         {
-            $object->fetch($id);
+        	$result = $object->fetch($id, $ref);
 
             $valideur = new User($db);
             $valideur->fetch($object->fk_validator);
@@ -1064,7 +1064,7 @@ else
 
                 $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-                dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+                dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 
                 print '<div class="fichecenter">';
@@ -1260,7 +1260,7 @@ else
                 }
 
                 // Si envoi en validation
-                if ($action == 'sendToValidate' && $object->statut == 1)
+                if ($action == 'sendToValidate' && $object->statut == Holiday::STATUS_DRAFT)
                 {
                 	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                 }
@@ -1291,10 +1291,10 @@ else
                 }
 
 
-                if ($action == 'edit' && $object->statut == 1)
+                if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT)
                 {
                     print '<div align="center">';
-                    if ($cancreate && $object->statut == 1)
+                    if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
                     }
@@ -1346,23 +1346,19 @@ else
 
                     print '</div>';
                 }
-
             } else {
                 print '<div class="tabBar">';
                 print $langs->trans('ErrorUserViewCP');
                 print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
                 print '</div>';
             }
-
         } else {
             print '<div class="tabBar">';
             print $langs->trans('ErrorIDFicheCP');
             print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
             print '</div>';
         }
-
     }
-
 }
 
 // End of page

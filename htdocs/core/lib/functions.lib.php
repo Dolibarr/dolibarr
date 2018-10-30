@@ -115,16 +115,16 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'c_paiement', 'c_payment_term', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
- *  @param	int		$forceentity	Entity id
+ *  @param	object	$currentobject	Current object if needed
  * 	@return	mixed				Entity id(s) to use
  */
-function getEntity($element, $shared=1, $forceentity=null)
+function getEntity($element, $shared=1, $currentobject=null)
 {
 	global $conf, $mc;
 
 	if (is_object($mc))
 	{
-		return $mc->getEntity($element, $shared, $forceentity);
+		return $mc->getEntity($element, $shared, $currentobject);
 	}
 	else
 	{
@@ -1223,7 +1223,6 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 					$outmore.='<a class="tabimage'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				else
 					$outmore.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
-
 			}
 			else if (! empty($links[$i][1]))
 			{
@@ -3238,6 +3237,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
+			} elseif ($pictowithoutext == 'play') {
+				$fakey = 'fa-play';
+				$facolor = '#444';
 			}
 			else {
 				$fakey = 'fa-'.$pictowithoutext;
@@ -3297,15 +3299,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) {
 		return $fullpathpicto;
 	}
-	else {
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
-		//$tmparray=array(0=>$titlealt);
-		//if (empty($notitle) && preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
-		//$title=$tmparray[0];
-		//$alt=empty($tmparray[1])?'':$tmparray[1];
-		$title = $titlealt;
-		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block'.($morecss?' '.$morecss:'').'"').'>';	// Alt is used for accessibility, title for popup
-	}
+    return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt:' class="inline-block'.($morecss?' '.$morecss:'').'"').'>';	// Alt is used for accessibility, title for popup
 }
 
 /**
@@ -3932,7 +3927,6 @@ function dol_print_error($db='',$error='',$errors=null)
 			$out.='> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
 			$out.='> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->transnoentities("ErrorNoRequestInError"))."\n";
 			$out.='> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->transnoentities("ErrorNoRequestInError"))."\n";
-
 		}
 		$syslog.=", sql=".$db->lastquery();
 		$syslog.=", db_error=".$db->lasterror();
@@ -4994,7 +4988,6 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		else
 		{
 			return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
-
 		}
 	}
 
@@ -5116,8 +5109,6 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		else
 		{
 			// TODO Read default product vat according to countrycode and product
-
-
 		}
 	}
 
@@ -5600,7 +5591,6 @@ function dolGetFirstLineOfText($text, $nboflines=1)
 		{
 			$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
 			$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
-
 		}
 		else
 		{
@@ -6585,7 +6575,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 /**
  *  Get formated error messages to output (Used to show messages on html output).
  *
- *  @param	string	$mesgstring         Error message
+ *  @param  string	$mesgstring         Error message
  *  @param  array	$mesgarray          Error messages array
  *  @param  int		$keepembedded       Set to 1 in error message must be kept embedded into its html place (this disable jnotify)
  *  @return string                		Return html output
@@ -6593,7 +6583,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @see    dol_print_error
  *  @see    dol_htmloutput_mesg
  */
-function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
+function get_htmloutput_errors($mesgstring='', $mesgarray=array(), $keepembedded=0)
 {
 	return get_htmloutput_mesg($mesgstring, $mesgarray,'error',$keepembedded);
 }
@@ -6603,15 +6593,15 @@ function get_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *
  *	@param	string		$mesgstring		Message string or message key
  *	@param	string[]	$mesgarray      Array of message strings or message keys
- *  @param  string      $style          Which style to use ('ok', 'warning', 'error')
- *  @param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
- *  @return	void
+ *	@param  string      $style          Which style to use ('ok', 'warning', 'error')
+ *	@param  int         $keepembedded   Set to 1 if message must be kept embedded into its html place (this disable jnotify)
+ *	@return	void
  *
- *  @see    dol_print_error
- *  @see    dol_htmloutput_errors
- *  @see    setEventMessages
+ *	@see    dol_print_error
+ *	@see    dol_htmloutput_errors
+ *	@see    setEventMessages
  */
-function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepembedded=0)
+function dol_htmloutput_mesg($mesgstring = '',$mesgarray = array(), $style = 'ok', $keepembedded=0)
 {
 	if (empty($mesgstring) && (! is_array($mesgarray) || count($mesgarray) == 0)) return;
 
@@ -6665,7 +6655,7 @@ function dol_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
  *  @see    dol_print_error
  *  @see    dol_htmloutput_mesg
  */
-function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
+function dol_htmloutput_errors($mesgstring='', $mesgarray=array(), $keepembedded=0)
 {
 	dol_htmloutput_mesg($mesgstring, $mesgarray, 'error', $keepembedded);
 }
@@ -7094,54 +7084,60 @@ function printCommonFooter($zone='private')
 				$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
 				$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 				$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-				foreach($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
+				if (!empty($user->default_values[$relativepathstring]['focus']))
 				{
-					$qualified = 0;
-					if ($defkey != '_noquery_')
+					foreach($user->default_values[$relativepathstring]['focus'] as $defkey => $defval)
 					{
-						$tmpqueryarraytohave=explode('&', $defkey);
-						$foundintru=0;
-						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						$qualified = 0;
+						if ($defkey != '_noquery_')
 						{
-							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							$tmpqueryarraytohave=explode('&', $defkey);
+							$foundintru=0;
+							foreach($tmpqueryarraytohave as $tmpquerytohave)
+							{
+								if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							}
+							if (! $foundintru) $qualified=1;
+							//var_dump($defkey.'-'.$qualified);
 						}
-						if (! $foundintru) $qualified=1;
-						//var_dump($defkey.'-'.$qualified);
-					}
-					else $qualified = 1;
+						else $qualified = 1;
 
-					if ($qualified)
-					{
-						foreach($defval as $paramkey => $paramval)
+						if ($qualified)
 						{
-							// Add property 'required' on input
-							print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
+							foreach($defval as $paramkey => $paramval)
+							{
+								// Add property 'required' on input
+								print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
+							}
 						}
 					}
 				}
-				foreach($user->default_values[$relativepathstring]['mandatory'] as $defkey => $defval)
+				if (!empty($user->default_values[$relativepathstring]['mandatory']))
 				{
-					$qualified = 0;
-					if ($defkey != '_noquery_')
+					foreach($user->default_values[$relativepathstring]['mandatory'] as $defkey => $defval)
 					{
-						$tmpqueryarraytohave=explode('&', $defkey);
-						$foundintru=0;
-						foreach($tmpqueryarraytohave as $tmpquerytohave)
+						$qualified = 0;
+						if ($defkey != '_noquery_')
 						{
-							if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							$tmpqueryarraytohave=explode('&', $defkey);
+							$foundintru=0;
+							foreach($tmpqueryarraytohave as $tmpquerytohave)
+							{
+								if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+							}
+							if (! $foundintru) $qualified=1;
+							//var_dump($defkey.'-'.$qualified);
 						}
-						if (! $foundintru) $qualified=1;
-						//var_dump($defkey.'-'.$qualified);
-					}
-					else $qualified = 1;
+						else $qualified = 1;
 
-					if ($qualified)
-					{
-						foreach($defval as $paramkey => $paramval)
+						if ($qualified)
 						{
-							// Add property 'required' on input
-							print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-							print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";		// required on a select works only if key is "", this does not happen in Dolibarr
+							foreach($defval as $paramkey => $paramval)
+							{
+								// Add property 'required' on input
+								print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";		// required on a select works only if key is "", this does not happen in Dolibarr
+							}
 						}
 					}
 				}
@@ -7689,7 +7685,7 @@ function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='
 	{
 		$dictvalues[$tablename] = array();
 		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
-		if ($checkentity) $sql.= ' AND entity IN (0,'.getEntity('').')';
+		if ($checkentity) $sql.= ' AND entity IN (0,'.getEntity($tablename).')';
 
 		$resql = $db->query($sql);
 		if ($resql)

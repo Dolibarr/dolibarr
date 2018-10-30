@@ -118,7 +118,6 @@ if (($action == 'create' || $action == 'add') && !$error)
 
 		$originid=$orders_id[0];
 		$_GET['originid']=$orders_id[0];
-
 	}
 	if (isset($_POST['orders_to_invoice']))
 	{
@@ -128,7 +127,6 @@ if (($action == 'create' || $action == 'add') && !$error)
 
 		$originid=$orders_id[0];
 		$_POST['originid']=$orders_id[0];
-
 	}
 
 	$projectid		= GETPOST('projectid','int')?GETPOST('projectid','int'):0;
@@ -531,8 +529,6 @@ if ($action == 'create' && !$error)
 
 	print '</td></tr>';
 	print "</table>\n";
-
-
 }
 
 // Mode liste
@@ -737,7 +733,6 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 // End of page

@@ -152,7 +152,6 @@ if (! empty($conf->product->enabled))
 	$statProducts.= '<tr class="oddeven">';
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][3]).'</td>';
 	$statProducts.= "</tr>";
-
 }
 if (! empty($conf->service->enabled))
 {
@@ -168,7 +167,6 @@ if (! empty($conf->service->enabled))
 	$statServices.= '<tr class="oddeven">';
 	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[1][3]).'</td>';
 	$statServices.= "</tr>";
-
 }
 $total=0;
 if ($type == '0')

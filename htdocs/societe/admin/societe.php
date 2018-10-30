@@ -788,7 +788,6 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -806,7 +805,6 @@ if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -826,7 +824,6 @@ if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -845,7 +842,6 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 {
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
     print img_picto($langs->trans("Activated"),'switch_on');
-    
 }
 else
 {

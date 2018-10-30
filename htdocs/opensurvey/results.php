@@ -492,7 +492,6 @@ if ($action != 'edit')
 				});
 		    </script>';
 	print ' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
-
 }
 
 print '</td></tr>';

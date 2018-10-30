@@ -316,7 +316,6 @@ if ($action == 'edit')
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
-
 }
 else
 {
@@ -403,7 +402,6 @@ else
     }
 
     print '</div>';
-
 }
 
 if ($action == 'edit')

@@ -261,8 +261,6 @@ if ($action == 'setDefaultPDFModulesByType')
             setEventMessages($langs->trans("Error"), null, 'errors');
         }
     }
-    
-   
 }
 
 
@@ -436,7 +434,6 @@ foreach ($dirmodels as $reldir)
                             print '</td>';
 
                             print "</tr>\n";
-
                         }
                     }
                 }

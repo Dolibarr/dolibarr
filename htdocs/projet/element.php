@@ -217,6 +217,14 @@ print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
 
+// Bill time
+if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+{
+	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+	print yn($object->bill_time);
+	print '</td></tr>';
+}
+
 // Categories
 if($conf->categorie->enabled) {
     print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -451,7 +459,7 @@ $listofreferent=array(
 	'disableamount'=>0,
 	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
 	'lang'=>'salaries',
-	'buttonnew'=>'AddSalariesPayment',
+	'buttonnew'=>'AddSalaryPayment',
 	'testnew'=>$user->rights->salaries->write,
 	'test'=>$conf->salaries->enabled && $user->rights->salaries->read),
 'variouspayment'=>array(
@@ -489,7 +497,6 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 if(!empty($hookmanager->resArray)) {
 
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
-
 }
 
 if ($action=="addelement")
@@ -687,8 +694,8 @@ foreach ($listofreferent as $key => $value)
 // and the final balance
 print '<tr class="liste_total">';
 print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td align="right" >'.price($balance_ht).'</td>';
-print '<td align="right" >'.price($balance_ttc).'</td>';
+print '<td align="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td align="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
 print "</table>";
@@ -873,7 +880,9 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print img_picto($langs->trans('Unlink'), 'unlink');
+						print '</a>';
 					}
 				}
 				print "</td>\n";
@@ -896,16 +905,16 @@ foreach ($listofreferent as $key => $value)
 
 					$element_doc = $element->element;
 					$filename=dol_sanitizeFileName($element->ref);
-					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
+					$filedir=$conf->{$element_doc}->multidir_output[$element->entity] . '/' . dol_sanitizeFileName($element->ref);
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc='commande_fournisseur';
-						$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
 					}
 					else if ($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
 						$filename = get_exdir($element->id,2,0,0,$element,'product').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
 					}
 
 					print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';

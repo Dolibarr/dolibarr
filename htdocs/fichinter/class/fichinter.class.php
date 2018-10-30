@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -805,15 +806,14 @@ class Fichinter extends CommonObject
 				$mybool|=@include_once $dir.$file;
 			}
 
-			if (! $mybool)
-			{
-				dol_print_error('',"Failed to include file ".$file);
+			if ($mybool === false) {
+				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
 
 			$obj = new $classname();
 			$numref = "";
-			$numref = $obj->getNextValue($soc,$this);
+			$numref = $obj->getNextValue($soc, $this);
 
 			if ( $numref != "")
 			{
@@ -882,7 +882,6 @@ class Fichinter extends CommonObject
 					$muser->fetch($obj->fk_user_modification);
 					$this->user_modification   = $muser;
 				}
-
 			}
 			$this->db->free($resql);
 		}

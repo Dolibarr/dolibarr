@@ -1303,7 +1303,6 @@ if ($action == 'create')
 
 		print '</table>';
 	}
-
 } else {
 	/*
 	 * Show object in view mode

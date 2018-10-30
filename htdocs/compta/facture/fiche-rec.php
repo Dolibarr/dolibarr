@@ -263,7 +263,6 @@ if (empty($reshook))
 	if ($action == 'setconditions' && $user->rights->facture->creer)
 	{
 		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-
 	}
 	// Set mode
 	elseif ($action == 'setmode' && $user->rights->facture->creer)
@@ -629,12 +628,10 @@ if (empty($reshook))
 					$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
 				$tmptxt .= ')';
 				$desc = dol_concatdesc($desc, $tmptxt);
-
 			}
 
 			$type = $prod->type;
 			$fk_unit = $prod->fk_unit;
-
 		}
 		else
 		{
@@ -1730,7 +1727,6 @@ else
 
 
 		print '</div></div>';
-
 	}
 }
 

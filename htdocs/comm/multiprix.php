@@ -174,7 +174,6 @@ if ($_socid > 0)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 // End of page

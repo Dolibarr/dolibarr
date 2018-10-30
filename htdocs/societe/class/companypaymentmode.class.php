@@ -561,7 +561,6 @@ class CompanyPaymentMode extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

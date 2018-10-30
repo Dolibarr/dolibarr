@@ -384,7 +384,6 @@ if ($mode == 'overwrite')
 
     print '</table>';
     print '</div>';
-
 }
 
 if ($mode == 'searchkey')

@@ -260,7 +260,6 @@ class DoliDBSqlite3 extends DoliDB
                     // Pour l'instant les contraintes ne sont pas créées
                     dol_syslog(get_class().'::query line emptied');
                     $line = 'SELECT 0;';
-
                 }
 
                 //if (preg_match('/rowid\s+.*\s+PRIMARY\s+KEY,/i', $line)) {
@@ -445,7 +444,6 @@ class DoliDBSqlite3 extends DoliDB
 
             // dummy statement
             $query="SELECT 0";
-
         } else {
             $query=$this->convertSQLFromMysql($query,$type);
         }

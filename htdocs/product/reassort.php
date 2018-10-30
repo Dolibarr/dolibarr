@@ -317,7 +317,6 @@ if ($resql)
 	        foreach($warehouses_list as &$wh) {
 	            print_liste_field_titre($wh['label'], '', '','','','align="right"');
 	        }
-
 	    }
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock",$_SERVER["PHP_SELF"], "",$param,"",'align="right"',$sortfield,$sortorder);
@@ -395,7 +394,6 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-
 }
 else
 {

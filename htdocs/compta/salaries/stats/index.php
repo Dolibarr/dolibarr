@@ -214,6 +214,7 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="border" width="100%">';
 print '<tr>';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -247,6 +248,7 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';

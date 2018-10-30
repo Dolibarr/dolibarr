@@ -484,7 +484,6 @@ class dolReceiptPrinter extends Escpos
                 $this->printer->cut();
                 //print '<pre>'.print_r($this->connector, true).'</pre>';
                 $this->printer->close();
-
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
                 $error++;
@@ -621,7 +620,6 @@ class dolReceiptPrinter extends Escpos
             // uncomment next line to see content sent to printer
             //print '<pre>'.print_r($this->connector, true).'</pre>';
             $this->printer->close();
-
         }
         return $error;
     }

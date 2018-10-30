@@ -643,7 +643,6 @@ if ($resql)
               		print "&nbsp;";
 		        }
 		        print '</td>';
-
 		}
 
 		// Extra fields
@@ -668,7 +667,6 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-
 }
 else
 {

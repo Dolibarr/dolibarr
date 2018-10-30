@@ -138,7 +138,6 @@ class Address
 				$this->db->rollback();
 				return -2;
 			}
-
 		}
 		else
 		{
@@ -496,7 +495,6 @@ class Address
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

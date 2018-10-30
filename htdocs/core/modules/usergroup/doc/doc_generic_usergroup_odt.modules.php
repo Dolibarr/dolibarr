@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -355,16 +356,15 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->user->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->user->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch(Exception $e)
-				{
+				} catch (Exception $e) {
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_WARNING);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -378,8 +378,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_WARNING);
 				}
 
 				// Make substitutions into odt
@@ -414,8 +415,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+						dol_syslog($e->getMessage(), LOG_WARNING);
 					}
 				}
 				// Replace tags of lines
@@ -425,7 +427,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 					try {
 						$listlines = $odfHandler->setSegment('lines');
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
 						// We may arrive here if tags for lines not present into template
 						$foundtagforlines = 0;
@@ -446,15 +448,17 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 							{
 								try
 								{
-									if(!is_array($val)) {
+									if (!is_array($val)) {
 										$listlines->setVars($key, $val, true, 'UTF-8');
 									}
 								}
-								catch(OdfException $e)
+								catch (OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_WARNING);
 								}
-								catch(SegmentException $e)
+								catch (SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_WARNING);
 								}
 							}
 							$listlines->merge();
@@ -471,39 +475,42 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 				// Replace labels translated
 				$tmparray=$outputlangs->get_translations_for_substitutions();
-				foreach($tmparray as $key=>$value)
+				foreach($tmparray as $key => $value)
 				{
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+						dol_syslog($e->getMessage(), LOG_WARNING);
 					}
 				}
 
 				// Call the beforeODTSave hook
-				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$parameters=array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$reshook=$hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+						dol_syslog($e->getMessage(), LOG_WARNING);
 						return -1;
 					}
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+						$odfHandler->saveToDisk($file);
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+						dol_syslog($e->getMessage(), LOG_WARNING);
 						return -1;
 					}
 				}
 
-				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

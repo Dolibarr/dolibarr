@@ -291,7 +291,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
-
 			}
 
 			if (file_exists($dir))

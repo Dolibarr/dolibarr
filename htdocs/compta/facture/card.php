@@ -93,11 +93,6 @@ $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : 
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-// Security check
-$fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
-if ($user->societe_id) $socid = $user->societe_id;
-$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
-
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES = 4;
 
@@ -117,6 +112,12 @@ $hookmanager->initHooks(array('invoicecard','globalcard'));
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+
+// Security check
+$fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
+if ($user->societe_id) $socid = $user->societe_id;
+$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
 
 /*
@@ -178,7 +179,7 @@ if (empty($reshook))
 	}
 
 	// Delete invoice
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer) {
+	else if ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -191,7 +192,10 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->is_erasable())
+		$isErasable=$object->is_erasable();
+
+		if (($user->rights->facture->supprimer && $isErasable > 0)
+			|| ($user->rights->facture->creer && $isErasable == 1))
 		{
 			$result = $object->delete($user, 0, $idwarehouse);
 			if ($result > 0) {
@@ -744,7 +748,6 @@ if (empty($reshook))
 				{
 					$error++;
 				}
-
 			}
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
 			{
@@ -765,7 +768,6 @@ if (empty($reshook))
 						break;
 					}
 				}
-
 			}
 
 			if (empty($error))
@@ -1000,15 +1002,11 @@ if (empty($reshook))
 							                $line->multicurrency_total_ht  = $line->multicurrency_total_ht  - $prevLine->multicurrency_total_ht;
 							                $line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
 							                $line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
-
-
 							            }
 							        }
 
 							        // prorata
 							        $line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
-
-
 							    }
 							}
 
@@ -1040,7 +1038,6 @@ if (empty($reshook))
 
 						$object->update_price(1);
 					}
-
 				}
 
 				if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
@@ -1342,7 +1339,6 @@ if (empty($reshook))
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
-
 						}
 						else
 						{
@@ -1489,7 +1485,6 @@ if (empty($reshook))
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 							$error++;
 						}
-
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -2363,7 +2358,6 @@ if (empty($reshook))
                                 $line->situation_percent = $line->situation_percent - $maxPrevSituationPercent;
 
                                 if($line->update()<0) $errors++;
-
 	                        }
 	                    }
 	                }
@@ -2693,7 +2687,6 @@ if ($action == 'create')
 		print ajax_combobox('fac_replacement');
 		print ajax_combobox('fac_avoir');
 		print ajax_combobox('situations');
-
 	}
 
 	if ($origin == 'contrat')
@@ -2992,8 +2985,8 @@ if ($action == 'create')
 		print $desc;
 		print '</div></div>';
 	}
-	
-	
+
+
 	if (empty($origin))
 	{
 		if ($socid > 0)
@@ -3068,7 +3061,7 @@ if ($action == 'create')
 
 	print '</div>';
 
-	
+
 	if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
 	{
     	// Add auto select default document model
@@ -3080,7 +3073,7 @@ if ($action == 'create')
     	    $curent = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
     	    $jsListType.=(!empty($jsListType)?',':'').'"'.$type.'":"'.$curent.'"';
     	}
-    	
+
     	print '<script type="text/javascript" language="javascript">
         		$(document).ready(function() {
                     var listType = {'.$jsListType.'};
@@ -3100,9 +3093,9 @@ if ($action == 'create')
         		});
         		</script>';
 	}
-	
-	
-	
+
+
+
 	print '</td></tr>';
 
 	if ($socid > 0)
@@ -3660,7 +3653,6 @@ else if ($id > 0 || ! empty($ref))
 	{
 		$payment_id = GETPOST('paiement_id');
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
-
 	}
 
 	// Confirmation de la suppression d'une ligne produit
@@ -4236,7 +4228,6 @@ else if ($id > 0 || ! empty($ref))
 	            print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
 	            print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
 	            print '</tr>';
-
 	        }
 
 	        $total_global_ht += $total_next_ht;
@@ -4860,9 +4851,9 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Delete
-			if ($user->rights->facture->supprimer)
+			$isErasable = $object->is_erasable();
+			if ($user->rights->facture->supprimer || ($user->rights->facture->creer && $isErasable == 1))	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 			{
-				$isErasable = $object->is_erasable();
 				//var_dump($isErasable);
 				if ($isErasable == -4) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';

@@ -378,10 +378,8 @@ if (empty($reshook))
 									$error++;
 									break;
 								}
-
 							}
 						}
-
 		            }
 		            else
 		            {
@@ -1099,7 +1097,6 @@ if ($action == 'create')
 
 		print '</form>';
 	}
-
 }
 else if ($id > 0 || ! empty($ref))
 {
@@ -1471,8 +1468,6 @@ else if ($id > 0 || ! empty($ref))
 					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
-
-
 				}
 
 				// Line in update mode
@@ -1519,8 +1514,6 @@ else if ($id > 0 || ! empty($ref))
 					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
-
-
 				}
 
 				$i++;
@@ -1711,7 +1704,6 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
 					print '>'.$langs->trans('Delete').'</a></div>';
 				}
-
 			}
 		}
 	}

@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,7 +263,6 @@ class PaiementFourn extends Paiement
 							$this->error=$this->db->lasterror();
 							$error++;
 						}
-
 					}
 					else
 					{
@@ -655,14 +655,12 @@ class PaiementFourn extends Paiement
 			}
 
 			// For compatibility
-			if (! $mybool)
-			{
+			if ($mybool === false) {
 				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
 				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
 				$classname = preg_replace('/\-.*$/','',$classname);
 				// Include file with class
-				foreach ($conf->file->dol_document_root as $dirroot)
-				{
+				foreach ($conf->file->dol_document_root as $dirroot) {
 					$dir = $dirroot."/core/modules/supplier_payment/";
 
 					// Load file with numbering class (if found)
@@ -672,8 +670,7 @@ class PaiementFourn extends Paiement
 				}
 			}
 
-			if (! $mybool)
-			{
+			if ($mybool === false) {
 				dol_print_error('',"Failed to include file ".$file);
 				return '';
 			}

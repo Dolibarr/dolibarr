@@ -230,7 +230,6 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','a
 	$toselect='';
 	$search_array_options=array();
 	$search_categ_cus=0;
-
 }
 
 if (empty($reshook))
@@ -310,7 +309,6 @@ if ($massaction == 'withdrawrequest')
 				else {
 					$listofbills[] = $objecttmp;    // $listofbills will only contains invoices with good payment method and no request already done
 				}
-
 			}
 		}
 
@@ -340,7 +338,6 @@ if ($massaction == 'withdrawrequest')
 			}
 		}
 	}
-
 }
 
 
@@ -1229,7 +1226,6 @@ if ($resql)
 			   else print '<td></td>';
 			}
 			print '</tr>';
-
 		}
 	}
 

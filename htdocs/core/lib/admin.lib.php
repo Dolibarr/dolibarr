@@ -932,10 +932,11 @@ function activateModule($value,$withdeps=1)
             if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
             {
                 // Activation of modules this module depends on
-                // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
+                // this->depends may be array('modModule1', 'mmodModule2') or array('always1'=>"modModule1", 'FR'=>'modModule2')
                 foreach ($objMod->depends as $key => $modulestring)
                 {
-                    if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
+                	//var_dump((! is_numeric($key)) && ! preg_match('/^always/', $key) && $mysoc->country_code && ! preg_match('/^'.$mysoc->country_code.'/', $key));exit;
+                	if ((! is_numeric($key)) && ! preg_match('/^always/', $key) && $mysoc->country_code && ! preg_match('/^'.$mysoc->country_code.'/', $key))
                     {
                         dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
                         continue;
@@ -943,6 +944,7 @@ function activateModule($value,$withdeps=1)
                 	$activate = false;
                 	foreach ($modulesdir as $dir)
                 	{
+                		var_dump($modulestring);
                 		if (file_exists($dir.$modulestring.".class.php"))
                 		{
                 			$resarray = activateModule($modulestring);
@@ -1233,7 +1235,6 @@ function activateModulesRequiredByCountry($country_code)
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
-
 						}
 						else dol_syslog("Module ".get_class($objMod)." not qualified");
 					}

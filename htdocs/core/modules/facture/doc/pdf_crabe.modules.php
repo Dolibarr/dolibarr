@@ -1202,7 +1202,6 @@ class pdf_crabe extends ModelePDFFactures
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
 							}
 						}
 					}
@@ -1225,7 +1224,6 @@ class pdf_crabe extends ModelePDFFactures
 							$this->tva[$tvakey]=$tvaval * $coef_fix_tva;
 						}
 					}
-
 				}
 
 				foreach($this->tva as $tvakey => $tvaval)
@@ -1516,9 +1514,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$pdf->MultiCell($this->postotalht-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
 				}
-
 			}
-
 		}
 
 		if($conf->global->PRODUCT_USE_UNITS) {

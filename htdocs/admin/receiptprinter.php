@@ -438,7 +438,6 @@ if ($mode == 'template' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-
 }
 
 // to remove after test

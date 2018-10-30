@@ -236,7 +236,6 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 $i++;
             }
-
         }
         else
         {
@@ -309,7 +308,6 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -382,7 +380,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 				$i++;
 			}
-
 		}
 		else
 		{

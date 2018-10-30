@@ -181,7 +181,6 @@ class ActionsCardCompany extends ActionsCardCommon
 				{
 					$this->tpl['tva_intra'] = $s;
 				}
-
 			}
 			else
 			{

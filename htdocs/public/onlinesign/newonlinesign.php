@@ -120,7 +120,6 @@ $creditor = $mysoc->name;
 if ($action == 'dosign')
 {
     // TODO
-
 }
 
 
@@ -256,8 +255,6 @@ if ($source == 'proposal')
 	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
 	print '</td></tr>'."\n";
-
-
 }
 
 

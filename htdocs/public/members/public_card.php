@@ -113,7 +113,6 @@ if ($id > 0)
 
 		print '</table>';
 	}
-
 }
 
 

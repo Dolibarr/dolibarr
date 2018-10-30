@@ -72,7 +72,10 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
 
+ALTER TABLE llx_payment_salary ADD COLUMN ref varchar(30) NULL after rowid;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
+
+ALTER TABLE llx_payment_various ADD COLUMN ref varchar(30) NULL after rowid;
 
 ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
 
@@ -156,3 +159,7 @@ ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bank (fk_bank)
 ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_paiement (fk_paiement);
 
 INSERT INTO llx_bordereau_chequedet (fk_bordereau, fk_bank, fk_paiement, type_line, emetteur, amount, num_chq, banque, datec) SELECT b.fk_bordereau, b.rowid as fk_bank, IF(ISNULL(p.rowid), 0, p.rowid) as fk_paiement, 'bank' as type_line, b.emetteur, b.amount, b.num_chq, b.banque, b.datec FROM llx_bank as b LEFT JOIN llx_paiement as p ON p.fk_bank=b.rowid WHERE b.fk_bordereau <> 0
+
+UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
+
+

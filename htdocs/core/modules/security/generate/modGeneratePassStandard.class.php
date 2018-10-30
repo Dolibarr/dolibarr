@@ -117,7 +117,6 @@ class modGeneratePassStandard extends ModeleGenPassword
 				$password .= $char;
 				$i++;
 			}
-
 		}
 
 		// done!

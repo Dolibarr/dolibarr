@@ -611,7 +611,6 @@ class Societe extends CommonObject
 				$this->db->rollback();
 				return $result;
 			}
-
 		}
 		else
 		{
@@ -1001,7 +1000,6 @@ class Societe extends CommonObject
 					$sql .=",localtax1_value =".$this->localtax1_value;
 				}
 				else $sql .=",localtax1_value =0.000";
-
 			}
 			else $sql .=",localtax1_value =0.000";
 
@@ -1012,7 +1010,6 @@ class Societe extends CommonObject
 					$sql .=",localtax2_value =".$this->localtax2_value;
 				}
 				else $sql .=",localtax2_value =0.000";
-
 			}
 			else $sql .=",localtax2_value =0.000";
 
@@ -2098,11 +2095,11 @@ class Societe extends CommonObject
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false) $label.= '<br><b>' . $langs->trans('ProfId5'.$this->country_code) . ':</b> '. $this->idprof5;
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false) $label.= '<br><b>' . $langs->trans('ProfId6'.$this->country_code) . ':</b> '. $this->idprof6;
 		}
-		if (! empty($this->code_client) && $this->client)
+		if (! empty($this->code_client) && ($this->client == 1 || $this->client == 3))
 			$label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
 		if (! empty($this->code_fournisseur) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
-		if (! empty($conf->accounting->enabled) && $this->client)
+		if (! empty($conf->accounting->enabled) && ($this->client == 1 || $this->client == 3))
 			$label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. ($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (! empty($conf->accounting->enabled) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
@@ -3177,7 +3174,6 @@ class Societe extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

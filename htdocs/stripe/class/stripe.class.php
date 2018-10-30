@@ -284,7 +284,6 @@ class Stripe extends CommonObject
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
-
 				}
 				elseif ($createifnotlinkedtostripe)
 				{

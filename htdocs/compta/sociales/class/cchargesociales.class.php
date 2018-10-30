@@ -201,8 +201,6 @@ class Cchargesociales
 				$this->fk_pays = $obj->fk_pays;
 				$this->module = $obj->module;
 				$this->accountancy_code = $obj->accountancy_code;
-
-
 			}
 			$this->db->free($resql);
 
