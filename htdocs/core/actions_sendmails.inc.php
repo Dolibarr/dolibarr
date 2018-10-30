@@ -496,5 +496,4 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';
 	}
-
 }

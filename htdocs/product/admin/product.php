@@ -127,7 +127,6 @@ if ($action == 'other')
 				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
-
 	}
 
 	$value = GETPOST('PRODUIT_SOUSPRODUITS','alpha');

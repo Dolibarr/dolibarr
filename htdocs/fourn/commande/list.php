@@ -263,7 +263,6 @@ if (empty($reshook))
 				$res = $object->create($user);
 
 				if($res > 0) $nb_bills_created++;
-
 			}
 
 			if ($object->id > 0)

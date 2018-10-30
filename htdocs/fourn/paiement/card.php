@@ -166,7 +166,6 @@ if ($result > 0)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-
 	}
 
 	/*
@@ -175,7 +174,6 @@ if ($result > 0)
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-
 	}
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/paiement.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
@@ -345,7 +343,6 @@ if ($result > 0)
 		   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-
 			}
 		}
 	}

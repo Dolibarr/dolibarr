@@ -151,7 +151,6 @@ if ($action == 'add' || $action == 'update')
             $action= "edit";
         }
     }
-
 }
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
@@ -291,7 +290,6 @@ if ($action == 'create')
         print '</div>'."\n";
 
         print '</form>'."\n";
-
     }
 }
 elseif ($action == 'edit')
@@ -486,7 +484,6 @@ else
         }
         print '</div>';
     }
-
 }
 
 

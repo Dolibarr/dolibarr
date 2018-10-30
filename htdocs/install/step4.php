@@ -109,7 +109,6 @@ if ($db->ok)
         print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
         $error=0;	// We show button
     }
-
 }
 
 $ret=0;

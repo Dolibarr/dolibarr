@@ -173,7 +173,6 @@ class modStock extends DolibarrModules
 		$this->rights[9][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[9][4] = 'inventory_advance';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[9][5] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
 		}
 
 		// Main menu entries
@@ -273,7 +272,7 @@ class modStock extends DolibarrModules
 			'e.rowid'=>'IdWarehouse','e.ref'=>'LocationSummary','e.description'=>'DescWareHouse','e.lieu'=>'LieuWareHouse','e.address'=>'Address','e.zip'=>'Zip',
 			'e.town'=>'Town','p.rowid'=>"ProductId",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",
 			'p.price'=>"Price",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell",'p.tobuy'=>'OnBuy','p.duration'=>"Duration",'p.datec'=>'DateCreation',
-			'p.tms'=>'DateModification','sm.rowid'=>'MovementId','sm.value'=>'Qty','sm.datem'=>'DateMovement','sm.label'=>'LabelMovement',
+			'p.tms'=>'DateModification','sm.rowid'=>'MovementId','sm.value'=>'Qty','sm.datem'=>'DateMovement','sm.label'=>'MovementLabel',
 			'sm.inventorycode'=>'InventoryCode'
 		);
 		$this->export_TypeFields_array[$r]=array(

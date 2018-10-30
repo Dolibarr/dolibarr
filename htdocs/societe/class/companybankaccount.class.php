@@ -184,7 +184,6 @@ class CompanyBankAccount extends Account
 		{
 			return 1;
 		}
-
 		}
 		else
 		{

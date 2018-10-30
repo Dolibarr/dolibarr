@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -816,9 +817,9 @@ class AccountancyCategory // extends CommonObject
 	 * Get all accounting account of a group.
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
-	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
-	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
-	 * @return 	array|int       				Array of accounting accounts or -1 if error
+	 * @param 	int 		$cat_id 				Id if personalized accounting group/category
+	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
+	 * @return 	array|int							Array of accounting accounts or -1 if error
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{

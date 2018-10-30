@@ -1070,7 +1070,6 @@ class Thirdparties extends DolibarrApi
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;
-
 				}
 			$returnAccounts[] = $object;
 		}
@@ -1332,7 +1331,6 @@ class Thirdparties extends DolibarrApi
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;
-
 				}
 			$returnAccounts[] = $object;
 		}

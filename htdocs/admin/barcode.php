@@ -75,7 +75,6 @@ else if ($action == 'update')
 else if ($action == 'updateengine')
 {
     // TODO Update engines.
-
 }
 
 if ($action && $action != 'setcoder' && $action != 'setModuleOptions')

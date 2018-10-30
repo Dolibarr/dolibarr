@@ -135,7 +135,6 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-
     }
   	else
     {

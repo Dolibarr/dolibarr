@@ -261,7 +261,6 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 						$error++;
 						break;
 					}
-
 				}
 			}
 
@@ -270,7 +269,6 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 				header('Location: ' . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $id);
 				exit();
 			}
-
 		} else {
 			$db->rollback();
 			$action = 'create';

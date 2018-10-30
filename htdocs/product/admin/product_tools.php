@@ -267,7 +267,6 @@ if ($action == 'convert')
 		{
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
-
 	}
 }
 

@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/product/stock/mouvement.php
+ *	\file       htdocs/product/stock/movement_list.php
  *	\ingroup    stock
  *	\brief      Page to list stock movements
  */
@@ -43,7 +43,7 @@ if (! empty($conf->projet->enabled))
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks'));
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 // Security check
@@ -103,7 +103,7 @@ $arrayfields=array(
     'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
     'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
     'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
-    'm.label'=>array('label'=>$langs->trans("LabelMovement"), 'checked'=>1),
+    'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
     'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1),
     'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
@@ -385,7 +385,7 @@ if ($action == "transfert_stock" && ! $cancel)
                 }
                 else
                 {
-                    header("Location: mouvement.php?id=".$object->id);
+                    header("Location: movement_list.php?id=".$object->id);
                     exit;
                 }
             }
@@ -478,11 +478,11 @@ if (! empty($search_movement))      $sql.= natural_search('m.label', $search_mov
 if (! empty($search_inventorycode)) $sql.= natural_search('m.inventorycode', $search_inventorycode);
 if (! empty($search_product_ref))   $sql.= natural_search('p.ref', $search_product_ref);
 if (! empty($search_product))       $sql.= natural_search('p.label', $search_product);
-if ($search_warehouse > 0)          $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
+if ($search_warehouse != '' && $search_warehouse != '-1')          $sql.= natural_search('e.rowid', $search_warehouse, 2);
 if (! empty($search_user))          $sql.= natural_search('u.login', $search_user);
 if (! empty($search_batch))         $sql.= natural_search('m.batch', $search_batch);
 if ($search_qty != '')				$sql.= natural_search('m.value', $search_qty, 1);
-if ($search_type_mouvement)	$sql.= " AND m.type_mouvement = '".$db->escape($search_type_mouvement)."'";
+if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql.= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -579,8 +579,10 @@ if ($resql)
 
         print '<table class="border" width="100%">';
 
+        print '<tr>';
+
         // Description
-        print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
+        print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
         $calcproductsunique=$object->nb_different_products();
         $calcproducts=$object->nb_products();
@@ -841,13 +843,14 @@ if ($resql)
 	    // Type of movement
 	    print '<td class="liste_titre" align="center">';
 	    //print '<input class="flat" type="text" size="3" name="search_type_mouvement" value="'.dol_escape_htmltag($search_type_mouvement).'">';
-		print '<select name="search_type_mouvement">';
+		print '<select id="search_type_mouvement" name="search_type_mouvement" class="maxwidth150">';
 		print '<option value="" '.(($search_type_mouvement=="")?'selected="selected"':'').'></option>';
-		print '<option value="0" '.(($search_type_mouvement=="0")?'selected="selected"':'').'>0</option>';
-		print '<option value="1" '.(($search_type_mouvement=="1")?'selected="selected"':'').'>1</option>';
-		print '<option value="2" '.(($search_type_mouvement=="2")?'selected="selected"':'').'>2</option>';
-		print '<option value="3" '.(($search_type_mouvement=="3")?'selected="selected"':'').'>3</option>';
+		print '<option value="0" '.(($search_type_mouvement=="0")?'selected="selected"':'').'>'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</option>';
+		print '<option value="1" '.(($search_type_mouvement=="1")?'selected="selected"':'').'>'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</option>';
+		print '<option value="2" '.(($search_type_mouvement=="2")?'selected="selected"':'').'>'.$langs->trans('StockDecrease').'</option>';
+		print '<option value="3" '.(($search_type_mouvement=="3")?'selected="selected"':'').'>'.$langs->trans('StockIncrease').'</option>';
 		print '</select>';
+		print ajax_combobox('search_type_mouvement');
 		// TODO: add new function $formentrepot->selectTypeOfMovement(...) like
 		// print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
 	    print '</td>';
@@ -966,7 +969,7 @@ if ($resql)
 			$origin = '';
 		}
 
-        print "<tr>";
+        print '<tr class="oddeven">';
         // Id movement
         if (! empty($arrayfields['m.rowid']['checked']))
         {
@@ -980,7 +983,7 @@ if ($resql)
         if (! empty($arrayfields['p.ref']['checked']))
         {
 	        // Product ref
-	        print '<td>';
+	        print '<td class="nowraponall">';
 	        print $productstatic->getNomUrl(1,'stock',16);
 	        print "</td>\n";
         }
@@ -997,7 +1000,7 @@ if ($resql)
         }
         if (! empty($arrayfields['m.batch']['checked']))
         {
-	    	print '<td align="center">';
+	    	print '<td class="center nowraponall">';
 	    	if ($productlot->id > 0) print $productlot->getNomUrl(1);
 	    	else print $productlot->batch;		// the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 	    	print '</td>';
@@ -1028,7 +1031,7 @@ if ($resql)
         {
 	        // Inventory code
 	        print '<td>'.'<a href="'
-								.DOL_URL_ROOT.'/product/stock/mouvement.php'
+								.DOL_URL_ROOT.'/product/stock/movement_list.php'
 								.'?id='.$objp->entrepot_id
 								.'&amp;search_inventorycode='.$objp->inventorycode
 							    .'&amp;search_type_mouvement='.$objp->type_mouvement
@@ -1050,7 +1053,7 @@ if ($resql)
         if (! empty($arrayfields['origin']['checked']))
         {
         	// Origin of movement
-        	print '<td>'.$origin.'</td>';
+        	print '<td class="nowraponall">'.$origin.'</td>';
         }
         if (! empty($arrayfields['m.value']['checked']))
         {

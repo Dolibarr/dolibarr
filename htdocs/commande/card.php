@@ -423,7 +423,6 @@ if (empty($reshook))
 						// modified by hook
 						if ($reshook < 0)
 							$error++;
-
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;

@@ -750,6 +750,7 @@ LinkToIntervention=Link to intervention
 CreateDraft=Create draft
 SetToDraft=Back to draft
 ClickToEdit=Click to edit
+ClickToRefresh=Click to refresh
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
 EditHTMLSource=Edit HTML Source
@@ -870,6 +871,8 @@ NewLeadOrProject=New lead or project
 Rights=Permissions
 LineNb=Line no.
 IncotermLabel=Incoterms
+TabLetteringCustomer=Customer lettering
+TabLetteringSupplier=Supplier lettering
 # Week day
 Monday=Monday
 Tuesday=Tuesday

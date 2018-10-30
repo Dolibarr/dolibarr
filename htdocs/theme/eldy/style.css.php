@@ -1856,7 +1856,7 @@ foreach($mainmenuusedarray as $val)
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 13px;
+	font-size: 14px;
 	vertical-align: middle;
 }
 .login_table_title {
@@ -3271,7 +3271,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats130 {
     width: 158px;
     height: 48px;
-    padding: 3px
+    padding: 3px;
 }
 .boxstats {
     padding: 3px;

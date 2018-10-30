@@ -362,7 +362,6 @@ class Mailing extends CommonObject
 							'source_id'=>$obj->source_id,
 							'source_type'=>$obj->source_type);
 						}
-
 					}
 				}
 				else
@@ -373,7 +372,6 @@ class Mailing extends CommonObject
 
 				$mailing_target->add_to_target($object->id, $target_array);
 			}
-
 		}
 
 		unset($object->context['createfromclone']);

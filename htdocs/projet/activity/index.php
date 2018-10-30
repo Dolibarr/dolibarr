@@ -325,7 +325,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print '</td>';
     		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
-
     	}
     	$db->free($resql);
     }
@@ -376,7 +375,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 			print "</tr>\n";
-
 		}
 		$db->free($resql);
 	}
@@ -570,7 +568,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	{
 		dol_print_error($db);
 	}
-
 }
 
 

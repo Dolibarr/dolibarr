@@ -19,6 +19,7 @@
 create table llx_payment_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  ref             varchar(30) NOT NULL,       -- payment reference number
   tms             timestamp,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
@@ -28,7 +29,7 @@ create table llx_payment_salary
   amount          double(24,8) NOT NULL DEFAULT 0,
   fk_projet       integer DEFAULT NULL,
   fk_typepayment  integer NOT NULL,
-  num_payment     varchar(50),                -- ref
+  num_payment     varchar(50),                -- num cheque or other
   label           varchar(255),
   datesp          date,                       -- date start period
   dateep          date,                       -- date end period

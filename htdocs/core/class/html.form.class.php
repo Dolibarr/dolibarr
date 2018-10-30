@@ -58,6 +58,11 @@ class Form
 	 */
 	public $error='';
 
+    /**
+     * @var string[]    Array of error strings
+     */
+    public $errors = array();
+
 	public $num;
 
 	// Cache arrays
@@ -2067,6 +2072,12 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
 		}
 
+		// include search in supplier ref
+		if(!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF))
+		{
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+		}
+
 		//Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 			$sql.=" LEFT JOIN  ".MAIN_DB_PREFIX."product_customer_price as pcp ON pcp.fk_soc=".$socid." AND pcp.fk_product=p.rowid";
@@ -2119,6 +2130,7 @@ class Form
 				if ($i > 0) $sql.=" AND ";
 				$sql.="(p.ref LIKE '".$db->escape($prefix.$crit)."%' OR p.label LIKE '".$db->escape($prefix.$crit)."%'";
 				if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$db->escape($prefix.$crit)."%'";
+				if (! empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) $sql.=" OR pfp.ref_fourn LIKE '".$db->escape($prefix.$crit)."%'";
 				$sql.=")";
 				$i++;
 			}
@@ -3271,17 +3283,17 @@ class Form
 			if ($empty && empty($arraytypes['code'])) continue;
 
 			if ($format == 0) print '<option value="'.$id.'"';
-			if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
-			if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
-			if ($format == 3) print '<option value="'.$id.'"';
+			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+			elseif ($format == 3) print '<option value="'.$id.'"';
 			// Si selected est text, on compare avec code, sinon avec id
 			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
 			elseif ($selected == $id) print ' selected';
 			print '>';
 			if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
-			if ($format == 1) $value=$arraytypes['code'];
-			if ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
-			if ($format == 3) $value=$arraytypes['code'];
+			elseif ($format == 1) $value=$arraytypes['code'];
+			elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
+			elseif ($format == 3) $value=$arraytypes['code'];
 			print $value?$value:'&nbsp;';
 			print '</option>';
 		}
@@ -3491,13 +3503,19 @@ class Form
 
 			while($res = $this->db->fetch_object($resql))
 			{
+			    $unitLabel = $res->label;
+			    if (! empty($langs->tab_translate['unit'.$res->code]))	// check if Translation is available before
+			    {
+			        $unitLabel = $langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label;
+			    }
+
 				if ($selected == $res->rowid)
 				{
-					$return.='<option value="'.$res->rowid.'" selected>'.($langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label).'</option>';
+				    $return.='<option value="'.$res->rowid.'" selected>'.$unitLabel.'</option>';
 				}
 				else
 				{
-					$return.='<option value="'.$res->rowid.'">'.($langs->trans('unit'.$res->code)!=$res->label?$langs->trans('unit'.$res->code):$res->label).'</option>';
+				    $return.='<option value="'.$res->rowid.'">'.$unitLabel.'</option>';
 				}
 			}
 			$return.='</select>';
@@ -3717,6 +3735,7 @@ class Form
 	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
 	{
         // phpcs:enable
+        dol_syslog(__METHOD__ . ': using form_confirm is deprecated. Use formconfim instead.', LOG_WARNING);
 		print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
 	}
 
@@ -3787,18 +3806,18 @@ class Form
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td align="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
-					else if ($input['type'] == 'password')
+					elseif ($input['type'] == 'password')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
-					else if ($input['type'] == 'select')
+					elseif ($input['type'] == 'select')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
 						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop" align="left">';
 						$more.=$this->selectarray($input['name'],$input['values'],$input['default'],1,0,0,$moreattr,0,0,0,'',$morecss);
 						$more.='</td></tr>'."\n";
 					}
-					else if ($input['type'] == 'checkbox')
+					elseif ($input['type'] == 'checkbox')
 					{
 						$more.='<tr>';
 						$more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].' </td><td align="left">';
@@ -3809,7 +3828,7 @@ class Form
 						$more.=' /></td>';
 						$more.='</tr>'."\n";
 					}
-					else if ($input['type'] == 'radio')
+					elseif ($input['type'] == 'radio')
 					{
 						$i=0;
 						foreach($input['values'] as $selkey => $selval)
@@ -3825,7 +3844,7 @@ class Form
 							$i++;
 						}
 					}
-					else if ($input['type'] == 'date')
+					elseif ($input['type'] == 'date')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
 						$more.='<td align="left">';
@@ -3837,7 +3856,7 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
 					}
-					else if ($input['type'] == 'other')
+					elseif ($input['type'] == 'other')
 					{
 						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
 						if (! empty($input['label'])) $more.=$input['label'].'</td><td align="left">';
@@ -3845,7 +3864,7 @@ class Form
 						$more.='</td></tr>'."\n";
 					}
 
-					else if ($input['type'] == 'onecolumn')
+					elseif ($input['type'] == 'onecolumn')
 					{
 						$more.='<tr><td colspan="2" align="left">';
 						$more.=$input['value'];
@@ -3894,7 +3913,7 @@ class Form
 			$formconfirm.= ($question ? '<div class="confirmmessage">'.img_help('','').' '.$question . '</div>': '');
 			$formconfirm.= '</div>'."\n";
 
-			$formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
+			$formconfirm.= "\n<!-- begin ajax formconfirm page=".$page." -->\n";
 			$formconfirm.= '<script type="text/javascript">'."\n";
 			$formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
@@ -3965,11 +3984,11 @@ class Form
             });
             });
             </script>';
-			$formconfirm.= "<!-- end ajax form_confirm -->\n";
+			$formconfirm.= "<!-- end ajax formconfirm -->\n";
 		}
 		else
 		{
-			$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
+			$formconfirm.= "\n<!-- begin formconfirm page=".$page." -->\n";
 
 			if (empty($disableformtag)) $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
 
@@ -4003,7 +4022,7 @@ class Form
 			if (empty($disableformtag)) $formconfirm.= "</form>\n";
 			$formconfirm.= '<br>';
 
-			$formconfirm.= "<!-- end form_confirm -->\n";
+			$formconfirm.= "<!-- end formconfirm -->\n";
 		}
 
 		return $formconfirm;
@@ -4570,6 +4589,7 @@ class Form
 	 *
 	 *    @param	string	$selected    preselected currency code
 	 *    @param    string	$htmlname    name of HTML select list
+     *    @deprecated
 	 *    @return	void
 	 */
 	function select_currency($selected='',$htmlname='currency_id')
@@ -4666,7 +4686,6 @@ class Form
 					$out.= '</option>';
 				}
 			}
-
 		}
 
 		$out.= '</select>';
@@ -4958,7 +4977,7 @@ class Form
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
-	 *  @return	string|null					Nothing or string if nooutput is 1
+	 *  @return	string|void					Nothing or string if nooutput is 1
      *  @deprecated
 	 *  @see    form_date, select_month, select_year, select_dayofweek
 	 */
@@ -5356,7 +5375,7 @@ class Form
 	 *						            if 'textselect' input hour is in text and input min is a combo
 	 *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
 	 * 	@param	int	$nooutput		    Do not output html string but return it
-	 *  @return	string|null
+	 *  @return	string|void
 	 */
 	function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0, $nooutput=0)
 	{
@@ -6939,7 +6958,6 @@ class Form
 				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
 				$ret.='</table>';
 			}
-
 		}
 		else dol_print_error('','Call of showphoto with wrong parameters modulepart='.$modulepart);
 
@@ -7127,7 +7145,7 @@ class Form
 	}
 
 	/**
-	 * Return HTML to show the select categories of expense category
+	 * Return HTML to show the select of expense categories
 	 *
 	 * @param	string	$selected              preselected category
 	 * @param	string	$htmlname              name of HTML select list
@@ -7143,7 +7161,7 @@ class Form
 		global $db, $conf, $langs, $user;
 
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
-		$sql.= ' AND entity IN (0,'.getEntity('').')';
+		$sql.= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) $sql.= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
 		$sql.= ' ORDER BY label';
 

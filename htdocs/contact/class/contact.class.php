@@ -893,6 +893,7 @@ class Contact extends CommonObject
 		$sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.=" WHERE ec.fk_c_type_contact = tc.rowid";
 		$sql.=" AND fk_socpeople = ". $this->id;
+		$sql.=" AND tc.source = 'external'";
 		$sql.=" GROUP BY tc.element";
 
 		dol_syslog(get_class($this)."::load_ref_elements", LOG_DEBUG);
@@ -1245,7 +1246,6 @@ class Contact extends CommonObject
 		{
 			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
 			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
-
 		}
 		elseif ($mode == 3)
 		{

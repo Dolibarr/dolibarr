@@ -189,7 +189,6 @@ else
          print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
       print '</tr>';
    }
-
 }
 print '</table>';
 print '</div>';

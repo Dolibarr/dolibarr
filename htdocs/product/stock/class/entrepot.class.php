@@ -416,11 +416,9 @@ class Entrepot extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

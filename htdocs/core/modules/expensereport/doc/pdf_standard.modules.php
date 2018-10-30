@@ -278,7 +278,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref_number));
+				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Trips"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
@@ -479,7 +479,6 @@ class pdf_standard extends ModeleExpenseReport
 						$pagenb++;
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
-
 				}
 
 				// Show square

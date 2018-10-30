@@ -110,8 +110,6 @@ class Facture extends CommonInvoice
 	public $fk_user_valid;
 
 	public $date;              // Date invoice
-	public $date_creation;		// Creation date
-	public $date_validation;	// Validation date
 	public $datem;
 	public $ref_client;
 	public $ref_int;
@@ -253,7 +251,7 @@ class Facture extends CommonInvoice
 	 * If paid partially, $this->close_code can be:
 	 * - CLOSECODE_DISCOUNTVAT
 	 * - CLOSECODE_BADDEBT
-	 * If paid completelly, this->close_code will be null
+	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -992,6 +990,7 @@ class Facture extends CommonInvoice
 		$this->user_valid         = '';
 		$this->fk_facture_source  = 0;
 		$this->date_creation      = '';
+		$this->date_modification = '';
 		$this->date_validation    = '';
 		$this->ref_client         = '';
 		$this->close_code         = '';
@@ -1361,6 +1360,7 @@ class Facture extends CommonInvoice
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
 				$this->date_creation		= $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
+				$this->date_modification		= $this->db->jdate($obj->datem);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
@@ -1771,9 +1771,9 @@ class Facture extends CommonInvoice
 			$facligne->total_ttc = -$remise->amount_ttc;
 
 			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
-			$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
-			$facligne->multicurrency_total_tva = -$remise->multicurrency_total_tva;
-			$facligne->multicurrency_total_ttc = -$remise->multicurrency_total_ttc;
+			$facligne->multicurrency_total_ht = -$remise->multicurrency_amount_ht;
+			$facligne->multicurrency_total_tva = -$remise->multicurrency_amount_tva;
+			$facligne->multicurrency_total_ttc = -$remise->multicurrency_amount_ttc;
 
 			$lineid=$facligne->insert();
 			if ($lineid > 0)
@@ -2442,7 +2442,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (! $error)
 			{
 				$this->ref = $num;
@@ -2465,7 +2465,6 @@ class Facture extends CommonInvoice
     				else $this->situation_final = 1;
 
 				$this->setFinal($user);
-
                 }
 			}
 		}
@@ -4713,7 +4712,6 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->db->commit();
 			return $this->id;
-
 		}
 		else
 		{
@@ -4952,7 +4950,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {
-		    // If invoice is a not a situation invoice, this->fk_prev_id is used for something else
+		    // If invoice is not a situation invoice, this->fk_prev_id is used for something else
             $tmpinvoice=new Facture($this->db);
             $tmpinvoice->fetch($invoiceid);
             if ($tmpinvoice->type != Facture::TYPE_SITUATION) return 0;

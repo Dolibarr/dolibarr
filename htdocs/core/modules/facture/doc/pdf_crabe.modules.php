@@ -1202,7 +1202,6 @@ class pdf_crabe extends ModelePDFFactures
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
 							}
 						}
 					}
@@ -1225,7 +1224,6 @@ class pdf_crabe extends ModelePDFFactures
 							$this->tva[$tvakey]=$tvaval * $coef_fix_tva;
 						}
 					}
-
 				}
 
 				foreach($this->tva as $tvakey => $tvaval)
@@ -1516,9 +1514,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$pdf->MultiCell($this->postotalht-$this->posxprogress,2, $outputlangs->transnoentities("Progress"),'','C');
 				}
-
 			}
-
 		}
 
 		if($conf->global->PRODUCT_USE_UNITS) {
@@ -1598,26 +1594,29 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
-		if ($this->emetteur->logo)
+		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO))
 		{
-			if (is_readable($logo))
+			$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+			if ($this->emetteur->logo)
 			{
-			    $height=pdf_getHeightForLogo($logo);
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
+				if (is_readable($logo))
+				{
+				    $height=pdf_getHeightForLogo($logo);
+					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
+				}
+				else
+				{
+					$pdf->SetTextColor(200,0,0);
+					$pdf->SetFont('','B',$default_font_size - 2);
+					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+				}
 			}
 			else
 			{
-				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B',$default_font_size - 2);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+				$text=$this->emetteur->name;
+				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 			}
-		}
-		else
-		{
-			$text=$this->emetteur->name;
-			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 		$pdf->SetFont('','B', $default_font_size + 3);

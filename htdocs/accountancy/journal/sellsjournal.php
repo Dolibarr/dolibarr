@@ -500,7 +500,6 @@ if ($action == 'writebookkeeping') {
 				break;  // Break in the foreach
 			}
 		}
-
 	}
 
 	$tabpay = $tabfac;

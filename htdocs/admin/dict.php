@@ -705,7 +705,6 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             {
                 $obj = $db->fetch_object($result);
                 $newid=($obj->newid + 1);
-
             } else {
                 dol_print_error($db);
             }

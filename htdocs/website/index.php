@@ -207,7 +207,7 @@ $htmlheadercontentdefault.='-->'."\n";
  * Actions
  */
 
-$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir','alpha')?'&section_dir='.urlencode(GETPOST('section_dir','alpha')):'');	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
@@ -1543,7 +1543,6 @@ if ($action == 'importsiteconfirm')
 				}
 			}
 		}
-
 	}
 }
 
@@ -2659,7 +2658,6 @@ if ($action == 'editfile' || $action == 'file_manager')
 	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 	print '</div>';
-
 }
 
 if ($action == 'editmenu')

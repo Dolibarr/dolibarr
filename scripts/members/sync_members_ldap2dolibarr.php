@@ -299,7 +299,6 @@ if ($result >= 0)
 				//print "yy".dol_print_date($datelast)."\n";
 				$crowid=$member->subscription($datelast, $pricelast, 0);
 			}
-
 		}
 
 		if (! $error || $forcecommit)

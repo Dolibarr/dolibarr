@@ -620,7 +620,6 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 		header("Location: ".$urlok);
 		exit;
 	}
-
 }
 
 

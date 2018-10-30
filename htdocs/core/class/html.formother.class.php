@@ -1212,7 +1212,6 @@ class FormOther
             }
 
             $boxlistb.= "<!-- End box right container -->\n";
-
         }
 
         return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);

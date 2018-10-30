@@ -175,7 +175,6 @@ class RejetPrelevement
 					$error++;
 					dol_syslog("RejetPrelevement::Create Error payment validation");
 				}
-
 			}
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);

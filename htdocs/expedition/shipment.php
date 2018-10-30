@@ -215,7 +215,6 @@ if (empty($reshook))
     }
 
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-
 }
 
 /*
@@ -257,7 +256,6 @@ if ($id > 0 || ! empty($ref))
 		if ($action == 'cloture')
 		{
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseShipment"),$langs->trans("ConfirmCloseShipment"),"confirm_cloture");
-
 		}
 
 		// Call Hook formConfirm
@@ -908,7 +906,6 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 
 				$somethingshown=1;
-
 			}
 			else
 			{

@@ -188,8 +188,6 @@ class Ctyperesource
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->active = $obj->active;
-
-
 			}
 
 			// Retrieve all extrafields for invoice
@@ -269,8 +267,6 @@ class Ctyperesource
 				$line->code = $obj->code;
 				$line->label = $obj->label;
 				$line->active = $obj->active;
-
-
 			}
 			$this->db->free($resql);
 

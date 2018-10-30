@@ -3127,11 +3127,8 @@ class Propal extends CommonObject
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture     = $cluser;
 				}
-
-
 			}
 			$this->db->free($result);
-
 		}
 		else
 		{

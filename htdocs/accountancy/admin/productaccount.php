@@ -173,7 +173,6 @@ if ($action == 'update') {
 
 				$cpt++;
 			}
-
 		}
 
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');

@@ -91,12 +91,13 @@ $planned_workload=$planned_workloadhour*3600+$planned_workloadmin*60;
 $userAccess=0;
 
 
-$parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 /*
  * Actions
  */
+
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
@@ -404,6 +405,14 @@ if ($id > 0 || ! empty($ref))
     print nl2br($object->description);
     print '</td></tr>';
 
+    // Bill time
+    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+    	print yn($object->bill_time);
+    	print '</td></tr>';
+    }
+
     // Categories
     if($conf->categorie->enabled) {
         print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -490,7 +499,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-	print $form->select_duration('planned_workload', $planned_workload?$planned_workload : $object->planned_workload,0,'text');
+	print $form->select_duration('planned_workload', $planned_workload?$planned_workload : 0, 0, 'text');
 	print '</td></tr>';
 
 	// Progress
@@ -506,11 +515,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Other options
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$taskstatic,$action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
+
     if (empty($reshook) && ! empty($extrafields_task->attribute_label))
 	{
-		print $object->showOptionals($extrafields_task,'edit');
+		print $taskstatic->showOptionals($extrafields_task,'edit');		// Do not use $object here that is object of project
 	}
 
 	print '</table>';
@@ -524,7 +534,6 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</div>';
 
 	print '</form>';
-
 }
 else if ($id > 0 || ! empty($ref))
 {

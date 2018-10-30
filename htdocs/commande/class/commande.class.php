@@ -108,8 +108,11 @@ class Commande extends CommonOrder
 	 */
 	public $billed;		// billed or not
 
-	public $brouillon;
-	public $cond_reglement_code;
+    /**
+     * @var int Draft Status of the order
+     */
+    public $brouillon;
+    public $cond_reglement_code;
 
 	/**
      * @var int ID
@@ -274,11 +277,11 @@ class Commande extends CommonOrder
 				$mybool|=@include_once $dir.$file;
 			}
 
-			if (! $mybool)
-			{
-				dol_print_error('',"Failed to include file ".$file);
-				return '';
-			}
+            if ($mybool === false)
+            {
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
+            }
 
 			$obj = new $classname();
 			$numref = $obj->getNextValue($soc,$this);
@@ -448,6 +451,7 @@ class Commande extends CommonOrder
 		{
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
+            $this->brouillon = 0;
 		}
 
 		if (! $error)
@@ -1620,7 +1624,7 @@ class Commande extends CommonOrder
 		$sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
 		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
 		$sql.= ', c.fk_account';
-		$sql.= ', c.date_commande';
+		$sql.= ', c.date_commande, c.date_valid, c.tms';
 		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_shipping_method';
 		$sql.= ', c.fk_warehouse';
@@ -1673,6 +1677,9 @@ class Commande extends CommonOrder
 				$this->total_ttc			= $obj->total_ttc;
 				$this->date					= $this->db->jdate($obj->date_commande);
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
+				$this->date_creation		= $this->db->jdate($obj->date_creation);
+				$this->date_validation		= $this->db->jdate($obj->date_valid);
+				$this->date_modification		= $this->db->jdate($obj->tms);
 				$this->remise				= $obj->remise;
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
@@ -3613,7 +3620,6 @@ class Commande extends CommonOrder
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -3772,7 +3778,7 @@ class Commande extends CommonOrder
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)

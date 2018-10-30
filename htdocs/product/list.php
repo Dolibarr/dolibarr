@@ -757,34 +757,34 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
-			// Duration
-			if (! empty($arrayfields['p.duration']['checked']))
+		// Duration
+		if (! empty($arrayfields['p.duration']['checked']))
+		{
+			print '<td align="center">';
+
+			if (preg_match('/([^a-z]+)[a-z]$/i',$obj->duration))
 			{
-				print '<td align="center">';
+				$duration_value	= substr($obj->duration,0,dol_strlen($obj->duration)-1);
+				$duration_unit	= substr($obj->duration,-1);
 
-				if (preg_match('/([^a-z]+)[a-z]$/i',$obj->duration))
+				if ((float) $duration_value > 1)
 				{
-					$duration_value	= substr($obj->duration,0,dol_strlen($obj->duration)-1);
-					$duration_unit	= substr($obj->duration,-1);
-
-					if ((float) $duration_value > 1)
-					{
-					    $dur=array("i"=>$langs->trans("Minutes"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-					}
-					else if ((float) $duration_value > 0)
-					{
-					    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-					}
-					print $duration_value;
-					print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
+				    $dur=array("i"=>$langs->trans("Minutes"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 				}
-				else
+				else if ((float) $duration_value > 0)
 				{
-					print $obj->duration;
+				    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 				}
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
+				print $duration_value;
+				print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
 			}
+			else
+			{
+				print $obj->duration;
+			}
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
 
 		// Sell price
 		if (! empty($arrayfields['p.sellprice']['checked']))

@@ -3,6 +3,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -560,9 +561,8 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch(OdfException $e)
-					{
+					} catch (OdfException $e) {
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -577,15 +577,12 @@ class doc_generic_task_odt extends ModelePDFTask
 					complete_substitutions_array($tmparray, $outputlangs, $object);
 					foreach($tmparray as $key => $val)
 					{
-						try
-						{
+						try {
 							$odfHandler->setVars($key, $val, true, 'UTF-8');
-						}
-						catch(OdfException $e)
-						{
-						}
-						catch(SegmentException $e)
-						{
+						} catch (OdfException $e) {
+							dol_syslog($e->getMessage(), LOG_INFO);
+						} catch(SegmentException $e) {
+							dol_syslog($e->getMessage(), LOG_INFO);
 						}
 					}
 
@@ -623,15 +620,13 @@ class doc_generic_task_odt extends ModelePDFTask
 
 							foreach($tmparray as $key => $val)
 							{
-								try
-								{
+								try {
 									$listlinestaskres->setVars($key, $val, true, 'UTF-8');
+								} catch (OdfException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
-								catch(OdfException $e)
-								{
-								}
-								catch(SegmentException $e)
-								{
+								catch (SegmentException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlinestaskres->merge();
@@ -677,9 +672,11 @@ class doc_generic_task_odt extends ModelePDFTask
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlinestasktime->merge();
@@ -710,9 +707,11 @@ class doc_generic_task_odt extends ModelePDFTask
 							}
 							catch(OdfException $e)
 							{
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
 							catch(SegmentException $e)
 							{
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
 						}
 						$listtasksfiles->merge();
@@ -720,7 +719,6 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
-
 				}
 				catch(OdfException $e)
 				{
@@ -753,9 +751,11 @@ class doc_generic_task_odt extends ModelePDFTask
 							}
 							catch(OdfException $e)
 							{
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
 							catch(SegmentException $e)
 							{
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
 						}
 						$listlines->merge();
@@ -811,9 +811,11 @@ class doc_generic_task_odt extends ModelePDFTask
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -838,16 +840,18 @@ class doc_generic_task_odt extends ModelePDFTask
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 				else {
 					try {
 						$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2005,7 +2006,6 @@ class Contrat extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2475,7 +2475,6 @@ class Contrat extends CommonObject
 				if ($reshook < 0)
 					$error ++;
 			}
-
 		}
 
 		unset($this->context['createfromclone']);
@@ -2859,7 +2858,6 @@ class ContratLigne extends CommonObjectLine
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->fk_fournprice, $obj->pa_ht);
 				$this->pa_ht = $marginInfos[0];
 				$this->fk_unit     = $obj->fk_unit;
-
 			}
 			$this->db->free($resql);
 
@@ -2887,9 +2885,9 @@ class ContratLigne extends CommonObjectLine
 		$error=0;
 
 		// Clean parameters
-		$this->fk_contrat=trim($this->fk_contrat);
-		$this->fk_product=trim($this->fk_product);
-		$this->statut=(int) $this->statut;
+		$this->fk_contrat = (int) $this->fk_contrat;
+		$this->fk_product = (int) $this->fk_product;
+		$this->statut = (int) $this->statut;
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->vat_src_code=trim($this->vat_src_code);
@@ -2899,7 +2897,7 @@ class ContratLigne extends CommonObjectLine
 		$this->qty=trim($this->qty);
 		$this->remise_percent=trim($this->remise_percent);
 		$this->remise=trim($this->remise);
-		$this->fk_remise_except=trim($this->fk_remise_except);
+		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice=price2num($this->subprice);
 		$this->price_ht=price2num($this->price_ht);
 		$this->total_ht=trim($this->total_ht);
@@ -2908,9 +2906,9 @@ class ContratLigne extends CommonObjectLine
 		$this->total_localtax2=trim($this->total_localtax2);
 		$this->total_ttc=trim($this->total_ttc);
 		$this->info_bits=trim($this->info_bits);
-		$this->fk_user_author=trim($this->fk_user_author);
-		$this->fk_user_ouverture=trim($this->fk_user_ouverture);
-		$this->fk_user_cloture=trim($this->fk_user_cloture);
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
+		$this->fk_user_cloture = (int) $this->fk_user_cloture;
 		$this->commentaire=trim($this->commentaire);
 		//if (empty($this->subprice)) $this->subprice = 0;
 		if (empty($this->price_ht)) $this->price_ht = 0;

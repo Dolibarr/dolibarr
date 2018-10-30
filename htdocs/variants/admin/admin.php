@@ -41,7 +41,6 @@ if ($_POST) {
        } else {
                setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
        }
-
 }
 
 $title = $langs->trans('ModuleSetup').' '.$langs->trans('ProductAttributes');

@@ -247,7 +247,6 @@ class BonPrelevement extends CommonObject
 				dol_syslog(get_class($this)."::addline Error -2");
 				$result = -2;
 			}
-
 		}
 
 		return $result;
@@ -515,7 +514,6 @@ class BonPrelevement extends CommonObject
 							dol_syslog(get_class($this)."::set_infocredit Update lines Error");
 							$error++;
 						}
-
 					}
 					else
 					{
@@ -1058,10 +1056,8 @@ class BonPrelevement extends CommonObject
 							$error++;
 							dol_syslog(__METHOD__."::Update Orders::Error=".$this->db->error(), LOG_ERR);
 						}
-
 					}
 				}
-
 			}
 
 			if (!$error)

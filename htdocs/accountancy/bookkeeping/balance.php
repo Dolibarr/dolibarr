@@ -315,7 +315,6 @@ if ($action != 'export_csv')
 
 	print "</table>";
 	print '</form>';
-
 }
 
 // End of page

@@ -413,7 +413,6 @@ class EmailSenderProfile extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

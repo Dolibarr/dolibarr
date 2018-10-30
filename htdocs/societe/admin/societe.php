@@ -211,6 +211,21 @@ if ($action=="setaskforshippingmet") {
 	}
 }
 
+//Activate "Disable prospect/customer type"
+if ($action=="setdisableprospectcustomer") {
+    $setdisableprospectcustomer = GETPOST('value','int');
+    $res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer,'yesno',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
 //Activate ProfId unique
 if ($action == 'setprofid')
 {
@@ -773,7 +788,6 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -791,7 +805,6 @@ if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -811,12 +824,29 @@ if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+// Disable Prospect/Customer thirdparty type
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("DisableProspectCustomerType").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+}
+else
+{
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
 }
 print '</a></td>';
 print '</tr>';

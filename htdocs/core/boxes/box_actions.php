@@ -232,7 +232,6 @@ class box_actions extends ModeleBoxes
 					}
 				}
 				$out.= '</table>';
-
 			}
 			$out.= '</div>';
 			if ($actioncejour)

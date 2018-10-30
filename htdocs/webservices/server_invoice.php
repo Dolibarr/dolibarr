@@ -635,7 +635,6 @@ function createInvoice($authentication,$invoice)
             $errorlabel=$new_invoice->error;
             dol_syslog("Function: createInvoice error while creating".$errorlabel);
         }
-
     }
 
     if ($error)
@@ -707,7 +706,6 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
 						$error++;
 						dol_syslog("Webservice server_invoice:: invoice creation from order failed", LOG_ERR);
 					}
-
 				}
 			}
 			else

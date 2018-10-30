@@ -122,8 +122,6 @@ class Stripe extends CommonObject
 	 */
 	public function getStripeCustomerAccount($id, $status=0)
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		$societeaccount = new SocieteAccount($this->db);
 		return $societeaccount->getCustomerAccount($id, 'stripe', $status);		// Get thirdparty cus_...
@@ -286,7 +284,6 @@ class Stripe extends CommonObject
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
-
 				}
 				elseif ($createifnotlinkedtostripe)
 				{

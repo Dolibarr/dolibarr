@@ -399,6 +399,12 @@ abstract class CommonObject
 	public $firstname;
 	public $civility_id;
 
+	// Dates
+	public $date_creation;			// Date creation
+	public $date_validation;		// Date validation
+	public $date_modification;		// Date last change (tms field)
+
+
 
 	// No constructor as it is an abstract class
 
@@ -1818,7 +1824,7 @@ abstract class CommonObject
 				$this->multicurrency_code = $code;
 
 				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
-				if ($rate) $this->setMulticurrencyRate($rate);
+				if ($rate) $this->setMulticurrencyRate($rate,2);
 
 				return 1;
 			}
@@ -1919,7 +1925,6 @@ abstract class CommonObject
 								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
 								break;
 						}
-
 					}
 				}
 
@@ -2809,7 +2814,6 @@ abstract class CommonObject
 								$this->total_ttc -= $diff;
 								$total_tva_by_vats[$obj->vatrate] -= $diff;
 								$total_ttc_by_vats[$obj->vatrate] -= $diff;
-
 					}
 				}
 
@@ -4624,7 +4628,6 @@ abstract class CommonObject
 				dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
 				return -1;
 			}
-
 		}
 		else
 		{
@@ -4810,6 +4813,7 @@ abstract class CommonObject
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				$this->array_options = array();
 				$numrows=$this->db->num_rows($resql);
 				if ($numrows)
 				{
@@ -5770,7 +5774,6 @@ abstract class CommonObject
 							}
 
 							$data[$obj->rowid]=$labeltoshow;
-
 						} else {
 							if (! $notrans) {
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -5799,7 +5802,6 @@ abstract class CommonObject
 					$this->db->free($resql);
 
 					$out=$form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
-
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
@@ -6179,7 +6181,6 @@ abstract class CommonObject
 					}
 				}
 				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-
 			} else {
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
 			}
@@ -6196,6 +6197,7 @@ abstract class CommonObject
 				$InfoFieldList = explode(":", $param_list[0]);
 				$classname=$InfoFieldList[0];
 				$classpath=$InfoFieldList[1];
+				$getnomurlparam=(empty($InfoFieldList[2]) ? 3 : $InfoFieldList[2]);
 				if (! empty($classpath))
 				{
 					dol_include_once($InfoFieldList[1]);
@@ -6203,7 +6205,7 @@ abstract class CommonObject
 					{
 						$object = new $classname($this->db);
 						$object->fetch($value);
-						$value=$object->getNomUrl(3);
+						$value=$object->getNomUrl($getnomurlparam);
 					}
 				}
 				else
@@ -6212,6 +6214,7 @@ abstract class CommonObject
 					return 'Error bad setup of extrafield';
 				}
 			}
+			else $value='';
 		}
 		elseif ($type == 'text' || $type == 'html')
 		{

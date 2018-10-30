@@ -64,7 +64,6 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1')
 {
-
 }
 
 $user = new User($db);
@@ -329,7 +328,6 @@ if ($resql)
 								if (!empty($conf->global->MAILING_DELAY)) {
 									sleep($conf->global->MAILING_DELAY);
 								}
-
 							}
 						}
 						else

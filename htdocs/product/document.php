@@ -113,7 +113,6 @@ if (empty($reshook))
 
 	// Action submit/delete file/link
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
-
 }
 
 if ($action=='filemerge')
