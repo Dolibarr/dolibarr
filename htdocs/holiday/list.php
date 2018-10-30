@@ -512,7 +512,7 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"cp.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"cp.ref","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("DateCreateCP",$_SERVER["PHP_SELF"],"cp.date_create","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("ValidatorCP",$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
@@ -546,7 +546,7 @@ elseif (! empty($holiday->holiday) && !empty($mysoc->country_id))
 	{
 		// Leave request
 		$holidaystatic->id=$infos_CP['rowid'];
-		$holidaystatic->ref=$infos_CP['rowid'];
+		$holidaystatic->ref=($infos_CP['ref']?$infos_CP['ref']:$infos_CP['rowid']);
 
 		// User
 		$userstatic->id=$infos_CP['fk_user'];
@@ -605,7 +605,6 @@ elseif (! empty($holiday->holiday) && !empty($mysoc->country_id))
 		print '</td>';
 
 		print '</tr>'."\n";
-
 	}
 }
 

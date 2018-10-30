@@ -688,7 +688,6 @@ if (! empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' 
 		$column='p.date_valid';
 		if (! empty($date_start) && ! empty($date_end))
 			$sql.= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
-
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
@@ -721,7 +720,6 @@ if (! empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' 
 
 				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 				$decaiss_ttc[$obj->dm] += $obj->amount_ttc;
-
 			}
 		}
 	}
@@ -729,7 +727,6 @@ if (! empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' 
 	{
 		dol_print_error($db);
 	}
-
 }
 elseif ($modecompta == 'BOOKKEEPING') {
 	// Nothing from this table

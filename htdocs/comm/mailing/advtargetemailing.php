@@ -467,7 +467,6 @@ if ($object->fetch($id) >= 0) {
 	if ($object->statut == 0 && $user->rights->mailing->creer) {
 
 		include DOL_DOCUMENT_ROOT . '/core/tpl/advtarget.tpl.php';
-
 	}
 }
 

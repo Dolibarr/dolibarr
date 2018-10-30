@@ -169,7 +169,6 @@ if ($action == 'presend')
 			$formmail->withtouser = $listeuser;
 			$formmail->withtoccuser = $listeuser;
 		}
-
 	}
 
 	$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;

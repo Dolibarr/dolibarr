@@ -132,9 +132,7 @@ if ($action == 'set')
 	{
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
-
 	}
-
 }
 
 // Set level

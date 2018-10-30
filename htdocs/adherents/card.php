@@ -789,7 +789,6 @@ if (empty($reshook))
 	$mode='emailfrommember';
 	$trackid='mem'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 }
 
 
@@ -1320,7 +1319,6 @@ else
 		print '</div>';
 
 		print '</form>';
-
 	}
 
 	if ($id > 0 && $action != 'edit')
@@ -1858,7 +1856,6 @@ else
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 					}
 				}
-
 			}
 		}
 		print '</div>';

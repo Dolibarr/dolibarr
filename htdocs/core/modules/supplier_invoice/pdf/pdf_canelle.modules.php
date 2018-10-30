@@ -243,7 +243,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
-
 			}
 
 			if (file_exists($dir))

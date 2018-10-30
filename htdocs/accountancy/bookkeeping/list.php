@@ -760,7 +760,6 @@ if ($num > 0)
 				else print '<td></td>';
 		}
 		print '</tr>';
-
 	}
 }
 

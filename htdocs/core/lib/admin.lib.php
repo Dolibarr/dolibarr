@@ -1233,7 +1233,6 @@ function activateModulesRequiredByCountry($country_code)
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
-
 						}
 						else dol_syslog("Module ".get_class($objMod)." not qualified");
 					}

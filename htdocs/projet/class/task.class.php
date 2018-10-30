@@ -1568,7 +1568,6 @@ class Task extends CommonObject
 			{
 				$clone_task->date_end			= $now + $clone_task->date_end - $orign_project_dt_start;
 			}
-
 		}
 
 		if (!$clone_prog)

@@ -545,8 +545,6 @@ class RssParser
             }
 
             $this->incontent = $el;
-
-
         }
 
         // if inside an Atom content construct (e.g. content or summary) field treat tags as text
@@ -734,7 +732,6 @@ class RssParser
             elseif ($this->inchannel) {
                 $this->concat($this->channel[ $el ], $text);
             }
-
         }
     }
 }
@@ -759,7 +756,6 @@ function xml2php($xml)
         foreach($value->attributes() as $ak=>$av)
         {
             $child[$ak] = (string) $av;
-
         }
 
         //Let see if the new child is not in the array

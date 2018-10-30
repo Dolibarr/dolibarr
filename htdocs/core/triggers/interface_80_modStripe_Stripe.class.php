@@ -200,7 +200,6 @@ class InterfaceStripe
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 
 			// For creation of credit card, we do not create in Stripe automatically
-
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);

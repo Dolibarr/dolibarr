@@ -169,7 +169,6 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
-
 		}
 	}
 	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok+$nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";

@@ -3616,7 +3616,6 @@ class Commande extends CommonOrder
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

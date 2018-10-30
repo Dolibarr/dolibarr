@@ -375,7 +375,6 @@ if ($action == 'create')
 			print '</td>';
 		}
 		print '</tr>' . "\n";
-
 	}
 
 	// Date

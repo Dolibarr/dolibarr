@@ -195,7 +195,6 @@ class PaymentSocialContribution extends CommonObject
 			{
 				$error++;
 			}
-
 		}
 
 		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE',$user);

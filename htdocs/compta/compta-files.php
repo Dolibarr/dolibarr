@@ -184,7 +184,6 @@ if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
          }
      }
      $db->free($resd);
-
 }
 /*
  * cleanup of old ZIP
@@ -293,7 +292,6 @@ if ($result)
                 print '<td></td>';
                 print "</tr>\n";
                 }
-
         }
 print "</table>";
 print   '<form name="dl" action="?action=dl" method="POST" >'."\n\t\t\t";

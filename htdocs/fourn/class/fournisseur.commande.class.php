@@ -2132,7 +2132,6 @@ class CommandeFournisseur extends CommonOrder
 		    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
 		    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
 		    		}
-
 		    	}
 	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to reception done, only if status of all line are ok (refuse denied)
 	    		{
@@ -3088,7 +3087,6 @@ class CommandeFournisseur extends CommonOrder
 							{
 								$close++;
 							}
-
 						}
 					}
 
@@ -3112,8 +3110,6 @@ class CommandeFournisseur extends CommonOrder
 							}
 							return 4;
 						}
-
-
 					}
 					else
 					{//all the products are not received
@@ -3123,7 +3119,6 @@ class CommandeFournisseur extends CommonOrder
 						}
 						return 4;
 					}
-
 				}
     				else
     				{

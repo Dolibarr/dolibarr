@@ -2387,7 +2387,6 @@ class Product extends CommonObject
 							$this->stats_commande['nb']+=$pFather->stats_commande['nb'];
 							$this->stats_commande['rows']+=$pFather->stats_commande['rows'];
 							$this->stats_commande['qty']+=$pFather->stats_commande['qty'] * $qtyCoef;
-
 						}
 					}
 				}
@@ -3552,7 +3551,6 @@ class Product extends CommonObject
 				dol_print_error($this->db);
 				return -1;
 			}
-
 		} else {
 			return false;
 		}
@@ -4856,7 +4854,6 @@ class Product extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

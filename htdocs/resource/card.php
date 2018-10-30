@@ -171,7 +171,6 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-
 			}
 			else
 			{

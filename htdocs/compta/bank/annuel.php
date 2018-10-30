@@ -339,7 +339,6 @@ else
 				$i++;
 			}
 			$db->free($resql);
-
 		}
 		else
 		{

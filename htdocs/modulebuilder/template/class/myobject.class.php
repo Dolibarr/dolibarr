@@ -182,7 +182,7 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 
@@ -197,6 +197,9 @@ class MyObject extends CommonObject
 				unset($this->fields[$key]);
 			}
 		}
+
+		// Translate some data
+		$this->fields['status']['arrayofkeyval']=array(0=>$langs->trans('Draft'), 1=>$langs->trans('Active'), -1=>$langs->trans('Cancel'));
 	}
 
 	/**
@@ -512,7 +515,6 @@ class MyObject extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

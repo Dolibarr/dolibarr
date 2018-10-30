@@ -136,7 +136,6 @@ function clean_data_ecm_directories()
 				$resqlupdate=$db->query($sqlupdate);
 				if (! $resqlupdate) dol_print_error($db,'Failed to update');
 			}
-
 		}
 	}
 	else dol_print_error($db,'Failed to run request');

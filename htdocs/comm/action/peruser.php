@@ -571,7 +571,6 @@ if ($resql)
             //print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
         }
         $i++;
-
     }
     $db->free($resql);
 }
@@ -798,7 +797,6 @@ while($currentdaytoshow<$lastdaytoshow) {
 	echo "<br>";
 
 	$currentdaytoshow =  dol_time_plus_duree($currentdaytoshow, 7, 'd');
-
 }
 
 echo '</div>';

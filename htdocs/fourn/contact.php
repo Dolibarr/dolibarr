@@ -123,7 +123,6 @@ if ($result)
     }
     print "</table>";
     $db->free($result);
-
 }
 else
 {

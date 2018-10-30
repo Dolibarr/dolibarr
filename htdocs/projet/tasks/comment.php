@@ -275,7 +275,6 @@ if ($id > 0 || ! empty($ref))
 
 		// Include comment tpl view
 		include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
-
 	}
 }
 

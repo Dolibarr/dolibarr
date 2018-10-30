@@ -517,7 +517,6 @@ else	// Show
             $text.= yn($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX,1);
             $text.= '</td></tr>';
         }
-
     }
 
     // Sales TAX / VAT information

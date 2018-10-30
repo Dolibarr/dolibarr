@@ -262,7 +262,6 @@ class PaiementFourn extends Paiement
 							$this->error=$this->db->lasterror();
 							$error++;
 						}
-
 					}
 					else
 					{

@@ -718,7 +718,6 @@ class FormFile
 				$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
 				$out.= $hookmanager->resPrint;
 			}
-
 		}
 
 		// Get list of files
@@ -848,7 +847,6 @@ class FormFile
 			{
 				$out.='<tr><td colspan="'.(3+($addcolumforpicto?1:0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
 			}
-
 		}
 
 		if ($headershown)
@@ -886,15 +884,13 @@ class FormFile
 		$out='';
 		$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
+		$entity = 1; // Without multicompany
+
 		// Get object entity
-		if (empty($conf->multicompany->enabled))
-		{
-			$entity = $conf->entity;
-		}
-		else
+		if (! empty($conf->multicompany->enabled))
 		{
 			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir,'/').'$/', $filedir, $regs);
-			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
+			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : 1); // If entity id not found in $filedir this is entity 1 by default
 		}
 
 		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)

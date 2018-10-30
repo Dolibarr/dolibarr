@@ -374,7 +374,6 @@ class DoliDBMssql extends DoliDB
                     $query="ALTER TABLE [".$matches[1]."] ADD CONSTRAINT [".$matches[2]."] PRIMARY KEY CLUSTERED (".$matches[3].")";
     		    }
     		}
-
 		}
 
 		if ($type=="auto" || $type='ddl')
@@ -416,7 +415,6 @@ class DoliDBMssql extends DoliDB
     	       $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
     	       @mssql_query($sql, $this->db);
     	       $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
-
     	   }
 		}
 		//print "<!--".$query."-->";

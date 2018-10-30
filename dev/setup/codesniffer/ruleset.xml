@@ -173,6 +173,7 @@
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
         <severity>0</severity>
     </rule>
+    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
 
     <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
 

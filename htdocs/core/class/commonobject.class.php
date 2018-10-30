@@ -1925,7 +1925,6 @@ abstract class CommonObject
 								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
 								break;
 						}
-
 					}
 				}
 
@@ -2815,7 +2814,6 @@ abstract class CommonObject
 								$this->total_ttc -= $diff;
 								$total_tva_by_vats[$obj->vatrate] -= $diff;
 								$total_ttc_by_vats[$obj->vatrate] -= $diff;
-
 					}
 				}
 
@@ -4630,7 +4628,6 @@ abstract class CommonObject
 				dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
 				return -1;
 			}
-
 		}
 		else
 		{
@@ -5777,7 +5774,6 @@ abstract class CommonObject
 							}
 
 							$data[$obj->rowid]=$labeltoshow;
-
 						} else {
 							if (! $notrans) {
 								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -5806,7 +5802,6 @@ abstract class CommonObject
 					$this->db->free($resql);
 
 					$out=$form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
-
 				} else {
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
@@ -6186,7 +6181,6 @@ abstract class CommonObject
 					}
 				}
 				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-
 			} else {
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
 			}

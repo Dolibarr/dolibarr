@@ -77,14 +77,39 @@ class Expedition extends CommonObject
 	public $picto = 'sending';
 
 	public $socid;
+
+	/**
+	 * @var string Customer ref
+	 */
 	public $ref_customer;
+
+	/**
+	 * @var string internal ref
+	 */
 	public $ref_int;
+
 	public $brouillon;
+
+	/**
+	 * @var int warehouse id
+	 */
 	public $entrepot_id;
 	public $lines=array();
+
+	/**
+	 * @var string Tracking number
+	 */
 	public $tracking_number;
+
+	/**
+	 * @var string Tracking url
+	 */
 	public $tracking_url;
 	public $billed;
+
+	/**
+	 * @var string name of pdf model
+	 */
 	public $model_pdf;
 
 	public $trueWeight;
@@ -383,7 +408,6 @@ class Expedition extends CommonObject
 						$this->db->rollback();
 						return -1*$error;
 					}
-
 				}
 				else
 				{
@@ -760,7 +784,6 @@ class Expedition extends CommonObject
 				$this->error=$this->db->error();
 				return -2;
 			}
-
 		}
 
 		// Change status of order to "shipment in process"
@@ -2129,7 +2152,6 @@ class Expedition extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror;
@@ -2256,7 +2278,6 @@ class Expedition extends CommonObject
 					$error++;
 				}
    			}
-
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror();
@@ -2344,13 +2365,18 @@ class ExpeditionLigne extends CommonObjectLine
 	public $table_element='expeditiondet';
 
 	/**
+	 * @deprecated
+	 * @see fk_origin_line
+	 */
+	public $origin_line_id;
+
+	/**
      * @var int ID
      */
 	public $fk_origin_line;
 
 	/**
-	 * Id of shipment
-	 * @var int
+	 * @var int Id of shipment
 	 */
 	public $fk_expedition;
 
@@ -2359,51 +2385,120 @@ class ExpeditionLigne extends CommonObjectLine
      */
     public $db;
 
-	// From llx_expeditiondet
-	var $qty;
-	var $qty_shipped;
-	var $fk_product;
-	var $detail_batch;
-	/**
-	 * Id of warehouse
-	 * @var int
-	 */
+    /**
+     * @var float qty asked From llx_expeditiondet
+     */
+    public $qty;
+
+    /**
+     * @var float qty shipped
+     */
+    public $qty_shipped;
+
+    /**
+     * @var int Id of product
+     */
+    public $fk_product;
+    public $detail_batch;
+
+    /**
+     * @var int Id of warehouse
+     */
 	public $entrepot_id;
 
 
-	// From llx_commandedet or llx_propaldet
-	var $qty_asked;
+    /**
+     * @var float qty asked From llx_commandedet or llx_propaldet
+     */
+	public $qty_asked;
+
+    /**
+     * @deprecated
+     * @see product_ref
+     */
+    public $ref;
+
+	/**
+	 * @var string product ref
+	 */
 	public $product_ref;
-	public $product_label;
-	public $product_desc;
 
-
-	// Invoicing
-	var $remise_percent;
-	var $total_ht;			// Total net of tax
-	var $total_ttc;			// Total with tax
-	var $total_tva;			// Total VAT
-	var $total_localtax1;   // Total Local tax 1
-	var $total_localtax2;   // Total Local tax 2
-
-
-
-	// Deprecated
-	/**
-	 * @deprecated
-	 * @see fk_origin_line
-	 */
-	var $origin_line_id;
-	/**
-	 * @deprecated
-	 * @see product_ref
-	 */
-	var $ref;
 	/**
 	 * @deprecated
 	 * @see product_label
 	 */
-	var $libelle;
+	public $libelle;
+
+    /**
+     * @var string product label
+     */
+	public $product_label;
+
+    /**
+     * @var string product description
+     * @deprecated
+     * @see product_desc
+     */
+    public $desc;
+
+    /**
+     * @var string product description
+     */
+	public $product_desc;
+
+    /**
+     * @var float weight
+     */
+    public $weight;
+    public $weight_units;
+
+    /**
+     * @var float weight
+     */
+    public $length;
+    public $length_units;
+
+    /**
+     * @var float weight
+     */
+    public $surface;
+    public $surface_units;
+
+    /**
+     * @var float weight
+     */
+    public $volume;
+    public $volume_units;
+
+	// Invoicing
+	public $remise_percent;
+    public $tva_tx;
+
+    /**
+     * @var float total without tax
+     */
+    public $total_ht;
+
+    /**
+     * @var float total with tax
+     */
+    public $total_ttc;
+
+    /**
+     * @var float total vat
+     */
+    public $total_tva;
+
+    /**
+     * @var float total localtax 1
+     */
+    public $total_localtax1;
+
+    /**
+     * @var float total localtax 2
+     */
+    public $total_localtax2;
+
 
     /**
      *	Constructor
@@ -2454,7 +2549,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *	@param      User	$user			User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int						<0 if KO, line id >0 if OK
+	 *	@return     int						<0 if KO, line id >0 if OK
 	 */
 	function insert($user=null, $notrigger=0)
 	{

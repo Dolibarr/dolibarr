@@ -487,7 +487,6 @@ class PaymentSalary extends CommonObject
 	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
 	            if ($result < 0) $error++;
 	            // End call triggers
-
 			}
 			else $error++;
 

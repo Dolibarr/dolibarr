@@ -121,7 +121,6 @@ class RemiseCheque extends CommonObject
 				{
 					$this->ref         = $obj->ref;
 				}
-
 			}
 			$this->db->free($resql);
 

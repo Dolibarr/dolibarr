@@ -1301,7 +1301,6 @@ if ($object->id > 0)
 
     				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-
     			}
     		}
     	}
@@ -1344,7 +1343,6 @@ if ($object->id > 0)
         // List of done actions
 		show_actions_done($conf,$langs,$db,$object);
 	}
-
 }
 else
 {

@@ -609,7 +609,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print "</table>";
 
         print "</form>";
-
 	}
 }
 

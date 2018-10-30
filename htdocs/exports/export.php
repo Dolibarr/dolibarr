@@ -208,7 +208,6 @@ if ($action=='selectfield')     // Selection of field at step 2
 
 	    setEventMessages($warnings, null, 'warnings');
     }
-
 }
 if ($action=='unselectfield')
 {
@@ -683,7 +682,6 @@ if ($step == 2 && $datatoexport)
 	}
 
     print '</div>';
-
 }
 
 if ($step == 3 && $datatoexport)
@@ -858,7 +856,6 @@ if ($step == 3 && $datatoexport)
 	// il n'est pas obligatoire de filtrer les champs
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
 	print '</div>';
-
 }
 
 if ($step == 4 && $datatoexport)
@@ -1162,7 +1159,6 @@ if ($step == 5 && $datatoexport)
     if ($action == 'remove_file')
     {
     	print $form->formconfirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-
     }
 
     print '<div class="fichecenter">';
