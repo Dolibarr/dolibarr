@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      François Legastelois <flegastelois@teclib.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,7 @@ print '</tr>';
 
 if ($num == 0)
 {
-   print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+   print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 }
 else
 {
