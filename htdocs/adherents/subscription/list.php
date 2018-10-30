@@ -40,7 +40,7 @@ $search_account=GETPOST('search_account','int');
 $search_amount=GETPOST('search_amount','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
-$date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
+$date_select=GETPOST("date_select",'alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
