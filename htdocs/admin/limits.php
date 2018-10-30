@@ -94,7 +94,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("LimitsSetup"),'','title_setup');
 
-if ($conf->multicurrency->enabled && $conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)
+if (! empty($conf->multicurrency->enabled) && ! empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
@@ -128,7 +128,7 @@ if ($action == 'edit')
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    if ($conf->multicurrency->enabled && $conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY) {
+    if (! empty($conf->multicurrency->enabled) && ! empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
     	print '<input type="hidden" name="currencycode" value="'.$currencycode.'">';
     }
 
