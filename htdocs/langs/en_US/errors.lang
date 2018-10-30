@@ -89,6 +89,7 @@ ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the
 ErrorSpecialCharNotAllowedForField=Special characters are not allowed for field "%s"
 ErrorNumRefModel=A reference exists into database (%s) and is not compatible with this numbering rule. Remove record or renamed reference to activate this module.
 ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this supplier
+ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created beacuse of too low quantity
 ErrorModuleSetupNotComplete=Setup of module looks to be uncomplete. Go on Home - Setup - Modules to complete.
 ErrorBadMask=Error on mask
 ErrorBadMaskFailedToLocatePosOfSequence=Error, mask without sequence number

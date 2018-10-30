@@ -735,7 +735,11 @@ class CMailFile
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
 					$result=$this->smtps->getErrors();
-					if (empty($this->error) && empty($result)) $res=true;
+					if (empty($this->error) && empty($result))
+					{
+						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
+						$res=true;
+					}
 					else
 					{
 						if (empty($this->error)) $this->error=$result;
@@ -797,6 +801,10 @@ class CMailFile
 				if (! empty($this->error) || ! $result) {
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
+				}
+				else
+				{
+					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 				}
 			}
 			else

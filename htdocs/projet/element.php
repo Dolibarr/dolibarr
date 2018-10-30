@@ -905,16 +905,16 @@ foreach ($listofreferent as $key => $value)
 
 					$element_doc = $element->element;
 					$filename=dol_sanitizeFileName($element->ref);
-					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
+					$filedir=$conf->{$element_doc}->multidir_output[$element->entity] . '/' . dol_sanitizeFileName($element->ref);
 
 					if ($element_doc === 'order_supplier') {
 						$element_doc='commande_fournisseur';
-						$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
 					}
 					else if ($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
 						$filename = get_exdir($element->id,2,0,0,$element,'product').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id,2,0,0,$element,'invoice_supplier').dol_sanitizeFileName($element->ref);
 					}
 
 					print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';

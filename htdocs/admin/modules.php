@@ -805,7 +805,7 @@ if ($mode == 'common')
 	        	        {
         	        	    foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage)
         	        	    {
-        	        	        if ($keycountry == 'always' || $keycountry == $mysoc->country_code)
+        	        	    	if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry)))
         	        	        {
         	        	            $warningmessage .= ($warningmessage?"\n":"").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
         	        	            $warningmessage .= ($warningmessage?"\n":"").($warningmessage?"\n":"").$langs->trans("Module").' : '.$objMod->getName();
