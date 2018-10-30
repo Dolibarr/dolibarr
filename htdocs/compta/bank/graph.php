@@ -26,13 +26,15 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+//$width=DolChartjs::getDefaultGraphSizeForStats('width',768);
+//$height=DolChartjs::getDefaultGraphSizeForStats('height',200);
+$width = 120;
+$height = 30;
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
@@ -43,9 +45,11 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
-$account=GETPOST("account");
-$mode='standard';
-if (GETPOST("mode") == 'showalltime') $mode='showalltime';
+$account = GETPOST("account");
+$mode = 'standard';
+if (GETPOST("mode") == 'showalltime') {
+    $mode = 'showalltime';
+}
 $error=0;
 
 
@@ -109,14 +113,13 @@ else
 	}
 	if (empty($min)) $min = dol_now - 3600 * 24;
 
-	$log="graph.php: min=".$min." max=".$max;
+	$log = "graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
 
 	// Tableau 1
 
-	if ($mode == 'standard')
-	{
+	if ($mode == 'standard') {
 		// Loading table $amounts
 		$amounts = array();
 
@@ -225,37 +228,78 @@ else
 		//exit;
 
 		// Fabrication tableau 1
-		$file= $conf->bank->dir_temp."/balance".$account."-".$year.$month.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
-		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
-		$graph_datas=array();
-		foreach($datas as $i => $val)
-		{
-			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+		$title = $langs->transnoentities("Balance").' - '.$langs->transnoentities("Month".$month).' '.$year;
+		$graph_datas = array();
+		foreach($datas as $i => $val) {
+			$graph_datas[$i] = array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
 			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
 		}
 
-		$px1 = new DolGraph();
-		$px1->SetData($graph_datas);
-		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
-		$px1->SetLegend($arraylegends);
-		$px1->SetLegendWidthMin(180);
-		$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
-		$px1->SetMinValue($px1->GetFloorMinValue()>0?0:$px1->GetFloorMinValue());
-		$px1->SetTitle($title);
-		$px1->SetWidth($WIDTH);
-		$px1->SetHeight($HEIGHT);
-		$px1->SetType(array('lines','lines','lines'));
-		$px1->setBgColor('onglet');
-		$px1->setBgColorGrid(array(255,255,255));
-		$px1->SetHorizTickIncrement(1);
-		$px1->SetPrecisionY(0);
-		$px1->draw($file,$fileurl);
+        $labels = array();
+        $datatmp = array();
+        $datacolor = array();
+        $bgdatacolor = array();
+        $dataset = array();
 
-		$show1=$px1->show();
+        $px1 = new DolChartJs();
+        foreach ($graph_datas as $data) {
+            $labels[] = $data[0];
+            for ($i=0; $i<$nbyear; $i++) {
+                $datacolor[$i][] = $px1->datacolor[$i];
+                $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
+                $datatmp[$i][] = $data[$i+1];
+            }
+        }
+        for ($i=0; $i<$nbyear; $i++) {
+            $dataset[] = array(
+                'label' => $startyear + $i,
+                'backgroundColor' => $datacolor[$i],
+                'borderColor' => $bgdatacolor[$i],
+                'data' => $datatmp[$i],
+            );
+        }
+        $px1->element('graphmovements')
+            ->setType('line')
+            ->setLabels($labels)
+            ->setDatasets($dataset)
+            ->setSize(array('width' => $width, 'height' => $height))
+            ->setOptions(array(
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => array(
+                    'display' => true,
+                    'position' => 'bottom',
+                ),
+                'title' => array(
+                    'display' => true,
+                    'text' => $title,
+                )
+            )
+        );
+
+        $show1 = $px1->renderChart();
+
+        // $px1 = new DolGraph();
+		// $px1->SetData($graph_datas);
+		// $arraylegends=array($langs->transnoentities("Balance"));
+		// if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
+		// if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		// $px1->SetLegend($arraylegends);
+		// $px1->SetLegendWidthMin(180);
+		// $px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
+		// $px1->SetMinValue($px1->GetFloorMinValue()>0?0:$px1->GetFloorMinValue());
+		// $px1->SetTitle($title);
+		// $px1->SetWidth($width);
+		// $px1->SetHeight($height);
+		// $px1->SetType(array('lines','lines','lines'));
+		// $px1->setBgColor('onglet');
+		// $px1->setBgColorGrid(array(255,255,255));
+		// $px1->SetHorizTickIncrement(1);
+		// $px1->SetPrecisionY(0);
+		// $px1->draw($file,$fileurl);
+
+		// $show1=$px1->show();
 		unset($graph_datas);
 		unset($px1);
 		unset($datas);
@@ -267,8 +311,7 @@ else
 
 	// Graph Balance for the year
 
-	if ($mode == 'standard')
-	{
+	elseif ($mode == 'standard') {
 		// Loading table $amounts
 		$amounts = array();
 		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
@@ -362,37 +405,80 @@ else
 		}
 
 		// Fabrication tableau 2
-		$file= $conf->bank->dir_temp."/balance".$account."-".$year.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.".png";
-		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
-		$graph_datas=array();
-		foreach($datas as $i => $val)
-		{
-			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+		$title = $langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas = array();
+		foreach($datas as $i => $val) {
+			$graph_datas[$i] = array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
 			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
 		}
-		$px2 = new DolGraph();
-		$px2->SetData($graph_datas);
-		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
-		$px2->SetLegend($arraylegends);
-		$px2->SetLegendWidthMin(180);
-		$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
-		$px2->SetMinValue($px2->GetFloorMinValue()>0?0:$px2->GetFloorMinValue());
-		$px2->SetTitle($title);
-		$px2->SetWidth($WIDTH);
-		$px2->SetHeight($HEIGHT);
-		$px2->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
-		$px2->setBgColor('onglet');
-		$px2->setBgColorGrid(array(255,255,255));
-		$px2->SetHideXGrid(true);
-		//$px2->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
-		$px2->SetPrecisionY(0);
-		$px2->draw($file,$fileurl);
 
-		$show2=$px2->show();
+        $labels = array();
+        $datatmp = array();
+        $datacolor = array();
+        $bgdatacolor = array();
+        $dataset = array();
+
+        $px2 = new DolChartJs();
+        foreach ($graph_datas as $data) {
+            $labels[] = $data[0];
+            for ($i=0; $i<$nbyear; $i++) {
+                $datacolor[$i][] = $px2->datacolor[$i];
+                $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
+                $datatmp[$i][] = $data[$i+1];
+            }
+        }
+        for ($i=0; $i<$nbyear; $i++) {
+            $dataset[] = array(
+                //'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
+                'label' => $startyear + $i,
+                'backgroundColor' => $datacolor[$i],
+                'borderColor' => $bgdatacolor[$i],
+                'data' => $datatmp[$i],
+            );
+        }
+        $px2->element('graphbalance')
+            ->setType('line')
+            ->setLabels($labels)
+            ->setDatasets($dataset)
+            ->setSize(array('width' => $width, 'height' => $height))
+            ->setOptions(array(
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => array(
+                    'display' => true,
+                    'position' => 'bottom',
+                ),
+                'title' => array(
+                    'display' => true,
+                    'text' => $title,
+                )
+            )
+        );
+
+        $show2 = $px2->renderChart();
+
+		// $px2 = new DolGraph();
+		// $px2->SetData($graph_datas);
+		// $arraylegends=array($langs->transnoentities("Balance"));
+		// if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
+		// if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		// $px2->SetLegend($arraylegends);
+		// $px2->SetLegendWidthMin(180);
+		// $px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
+		// $px2->SetMinValue($px2->GetFloorMinValue()>0?0:$px2->GetFloorMinValue());
+		// $px2->SetTitle($title);
+		// $px2->SetWidth($width);
+		// $px2->SetHeight($height);
+		// $px2->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
+		// $px2->setBgColor('onglet');
+		// $px2->setBgColorGrid(array(255,255,255));
+		// $px2->SetHideXGrid(true);
+		// //$px2->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
+		// $px2->SetPrecisionY(0);
+		// $px2->draw($file,$fileurl);
+
+		// $show2=$px2->show();
 
 		unset($px2);
 		unset($graph_datas);
@@ -488,25 +574,69 @@ else
 			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
 		}
 
-		$px3 = new DolGraph();
-		$px3->SetData($graph_datas);
-		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
-		$px3->SetLegend($arraylegends);
-		$px3->SetLegendWidthMin(180);
-		$px3->SetMaxValue($px3->GetCeilMaxValue()<0?0:$px3->GetCeilMaxValue());
-		$px3->SetMinValue($px3->GetFloorMinValue()>0?0:$px3->GetFloorMinValue());
-		$px3->SetTitle($title);
-		$px3->SetWidth($WIDTH);
-		$px3->SetHeight($HEIGHT);
-		$px3->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
-		$px3->setBgColor('onglet');
-		$px3->setBgColorGrid(array(255,255,255));
-		$px3->SetPrecisionY(0);
-		$px3->draw($file,$fileurl);
+        $labels = array();
+        $datatmp = array();
+        $datacolor = array();
+        $bgdatacolor = array();
+        $dataset = array();
 
-		$show3=$px3->show();
+        $px3 = new DolChartJs();
+        foreach ($graph_datas as $data) {
+            $labels[] = $data[0];
+            for ($i=0; $i<$nbyear; $i++) {
+                $datacolor[$i][] = $px3->datacolor[$i];
+                $bgdatacolor[$i][] = $px3->bgdatacolor[$i];
+                $datatmp[$i][] = $data[$i+1];
+            }
+        }
+        for ($i=0; $i<$nbyear; $i++) {
+            $dataset[] = array(
+                'label' => $startyear + $i,
+                'backgroundColor' => $datacolor[$i],
+                'borderColor' => $bgdatacolor[$i],
+                'data' => $datatmp[$i],
+            );
+        }
+        $px3->element('graphbalance')
+            ->setType('line')
+            ->setLabels($labels)
+            ->setDatasets($dataset)
+            ->setSize(array('width' => $width, 'height' => $height))
+            ->setOptions(array(
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => array(
+                    'display' => true,
+                    'position' => 'bottom',
+                ),
+                'title' => array(
+                    'display' => true,
+                    'text' => $title,
+                )
+            )
+        );
+
+        $show3 = $px3->renderChart();
+
+		// $px3 = new DolGraph();
+		// $px3->SetData($graph_datas);
+		// $arraylegends=array($langs->transnoentities("Balance"));
+		// if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
+		// if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		// $px3->SetLegend($arraylegends);
+		// $px3->SetLegendWidthMin(180);
+		// $px3->SetMaxValue($px3->GetCeilMaxValue()<0?0:$px3->GetCeilMaxValue());
+		// $px3->SetMinValue($px3->GetFloorMinValue()>0?0:$px3->GetFloorMinValue());
+		// $px3->SetTitle($title);
+		// $px3->SetWidth($width);
+		// $px3->SetHeight($height);
+		// $px3->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
+		// $px3->setBgColor('onglet');
+		// $px3->setBgColorGrid(array(255,255,255));
+		// $px3->SetPrecisionY(0);
+		// $px3->draw($file,$fileurl);
+
+		// $show3=$px3->show();
 
 		unset($px3);
 		unset($graph_datas);
@@ -611,32 +741,76 @@ else
 		}
 
 		// Fabrication tableau 4a
-		$file= $conf->bank->dir_temp."/movement".$account."-".$year.$month.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
-		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
+		$title = $langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month".$month).' '.$year;
 		$graph_datas=array();
 		foreach($data_credit as $i => $val)
 		{
 			$graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
 		}
-		$px4 = new DolGraph();
-		$px4->SetData($graph_datas);
-		$px4->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
-		$px4->SetLegendWidthMin(180);
-		$px4->SetMaxValue($px4->GetCeilMaxValue()<0?0:$px4->GetCeilMaxValue());
-		$px4->SetMinValue($px4->GetFloorMinValue()>0?0:$px4->GetFloorMinValue());
-		$px4->SetTitle($title);
-		$px4->SetWidth($WIDTH);
-		$px4->SetHeight($HEIGHT);
-		$px4->SetType(array('bars','bars'));
-		$px4->SetShading(3);
-		$px4->setBgColor('onglet');
-		$px4->setBgColorGrid(array(255,255,255));
-		$px4->SetHorizTickIncrement(1);
-		$px4->SetPrecisionY(0);
-		$px4->draw($file,$fileurl);
 
-		$show4=$px4->show();
+        $labels = array();
+        $datatmp = array();
+        $datacolor = array();
+        $bgdatacolor = array();
+        $dataset = array();
+
+        $px4 = new DolChartJs();
+        foreach ($graph_datas as $data) {
+            $labels[] = $data[0];
+            for ($i=0; $i<$nbyear; $i++) {
+                $datacolor[$i][] = $px4->datacolor[$i];
+                $bgdatacolor[$i][] = $px4->bgdatacolor[$i];
+                $datatmp[$i][] = $data[$i+1];
+            }
+        }
+        for ($i=0; $i<$nbyear; $i++) {
+            $dataset[] = array(
+                'label' => $startyear + $i,
+                'backgroundColor' => $datacolor[$i],
+                'borderColor' => $bgdatacolor[$i],
+                'data' => $datatmp[$i],
+            );
+        }
+        $px4->element('graphbankmovementsbymonth')
+            ->setType('line')
+            ->setLabels($labels)
+            ->setDatasets($dataset)
+            ->setSize(array('width' => $width, 'height' => $height))
+            ->setOptions(array(
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => array(
+                    'display' => true,
+                    'position' => 'bottom',
+                ),
+                'title' => array(
+                    'display' => true,
+                    'text' => $title,
+                )
+            )
+        );
+
+        $show4 = $px4->renderChart();
+
+
+        // $px4 = new DolGraph();
+		// $px4->SetData($graph_datas);
+		// $px4->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+		// $px4->SetLegendWidthMin(180);
+		// $px4->SetMaxValue($px4->GetCeilMaxValue()<0?0:$px4->GetCeilMaxValue());
+		// $px4->SetMinValue($px4->GetFloorMinValue()>0?0:$px4->GetFloorMinValue());
+		// $px4->SetTitle($title);
+		// $px4->SetWidth($width);
+		// $px4->SetHeight($height);
+		// $px4->SetType(array('bars','bars'));
+		// $px4->SetShading(3);
+		// $px4->setBgColor('onglet');
+		// $px4->setBgColorGrid(array(255,255,255));
+		// $px4->SetHorizTickIncrement(1);
+		// $px4->SetPrecisionY(0);
+		// $px4->draw($file,$fileurl);
+
+		// $show4=$px4->show();
 
 		unset($graph_datas);
 		unset($px4);
@@ -720,32 +894,75 @@ else
 		}
 
 		// Fabrication tableau 4b
-		$file= $conf->bank->dir_temp."/movement".$account."-".$year.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
 		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;
 		$graph_datas=array();
 		foreach($data_credit as $i => $val)
 		{
 			$graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
 		}
-		$px5 = new DolGraph();
-		$px5->SetData($graph_datas);
-		$px5->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
-		$px5->SetLegendWidthMin(180);
-		$px5->SetMaxValue($px5->GetCeilMaxValue()<0?0:$px5->GetCeilMaxValue());
-		$px5->SetMinValue($px5->GetFloorMinValue()>0?0:$px5->GetFloorMinValue());
-		$px5->SetTitle($title);
-		$px5->SetWidth($WIDTH);
-		$px5->SetHeight($HEIGHT);
-		$px5->SetType(array('bars','bars'));
-		$px5->SetShading(3);
-		$px5->setBgColor('onglet');
-		$px5->setBgColorGrid(array(255,255,255));
-		$px5->SetHorizTickIncrement(1);
-		$px5->SetPrecisionY(0);
-		$px5->draw($file,$fileurl);
 
-		$show5=$px5->show();
+        $labels = array();
+        $datatmp = array();
+        $datacolor = array();
+        $bgdatacolor = array();
+        $dataset = array();
+
+        $px5 = new DolChartJs();
+        foreach ($graph_datas as $data) {
+            $labels[] = $data[0];
+            for ($i=0; $i<$nbyear; $i++) {
+                $datacolor[$i][] = $px5->datacolor[$i];
+                $bgdatacolor[$i][] = $px5->bgdatacolor[$i];
+                $datatmp[$i][] = $data[$i+1];
+            }
+        }
+        for ($i=0; $i<$nbyear; $i++) {
+            $dataset[] = array(
+                'label' => $startyear + $i,
+                'backgroundColor' => $datacolor[$i],
+                'borderColor' => $bgdatacolor[$i],
+                'data' => $datatmp[$i],
+            );
+        }
+        $px5->element('graphbankmovementsbyyear')
+            ->setType('line')
+            ->setLabels($labels)
+            ->setDatasets($dataset)
+            ->setSize(array('width' => $width, 'height' => $height))
+            ->setOptions(array(
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => array(
+                    'display' => true,
+                    'position' => 'bottom',
+                ),
+                'title' => array(
+                    'display' => true,
+                    'text' => $title,
+                )
+            )
+        );
+
+        $show5 = $px5->renderChart();
+
+        // $px5 = new DolGraph();
+		// $px5->SetData($graph_datas);
+		// $px5->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+		// $px5->SetLegendWidthMin(180);
+		// $px5->SetMaxValue($px5->GetCeilMaxValue()<0?0:$px5->GetCeilMaxValue());
+		// $px5->SetMinValue($px5->GetFloorMinValue()>0?0:$px5->GetFloorMinValue());
+		// $px5->SetTitle($title);
+		// $px5->SetWidth($width);
+		// $px5->SetHeight($height);
+		// $px5->SetType(array('bars','bars'));
+		// $px5->SetShading(3);
+		// $px5->setBgColor('onglet');
+		// $px5->setBgColorGrid(array(255,255,255));
+		// $px5->SetHorizTickIncrement(1);
+		// $px5->SetPrecisionY(0);
+		// $px5->draw($file,$fileurl);
+
+		// $show5=$px5->show();
 
 		unset($graph_datas);
 		unset($px5);

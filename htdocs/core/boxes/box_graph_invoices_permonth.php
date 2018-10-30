@@ -143,21 +143,21 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($shownb) {
-                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+                $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
 
-                $labels1 = array();
-                $datas1 = array();
-                $datacolor=array();
-                $bgdatacolor=array();
+                $labels = array();
+                $datas = array();
+                $datacolor = array();
+                $bgdatacolor = array();
                 $dataset = array();
 
                 $px1 = new DolChartJs();
-                foreach ($data1 as $data) {
-                    $labels1[] = $data[0];
+                foreach ($graph_datas as $data) {
+                    $labels[] = $data[0];
                     for ($i=0; $i<$nbyear; $i++) {
                         $datacolor[$i][] = $px1->datacolor[$i];
                         $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
-                        $datas1[$i][] = $data[$i+1];
+                        $datas[$i][] = $data[$i+1];
                     }
                 }
                 for ($i=0; $i<$nbyear; $i++) {
@@ -166,12 +166,12 @@ class box_graph_invoices_permonth extends ModeleBoxes
                         'label' => $startyear + $i,
                         'backgroundColor' => $datacolor[$i],
                         'borderColor' => $bgdatacolor[$i],
-                        'data' => $datas1[$i],
+                        'data' => $datas[$i],
                     );
                 }
                 $px1->element('idboxgraphboxnb'.$this->boxcode)
                     ->setType('bar')
-                    ->setLabels($labels1)
+                    ->setLabels($labels)
                     ->setDatasets($dataset)
                     ->setSize(array('width' => $width, 'height' => $height))
                     ->setOptions(array(
