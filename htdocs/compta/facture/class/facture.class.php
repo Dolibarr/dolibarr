@@ -206,7 +206,7 @@ class Facture extends CommonInvoice
 	 * If paid partially, $this->close_code can be:
 	 * - CLOSECODE_DISCOUNTVAT
 	 * - CLOSECODE_BADDEBT
-	 * If paid completelly, this->close_code will be null
+	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -2370,7 +2370,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (! $error)
 			{
 				$this->ref = $num;
@@ -4836,7 +4836,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {
-		    // If invoice is a not a situation invoice, this->fk_prev_id is used for something else
+		    // If invoice is not a situation invoice, this->fk_prev_id is used for something else
             $tmpinvoice=new Facture($this->db);
             $tmpinvoice->fetch($invoiceid);
             if ($tmpinvoice->type != Facture::TYPE_SITUATION) return 0;
