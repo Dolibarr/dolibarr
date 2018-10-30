@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018 SuperAdmin
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +16,20 @@
  */
 
 /**
- * 	\defgroup   takepos     Module TakePos
- *  \brief      TakePos module descriptor.
+ * 	\defgroup   dav     Module dav
+ *  \brief      dav module descriptor.
  *
- *  \file       htdocs/takepos/core/modules/modTakePos.class.php
- *  \ingroup    takepos
- *  \brief      Description and activation file for module TakePos
+ *  \file       htdocs/dav/core/modules/modDav.class.php
+ *  \ingroup    dav
+ *  \brief      Description and activation file for module dav
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  Class to describe and enable module TakePos
+ *  Description and activation class for module dav
  */
-class modTakePos extends DolibarrModules
+class modEmailCollector extends DolibarrModules
 {
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
@@ -45,92 +44,82 @@ class modTakePos extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 50150;
+		$this->numero = 50320;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'takepos';
+		$this->rights_class = 'dav';
 
-		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
+		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
-		$this->family = "portal";
+		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '75';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
-		// Module label (no space allowed), used if translation string 'ModuleTakePosName' not found (MyModue is name of module).
+		// Module label (no space allowed), used if translation string 'ModuledavName' not found (MyModue is name of module).
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		// Module description, used if translation string 'ModuleTakePosDesc' not found (MyModue is name of module).
-		$this->description = "Point of sales module (Touch Screen POS)";
+		// Module description, used if translation string 'ModuledavDesc' not found (MyModue is name of module).
+		$this->description = "EmailCollectorDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "Point Of Sales (compliant with touch screen)";
+		$this->descriptionlong = "EmailCollectorDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
-		// Key used in llx_const table to save module status enabled/disabled (where TAKEPOS is value of property name of module in uppercase)
+		$this->version = 'development';
+		// Key used in llx_const table to save module status enabled/disabled (where DAV is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='list';
+		$this->picto='generic';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
-		// for default path (eg: /takepos/core/xxxxx) (0=disable, 1=enable)
-		// for specific path of parts (eg: /takepos/core/modules/barcode)
-		// for specific css file (eg: /takepos/css/takepos.css.php)
-		$this->module_parts = array(
-		                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
-									'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
-									'substitutions' => 1,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
-									'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
-									'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
-									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
-									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
-									'hooks' => array('data'=>array('invoicecard'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-		                        );
+		// for default path (eg: /dav/core/xxxxx) (0=disable, 1=enable)
+		// for specific path of parts (eg: /dav/core/modules/barcode)
+		// for specific css file (eg: /dav/css/dav.css.php)
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/takepos/temp","/takepos/subdir");
+		// Example: this->dirs = array("/dav/temp","/dav/subdir");
 		$this->dirs = array();
 
-		// Config pages. Put here list of php page, stored into takepos/admin directory, to use to setup module.
-		$this->config_page_url = array("setup.php@takepos");
+		// Config pages. Put here list of php page, stored into dav/admin directory, to use to setup module.
+		$this->config_page_url = array("emailcollector.php");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('always1'=>"modBanque", 'always2'=>"modFacture", 'always3'=>"modProduct", 'always4'=>'modCategorie', 'FR1'=>'modBlockedLog');			// List of module class names as string that must be enabled if this module is enabled
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->langfiles = array("cashdesk");
-		$this->phpmin = array(5,43);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(4,0);	// Minimum version of Dolibarr required by module
+		$this->langfiles = array("admin");
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(7,0);	// Minimum version of Dolibarr required by module
 		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		//$this->automatic_activation = array('FR'=>'TakePosWasAutomaticallyActivatedBecauseOfYourCountryChoice');
+		//$this->automatic_activation = array('FR'=>'davWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
-		// Example: $this->const=array(0=>array('TAKEPOS_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
-		//                             1=>array('TAKEPOS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
+		// Example: $this->const=array(0=>array('DAV_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
+		//                             1=>array('DAV_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			//1=>array('TAKEPOS_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+			//1=>array('DAV_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
 
-		if (! isset($conf->takepos) || ! isset($conf->takepos->enabled))
+		if (! isset($conf->dav) || ! isset($conf->dav->enabled))
 		{
-			$conf->takepos=new stdClass();
-			$conf->takepos->enabled=0;
+			$conf->dav=new stdClass();
+			$conf->dav->enabled=0;
 		}
 
 
 		// Array to add new pages in new tabs
         $this->tabs = array();
 		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@takepos:$user->rights->takepos->read:/takepos/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@takepos:$user->rights->othermodule->read:/takepos/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@dav:$user->rights->dav->read:/dav/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@dav:$user->rights->othermodule->read:/dav/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
         // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
         //
         // Where objecttype can be
@@ -159,7 +148,7 @@ class modTakePos extends DolibarrModules
 		$this->dictionaries=array();
         /* Example:
         $this->dictionaries=array(
-            'langs'=>'mylangfile@takepos',
+            'langs'=>'mylangfile@dav',
             'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
             'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
             'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
@@ -168,25 +157,25 @@ class modTakePos extends DolibarrModules
             'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
             'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
             'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->takepos->enabled,$conf->takepos->enabled,$conf->takepos->enabled)												// Condition to show each dictionary
+            'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
         );
         */
 
 
         // Boxes/Widgets
-		// Add here list of php file(s) stored in takepos/core/boxes that contains class to show a widget.
+		// Add here list of php file(s) stored in dav/core/boxes that contains class to show a widget.
         $this->boxes = array(
-        	//0=>array('file'=>'takeposwidget1.php@takepos','note'=>'Widget provided by TakePos','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'takeposwidget2.php@takepos','note'=>'Widget provided by TakePos'),
-        	//2=>array('file'=>'takeposwidget3.php@takepos','note'=>'Widget provided by TakePos')
+        	//0=>array('file'=>'davwidget1.php@dav','note'=>'Widget provided by dav','enabledbydefaulton'=>'Home'),
+        	//1=>array('file'=>'davwidget2.php@dav','note'=>'Widget provided by dav'),
+        	//2=>array('file'=>'davwidget3.php@dav','note'=>'Widget provided by dav')
         );
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
-		$this->cronjobs = array(
-			//0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/takepos/class/myobject.class.php', 'objectname'=>'MyObject', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
-		);
+		//$this->cronjobs = array(
+			//0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/dav/class/myobject.class.php', 'objectname'=>'MyObject', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
+		//);
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
 		// );
@@ -195,26 +184,27 @@ class modTakePos extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 
-		/*$r=0;
+		/*
+		$r=0;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read myobject of TakePos';	// Permission label
+		$this->rights[$r][1] = 'Read myobject of dav';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update myobject of TakePos';	// Permission label
+		$this->rights[$r][1] = 'Create/Update myobject of dav';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
+		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete myobject of TakePos';	// Permission label
+		$this->rights[$r][1] = 'Delete myobject of dav';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->takepos->level1->level2)
+		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 		*/
 
 		// Main menu entries
@@ -224,44 +214,44 @@ class modTakePos extends DolibarrModules
 		// Add here entries to declare new menus
 
 		/* BEGIN MODULEBUILDER TOPMENU */
-		$this->menu[$r++]=array('fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		/*$this->menu[$r++]=array('fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>'PointOfSale',
-								'mainmenu'=>'takepos',
+								'titre'=>'dav',
+								'mainmenu'=>'dav',
 								'leftmenu'=>'',
-								'url'=>'/takepos/takepos.php',
-								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'url'=>'/dav/davindex.php',
+								'langs'=>'dav@dav',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
-								'enabled'=>'$conf->takepos->enabled',	// Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
-								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
-								'target'=>'takepos',
+								'enabled'=>'$conf->dav->enabled',	// Define condition to show or hide menu entry. Use '$conf->dav->enabled' if entry must be visible if module is enabled.
+								'perms'=>'1',			                // Use 'perms'=>'$user->rights->dav->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-
+		*/
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT
-		$this->menu[$r++]=array(	'fk_menu'=>'fk_mainmenu=takepos',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r++]=array(	'fk_menu'=>'fk_mainmenu=dav',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',			                // This is a Left menu entry
 								'titre'=>'List MyObject',
-								'mainmenu'=>'takepos',
-								'leftmenu'=>'takepos_myobject_list',
-								'url'=>'/takepos/myobject_list.php',
-								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'mainmenu'=>'dav',
+								'leftmenu'=>'dav_myobject_list',
+								'url'=>'/dav/myobject_list.php',
+								'langs'=>'dav@dav',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
-								'enabled'=>'$conf->takepos->enabled',  // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
+								'enabled'=>'$conf->dav->enabled',  // Define condition to show or hide menu entry. Use '$conf->dav->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'1',			                // Use 'perms'=>'$user->rights->dav->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		$this->menu[$r++]=array(	'fk_menu'=>'fk_mainmenu=takepos,fk_leftmenu=takepos',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r++]=array(	'fk_menu'=>'fk_mainmenu=dav,fk_leftmenu=dav',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',			                // This is a Left menu entry
 								'titre'=>'New MyObject',
-								'mainmenu'=>'takepos',
-								'leftmenu'=>'takepos_myobject_new',
-								'url'=>'/takepos/myobject_page.php?action=create',
-								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'mainmenu'=>'dav',
+								'leftmenu'=>'dav_myobject_new',
+								'url'=>'/dav/myobject_page.php?action=create',
+								'langs'=>'dav@dav',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
-								'enabled'=>'$conf->takepos->enabled',  // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
+								'enabled'=>'$conf->dav->enabled',  // Define condition to show or hide menu entry. Use '$conf->dav->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'1',			                // Use 'perms'=>'$user->rights->dav->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		END MODULEBUILDER LEFTMENU MYOBJECT */
@@ -272,10 +262,10 @@ class modTakePos extends DolibarrModules
 
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
-		$langs->load("cashdesk");
+		$langs->load("dav@dav");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@takepos';
+		$this->export_icon[$r]='myobject@dav';
 		$keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject';
@@ -299,12 +289,19 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$this->_load_tables('/takepos/sql/');
+		//$this->_load_tables('/dav/sql/');
+
+		// Create extrafields
+		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+
+		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
+		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
+		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
+		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1 '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
+		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'dav@dav', '$conf->dav->enabled');
 
 		$sql = array();
-
-		// Remove permissions and default values
-		$this->remove($options);
 
 		return $this->_init($sql, $options);
 	}

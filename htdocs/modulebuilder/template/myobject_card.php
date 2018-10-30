@@ -99,7 +99,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Security check - Protection if external user
 //if ($user->societe_id > 0) access_forbidden();
 //if ($user->societe_id > 0) $socid = $user->societe_id;
-//$result = restrictedArea($user, 'mymodule', $object->id);
+//$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
+//$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
