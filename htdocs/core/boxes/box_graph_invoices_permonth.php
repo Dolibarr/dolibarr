@@ -127,8 +127,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			if (empty($nbyear) || $nbyear<1) {
 				$nbyear = 1;
 			}
-			if ($nbyear>6) {
-				$nbyear = 6;
+			if ($nbyear>8) {
+				$nbyear = 8;
 			}
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) {
@@ -136,8 +136,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			}
 			$startyear = $endyear - $nbyear + 1;
 			$mode = 'customer';
-			$width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-			$height = '25';
+			$width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?35:70;
+			$height = 25;
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
 
@@ -149,6 +149,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
                 $datas1 = array();
                 $datacolor=array();
                 $bgdatacolor=array();
+                $dataset = array();
+
                 $px1 = new DolChartJs();
                 foreach ($data1 as $data) {
                     $labels1[] = $data[0];
@@ -158,7 +160,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
                         $datas1[$i][] = $data[$i+1];
                     }
                 }
-                $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
                         //'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
@@ -196,6 +197,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
                 $datas2 = array();
                 $datacolor=array();
                 $bgdatacolor=array();
+                $dataset = array();
 
                 $px2 = new DolChartJs();
 
@@ -207,7 +209,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
                         $datas2[$i][] = $data[$i+1];
                     }
                 }
-                $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
                         //'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),

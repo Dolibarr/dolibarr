@@ -80,13 +80,13 @@ class box_graph_orders_permonth extends ModeleBoxes
 		$text = $langs->trans("BoxCustomersOrdersPerMonth", $max);
 		$this->info_box_head = array(
 			'text' => $text,
-			'limit'=> dol_strlen($text),
-			'graph'=> 1,
-			'sublink'=>'',
-			'subtext'=>$langs->trans("Filter"),
-			'subpicto'=>'filter.png',
-			'subclass'=>'linkobject boxfilter',
-			'target'=>'none'	// Set '' to get target="_blank"
+			'limit' => dol_strlen($text),
+			'graph' => 1,
+			'sublink' => '',
+			'subtext' => $langs->trans("Filter"),
+			'subpicto' => 'filter.png',
+			'subclass' => 'linkobject boxfilter',
+			'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 		$socid=0;
@@ -121,22 +121,24 @@ class box_graph_orders_permonth extends ModeleBoxes
             if (empty($nbyear) || $nbyear<1) {
                 $nbyear = 1;
             }
-            if ($nbyear>6) {
-                $nbyear = 6;
+            if ($nbyear>8) {
+                $nbyear = 8;
             }
 			$nowarray=dol_getdate(dol_now(),true);
-			if (empty($endyear)) $endyear=$nowarray['year'];
+            if (empty($endyear)) {
+                $endyear = $nowarray['year'];
+            }
             $startyear = $endyear - $nbyear + 1;
             $mode = 'customer';
-            $width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-            $height = '25';
+            $width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?35:70;
+            $height = 25;
 
 			$stats = new CommandeStats($this->db, $socid, $mode, 0);
 			$langs->load('orders');
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($shownb) {
-                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0));
 
                 $labels1 = array();
                 $datas1 = array();
@@ -183,12 +185,13 @@ class box_graph_orders_permonth extends ModeleBoxes
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($showtot) {
-                $data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+                $data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0));
 
                 $labels2 = array();
                 $datas2 = array();
-                $datacolor=array();
-                $bgdatacolor=array();
+                $datacolor = array();
+                $bgdatacolor = array();
+                $dataset = array();
 
                 $px2 = new DolChartJs();
 
@@ -200,7 +203,6 @@ class box_graph_orders_permonth extends ModeleBoxes
                         $datas2[$i][] = $data[$i+1];
                     }
                 }
-                $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
                         //'label' => $langs->trans("AmountOfOrdersHT").' '.($startyear+$i),

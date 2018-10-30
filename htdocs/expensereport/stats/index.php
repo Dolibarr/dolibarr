@@ -24,21 +24,23 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportstats.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('trips', 'companies'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+//$width=DolChartjs::getDefaultGraphSizeForStats('width');
+//$height=DolChartjs::getDefaultGraphSizeForStats('height');
+$width = 70;
+$height = 25;
 
-$mode=GETPOST("mode")?GETPOST("mode"):'customer';
-$object_status=GETPOST('object_status');
+$mode = GETPOST("mode")?GETPOST("mode"):'customer';
+$object_status = GETPOST('object_status');
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
-$id = GETPOST('id','int');
+$userid=GETPOST('userid', 'int');
+$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$id = GETPOST('id', 'int');
 
 // Security check
 if ($user->societe_id > 0)
@@ -51,9 +53,10 @@ $result = restrictedArea($user, 'expensereport', $id,'');
 
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
+$nbyear = 3;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$startyear = $year - $nbyear + 1;
+$endyear = $year;
 
 
 
@@ -61,11 +64,10 @@ $endyear=$year;
  * View
  */
 
-$form=new Form($db);
-$tmpexpensereport=new ExpenseReport($db);
+$form = new Form($db);
+$tmpexpensereport = new ExpenseReport($db);
 
-$title=$langs->trans("TripsAndExpensesStatistics");
-$dir=$conf->expensereport->dir_temp;
+$title = $langs->trans("TripsAndExpensesStatistics");
 
 llxHeader('', $title);
 
@@ -79,119 +81,191 @@ if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_st
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
 //print "$endyear, $startyear";
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$datas = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 
-$filenamenb = $dir."/tripsexpensesnbinyear-".$year.".png";
-$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;file=tripsexpensesnbinyear-'.$year.'.png';
-
-$px1 = new DolGraph();
-$mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px1->SetLegend($legend);
-	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetWidth($WIDTH);
-	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("Number"));
-	$px1->SetShading(3);
-	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
-	$px1->mode='depth';
-	$px1->SetTitle($langs->trans("NumberByMonth"));
-
-	$px1->draw($filenamenb,$fileurlnb);
+$labels = array();
+$datatmp = array();
+$datacolor = array();
+$bgdatacolor = array();
+$dataset = array();
+$px1 = new DolChartJs();
+foreach ($datas as $data) {
+    $labels[] = $data[0];
+    for ($i=0; $i<$nbyear; $i++) {
+        $datacolor[$i][] = $px1->datacolor[$i];
+        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
+        $datatmp[$i][] = $data[$i+1];
+    }
 }
+for ($i=0; $i<$nbyear; $i++) {
+    $dataset[] = array(
+        //'label' => $langs->trans("NbOfSubscriptions").' '.($startyear+$i),
+        'label' => $startyear + $i,
+        'backgroundColor' => $datacolor[$i],
+        'borderColor' => $bgdatacolor[$i],
+        'data' => $datatmp[$i],
+    );
+}
+$px1->element('tripsexpensesnbinyear')
+    ->setType('bar')
+    ->setLabels($labels)
+    ->setDatasets($dataset)
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("NumberByMonth"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("Number"),
+                        'fontColor' => 'green',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+$datas = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
-
-$filenameamount = $dir."/tripsexpensesamountinyear-".$year.".png";
-$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;file=tripsexpensesamountinyear-'.$year.'.png';
-
-$px2 = new DolGraph();
-$mesg = $px2->isGraphKo();
-if (! $mesg)
-{
-	$px2->SetData($data);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px2->SetLegend($legend);
-	$px2->SetMaxValue($px2->GetCeilMaxValue());
-	$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
-	$px2->SetWidth($WIDTH);
-	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("Amount"));
-	$px2->SetShading(3);
-	$px2->SetHorizTickIncrement(1);
-	$px2->SetPrecisionY(0);
-	$px2->mode='depth';
-	$px2->SetTitle($langs->trans("AmountTotal"));
-
-	$px2->draw($filenameamount,$fileurlamount);
-}
-
-
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
-
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
-    $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
-}
-
-$px3 = new DolGraph();
-$mesg = $px3->isGraphKo();
-if (! $mesg)
-{
-    $px3->SetData($data);
-    $i = $startyear;$legend=array();
-    while ($i <= $endyear)
-    {
-        $legend[]=$i;
-        $i++;
+$labels1 = array();
+$datatmp = array();
+$datacolor = array();
+$bgdatacolor = array();
+$dataset = array();
+$px2 = new DolChartJs();
+foreach ($datas as $data) {
+    $labels1[] = $data[0];
+    for ($i=0; $i<$nbyear; $i++) {
+        $datacolor[$i][] = $px2->datacolor[$i];
+        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
+        $datatmp[$i][] = $data[$i+1];
     }
-    $px3->SetLegend($legend);
-    $px3->SetYLabel($langs->trans("AmountAverage"));
-    $px3->SetMaxValue($px3->GetCeilMaxValue());
-    $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
-    $px3->SetShading(3);
-    $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
-    $px3->mode='depth';
-    $px3->SetTitle($langs->trans("AmountAverage"));
-
-    $px3->draw($filename_avg,$fileurl_avg);
 }
+for ($i=0; $i<$nbyear; $i++) {
+    $dataset[] = array(
+        //'label' => $langs->trans("NbOfSubscriptions").' '.($startyear+$i),
+        'label' => $startyear + $i,
+        'backgroundColor' => $datacolor[$i],
+        'borderColor' => $bgdatacolor[$i],
+        'data' => $datatmp[$i],
+    );
+}
+$px2->element('tripsexpensesamountinyear')
+    ->setType('bar')
+    ->setLabels($labels1)
+    ->setDatasets($dataset)
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("AmountTotal"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("Amount"),
+                        'fontColor' => 'green',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
+
+$datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
+
+$labels = array();
+$datatmp = array();
+$datacolor = array();
+$bgdatacolor = array();
+$dataset = array();
+$px3 = new DolChartJs();
+foreach ($datas as $data) {
+    $labels[] = $data[0];
+    for ($i=0; $i<$nbyear; $i++) {
+        $datacolor[$i][] = $px3->datacolor[$i];
+        $bgdatacolor[$i][] = $px3->bgdatacolor[$i];
+        $datatmp[$i][] = $data[$i+1];
+    }
+}
+for ($i=0; $i<$nbyear; $i++) {
+    $dataset[] = array(
+        //'label' => $langs->trans("NbOfSubscriptions").' '.($startyear+$i),
+        'label' => $startyear + $i,
+        'backgroundColor' => $datacolor[$i],
+        'borderColor' => $bgdatacolor[$i],
+        'data' => $datatmp[$i],
+    );
+}
+$px3->element('tripsexpensesamountavginyear')
+    ->setType('bar')
+    ->setLabels($labels)
+    ->setDatasets($dataset)
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("AmountAverageByMonth"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("AmountAverage"),
+                        'fontColor' => 'green',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
 // Show array
-$data = $stats->getAllByYear();
-$arrayyears=array();
-foreach($data as $val) {
+$datas = $stats->getAllByYear();
+$arrayyears = array();
+foreach($datas as $val) {
     $arrayyears[$val['year']]=$val['year'];
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
@@ -256,7 +330,7 @@ print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
+foreach ($datas as $val)
 {
 	$year = $val['year'];
 	while ($year && $oldyear > $year+1)
@@ -271,31 +345,31 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';
-print '<div>';
+print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-    print $px1->show();
-	print "<br>\n";
-	print $px2->show();
+if ($mesg) {
+    print $mesg;
+} else {
+    print $px1->renderChart();
     print "<br>\n";
-    print $px3->show();
+    print $px2->renderChart();
+    print "<br>\n";
+    print $px3->renderChart();
 }
 print '</td></tr></table>';
 

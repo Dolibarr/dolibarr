@@ -130,8 +130,8 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
             if (empty($endyear)) $endyear=$nowarray['year'];
             $startyear = $endyear - $nbyear + 1;
             $mode = 'supplier';
-            $width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-            $height = '25';
+            $width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?35:70;
+            $height = 25;
 
 			$stats = new CommandeStats($this->db, $socid, $mode, 0);
 

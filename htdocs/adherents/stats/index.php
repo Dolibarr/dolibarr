@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 //$height = DolGraph::getDefaultGraphSizeForStats('height');
 //$width = DolChartjs::getDefaultGraphSizeForStats('width');
 //$height = DolChartjs::getDefaultGraphSizeForStats('height');
-$width = 80;
+$width = 70;
 $height = 25;
 
 $userid = GETPOST('userid', 'int');
@@ -80,6 +80,8 @@ $labels1 = array();
 $datas1 = array();
 $datacolor=array();
 $bgdatacolor=array();
+$dataset = array();
+
 $px1 = new DolChartJs();
 foreach ($datas as $data) {
     $labels1[] = $data[0];
@@ -89,7 +91,6 @@ foreach ($datas as $data) {
         $datas1[$i][] = $data[$i+1];
     }
 }
-$dataset = array();
 for ($i=0; $i<$nbyear; $i++) {
     $dataset[] = array(
         //'label' => $langs->trans("NbOfSubscriptions").' '.($startyear+$i),
@@ -126,6 +127,7 @@ $labels2 = array();
 $datas2 = array();
 $datacolor=array();
 $bgdatacolor=array();
+$dataset = array();
 
 $px2 = new DolChartJs();
 
@@ -137,7 +139,6 @@ foreach ($datas as $data) {
         $datas2[$i][] = $data[$i+1];
     }
 }
-$dataset = array();
 for ($i=0; $i<$nbyear; $i++) {
     $dataset[] = array(
         //'label' => $langs->trans("AmountOfSubscriptions").' '.($startyear+$i),

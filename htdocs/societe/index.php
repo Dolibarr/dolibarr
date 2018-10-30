@@ -167,14 +167,14 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
                 ),
             )
         )
-        ->setSize(['width' => '50', 'height' => '20'])
-        ->setOptions([
+        ->setSize(array('width' => 70, 'height' => 25))
+        ->setOptions(array(
             'responsive' => true,
             'maintainAspectRatio' => false,
             'legend' => array(
                 'position' => 'right',
             ),
-        ]
+        )
     );
     print $dolchartjs->renderChart();
     print '</td></tr>'."\n";

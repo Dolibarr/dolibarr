@@ -130,8 +130,8 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			}
 			$startyear = $endyear - $nbyear + 1;
 			$mode = 'supplier';
-			$width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-			$height = '25';
+			$width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?35:70;
+			$height = 25;
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
             $langs->load("bills");

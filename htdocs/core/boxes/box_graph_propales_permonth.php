@@ -121,25 +121,27 @@ class box_graph_propales_permonth extends ModeleBoxes
             if (empty($nbyear) || $nbyear<1) {
                 $nbyear = 1;
             }
-            if ($nbyear>6) {
-                $nbyear = 6;
+            if ($nbyear>8) {
+                $nbyear = 8;
             }
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear = $endyear - $nbyear + 1;
-			$width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-			$height = '25';
+			$width = (($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?35:70;
+			$height = 25;
 
 			$stats = new PropaleStats($this->db, $socid, 0);
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($shownb) {
-                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0));
 
                 $labels1 = array();
                 $datas1 = array();
                 $datacolor=array();
                 $bgdatacolor=array();
+                $dataset = array();
+
                 $px1 = new DolChartJs();
                 foreach ($data1 as $data) {
                     $labels1[] = $data[0];
@@ -149,7 +151,6 @@ class box_graph_propales_permonth extends ModeleBoxes
                         $datas1[$i][] = $data[$i+1];
                     }
                 }
-                $dataset = array();
                 for ($i=0; $i<$nbyear; $i++) {
                     $dataset[] = array(
                         //'label' => $langs->trans("NumberOfProposals").' '.($startyear+$i),
@@ -187,7 +188,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($showtot) {
-                $data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
+                $data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0));
 
                 $labels2 = array();
                 $datas2 = array();

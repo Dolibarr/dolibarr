@@ -146,8 +146,8 @@ class box_graph_product_distribution extends ModeleBoxes
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation
 
-        $width = ($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'40':'80';
-        $height = '25';
+        $width = ($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?35:70;
+        $height = 25;
 
         if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire) && $showinvoicenb) {
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
