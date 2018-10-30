@@ -634,19 +634,27 @@ if (empty($reshook))
 					$msg     = $arraydefaultmessage->content;
 				}
 
-				$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+                if (empty($labeltouse) || (int)$labeltouse === -1) {
+                    //fallback on the old configuration.
+                    setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+                    $error++;
+                }else{
+                    $substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+                    complete_substitutions_array($substitutionarray, $outputlangs, $object);
+                    $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+                    $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
-				$moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
+                    $moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-				$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				if ($result < 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+                    $result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+                    if ($result < 0)
+                    {
+                        $error++;
+                        setEventMessages($object->error, $object->errors, 'errors');
+                    }
+                }
+
+
 			}
 		}
 		else
@@ -707,20 +715,28 @@ if (empty($reshook))
 						$msg     = $arraydefaultmessage->content;
 					}
 
-					$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-					$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
+                    if (empty($labeltouse) || (int)$labeltouse === -1) {
+                        //fallback on the old configuration.
+                        setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+                        $error++;
+                    }else{
+                        $substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+                        complete_substitutions_array($substitutionarray, $outputlangs, $object);
+                        $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+                        $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
 
-					$moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
+                        $moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
 
-					$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				}
-				if ($result < 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+                        $result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+                        if ($result < 0)
+                        {
+                            $error++;
+                            setEventMessages($object->error, $object->errors, 'errors');
+                        }
+                    }
+                }
+
+
 			}
 			else
 			{
