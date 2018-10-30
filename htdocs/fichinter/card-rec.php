@@ -866,7 +866,7 @@ if ($action == 'create') {
 			print "</tr>\n";
 
 
-// les filtres à faire ensuite
+			// les filtres à faire ensuite
 
 			if ($num > 0) {
 				while ($i < min($num, $limit)) {
@@ -893,8 +893,8 @@ if ($action == 'create') {
 					}
 					if (! empty($conf->projet->enabled)) {
 						print '<td>';
-						if ($objp->fk_project >0) {
-							$projectstatic->fecth($objp->fk_projet);
+						if ($objp->fk_project > 0) {
+							$projectstatic->fetch($objp->fk_projet);
 							print $projectstatic->getNomUrl(1);
 						}
 						print '</td>';
