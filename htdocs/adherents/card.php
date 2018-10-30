@@ -634,7 +634,7 @@ if (empty($reshook))
 					$msg     = $arraydefaultmessage->content;
 				}
 
-                if (empty($labeltouse) || (int)$labeltouse === -1) {
+                if (empty($labeltouse) || (int) $labeltouse === -1) {
                     //fallback on the old configuration.
                     setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
                     $error++;
@@ -715,7 +715,7 @@ if (empty($reshook))
 						$msg     = $arraydefaultmessage->content;
 					}
 
-                    if (empty($labeltouse) || (int)$labeltouse === -1) {
+                    if (empty($labeltouse) || (int) $labeltouse === -1) {
                         //fallback on the old configuration.
                         setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
                         $error++;
