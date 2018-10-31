@@ -302,8 +302,13 @@ class EmailCollector extends CommonObject
 	/**
 	 * Fetch all account and load objects into an array
 	 *
-	 * @return array Array with key => EmailCollector object
-	 * @author
+	 * @param   User    $user           User
+	 * @param   int     $activeOnly     filter if active
+	 * @param   string  $sortfield      field for sorting
+	 * @param   string  $sortorder      sorting order
+	 * @param   int     $limit          sort limit
+	 * @param   int     $page           page to start on
+	 * @return  array   Array with key => EmailCollector object
 	 */
 	public function fetchAll(User $user, $activeOnly = 0, $sortfield = 's.rowid', $sortorder = 'ASC', $limit = 100, $page = 0)
     {
@@ -490,7 +495,7 @@ class EmailCollector extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
