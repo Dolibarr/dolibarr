@@ -410,7 +410,7 @@ class MyObject extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
@@ -423,7 +423,7 @@ class MyObject extends CommonObject
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
-	function LibStatut($status, $mode=0)
+	public function LibStatut($status, $mode=0)
 	{
 		// phpcs:enable
 		if (empty($this->labelstatus))
@@ -475,7 +475,7 @@ class MyObject extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql.= ' fk_user_creat, fk_user_modif';
