@@ -81,6 +81,10 @@ ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
 
 ALTER TABLE llx_paiement ADD COLUMN ext_payment_id varchar(128);
 ALTER TABLE llx_paiement ADD COLUMN ext_payment_site varchar(128);
+ALTER TABLE llx_paiement ADD COLUMN fk_account integer DEFAULT 0 NOT NULL after num_paiement;
+
+-- Get the planned account of the paiement from bankentries
+UPDATE llx_paiement as p INNER JOIN llx_bank as b ON p.fk_bank = b.rowid SET p.fk_account = b.fk_account WHERE p.fk_account = 0;
 
 ALTER TABLE llx_societe ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN facebook varchar(255) after skype;
@@ -136,4 +140,26 @@ CREATE TABLE llx_takepos_floor_tables(
 
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
+CREATE TABLE llx_bordereau_chequedet
+(
+    rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+    fk_bordereau 	integer NOT NULL,
+    fk_bank 		integer,
+    fk_paiement 	integer,
+    type_line		varchar(255),
+    emetteur 		varchar(255),
+    amount 			double(28,8) DEFAULT 0,
+    num_chq			varchar(50),
+    banque			varchar(255),
+    datec			datetime	
+) ENGINE = InnoDB;
+
+ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bordereau (fk_bordereau);
+ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_bank (fk_bank);
+ALTER TABLE llx_bordereau_chequedet ADD INDEX idx_bordereaudet_fk_paiement (fk_paiement);
+
+INSERT INTO llx_bordereau_chequedet (fk_bordereau, fk_bank, fk_paiement, type_line, emetteur, amount, num_chq, banque, datec) SELECT b.fk_bordereau, b.rowid as fk_bank, IF(ISNULL(p.rowid), 0, p.rowid) as fk_paiement, 'bank' as type_line, b.emetteur, b.amount, b.num_chq, b.banque, b.datec FROM llx_bank as b LEFT JOIN llx_paiement as p ON p.fk_bank=b.rowid WHERE b.fk_bordereau <> 0
+
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
+
+

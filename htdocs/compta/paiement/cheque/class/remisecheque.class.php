@@ -26,7 +26,8 @@
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 /**
  *	Class to manage cheque delivery receipts
@@ -113,6 +114,7 @@ class RemiseCheque extends CommonObject
 				$this->statut         = $obj->statut;
 				$this->ref_ext        = $obj->ref_ext;
 
+				$this->fetch_lines();
 				if ($this->statut == 0)
 				{
 					$this->ref         = "(PROV".$this->id.")";
@@ -179,6 +181,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", ''";
 		$sql.= ")";
 
+		dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -195,6 +198,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " SET ref='(PROV".$this->id.")'";
 				$sql.= " WHERE rowid=".$this->id."";
 
+				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql)
 				{
@@ -205,56 +209,78 @@ class RemiseCheque extends CommonObject
 
 			if ($this->id > 0 && $this->errno == 0)
 			{
-				$lines = array();
-				$sql = "SELECT b.rowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-				$sql.= " WHERE b.fk_type = 'CHQ'";
-				$sql.= " AND b.amount > 0";
-				$sql.= " AND b.fk_bordereau = 0";
-				$sql.= " AND b.fk_account='".$account_id."'";
-				if ($limit) $sql.= $this->db->plimit($limit);
+			    $this->lines = array();
+			    
+			    foreach ($toRemise as $typeline => $linetoremise)
+			    {
+			        if ($typeline == "bank")
+			        {
+			            foreach ($linetoremise as $bank_id)
+			            {
+			                $sql = "SELECT p.rowid, b.emetteur, b.amount, b.num_chq, b.banque, b.datec";
+			                $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
+			                $sql.= " WHERE b.rowid = ".$bank_id;
+			                $res = $this->db->query($sql);
+			                
+			                if($res)
+			                {
+			                    $obj = $this->db->fetch_object($res);
+			                    
+			                    $fk_paiement = (empty($obj->rowid)) ? 0 : intVal($obj->rowid);
+			                    $emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
+			                    $amount = (empty($obj->amount)) ? 0 : $obj->amount;
+			                    $num_chq = (empty($obj->num_chq)) ? '' : $this->db->escape($obj->num_chq);
+			                    $banque = (empty($obj->banque)) ? '' : $this->db->escape($obj->banque);
+			                    $datec = (empty($obj->datec)) ? '' : $this->db->jdate($obj->datec);
+			                    
+			                    $ret = $this->addline($bank_id, $fk_paiement, $typeline, $emetteur, $amount, $num_chq, $banque, $datec);
+			                    if ($ret<0)
+			                    {
+			                        $this->errno = $ret;
+			                    }
+			                    
+			                }
+			            }
+			        }
+			        elseif ($typeline == "payment")
+			        {
+			            foreach ($linetoremise as $payment_id)
+			            {
+			                
+			                $sql = "SELECT p.amount, p.datec, s.nom as emetteur";
+			                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON (pf.fk_paiement = p.rowid)";
+			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (f.rowid = pf.fk_facture)";
+			                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = f.fk_soc)";
+			                $sql.= " WHERE p.rowid = " . $payment_id;
+			                
+			                $res = $this->db->query($sql);
+			                
+			                if($res)
+			                {
+			                    $obj = $this->db->fetch_object($res);
+			                    
+			                    $emetteur = (empty($obj->emetteur)) ? '' : $this->db->escape($obj->emetteur);
+			                    $amount = (empty($obj->amount)) ? 0 : $obj->amount;
+			                    $num_chq = '';
+			                    $banque = '';
+			                    $datec = (empty($obj->datec)) ? '' : $this->db->jdate($obj->datec);
+			                    			                    
+			                    $ret = $this->addline(0, $payment_id, $typeline, $emetteur, $amount, $num_chq, $banque, $datec);
+			                    if ($ret<0)
+			                    {
+			                        $this->errno = $ret;
+			                    }
+			                    
+			                }
+			            }
+			        }
+			        
+			    }
+			    
+			    
 
-				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if ($resql)
-				{
-					while ($row = $this->db->fetch_row($resql) )
-					{
-						array_push($lines, $row[0]);
-					}
-					$this->db->free($resql);
-				}
-				else
-				{
-					$this->errno = -1026;
-					dol_syslog("RemiseCheque::Create Error ".$this->errno, LOG_ERR);
-				}
-			}
-
-			if ($this->id > 0 && $this->errno == 0)
-			{
-				foreach ($lines as $lineid)
-				{
-					$checkremise=false;
-					foreach ($toRemise as $linetoremise)
-					{
-						if($linetoremise==$lineid) $checkremise=true;
-					}
-
-					if ($checkremise)
-					{
-						$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-						$sql.= " SET fk_bordereau = ".$this->id;
-						$sql.= " WHERE rowid = ".$lineid;
-
-						$resql = $this->db->query($sql);
-						if (!$resql)
-						{
-							$this->errno = -18;
-							dol_syslog("RemiseCheque::Create Error update bank ".$this->errno, LOG_ERR);
-						}
-					}
-				}
 			}
 
 			if ($this->id > 0 && $this->errno == 0)
@@ -265,6 +291,9 @@ class RemiseCheque extends CommonObject
 					dol_syslog("RemiseCheque::Create Error update amount ".$this->errno, LOG_ERR);
 				}
 			}
+			
+// 			var_dump($this);
+// 			exit;
 		}
 		else
 		{
@@ -301,37 +330,78 @@ class RemiseCheque extends CommonObject
 	 */
 	function delete($user='')
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->errno = 0;
 		$this->db->begin();
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
-
-		$resql = $this->db->query($sql);
-		if ( $resql )
+		
+		if ($this->statut == 1)
 		{
-			$num = $this->db->affected_rows($resql);
-
-			if ($num <> 1) {
-				$this->errno = -2;
-				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
-			}
-
-			if ( $this->errno === 0) {
-			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-			    $sql.= " SET fk_bordereau = 0";
-			    $sql.= " WHERE fk_bordereau = ".$this->id;
-
-			    $resql = $this->db->query($sql);
-			    if (!$resql)
-			    {
-			        $this->errno = -1028;
-				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
-				}
-			}
+		    $sql = "SELECT datec, datev, dateo, amount, fk_account  FROM ".MAIN_DB_PREFIX."bank WHERE fk_bordereau = ".$this->id." AND label LIKE '(ChequeDeposit)'";
+		    $res = $this->db->query($sql);
+		    
+		    if ($res && $this->db->num_rows($res))
+		    {
+		        $obj = $this->db->fetch_object($res);
+		        // create a regulation entry
+		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_type, fk_bordereau";
+		        $sql.= ") VALUES (";
+		        $sql.= "'".$obj->datec."'";
+		        $sql.= ", '". $obj->datev."'";
+		        $sql.= ", '". $obj->dateo."'";
+		        $sql.= ", '-".$obj->amount."'";
+		        $sql.= ", '(ChequeDepositCancel)'";
+		        $sql.= ", ".$obj->fk_account;
+		        $sql.= ", ".$user->id;
+		        $sql.= ", 'CHQ'";
+		        $sql.= ", ".$this->id;
+		        $sql.= ")";
+		        
+		        $res = $this->db->query($sql);
+// 		        var_dump($obj, $sql); exit;
+		    }
+		}
+		
+		// delete lines
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_chequedet";
+		$sql.= " WHERE fk_bordereau = ".$this->id;
+		dol_syslog("Remisecheque::Deletelines of bordereau $this->id");
+		$res = $this->db->query($sql);
+		if ($res)
+		{
+    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+    		$sql.= " WHERE rowid = ".$this->id;
+    		$sql.= " AND entity = ".$conf->entity;
+    
+    		$resql = $this->db->query($sql);
+    		if ( $resql )
+    		{
+    			$num = $this->db->affected_rows($resql);
+    
+    			if ($num <> 1) {
+    				$this->errno = -2;
+    				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
+    			}
+    
+    			if ( $this->errno === 0) {
+    			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+    			    $sql.= " SET fk_bordereau = 0";
+    			    $sql.= " WHERE fk_bordereau = ".$this->id;
+    			    $sql.= " AND label NOT LIKE '%ChequeDeposit%'";
+    
+    			    $resql = $this->db->query($sql);
+    			    if (!$resql)
+    			    {
+    			        $this->errno = -1028;
+    				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+    				}
+    			}
+    		}
+		}
+		else 
+		{
+		    $this->errno = -1;
+		    dol_syslog("RemiseCheque::Delete lines ($this->errno)");
 		}
 
 		if ($this->errno === 0)
@@ -381,6 +451,13 @@ class RemiseCheque extends CommonObject
 				{
 				    $this->ref = $numref;
 					$this->statut = 1;
+					
+					$ret = $this->createBankEntry();
+					if ($ret < 0)
+					{
+					    $this->errno = $ret;
+					    dol_syslog("Remisecheque::Validate BankEntry creation Error ".$this->errno, LOG_ERR);
+					}
 				}
 				else
 				{
@@ -407,6 +484,305 @@ class RemiseCheque extends CommonObject
 			dol_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
             return $this->errno;
 		}
+	}
+	
+	/**
+	 * Add a line of remisecheque
+	 * 
+	 * @param int      $fk_bank
+	 * @param int      $fk_paiement
+	 * @param string   $type_line
+	 * @param string   $emetteur
+	 * @param double   $amount
+	 * @param string   $num_chq
+	 * @param string   $banque
+	 * @param string   $datec
+	 * 
+	 * @return    	int             				<0 if KO, Id of line if OK
+	 */
+	function addline($fk_bank = 0, $fk_paiement = 0, $type_line = '', $emetteur = '', $amount = 0, $num_chq = '', $banque = '', $datec = null)
+	{
+	    dol_syslog("RemiseCheque::addline id=$this->id, fk_bank=$fk_bank, fk_paiement=$fk_paiement, type_line=$type_line, emetteur=$emetteur, amount=$amount, num_chq=$num_chq, banque=$banque, datec=$datec", LOG_DEBUG);
+	    
+	    // clean parameters
+	    if (empty($fk_bank)) $fk_bank = 0;
+	    if (empty($fk_paiement)) $fk_paiement = 0;
+	    
+	    // check parameters
+	    if (empty($fk_bank) && empty($fk_paiement))
+	    {
+	        $this->error = "ErrorAddLineNoLink";
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -1;
+	    }
+	    
+	    if (empty($type_line) || !in_array($type_line, array("bank", "payment")))
+	    {
+	        $this->error = "ErrorAddLineInvalidType";
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -2;
+	    }
+	    
+	    if (empty($this->id))
+	    {
+	        $this->error = "ErrorAddLineNoBordereauId";
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -3;
+	    }
+	    $this->line = new RemiseChequeLine($this->db);
+	    
+	    $this->line->fk_bordereau  = $this->id;
+	    $this->line->fk_bank       = $fk_bank;
+	    $this->line->fk_paiement   = $fk_paiement;
+	    $this->line->type_line     = $this->db->escape($type_line);
+	    $this->line->emetteur      = (empty($emetteur)) ? '' : $this->db->escape($emetteur);
+	    $this->line->amount        = (empty($amount)) ? 0 : $amount;
+	    $this->line->num_chq       = $this->db->escape($num_chq);
+	    $this->line->banque        = $this->db->escape($banque);
+	    $this->line->datec         = $datec;
+	    
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_chequedet (";
+	    $sql.= "fk_bordereau, ";
+	    $sql.= "fk_bank, ";
+	    $sql.= "fk_paiement, ";
+	    $sql.= "type_line, ";
+	    $sql.= "emetteur, ";
+	    $sql.= "amount, ";
+	    $sql.= "num_chq, ";
+	    $sql.= "banque, ";
+	    $sql.= "datec";
+	    $sql.= ") VALUES (";
+	    $sql.= $this->line->fk_bordereau;
+	    $sql.= ", ". $this->line->fk_bank;
+	    $sql.= ", ". $this->line->fk_paiement;
+	    $sql.= ", '".$this->line->type_line."'";
+	    $sql.= ", '".$this->line->emetteur."'";
+	    $sql.= ", '".$this->line->amount."'";
+	    $sql.= ", '".$this->line->num_chq."'";
+	    $sql.= ", '".$this->line->banque."'";
+	    $sql.= ", ".(! empty($this->line->datec) ? "'".$this->db->idate($this->line->datec)."'" :"null");
+	    $sql.= ")";
+	    
+	    dol_syslog("RemiseCheque::Addline", LOG_DEBUG);
+	    $res = $this->db->query($sql);
+	    if ($res)
+	    {
+	        $this->line->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'bordereau_chequedet');
+	        $this->lines[] = $this->line;
+	        
+	        // update bankentry
+	        if ($this->line->type_line == "bank")
+	        {
+	            $sql2 = "UPDATE ".MAIN_DB_PREFIX."bank SET fk_bordereau = ".$this->id." WHERE rowid = ". $this->line->fk_bank;
+	            $resql2 = $this->db->query($sql2);
+	            if (!$resql2)
+	            {
+	                $this->errno = $this->db->lasterrno;
+	                $this->error = $this->db->lasterror;
+	                dol_syslog("RemiseCheque::Addline Update Bank Error ".$this->error, LOG_ERR);
+	                return $this->errno;
+	            }
+	        }
+	        
+	        return $this->line->id;
+	    }
+	    else
+	    {
+	        $this->error = $this->db->lasterror;
+	        dol_syslog("RemiseCheque::Addline Error ".$this->error, LOG_ERR);
+	        return -4;
+	    }
+	    
+	}
+	
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 *	Load all detailed lines into this->lines
+	 *
+	 *	@return     int         1 if OK, < 0 if KO
+	 */
+	function fetch_lines()
+	{
+	    // phpcs:enable
+	    $this->lines=array();
+	    
+	    $sql = "SELECT l.rowid, l.fk_bordereau, l.fk_bank, l.fk_paiement, l.type_line, l.emetteur, l.amount, l.num_chq, l.banque, l.datec, p.statut";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_chequedet as l";
+	    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.rowid = l.fk_paiement";
+	    $sql.= " WHERE l.fk_bordereau = ".$this->id;
+	    
+	    dol_syslog(get_class($this).'::fetch_lines', LOG_DEBUG);
+	    $result = $this->db->query($sql);
+	    if ($result)
+	    {
+	        $num = $this->db->num_rows($result);
+	        $i = 0;
+	        
+	        while ($i < $num)
+	        {
+	            $objp = $this->db->fetch_object($result);
+	            
+	            $line = new RemiseChequeLine($this->db);
+	            
+	            $line->id              = $objp->rowid;
+	            $line->fk_bordereau    = $objp->fk_bordereau;
+	            $line->fk_bank         = $objp->fk_bank;
+	            $line->fk_paiement     = $objp->fk_paiement;
+	            $line->type_line       = $objp->type_line;
+	            $line->emetteur        = $objp->emetteur;
+	            $line->amount          = floatval($objp->amount);
+	            $line->num_chq         = $objp->num_chq;
+	            $line->banque          = $objp->banque;
+	            $line->datec           = (!empty($objp->datec)) ? $this->db->jdate($objp->datec) : null;
+	            $line->statut          = $objp->statut;
+	            
+	            $this->lines[$i] = $line;
+	            
+	            $i++;
+	        }
+	        $this->db->free($result);
+	        return 1;
+	    }
+	    else
+	    {
+	        $this->error=$this->db->error();
+	        return -3;
+	    }
+	}
+	
+	/**
+	 * Create a global bank entry for lines which haven't one
+	 * 
+	 * @return	int	>0 if OK or <0 if KO
+	 */
+	function createBankEntry()
+	{
+	    global $user;
+	    
+	    if(empty($this->lines)) $this->fetch_lines();
+	    
+	    $error = 0;
+	    $this->db->begin();
+	    
+	    if(count($this->lines))
+	    {
+	        $total = 0;
+	        $TLinesToUpdate = $TPaymentToUpdate = array();
+	        foreach ($this->lines as $line)
+	        {
+	            if($line->type_line == "payment" && empty($line->fk_bank))
+	            {
+	                $paiement = new Paiement($this->db);
+	                $paiement->fetch($line->fk_paiement);
+	                
+	                if (empty($paiement->fk_bank))
+	                {
+	                    $total += $paiement->amount;
+	                    $TLinesToUpdate[] = $line->id;
+	                    $TPaymentToUpdate[] = $line->fk_paiement;
+	                }
+	                else
+	                {
+	                    // update line->fk_bank
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX.$line->$table_element." SET fk_bank = ".$paiement->fk_bank." WHERE rowid = ".$line->id;
+	                    $res = $this->db->query($sql);
+	                    if (!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update lines fk_bank error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update lines fk_bank error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                }
+	            }
+	            else continue;
+	        }
+	        
+	        if (!$error && count($TLinesToUpdate))
+	        {
+	            //create a global bankentry
+	            $account = new Account($this->db);
+	            $res = $account->fetch($this->account_id);
+	            
+	            if ($res > 0)
+	            {
+	                $date = dol_now();
+	                $label = '(ChequeDeposit)';
+	                $amount = $total;
+	                
+	                $ret = $account->addline($date, 'CHQ', $label, $amount, '', '', $user);
+	                if ($ret < 0)
+	                {
+	                    $error++;
+	                    $this->errors[] = "RemiseCheque::createBankEntry add global bankentry error : " . $account->error;
+	                    dol_syslog("RemiseCheque::createBankEntry add global bankentry error : " . $account->error, LOG_ERR);
+	                }
+	                else
+	                {
+	                    $bank_line_id = $ret;
+	                    
+	                    // Update bankentry created
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET fk_bordereau = ".$this->id." WHERE rowid = ".$bank_line_id;
+	                    $res = $this->db->query($sql);
+	                    if(!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update bankentry error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update bankentry error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                    
+	                    // Update payments
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_bank = ".$bank_line_id." WHERE rowid in (".implode(",", $TPaymentToUpdate).")";
+	                    $res = $this->db->query($sql);
+	                    if(!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update payments error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update payments error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                    
+	                    // update lines
+	                    $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_chequedet SET fk_bank = ".$bank_line_id." WHERE rowid in (".implode(",", $TLinesToUpdate).")";
+	                    $res = $this->db->query($sql);
+	                    if(!$res)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry update lines error : " . $this->db->lasterror;
+	                        dol_syslog("RemiseCheque::createBankEntry update lines error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                    
+	                    // add bank_url to link the bankentry to the bordereau
+	                    $url=DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id=';
+	                    $result=$account->add_url_line($bank_line_id, $this->id, $url, $this->ref, 'cheque_deposit');
+	                    if ($result <= 0)
+	                    {
+	                        $error++;
+	                        $this->errors[] = "RemiseCheque::createBankEntry add bank_url for payment $payment_id error : " . $this->db->lasterror;
+	                        dol_print_error("RemiseCheque::createBankEntry add bank_url for payment $payment_id error : " . $this->db->lasterror, LOG_ERR);
+	                    }
+	                    
+	                }
+	            }
+	            else
+	            {
+	                $error++;
+	                $this->errors[] = "RemiseCheque::createBankEntry can't fetch account error : " . $this->account_id;
+	                dol_syslog("RemiseCheque::createBankEntry can't fetch account error : " . $this->account_id, LOG_ERR);
+	            }
+	        }
+	        
+	        if ($error)
+	        {
+	            $this->db->rollback();
+	            setEventMessages('Errors during BankEntry creation', $this->errors, 'errors');
+	            return -1;
+	        }
+	        else
+	        {
+	            $this->db->commit();
+	            return 1;
+	        }
+	    }
+	    else return -2;
 	}
 
 	/**
@@ -618,28 +994,19 @@ class RemiseCheque extends CommonObject
 			$classname='BordereauCheque'.ucfirst($model);
 			$docmodel = new $classname($this->db);
 
-			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-			$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-			$sql.= ", ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-			$sql.= " WHERE b.fk_account = ba.rowid";
-			$sql.= " AND b.fk_bordereau = bc.rowid";
-			$sql.= " AND bc.rowid = ".$this->id;
-			$sql.= " AND bc.entity = ".$conf->entity;
-			$sql.= " ORDER BY b.dateo ASC, b.rowid ASC";
-
+			if(empty($this->lines)) $this->fetch_lines();
+			
 			dol_syslog("RemiseCheque::generatePdf", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result)
+			if (count($this->lines))
 			{
 				$i = 0;
-				while ($objp = $this->db->fetch_object($result))
+				foreach ($this->lines as $line)
 				{
 					$docmodel->lines[$i] = new stdClass();
-					$docmodel->lines[$i]->bank_chq = $objp->banque;
-					$docmodel->lines[$i]->emetteur_chq = $objp->emetteur;
-					$docmodel->lines[$i]->amount_chq = $objp->amount;
-					$docmodel->lines[$i]->num_chq = $objp->num_chq;
+					$docmodel->lines[$i]->bank_chq = $line->banque;
+					$docmodel->lines[$i]->emetteur_chq = $line->emetteur;
+					$docmodel->lines[$i]->amount_chq = $line->amount;
+					$docmodel->lines[$i]->num_chq = $line->num_chq;
 					$i++;
 				}
 			}
@@ -687,23 +1054,22 @@ class RemiseCheque extends CommonObject
 		global $conf;
 
 		$this->errno = 0;
+		
 		$this->db->begin();
 		$total = 0;
 		$nb = 0;
-		$sql = "SELECT amount ";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE fk_bordereau = ".$this->id;
-
-		$resql = $this->db->query($sql);
-		if ( $resql )
+		
+		if ( !empty($this->lines) && count($this->lines) )
 		{
-			while ( $row = $this->db->fetch_row($resql) )
+		    $nb = count($this->lines);
+		    $i = 0;
+		    
+			while ( $i < $nb)
 			{
-				$total += $row[0];
-				$nb++;
+				$total += $this->lines[$i]->amount;
+				
+				$i++;
 			}
-
-			$this->db->free($resql);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql.= " SET amount = '".price2num($total)."'";
@@ -717,11 +1083,16 @@ class RemiseCheque extends CommonObject
 				$this->errno = -1030;
 				dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
 			}
+			else 
+			{
+			    $this->amount = $total;
+			    $this->nbcheque = $nb;
+			}
 		}
 		else
 		{
 			$this->errno = -1031;
-			dol_syslog("RemiseCheque::updateAmount ERREUR SELECT ($this->errno)");
+			dol_syslog("RemiseCheque::updateAmount No Lines");
 		}
 
 		if ($this->errno === 0)
@@ -740,31 +1111,112 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Insere la remise en base
 	 *
-	 *	@param	int		$account_id 		Compte bancaire concerne
+	 *	@param	int		$line_id 		id de la ligne à retirer
 	 * 	@return	int
 	 */
-	function removeCheck($account_id)
+	function removeCheck($line_id)
 	{
 		$this->errno = 0;
-
-		if ($this->id > 0)
+		
+		$found = false;
+		$i = 0;
+		foreach ($this->lines as $line)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-			$sql.= " SET fk_bordereau = 0";
-			$sql.= " WHERE rowid = '".$account_id."'";
-			$sql.= " AND fk_bordereau = ".$this->id;
-
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$this->updateAmount();
-			}
-			else
-			{
-				$this->errno = -1032;
-				dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
-			}
+		    if ($line->id == $line_id)
+		    {
+		        $found = true;
+		    }
+		    
+		    if($found) break;
+		    
+		    $i++;
 		}
+		
+		if(!$found)
+		{
+		    $this->error = "RemiseCheque::removeCheck error line not found";
+		    dol_syslog($this->error, LOG_ERR);
+		    return -1;
+		}
+		
+		$this->db->begin();
+		
+		if (empty($this->statut))
+		{
+		    if ($this->lines[$i]->type_line == "bank")
+		    {
+		        // update bankentry
+		        $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+		        $sql.= " SET fk_bordereau = 0";
+		        $sql.= " WHERE rowid = '".$this->lines[$i]->fk_bank."'";
+		        $sql.= " AND fk_bordereau = ".$this->id;
+		        
+		        $resql = $this->db->query($sql);
+		        if (!$resql)
+		        {
+		            $this->errno = -1032;
+		            $this->error = "RemiseCheque::removeCheck bank ERREUR UPDATE ($this->errno)";
+		            dol_syslog($this->error, LOG_ERR);
+		            $this->db->rollback();
+		            return -1;
+		        }
+		    }
+		    elseif ($this->lines[$i]->type_line == "payment")
+		    {
+		        // if we disable the BANK_CHK_DONT_CREATE_BANK_RECORDS configuration, it create bankentries for payment which haven't one
+		        // so we must verify if a bank entry has been created
+		        $sql = "SELECT p.fk_bank FROM ".MAIN_DB_PREFIX."paiement as p WHERE p.rowid = ".$this->lines[$i]->fk_paiement;
+		        
+		        $resql = $this->db->query($sql);
+		        if ($resql && $this->db->num_rows($resql))
+		        {
+		            $obj = $this->db->fetch_object($resql);
+		            if (!empty($obj->fk_bank)){
+    		            // update bankentry
+    		            $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+    		            $sql.= " SET fk_bordereau = 0";
+    		            $sql.= " WHERE rowid = '".$obj->fk_bank."'";
+    		            $sql.= " AND fk_bordereau = ".$this->id;
+    		            
+    		            $resql = $this->db->query($sql);
+    		            if (!$resql)
+    		            {
+    		                $this->errno = -1032;
+    		                $this->error = "RemiseCheque::removeCheck payment ERREUR UPDATE ($this->errno)";
+    		                dol_syslog($this->error, LOG_ERR);
+    		                $this->db->rollback();
+    		                return -1;
+    		            }
+		            }
+		        }
+		        
+		    }
+		}
+		else
+		{
+		    $this->errno = -2;
+		    $this->error = "RemiseCheque::removeCheck Error Bordereau already validated ($this->errno)";
+		    dol_syslog($this->error, LOG_ERR);
+		    $this->db->rollback();
+		    return -1;
+		}
+		
+		// delete line
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_chequedet";
+		$sql.= " WHERE rowid = ".$this->lines[$i]->id;
+		$resql = $this->db->query($sql);
+		if (!$resql)
+		{
+		    $this->error = "RemiseCheque::removeCheck error can't delete bordereau line";
+		    dol_syslog($this->error, LOG_ERR);
+		    $this->db->rollback();
+		    return -1;
+		}
+		
+		$this->updateAmount();
+		
+		$this->db->commit();
+		
 		return 0;
 	}
 
@@ -772,17 +1224,39 @@ class RemiseCheque extends CommonObject
 	 *	Check return management
 	 *	Reopen linked invoices and create a new negative payment.
 	 *
-	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
+	 *	@param	int		$line_id 		   Id of line concerned
 	 *	@param	date	$rejection_date    Date to use on the negative payment
 	 * 	@return	int                        Id of negative payment line created
 	 */
-	function rejectCheck($bank_id, $rejection_date)
+	function rejectCheck($line_id, $rejection_date)
 	{
 		global $db, $user;
 
+		$found = false;
+		
+		foreach ($this->lines as $line)
+		{
+		    if ($line->id == $line_id)
+		    {
+		        $found = true;
+		        $bank_id = $line->fk_bank;
+		        $payment_id = $line->fk_paiement;
+		    }
+		    
+		    if($found) break;
+		}
+		
+		//var_dump($found, $line_id); exit;
+		if(!$found)
+		{
+		    $this->error = "RemiseCheque::removeCheck error line not found";
+		    dol_syslog($this->error, LOG_ERR);
+		    return -1;
+		}
+		
 		$payment = new Paiement($db);
-		$payment->fetch(0,0,$bank_id);
-
+		$payment->fetch($payment_id);
+		
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
 
@@ -813,6 +1287,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment->datepaye = $rejection_date;
 			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement','code','id',1);
 			$rejectedPayment->num_paiement = $payment->numero;
+			$rejectedPayment->fk_account = $payment->fk_account;
 
 			while($obj = $db->fetch_object($resql))
 			{
@@ -1119,4 +1594,34 @@ class RemiseCheque extends CommonObject
 		}
 		return $langs->trans('Unknown');
 	}
+}
+
+class RemiseChequeLine extends CommonObject
+{
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element='bordereau_chequedet';
+    
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='bordereau_chequedet';
+    
+    public $fk_bordereau; // bordereau id
+    
+    public $fk_bank; // 
+    public $fk_paiement;
+    public $type_line;
+    public $emetteur;
+    public $amount;
+    public $num_chq;
+    public $banque;
+    public $datec;
+    public $statut;
+    
+    public function __construct(DoliDB $db)
+    {
+        $this->db = $db;
+    }
 }

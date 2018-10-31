@@ -195,6 +195,7 @@ class Paiement extends CommonObject
                 $this->ext_payment_id = $obj->ext_payment_id;
                 $this->ext_payment_site = $obj->ext_payment_site;
 
+				$this->paiementid     = $obj->fk_paiement;
 				$this->bank_account   = $obj->fk_account; // deprecated
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
@@ -287,9 +288,11 @@ class Paiement extends CommonObject
 			$mtotal = $totalamount;
 		}
 		$note = ($this->note_public?$this->note_public:$this->note);
+    $payment_id = $this->ext_payment_id ? $this->payment_id : null;
+    $payment_site = $this->ext_payment_site ? $this->payment_site : null;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, fk_account, note, ext_payment_id, ext_payment_site, fk_user_creat)";
+		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', ".$this->fk_account.",'".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);

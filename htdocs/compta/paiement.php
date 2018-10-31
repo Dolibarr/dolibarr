@@ -253,7 +253,8 @@ if (empty($reshook))
 	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',1);
 	    $paiement->num_paiement = GETPOST('num_paiement');
 	    $paiement->note         = GETPOST('comment');
-
+	    $paiement->fk_account = GETPOST('accountid', 'int');
+	    
 	    if (! $error)
 	    {
 	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));    // This include closing invoices and regenerating documents
@@ -268,12 +269,27 @@ if (empty($reshook))
 	    {
 	    	$label='(CustomerInvoicePayment)';
 	    	if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) $label='(CustomerInvoicePaymentBack)';  // Refund of a credit note
-	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
-	        if ($result < 0)
-	        {
-	            setEventMessages($paiement->error, $paiement->errors, 'errors');
-	            $error++;
-	        }
+	    	if (empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
+	    	{
+    	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
+    	        if ($result < 0)
+    	        {
+    	            setEventMessages($paiement->error, $paiement->errors, 'errors');
+    	            $error++;
+    	        }
+	    	}
+	    	else 
+	    	{
+	    	    if (GETPOST('paiementcode') !== "CHQ")
+	    	    {
+	    	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
+	    	        if ($result < 0)
+	    	        {
+	    	            setEventMessages($paiement->error, $paiement->errors, 'errors');
+	    	            $error++;
+	    	        }
+	    	    }
+	    	}
 	    }
 
 	    if (! $error)

@@ -164,7 +164,7 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 
 if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banque->cheque)
 {
-	$object->id = $id;
+    $object->fetch($id);
 	$result = $object->removeCheck($_GET["lineid"]);
 	if ($result === 0)
 	{
@@ -179,7 +179,8 @@ if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banq
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->cheque)
 {
-	$object->id = $id;
+	$object->fetch($id);
+	
 	$result = $object->delete();
 	if ($result == 0)
 	{
@@ -433,7 +434,39 @@ if ($action == 'new')
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
 			$lines[$obj->bid][$i]["id"] = $obj->transactionid;
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
+			$lines[$obj->bid][$i]["typeline"] = "bank";
 			$i++;
+		}
+		
+		if (!empty($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS))
+		{
+		   $sql2 = "SELECT DISTINCT ba.rowid as bid, p.datec as datec, p.datep as date, p.amount, ba.label, p.rowid as paymentid, s.nom as emetteur";
+		   $sql2.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON (pf.fk_paiement = p.rowid)";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (f.rowid = pf.fk_facture)";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = f.fk_soc)";
+		   $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (p.fk_account = ba.rowid)";
+		   $sql2.= " WHERE p.fk_bank = 0";
+		   $sql2.= " AND p.rowid not in (SELECT DISTINCT fk_paiement FROM ".MAIN_DB_PREFIX."bordereau_chequedet WHERE fk_bank = 0)";
+		   
+		   $resql2 = $db->query($sql2);
+		   if ($resql2)
+		   {
+		       
+		       while ( $obj = $db->fetch_object($resql2) )
+		       {
+		           $accounts[$obj->bid] = $obj->label;
+		           $lines[$obj->bid][$i]["date"] = $db->jdate($obj->date);
+		           $lines[$obj->bid][$i]["amount"] = $obj->amount;
+		           $lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
+		           $lines[$obj->bid][$i]["numero"] = '';
+		           $lines[$obj->bid][$i]["banque"] = '';
+		           $lines[$obj->bid][$i]["id"] = $obj->paymentid;
+		           $lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
+		           $lines[$obj->bid][$i]["typeline"] = "payment";
+		           $i++;
+		       }
+		   }
 		}
 
 		if ($i == 0)
@@ -515,9 +548,11 @@ if ($action == 'new')
 					print '&nbsp;';
 				}
 				print '</td>';
+
 				// Link to bank transaction
 				print '<td align="center">';
-				$accountlinestatic->rowid=$value["id"];
+				$accountlinestatic->rowid = 0;
+				if ($value["typeline"] !== "payment") $accountlinestatic->rowid=$value["id"];
 				if ($accountlinestatic->rowid)
 				{
 					print $accountlinestatic->getNomUrl(1);
@@ -529,7 +564,7 @@ if ($action == 'new')
 				print '</td>';
 
 				print '<td align="center">';
-				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise['.$value['typeline'].'][]" value="'.$value["id"].'">';
 				print '</td>' ;
 				print '</tr>';
 
@@ -645,119 +680,121 @@ else
 
 	print '</div>';
 
-
 	// List of cheques
-	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
-	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
-	$sql.= " p.rowid as pid, ba.rowid as bid, p.statut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.fk_account = ba.rowid)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
-	$sql.= " WHERE ba.entity IN (".getEntity('bank_account').")";
-	$sql.= " AND b.fk_type= 'CHQ'";
-	$sql.= " AND b.fk_bordereau = ".$object->id;
-	$sql.= $db->order($sortfield, $sortorder);
-
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-
-	    print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
-
-		$param="&amp;id=".$object->id;
-
-		print '<tr class="liste_titre">';
-		print_liste_field_titre("Cheques",'','','','','width="30"');
-		print_liste_field_titre("DateChequeReceived",$_SERVER["PHP_SELF"],"b.dateo,b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre("CheckTransmitter",$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre("Bank",$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre("Payment",$_SERVER["PHP_SELF"],"p.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre("LineRecord",$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre('');
-		print "</tr>\n";
-		$i=1;
-
-        if ($num > 0)
+    $num = count($object->lines);
+    
+    // reorder lines if necessary
+    if (!empty($sortfield))
+    {
+        $tosort = array();
+        $i=0;
+        foreach ($object->lines as $line)
         {
-    		while ($objp = $db->fetch_object($resql))
-    		{
-    			//$account_id = $objp->bid; FIXME not used
-
-    			// FIXME $accounts[$objp->bid] is a label
-    			/*if (! isset($accounts[$objp->bid]))
-    				$accounts[$objp->bid]=0;
-    			$accounts[$objp->bid] += 1;*/
-
-    			print '<tr class="oddeven">';
-    			print '<td align="center">'.$i.'</td>';
-    			print '<td align="center">'.dol_print_date($db->jdate($objp->date),'day').'</td>';	// Date operation
-    			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
-    			print '<td>'.dol_trunc($objp->emetteur,24).'</td>';
-    			print '<td>'.dol_trunc($objp->banque,24).'</td>';
-    			print '<td align="right">'.price($objp->amount).'</td>';
-    			// Link to payment
-    			print '<td align="center">';
-    			$paymentstatic->id=$objp->pid;
-    			$paymentstatic->ref=$objp->pid;
-    			if ($paymentstatic->id)
-    			{
-    				print $paymentstatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
-    			// Link to bank transaction
-    			print '<td align="center">';
-    			$accountlinestatic->rowid=$objp->rowid;
-    			if ($accountlinestatic->rowid)
-    			{
-    				print $accountlinestatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
-    			// Action button
-    			print '<td align="right">';
-    			if ($object->statut == 0)
-    			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
-    			}
-       			if ($object->statut == 1 && $objp->statut != 2)
-       			{
-       				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
-       			}
-    			if ($objp->statut == 2)
-    			{
-    				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
-    			}
-    		    print '</td>';
-    			print '</tr>';
-
-    			$i++;
-    		}
+            $tosort[$i] = $line->{$sortfield};
+            $i++;
         }
-        else
+        
+        if ($sortorder == 'desc') arsort($tosort);
+        else asort($tosort);
+        
+        $newOrder = array();
+        foreach (array_keys($tosort) as $index)
         {
-            print '<td colspan="8" class="opacitymedium">';
-            print $langs->trans("None");
-            print '</td>';
+            $newOrder[] = $object->lines[$index];
         }
+        
+        $object->lines = $newOrder;
+    }
+    print '<div class="div-table-responsive">';
+	print '<table class="noborder" width="100%">';
 
-		print "</table>";
-		print "</div>";
-	}
-	else
-	{
-		dol_print_error($db);
-	}
+	$param="&amp;id=".$object->id;
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Cheques",'','','','','width="30"');
+	print_liste_field_titre("DateChequeReceived",$_SERVER["PHP_SELF"],"datec", "",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"num_chq", "",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("CheckTransmitter",$_SERVER["PHP_SELF"],"emetteur", "",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Bank",$_SERVER["PHP_SELF"],"banque", "",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"amount", "",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Payment",$_SERVER["PHP_SELF"],"fk_paiement", "",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("LineRecord",$_SERVER["PHP_SELF"],"fk_bank", "",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
+	$i=1;
+
+    if ($num > 0)
+    {
+		foreach ($object->lines as $line)
+		{
+			//$account_id = $objp->bid; FIXME not used
+
+			// FIXME $accounts[$objp->bid] is a label
+			/*if (! isset($accounts[$objp->bid]))
+				$accounts[$objp->bid]=0;
+			$accounts[$objp->bid] += 1;*/
+
+			print '<tr class="oddeven">';
+			print '<td align="center">'.$i.'</td>';
+			print '<td align="center">'.dol_print_date($line->datec,'day').'</td>';	// Date operation
+			print '<td align="center">'.($line->num_chq?$line->num_chq:'&nbsp;').'</td>';
+			print '<td>'.dol_trunc($line->emetteur,24).'</td>';
+			print '<td>'.dol_trunc($line->banque,24).'</td>';
+			print '<td align="right">'.price($line->amount).'</td>';
+			// Link to payment
+			print '<td align="center">';
+			$paymentstatic->id=$line->fk_paiement;
+			
+			if ($paymentstatic->id)
+			{
+				print $paymentstatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			// Link to bank transaction
+			print '<td align="center">';
+			$accountlinestatic->rowid=$line->fk_bank;
+			if ($accountlinestatic->rowid)
+			{
+				print $accountlinestatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			// Action button
+			print '<td align="right">';
+			if ($object->statut == 0)
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$line->id.'">'.img_delete().'</a>';
+			}
+   			if ($object->statut == 1 && $line->statut != 2)
+   			{
+   				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$line->id.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a>';
+   			}
+			if ($line->statut == 2)
+			{
+				print ' &nbsp; '.img_picto($langs->trans('CheckRejected'),'statut8').'</a>';
+			}
+		    print '</td>';
+			print '</tr>';
+
+			$i++;
+		}
+    }
+    else
+    {
+        print '<td colspan="8" class="opacitymedium">';
+        print $langs->trans("None");
+        print '</td>';
+    }
+
+	print "</table>";
+	print "</div>";
 
 	dol_fiche_end();
 }

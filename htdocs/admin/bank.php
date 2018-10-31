@@ -82,6 +82,65 @@ elseif ($action == 'unsetreportlastnumreleve') {
     }
 }
 
+// Payments by check don't create bank records
+if ($action == 'setchkdontcreatebankrecords') {
+    if (dolibarr_set_const($db, "BANK_CHK_DONT_CREATE_BANK_RECORDS", 1, 'chaine', 0,
+        '', $conf->entity) > 0) {
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
+}
+elseif ($action == 'unsetchkdontcreatebankrecords') {
+    if (dolibarr_set_const($db, "BANK_CHK_DONT_CREATE_BANK_RECORDS", 0, 'chaine', 0,
+        '', $conf->entity) > 0) {
+        
+        // Create bankentries for payments which were created without bankentry
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."paiement WHERE fk_bank = 0";
+        $resql = $db->query($sql);
+        
+        if ($resql && $db->num_rows($resql))
+        {
+            dol_include_once('/compta/paiement/class/paiement.class.php');
+            while ($obj = $db->fetch_object($resql))
+            {
+                $paiement = new Paiement($db);
+                $paiement->fetch($obj->rowid);
+                
+                $emetteur = "";
+                
+                $sql2 = "SELECT s.nom as emetteur";
+                $sql2.= " FROM ".MAIN_DB_PREFIX."societe as s";
+                $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (f.fk_soc = s.rowid)";
+                $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON (pf.fk_facture = f.rowid)";
+                $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement) ";
+                $sql2.= " WHERE p.rowid = ".$paiement->id;
+                
+                $resql2 = $db->query($sql2);
+                if ($resql2)
+                {
+                    $obj2 = $db->fetch_object($resql2);
+                    $emetteur = $obj2->emetteur;
+                }
+                
+                $result = $paiement->addPaymentToBank($user, 'payement', '(CreateByConfDesactivate)', $paiement->bank_account, $emetteur, '');
+                if ($result < 0)
+                {
+                    setEventMessage('Error for payment '. $paiement->id. ' : ' .$paiement->error, 'errors');
+                    $error++;
+                }
+            }
+        }
+        
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
+}
 
 if ($action == 'specimen') {
     $modele = GETPOST('module', 'alpha');
@@ -430,6 +489,44 @@ else
 
 print "</tr>\n";
 print '</table>';
+
+print '<br><br>';
+
+print load_fiche_titre($langs->trans("MenuChequeDeposits"), '', '');
+
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print '<td>' . $langs->trans("Name") . '</td>';
+print '<td>' . $langs->trans("Description") . '</td>';
+print '<td align="center" width="60">' . $langs->trans("Status") . "</td>\n";
+print "</tr>\n";
+
+print '<tr class="oddeven"><td width="100">';
+print $langs->trans('ChequeDeposits');
+print "</td><td>\n";
+print $langs->trans('ChkDontCreateBankRecords');
+print '</td>';
+// Active
+if ($conf->global->BANK_CHK_DONT_CREATE_BANK_RECORDS) {
+    print '<td align="center">' . "\n";
+    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=unsetchkdontcreatebankrecords">';
+    print img_picto($langs->trans("Enabled"), 'switch_on');
+    print '</a>';
+    print '</td>';
+}
+else
+{
+    print '<td align="center">' . "\n";
+    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setchkdontcreatebankrecords">' . img_picto($langs->trans("Disabled"),
+        'switch_off') . '</a>';
+    print "</td>";
+}
+
+print "</tr>\n";
+print '</table>';
+
+print '<br><br>';
+
 dol_fiche_end();
 
 // End of page
