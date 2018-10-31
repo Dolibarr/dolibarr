@@ -376,10 +376,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_each_var_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-		                // retrieve contact information for use in user as contact_xxx tags
-                		$array_thirdparty_contact = array();
-                		if ($usecontact)
-                    			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in object as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$tmparray = array_merge($array_global,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
