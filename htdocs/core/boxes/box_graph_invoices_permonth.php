@@ -141,38 +141,15 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
 
-            // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+            // Build graphic number of object.
             if ($shownb) {
-                $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
-
-                $labels = array();
-                $datas = array();
-                $datacolor = array();
-                $bgdatacolor = array();
-                $dataset = array();
-
                 $px1 = new DolChartJs();
-                foreach ($graph_datas as $data) {
-                    $labels[] = $data[0];
-                    for ($i=0; $i<$nbyear; $i++) {
-                        $datacolor[$i][] = $px1->datacolor[$i];
-                        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
-                        $datas[$i][] = $data[$i+1];
-                    }
-                }
-                for ($i=0; $i<$nbyear; $i++) {
-                    $dataset[] = array(
-                        //'label' => $langs->trans("NumberOfBills").' '.($startyear+$i),
-                        'label' => $startyear + $i,
-                        'backgroundColor' => $datacolor[$i],
-                        'borderColor' => $bgdatacolor[$i],
-                        'data' => $datas[$i],
-                    );
-                }
+                $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0), 1, $px1->datacolor, $px1->bgdatacolor);
+
                 $px1->element('idboxgraphboxnb'.$this->boxcode)
                     ->setType('bar')
-                    ->setLabels($labels)
-                    ->setDatasets($dataset)
+                    ->setLabels($graph_datas['labelgroup'])
+                    ->setDatasets($graph_datas['dataset'])
                     ->setSize(array('width' => $width, 'height' => $height))
                     ->setOptions(array(
                         'responsive' => true,
@@ -191,37 +168,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot) {
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0));
-
-                $labels2 = array();
-                $datas2 = array();
-                $datacolor=array();
-                $bgdatacolor=array();
-                $dataset = array();
-
                 $px2 = new DolChartJs();
+                $graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0), 1, $px2->datacolor, $px2->bgdatacolor);
 
-                foreach ($data2 as $data) {
-                    $labels2[] = $data[0];
-                    for ($i=0; $i<$nbyear; $i++) {
-                        $datacolor[$i][] = $px2->datacolor[$i];
-                        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
-                        $datas2[$i][] = $data[$i+1];
-                    }
-                }
-                for ($i=0; $i<$nbyear; $i++) {
-                    $dataset[] = array(
-                        //'label' => $langs->trans("AmountOfBillsHT").' '.($startyear+$i),
-                        'label' => $startyear + $i,
-                        'backgroundColor' => $datacolor[$i],
-                        'borderColor' => $bgdatacolor[$i],
-                        'data' => $datas2[$i],
-                    );
-                }
                 $px2->element('idboxgraphboxamount'.$this->boxcode)
                     ->setType('bar')
-                    ->setLabels($labels2)
-                    ->setDatasets($dataset)
+                    ->setLabels($graph_datas['labelgroup'])
+                    ->setDatasets($graph_datas['dataset'])
                     ->setSize(array('width' => $width, 'height' => $height))
                     ->setOptions(array(
                         'responsive' => true,
@@ -236,7 +189,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
                         )
                     )
                 );
-			}
+            }
 
 			if (empty($conf->use_javascript_ajax)) {
 				$langs->load("errors");
@@ -267,27 +220,27 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
 				if ($shownb && $showtot) {
-					$stringtoshow.='<div class="fichecenter">';
-					$stringtoshow.='<div class="fichehalfleft">';
+					$stringtoshow .= '<div class="fichecenter">';
+					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) $stringtoshow.=$px1->renderChart();
+				if ($shownb) $stringtoshow .= $px1->renderChart();
 				if ($shownb && $showtot) {
 					$stringtoshow.='</div>';
 					$stringtoshow.='<div class="fichehalfright">';
 				}
-				if ($showtot) $stringtoshow.=$px2->renderChart();
+				if ($showtot) $stringtoshow .= $px2->renderChart();
 				if ($shownb && $showtot) {
-					$stringtoshow.='</div>';
-					$stringtoshow.='</div>';
+					$stringtoshow .= '</div>';
+					$stringtoshow .= '</div>';
 				}
 				$this->info_box_contents[0][0] = array(
-                    'tr'=>'class="oddeven nohover"',
+                    'tr' => 'class="oddeven nohover"',
                     'td' => 'align="center" class="nohover"',
-                    'textnoformat'=>$stringtoshow,
+                    'textnoformat' => $stringtoshow,
                 );
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'tr'=>'class="oddeven nohover"',
+                    'tr' => 'class="oddeven nohover"',
                     'td' => 'align="left" class="nohover"',
                     'maxlength' => 500,
                     'text' => $mesg,
@@ -302,14 +255,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	}
 
 	/**
-	 *	Method to show box
+	 * Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
+	 * @param   array   $head       Array with properties of box title
+	 * @param   array   $contents   Array with properties of box lines
+	 * @param   int     $nooutput   No print, only return string
+	 * @return  string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

@@ -52,7 +52,7 @@ if ($user->societe_id > 0)
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport', $id,'');
 
-$nowyear=strftime("%Y", dol_now());
+$nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $nbyear = 3;
 //$startyear=$year-2;
@@ -82,7 +82,7 @@ if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_st
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)
 //print "$endyear, $startyear";
-$datas = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
 $labels = array();

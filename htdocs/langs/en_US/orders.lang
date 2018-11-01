@@ -86,6 +86,7 @@ OrdersStatistics=Order's statistics
 OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Number of orders by month
 AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
+AmountOfOrders=Amount of orders
 ListOfOrders=List of orders
 CloseOrder=Close order
 ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.

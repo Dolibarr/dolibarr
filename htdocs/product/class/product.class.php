@@ -2705,12 +2705,15 @@ class Product extends CommonObject
 	/**
 	 *  Return an array formated for showing graphs
 	 *
-	 *  @param		string	$sql        Request to execute
-	 *  @param		string	$mode		'byunit'=number of unit, 'bynumber'=nb of entities
-	 *  @param      int     $year       Year (0=current year)
-	 *  @return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param	string	$sql            Request to execute
+	 *  @param	string	$mode           'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param  int     $year           Year (0=current year)
+     *  @param  int     $datamode       0 for data array old mode, 1 for new array
+     *  @param  array   $datacolor      array of datacolor
+     *  @param  array   $bgdatacolor    array of background datacolor
+	 *  @return array                   <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function _get_stats($sql, $mode, $year=0)
+	function _get_stats($sql, $mode, $year=0, $datamode = 1, $datacolor = array(), $bgdatacolor = array())
 	{
         // phpcs:enable
 		$resql = $this->db->query($sql);
@@ -2739,31 +2742,47 @@ class Product extends CommonObject
 		}
 		else
 		{
-		    $month=12;    // We imagine we are at end of year, so we get last 12 month before, so all correct year.
+		    $month = 12;    // We imagine we are at end of year, so we get last 12 month before, so all correct year.
 		}
-		$result = array();
+		$data = array();
 
-		for ($j = 0 ; $j < 12 ; $j++)
-		{
-			$idx=ucfirst(dol_trunc(dol_print_date(dol_mktime(12,0,0,$month,1,$year),"%b"),3,'right','UTF-8',1));
-			$monthnum=sprintf("%02s",$month);
+        if ($datamode == 0) {
+            for ($j = 0 ; $j < 12 ; $j++) {
+			    $idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, $year),"%b"), 3, 'right', 'UTF-8', 1));
+			    $monthnum = sprintf("%02s",$month);
 
-			$result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
-			//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
+			    $data[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
+			    //            $data[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
 
-			$month = "0".($month - 1);
-			if (dol_strlen($month) == 3)
-			{
-				$month = substr($month,1);
-			}
-			if ($month == 0)
-			{
-				$month = 12;
-				$year = $year - 1;
-			}
-		}
-
-		return array_reverse($result);
+			    $month = "0".($month - 1);
+			    if (dol_strlen($month) == 3) {
+				    $month = substr($month, 1);
+			    }
+			    if ($month == 0) {
+				    $month = 12;
+				    $year = $year - 1;
+			    }
+            }
+            $data = array_reverse($data);
+        } elseif ($datamode == 1) {
+            $data['dataset'] = array();
+            $data['labelgroup'] = array();
+            $data['dataset'][0]['label'] = $year;
+            for ($i = 0 ; $i < 12 ; $i++) {
+                $idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, $year),"%b"), 3, 'right', 'UTF-8', 1));
+                $data['labelgroup'][$i] = $idx;
+                $ym = $year.sprintf("%02s",$month);
+                $data['dataset'][0]['data'][$i] = isset($tab[$ym])?$tab[$ym]:0;
+                $data['dataset'][0]['backgroundColor'][$i] = $bgdatacolor[$i];
+                $data['dataset'][0]['borderColor'][$i] = $datacolor[$i];
+                $month--;
+                if ($month == 0) {
+                    $month = 12;
+                    $year--;
+                }
+            }
+        }
+		return $data;
 	}
 
 
@@ -2778,7 +2797,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_vente($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+	function get_nb_vente($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
         // phpcs:enable
 		global $conf;
@@ -2801,7 +2820,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
 		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year);
+		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
 	}
 
 
@@ -2816,7 +2835,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_achat($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+	function get_nb_achat($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
         // phpcs:enable
 		global $conf;
@@ -2839,7 +2858,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
 		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year);
+		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -2853,7 +2872,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propal($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+	function get_nb_propal($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
         // phpcs:enable
 		global $conf;
@@ -2876,7 +2895,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(p.datep,'%Y%m')";
 		$sql.= " ORDER BY date_format(p.datep,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year);
+		return $this->_get_stats($sql, $mode, $year, $datamode, $datacolor, $bgdatacolor);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -2890,7 +2909,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
         // phpcs:enable
 		global $conf;
@@ -2913,7 +2932,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(p.date_valid,'%Y%m')";
 		$sql.= " ORDER BY date_format(p.date_valid,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year);
+		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -2927,7 +2946,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_order($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+	function get_nb_order($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -2949,7 +2968,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year);
+		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -2963,7 +2982,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
+	function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -2985,7 +3004,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year);
+		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

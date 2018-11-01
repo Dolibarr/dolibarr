@@ -213,13 +213,16 @@ class DolChartJs
     {
         $chart = $this->charts[$this->element];
         $template = "<div class=\"".$this->element."-container\" style=\"position: relative; width:".$chart['size']['width']."vh; height:".$chart['size']['height']."vh;\">";
-        $template .= "<canvas id=\"".$this->element."\"></canvas></div>";
-        $template .= '<script>'."\n";
-        //$template .= "\tdocument.addEventListener(\"DOMContentLoaded\", function(event) {\n";
-        //$template .= "\t\t(function() {\n";
-        $template .= "\t\t\tvar ctx = document.getElementById('".$this->element."').getContext('2d');\n";
-        $template .= "\t\t\tvar chart = new Chart(ctx, {\n";
-        $template .= "\t\t\t\ttype: '". $chart['type'] ."',\n";
+        $template .= "<canvas id=\"".$this->element."\"></canvas></div><div><button type=\"button\" onclick=\"toggleChart".$this->element."();\">Toggle</button></div>";
+        $template .= "<script>\n";
+        $template .= "var ctx".$this->element." = document.getElementById('".$this->element."').getContext('2d');\n";
+        $template .= "var chart".$this->element.";\n";
+        $template .= "var chartType".$this->element."='".$chart['type']."';\n";
+        $template .= "\tinit".$this->element."();\n";
+        $template .= "\tfunction init".$this->element."() {\n";
+        $template .= "\tconsole.log(chartType".$this->element.");\n";
+        $template .= "\t\t\tchart".$this->element." = new Chart(ctx".$this->element.", {\n";
+        $template .= "\t\t\t\ttype: chartType".$this->element.",\n";
         $template .= "\t\t\t\tdata: {\n";
         $template .= "\t\t\t\t\tlabels: ". json_encode($chart['labels']).",\n";
         $template .= "\t\t\t\t\tdatasets: ". json_encode($chart['datasets'])."\n";
@@ -230,8 +233,13 @@ class DolChartJs
             $template .= "\t\t\t\toptions: ". json_encode($chart['options'])."\n";
         }
         $template .= "\t\t\t});\n";
-        //$template .= "\t\t})();\n";
-        //$template .= "\t});\n";
+        $template .= "\t}\n";
+        $template .= "function toggleChart".$this->element."() {\n";
+        $template .= "\t//destroy chart\n";
+        $template .= "\tchart".$this->element.".destroy();\n";
+        $template .= "\tthis.chartType".$this->element." = (this.chartType".$this->element." == 'bar') ? 'pie':'bar';\n";
+        $template .= "\tinit".$this->element."();\n";
+        $template .= "}\n";
         $template .= '</script>'."\n";
 
         return $template;

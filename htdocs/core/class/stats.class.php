@@ -40,19 +40,21 @@ abstract class Stats
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
      * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param   int     $datamode           0 for data array old mode, 1 for new array
+     * @param   array   $datacolor      array of datacolor
+     * @param   array   $bgdatacolor    array of background datacolor
 	 * @return 	array					Array of values
 	 */
-	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
+	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
 		global $conf,$user,$langs;
 
 	    if ($startyear > $endyear) return -1;
 
-		$datay=array();
+		$datay = array();
 
 		// Search into cache
-		if (! empty($cachedelay))
-	    {
+		if (! empty($cachedelay)) {
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	    }
@@ -72,20 +74,16 @@ abstract class Stats
 					$foundintocache = 1;
 					$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
 				}
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
 		// Load file into $data
-		if ($foundintocache)    // Cache file found and is not too old
-		{
+		if ($foundintocache) {
+            // Cache file found and is not too old
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
-		}
-		else
-		{
+		} else {
 			$year = $startyear;
 			while ($year <= $endyear) {
 				$datay[$year] = $this->getNbByMonth($year, $format);
@@ -100,14 +98,30 @@ abstract class Stats
 
 			$data = array();
 
-			for ($i = 0 ; $i < 12 ; $i++) {
-				$data[$i][]=$datay[$endyear][$i][0];
-				$year=$startyear;
-				while($year <= $endyear) {
-					$data[$i][]=$datay[$year][$i][1];
-					$year++;
-				}
-			}
+            if ($datamode == 0) {
+                for ($i = 0 ; $i < 12 ; $i++) {
+                    $data[$i][]=$datay[$endyear][$i][0];
+                    $year=$startyear;
+                    while($year <= $endyear) {
+                        $data[$i][]=$datay[$year][$i][1];
+                        $year++;
+                    }
+                }
+            } elseif ($datamode == 1) {
+                $data['dataset'] = array();
+                $data['labelgroup'] = array();
+                $j = 0;
+                for ($year = $startyear; $year <= $endyear; $year++) {
+                    for ($i = 0 ; $i < 12 ; $i++) {
+                        $data['labelgroup'][$i] = $datay[$year][$i][0];
+                        $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
+                        $data['dataset'][$j]['backgroundColor'][$i] = $bgdatacolor[$j];
+                        $data['dataset'][$j]['borderColor'][$i] = $datacolor[$j];
+                    }
+                    $data['dataset'][$j]['label'] = $year;
+                    $j++;
+                }
+            }
 		}
 
 		// Save cache file
@@ -138,9 +152,12 @@ abstract class Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
      * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param   int     $mode           0 for data array old mode, 1 for new array
+     * @param   array   $datacolor      array of datacolor
+     * @param   array   $bgdatacolor    array of background datacolor
 	 * @return 	array					Array of values
 	 */
-	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
+	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $mode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
 		global $conf, $user, $langs;
 
@@ -149,8 +166,7 @@ abstract class Stats
         $datay=array();
 
         // Search into cache
-        if (! empty($cachedelay))
-        {
+        if (! empty($cachedelay)) {
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
@@ -178,8 +194,8 @@ abstract class Stats
         }
 
         // Load file into $data
-        if ($foundintocache)    // Cache file found and is not too old
-        {
+        if ($foundintocache) {
+            // Cache file found and is not too old
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
         } else {
@@ -189,24 +205,38 @@ abstract class Stats
 				if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
 					// generate random to test
 					for ($j=0; $j<12;$j++){
-						$datay[$year][$j][1] = 12+rand(1000,300000);
+						$datay[$year][$j][1] = 12 + rand(1000, 300000);
 					}
 				}
 				$year++;
 			}
 
 			$data = array();
-			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
-			for ($i = 0 ; $i < 12 ; $i++)
-			{
-				$data[$i][]=$datay[$endyear][$i][0];	// set label
-				$year=$startyear;
-				while($year <= $endyear)
-				{
-					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
-					$year++;
-				}
-			}
+            if ($mode == 0) {
+                // $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
+			    for ($i = 0 ; $i < 12 ; $i++) {
+				    $data[$i][]=$datay[$endyear][$i][0];	// set label
+				    $year=$startyear;
+				    while($year <= $endyear) {
+					    $data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+					    $year++;
+				    }
+                }
+            } elseif ($mode == 1) {
+                $data['dataset'] = array();
+                $data['labelgroup'] = array();
+                $j = 0;
+                for ($year = $startyear; $year <= $endyear; $year++) {
+                    for ($i = 0 ; $i < 12 ; $i++) {
+                        $data['labelgroup'][$i] = $datay[$year][$i][0];
+                        $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
+                        $data['dataset'][$j]['backgroundColor'][$i] = $bgdatacolor[$j];
+                        $data['dataset'][$j]['borderColor'][$i] = $datacolor[$j];
+                    }
+                    $data['dataset'][$j]['label'] = $year;
+                    $j++;
+                }
+            }
 		}
 
 		// Save cache file
@@ -234,36 +264,57 @@ abstract class Stats
 	 *
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
+     * @param   int     $mode           0 for data array old mode, 1 for new array
+     * @param   array   $datacolor      array of datacolor
+     * @param   array   $bgdatacolor    array of background datacolor
 	 * @return 	array					Array of values
 	 */
-	function getAverageByMonthWithPrevYear($endyear, $startyear)
+	function getAverageByMonthWithPrevYear($endyear, $startyear, $mode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
+        global $conf;
         if ($startyear > $endyear) return -1;
 
-        $datay=array();
+        $datay = array();
 
-		$year=$startyear;
-		while($year <= $endyear)
-		{
-			$datay[$year] = $this->getAverageByMonth($year);
-			$year++;
+        $year = $startyear;
+        while($year <= $endyear) {
+            $datay[$year] = $this->getAverageByMonth($year);
+            if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+                // generate random to test
+                for ($j=0; $j<12;$j++){
+                    $datay[$year][$j][1] = 12 + rand(1000, 300000);
+                }
+            }
+            $year++;
 		}
 
 		$data = array();
-
-		for ($i = 0 ; $i < 12 ; $i++)
-		{
-			$data[$i][]=$datay[$endyear][$i][0];
-			$year=$startyear;
-			while($year <= $endyear)
-			{
-				$data[$i][]=$datay[$year][$i][1];
-				$year++;
-			}
-		}
-
-		return $data;
-	}
+        if ($mode == 0) {
+		    for ($i = 0 ; $i < 12 ; $i++) {
+			    $data[$i][]=$datay[$endyear][$i][0];
+			    $year = $startyear;
+			    while ($year <= $endyear) {
+                    $data[$i][]=$datay[$year][$i][1];
+				    $year++;
+			    }
+            }
+        } elseif ($mode == 1) {
+            $data['dataset'] = array();
+            $data['labelgroup'] = array();
+            $j = 0;
+            for ($year = $startyear; $year <= $endyear; $year++) {
+                for ($i = 0 ; $i < 12 ; $i++) {
+                    $data['labelgroup'][$i] = $datay[$year][$i][0];
+                    $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
+                    $data['dataset'][$j]['backgroundColor'][$i] = $bgdatacolor[$j];
+                    $data['dataset'][$j]['borderColor'][$i] = $datacolor[$j];
+                }
+                $data['dataset'][$j]['label'] = $year;
+                $j++;
+            }
+        }
+        return $data;
+    }
 
 	/**
 	 * Return count, and sum of products
@@ -274,9 +325,9 @@ abstract class Stats
 	 */
 	function getAllByProductEntry($year, $cachedelay=0)
 	{
-		global $conf,$user,$langs;
+		global $conf, $user, $langs;
 
-        $datay=array();
+        $datay = array();
 
         // Search into cache
         if (! empty($cachedelay)) {
@@ -322,7 +373,7 @@ abstract class Stats
 				$nb = 12 - count($data);
 				for ($i=0; $i<$nb;$i++) {
 					$data[] = array(
-						'0' => 'PRODUIT'.$i,
+						'0' => 'SPECIMEN'.$i,
 						'1' => rand(1, 100),
 					);
 				}
