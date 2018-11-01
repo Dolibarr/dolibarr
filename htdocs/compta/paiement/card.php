@@ -325,7 +325,7 @@ if (!empty($stripeacc)) $connect=$stripeacc.'/';
 				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$object->ext_payment_id;
 			}
       
-print '<tr><td>'.$langs->trans('Source').' '.$object->payment_site.'</td><td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$object->payment_id.'</a></td></tr>';
+print '<tr><td>'.$langs->trans('Source').' '.$object->ext_payment_site.'</td><td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$object->ext_payment_id.'</a></td></tr>';
 }
 
 print '</table>';
