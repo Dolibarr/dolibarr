@@ -313,25 +313,14 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 // External link
-if (!empty($object->payment_id) && !empty($object->payment_site) && $object->payment_site == 'stripe') {
-$stripe=new Stripe($db);
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE)))
-{
-	$service = 'StripeTest';
-	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-else
-{
-	$service = 'StripeLive';
-	$servicestatus = '1';
-}
+if (!empty($object->payment_id) && !empty($object->payment_site) ) { 
 
-$stripeacc = $stripe->getStripeAccount($service);
+$stripe=new Stripe($db);
+$stripeacc = $stripe->getStripeAccount($object->payment_site);
 
 if (!empty($stripeacc)) $connect=$stripeacc.'/';	
   	$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$object->payment_id;
-			if ($servicestatus)
+			if ($object->payment_site == StripeLive)
 			{
 				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$object->payment_id;
 			}
