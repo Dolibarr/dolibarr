@@ -66,6 +66,7 @@ else {
     $servicestatus = 1;
 	}
 }
+
 $payload = @file_get_contents("php://input");
 $sig_header = $_SERVER["HTTP_STRIPE_SIGNATURE"];
 $event = null;
@@ -159,7 +160,7 @@ elseif ($event->type == 'payout.paid') {
 		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
 
 		$accountto=new Account($db);
-		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANFERS);
+		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
 
 		if ($accountto->currency_code != $accountfrom->currency_code) {
 			$error++;
@@ -353,4 +354,3 @@ elseif ($event->type == 'customer.deleted') {
 	$db->query($sql);
 	$db->commit();
 }
-
