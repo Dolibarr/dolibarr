@@ -137,3 +137,46 @@ CREATE TABLE llx_takepos_floor_tables(
 UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
 
 UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
+
+
+
+CREATE TABLE llx_emailcollector_emailcollector(
+        -- BEGIN MODULEBUILDER FIELDS
+        rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+        entity integer DEFAULT 1 NOT NULL, 
+        ref varchar(128) NOT NULL,
+        label varchar(255), 
+        description text,
+        host varchar(255), 
+        user varchar(128), 
+        password varchar(128),
+        source_directory varchar(255),
+        filter text,
+        actiontodos varchar(255),
+        target_directory varchar(255),
+        datelastresult datetime, 
+        lastresult varchar(255),
+        note_public text, 
+        note_private text, 
+        date_creation datetime NOT NULL, 
+        tms timestamp NOT NULL, 
+        fk_user_creat integer NOT NULL, 
+        fk_user_modif integer, 
+        import_key varchar(14), 
+        status integer NOT NULL, 
+        -- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+-- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_rowid (rowid);
+ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
+ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
+-- END MODULEBUILDER INDEXES
+
+--ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_fieldxyz(fieldx, fieldy);
+
+--ALTER TABLE llx_emailcollector_emailcollector ADD CONSTRAINT llx_emailcollector_emailcollector_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
+
+
+
+

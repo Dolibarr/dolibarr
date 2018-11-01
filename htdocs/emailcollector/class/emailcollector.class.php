@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +16,9 @@
  */
 
 /**
- * \file        htdocs/modulebuilder/template/class/myobject.class.php
- * \ingroup     mymodule
- * \brief       This file is a CRUD class file for MyObject (Create/Read/Update/Delete)
+ * \file        emailcollector/class/emailcollector.class.php
+ * \ingroup     emailcollector
+ * \brief       This file is a CRUD class file for EmailCollector (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -28,34 +27,30 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for MyObject
+ * Class for EmailCollector
  */
-class MyObject extends CommonObject
+class EmailCollector extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'myobject';
-
+	public $element = 'emailcollector';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'mymodule_myobject';
-
+	public $table_element = 'emailcollector_emailcollector';
 	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does emailcollector support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
-
 	/**
-	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
+	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
-	public $isextrafieldmanaged = 1;
-
+	public $isextrafieldmanaged = 0;
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
-	public $picto = 'myobject@mymodule';
+	public $picto = 'generic';
 
 
 	/**
@@ -79,27 +74,35 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-     * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-     */
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields=array(
-	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
-	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
-		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
-		'description'   =>array('type'=>'text',			'label'=>'Description',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
-		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
-		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
-		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
-	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+	    'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID','visible'=>2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1),
+		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
+		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1),
+		'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'searchall'=>1),
+		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMPA server",),
+		'user'          => array('type'=>'varchar(128)', 'label'=>'User', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login",),
+		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>1, 'comment'=>"IMAP password",),
+		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>-1, 'default' => 'Inbox'),
+		'filter'		=> array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
+		'actiontodo'	=> array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
+		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>1, 'comment'=>"Where to store messages once processed"),
+		'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastResult', 'visible'=>-2, 'enabled'=>1, 'position'=>121, 'notnull'=>-1,),
+		'lastresult'    => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>1, 'position'=>122, 'notnull'=>-1,),
+		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>0, 'enabled'=>1, 'position'=>61, 'notnull'=>-1,),
+		'note_private'  => array('type'=>'html', 'label'=>'NotePrivate', 'visible'=>0, 'enabled'=>1, 'position'=>62, 'notnull'=>-1,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
+		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>501, 'notnull'=>1,),
 		//'date_validation'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510, 'foreignkey'=>'llx_user.rowid'),
-		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'visible'=>-2, 'enabled'=>1, 'position'=>510, 'notnull'=>1,),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'visible'=>-2, 'enabled'=>1, 'position'=>511, 'notnull'=>-1,),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
-	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Canceled')),
+		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1,),
+		'status'        => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Inactive', '1'=>'Active'))
 	);
+
 
 	/**
 	 * @var int ID
@@ -117,9 +120,9 @@ class MyObject extends CommonObject
 	public $entity;
 
 	/**
-     * @var string label
-     */
-    public $label;
+	 * @var string label
+	 */
+	public $label;
 
 	public $amount;
 
@@ -132,46 +135,28 @@ class MyObject extends CommonObject
 	public $tms;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	public $import_key;
+
+
+	public $host;
+	public $user;
+	public $password;
+	public $source_directory;
+	public $filter;
+	public $actiontodo;
+    public $target_directory;
+    public $datelastresult;
+	public $lastresult;
 	// END MODULEBUILDER PROPERTIES
-
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'myobjectdet';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_myobject';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'MyObjectline';
-
-	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
-	 */
-	//protected $childtables=array('myobjectdet');
-
-	/**
-	 * @var MyObjectLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
 
 
 
@@ -233,7 +218,7 @@ class MyObject extends CommonObject
 	public function createFromClone(User $user, $fromid)
 	{
 		global $langs, $hookmanager, $extrafields;
-	    $error = 0;
+		$error = 0;
 
 	    dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -309,10 +294,87 @@ class MyObject extends CommonObject
 	{
 		$this->lines=array();
 
-		// Load lines with object MyObjectLine
+		// Load lines with object EmailCollectorLine
 
 		return count($this->lines)?1:0;
 	}*/
+
+	/**
+	 * Fetch all account and load objects into an array
+	 *
+	 * @return array Array with key => EmailCollector object
+	 * @author
+	 */
+	public function fetchAll(User $user, $activeOnly = 0, $sortfield = 's.rowid', $sortorder = 'ASC', $limit = 100, $page = 0)
+    {
+		global $langs;
+
+		$obj_ret = array();
+
+        $socid = $user->societe_id ? $user->societe_id : '';
+
+        // If the internal user must only see his customers, force searching by him
+        if (! $user->rights->societe->client->voir && !$socid) {
+            $search_sale = $user->id;
+        }
+		$sql = "SELECT s.rowid";
+        //if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+        //    $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        //}
+        $sql.= " FROM ".MAIN_DB_PREFIX."emailcollector as s";
+
+        //if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+        //    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        //}
+        //$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+        //$sql.= " WHERE s.fk_stcomm = st.id";
+
+		// Example of use $mode
+        //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
+        //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
+
+        $sql.= ' WHERE s.entity IN ('.getEntity('emailcollector').')';
+        //if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+        //    $sql.= " AND s.fk_soc = sc.fk_soc";
+        //}
+        //if ($socid) {
+        //    $sql.= " AND s.fk_soc = ".$socid;
+        //}
+        if ($activeOnly) {
+            $sql.= " AND s.status = 1";
+        }
+        $sql.= $this->db->order($sortfield, $sortorder);
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql.= $this->db->plimit($limit + 1, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            while ($i < $num) {
+                $obj = $this->db->fetch_object($result);
+                $emailcollector_static = new EmailCollector($this->db);
+                if ($emailcollector_static->fetch($obj->rowid)) {
+                    $obj_ret[] = $emailcollector_static;
+                }
+                $i++;
+            }
+        } else {
+            dol_syslog(__METHOD__.':: Error when retrieve emailcollector list', LOG_ERR);
+            $ret = -1;
+        }
+        if (! count($obj_ret)) {
+            dol_syslog(__METHOD__.':: No emailcollector found', LOG_DEBUG);
+        }
+
+        return $obj_ret;
+	}
 
 	/**
 	 * Update object into database
@@ -359,18 +421,22 @@ class MyObject extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyObject") . '</u>';
+        $label = '<u>' . $langs->trans("EmailCollector") . '</u>';
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/mymodule/myobject_card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/admin/emailcollector_card.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
 	        // Add param to save lastsearch_values or not
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+                $add_save_lastsearch_values=1;
+            }
+	        if ($add_save_lastsearch_values) {
+                $url.='&save_lastsearch_values=1';
+            }
         }
 
         $linkclose='';
@@ -378,7 +444,7 @@ class MyObject extends CommonObject
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowMyObject");
+                $label=$langs->trans("ShowEmailCollector");
                 $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
@@ -404,7 +470,7 @@ class MyObject extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action,$hookmanager;
-		$hookmanager->initHooks(array('myobjectdao'));
+		$hookmanager->initHooks(array('emailcollectordao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
@@ -424,7 +490,7 @@ class MyObject extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -573,18 +639,3 @@ class MyObject extends CommonObject
 		return $error;
 	}
 }
-
-/**
- * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
- */
-/*
-class MyObjectLine
-{
-	// @var int ID
-	public $id;
-	// @var mixed Sample line property 1
-	public $prop1;
-	// @var mixed Sample line property 2
-	public $prop2;
-}
-*/

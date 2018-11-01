@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,51 +16,25 @@
  */
 
 /**
- *   	\file       htdocs/modulebuilder/template/myobject_list.php
- *		\ingroup    mymodule
- *		\brief      List page for myobject
+ *      \file       htdocs/admin/emailcollector_list.php
+ *      \ingroup    emailcollector
+ *      \brief      List page for emailcollector
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB','1');					// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER','1');				// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC','1');				// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN','1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION','1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK','1');					// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL','1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK','1');				// Do not check style html tag into posted data
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK','1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML','1');				// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX','1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN",'1');						// If this page is public (can be called outside logged session)
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT','auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE','aloginmodule');		// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
-// Load Dolibarr environment
-$res=0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
-while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
-if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
-if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
-// Try main.inc.php using relative path
-if (! $res && file_exists("../main.inc.php")) $res=@include "../main.inc.php";
-if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
-if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
-if (! $res) die("Include of main fails");
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+dol_include_once('/emailcollector/class/emailcollector.class.php');
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-dol_include_once('/mymodule/class/myobject.class.php');
+if (!$user->admin) accessforbidden();
 
-// Load translation files required by the page
-$langs->loadLangs(array("mymodule@mymodule","other"));
+// Load traductions files requiredby by page
+$langs->loadLangs(array("admin", "other"));
 
 $action     = GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction','alpha');											// The bulk action (combo box choice into lists)
@@ -69,7 +42,7 @@ $show_files = GETPOST('show_files','int');												// Show files area generat
 $confirm    = GETPOST('confirm','alpha');												// Result of a confirmation
 $cancel     = GETPOST('cancel', 'alpha');												// We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array');												// Array of ids of elements selected into a list
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'emailcollectorlist';   // To manage different context of search
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
@@ -88,13 +61,13 @@ $pagenext = $page + 1;
 //if (! $sortorder) $sortorder="DESC";
 
 // Initialize technical objects
-$object=new MyObject($db);
+$object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction = $conf->emailcollector->dir_output . '/temp/massgeneration/' . $user->id;
+$hookmanager->initHooks(array('emailcollectorlist')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$extralabels = $extrafields->fetch_name_optionals_label('emailcollector');
+$search_array_options = $extrafields->getOptionalsFromPost($extralabels, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
@@ -107,7 +80,7 @@ if ($user->societe_id > 0)	// Protection if external user
 	//$socid = $user->societe_id;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'mymodule', $id, '');
+//$result = restrictedArea($user, 'emailcollector', $id, '');
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));
@@ -180,11 +153,11 @@ if (empty($reshook))
 	}
 
 	// Mass actions
-	$objectclass='MyObject';
-	$objectlabel='MyObject';
-	$permtoread = $user->rights->mymodule->read;
-	$permtodelete = $user->rights->mymodule->delete;
-	$uploaddir = $conf->mymodule->dir_output;
+	$objectclass='EmailCollector';
+	$objectlabel='EmailCollector';
+	$permtoread = $user->rights->emailcollector->read;
+	$permtodelete = $user->rights->emailcollector->delete;
+	$uploaddir = $conf->emailcollector->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -200,9 +173,9 @@ $form=new Form($db);
 
 $now=dol_now();
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
+//$help_url="EN:Module_EmailCollector|FR:Module_EmailCollector_FR|ES:Módulo_EmailCollector";
 $help_url='';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("MyObjects"));
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("EmailCollector"));
 
 
 // Build and execute select
@@ -239,20 +212,20 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object)
 $sql.=$hookmanager->resPrint;
 
 /* If a group by is required
-$sql.= " GROUP BY "
-foreach($object->fields as $key => $val)
-{
-	$sql.='t.'.$key.', ';
-}
-// Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-// Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
-*/
+ $sql.= " GROUP BY "
+ foreach($object->fields as $key => $val)
+ {
+ $sql.='t.'.$key.', ';
+ }
+ // Add fields from extrafields
+ if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+ foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+ // Add where from hooks
+ $parameters=array();
+ $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
+ $sql.=$hookmanager->resPrint;
+ $sql=preg_replace('/, $/','', $sql);
+ */
 
 $sql.=$db->order($sortfield,$sortorder);
 
@@ -292,7 +265,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/emailcollector/emailcollector_card.php?id='.$id);
 	exit;
 }
 
@@ -332,10 +305,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+//'presend'=>$langs->trans("SendByMail"),
+//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (GETPOST('nomassaction','int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -350,20 +323,16 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton='';
-//if ($user->rights->mymodule->creer)
-//{
-	$newcardbutton='<a class="butActionNew" href="myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+//if ($user->rights->emailcollector->creer)
+	//{
+$newcardbutton='<a class="butActionNew" href="emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
+$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+$newcardbutton.= '</a>';
 //}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail="SendMyObjectRef";
-$modelmail="myobject";
-$objecttmp=new MyObject($db);
-$trackid='xxxx'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
@@ -374,8 +343,8 @@ if ($sall)
 
 $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
-$moreforfilter.= '</div>';*/
+ $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
+ $moreforfilter.= '</div>';*/
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
@@ -571,10 +540,10 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 	$urlsource.=str_replace('&amp;','&',$param);
 
 	$filedir=$diroutputmassaction;
-	$genallowed=$user->rights->mymodule->read;
-	$delallowed=$user->rights->mymodule->create;
+	$genallowed=$user->rights->emailcollector->read;
+	$delallowed=$user->rights->emailcollector->create;
 
-	print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_emailcollector','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 
 // End of page

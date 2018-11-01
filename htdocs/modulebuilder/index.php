@@ -71,6 +71,11 @@ if (! empty($tmpdir[1]))
 	$dirread=$tmpdir[1];
 	$forceddirread=1;
 }
+if (GETPOST('dirins','alpha'))
+{
+	$dirread = $dirins = GETPOST('dirins','alpha');
+	$forceddirread=1;
+}
 
 $FILEFLAG='modulebuilder.txt';
 
@@ -911,17 +916,31 @@ $dirsincustom=dol_dir_list($dirread, 'directories');
 if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 	foreach ($dirsincustom as $dircustomcursor) {
 		$fullname = $dircustomcursor['fullname'];
-		if (dol_is_file($fullname . '/' . $FILEFLAG)) {
+		if (dol_is_file($fullname . '/' . $FILEFLAG))
+		{
 			// Get real name of module (MyModule instead of mymodule)
-			$descriptorfiles = dol_dir_list($fullname . '/core/modules/', 'files', 0, 'mod.*\.class\.php$');
+			$dirtoscanrel = basename($fullname).'/core/modules/';
+
+			$descriptorfiles = dol_dir_list(dirname($fullname).'/'.$dirtoscanrel, 'files', 0, 'mod.*\.class\.php$');
+			if (empty($descriptorfiles))	// If descriptor not found into module dir, we look into main module dir.
+			{
+				$dirtoscanrel = 'core/modules/';
+				$descriptorfiles = dol_dir_list($fullname.'/../'.$dirtoscanrel, 'files', 0, 'mod'.strtoupper(basename($fullname)).'\.class\.php$');
+			}
 			$modulenamewithcase = '';
+			$moduledescriptorrelpath = '';
+			$moduledescriptorfullpath = '';
+
 			foreach ($descriptorfiles as $descriptorcursor) {
 				$modulenamewithcase = preg_replace('/^mod/', '', $descriptorcursor['name']);
 				$modulenamewithcase = preg_replace('/\.class\.php$/', '', $modulenamewithcase);
+				$moduledescriptorrelpath = $dirtoscanrel.$descriptorcursor['name'];
+				$moduledescriptorfullpath = $descriptorcursor['fullname'];
+				//var_dump($descriptorcursor);
 			}
 			if ($modulenamewithcase)
 			{
-				$listofmodules[$dircustomcursor['name']] = $modulenamewithcase;
+				$listofmodules[$dircustomcursor['name']] = array('modulenamewithcase'=>$modulenamewithcase, 'moduledescriptorrelpath'=> $moduledescriptorrelpath, 'moduledescriptorfullpath'=>$moduledescriptorfullpath);
 			}
 			//var_dump($listofmodules);
 		}
@@ -929,7 +948,7 @@ if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 }
 if ($forceddirread && empty($listofmodules))
 {
-	$listofmodules[strtolower($module)] = $module;
+	$listofmodules[strtolower($module)] = array('modulenamewithcase'=>$module, 'moduledescriptorrelpath'=> 'notyetimplemented', 'moduledescriptorfullpath'=> 'notyetimplemented');
 }
 
 // Show description of content
@@ -983,7 +1002,8 @@ if (! empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 	$modulelowercase=strtolower($module);
 
 	// Load module
-	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+	$fullpathdirtodescriptor = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	dol_include_once($fullpathdirtodescriptor);
 	$class='mod'.$module;
 
 	if (class_exists($class))
@@ -1017,11 +1037,11 @@ $head[$h][1] = $langs->trans("NewModule");
 $head[$h][2] = 'initmodule';
 $h++;
 
-foreach($listofmodules as $tmpmodule => $tmpmodulewithcase)
+foreach($listofmodules as $tmpmodule => $tmpmodulearray)
 {
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulewithcase.($forceddirread?'@'.$dirread:'');
-	$head[$h][1] = $tmpmodulewithcase;
-	$head[$h][2] = $tmpmodulewithcase;
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?module='.$tmpmodulearray['modulenamewithcase'].($forceddirread?'@'.$dirread:'');
+	$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
+	$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
 	$h++;
 }
 
@@ -1167,7 +1187,7 @@ elseif (! empty($module))
 
 		if ($tab == 'description')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 			$pathtofilereadme = $modulelowercase.'/README.md';
 			$pathtochangelog = $modulelowercase.'/ChangeLog.md';
 
@@ -1877,7 +1897,7 @@ elseif (! empty($module))
 
 		if ($tab == 'menus')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
 			//$menus = $moduleobj->;
 
@@ -2002,7 +2022,7 @@ elseif (! empty($module))
 
 		if ($tab == 'permissions')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
 			//$perms = $moduleobj->;
 
@@ -2132,7 +2152,7 @@ elseif (! empty($module))
 				print $langs->trans("HooksDefDesc").'<br>';
 				print '<br>';
 
-				$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+				$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
@@ -2277,7 +2297,7 @@ elseif (! empty($module))
 
 		if ($tab == 'cron')
 		{
-			$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
 			$cronjobs = $moduleobj->cronjobs;
 
@@ -2411,7 +2431,8 @@ elseif (! empty($module))
 			$FILENAMEZIP='';
 
 			// Load module
-			dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+			dol_include_once($pathtofile);
 			$class='mod'.$module;
 
 			if (class_exists($class))
