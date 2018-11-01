@@ -192,8 +192,8 @@ class Paiement extends CommonObject
 				$this->type_libelle   = $obj->type_libelle;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
-        $this->payment_id     = $obj->payment_id;
-        $this->payment_site   = $obj->payment_site;
+				$this->payment_id     = $obj->payment_id;
+				$this->payment_site   = $obj->payment_site;
 				$this->bank_account   = $obj->fk_account; // deprecated
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
