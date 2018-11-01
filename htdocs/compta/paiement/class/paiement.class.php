@@ -108,12 +108,12 @@ class Paiement extends CommonObject
     /**
      * @var string Id of external payment mode
      */
-    public $ext_payment_id;
+    public $payment_id;
 
     /**
      * @var string Name of external payment mode
      */
-    public $ext_payment_site;
+    public $payment_site;
 
     /**
      * @var int bank account id of payment
@@ -159,7 +159,7 @@ class Paiement extends CommonObject
 	 */
 	public function fetch($id, $ref='', $fk_bank='')
 	{
-		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank,';
+		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.payment_id, p.payment_site, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
 		$sql.= ' p.num_paiement as num_payment, p.note,';
 		$sql.= ' b.fk_account';
@@ -192,9 +192,8 @@ class Paiement extends CommonObject
 				$this->type_libelle   = $obj->type_libelle;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
-                $this->ext_payment_id = $obj->ext_payment_id;
-                $this->ext_payment_site = $obj->ext_payment_site;
-
+        $this->payment_id     = $obj->payment_id;
+        $this->payment_site   = $obj->payment_site;
 				$this->bank_account   = $obj->fk_account; // deprecated
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
