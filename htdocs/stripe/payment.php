@@ -327,8 +327,8 @@ if (empty($reshook))
 			$paiement->paiementid   = dol_getIdFromCode($db,$paiementcode,'c_paiement');
 			$paiement->num_paiement = $charge->message;
 			$paiement->note         = GETPOST('comment');
-      $paiement->ext_payment_id = $charge->id;
-      $paiement->ext_payment_site = $service;
+			$paiement->ext_payment_id = $charge->id;
+			$paiement->ext_payment_site = $service;
 		}
 
 		if (! $error)
