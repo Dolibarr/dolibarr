@@ -1033,13 +1033,13 @@ class ActionComm extends CommonObject
     	}
     	$sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
     	$sql.= ")";
-    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+    	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON a.id = ar.fk_actioncomm";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
     	$sql.= " WHERE 1 = 1";
     	if(empty($load_state_board)) $sql.= " AND a.percent >= 0 AND a.percent < 100";
     	$sql.= " AND a.entity IN (".getEntity('agenda').")";
-    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-    	if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
+    	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND (ar.element_type = 'user' AND ar.fk_element = " .$user->id . ")";
+    	if ($user->socid) $sql.=" AND a.fk_soc = ".$user->socid;
     	if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
 
     	$resql=$this->db->query($sql);
@@ -1051,7 +1051,8 @@ class ActionComm extends CommonObject
 	    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	    		$response->label = $langs->trans("ActionsToDo");
 	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?actioncode=0&amp;status=todo&amp;mainmenu=agenda';
-	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
+	    		if ($user->rights->societe->client->voir && $user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
+	    		else if (! $user->rights->societe->client->voir) $response->url.='&amp;filtert='.$user->id;
 	    		$response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
     		}
     		// This assignment in condition is not a bug. It allows walking the results.
