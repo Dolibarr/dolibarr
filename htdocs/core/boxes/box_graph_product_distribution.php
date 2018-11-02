@@ -89,9 +89,9 @@ class box_graph_product_distribution extends ModeleBoxes
 		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray)) {
 			$year=GETPOST($param_year,'int');
-			$showinvoicenb=GETPOST($param_showinvoicenb,'alpha');
-			$showpropalnb=GETPOST($param_showpropalnb,'alpha');
-			$showordernb=GETPOST($param_showordernb,'alpha');
+			$showinvoicenb=GETPOST($param_showinvoicenb, 'alpha');
+			$showpropalnb=GETPOST($param_showpropalnb, 'alpha');
+			$showordernb=GETPOST($param_showordernb, 'alpha');
 		} else {
 			$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 			$year=$tmparray['year'];
@@ -128,63 +128,41 @@ class box_graph_product_distribution extends ModeleBoxes
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit'=> dol_strlen($text),
-			'graph'=> 1,
-			'sublink'=>'',
-			'subtext'=>$langs->trans("Filter"),
-			'subpicto'=>'filter.png',
-            'subclass'=>'linkobject boxfilter',
+			'graph' => 1,
+			'sublink' => '',
+			'subtext' => $langs->trans("Filter"),
+			'subpicto' => 'filter.png',
+            'subclass' => 'linkobject boxfilter',
             // Set '' to get target="_blank"
-			'target'=>'none'
+			'target' => 'none'
 		);
 
 
-		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
-		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
-		if (empty($conf->service->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Products");
+		$paramtitle = $langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
+		if (empty($conf->produit->enabled)) $paramtitle = $langs->transnoentitiesnoconv("Services");
+		if (empty($conf->service->enabled)) $paramtitle = $langs->transnoentitiesnoconv("Products");
 
-		$socid=empty($user->societe_id)?0:$user->societe_id;
-		$userid=0;	// No filter on user creation
+		$socid = empty($user->societe_id)?0:$user->societe_id;
+		$userid = 0;	// No filter on user creation
 
         $width = ($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?35:70;
         $height = 25;
 
         if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire) && $showinvoicenb) {
-            // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+            // Build graphic number of object
             $langs->load("bills");
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
             $mode = 'customer';
             $stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-            $data1 = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
-            if (empty($data1)) {
-                $data1 = array(
-                    array(
-                        0 => $langs->trans("None"),
-                        1 => 1
-                    )
-                );
-            }
-
-            $labels1 = array();
-            $datas1 = array();
-            foreach ($data1 as $data) {
-                $labels1[] = $data[0];
-                $datas1[] = $data[1];
-            }
 
             $px1 = new DolChartJs();
+            $graph_datas = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px1->datacolor, $px1->bgdatacolor);
+
             $px1->element('idboxgraphboxbycustomer')
                 ->setType('pie')
-                ->setLabels($labels1)
-                ->setDatasets(
-                    array(
-                        array(
-                            'backgroundColor' => $px1->datacolor,
-                            'borderColor' => $px1->bgdatacolor,
-                            'data' => $datas1,
-                        ),
-                    )
-                )
+                ->setLabels($graph_datas['labelgroup'])
+                ->setDatasets($graph_datas['dataset'])
                 ->setSize(array('width' => $width, 'height' => $height))
                 ->setOptions(array(
                     'responsive' => true,
@@ -207,42 +185,15 @@ class box_graph_product_distribution extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
             $stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
-            $data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
-            if (empty($data2)) {
-                $data2 = array(
-                    array(
-                        0 => $langs->trans("None"),
-                        1 => 1,
-                    ),
-                );
-            }
-
-            $labels2 = array();
-            $datas2 = array();
-            foreach ($data2 as $data) {
-                $labels2[] = $data[0];
-                $datas2[] = $data[1];
-            }
 
             $px2 = new DolChartJs();
+            $graph_datas = $stats_proposal->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px2->datacolor, $px2->bgdatacolor);
+
             $px2->element('idboxgraphprodbyproposal')
                 ->setType('pie')
-                ->setLabels($labels2)
-                ->setDatasets(
-                    array(
-                        array(
-                            'backgroundColor' => $px2->datacolor,
-                            'borderColor' => $px2->bgdatacolor,
-                            'data' => $datas2,
-                        ),
-                    )
-                )
-                ->setSize(
-                    array(
-                        'width' => $width,
-                        'height' => $height
-                    )
-                )
+                ->setLabels($graph_datas['labelgroup'])
+                ->setDatasets($graph_datas['dataset'])
+                ->setSize(array('width' => $width,'height' => $height))
                 ->setOptions(
                     array(
                         'responsive' => true,
@@ -265,44 +216,17 @@ class box_graph_product_distribution extends ModeleBoxes
 
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
-            $mode='customer';
+            $mode = 'customer';
             $stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
-            $data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
-            if (empty($data3)) {
-                $data3=array(
-                    array(
-                        0 => $langs->trans("None"),
-                        1 => 1
-                    )
-                );
-            }
-
-            $labels3 = array();
-            $datas3 = array();
-            foreach ($data3 as $data) {
-                $labels3[] = $data[0];
-                $datas3[] = $data[1];
-            }
 
             $px3 = new DolChartJs();
+            $graph_datas = $stats_order->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px3->datacolor, $px3->bgdatacolor);
+
             $px3->element('idboxgraphboxbyorder')
                 ->setType('pie')
-                ->setLabels($labels3)
-                ->setDatasets(
-                    array(
-                        array(
-                            'backgroundColor' => $px3->datacolor,
-                            'borderColor' => $px3->bgdatacolor,
-                            'data' => $datas3,
-                        ),
-                    )
-                )
-                ->setSize(
-                    array(
-                        'width' => $width,
-                        'height' => $height
-                    )
-                )
+                ->setLabels($graph_datas['labelgroup'])
+                ->setDatasets($graph_datas['dataset'])
+                ->setSize(array('width' => $width, 'height' => $height))
                 ->setOptions(
                     array(
                         'responsive' => true,

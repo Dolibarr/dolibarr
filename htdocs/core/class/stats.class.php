@@ -39,7 +39,9 @@ abstract class Stats
 	 * @param 	int		$endyear		Start year
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+     * @param   int     $format         0=Label of abscissa is a translated text
+     *                                  1=Label of abscissa is month number
+     *                                  2=Label of abscissa is first letter of month
      * @param   int     $datamode       0 for data array old mode, 1 for new array
      * @param   array   $datacolor      array of datacolor
      * @param   array   $bgdatacolor    array of background datacolor
@@ -154,7 +156,9 @@ abstract class Stats
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+     * @param   int     $format         0=Label of abscissa is a translated text
+     *                                  1=Label of abscissa is month number
+     *                                  2=Label of abscissa is first letter of month
      * @param   int     $datamode       0 for data array old mode, 1 for new array
      * @param   array   $datacolor      array of datacolor
      * @param   array   $bgdatacolor    array of background datacolor
@@ -174,8 +178,8 @@ abstract class Stats
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
 
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').(int) $endyear.'-'.(int) $startyear.'-'.$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
-        $newmask='0644';
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').(int) $endyear.'-'.(int) $startyear.'_'.$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
+        $newmask = '0644';
 
         $nowgmt = dol_now();
 
@@ -267,12 +271,12 @@ abstract class Stats
 	 *
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
-     * @param   int     $mode           0 for data array old mode, 1 for new array
+     * @param   int     $datamode       0 for data array old mode, 1 for new array
      * @param   array   $datacolor      array of datacolor
      * @param   array   $bgdatacolor    array of background datacolor
 	 * @return 	array					Array of values
 	 */
-	function getAverageByMonthWithPrevYear($endyear, $startyear, $mode = 0, $datacolor = array(), $bgdatacolor = array())
+	function getAverageByMonthWithPrevYear($endyear, $startyear, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
         global $conf;
         if ($startyear > $endyear) return -1;
@@ -292,7 +296,7 @@ abstract class Stats
 		}
 
 		$data = array();
-        if ($mode == 0) {
+        if ($datamode == 0) {
 		    for ($i = 0 ; $i < 12 ; $i++) {
 			    $data[$i][]=$datay[$endyear][$i][0];
 			    $year = $startyear;
@@ -301,7 +305,7 @@ abstract class Stats
 				    $year++;
 			    }
             }
-        } elseif ($mode == 1) {
+        } elseif ($datamode == 1) {
             $data['dataset'] = array();
             $data['labelgroup'] = array();
             $j = 0;
@@ -324,9 +328,12 @@ abstract class Stats
 	 *
 	 * @param	int		$year			Year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @return 	array					Array of values
+     * @param   int     $datamode       0 for data array old mode, 1 for new array
+     * @param   array   $datacolor      array of datacolor
+     * @param   array   $bgdatacolor    array of background datacolor
+     * @return 	array					Array of values
 	 */
-	function getAllByProductEntry($year, $cachedelay=0)
+	function getAllByProductEntry($year, $cachedelay=0, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
 		global $conf, $user, $langs;
 
@@ -338,7 +345,10 @@ abstract class Stats
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
         }
 
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
+        $newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__;
+        $newpathofdestfile .= '_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_');
+        $newpathofdestfile .= 'y'.$year.'_dm'.$datamode.'_';
+        $newpathofdestfile .= $langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
         $newmask='0644';
 
         $nowgmt = dol_now();
@@ -363,8 +373,8 @@ abstract class Stats
         }
 
         // Load file into $data
-        if ($foundintocache)    // Cache file found and is not too old
-        {
+        if ($foundintocache) {
+            // Cache file found and is not too old
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
         }
@@ -373,25 +383,45 @@ abstract class Stats
 			$data = $this->getAllByProduct($year);
 			if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
 				//var_dump($data);
-				$nb = 12 - count($data);
+				$nb = 9 - count($data);
 				for ($i=0; $i<$nb;$i++) {
 					$data[] = array(
 						'0' => 'SPECIMEN'.$i,
-						'1' => rand(1, 100),
+						'1' => rand(0, 200),
 					);
 				}
 			}
-			//$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
-		}
+            if (empty($data)) {
+                $data = array(
+                    array(
+                        0 => $langs->trans("None"),
+                        1 => 1
+                    )
+                );
+            }
+            if ($datamode ==1) {
+                $tmpdatas = $data;
+                $data = array();
+                $data['dataset'] = array();
+                $data['labelgroup'] = array();
+                $i = 0;
+                foreach ($tmpdatas as $key => $tmpdata) {
+                    $data['labelgroup'][$i] = $tmpdata[0];
+                    $data['dataset'][0]['data'][$i] = $tmpdata[1];
+                    $data['dataset'][0]['backgroundColor'][$i] = $bgdatacolor[$i];
+                    $data['dataset'][0]['borderColor'][$i] = $datacolor[$i];
+                    $data['dataset'][0]['label'] = $year;
+                    $i++;
+                }
+            }
+        }
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
-		{
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1)) {
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			if ($fp)
-			{
+			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
 				if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
@@ -521,12 +551,11 @@ abstract class Stats
 
 		$data = array();
 
-		for ($i = 1 ; $i < 13 ; $i++)
-		{
-			$month='unknown';
-			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
-			elseif ($format == 1) $month=$i;
-			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+		for ($i = 1 ; $i < 13 ; $i++) {
+			$month = 'unknown';
+			if ($format == 0) $month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
+			elseif ($format == 1) $month = $i;
+			elseif ($format == 2) $month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
 			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			//$month=dol_substr($month,0,3);
 			$data[$i-1] = array($month, $res[$i]);

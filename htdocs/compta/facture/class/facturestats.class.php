@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ class FactureStats extends Stats
 			$this->field='total';
 			$this->field_line='total_ht';
 		}
-		if ($mode == 'supplier')
+		elseif ($mode == 'supplier')
 		{
 			$object=new FactureFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
@@ -97,7 +98,9 @@ class FactureStats extends Stats
 	 * 	Return orders number by month for a year
 	 *
 	 *	@param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+     *  @param  int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
 	 *	@return	array				Array of values
 	 */
 	function getNbByMonth($year, $format=0)
@@ -112,8 +115,8 @@ class FactureStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+        $res=$this->_getNbByMonth($year, $sql, $format);
+
 		return $res;
 	}
 
@@ -142,7 +145,9 @@ class FactureStats extends Stats
 	 * 	Return the invoices amount by month for a year
 	 *
 	 *	@param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+     *  @param  int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
 	 *	@return	array				Array with amount by month
 	 */
 	function getAmountByMonth($year, $format=0)
@@ -158,8 +163,8 @@ class FactureStats extends Stats
         $sql.= $this->db->order('dm','DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
-		return $res;
+
+        return $res;
 	}
 
 	/**
