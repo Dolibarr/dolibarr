@@ -95,6 +95,12 @@ class DolChartJs
     public $bgdatacolor;
 
     /**
+     * array('pie', ...)
+     * @var array
+     */
+    public $switchers;
+
+    /**
      * Constructor
      *
      */
@@ -105,12 +111,30 @@ class DolChartJs
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-        $this->bordercolor = '#ebebe0';
+        $this->bordercolor = '#e0e0e0';
+        $this->bgcolor = '#0b0b0b';
         $this->datacolor = array('#788296', '#a0a0b4', '#bebedc');
         $this->bgdatacolor = array('#788296', '#a0a0b4', '#bebedc');
-        $this->bgcolor = '#ebebe0';
 
         $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
+        // $theme_bordercolor = array(235,235,224);
+        // $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
+        // $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
+        // $theme_datacolor = array(
+        //     array(136,102,136),
+        //     array(0,130,110),
+        //     array(140,140,220),
+        //     array(190,120,120),
+        //     array(190,190,100),
+        //     array(115,125,150),
+        //     array(100,170,20),
+        //     array(250,190,30),
+        //     array(150,135,125),
+        //     array(85,135,150),
+        //     array(150,135,80),
+        //     array(150,80,150),
+        // );
+
         if (is_readable($color_file)) {
             include_once $color_file;
             if (isset($theme_bordercolor)) {
@@ -129,7 +153,7 @@ class DolChartJs
     /**
      *
      */
-    private function setfromArray($arraycolor, $coef=1)
+    private function setfromArray($arraycolor, $coef = 1)
     {
         $arrayhex = array();
         foreach ($arraycolor as $value) {
@@ -147,6 +171,7 @@ class DolChartJs
     {
         $this->element = $element;
         $this->charts[$element] = $this->defaults;
+        $this->set('switchers', array());
         return $this;
     }
 
@@ -207,13 +232,27 @@ class DolChartJs
     }
 
     /**
+     * @param array $switchers
+     *
+     * @return DolChartJs
+     */
+    public function setSwitchers(array $switchers)
+    {
+        return $this->set('switchers', $switchers);
+    }
+
+    /**
      * @return mixed
      */
     public function renderChart()
     {
         $chart = $this->charts[$this->element];
+        $switchers = $this->charts[$this->element]['switchers'];
         $template = "<div class=\"".$this->element."-container\" style=\"position: relative; width:".$chart['size']['width']."vh; height:".$chart['size']['height']."vh;\">";
-        $template .= "<canvas id=\"".$this->element."\"></canvas></div><div><button type=\"button\" onclick=\"toggleChart".$this->element."();\">Toggle</button></div>";
+        $template .= "<canvas id=\"".$this->element."\"></canvas></div>";
+        foreach ($switchers as $switcher) {
+            $template .= "<span><button type=\"button\" class=\"fa fa-".$switcher."-chart\" onclick=\"setChart".$this->element."('".$switcher."');\"></button></span>";
+        }
         $template .= "<script>\n";
         $template .= "var ctx".$this->element." = document.getElementById('".$this->element."').getContext('2d');\n";
         $template .= "var chart".$this->element.";\n";
@@ -234,10 +273,10 @@ class DolChartJs
         }
         $template .= "\t\t\t});\n";
         $template .= "\t}\n";
-        $template .= "function toggleChart".$this->element."() {\n";
+        $template .= "function setChart".$this->element."(type) {\n";
         $template .= "\t//destroy chart\n";
         $template .= "\tchart".$this->element.".destroy();\n";
-        $template .= "\tthis.chartType".$this->element." = (this.chartType".$this->element." == 'bar') ? 'pie':'bar';\n";
+        $template .= "\tthis.chartType".$this->element." = type;\n";
         $template .= "\tinit".$this->element."();\n";
         $template .= "}\n";
         $template .= '</script>'."\n";

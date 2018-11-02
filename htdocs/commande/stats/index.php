@@ -88,7 +88,7 @@ print load_fiche_titre($title, '', 'title_commercial.png');
 
 // Build graphic number of object
 $px1 = new DolChartJs();
-$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1->datacolor, $px1->bgdatacolor);
+$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1);
 
 $px1->element('ordersnbinyear')
     ->setType('bar')
@@ -126,7 +126,7 @@ $px1->element('ordersnbinyear')
 
 // Build graphic amount of object
 $px2 = new DolChartJs();
-$graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2->datacolor, $px2->bgdatacolor);
+$graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2);
 
 $px2->element('ordersamountinyear')
     ->setType('bar')
@@ -164,7 +164,7 @@ $px2->element('ordersamountinyear')
 
 // Build graphic average amount of object
 $px3 = new DolChartJs();
-$graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $px3->datacolor, $px3->bgdatacolor);
+$graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $px3);
 
 $px3->element('ordersaverage')
     ->setType('bar')

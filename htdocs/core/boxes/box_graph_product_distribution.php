@@ -157,10 +157,11 @@ class box_graph_product_distribution extends ModeleBoxes
             $stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid>0?$userid:0));
 
             $px1 = new DolChartJs();
-            $graph_datas = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px1->datacolor, $px1->bgdatacolor);
+            $graph_datas = $stats_invoice->getAllByProductEntry($year,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px1);
 
             $px1->element('idboxgraphboxbycustomer')
                 ->setType('pie')
+                ->setSwitchers(array('pie', 'line', 'bar'))
                 ->setLabels($graph_datas['labelgroup'])
                 ->setDatasets($graph_datas['dataset'])
                 ->setSize(array('width' => $width, 'height' => $height))
@@ -187,10 +188,11 @@ class box_graph_product_distribution extends ModeleBoxes
             $stats_proposal = new PropaleStats($this->db, $socid, ($userid>0?$userid:0));
 
             $px2 = new DolChartJs();
-            $graph_datas = $stats_proposal->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px2->datacolor, $px2->bgdatacolor);
+            $graph_datas = $stats_proposal->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px2);
 
             $px2->element('idboxgraphprodbyproposal')
                 ->setType('pie')
+                ->setSwitchers(array('pie', 'line', 'bar'))
                 ->setLabels($graph_datas['labelgroup'])
                 ->setDatasets($graph_datas['dataset'])
                 ->setSize(array('width' => $width,'height' => $height))
@@ -220,10 +222,11 @@ class box_graph_product_distribution extends ModeleBoxes
             $stats_order = new CommandeStats($this->db, $socid, $mode, ($userid>0?$userid:0));
 
             $px3 = new DolChartJs();
-            $graph_datas = $stats_order->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px3->datacolor, $px3->bgdatacolor);
+            $graph_datas = $stats_order->getAllByProductEntry($year, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), 1, $px3);
 
             $px3->element('idboxgraphboxbyorder')
                 ->setType('pie')
+                ->setSwitchers(array('pie', 'line', 'bar'))
                 ->setLabels($graph_datas['labelgroup'])
                 ->setDatasets($graph_datas['dataset'])
                 ->setSize(array('width' => $width, 'height' => $height))

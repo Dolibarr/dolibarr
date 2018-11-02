@@ -36,18 +36,17 @@ abstract class Stats
 	/**
 	 * Return nb of elements by month for several years
 	 *
-	 * @param 	int		$endyear		Start year
-	 * @param 	int		$startyear		End year
-	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param   int     $format         0=Label of abscissa is a translated text
-     *                                  1=Label of abscissa is month number
-     *                                  2=Label of abscissa is first letter of month
-     * @param   int     $datamode       0 for data array old mode, 1 for new array
-     * @param   array   $datacolor      array of datacolor
-     * @param   array   $bgdatacolor    array of background datacolor
-	 * @return 	array					Array of values
+	 * @param 	int		    $endyear        Start year
+	 * @param 	int		    $startyear      End year
+	 * @param	int		    $cachedelay     Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+     * @param   int         $format         0=Label of abscissa is a translated text
+     *                                      1=Label of abscissa is month number
+     *                                      2=Label of abscissa is first letter of month
+     * @param   int         $datamode       0 for data array old mode, 1 for new array
+     * @param   DolChartJs  $px             object dolchartjs
+	 * @return 	array                       Array of values
 	 */
-	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $px = null)
 	{
 		global $conf,$user,$langs;
 
@@ -120,8 +119,8 @@ abstract class Stats
                     for ($i = 0 ; $i < 12 ; $i++) {
                         $data['labelgroup'][$i] = $datay[$year][$i][0];
                         $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
-                        $data['dataset'][$j]['backgroundColor'][$i] = $bgdatacolor[$j];
-                        $data['dataset'][$j]['borderColor'][$i] = $datacolor[$j];
+                        $data['dataset'][$j]['backgroundColor'][$i] = $px->bgdatacolor[$j];
+                        $data['dataset'][$j]['borderColor'][$i] = $px->datacolor[$j];
                     }
                     $data['dataset'][$j]['label'] = $year;
                     $j++;
@@ -153,18 +152,17 @@ abstract class Stats
 	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
 	 * calling constructor.
 	 *
-	 * @param	int		$endyear		Start year
-	 * @param	int		$startyear		End year
-	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param   int     $format         0=Label of abscissa is a translated text
-     *                                  1=Label of abscissa is month number
-     *                                  2=Label of abscissa is first letter of month
-     * @param   int     $datamode       0 for data array old mode, 1 for new array
-     * @param   array   $datacolor      array of datacolor
-     * @param   array   $bgdatacolor    array of background datacolor
-	 * @return  array					Array of values
+	 * @param	int         $endyear		Start year
+	 * @param	int         $startyear		End year
+	 * @param	int         $cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+     * @param   int         $format         0=Label of abscissa is a translated text
+     *                                      1=Label of abscissa is month number
+     *                                      2=Label of abscissa is first letter of month
+     * @param   int         $datamode       0 for data array old mode, 1 for new array
+     * @param   DolChartJs  $px             object dolchartjs
+	 * @return  array                       Array of values
 	 */
-	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $px = null)
 	{
 		global $conf, $user, $langs;
 
@@ -237,8 +235,8 @@ abstract class Stats
                     for ($i = 0 ; $i < 12 ; $i++) {
                         $data['labelgroup'][$i] = $datay[$year][$i][0];
                         $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
-                        $data['dataset'][$j]['backgroundColor'][$i] = $bgdatacolor[$j];
-                        $data['dataset'][$j]['borderColor'][$i] = $datacolor[$j];
+                        $data['dataset'][$j]['backgroundColor'][$i] = $px->bgdatacolor[$j];
+                        $data['dataset'][$j]['borderColor'][$i] = $px->datacolor[$j];
                     }
                     $data['dataset'][$j]['label'] = $year;
                     $j++;
@@ -269,14 +267,13 @@ abstract class Stats
 	/**
 	 * Return average of entity by month for several years
 	 *
-	 * @param	int		$endyear		Start year
-	 * @param	int		$startyear		End year
-     * @param   int     $datamode       0 for data array old mode, 1 for new array
-     * @param   array   $datacolor      array of datacolor
-     * @param   array   $bgdatacolor    array of background datacolor
-	 * @return 	array					Array of values
+	 * @param	int		    $endyear		Start year
+	 * @param	int		    $startyear		End year
+     * @param   int         $datamode       0 for data array old mode, 1 for new array
+     * @param   DolChartJs  $px             object dolchartjs
+	 * @return 	array					    Array of values
 	 */
-	function getAverageByMonthWithPrevYear($endyear, $startyear, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function getAverageByMonthWithPrevYear($endyear, $startyear, $datamode = 0, $px = null)
 	{
         global $conf;
         if ($startyear > $endyear) return -1;
@@ -313,8 +310,8 @@ abstract class Stats
                 for ($i = 0 ; $i < 12 ; $i++) {
                     $data['labelgroup'][$i] = $datay[$year][$i][0];
                     $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
-                    $data['dataset'][$j]['backgroundColor'][$i] = $bgdatacolor[$j];
-                    $data['dataset'][$j]['borderColor'][$i] = $datacolor[$j];
+                    $data['dataset'][$j]['backgroundColor'][$i] = $px->bgdatacolor[$j];
+                    $data['dataset'][$j]['borderColor'][$i] = $px->datacolor[$j];
                 }
                 $data['dataset'][$j]['label'] = $year;
                 $j++;
@@ -326,14 +323,13 @@ abstract class Stats
 	/**
 	 * Return count, and sum of products
 	 *
-	 * @param	int		$year			Year
-	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param   int     $datamode       0 for data array old mode, 1 for new array
-     * @param   array   $datacolor      array of datacolor
-     * @param   array   $bgdatacolor    array of background datacolor
-     * @return 	array					Array of values
+	 * @param	int		    $year			Year
+	 * @param	int		    $cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+     * @param   int         $datamode       0 for data array old mode, 1 for new array
+     * @param   DolChartJs  $px             object dolchartjs
+     * @return 	array					    Array of values
 	 */
-	function getAllByProductEntry($year, $cachedelay=0, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function getAllByProductEntry($year, $cachedelay=0, $datamode = 0, $px=null)
 	{
 		global $conf, $user, $langs;
 
@@ -408,8 +404,8 @@ abstract class Stats
                 foreach ($tmpdatas as $key => $tmpdata) {
                     $data['labelgroup'][$i] = $tmpdata[0];
                     $data['dataset'][0]['data'][$i] = $tmpdata[1];
-                    $data['dataset'][0]['backgroundColor'][$i] = $bgdatacolor[$i];
-                    $data['dataset'][0]['borderColor'][$i] = $datacolor[$i];
+                    $data['dataset'][0]['backgroundColor'][$i] = $px->bgdatacolor[$i];
+                    $data['dataset'][0]['borderColor'][$i] = $px->datacolor[$i];
                     $data['dataset'][0]['label'] = $year;
                     $i++;
                 }

@@ -284,6 +284,7 @@ DurationMonths=months
 DurationWeeks=weeks
 DurationDays=days
 Year=Year
+NbYear=Number of years
 Month=Month
 Week=Week
 WeekShort=Week

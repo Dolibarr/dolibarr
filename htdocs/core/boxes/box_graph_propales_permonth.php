@@ -134,42 +134,14 @@ class box_graph_propales_permonth extends ModeleBoxes
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($shownb) {
-                $data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0));
-
-                $labels1 = array();
-                $datas1 = array();
-                $datacolor=array();
-                $bgdatacolor=array();
-                $dataset = array();
-
                 $px1 = new DolChartJs();
-                foreach ($data1 as $data) {
-                    $labels1[] = $data[0];
-                    for ($i=0; $i<$nbyear; $i++) {
-                        $datacolor[$i][] = $px1->datacolor[$i];
-                        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
-                        $datas1[$i][] = $data[$i+1];
-                    }
-                }
-                for ($i=0; $i<$nbyear; $i++) {
-                    $dataset[] = array(
-                        //'label' => $langs->trans("NumberOfProposals").' '.($startyear+$i),
-                        'label' => $startyear + $i,
-                        'backgroundColor' => $datacolor[$i],
-                        'borderColor' => $bgdatacolor[$i],
-                        'data' => $datas1[$i],
-                    );
-                }
+                $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0), 1, $px1);
+
                 $px1->element('idboxgraphboxnb'.$this->boxcode)
                     ->setType('bar')
-                    ->setLabels($labels1)
-                    ->setDatasets($dataset)
-                    ->setSize(
-                        array(
-                            'width' => $width,
-                            'height' => $height
-                        )
-                    )
+                    ->setLabels($graph_datas['labelgroup'])
+                    ->setDatasets($graph_datas['dataset'])
+                    ->setSize(array('width' => $width, 'height' => $height))
                     ->setOptions(
                         array(
                             'responsive' => true,
@@ -188,37 +160,13 @@ class box_graph_propales_permonth extends ModeleBoxes
 
             // Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
             if ($showtot) {
-                $data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0));
-
-                $labels2 = array();
-                $datas2 = array();
-                $datacolor=array();
-                $bgdatacolor=array();
-
                 $px2 = new DolChartJs();
+                $graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0), 1, $px2);
 
-                foreach ($data2 as $data) {
-                    $labels2[] = $data[0];
-                    for ($i=0; $i<$nbyear; $i++) {
-                        $datacolor[$i][] = $px2->datacolor[$i];
-                        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
-                        $datas2[$i][] = $data[$i+1];
-                    }
-                }
-                $dataset = array();
-                for ($i=0; $i<$nbyear; $i++) {
-                    $dataset[] = array(
-                        //'label' => $langs->trans("AmountOfProposalsHT").' '.($startyear+$i),
-                        'label' => $startyear + $i,
-                        'backgroundColor' => $datacolor[$i],
-                        'borderColor' => $bgdatacolor[$i],
-                        'data' => $datas2[$i],
-                    );
-                }
                 $px2->element('idboxgraphboxamount'.$this->boxcode)
                     ->setType('bar')
-                    ->setLabels($labels2)
-                    ->setDatasets($dataset)
+                    ->setLabels($graph_datas['labelgroup'])
+                    ->setDatasets($graph_datas['dataset'])
                     ->setSize(array('width' => $width, 'height' => $height))
                     ->setOptions(array(
                         'responsive' => true,

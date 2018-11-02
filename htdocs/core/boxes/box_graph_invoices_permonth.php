@@ -144,7 +144,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
             // Build graphic number of object.
             if ($shownb) {
                 $px1 = new DolChartJs();
-                $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0), 1, $px1->datacolor, $px1->bgdatacolor);
+                $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<80?2:0), 1, $px1);
 
                 $px1->element('idboxgraphboxnb'.$this->boxcode)
                     ->setType('bar')
@@ -169,7 +169,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot) {
                 $px2 = new DolChartJs();
-                $graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0), 1, $px2->datacolor, $px2->bgdatacolor);
+                $graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($width<70?2:0), 1, $px2);
 
                 $px2->element('idboxgraphboxamount'.$this->boxcode)
                     ->setType('bar')

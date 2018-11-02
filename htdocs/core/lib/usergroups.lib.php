@@ -495,6 +495,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
+		$default='c5c5c5';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("BackgroundColor").'</td>';
 		print '<td colspan="'.($colspan-1).'">';
@@ -509,7 +510,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>ffffff</strong>) ';
+		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';

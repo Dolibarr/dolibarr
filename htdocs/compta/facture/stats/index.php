@@ -84,7 +84,7 @@ print load_fiche_titre($title, $mesg, 'title_accountancy.png');
 // Build graphic number of object
 // $graph_datas = array(array('Lib',val1,val2,val3),...)
 $px1 = new DolChartJs();
-$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1->datacolor, $px1->bgdatacolor);
+$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1);
 
 $px1->element('invoicesnbinyear')
     ->setType('bar')
@@ -129,7 +129,7 @@ $px1->element('invoicesnbinyear')
 
 // Build graphic amount of object
 $px2 = new DolChartJs();
-$graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2->datacolor, $px2->bgdatacolor);
+$graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2);
 
 $px2->element('invoicesamountinyear')
     ->setType('bar')
@@ -167,7 +167,7 @@ $px2->element('invoicesamountinyear')
 
 
 $px3 = new DolChartJs();
-$graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $px3->datacolor, $px3->bgdatacolor);
+$graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $px3);
 
 $px3->element('invoicesaverage')
     ->setType('bar')
