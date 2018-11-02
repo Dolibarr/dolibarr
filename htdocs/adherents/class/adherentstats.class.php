@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,9 @@ class AdherentStats extends Stats
 	 * Return the number of proposition by month for a given year
 	 *
      * @param   int		$year       Year
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param   int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
      * @return	array				Array of nb each month
 	 */
 	function getNbByMonth($year, $format=0)
@@ -123,7 +126,9 @@ class AdherentStats extends Stats
 	 * Return the number of subscriptions by month for a given year
 	 *
      * @param   int		$year       Year
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param   int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
      * @return	array				Array of amount each month
 	 */
 	function getAmountByMonth($year, $format=0)
@@ -164,9 +169,9 @@ class AdherentStats extends Stats
 
 
 	/**
-	 *	Return nb, total and average
+	 *  Return nb, total and average
 	 *
-	 * 	@return		array					Array with nb, total amount, average for each year
+	 *  @return array   Array with nb, total amount, average for each year
 	 */
 	function getAllByYear()
 	{

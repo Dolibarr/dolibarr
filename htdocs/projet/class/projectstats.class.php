@@ -1,6 +1,7 @@
 <?php
 /* Lead
- * Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Florian HENRY           <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +191,9 @@ class ProjectStats extends Stats
 	 * Return Project number by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param   int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
 	 * @return 	array 				Array of values
 	 */
 	function getNbByMonth($year, $format=0)
@@ -219,7 +222,9 @@ class ProjectStats extends Stats
 	 * Return the Project amount by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param   int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
 	function getAmountByMonth($year, $format=0)
@@ -253,7 +258,7 @@ class ProjectStats extends Stats
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
 	 * @return 	array					Array of values
 	 */
-	function getWeightedAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0,$wonlostfilter=1)
+	function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $wonlostfilter=1)
 	{
 		global $conf,$user,$langs;
 
@@ -269,7 +274,7 @@ class ProjectStats extends Stats
 		}
 
 		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
-		$newmask='0644';
+		$newmask = '0644';
 
 		$nowgmt = dol_now();
 
@@ -373,7 +378,7 @@ class ProjectStats extends Stats
 	 * @param int $endyear		End year
 	 * @param int $startyear	Start year
 	 * @param int $cachedelay accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @return array of values
+	 * @return array Array of values
 	 */
 	function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
 	{
@@ -453,7 +458,7 @@ class ProjectStats extends Stats
 	 * Return the Project transformation rate by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
 	function getTransformRateByMonth($year, $format=0)
@@ -492,14 +497,12 @@ class ProjectStats extends Stats
 		$res=array();
 
 		foreach($res_total as $key=>$total_row) {
-			//var_dump($total_row);
 			if (!empty($total_row[1])) {
 				$res[$key]=array($total_row[0],(100*$res_only_wined[$key][1])/$total_row[1]);
 			} else {
 				$res[$key]=array($total_row[0],0);
 			}
 		}
-		// var_dump($res);print '<br>';
 		return $res;
 	}
 }

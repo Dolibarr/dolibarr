@@ -39,8 +39,8 @@ abstract class Stats
 	 * @param 	int		$endyear		Start year
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-     * @param   int     $datamode           0 for data array old mode, 1 for new array
+     * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+     * @param   int     $datamode       0 for data array old mode, 1 for new array
      * @param   array   $datacolor      array of datacolor
      * @param   array   $bgdatacolor    array of background datacolor
 	 * @return 	array					Array of values
@@ -59,8 +59,11 @@ abstract class Stats
 	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	    }
 
-		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').(int) $endyear.'-'.(int) $startyear.'-'.$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
-		$newmask='0644';
+        $newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__;
+        $newpathofdestfile .= '_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_');
+        $newpathofdestfile .= (int) $endyear.'-'.(int) $startyear.'_dm'.$datamode;
+        $newpathofdestfile .= '_'.$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
+		$newmask = '0644';
 
 		$nowgmt = dol_now();
 
@@ -135,7 +138,7 @@ abstract class Stats
 			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
 
-			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 
 		// return array(array('Month',val1,val2,val3),...)
@@ -151,13 +154,13 @@ abstract class Stats
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-     * @param   int     $mode           0 for data array old mode, 1 for new array
+     * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+     * @param   int     $datamode       0 for data array old mode, 1 for new array
      * @param   array   $datacolor      array of datacolor
      * @param   array   $bgdatacolor    array of background datacolor
-	 * @return 	array					Array of values
+	 * @return  array					Array of values
 	 */
-	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $mode = 0, $datacolor = array(), $bgdatacolor = array())
+	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $datacolor = array(), $bgdatacolor = array())
 	{
 		global $conf, $user, $langs;
 
@@ -212,7 +215,7 @@ abstract class Stats
 			}
 
 			$data = array();
-            if ($mode == 0) {
+            if ($datamode == 0) {
                 // $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			    for ($i = 0 ; $i < 12 ; $i++) {
 				    $data[$i][]=$datay[$endyear][$i][0];	// set label
@@ -222,7 +225,7 @@ abstract class Stats
 					    $year++;
 				    }
                 }
-            } elseif ($mode == 1) {
+            } elseif ($datamode == 1) {
                 $data['dataset'] = array();
                 $data['labelgroup'] = array();
                 $j = 0;
@@ -481,7 +484,7 @@ abstract class Stats
 	 *
      *     @param   int		$year       Year
      *     @param   string	$sql        SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      *     @return	array				Array of nb each month
 	 */
 	function _getNbByMonth($year, $sql, $format=0)
@@ -538,7 +541,7 @@ abstract class Stats
 	 *
 	 *     @param	int		$year       Year
 	 *     @param   string	$sql		SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *     @return	array
 	 */
 	function _getAmountByMonth($year, $sql, $format=0)
@@ -592,7 +595,7 @@ abstract class Stats
 	 *
      *     @param	int		$year       Year
      *     @param  	string	$sql        SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *     @return	array
 	 */
 	function _getAverageByMonth($year, $sql, $format=0)

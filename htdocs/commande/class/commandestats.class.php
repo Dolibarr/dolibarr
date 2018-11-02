@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ class CommandeStats extends Stats
 	 * @param 	string	$mode	   Option ('customer', 'supplier')
 	 * @param   int		$userid    Id user for filter (creation user)
 	 */
-	function __construct($db, $socid, $mode, $userid=0)
+	function __construct($db, $socid, $mode, $userid = 0)
 	{
 		global $user, $conf;
 
@@ -98,7 +99,9 @@ class CommandeStats extends Stats
 	 * Return orders number by month for a year
 	 *
 	 * @param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param   int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
 	 * @return	array				Array with number by month
 	 */
 	function getNbByMonth($year, $format=0)
@@ -141,7 +144,9 @@ class CommandeStats extends Stats
 	 * Return the orders amount by month for a year
 	 *
 	 * @param	int		$year		Year to scan
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param   int     $format     0=Label of abscissa is a translated text
+     *                              1=Label of abscissa is month number
+     *                              2=Label of abscissa is first letter of month
 	 * @return	array				Array with amount by month
 	 */
 	function getAmountByMonth($year, $format=0)
