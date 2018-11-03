@@ -111,7 +111,9 @@ $px1->element('invoicesnbinyear')
             ),
             'yAxes' => array(
                 array(
-                    //'stacked' => true,
+                    'ticks' => array(
+                        'min' => 0,
+                    ),
                     'gridLines' => array(
                         'color' => 'black',
                         'borderDash' => array(2, 3),

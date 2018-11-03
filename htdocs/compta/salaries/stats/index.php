@@ -23,28 +23,31 @@
  */
 
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salariesstats.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("salaries","companies"));
+$langs->loadLangs(array("salaries", "companies"));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+//$width = DolChartJs::getDefaultGraphSizeForStats('width');
+//$height = DolChartJs::getDefaultGraphSizeForStats('height');
+$width = 70;
+$height = 25;
 
-$userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
-$id = GETPOST('id','int');
+$userid=GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$id = GETPOST('id', 'int');
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
+$nbyear = 3;
+$startyear = $year - $nbyear + 1;
 $endyear=$year;
 
 
@@ -52,124 +55,137 @@ $endyear=$year;
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 
 llxHeader();
 
 $title=$langs->trans("SalariesStatistics");
-$dir=$conf->salaries->dir_temp;
 
 print load_fiche_titre($title, $mesg);
 
 dol_mkdir($dir);
 
-$useridtofilter=$userid;	// Filter from parameters
+$useridtofilter = $userid;	// Filter from parameters
 
 $stats = new SalariesStats($db, $socid, $useridtofilter);
 
 
 // Build graphic number of object
-// $data = array(array('Lib',val1,val2,val3),...)
-//print "$endyear, $startyear";
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
+$px1 = new DolChartJs();
+$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1);
 
-$filenamenb = $dir."/salariesnbinyear-".$year.".png";
-$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=salariesstats&amp;file=salariesnbinyear-'.$year.'.png';
-
-$px1 = new DolGraph();
-$mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px1->SetLegend($legend);
-	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetWidth($WIDTH);
-	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("Number"));
-	$px1->SetShading(3);
-	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
-	$px1->mode='depth';
-	$px1->SetTitle($langs->trans("NumberByMonth"));
-
-	$px1->draw($filenamenb,$fileurlnb);
-}
+$px1->element('salariesnbinyear')
+    ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("NumberOfSalariesByMonth"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("NbOfSalaries"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
-// $data = array(array('Lib',val1,val2,val3),...)
+$px2 = new DolChartJs();
+$graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2);
 
-$filenameamount = $dir."/salariesamountinyear-".$year.".png";
-$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=salariesstats&amp;file=salariesamountinyear-'.$year.'.png';
+$px2->element('salariesamountinyear')
+    ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentities("AmountOfSalariesByMonth"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("AmountOfSalaries"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
-$px2 = new DolGraph();
-$mesg = $px2->isGraphKo();
-if (! $mesg)
-{
-	$px2->SetData($data);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px2->SetLegend($legend);
-	$px2->SetMaxValue($px2->GetCeilMaxValue());
-	$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
-	$px2->SetWidth($WIDTH);
-	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("Amount"));
-	$px2->SetShading(3);
-	$px2->SetHorizTickIncrement(1);
-	$px2->SetPrecisionY(0);
-	$px2->mode='depth';
-	$px2->SetTitle($langs->trans("AmountTotal"));
+$px3 = new DolChartJs();
+$graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $px3);
 
-	$px2->draw($filenameamount,$fileurlamount);
-}
-
-
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
-
-$filename_avg = $dir."/salariesaverageinyear-".$year.".png";
-$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=salariesstats&file=salariesaverageinyear-'.$year.'.png';
-
-$px3 = new DolGraph();
-$mesg = $px3->isGraphKo();
-if (! $mesg)
-{
-	$px3->SetData($data);
-	$i = $startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px3->SetLegend($legend);
-	$px3->SetYLabel($langs->trans("AmountAverage"));
-	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
-	$px3->SetWidth($WIDTH);
-	$px3->SetHeight($HEIGHT);
-	$px3->SetShading(3);
-	$px3->SetHorizTickIncrement(1);
-	$px3->SetPrecisionY(0);
-	$px3->mode='depth';
-	$px3->SetTitle($langs->trans("AmountAverage"));
-
-	$px3->draw($filename_avg,$fileurl_avg);
-}
-
+$px3->element('salariesaverageinyear')
+    ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentities("AmountAverageOfSalariesByMonthHT"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("AmountAverageOfSalaries"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
 // Show array
 $data = $stats->getAllByYear();
@@ -224,11 +240,9 @@ print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
-	{
+	while ($year && $oldyear > $year+1) {
 		// If we have empty year
 		$oldyear--;
 		print '<tr height="24">';
@@ -241,10 +255,10 @@ foreach ($data as $val)
 	print '<tr height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '<td align="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td align="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';
@@ -256,14 +270,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-	print $px1->show();
-	print "<br>\n";
-	print $px2->show();
-	print "<br>\n";
-	print $px3->show();
-}
+print $px1->renderChart();
+print "<br>\n";
+print $px2->renderChart();
+print "<br>\n";
+print $px3->renderChart();
 print '</td></tr></table>';
 
 

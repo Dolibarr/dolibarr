@@ -107,8 +107,16 @@ $px1->element('ordersnbinyear')
             'text' => $langs->transnoentitiesnoconv("NumberOfOrdersByMonth"),
         ),
         'scales' => array(
+            'xAxes' => array(
+                array(
+                    //'stacked' => true,
+                )
+            ),
             'yAxes' => array(
                 array(
+                    'ticks' => array(
+                        'min' => 0,
+                    ),
                     'gridLines' => array(
                         'color' => 'black',
                         'borderDash' => array(2, 3),
