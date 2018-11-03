@@ -44,9 +44,9 @@ abstract class Stats
      *                                      2=Label of abscissa is first letter of month
      * @param   int         $datamode       0 for data array old mode, 1 for new array
      * @param   DolChartJs  $px             object dolchartjs
-	 * @return 	array                       Array of values
-	 */
-	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $px = null)
+     * @return 	array                       Array of values
+     */
+    function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0, $datamode = 0, $px = null)
 	{
 		global $conf,$user,$langs;
 
@@ -56,8 +56,8 @@ abstract class Stats
 
 		// Search into cache
 		if (! empty($cachedelay)) {
-	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+	        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	        include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	    }
 
         $newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__;
@@ -131,8 +131,7 @@ abstract class Stats
 		}
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1) && empty($conf->global->GRAPH_DATA_GENERATE_RANDOM))
-		{
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1) && empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
@@ -686,17 +685,15 @@ abstract class Stats
 	{
 		global $langs;
 
-		$result=array();
-		$res=array();
+		$result = array();
+		$res = array();
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0; $other=0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 		  		$row = $this->db->fetch_row($resql);
 		  		if ($i < $limit || $num == $limit) $result[$i] = array($row[0],$row[1]);	// Ref of product, nb
 		  		else $other += $row[1];

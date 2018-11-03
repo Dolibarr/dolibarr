@@ -2701,28 +2701,23 @@ class Product extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return an array formated for showing graphs
 	 *
-	 *  @param	string	$sql            Request to execute
-	 *  @param	string	$mode           'byunit'=number of unit, 'bynumber'=nb of entities
-	 *  @param  int     $year           Year (0=current year)
-     *  @param  int     $datamode       0 for data array old mode, 1 for new array
-     *  @param  array   $datacolor      array of datacolor
-     *  @param  array   $bgdatacolor    array of background datacolor
+	 *  @param	string      $sql        Request to execute
+	 *  @param	string      $mode       'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param  int         $year       Year (0=current year)
+     *  @param  int         $datamode   0 for data array old mode, 1 for new array
+     *  @param  DolChartJs  $px         object dolchartjs
 	 *  @return array                   <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function _get_stats($sql, $mode, $year=0, $datamode = 1, $datacolor = array(), $bgdatacolor = array())
+	private function getStats($sql, $mode, $year=0, $datamode = 1, $px = null)
 	{
-        // phpcs:enable
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$arr = $this->db->fetch_array($resql);
 				if ($mode == 'byunit')   $tab[$arr[1]] = $arr[0];	// 1st field
 				if ($mode == 'bynumber') $tab[$arr[1]] = $arr[2];	// 3rd field
@@ -2731,12 +2726,11 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
 
-		if (empty($year))
-		{
+		if (empty($year)) {
 		    $year = strftime('%Y',time());
 		    $month = strftime('%m',time());
 		}
@@ -2752,7 +2746,7 @@ class Product extends CommonObject
 			    $monthnum = sprintf("%02s",$month);
 
 			    $data[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);
-			    //            $data[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
+			    // $data[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
 
 			    $month = "0".($month - 1);
 			    if (dol_strlen($month) == 3) {
@@ -2773,8 +2767,9 @@ class Product extends CommonObject
                 $data['labelgroup'][$i] = $idx;
                 $ym = $year.sprintf("%02s",$month);
                 $data['dataset'][0]['data'][$i] = isset($tab[$ym])?$tab[$ym]:0;
-                $data['dataset'][0]['backgroundColor'][$i] = $bgdatacolor[$i];
-                $data['dataset'][0]['borderColor'][$i] = $datacolor[$i];
+                $data['dataset'][0]['backgroundColor'][$i] = $px->bgdatacolor[$i];
+                $data['dataset'][0]['borderColor'][$i] = $px->datacolor[$i];
+                $data['dataset'][0]['borderWidth'][$i] = 1;
                 $month--;
                 if ($month == 0) {
                     $month = 12;
@@ -2790,14 +2785,16 @@ class Product extends CommonObject
 	/**
 	 *  Return nb of units or customers invoices in which product is included
 	 *
-	 *  @param  	int		$socid                   Limit count on a particular third party id
-	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
-	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
-	 *  @param      int     $year                    Year (0=last 12 month)
-	 *  @param      string  $morefilter              More sql filters
-	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int         $socid                  Limit count on a particular third party id
+	 *  @param		string      $mode		            'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int         $filteronproducttype    0=To filter on product only, 1=To filter on services only
+	 *  @param      int         $year                   Year (0=last 12 month)
+	 *  @param      string      $morefilter             More sql filters
+     *  @param      int         $datamode               0 for data array old mode, 1 for new array
+     *  @param      DolChartJs  $px                     object dolchartjs
+	 * 	@return   	array                               <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_vente($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function get_nb_vente($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '', $datamode = 0, $px = null)
 	{
         // phpcs:enable
 		global $conf;
@@ -2820,7 +2817,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
 		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
+		return $this->getStats($sql,$mode, $year, $datamode, $px);
 	}
 
 
@@ -2833,9 +2830,11 @@ class Product extends CommonObject
 	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
 	 *  @param      int     $year                    Year (0=last 12 month)
 	 *  @param      string  $morefilter              More sql filters
+     *  @param      int         $datamode               0 for data array old mode, 1 for new array
+     *  @param      DolChartJs  $px                     object dolchartjs
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_achat($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function get_nb_achat($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $px = null)
 	{
         // phpcs:enable
 		global $conf;
@@ -2858,21 +2857,23 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
 		$sql.= " ORDER BY date_format(f.datef,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
+		return $this->getStats($sql,$mode, $year, $datamode, $px);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return nb of units or proposals in which product is included
 	 *
-	 *  @param  	int		$socid                   Limit count on a particular third party id
-	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
-	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
-	 *  @param      int     $year                    Year (0=last 12 month)
-	 *  @param      string  $morefilter              More sql filters
-	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int         $socid                  Limit count on a particular third party id
+	 * 	@param		string      $mode                   'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int         $filteronproducttype    0=To filter on product only, 1=To filter on services only
+	 *  @param      int         $year                   Year (0=last 12 month)
+	 *  @param      string      $morefilter             More sql filters
+     *  @param      int         $datamode               0 for data array old mode, 1 for new array
+     *  @param      DolChartJs  $px                     object dolchartjs
+	 * 	@return   	array                               <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propal($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function get_nb_propal($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '', $datamode = 0, $px = null)
 	{
         // phpcs:enable
 		global $conf;
@@ -2895,21 +2896,23 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(p.datep,'%Y%m')";
 		$sql.= " ORDER BY date_format(p.datep,'%Y%m') DESC";
 
-		return $this->_get_stats($sql, $mode, $year, $datamode, $datacolor, $bgdatacolor);
+		return $this->getStats($sql, $mode, $year, $datamode, $px);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return nb of units or proposals in which product is included
 	 *
-	 *  @param  	int		$socid                   Limit count on a particular third party id
-	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
-	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
-	 *  @param      int     $year                    Year (0=last 12 month)
-	 *  @param      string  $morefilter              More sql filters
-	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int         $socid                  Limit count on a particular third party id
+	 * 	@param		string      $mode                   'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int         $filteronproducttype    0=To filter on product only, 1=To filter on services only
+	 *  @param      int         $year                   Year (0=last 12 month)
+	 *  @param      string      $morefilter             More sql filters
+     *  @param      int         $datamode               0 for data array old mode, 1 for new array
+     *  @param      DolChartJs  $px                     object dolchartjs
+	 * 	@return   	array                               <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $px = null)
 	{
         // phpcs:enable
 		global $conf;
@@ -2932,21 +2935,23 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(p.date_valid,'%Y%m')";
 		$sql.= " ORDER BY date_format(p.date_valid,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
+		return $this->getStats($sql,$mode, $year, $datamode, $px);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return nb of units or orders in which product is included
 	 *
-	 *  @param  	int		$socid                   Limit count on a particular third party id
-	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
-	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
-	 *  @param      int     $year                    Year (0=last 12 month)
-	 *  @param      string  $morefilter              More sql filters
-	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param  	int         $socid                  Limit count on a particular third party id
+	 *  @param		string      $mode                   'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int         $filteronproducttype    0=To filter on product only, 1=To filter on services only
+	 *  @param      int         $year                   Year (0=last 12 month)
+	 *  @param      string      $morefilter             More sql filters
+     *  @param      int         $datamode               0 for data array old mode, 1 for new array
+     *  @param      DolChartJs  $px                     object dolchartjs
+	 * 	@return   	array                               <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_order($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function get_nb_order($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '', $datamode = 0, $px = null)
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -2968,21 +2973,23 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
+		return $this->getStats($sql,$mode, $year, $datamode, $px);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return nb of units or orders in which product is included
 	 *
-	 *  @param  	int		$socid                   Limit count on a particular third party id
-	 *  @param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
-	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
-	 *  @param      int     $year                    Year (0=last 12 month)
-	 *  @param      string  $morefilter              More sql filters
-	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 *  @param      int         $socid                  Limit count on a particular third party id
+	 *  @param      string      $mode                   'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int         $filteronproducttype    0=To filter on product only, 1=To filter on services only
+	 *  @param      int         $year                   Year (0=last 12 month)
+	 *  @param      string      $morefilter             More sql filters
+     *  @param      int         $datamode               0 for data array old mode, 1 for new array
+     *  @param      DolChartJs  $px                     object dolchartjs
+	 * 	@return     array                               <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
-	function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='', $datamode = 0, $datacolor = array(), $bgdatacolor = array())
+	function get_nb_ordersupplier($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '', $datamode = 0, $px = null)
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -3004,7 +3011,7 @@ class Product extends CommonObject
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
 		$sql.= " ORDER BY date_format(c.date_commande,'%Y%m') DESC";
 
-		return $this->_get_stats($sql,$mode, $year, $datamode, $datacolor, $bgdatacolor);
+		return $this->getStats($sql,$mode, $year, $datamode, $px);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps

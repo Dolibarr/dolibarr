@@ -288,17 +288,17 @@ if ($result || empty($id)) {
             }
 
             if ($key == 'propal') {
-                $graph_datas = $object->get_nb_propal($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px->datacolor, $px->bgdatacolor);
+                $graph_datas = $object->get_nb_propal($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px);
             } elseif ($key == 'orders') {
-                $graph_datas = $object->get_nb_order($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px->datacolor, $px->bgdatacolor);
+                $graph_datas = $object->get_nb_order($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px);
             } elseif ($key == 'invoices') {
-                $graph_datas = $object->get_nb_vente($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px->datacolor, $px->bgdatacolor);
+                $graph_datas = $object->get_nb_vente($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px);
             } elseif ($key == 'proposalssuppliers') {
-                $graph_datas = $object->get_nb_propalsupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px->datacolor, $px->bgdatacolor);
+                $graph_datas = $object->get_nb_propalsupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px);
             } elseif ($key == 'invoicessuppliers') {
-                $graph_datas = $object->get_nb_achat($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px->datacolor, $px->bgdatacolor);
+                $graph_datas = $object->get_nb_achat($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px);
             } elseif ($key == 'orderssuppliers') {
-                $graph_datas = $object->get_nb_ordersupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px->datacolor, $px->bgdatacolor);
+                $graph_datas = $object->get_nb_ordersupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters, 1, $px);
             }
 
             if (is_array($graph_datas)) {

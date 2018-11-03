@@ -44,7 +44,7 @@ if (! in_array($mode, array('customer', 'supplier'))) {
 if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
 elseif ($mode == 'supplier' && ! $user->rights->fournisseur->commande->lire) accessforbidden();
 
-$object_status = GETPOST('object_status', 'int');
+$object_status = GETPOST('object_status');
 
 $userid = GETPOST('userid','int');
 $socid = GETPOST('socid','int');
@@ -77,8 +77,7 @@ if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_st
 
 if ($mode == 'customer') {
     $title = $langs->trans("OrdersStatistics");
-}
-if ($mode == 'supplier') {
+} elseif ($mode == 'supplier') {
     $title = $langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
 }
 
@@ -321,15 +320,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) {
-    print $mesg;
-} else {
-    print $px1->renderChart();
-    print "<br>\n";
-    print $px2->renderChart();
-    print "<br>\n";
-    print $px3->renderChart();
-}
+print $px1->renderChart();
+print "<br>\n";
+print $px2->renderChart();
+print "<br>\n";
+print $px3->renderChart();
 print '</td></tr></table>';
 
 

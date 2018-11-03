@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,10 +166,11 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	if (! empty($conf->salaries->enabled)) $menuqualified++;
 	if (! empty($conf->supplier_invoice->enabled)) $menuqualified++;
 	if (! empty($conf->loan->enabled)) $menuqualified++;
-	$tmpentry=array(
-	   'enabled'=>$menuqualified,
-	'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
-	   'module'=>'facture|supplier_invoice|don|tax|salaries|loan');
+	$tmpentry = array(
+	    'enabled' => $menuqualified,
+        'perms' => (! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
+        'module' => 'facture|supplier_invoice|don|tax|salaries|loan',
+    );
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -183,9 +185,11 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	}
 
 	// Bank
-	$tmpentry=array('enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
-	'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
-	'module'=>'banque|prelevement');
+	$tmpentry = array(
+        'enabled' => (! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
+	    'perms' => (! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
+        'module' => 'banque|prelevement',
+    );
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -205,10 +209,11 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	if (! empty($conf->comptabilite->enabled)) $menuqualified++;
 	if (! empty($conf->accounting->enabled)) $menuqualified++;
 	if (! empty($conf->asset->enabled)) $menuqualified++;
-	$tmpentry=array(
-	'enabled'=>$menuqualified,
-	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
-	'module'=>'comptabilite|accounting');
+	$tmpentry = array(
+	    'enabled' => $menuqualified,
+	    'perms' => (! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
+        'module' => 'comptabilite|accounting'
+    );
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -223,9 +228,11 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	}
 
 	// Projects
-	$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
-	'perms'=>(! empty($user->rights->projet->lire)),
-	'module'=>'projet');
+	$tmpentry = array(
+        'enabled'=>(! empty($conf->projet->enabled)),
+	    'perms'=>(! empty($user->rights->projet->lire)),
+        'module'=>'projet',
+    );
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -254,9 +261,11 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	}
 
 	// HRM
-	$tmpentry=array('enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
-	'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
-	'module'=>'hrm|holiday|deplacement|expensereport');
+	$tmpentry = array(
+        'enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
+	    'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
+        'module'=>'hrm|holiday|deplacement|expensereport',
+    );
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -271,10 +280,11 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	}
 
 	// Tools
-	$tmpentry=array(
-	'enabled'=>1,
-	'perms'=>1,
-	'module'=>'');
+	$tmpentry = array(
+	    'enabled'=>1,
+	    'perms'=>1,
+        'module'=>'',
+    );
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -890,9 +900,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("donations");
 				$newmenu->add("/don/index.php?leftmenu=donations&amp;mainmenu=billing",$langs->trans("Donations"), 0, $user->rights->don->lire, '', $mainmenu, 'donations');
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/card.php?leftmenu=donations&amp;action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
-				if ($usemenuhider || empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/list.php?leftmenu=donations",$langs->trans("List"), 1, $user->rights->don->lire);
-				// if ($leftmenu=="donations") $newmenu->add("/don/stats/index.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "donations") $newmenu->add("/don/card.php?leftmenu=donations&amp;action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "donations") $newmenu->add("/don/list.php?leftmenu=donations",$langs->trans("List"), 1, $user->rights->don->lire);
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "donations") $newmenu->add("/don/stats/index.php?leftmenu=donations",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 			}
 
 			// Taxes and social contributions

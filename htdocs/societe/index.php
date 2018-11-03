@@ -5,6 +5,7 @@
  * Copyright (C) 2014      Charles-Fr Benke	    <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,8 +162,8 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
         ->setDatasets(
             array(
                 array(
-                    'backgroundColor' => $dolchartjs->datacolor,
-                    'borderColor' => $dolchartjs->bgdatacolor,
+                    'backgroundColor' => $dolchartjs->bgdatacolor,
+                    'borderColor' => $dolchartjs->datacolor,
                     'data' => $dataseries,
                 ),
             )

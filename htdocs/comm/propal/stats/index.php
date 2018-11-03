@@ -27,32 +27,37 @@
 
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+// $width = DolChartJs::getDefaultGraphSizeForStats('width');
+// $height = DolChartJs::getDefaultGraphSizeForStats('height');
+$width = 70;
+$height = 25;
 
-$mode=GETPOST("mode")?GETPOST("mode"):'customer';
+$mode = GETPOST("mode", 'alpha');
+if (! in_array($mode, array('customer', 'supplier'))) {
+    $mode = 'customer';
+}
 if ($mode == 'customer' && ! $user->rights->propale->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->supplier_proposal->lire) accessforbidden();
 
-$object_status=GETPOST('object_status');
+$object_status = GETPOST('object_status');
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
 
-$nowyear=strftime("%Y", dol_now());
+$nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$nbyear = 3;
+$startyear = $year - $nbyear + 1;
+$endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
@@ -62,160 +67,141 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_p
  * View
  */
 
-$form=new Form($db);
-$formpropal=new FormPropal($db);
+$form = new Form($db);
+$formpropal = new FormPropal($db);
 
 $langs->loadLangs(array('propal', 'other', 'companies'));
 
-if ($mode == 'customer')
-{
+if ($mode == 'customer') {
     $title=$langs->trans("ProposalsStatistics");
-    $dir=$conf->propale->dir_temp;
-}
-if ($mode == 'supplier')
-{
+} elseif ($mode == 'supplier') {
     $title=$langs->trans("ProposalsStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
-    $dir=$conf->supplier_proposal->dir_temp;
 }
 
 llxHeader('', $title);
 
 print load_fiche_titre($title,'','title_commercial.png');
 
-
-dol_mkdir($dir);
-
-
 $stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
 if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
-// $data = array(array('Lib',val1,val2,val3),...)
+$px1 = new DolChartJs();
+$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1);
 
+$px1->element('proposalsnbinyear')
+    ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("NumberOfProposalsByMonth"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("NbOfProposals"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
-    $filenamenb = $dir.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
-    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenamenb = $dir.'/proposalsnbinyear-'.$year.'.png';
-    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$year.'.png';
-}
-
-$px1 = new DolGraph();
-$mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-    $px1->SetData($data);
-    $px1->SetPrecisionY(0);
-    $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
-        $legend[]=$i;
-        $i++;
-    }
-    $px1->SetLegend($legend);
-    $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
-    $px1->SetWidth($WIDTH);
-    $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfProposals"));
-    $px1->SetShading(3);
-    $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
-    $px1->mode='depth';
-    $px1->SetTitle($langs->trans("NumberOfProposalsByMonth"));
-
-    $px1->draw($filenamenb,$fileurlnb);
-}
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,0);
-// $data = array(array('Lib',val1,val2,val3),...)
+$px2 = new DolChartJs();
+$graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
-    $filenameamount = $dir.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
-    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenameamount = $dir.'/proposalsamountinyear-'.$year.'.png';
-    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$year.'.png';
-}
+$px2->element('proposalsamountinyear')
+    ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentities("AmountOfProposalsByMonthHT"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("AmountOfProposals"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
-$px2 = new DolGraph();
-$mesg = $px2->isGraphKo();
-if (! $mesg)
-{
-    $px2->SetData($data);
-    $px2->SetPrecisionY(0);
-    $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
-        $legend[]=$i;
-        $i++;
-    }
-    $px2->SetLegend($legend);
-    $px2->SetMaxValue($px2->GetCeilMaxValue());
-    $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
-    $px2->SetWidth($WIDTH);
-    $px2->SetHeight($HEIGHT);
-    $px2->SetYLabel($langs->trans("AmountOfProposals"));
-    $px2->SetShading(3);
-    $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
-    $px2->mode='depth';
-    $px2->SetTitle($langs->trans("AmountOfProposalsByMonthHT"));
 
-    $px2->draw($filenameamount,$fileurlamount);
-}
+$px3 = new DolChartJs();
+$graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $px3);
 
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
-
-$fileurl_avg='';
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
-    $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
-}
-
-$px3 = new DolGraph();
-$mesg = $px3->isGraphKo();
-if (! $mesg)
-{
-    $px3->SetData($data);
-    $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
-        $legend[]=$i;
-        $i++;
-    }
-    $px3->SetLegend($legend);
-    $px3->SetYLabel($langs->trans("AmountAverage"));
-    $px3->SetMaxValue($px3->GetCeilMaxValue());
-    $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
-    $px3->SetShading(3);
-    $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
-    $px3->mode='depth';
-    $px3->SetTitle($langs->trans("AmountAverage"));
-
-    $px3->draw($filename_avg,$fileurl_avg);
-}
-
+$px3->element('proposalsaverage')
+    ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentities("AmountAverageOfProposalsByMonthHT"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("AmountAverageOfProposals"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
 // Show array
 $data = $stats->getAllByYear();
@@ -225,7 +211,9 @@ foreach($data as $val) {
 		$arrayyears[$val['year']]=$val['year'];
 	}
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! count($arrayyears)) {
+    $arrayyears[$nowyear] = $nowyear;
+}
 
 
 $h=0;
@@ -289,11 +277,10 @@ print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
     $year = $val['year'];
-    while (! empty($year) && $oldyear > $year+1)
-    {	// If we have empty year
+    while (! empty($year) && $oldyear > $year+1) {
+        // If we have empty year
         $oldyear--;
 
         print '<tr class="oddeven" height="24">';
@@ -315,7 +302,7 @@ foreach ($data as $val)
     print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
 	print '<td align="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
     print '</tr>';
-    $oldyear=$year;
+    $oldyear = $year;
 }
 
 print '</table>';
@@ -326,14 +313,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-    print $px1->show();
-    print "<br>\n";
-    print $px2->show();
-    print "<br>\n";
-    print $px3->show();
-}
+print $px1->renderChart();
+print "<br>\n";
+print $px2->renderChart();
+print "<br>\n";
+print $px3->renderChart();
 print '</td></tr></table>';
 
 

@@ -110,6 +110,7 @@ class DolChartJs
         global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/includes/ariColor/aricolor.php';
 
         $this->bordercolor = '#e0e0e0';
         $this->bgcolor = '#0b0b0b';
@@ -142,7 +143,7 @@ class DolChartJs
             }
             if (isset($theme_datacolor)) {
                 $this->datacolor = $this->setFromArray($theme_datacolor);
-                $this->bgdatacolor =  $this->setFromArray($theme_datacolor, 1.15);
+                $this->bgdatacolor =  $this->setFromArray($theme_datacolor, 0.5);
             }
             if (isset($theme_bgcolor)) {
                 $this->bgcolor = $this->setFromArray($theme_bgcolor);
@@ -153,11 +154,13 @@ class DolChartJs
     /**
      *
      */
-    private function setfromArray($arraycolor, $coef = 1)
+    private function setfromArray($arraycolor, $alpha=1)
     {
         $arrayhex = array();
         foreach ($arraycolor as $value) {
-            $arrayhex[] = '#'.colorArrayToHex(array($value[0]*$coef, $value[1]*$coef, $value[2]*$coef));
+            $color = ariColor::newColor('rgb('.$value[0].', '.$value[1].', '.$value[2].')');
+            $new = $color->getNew('alpha', $alpha);
+            $arrayhex[] = $new->toCSS('rgba');
         }
         return $arrayhex;
     }

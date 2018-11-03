@@ -179,7 +179,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger=0)
+	function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -623,7 +623,7 @@ class Fichinter extends CommonObject
 	 *  @param      int                     $hidedetails    Hide details of lines
 	 *  @param      int                     $hidedesc       Hide description
 	 *  @param      int                     $hideref        Hide ref
-         *  @param   null|array  $moreparams     Array to provide more information
+     *  @param      null|array              $moreparams     Array to provide more information
 	 *  @return     int                                     0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
@@ -654,7 +654,7 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
@@ -667,7 +667,7 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return     string      		Label
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		// Init/load array of translation of status
@@ -860,15 +860,15 @@ class Fichinter extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                = $obj->rowid;
+				$this->id = $obj->rowid;
 
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_validation = $this->db->jdate($obj->datev);
 
 				$cuser = new User($this->db);
 				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation     = $cuser;
+				$this->user_creation = $cuser;
 
 				if ($obj->fk_user_valid)
 				{
