@@ -161,7 +161,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
             $px1->element('idboxgraphboxbycustomer')
                 ->setType('pie')
-                ->setSwitchers(array('pie', 'line', 'bar'))
+                ->setSwitchers(array('pie', 'bar'))
                 ->setLabels($graph_datas['labelgroup'])
                 ->setDatasets($graph_datas['dataset'])
                 ->setSize(array('width' => $width, 'height' => $height))
@@ -192,7 +192,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
             $px2->element('idboxgraphprodbyproposal')
                 ->setType('pie')
-                ->setSwitchers(array('pie', 'line', 'bar'))
+                ->setSwitchers(array('pie', 'bar'))
                 ->setLabels($graph_datas['labelgroup'])
                 ->setDatasets($graph_datas['dataset'])
                 ->setSize(array('width' => $width,'height' => $height))
@@ -226,7 +226,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
             $px3->element('idboxgraphboxbyorder')
                 ->setType('pie')
-                ->setSwitchers(array('pie', 'line', 'bar'))
+                ->setSwitchers(array('pie', 'bar'))
                 ->setLabels($graph_datas['labelgroup'])
                 ->setDatasets($graph_datas['dataset'])
                 ->setSize(array('width' => $width, 'height' => $height))

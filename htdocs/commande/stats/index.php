@@ -92,6 +92,7 @@ $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $
 
 $px1->element('ordersnbinyear')
     ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
     ->setSize(array('width' => $width, 'height' => $height))
@@ -130,6 +131,7 @@ $graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 
 
 $px2->element('ordersamountinyear')
     ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
     ->setSize(array('width' => $width, 'height' => $height))
@@ -168,6 +170,7 @@ $graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $p
 
 $px3->element('ordersaverage')
     ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
     ->setSize(array('width' => $width, 'height' => $height))

@@ -119,9 +119,11 @@ abstract class Stats
                     for ($i = 0 ; $i < 12 ; $i++) {
                         $data['labelgroup'][$i] = $datay[$year][$i][0];
                         $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
-                        $data['dataset'][$j]['backgroundColor'][$i] = $px->bgdatacolor[$j];
-                        $data['dataset'][$j]['borderColor'][$i] = $px->datacolor[$j];
                     }
+                    $data['dataset'][$j]['backgroundColor'] = $px->bgdatacolor[$j];
+                    $data['dataset'][$j]['borderColor'] = $px->datacolor[$j];
+                    $data['dataset'][$j]['borderWidth'] = 1;
+                    $data['dataset'][$j]['fill'] = false;
                     $data['dataset'][$j]['label'] = $year;
                     $j++;
                 }
@@ -235,9 +237,11 @@ abstract class Stats
                     for ($i = 0 ; $i < 12 ; $i++) {
                         $data['labelgroup'][$i] = $datay[$year][$i][0];
                         $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
-                        $data['dataset'][$j]['backgroundColor'][$i] = $px->bgdatacolor[$j];
-                        $data['dataset'][$j]['borderColor'][$i] = $px->datacolor[$j];
                     }
+                    $data['dataset'][$j]['backgroundColor'] = $px->bgdatacolor[$j];
+                    $data['dataset'][$j]['borderColor'] = $px->datacolor[$j];
+                    $data['dataset'][$j]['borderWidth'] = 1;
+                    $data['dataset'][$j]['fill'] = false;
                     $data['dataset'][$j]['label'] = $year;
                     $j++;
                 }
@@ -310,9 +314,11 @@ abstract class Stats
                 for ($i = 0 ; $i < 12 ; $i++) {
                     $data['labelgroup'][$i] = $datay[$year][$i][0];
                     $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
-                    $data['dataset'][$j]['backgroundColor'][$i] = $px->bgdatacolor[$j];
-                    $data['dataset'][$j]['borderColor'][$i] = $px->datacolor[$j];
                 }
+                $data['dataset'][$j]['backgroundColor'] = $px->bgdatacolor[$j];
+                $data['dataset'][$j]['borderColor'] = $px->datacolor[$j];
+                $data['dataset'][$j]['borderWidth'] = 1;
+                $data['dataset'][$j]['fill'] = false;
                 $data['dataset'][$j]['label'] = $year;
                 $j++;
             }
@@ -371,8 +377,8 @@ abstract class Stats
         // Load file into $data
         if ($foundintocache) {
             // Cache file found and is not too old
-        	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
-        	$data = json_decode(file_get_contents($newpathofdestfile), true);
+            dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+            $data = json_decode(file_get_contents($newpathofdestfile), true);
         }
         else
 		{
@@ -406,9 +412,9 @@ abstract class Stats
                     $data['dataset'][0]['data'][$i] = $tmpdata[1];
                     $data['dataset'][0]['backgroundColor'][$i] = $px->bgdatacolor[$i];
                     $data['dataset'][0]['borderColor'][$i] = $px->datacolor[$i];
-                    $data['dataset'][0]['label'] = $year;
                     $i++;
                 }
+                $data['dataset'][0]['label'] = $year;
             }
         }
 

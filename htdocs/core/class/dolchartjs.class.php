@@ -56,7 +56,7 @@ class DolChartJs
         'size'     => array(
             'width' => null,
             'height' => null,
-            )
+        )
     );
 
     /**
@@ -142,7 +142,7 @@ class DolChartJs
             }
             if (isset($theme_datacolor)) {
                 $this->datacolor = $this->setFromArray($theme_datacolor);
-                $this->bgdatacolor =  $this->setFromArray($theme_datacolor, 0.95);
+                $this->bgdatacolor =  $this->setFromArray($theme_datacolor, 1.15);
             }
             if (isset($theme_bgcolor)) {
                 $this->bgcolor = $this->setFromArray($theme_bgcolor);
