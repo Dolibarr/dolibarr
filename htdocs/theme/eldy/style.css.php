@@ -907,7 +907,8 @@ div.fiche {
     min-width: 150px;
 }
 .thumbstat150 {
-    min-width: 170px;
+    /* min-width: 170px; */
+    width: 170px;
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>
@@ -3566,7 +3567,7 @@ div.boximport {
 .widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
-.dolgraphtitlecssboxes { margin: 0px; }
+.dolgraphtitlecssboxes { /* margin: 0px; */ }
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
