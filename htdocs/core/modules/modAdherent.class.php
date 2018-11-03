@@ -355,7 +355,7 @@ class modAdherent extends DolibarrModules
 				'jobtype'=>'method', 'class'=>'adherents/class/adherent.class.php',
 				'objectname'=>'Adherent',
 				'method'=>'sendReminderForExpiredSubscription',
-				'parameters'=>'10',
+				'parameters'=>'10,0',
 				'comment'=>'SendReminderForExpiredSubscription',
 				'frequency'=>1,
 				'unitfrequency'=> 3600 * 24,
