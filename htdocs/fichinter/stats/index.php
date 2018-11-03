@@ -217,12 +217,12 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/fichinter/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/fichinter/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-$type='fichinter_stats';
+$type = 'fichinter_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
