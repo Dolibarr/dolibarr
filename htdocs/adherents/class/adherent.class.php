@@ -2742,7 +2742,58 @@ class Adherent extends CommonObject
 							{
 								$nbok++;
 
-								// TODO Add event email sent for member
+								$message = $msg;
+								$sendto = $to;
+								$sendtocc = '';
+								$sendtobcc = '';
+								$actioncode='EMAIL';
+								$extraparams='';
+
+								$actionmsg='';
+								$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
+								if ($message)
+								{
+									$actionmsg=$langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
+									$actionmsg=dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
+									if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . dol_escape_htmltag($sendtocc));
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+									$actionmsg = dol_concatdesc($actionmsg, $message);
+								}
+								
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+								
+	    						// Insert record of emails sent
+	    						$actioncomm = new ActionComm($this->db);
+
+	    						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+	    						$actioncomm->code        = 'AC_'.$actioncode;
+	    						$actioncomm->label       = $actionmsg2;
+	    						$actioncomm->note        = $actionmsg;
+	    						$actioncomm->fk_project  = 0;
+	    						$actioncomm->datep       = $now;
+	    						$actioncomm->datef       = $now;
+	    						$actioncomm->percentage  = -1;   // Not applicable
+	    						$actioncomm->socid       = $adherent->thirdparty->id;
+	    						$actioncomm->contactid   = 0;
+	    						$actioncomm->authorid    = $user->id;   // User saving action
+	    						$actioncomm->userownerid = $user->id;	// Owner of action
+	    						// Fields when action is en email (content should be added into note)
+	    						$actioncomm->email_msgid = $cmail->msgid;
+	    						$actioncomm->email_from  = $from;
+	    						$actioncomm->email_sender= '';
+	    						$actioncomm->email_to    = $to;
+	    						$actioncomm->email_tocc  = $sendtocc;
+	    						$actioncomm->email_tobcc = $sendtobcc;
+	    						$actioncomm->email_subject = $subject;
+	    						$actioncomm->errors_to   = '';
+	    						
+	    						$actioncomm->fk_element  = $adherent->id;
+	    						$actioncomm->elementtype = $adherent->element;
+	    						
+	    						$actioncomm->extraparams = $extraparams;
+
+	    						$actioncomm->create($user);
 							}
 						}
 						else

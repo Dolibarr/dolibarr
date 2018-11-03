@@ -439,6 +439,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 							$object->sendtouserid	= $sendtouserid;
 						}
 
+						// TODO Set object->email_xxx properties
+						$object->email_msgid = $mailfile->msgid;
+						//...
+
 						// Call of triggers
 						if (! empty($trigger_name))
 						{
