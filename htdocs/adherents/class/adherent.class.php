@@ -2644,13 +2644,19 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		/*if (empty($conf->global->MEMBER_REMINDER_EMAIL))
+		if (empty($conf->adherent->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}
+		if (empty($conf->global->MEMBER_REMINDER_EMAIL))
 		{
 			$langs->load("agenda");
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
-		}*/
-
+		}
+		
 		$now = dol_now();
 		$nbok = 0;
 		$nbko = 0;

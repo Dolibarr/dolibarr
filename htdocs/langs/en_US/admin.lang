@@ -1282,6 +1282,7 @@ AdherentLoginRequired= Manage a Login for each member
 AdherentMailRequired=EMail required to create a new member
 MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members (validation or new subscription) is on by default
 VisitorCanChooseItsPaymentMode=Visitor can choose among available payment modes
+MEMBER_REMINDER_EMAIL=Enable automatic reminder <b>by emails</b> of expired subscriptions. Note: Module <strong>%s</strong> must be enabled and correctly setup to have reminder sent.
 ##### LDAP setup #####
 LDAPSetup=LDAP Setup
 LDAPGlobalParameters=Global parameters
