@@ -191,8 +191,7 @@ if ($result) {
     dol_print_error($db);
 }
 
-$stringtoshow = '';
-$stringtoshow .= '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript" language="javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -246,10 +245,9 @@ if (! empty($dataseries) && count($dataseries) > 1) {
 
         $px1->draw($filenamenb, $fileurlnb);
         print $px1->show();
-
-        print $stringtoshow;
     }
 }
+print $stringtoshow;
 print '</td></tr>';
 
 print '</table>';
