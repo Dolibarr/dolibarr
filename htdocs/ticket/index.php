@@ -184,8 +184,8 @@ if ($result) {
         $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
         $dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
         $dataseries[] = array('label' => $langs->trans("Waiting"), 'data' => round($tick['waiting']));
-        $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['Closed']));
-        $dataseries[] = array('label' => $langs->trans("Deleted"), 'data' => round($tick['Deleted']));
+        $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+        $dataseries[] = array('label' => $langs->trans("Deleted"), 'data' => round($tick['deleted']));
     }
 } else {
     dol_print_error($db);
