@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2016     Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +24,10 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticketstats.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/dolchartjs.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket'));
-
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -73,11 +71,8 @@ $linkback='';
 print load_fiche_titre($langs->trans('TicketsIndex'),$linkback,'title_ticket.png');
 
 
-$dir = '';
-$filenamenb = $dir . "/" . $prefix . "ticketinyear-" . $endyear . ".png";
-$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=ticket&amp;file=ticketinyear-' . $endyear . '.png';
-
 $stats = new TicketStats($db, $socid, $userid);
+
 $param_year = 'DOLUSERCOOKIE_ticket_by_status_year';
 $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
@@ -102,8 +97,8 @@ if (empty($endyear)) {
 }
 
 $startyear = $endyear - 1;
-$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
-$HEIGHT = '192';
+$width = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '35' : '70';
+$height = 25;
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -148,7 +143,6 @@ $sql .= " GROUP BY t.fk_statut";
 $result = $db->query($sql);
 if ($result) {
     while ($objp = $db->fetch_object($result)) {
-        $found = 0;
         if ($objp->fk_statut == 0) {
             $tick['unread'] = $objp->nb;
         }
@@ -173,26 +167,36 @@ if ($result) {
         if ($objp->fk_statut == 9) {
             $tick['deleted'] = $objp->nb;
         }
+        $tick['closed'] = 12;
+        $tick['deleted'] = 5;
     }
+    $dataseries = array();
+    $labels = array();
 
     if ((round($tick['unread']) ? 1 : 0) +(round($tick['read']) ? 1 : 0) +(round($tick['answered']) ? 1 : 0) +(round($tick['assigned']) ? 1 : 0) +(round($tick['inprogress']) ? 1 : 0) +(round($tick['waiting']) ? 1 : 0) +(round($tick['closed']) ? 1 : 0) +(round($tick['deleted']) ? 1 : 0) >= 2
     ) {
-        $dataseries = array();
-        $dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
-        $dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
-        $dataseries[] = array('label' => $langs->trans("Answered"), 'data' => round($tick['answered']));
-        $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
-        $dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
-        $dataseries[] = array('label' => $langs->trans("Waiting"), 'data' => round($tick['waiting']));
-        $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['Closed']));
-        $dataseries[] = array('label' => $langs->trans("Deleted"), 'data' => round($tick['Deleted']));
+        $dataseries[] = round($tick['unread']);
+        $labels[] = $langs->transnoentities("Unread");
+        $dataseries[] = round($tick['read']);
+        $labels[] = $langs->transnoentities("Read");
+        $dataseries[] = round($tick['answered']);
+        $labels[] = $langs->transnoentities("Answered");
+        $dataseries[] = round($tick['assigned']);
+        $labels[] = $langs->transnoentities("Assigned");
+        $dataseries[] = round($tick['inprogress']);
+        $labels[] = $langs->transnoentities("InProgress");
+        $dataseries[] = round($tick['waiting']);
+        $labels[] = $langs->transnoentities("Waiting");
+        $dataseries[] = round($tick['closed']);
+        $labels[] = $langs->transnoentities("Closed");
+        $dataseries[] = round($tick['deleted']);
+        $labels[] = $langs->transnoentities("Deleted");
     }
 } else {
     dol_print_error($db);
 }
 
-$stringtoshow = '';
-$stringtoshow .= '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript" language="javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -213,43 +217,36 @@ print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . img_
 
 print '<tr><td>';
 
-// don't display graph if no series
-if (! empty($dataseries) && count($dataseries) > 1) {
-    $data = array();
-    foreach ($dataseries as $key => $value) {
-        $data[] = array($value['label'], $value['data']);
-    }
-    $px1 = new DolGraph();
-    $mesg = $px1->isGraphKo();
-    if (!$mesg) {
-        $px1->SetData($data);
-        unset($data1);
-        $px1->SetPrecisionY(0);
-        $i = $startyear;
-        $legend = array();
-        while ($i <= $endyear) {
-            $legend[] = $i;
-            $i++;
-        }
-        $px1->SetType(array('pie'));
-        $px1->SetLegend($legend);
-        $px1->SetMaxValue($px1->GetCeilMaxValue());
-        $px1->SetWidth($WIDTH);
-        $px1->SetHeight($HEIGHT);
-        $px1->SetYLabel($langs->trans("TicketStatByStatus"));
-        $px1->SetShading(3);
-        $px1->SetHorizTickIncrement(1);
-        $px1->SetPrecisionY(0);
-        $px1->SetCssPrefix("cssboxes");
-        $px1->mode = 'depth';
-        //$px1->SetTitle($langs->trans("TicketStatByStatus"));
+$px = new DolChartJs();
+$px->element('idgraphstatus')
+    ->setType('pie')
+    ->setLabels($labels)
+    ->setDatasets(
+        array(
+            array(
+                'backgroundColor' => $px->bgdatacolor,
+                'borderColor' => $px->datacolor,
+                'data' => $dataseries,
+            ),
+        )
+    )
+    ->setSize(array('width' => 70, 'height' => 25))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("TicketStatByStatus"),
+        ),
+            'legend' => array(
+            'position' => 'right',
+        ),
+    )
+);
 
-        $px1->draw($filenamenb, $fileurlnb);
-        print $px1->show();
+print $px->renderChart((! empty($dataseries) && count($dataseries) > 1)?0:1);
 
-        print $stringtoshow;
-    }
-}
+print $stringtoshow;
 print '</td></tr>';
 
 print '</table>';

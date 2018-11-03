@@ -24,13 +24,13 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 
-$graphwidth=DolGraph::getDefaultGraphSizeForStats('width',700);
+$graphwidth=DolChartJs::getDefaultGraphSizeForStats('width',700);
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
-$mode=GETPOST('mode')?GETPOST('mode'):'';
+$mode = GETPOST('mode')?GETPOST('mode'):'';
 
 
 // Security check
@@ -62,7 +62,7 @@ elseif ($mode == 'memberbystate') $title = $langs->trans("MembersStatisticsBySta
 elseif ($mode == 'memberbytown') $title = $langs->trans("MembersStatisticsByTown");
 elseif ($mode == 'memberbyregion') $title = $langs->trans("MembersStatisticsByRegion");
 
-llxHeader('', $title,'','',0,0,$arrayjs);
+llxHeader('', $title, '', '', 0, 0, $arrayjs);
 
 print load_fiche_titre($title, $mesg);
 

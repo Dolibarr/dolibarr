@@ -177,7 +177,7 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
             ),
         )
     );
-    print $dolchartjs->renderChart();
+    print $dolchartjs->renderChart($total?0:1);
     print '</td></tr>'."\n";
 }
 else

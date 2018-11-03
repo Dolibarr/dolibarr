@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,24 +119,40 @@ if ($resql)
     $db->free($resql);
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
-    $listofstatus=array(0,1,2,3,-1);
-    foreach ($listofstatus as $status)
-    {
-    	$dataseries[]=array($commandestatic->LibStatut($status,$bool,1), (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
+    $listofstatus = array(0,1,2,3,-1);
+    $labels = array();
+    foreach ($listofstatus as $status) {
+        $dataseries[] = isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0;
+        $labels[] = html_entity_decode($commandestatic->LibStatut($status, $bool, 1));
     }
     if ($conf->use_javascript_ajax)
     {
         print '<tr class="impair"><td align="center" colspan="2">';
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-        $dolgraph = new DolGraph();
-        $dolgraph->SetData($dataseries);
-        $dolgraph->setShowLegend(1);
-        $dolgraph->setShowPercent(1);
-        $dolgraph->SetType(array('pie'));
-        $dolgraph->setWidth('100%');
-        $dolgraph->draw('idgraphstatus');
-        print $dolgraph->show($total?0:1);
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+        $dolchartjs = new DolChartJs();
+        $dolchartjs->element('idgraphstatus')
+            ->setType('pie')
+            ->setLabels($labels)
+            ->setDatasets(
+                array(
+                    array(
+                        'backgroundColor' => $dolchartjs->bgdatacolor,
+                        'borderColor' => $dolchartjs->datacolor,
+                        'data' => $dataseries,
+                    ),
+                )
+            )
+            ->setSize(array('width' => 70, 'height' => 25))
+            ->setOptions(array(
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => array(
+                    'position' => 'right',
+                ),
+            )
+        );
+        print $dolchartjs->renderChart($total?0:1);
 
         print '</td></tr>';
     }
@@ -146,7 +163,7 @@ if ($resql)
         	print '<tr class="oddeven">';
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
-            print $commandestatic->LibStatut($status,$bool,3);
+            print $commandestatic->LibStatut($status, $bool, 3);
             print '</a>';
             print '</td>';
             print "</tr>\n";
@@ -165,8 +182,7 @@ else
 /*
  * Draft orders
  */
-if (! empty($conf->commande->enabled))
-{
+if (! empty($conf->commande->enabled)) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
     $sql.= ", s.client";
     $sql.= ", s.code_client";

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +33,7 @@ $langs->loadLangs(array('propal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid','int');
-if (isset($user->societe_id) && $user->societe_id  > 0)
-{
+if (isset($user->societe_id) && $user->societe_id  > 0) {
 	$action = '';
 	$socid = $user->societe_id;
 }
@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'propal');
 /*
  * View
  */
-$now=dol_now();
+$now = dol_now();
 $propalstatic=new Propal($db);
 $companystatic=new Societe($db);
 $form = new Form($db);
@@ -59,8 +59,8 @@ print load_fiche_titre($langs->trans("ProspectionArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -86,8 +86,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql.= " GROUP BY p.fk_statut";
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -114,33 +113,45 @@ if ($resql)
 
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Proposals").'</td></tr>'."\n";
-    $listofstatus=array(0,1,2,3,4);
-    foreach ($listofstatus as $status)
-    {
-    	$dataseries[]=array($propalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
-        if (! $conf->use_javascript_ajax)
-        {
+    $listofstatus = array(0,1,2,3,4);
+    $labels = array();
+    foreach ($listofstatus as $status) {
+        $dataseries[] = isset($vals[$status])?(int) $vals[$status]:0;
+        $labels[] = html_entity_decode($propalstatic->LibStatut($status,0));
+        if (! $conf->use_javascript_ajax) {
 
             print '<tr class="oddeven">';
-            print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
+            print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
         }
     }
-    if ($conf->use_javascript_ajax)
-    {
+    if ($conf->use_javascript_ajax) {
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
         print '<tr><td align="center" colspan="2">';
-
-        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-        $dolgraph = new DolGraph();
-        $dolgraph->SetData($dataseries);
-        $dolgraph->setShowLegend(1);
-        $dolgraph->setShowPercent(1);
-        $dolgraph->SetType(array('pie'));
-        $dolgraph->setWidth('100%');
-        $dolgraph->draw('idgraphthirdparties');
-        print $dolgraph->show($total?0:1);
-
+        $dolchartjs = new DolChartJs();
+        $dolchartjs->element('idgraphthirdparties')
+            ->setType('pie')
+            ->setLabels($labels)
+            ->setDatasets(
+                array(
+                    array(
+                        'backgroundColor' => $dolchartjs->bgdatacolor,
+                        'borderColor' => $dolchartjs->datacolor,
+                        'data' => $dataseries,
+                    ),
+                )
+            )
+            ->setSize(array('width' => 70, 'height' => 25))
+            ->setOptions(array(
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => array(
+                    'position' => 'right',
+                ),
+            )
+        );
+        print $dolchartjs->renderChart($total?0:1);
         print '</td></tr>';
     }
     //if ($totalinprocess != $total)

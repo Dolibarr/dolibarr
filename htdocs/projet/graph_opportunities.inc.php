@@ -1,6 +1,29 @@
 <?php
-if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *       \file       htdocs/projet/graph_opportunities.inc.php
+ *       \ingroup    projet
+ *       \brief      Grap statistics project page
+ */
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
 	$sql.= " WHERE p.entity IN (".getEntity('project').")";
@@ -11,8 +34,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	$sql.= " GROUP BY p.fk_opp_status, cls.code";
 	$resql = $db->query($sql);
 
-	if ($resql)
-	{
+	if ($resql) {
 	    $num = $db->num_rows($resql);
 	    $i = 0;
 
@@ -52,9 +74,9 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
-	    $listofstatus=array_keys($listofoppstatus);
-	    foreach ($listofstatus as $status)
-	    {
+        $listofstatus=array_keys($listofoppstatus);
+        $labels = array();
+	    foreach ($listofstatus as $status) {
 	    	$labelstatus = '';
 
 			$code = dol_getIdFromCode($db, $status, 'c_lead_status', 'rowid', 'code');
@@ -64,7 +86,8 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        //$labelstatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
 	        //$labelstatus .= ' - '.price2num($listofoppstatus[$status]).'%';
 
-	        $dataseries[]=array($labelstatus, (isset($valsamount[$status])?(float) $valsamount[$status]:0));
+            $dataseries[] = isset($valsamount[$status])?(float) $valsamount[$status]:0;
+            $labels[] = $labelstatus;
 	        if (! $conf->use_javascript_ajax)
 	        {
 
@@ -78,16 +101,30 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    {
 	        print '<tr><td align="center" colspan="2">';
 
-	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-	        $dolgraph = new DolGraph();
-	        $dolgraph->SetData($dataseries);
-	        $dolgraph->setShowLegend(1);
-	        $dolgraph->setShowPercent(1);
-	        $dolgraph->SetType(array('pie'));
-	        $dolgraph->setWidth('100%');
-	        $dolgraph->SetHeight(180);
-	        $dolgraph->draw('idgraphstatus');
-	        print $dolgraph->show($totaloppnb?0:1);
+            include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+            $dolchartjs = new DolChartJs();
+            $dolchartjs->element('idgraphstatus')
+                ->setType('pie')
+                ->setLabels($labels)
+                ->setDatasets(
+                    array(
+                        array(
+                            'backgroundColor' => $dolchartjs->bgdatacolor,
+                            'borderColor' => $dolchartjs->datacolor,
+                            'data' => $dataseries,
+                        ),
+                    )
+                )
+                ->setSize(array('width' => 70, 'height' => 25))
+                ->setOptions(array(
+                    'responsive' => true,
+                    'maintainAspectRatio' => false,
+                    'legend' => array(
+                        'position' => 'right',
+                    ),
+                )
+            );
+            print $dolchartjs->renderChart($totaloppnb?0:1);
 
 	        print '</td></tr>';
 	    }

@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,31 +51,33 @@ $sortorder = GETPOST("sortorder",'alpha');
  * View
  */
 
-$companystatic=new Societe($db);
-$projectstatic=new Project($db);
-$userstatic=new User($db);
-$form=new Form($db);
-$formfile=new FormFile($db);
+$companystatic = new Societe($db);
+$projectstatic = new Project($db);
+$userstatic = new User($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 
 $projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
 //var_dump($projectsListId);
 
 
-llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
+llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$title=$langs->trans("ProjectsArea");
+$title = $langs->trans("ProjectsArea");
 //if ($mine) $title=$langs->trans("MyProjectsArea");
 
 
 // Title for combo list see all projects
-$titleall=$langs->trans("AllAllowedProjects");
-if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
-else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
+$titleall = $langs->trans("AllAllowedProjects");
+if (! empty($user->rights->projet->all->lire) && ! $socid) {
+    $titleall = $langs->trans("AllProjects");
+} else {
+    $titleall = $langs->trans("AllAllowedProjects").'<br><br>';
+}
 
 
-$morehtml='';
-$morehtml.='<form name="projectform">';
+$morehtml ='<form name="projectform">';
 $morehtml.='<SELECT name="search_project_user">';
 $morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
 $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
@@ -187,9 +190,7 @@ if ($resql)
 	{
 		$i = 0;
 		$var = true;
-		while ($i < $num)
-		{
-
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';

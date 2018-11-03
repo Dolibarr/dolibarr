@@ -26,12 +26,9 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
-//$width = DolGraph::getDefaultGraphSizeForStats('width');
-//$height = DolGraph::getDefaultGraphSizeForStats('height');
 //$width = DolChartjs::getDefaultGraphSizeForStats('width');
 //$height = DolChartjs::getDefaultGraphSizeForStats('height');
 $width = 70;
@@ -73,37 +70,13 @@ dol_mkdir($dir);
 $stats = new AdherentStats($db, $socid, $userid);
 
 // Build graphic number of object
-$datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
-//var_dump($data);
-// $data = array(array('Lib',val1,val2,val3),...)
-$labels1 = array();
-$datas1 = array();
-$datacolor=array();
-$bgdatacolor=array();
-$dataset = array();
-
 $px1 = new DolChartJs();
-foreach ($datas as $data) {
-    $labels1[] = $data[0];
-    for ($i=0; $i<$nbyear; $i++) {
-        $datacolor[$i][] = $px1->datacolor[$i];
-        $bgdatacolor[$i][] = $px1->bgdatacolor[$i];
-        $datas1[$i][] = $data[$i+1];
-    }
-}
-for ($i=0; $i<$nbyear; $i++) {
-    $dataset[] = array(
-        //'label' => $langs->trans("NbOfSubscriptions").' '.($startyear+$i),
-        'label' => $startyear + $i,
-        'backgroundColor' => $datacolor[$i],
-        'borderColor' => $bgdatacolor[$i],
-        'data' => $datas1[$i],
-    );
-}
+$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1);
 $px1->element('subscriptionsnbinyear')
     ->setType('bar')
-    ->setLabels($labels1)
-    ->setDatasets($dataset)
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
     ->setSize(array('width' => $width, 'height' => $height))
     ->setOptions(array(
         'responsive' => true,
@@ -114,44 +87,35 @@ $px1->element('subscriptionsnbinyear')
         ),
         'title' => array(
             'display' => true,
-            'text' => $langs->transnoentitiesnoconv("NbOfSubscriptions"),
-        )
+            'text' => $langs->transnoentitiesnoconv("NbOfSubscriptionsByMonth"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("NbOfSubscriptions"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
     )
 );
 
 // Build graphic amount of object
-$datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
-//var_dump($data);
-// $data = array(array('Lib',val1,val2,val3),...)
-$labels2 = array();
-$datas2 = array();
-$datacolor=array();
-$bgdatacolor=array();
-$dataset = array();
-
 $px2 = new DolChartJs();
+$graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2);
 
-foreach ($datas as $data) {
-    $labels2[] = $data[0];
-    for ($i=0; $i<$nbyear; $i++) {
-        $datacolor[$i][] = $px2->datacolor[$i];
-        $bgdatacolor[$i][] = $px2->bgdatacolor[$i];
-        $datas2[$i][] = $data[$i+1];
-    }
-}
-for ($i=0; $i<$nbyear; $i++) {
-    $dataset[] = array(
-        //'label' => $langs->trans("AmountOfSubscriptions").' '.($startyear+$i),
-        'label' => $startyear + $i,
-        'backgroundColor' => $datacolor[$i],
-        'borderColor' => $bgdatacolor[$i],
-        'data' => $datas2[$i],
-    );
-}
 $px2->element('subscriptionsamountinyear')
     ->setType('bar')
-    ->setLabels($labels2)
-    ->setDatasets($dataset)
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
     ->setSize(array('width' => $width, 'height' => $height))
     ->setOptions(array(
         'responsive' => true,
@@ -162,8 +126,23 @@ $px2->element('subscriptionsamountinyear')
         ),
         'title' => array(
             'display' => true,
-            'text' => $langs->transnoentitiesnoconv("AmountOfSubscriptions"),
-        )
+            'text' => $langs->transnoentities("AmountOfSubscriptionsByMonth"),
+        ),
+        'scales' => array(
+            'yAxes' => array(
+                array(
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("AmountOfSubscriptions"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
     )
 );
 

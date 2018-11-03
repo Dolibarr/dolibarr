@@ -245,11 +245,19 @@ class DolChartJs
     }
 
     /**
+	 * @param   int     $shownographyet     Show graph to say there is not enough data
      * @return mixed
      */
-    public function renderChart()
+    public function renderChart($shownographyet=0)
     {
+        global $langs;
         $chart = $this->charts[$this->element];
+        if ($shownographyet) {
+            $s = '<div class="nographyet" style="width:'.$chart['size']['width'].'vh; height:'.$chart['size']['height'].'vh;"></div>';
+            $s .= '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+            return $s;
+        }
+
         $switchers = $this->charts[$this->element]['switchers'];
         $template = "<div class=\"".$this->element."-container\" style=\"position: relative; width:".$chart['size']['width']."vh; height:".$chart['size']['height']."vh;\">";
         $template .= "<canvas id=\"".$this->element."\"></canvas></div>";
