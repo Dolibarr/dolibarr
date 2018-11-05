@@ -713,7 +713,7 @@ class EmailCollector extends CommonObject
 		$this->fetch_actions();
 
 		$sourcedir = $this->source_directory;
-		$targetdir = ($this->target_directory ? $server.$this->target_directory : '');
+		$targetdir = ($this->target_directory ? $server.$this->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
 
 		// Connect to IMAP
 		$flags ='/service=imap';		// IMAP
@@ -722,8 +722,9 @@ class EmailCollector extends CommonObject
 		//$flags.='/readonly';
 		//$flags.='/debug';
 
-		$connectstring = '{'.$this->host.':993'.$flags.'}';
-		$connectstring.=imap_utf7_encode($sourcedir);
+		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
+		$connectstring = $connectstringserver.imap_utf7_encode($sourcedir);
+		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
 		$connection = imap_open($connectstring, $this->user, $this->password);
 		if (! $connection)
@@ -765,9 +766,22 @@ class EmailCollector extends CommonObject
 		{
 			foreach($arrayofemail as $imapemail)
 			{
+				if ($nbemailprocessed > 100) break;			// Do not process more than 100 email per launch
+
 				$errorforactions = 0;
 
 				$this->db->begin();
+
+				$overview = imap_fetch_overview($connection, $imapemail, 0);
+				$header = imap_fetchheader($connection ,$imapemail, 0);
+				$message = imap_body($connection, $imapemail, 0);
+				// imap_fetchstructure($connection, $imapemail, 0);
+				// imap_fetchbody($connection, $imapemail, 1) may be text/plain, 2 may be text/html
+
+				/*var_dump($overview);
+				var_dump($header);
+				var_dump($message);
+				*/
 
 				// Record email
 				foreach($this->actions as $actionkey => $actionvalue)
@@ -786,7 +800,13 @@ class EmailCollector extends CommonObject
 				// Move email
 				if (! $errorforactions && $targetdir)
 				{
-					//imap_mail_move($connection, $sourcedir, $targetdir);
+					dol_syslog("EmailCollector::doCollect move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
+					$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
+					if ($res == false) {
+						$error++;
+						$this->errors = imap_last_error();
+						dol_syslog(imap_last_error());
+					}
 				}
 
 				$nbemailprocessed++;
@@ -801,7 +821,8 @@ class EmailCollector extends CommonObject
 			$this->output=$langs->trans('NoNewEmailToProcess');
 		}
 
-		//imap_expunge($connection);
+		imap_expunge($connection);	// To validate any move
+
 		imap_close($connection);
 
 		$this->datelastresult = $now;
