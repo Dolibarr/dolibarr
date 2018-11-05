@@ -218,6 +218,7 @@ class AccountancyExport
 
 		// Define name of file to save
 		$filename = 'general_ledger-'.$this->getFormatCode($conf->global->ACCOUNTING_EXPORT_MODELCSV);
+		$type_export = 'general_ledger';
 
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
