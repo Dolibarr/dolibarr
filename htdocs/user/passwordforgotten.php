@@ -41,7 +41,7 @@ if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
     exit;
 }
 
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 

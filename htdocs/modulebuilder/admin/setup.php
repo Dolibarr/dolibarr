@@ -29,7 +29,7 @@ $langs->loadLangs(array("admin", "other", "modulebuilder"));
 if (!$user->admin || empty($conf->modulebuilder->enabled))
     accessforbidden();
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 /*

@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule"));
 
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 
 
 // Securite acces client

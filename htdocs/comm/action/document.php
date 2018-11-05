@@ -40,7 +40,7 @@ if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/cla
 $langs->loadLangs(array('companies', 'commercial', 'other', 'bills'));
 
 $id = GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check

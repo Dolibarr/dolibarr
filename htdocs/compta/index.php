@@ -50,7 +50,7 @@ $langs->loadLangs(array('compta', 'bills'));
 if (! empty($conf->commande->enabled))
 	$langs->load("orders");
 
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $bid=GETPOST('bid', 'int');
 
 // Security check

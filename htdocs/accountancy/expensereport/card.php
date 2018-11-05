@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bills","accountancy","trips"));
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 

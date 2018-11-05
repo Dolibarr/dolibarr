@@ -35,7 +35,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 
 
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $backtourl = GETPOST('backtourl', 'alpha');
 
 

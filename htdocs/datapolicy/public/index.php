@@ -39,7 +39,7 @@ dol_include_once('/datapolicy/class/datapolicy.class.php');
 $idc = GETPOST('c', 'int');
 $ids = GETPOST('s', 'int');
 $ida = GETPOST('a', 'int');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $lang = GETPOST('l', 'alpha');
 $code = GETPOST('key', 'alpha');
 

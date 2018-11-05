@@ -29,7 +29,7 @@ $langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy'));
 
 
 // Parameters
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $formadmin = new FormAdmin($db);
 

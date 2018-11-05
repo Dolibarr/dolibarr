@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin","members"));
 
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 
 if (! $user->admin) accessforbidden();
 

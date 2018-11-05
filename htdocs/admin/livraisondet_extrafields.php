@@ -48,7 +48,7 @@ $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
 
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
 $elementtype='livraisondet'; //Must be the $table_element of the class that manage extrafield
 

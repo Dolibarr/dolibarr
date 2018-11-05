@@ -37,7 +37,7 @@ if (!$user->admin) {
 
 // Parameters
 $value = GETPOST('value', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
 $type = 'ticket';

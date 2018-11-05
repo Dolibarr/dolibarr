@@ -30,7 +30,7 @@ $langs->loadLangs(array('admin', 'hrm'));
 if (! $user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 
 // Other parameters HRM_*
 $list = array (

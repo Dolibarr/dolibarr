@@ -43,7 +43,7 @@ $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins'));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid=GETPOST('rowid','int');
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'pricesuppliercard';
 

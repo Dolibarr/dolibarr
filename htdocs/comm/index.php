@@ -40,7 +40,7 @@ if (! $user->rights->societe->lire) accessforbidden();
 // Load translation files required by the page
 $langs->loadLangs(array("commercial", "propal"));
 
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $bid=GETPOST('bid', 'int');
 
 // Securite acces client

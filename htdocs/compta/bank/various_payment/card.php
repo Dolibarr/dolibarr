@@ -41,7 +41,7 @@ $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
-$action		= GETPOST('action', 'aZ09');
+$action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'aZ09');
 $backtopage	= GETPOST('backtopage', 'alpha');
 

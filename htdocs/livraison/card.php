@@ -50,7 +50,7 @@ $langs->loadLangs(array("sendings","bills",'deliveries','orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
 

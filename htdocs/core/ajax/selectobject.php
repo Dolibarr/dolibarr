@@ -33,7 +33,7 @@ $objectdesc=GETPOST('objectdesc', 'alpha');
 $htmlname=GETPOST('htmlname', 'aZ09');
 $sqlfilter=GETPOST('sqlfilter', 'alpha');
 $outjson=(GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
 
 

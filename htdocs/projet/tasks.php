@@ -38,7 +38,7 @@ $langs->loadLangs(array("users", "projects"));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
 

@@ -43,7 +43,7 @@ $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 $id = GETPOST('id', 'int');
 $msg_id = GETPOST('msg_id', 'int');
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 
 $object = new Ticket($db);
 

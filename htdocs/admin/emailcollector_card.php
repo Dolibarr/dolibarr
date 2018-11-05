@@ -77,8 +77,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters = array();
@@ -105,11 +103,29 @@ if (empty($reshook))
 }
 
 
+if ($action == 'confirm_collect')
+{
+	dol_include_once('/emailcollector/class/emailcollector.class.php');
+
+	$res = $object->doCollect();
+
+	if ($res == 0)
+	{
+		setEventMessages($object->output, null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($object->error, null, 'errors');
+	}
+
+	$action = '';
+}
+
+
+
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -302,26 +318,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</table>';
 
-
-	if ($action == 'confirm_collect')
-	{
-		print_fiche_titre($langs->trans('MessagesFetchingResults'), '', '');
-
-		dol_include_once('/emailcollector/class/emailcollector.class.php');
-		$emailcollector = new EmailCollector($object);
-
-		$res = $emailcollector->doCollect();
-		if (is_array($res)) {
-			if (count($res['actions_done']) > 0) {
-				setEventMessages($langs->trans('XActionsDone', count($res['actions_done'])), null, 'info');
-			} else {
-				setEventMessages($langs->trans('NoActionsdone'), null, 'info');
-			}
-		} else {
-			setEventMessages($langs->trans('NoEmailsToProcess'), null, 'info');
-		}
-		$action = '';
-	}
 	print '</div>';
 	print '</div>';
 

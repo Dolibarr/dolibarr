@@ -37,7 +37,7 @@ $langs->load('datapolicy@datapolicy');
 if (! $user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters=array(

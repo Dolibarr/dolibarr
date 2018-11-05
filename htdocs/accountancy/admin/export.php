@@ -41,7 +41,7 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 aZ09
 // Parameters ACCOUNTING_EXPORT_*
 $main_option = array (

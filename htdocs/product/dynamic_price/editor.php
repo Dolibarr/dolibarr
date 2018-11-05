@@ -33,7 +33,7 @@ $langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on 
 
 $id = GETPOST('id', 'int');
 $eid = GETPOST('eid', 'int');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');
 $tab = GETPOST('tab', 'alpha');

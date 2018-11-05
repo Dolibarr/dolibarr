@@ -37,7 +37,7 @@ $langs->loadLangs(array("admin","companies","bills","other","banks"));
 if (!$user->admin)
     accessforbidden();
 
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');

@@ -38,7 +38,7 @@ $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
 $id =GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'aZ09');
+$action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 
 // Security check

@@ -83,7 +83,7 @@ class EmailCollector extends CommonObject
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1),
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
-		'user'          => array('type'=>'varchar(128)', 'label'=>'User', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myacount@gmail.com'),
+		'user'          => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myacount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>1, 'comment'=>"IMAP password"),
 		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox'),
 		//'filter'		=> array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
@@ -124,7 +124,6 @@ class EmailCollector extends CommonObject
 	 */
 	public $label;
 
-	public $amount;
 
 	/**
 	 * @var int Status
@@ -151,13 +150,13 @@ class EmailCollector extends CommonObject
 	public $user;
 	public $password;
 	public $source_directory;
-	public $filter;
-	public $actiontodo;
     public $target_directory;
     public $datelastresult;
 	public $lastresult;
 	// END MODULEBUILDER PROPERTIES
 
+	public $rules;
+	public $actions;
 
 
 	/**
@@ -613,6 +612,58 @@ class EmailCollector extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
+	/**
+	 * Fetch rules
+	 *
+	 * @return 	int		<0 if KO, >0 if OK
+	 */
+	public function fetch_rules()
+	{
+		$this->rules = array();
+
+		$sql='SELECT type, rulevalue FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter WHERE status = 1 AND fk_emailcollector = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num=$this->db->num_rows($resql);
+			$i = 0;
+			while($i < $num)
+			{
+				$obj=$this->db->fetch_object($resql);
+				$this->rules[]=array('type'=>$obj->type, 'rulevalue'=>$obj->rulevalue);
+			}
+			$this->db->free($resql);
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Fetch actions
+	 *
+	 * @return 	int		<0 if KO, >0 if OK
+	 */
+	public function fetch_actions()
+	{
+		$this->actions = array();
+
+		$sql='SELECT type, actionparam FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction WHERE status = 1 AND fk_emailcollector = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num=$this->db->num_rows($resql);
+			$i = 0;
+			while($i < $num)
+			{
+				$obj=$this->db->fetch_object($resql);
+				$this->rules[]=array('type'=>$obj->type, 'actionparam'=>$obj->actionparam);
+			}
+			$this->db->free($resql);
+		}
+	}
+
 
 	/**
 	 * Action executed by scheduler
@@ -623,9 +674,11 @@ class EmailCollector extends CommonObject
 	//public function doScheduledJob($param1, $param2, ...)
 	public function doCollect()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
+
+		dol_syslog("EmailCollector::doCollect start", LOG_DEBUG);
 
 		$error = 0;
 		$this->output = '';
@@ -635,11 +688,127 @@ class EmailCollector extends CommonObject
 
 		$now = dol_now();
 
-		$this->db->begin();
+		if (empty($this->host))
+		{
+			$this->error=$langs->trans('ErrorFieldRequired', 'EMailHost');
+			return -1;
+		}
+		if (empty($this->user))
+		{
+			$this->error=$langs->trans('ErrorFieldRequired', 'Login');
+			return -1;
+		}
+		if (empty($this->source_directory))
+		{
+			$this->error=$langs->trans('ErrorFieldRequired', 'MailboxSourceDirectory');
+			return -1;
+		}
+		if (! function_exists('imap_open'))
+		{
+			$this->error='IMAP function not enabled on your PHP';
+			return -2;
+		}
 
-		// ...
+		$this->fetch_rules();
+		$this->fetch_actions();
 
-		$this->db->commit();
+		$sourcedir = $this->source_directory;
+		$targetdir = ($this->target_directory ? $server.$this->target_directory : '');
+
+		// Connect to IMAP
+		$flags ='/service=imap';		// IMAP
+		$flags.='/ssl';					// '/tls'
+		$flags.='/novalidate-cert';
+		//$flags.='/readonly';
+		//$flags.='/debug';
+
+		$connectstring = '{'.$this->host.':993'.$flags.'}';
+		$connectstring.=imap_utf7_encode($sourcedir);
+
+		$connection = imap_open($connectstring, $this->user, $this->password);
+		if (! $connection)
+		{
+			$this->error = 'Failed to open IMAP connection '.$connectstring;
+			return -3;
+		}
+
+		//$search='ALL';
+		$search='UNDELETED';
+		foreach($this->rules as $key => $rulevalue)
+		{
+			if ($key == 'to')      $search=($search?' ':'').'TO "'.str_replace('"', '', $rulevalue).'"';
+			if ($key == 'bcc')     $search=($search?' ':'').'BCC';
+			if ($key == 'cc')      $search=($search?' ':'').'CC';
+			if ($key == 'from')    $search=($search?' ':'').'FROM "'.str_replace('"', '', $rulevalue).'"';
+			if ($key == 'subject') $search=($search?' ':'').'SUBJECT "'.str_replace('"', '', $rulevalue).'"';
+			if ($key == 'body')    $search=($search?' ':'').'BODY "'.str_replace('"', '', $rulevalue).'"';
+			if ($key == 'seen')    $search=($search?' ':'').'SEEN';
+			if ($key == 'unseen')  $search=($search?' ':'').'UNSEEN';
+		}
+
+		if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
+		{
+			$fromdate=0;
+			if ($this->datelastresult) $fromdate = $this->datelastresult;
+			if ($fromdate > 0) $search.=($search?' ':'').'SINCE '.dol_print_date($fromdate - 1,'dayhourrfc');
+		}
+		dol_syslog("search string = ".$search);
+
+		$nbemailprocessed=0; $nbactiondone=0;
+
+		// Scan IMAP inbox
+		$arrayofemail= imap_search($connection, $search);
+		//var_dump($arrayofemail);
+
+		// Loop on each email found
+		if (! empty($arrayofemail) && count($arrayofemail) > 0)
+		{
+			foreach($arrayofemail as $imapemail)
+			{
+				$errorforactions = 0;
+
+				$this->db->begin();
+
+				// Record email
+				foreach($this->actions as $actionkey => $actionvalue)
+				{
+					if ($errorforactions) break;
+
+					// Make action
+
+
+					if (! $errorforactions)
+					{
+						$nbactiondone++;
+					}
+				}
+
+				// Move email
+				if (! $errorforactions && $targetdir)
+				{
+					//imap_mail_move($connection, $sourcedir, $targetdir);
+				}
+
+				$nbemailprocessed++;
+
+				$this->db->commit();
+			}
+
+			$this->output=$langs->trans('XEmailsDoneYActionsDone', $nbemailprocessed, $nbactiondone);
+		}
+		else
+		{
+			$this->output=$langs->trans('NoNewEmailToProcess');
+		}
+
+		//imap_expunge($connection);
+		imap_close($connection);
+
+		$this->datelastresult = $now;
+		$this->lastresult = $this->output;
+		$this->update($user);
+
+		dol_syslog("EmailCollector::doCollect end", LOG_DEBUG);
 
 		return $error;
 	}

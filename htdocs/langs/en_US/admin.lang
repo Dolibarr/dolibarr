@@ -1822,6 +1822,11 @@ MailboxTargetDirectory=Mailbox target directory
 CollectNow=Collect now
 DateLastResult=Date last collect
 LastResult=Last result
+EmailCollectorConfirmCollectTitle=Email collect confirmation
+EmailCollectorConfirmCollect=Do you want to run the collect for this collector now ?
+NoNewEmailToProcess=No new email to process
+NothingProcessed=Nothing done
+XEmailsDoneYActionsDone=%s emails analyzed, %s record/actions done by collector
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

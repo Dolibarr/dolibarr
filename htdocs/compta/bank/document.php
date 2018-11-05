@@ -36,7 +36,7 @@ $langs->loadLangs(array('banks', 'companies', 'other'));
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 $mesg = '';

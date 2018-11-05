@@ -50,7 +50,7 @@ $langs->loadLangs(array("mymodule@mymodule","other"));
 // Get parameters
 $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'aZ09');
+$action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
