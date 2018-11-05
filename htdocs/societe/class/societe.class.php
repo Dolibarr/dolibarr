@@ -13,6 +13,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3827,6 +3828,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return		int				Amount in debt for thirdparty
 	 *  @deprecated
+	 *  @see getOutstandingBills()
 	 */
 	function get_OutstandingBill()
 	{
