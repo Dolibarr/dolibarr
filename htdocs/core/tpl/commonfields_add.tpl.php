@@ -41,7 +41,7 @@ foreach($object->fields as $key => $val)
 	if (abs($val['visible']) != 1) continue;
 
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
-	var_dump($val['enabled']);
+
 	print '<tr id="field_'.$key.'">';
 	print '<td';
 	print ' class="titlefieldcreate';

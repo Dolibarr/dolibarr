@@ -6816,21 +6816,15 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id
 function verifCond($strRights)
 {
 	global $user,$conf,$langs;
-	global $action,$leftmenu;
+	global $leftmenu;
 	global $rights;    // To export to dol_eval function
 
 	//print $strRights."<br>\n";
 	$rights = true;
 	if ($strRights != '')
 	{
-		$action = preg_replace('/[a-zA-Z0-9_')
-		//$tab_rights = explode('&&', $strRights);
-		//$i = 0;
-		//while (($i < count($tab_rights)) && ($rights == true)) {
 		$str = 'if(!(' . $strRights . ')) { $rights = false; }';
-		dol_eval($str);
-		//	$i++;
-		//}
+		dol_eval($str);		// The dol_eval must contains all the global $xxx used into a condition
 	}
 	return $rights;
 }
@@ -6847,8 +6841,8 @@ function verifCond($strRights)
 function dol_eval($s, $returnvalue=0, $hideerrors=1)
 {
 	// Only global variables can be changed by eval function and returned to caller
-	global $db, $langs, $user, $conf;
-	global $mainmenu, $leftmenu;
+	global $db, $langs, $user, $conf, $website, $websitepage;
+	global $action, $mainmenu, $leftmenu;
 	global $rights;
 	global $object;
 	global $mysoc;
