@@ -187,7 +187,7 @@ class modDataPolicy extends DolibarrModules {
         // Cronjobs (List of cron jobs entries to add when module is enabled)
         // unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
         $this->cronjobs = array(
-            0 => array('label' => 'DATAPOLICY Cron', 'jobtype' => 'method', 'class' => '/datapolicy/class/datapolicyCron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'exec', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => true),
+            0 => array('label' => 'DATAPOLICY Cron', 'jobtype' => 'method', 'class' => '/datapolicy/class/datapolicyCron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'exec', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => '$conf->datapolicy->enabled'),
             //1 => array('label' => 'DATAPOLICY Mailing', 'jobtype' => 'method', 'class' => '/datapolicy/class/datapolicyCron.class.php', 'objectname' => 'RgpdCron', 'method' => 'sendMailing', 'parameters' => '', 'comment' => 'Comment', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 0, 'test' => true)
         );
         // Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),

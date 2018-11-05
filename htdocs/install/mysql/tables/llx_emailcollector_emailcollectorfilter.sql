@@ -1,4 +1,4 @@
--- Copyright (C) 2018 Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) ---Put here your own copyright and developer email---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,12 +14,17 @@
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
--- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
-ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
--- END MODULEBUILDER INDEXES
-
---ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_fieldxyz(fieldx, fieldy);
-
---ALTER TABLE llx_emailcollector_emailcollector ADD CONSTRAINT llx_emailcollector_emailcollector_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
-
+CREATE TABLE llx_emailcollector_emailcollectorfilter(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL, 
+	rulevalue varchar(255) NULL, 
+	date_creation datetime NOT NULL, 
+	tms timestamp NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
