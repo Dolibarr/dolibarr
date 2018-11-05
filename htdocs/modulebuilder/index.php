@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
+$langs->loadLangs(array("admin", "modulebuilder", "other", "cron", "errors"));
 
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
@@ -1280,8 +1280,8 @@ elseif (! empty($module))
 
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
-
-					print $moduleobj->getDescLong();
+					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print $moduleobj->getDescLong();
+					else print $langs->trans("ErrorFileNotFound", $pathtofilereadme);
 
 					print '<br><br>';
 
@@ -1291,7 +1291,8 @@ elseif (! empty($module))
 					print '<div class="underbanner clearboth"></div>';
 					print '<div class="fichecenter">';
 
-					print $moduleobj->getChangeLog();
+					if (dol_is_file($dirread.'/'.$pathtochangelog)) print $moduleobj->getChangeLog();
+					else print $langs->trans("ErrorFileNotFound", $pathtochangelog);
 
 					print '</div>';
 				}
