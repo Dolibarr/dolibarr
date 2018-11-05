@@ -294,21 +294,27 @@ class FormProjets
 	/**
 	 *	Output a combo list with projects qualified for a third party
 	 *
-	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   	Id task preselected
-	 *	@param  string	$htmlname   	Name of HTML select
-	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Return only html options lines without the select tag
-	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
-     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
-     *  @param	int		$disabled		Disabled
-	 *  @param	string	$morecss        More css added to the select component
-	 *	@return int         			Nbr of project if OK, <0 if KO
+	 *  @param	int		$socid				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *  @param	int		$selected			Id task preselected
+	 *  @param	string	$htmlname			Name of HTML select
+	 *  @param	int		$maxlength			Maximum length of label
+	 *  @param	int		$option_only		Return only html options lines without the select tag
+	 *  @param	string	$show_empty			Add an empty line ('1' or string to show for empty line)
+	 *  @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 *  @param	int		$forcefocus			Force focus on field (works with javascript only)
+	 *  @param	int		$disabled			Disabled
+	 *  @param	string	$morecss			More css added to the select component
+	 *  @param	User	$usertofilter		User object to use for filtering
+	 *  @return	int							Nbr of project if OK, <0 if KO
 	 */
-	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500')
+	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500', $usertofilter=null)
 	{
 		global $user,$conf,$langs;
+
+		if(is_null($usertofilter))
+		{
+			$usertofilter = $user;
+		}
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -318,10 +324,10 @@ class FormProjets
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		$projectsListId = false;
-		if (empty($user->rights->projet->all->lire))
+		if (empty($usertofilter->rights->projet->all->lire))
 		{
 			$projectstatic=new Project($this->db);
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter,0,1);
 		}
 
 		// Search all projects
@@ -366,7 +372,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire))
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire))
 					{
 						// Do nothing
 					}
