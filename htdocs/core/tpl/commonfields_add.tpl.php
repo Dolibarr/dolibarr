@@ -19,6 +19,7 @@
  * $action
  * $conf
  * $langs
+ * $form
  */
 
 // Protection to avoid direct call of template
@@ -49,6 +50,9 @@ foreach($object->fields as $key => $val)
 	print '"';
 	print '>';
 	print $langs->trans($val['label']);
+    if(!empty($val['help'])){
+        print $form->textwithpicto('',$langs->trans($val['help']));
+    }
 	print '</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
