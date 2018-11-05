@@ -1518,6 +1518,19 @@ class Societe extends CommonObject
 					dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
 				}
 			}
+			
+			// Remove links to subsidiaries companies
+			if (! $error)
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+				$sql.= " SET parent = NULL";
+				$sql.= " WHERE parent = " . $id;
+				if (! $this->db->query($sql))
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
 
 			// Remove third party
 			if (! $error)
