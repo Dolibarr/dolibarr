@@ -184,15 +184,14 @@ if ($result) {
         $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
         $dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
         $dataseries[] = array('label' => $langs->trans("Waiting"), 'data' => round($tick['waiting']));
-        $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['Closed']));
-        $dataseries[] = array('label' => $langs->trans("Deleted"), 'data' => round($tick['Deleted']));
+        $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+        $dataseries[] = array('label' => $langs->trans("Deleted"), 'data' => round($tick['deleted']));
     }
 } else {
     dol_print_error($db);
 }
 
-$stringtoshow = '';
-$stringtoshow .= '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript" language="javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -246,10 +245,9 @@ if (! empty($dataseries) && count($dataseries) > 1) {
 
         $px1->draw($filenamenb, $fileurlnb);
         print $px1->show();
-
-        print $stringtoshow;
     }
 }
+print $stringtoshow;
 print '</td></tr>';
 
 print '</table>';
