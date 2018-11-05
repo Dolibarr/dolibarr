@@ -22,11 +22,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");		// to work if your module directory is into a subdir of root htdocs directory
-if (! $res) die("Include of main fails");
-
-if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
@@ -39,19 +35,22 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
+if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+
 // You can find your endpoint's secret in your webhook settings
-if (isset($_GET['connect'])){
+if (isset($_GET['connect']))
+{
 	if (isset($_GET['test']))
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
-    $servicestatus = 0;
+		$servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-    $servicestatus = 1;  
+    $servicestatus = 1;
 	}
 }
 else {
@@ -59,13 +58,13 @@ else {
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
-    $servicestatus = 0;
+		$servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
-    $servicestatus = 1;
+		$servicestatus = 1;
 	}
 }
 
@@ -194,7 +193,6 @@ elseif ($event->type == 'payout.paid') {
 
 		if (($accountto->id != $accountfrom->id) && empty($error))
 		{
-
 			$bank_line_id_from=0;
 			$bank_line_id_to=0;
 			$result=0;
@@ -208,41 +206,41 @@ elseif ($event->type == 'payout.paid') {
 			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
 			if (! ($bank_line_id_to > 0)) $error++;
 
-		  if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-			if (! ($result > 0)) $error++;      
-		  if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
 			if (! ($result > 0)) $error++;
-
+			if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (! ($result > 0)) $error++;
 		}
-        $subject = '[NOTIFICATION] Stripe payout done';
-        if (!empty($user->email)) {
-            $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
-        } else {
-            $sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-        }
-        $replyto = $sendto;
-        $sendtocc = '';
-        if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-            $sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
-        }
 
-        $message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been transfert in your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+		$subject = '[NOTIFICATION] Stripe payout done';
+		if (!empty($user->email)) {
+			$sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
+		} else {
+			$sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+		}
+		$replyto = $sendto;
+		$sendtocc = '';
+		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+			$sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+		}
 
-        $mailfile = new CMailFile(
-            $subject,
-            $sendto,
-            $replyto,
-            $message,
-            array(),
-            array(),
-            array(),
-            $sendtocc,
-            '',
-            0,
-            -1
-        );
+		$message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
-        $ret = $mailfile->sendfile();
+		$mailfile = new CMailFile(
+			$subject,
+			$sendto,
+			$replyto,
+			$message,
+			array(),
+			array(),
+			array(),
+			$sendtocc,
+			'',
+			0,
+			-1
+			);
+
+		$ret = $mailfile->sendfile();
 
 		return 1;
 	}
