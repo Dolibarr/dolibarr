@@ -894,7 +894,8 @@ div.fiche {
     min-width: 150px;
 }
 .thumbstat150 {
-    min-width: 170px;
+    /* min-width: 170px; */
+    width: 170px;
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>

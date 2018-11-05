@@ -587,7 +587,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-				// retrieve contact information for use in project as contact_xxx tags
+				// retrieve contact information for use in object as contact_xxx tags
 				$array_project_contact = array();
 				if ($usecontact && is_object($contactobject)) $array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
@@ -932,109 +932,109 @@ class doc_generic_project_odt extends ModelePDFProjects
 								'title' => "ListProposalsAssociatedProject",
 								'class' => 'Propal',
 								'table' => 'propal',
-								'test' => $conf->propal->enabled && $user->rights->propale->lire 
+								'test' => $conf->propal->enabled && $user->rights->propale->lire
 						),
 						'order' => array(
 								'title' => "ListOrdersAssociatedProject",
 								'class' => 'Commande',
 								'table' => 'commande',
-								'test' => $conf->commande->enabled && $user->rights->commande->lire 
+								'test' => $conf->commande->enabled && $user->rights->commande->lire
 						),
 						'invoice' => array(
 								'title' => "ListInvoicesAssociatedProject",
 								'class' => 'Facture',
 								'table' => 'facture',
-								'test' => $conf->facture->enabled && $user->rights->facture->lire 
+								'test' => $conf->facture->enabled && $user->rights->facture->lire
 						),
 						'invoice_predefined' => array(
 								'title' => "ListPredefinedInvoicesAssociatedProject",
 								'class' => 'FactureRec',
 								'table' => 'facture_rec',
-								'test' => $conf->facture->enabled && $user->rights->facture->lire 
+								'test' => $conf->facture->enabled && $user->rights->facture->lire
 						),
 						'proposal_supplier' => array(
 								'title' => "ListSupplierProposalsAssociatedProject",
 								'class' => 'SupplierProposal',
 								'table' => 'supplier_proposal',
-								'test' => $conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire 
+								'test' => $conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire
 						),
 						'order_supplier' => array(
 								'title' => "ListSupplierOrdersAssociatedProject",
 								'table' => 'commande_fournisseur',
 								'class' => 'CommandeFournisseur',
-								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire 
+								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire
 						),
 						'invoice_supplier' => array(
 								'title' => "ListSupplierInvoicesAssociatedProject",
 								'table' => 'facture_fourn',
 								'class' => 'FactureFournisseur',
-								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire 
+								'test' => $conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire
 						),
 						'contract' => array(
 								'title' => "ListContractAssociatedProject",
 								'class' => 'Contrat',
 								'table' => 'contrat',
-								'test' => $conf->contrat->enabled && $user->rights->contrat->lire 
+								'test' => $conf->contrat->enabled && $user->rights->contrat->lire
 						),
 						'intervention' => array(
 								'title' => "ListFichinterAssociatedProject",
 								'class' => 'Fichinter',
 								'table' => 'fichinter',
 								'disableamount' => 1,
-								'test' => $conf->ficheinter->enabled && $user->rights->ficheinter->lire 
+								'test' => $conf->ficheinter->enabled && $user->rights->ficheinter->lire
 						),
 						'shipping' => array(
 								'title' => "ListShippingAssociatedProject",
 								'class' => 'Expedition',
 								'table' => 'expedition',
 								'disableamount' => 1,
-								'test' => $conf->expedition->enabled && $user->rights->expedition->lire 
+								'test' => $conf->expedition->enabled && $user->rights->expedition->lire
 						),
 						'trip' => array(
 								'title' => "ListTripAssociatedProject",
 								'class' => 'Deplacement',
 								'table' => 'deplacement',
 								'disableamount' => 1,
-								'test' => $conf->deplacement->enabled && $user->rights->deplacement->lire 
+								'test' => $conf->deplacement->enabled && $user->rights->deplacement->lire
 						),
 						'expensereport' => array(
 								'title' => "ListExpenseReportsAssociatedProject",
 								'class' => 'ExpenseReportLine',
 								'table' => 'expensereport_det',
-								'test' => $conf->expensereport->enabled && $user->rights->expensereport->lire 
+								'test' => $conf->expensereport->enabled && $user->rights->expensereport->lire
 						),
 						'donation' => array(
 								'title' => "ListDonationsAssociatedProject",
 								'class' => 'Don',
 								'table' => 'don',
-								'test' => $conf->don->enabled && $user->rights->don->lire 
+								'test' => $conf->don->enabled && $user->rights->don->lire
 						),
 						'loan' => array(
 								'title' => "ListLoanAssociatedProject",
 								'class' => 'Loan',
 								'table' => 'loan',
-								'test' => $conf->loan->enabled && $user->rights->loan->read 
+								'test' => $conf->loan->enabled && $user->rights->loan->read
 						),
 						'chargesociales' => array(
 								'title' => "ListSocialContributionAssociatedProject",
 								'class' => 'ChargeSociales',
 								'table' => 'chargesociales',
 								'urlnew' => DOL_URL_ROOT . '/compta/sociales/card.php?action=create&projectid=' . $id,
-								'test' => $conf->tax->enabled && $user->rights->tax->charges->lire 
+								'test' => $conf->tax->enabled && $user->rights->tax->charges->lire
 						),
 						'stock_mouvement' => array(
 								'title' => "ListMouvementStockProject",
 								'class' => 'MouvementStock',
 								'table' => 'stock_mouvement',
-								'test' => ($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)) 
+								'test' => ($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
 						),
 						'agenda' => array(
 								'title' => "ListActionsAssociatedProject",
 								'class' => 'ActionComm',
 								'table' => 'actioncomm',
 								'disableamount' => 1,
-								'test' => $conf->agenda->enabled && $user->rights->agenda->allactions->lire 
-						) 
+								'test' => $conf->agenda->enabled && $user->rights->agenda->allactions->lire
+						)
 				);
 
 				//Insert reference

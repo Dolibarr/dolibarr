@@ -523,10 +523,17 @@ if ($nboftargetok) {
 		$ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot12.png`;
 
 		# Security to avoid to package data files 
+        print "Remove documents dir\n";
 		$ret=`rm -fr $BUILDROOT/$PROJECT/document`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/document`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/documents`;
+        
+        print "Remove subdir of custom dir\n";
+   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs but not files
+   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\;\n";
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs, even symbolic links, but not files
 
 		# Removed known external modules to avoid any error when packaging from env where external modules are tested 
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/allscreens*`;
@@ -592,13 +599,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
-        
-        
-        print "Remove subdir of custom dir\n";
-   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
-   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs but not files
-   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\;\n";
-   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs, even symbolic links, but not files
 	}
 
 	# Build package for each target
