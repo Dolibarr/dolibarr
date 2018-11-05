@@ -1820,6 +1820,7 @@ EMailHost=Host of email IMAP server
 MailboxSourceDirectory=Mailbox source directory
 MailboxTargetDirectory=Mailbox target directory
 CollectNow=Collect now
+DateLastResult=Date last collect
 LastResult=Last result
 ##### Resource ####
 ResourceSetup=Configuration du module Resource

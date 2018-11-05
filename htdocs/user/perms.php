@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array('users', 'admin'));
 
 $id=GETPOST('id', 'int');
-$action=GETPOST('action', 'alpha');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');

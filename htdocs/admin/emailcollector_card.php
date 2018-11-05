@@ -41,7 +41,7 @@ $langs->loadLangs(array("admin", "other"));
 // Get parameters
 $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'alpha');
+$action		= GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectcard';   // To manage different context of search
@@ -144,6 +144,8 @@ if ($action == 'create') {
 	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
+
+	//unset($fields[]);
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';

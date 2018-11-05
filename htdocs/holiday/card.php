@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
 // Get parameters
-$action=GETPOST('action', 'alpha');
+$action=GETPOST('action', 'aZ09');
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id);

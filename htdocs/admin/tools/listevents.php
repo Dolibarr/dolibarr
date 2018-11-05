@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST('action', 'alpha');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm','alpha');
 
 // Security check

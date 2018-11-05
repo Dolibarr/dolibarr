@@ -6811,18 +6811,19 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strRights		String with condition to check
- * @return 	boolean						True or False. Return true if strRights is ''
+ * @return 	boolean						True or False. Return True if strRights is ''
  */
 function verifCond($strRights)
 {
 	global $user,$conf,$langs;
-	global $leftmenu;
+	global $action,$leftmenu;
 	global $rights;    // To export to dol_eval function
 
 	//print $strRights."<br>\n";
 	$rights = true;
 	if ($strRights != '')
 	{
+		$action = preg_replace('/[a-zA-Z0-9_')
 		//$tab_rights = explode('&&', $strRights);
 		//$i = 0;
 		//while (($i < count($tab_rights)) && ($rights == true)) {

@@ -40,7 +40,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 $langs->loadLangs(array("products", "companies", "bills"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $search_prod = GETPOST('search_prod','alpha');
 $cancel = GETPOST('cancel','alpha');
 

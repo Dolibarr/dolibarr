@@ -45,7 +45,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;

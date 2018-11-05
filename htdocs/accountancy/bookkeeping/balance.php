@@ -41,7 +41,7 @@ $langs->loadLangs(array("accountancy"));
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
 
 // Load variable for pagination

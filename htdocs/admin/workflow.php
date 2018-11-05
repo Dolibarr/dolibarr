@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin","workflow","propal","workflow","orders","supplie
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 /*
  * Actions

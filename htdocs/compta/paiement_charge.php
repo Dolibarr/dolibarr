@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("bills");
 
 $chid=GETPOST("id", 'int');
-$action=GETPOST('action', 'alpha');
+$action=GETPOST('action', 'aZ09');
 $amounts = array();
 
 // Security check

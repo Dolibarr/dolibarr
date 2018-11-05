@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variab
 $langs->load("products");
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $save = GETPOST('save', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $selection = GETPOST('selection', 'int');
