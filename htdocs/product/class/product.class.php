@@ -1885,10 +1885,11 @@ class Product extends CommonObject
 	 *  @param	int		$id      			Id of product/service to load
 	 *  @param  string	$ref     			Ref of product/service to load
 	 *  @param	string	$ref_ext			Ref ext of product/service to load
+	 *  @param	string	$barcode			Barcode of product/service to load
      *  @param	int		$ignore_expression  Ignores the math expression for calculating price and uses the db value instead
 	 *  @return int     					<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id='', $ref='', $ref_ext='', $ignore_expression=0)
+	function fetch($id='', $ref='', $ref_ext='', $barcode='', $ignore_expression=0)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -1897,7 +1898,7 @@ class Product extends CommonObject
 		dol_syslog(get_class($this)."::fetch id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
 		// Check parameters
-		if (! $id && ! $ref && ! $ref_ext)
+		if (! $id && ! $ref && ! $ref_ext && ! $barcode)		
 		{
 			$this->error='ErrorWrongParameters';
 			dol_syslog(get_class($this)."::fetch ".$this->error);
@@ -1919,6 +1920,7 @@ class Product extends CommonObject
 			$sql.= " WHERE entity IN (".getEntity($this->element).")";
 			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
+			else if ($barcode) $sql.= " AND barcode = '".$this->db->escape($barcode)."'";	
 		}
 
 		$resql = $this->db->query($sql);

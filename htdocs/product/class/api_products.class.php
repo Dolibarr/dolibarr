@@ -52,12 +52,15 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Get properties of a product object
+     * Get properties of a product object (from its ID, Ref, Ref_ext or Barcode)
      *
      * Return an array with product information.
      * TODO implement getting a product by ref or by $ref_ext
      *
-     * @param 	int 	$id     			ID of product
+     * @param 	int 	$id     			ID of product 
+	 * @param	string	$ref			    Ref of element
+	 * @param	string	$ref_ext			Ref ext of element
+	 * @param	string	$barcode			Barcode of element
      * @param	int		$includestockdata	Load also information about stock (slower)
      * @return 	array|mixed 				Data without useless information
 	 *
@@ -65,17 +68,23 @@ class Products extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    function get($id, $includestockdata=0)
+    function get($id, $ref='', $ref_ext='', $barcode='', $includestockdata=0)
     {
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
+			throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
+		}
+
+        $id = (empty($id)?0:$id);
+        
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(403);
 		}
 
-        $result = $this->product->fetch($id);
+        $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
         if( ! $result ) {
             throw new RestException(404, 'Product not found');
         }
-
+        
 		if( ! DolibarrApi::_checkAccessToResource('product',$this->product->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
