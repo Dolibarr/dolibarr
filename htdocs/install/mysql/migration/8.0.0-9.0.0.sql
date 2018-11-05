@@ -150,7 +150,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         host varchar(255), 
         user varchar(128), 
         password varchar(128),
-        source_directory varchar(255),
+        source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
         datelastresult datetime, 
         lastresult varchar(255),
@@ -165,7 +165,6 @@ CREATE TABLE llx_emailcollector_emailcollector(
         -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
-ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_rowid (rowid);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
 

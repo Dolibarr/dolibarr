@@ -96,10 +96,10 @@ if (empty($reshook))
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-	
+
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
-	
+
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
@@ -218,7 +218,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneMyObject'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-	
+
 	// Confirmation of action process
 	if ($action == 'collect') {
 		$formquestion = array(
@@ -232,10 +232,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-	
+
 	// Print form confirm
 	print $formconfirm;
-	
+
 	// Object card
 	// ------------------------------------------------------------
 	$linkback = '<a href="' . dol_buildpath('/admin/emailcollector_list.php', 1) . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
@@ -308,7 +308,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		dol_include_once('/emailcollector/class/emailcollector.class.php');
 		$emailcollector = new EmailCollector($object);
 
-		$res = $emailcollector->collectEmails();
+		$res = $emailcollector->doCollect();
 		if (is_array($res)) {
 			if (count($res['actions_done']) > 0) {
 				setEventMessages($langs->trans('XActionsDone', count($res['actions_done'])), null, 'info');
@@ -322,8 +322,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	print '</div>';
 	print '</div>';
-	
-	
+
+
 	print '<div class="clearboth"></div><br>';
 
 	dol_fiche_end();
@@ -334,7 +334,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-		
+
 		if (empty($reshook))
 		{
 			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=collect">' . $langs->trans("CollectNow") . '</a>' . "\n";
