@@ -668,7 +668,7 @@ function dol_include_once($relpath, $classname='')
 
 
 /**
- *	Return path of url or filesystem. Return alternate root if exists.
+ *	Return path of url or filesystem. Can check into alternate dir or alternate dir + main dir depending on value of $returnemptyifnotfound.
  *
  * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type						0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
@@ -688,7 +688,10 @@ function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
 		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			if ($key == 'main') continue;
+			if ($key == 'main')
+			{
+				continue;
+			}
 			if (file_exists($dirroot.'/'.$path))
 			{
 				$res=$dirroot.'/'.$path;

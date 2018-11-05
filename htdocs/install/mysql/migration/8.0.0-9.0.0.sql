@@ -151,8 +151,6 @@ CREATE TABLE llx_emailcollector_emailcollector(
         user varchar(128), 
         password varchar(128),
         source_directory varchar(255),
-        filter text,
-        actiontodos varchar(255),
         target_directory varchar(255),
         datelastresult datetime, 
         lastresult varchar(255),

@@ -1563,6 +1563,8 @@ elseif (! empty($module))
 				if ($action != 'editfile' || empty($file))
 				{
 					try {
+						//$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
 						$pathtoclass    = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
 						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($module).'.class.php';
 						$pathtoagenda   = strtolower($module).'/'.strtolower($tabobj).'_agenda.php';
@@ -1578,20 +1580,22 @@ elseif (! empty($module))
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 						$pathtoscript   = strtolower($module).'/scripts/'.strtolower($tabobj).'.php';
 
-						$realpathtoclass    = dol_buildpath($pathtoclass, 0, 1);
-						$realpathtoapi      = dol_buildpath($pathtoapi, 0, 1);
-						$realpathtoagenda   = dol_buildpath($pathtoagenda, 0, 1);
-						$realpathtocard     = dol_buildpath($pathtocard, 0, 1);
-						$realpathtodocument = dol_buildpath($pathtodocument, 0, 1);
-						$realpathtolist     = dol_buildpath($pathtolist, 0, 1);
-						$realpathtonote     = dol_buildpath($pathtonote, 0, 1);
-						$realpathtophpunit  = dol_buildpath($pathtophpunit, 0, 1);
-						$realpathtosql      = dol_buildpath($pathtosql, 0, 1);
-						$realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 1);
-						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 1);
-						$realpathtolib      = dol_buildpath($pathtolib, 0, 1);
-						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 1);
-						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 1);
+						//var_dump($pathtolib);
+
+						$realpathtoclass    = dol_buildpath($pathtoclass, 0, 2);
+						$realpathtoapi      = dol_buildpath($pathtoapi, 0, 2);
+						$realpathtoagenda   = dol_buildpath($pathtoagenda, 0, 2);
+						$realpathtocard     = dol_buildpath($pathtocard, 0, 2);
+						$realpathtodocument = dol_buildpath($pathtodocument, 0, 2);
+						$realpathtolist     = dol_buildpath($pathtolist, 0, 2);
+						$realpathtonote     = dol_buildpath($pathtonote, 0, 2);
+						$realpathtophpunit  = dol_buildpath($pathtophpunit, 0, 2);
+						$realpathtosql      = dol_buildpath($pathtosql, 0, 2);
+						$realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 2);
+						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 2);
+						$realpathtolib      = dol_buildpath($pathtolib, 0, 2);
+						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 2);
+						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 2);
 
 						print '<div class="fichehalfleft">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
