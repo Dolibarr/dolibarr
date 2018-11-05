@@ -91,8 +91,8 @@ if (empty($reshook))
 
 	$permissiontoadd=1;
 	$permissiontodelete=1;
-	if (empty($backtopage)) $backtopage = dol_buildpath('/emailcollector/emailcollector_card.php',1).'?id='.($id > 0 ? $id : '__ID__');
-	$backurlforlist = dol_buildpath('/emailcollector/emailcollector_list.php', 1);
+	if (empty($backtopage)) $backtopage = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.($id > 0 ? $id : '__ID__');
+	$backurlforlist = DOL_URL_ROOT.'/admin/emailcollector_list.php';
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -337,6 +337,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook))
 		{
+			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit">' . $langs->trans("Edit") . '</a>' . "\n";
+
 			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=collect">' . $langs->trans("CollectNow") . '</a>' . "\n";
 
 			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a>' . "\n";
