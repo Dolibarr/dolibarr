@@ -521,7 +521,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 		case 'none':
 			break;
 		case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
-			if (! is_numeric($out)) { $out=''; }
+			if (! is_numeric($out)) { $out=0; }
 			break;
 		case 'intcomma':
 			if (preg_match('/[^0-9,-]+/i',$out)) $out='';
