@@ -75,7 +75,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 28;
 		$this->posxpuht=$this->page_largeur - $this->marge_droite;
 
-		if (!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) {
+		if (!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) {	// Show also the prices
 
 			$this->posxweightvol=$this->page_largeur - $this->marge_droite - 118;
 			$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 96;
@@ -122,7 +122,7 @@ class pdf_rouget extends ModelePdfExpedition
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-		
+
 		// Translations
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 
