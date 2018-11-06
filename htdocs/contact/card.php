@@ -1257,7 +1257,7 @@ else
 
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
+		if (empty($reshook) && $action!='presend')
 		{
 			if (! empty($object->email))
 			{
