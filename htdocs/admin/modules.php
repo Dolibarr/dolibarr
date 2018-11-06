@@ -1026,11 +1026,21 @@ if ($mode == 'deploy')
 
 			if ($maxmin > 0)
 			{
+				print '<script type="text/javascript">
+				$(document).ready(function() {
+					jQuery("#fileinstall").on("change", function() {
+						if(this.files[0].size > '.($maxmin*1024).'){
+							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
+							this.value = "";
+						};
+					});
+				});
+				</script>'."\n";
 				// MAX_FILE_SIZE doit précéder le champ input de type file
 				print '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
 			}
 
-			print '<input class="flat minwidth400" type="file" name="fileinstall"> ';
+			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
 
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
 
