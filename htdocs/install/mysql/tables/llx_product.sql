@@ -88,7 +88,7 @@ create table llx_product
   fk_default_warehouse          integer      DEFAULT NULL,
   canvas                        varchar(32)  DEFAULT NULL,
   finished                      tinyint      DEFAULT NULL,          -- 1=manufactured product, 0=matiere premiere
-  hidden                        tinyint      DEFAULT 0,             -- Show/hide product despite being in the status "for sale" (can be used by externals modules)
+  hidden                        tinyint      DEFAULT 0,             -- Show/hide product despite being in the status 'for sale' (can be used by externals modules)
   import_key                    varchar(14),                        -- Import key
   model_pdf                     varchar(255),                       -- model save dodument used
   fk_price_expression           integer,                            -- Link to the rule for dynamic price calculation
