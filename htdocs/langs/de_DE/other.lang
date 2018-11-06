@@ -90,6 +90,7 @@ PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nAnbei erhalten Sie die R
 PredefinedMailContentSendShipping=__(Hello)__\n\nAls Anlage erhalten Sie unsere Lieferung __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendFichInter=__(Hello)__\n\nAnbei finden Sie den Serviceauftrag __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentThirdparty=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentContact=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentUser=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.\n\n%s\n\n
 DemoDesc=Dolibarr ist eine Management-Software die mehrere Business-Module anbietet. Eine Demo, die alle Module beinhaltet ist nicht sinnvoll , weil der Fall nie existiert (Hunderte von verfügbaren Module). Es stehen auch einige Demo-Profile Typen zur Verfügung.

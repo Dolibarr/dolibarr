@@ -90,6 +90,7 @@ PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nYou will find here the i
 PredefinedMailContentSendShipping=__(Hello)__\n\nYou will find here the shipping __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendFichInter=__(Hello)__\n\nYou will find here the intervention __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentThirdparty=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentContact=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentUser=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.\n\n%s\n\n
 DemoDesc=O Dolibarr é um ERP/CRM compacto que suporta vários módulos de negócios. Uma demonstração mostrando todos os módulos não faz sentido porque esse cenário nunca ocorre (várias centenas disponíveis). Assim, vários perfis de demonstração estão disponíveis.

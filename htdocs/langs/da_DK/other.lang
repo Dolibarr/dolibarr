@@ -90,6 +90,7 @@ PredefinedMailContentSendSupplierInvoice=__(Hej)__\n\nHer finder du fakturaen __
 PredefinedMailContentSendShipping=__(Hej)__\n\nHer finder du forsendelsen __REF__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
 PredefinedMailContentSendFichInter=__(Hej)__\n\nHer finder du interventionen __REF__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
 PredefinedMailContentThirdparty=__(Hej)__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
+PredefinedMailContentContact=__(Hello)__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentUser=__(Hej)__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
 PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.\n\n%s\n\n
 DemoDesc=Dolibarr er en kompakt ERP / CRM, der understøtter flere forretningsmoduler. En demo, der viser alle moduler, giver ingen mening, da dette scenario aldrig forekommer (flere hundrede tilgængelige). Så flere demo profiler er tilgængelige.
