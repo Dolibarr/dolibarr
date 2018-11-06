@@ -1695,7 +1695,7 @@ class Product extends CommonObject
 				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
 
-				if ($newminprice != '' || $newminprice == 0)
+				if (($newminprice !== '' && is_numeric($newminprice)) || $newminprice == 0)
 				{
 					$price_min_ttc = price2num($newminprice,'MU');
 					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
@@ -1713,7 +1713,7 @@ class Product extends CommonObject
 				$price_ttc = ( $newnpr != 1 ) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = price2num($price_ttc,'MU');
 
-				if ( $newminprice !== '' || $newminprice === 0)
+				if (($newminprice !== '' && is_numeric($newminprice)) || $newminprice === 0)
 				{
 					$price_min = price2num($newminprice,'MU');
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
