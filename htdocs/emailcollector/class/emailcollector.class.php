@@ -155,7 +155,7 @@ class EmailCollector extends CommonObject
 	public $lastresult;
 	// END MODULEBUILDER PROPERTIES
 
-	public $rules;
+	public $filters;
 	public $actions;
 
 
@@ -613,15 +613,15 @@ class EmailCollector extends CommonObject
 	}
 
 	/**
-	 * Fetch rules
+	 * Fetch filters
 	 *
 	 * @return 	int		<0 if KO, >0 if OK
 	 */
-	public function fetch_rules()
+	public function fetchFilters()
 	{
 		$this->rules = array();
 
-		$sql='SELECT type, rulevalue FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter WHERE status = 1 AND fk_emailcollector = '.$this->id;
+		$sql='SELECT rowid, type, rulevalue, status FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter WHERE fk_emailcollector = '.$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -631,7 +631,7 @@ class EmailCollector extends CommonObject
 			while($i < $num)
 			{
 				$obj=$this->db->fetch_object($resql);
-				$this->rules[]=array('type'=>$obj->type, 'rulevalue'=>$obj->rulevalue);
+				$this->filters[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'rulevalue'=>$obj->rulevalue, 'status'=>$obj->status);
 			}
 			$this->db->free($resql);
 		}
@@ -644,11 +644,11 @@ class EmailCollector extends CommonObject
 	 *
 	 * @return 	int		<0 if KO, >0 if OK
 	 */
-	public function fetch_actions()
+	public function fetchActions()
 	{
 		$this->actions = array();
 
-		$sql='SELECT type, actionparam FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction WHERE status = 1 AND fk_emailcollector = '.$this->id;
+		$sql='SELECT rowid, type, actionparam, status FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction WHERE fk_emailcollector = '.$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -658,7 +658,7 @@ class EmailCollector extends CommonObject
 			while($i < $num)
 			{
 				$obj=$this->db->fetch_object($resql);
-				$this->rules[]=array('type'=>$obj->type, 'actionparam'=>$obj->actionparam);
+				$this->rules[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status);
 			}
 			$this->db->free($resql);
 		}
@@ -709,8 +709,8 @@ class EmailCollector extends CommonObject
 			return -2;
 		}
 
-		$this->fetch_rules();
-		$this->fetch_actions();
+		$this->fetchFilters();
+		$this->fetchActions();
 
 		$sourcedir = $this->source_directory;
 		$targetdir = ($this->target_directory ? $server.$this->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
@@ -735,16 +735,18 @@ class EmailCollector extends CommonObject
 
 		//$search='ALL';
 		$search='UNDELETED';
-		foreach($this->rules as $key => $rulevalue)
+		foreach($this->filters as $rule)
 		{
-			if ($key == 'to')      $search=($search?' ':'').'TO "'.str_replace('"', '', $rulevalue).'"';
-			if ($key == 'bcc')     $search=($search?' ':'').'BCC';
-			if ($key == 'cc')      $search=($search?' ':'').'CC';
-			if ($key == 'from')    $search=($search?' ':'').'FROM "'.str_replace('"', '', $rulevalue).'"';
-			if ($key == 'subject') $search=($search?' ':'').'SUBJECT "'.str_replace('"', '', $rulevalue).'"';
-			if ($key == 'body')    $search=($search?' ':'').'BODY "'.str_replace('"', '', $rulevalue).'"';
-			if ($key == 'seen')    $search=($search?' ':'').'SEEN';
-			if ($key == 'unseen')  $search=($search?' ':'').'UNSEEN';
+			if (empty($rule['status'])) continue;
+
+			if ($rule['key'] == 'to')      $search=($search?' ':'').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['key'] == 'bcc')     $search=($search?' ':'').'BCC';
+			if ($rule['key'] == 'cc')      $search=($search?' ':'').'CC';
+			if ($rule['key'] == 'from')    $search=($search?' ':'').'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['key'] == 'subject') $search=($search?' ':'').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['key'] == 'body')    $search=($search?' ':'').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['key'] == 'seen')    $search=($search?' ':'').'SEEN';
+			if ($rule['key'] == 'unseen')  $search=($search?' ':'').'UNSEEN';
 		}
 
 		if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
@@ -783,12 +785,14 @@ class EmailCollector extends CommonObject
 				var_dump($message);
 				*/
 
-				// Record email
-				foreach($this->actions as $actionkey => $actionvalue)
+				// Do operationss
+				foreach($this->actions as $operation)
 				{
 					if ($errorforactions) break;
+					if (empty($operation['status'])) continue;
 
-					// Make action
+					// Make Operation
+
 
 
 					if (! $errorforactions)

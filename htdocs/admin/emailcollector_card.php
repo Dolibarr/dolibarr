@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
  */
 
 /**
- *   	\file       htdocs/admin/emailcollectore/emailcollector_card.php
+ *   	\file       htdocs/admin/emailcollector_card.php
  *		\ingroup    emailcollector
  *		\brief      Page to create/edit/view emailcollector
  */
@@ -27,10 +26,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-dol_include_once('/emailcollector/class/emailcollector.class.php');
-dol_include_once('/emailcollector/lib/emailcollector.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollector.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 if (!$user->admin)
 	accessforbidden();
@@ -219,6 +220,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
 	$res = $object->fetch_optionals();
 
+	$object->fetchFilters();
+	$object->fetchActions();
+
 	$head = emailcollectorPrepareHead($object);
 	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'emailcollector');
 
@@ -317,6 +321,72 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
+
+	// Filters
+	print '<table class="border centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
+	print '</tr>';
+	// Add filter
+	print '<tr class="oddeven">';
+	print '<td>';
+	$arrayoftypes=array('to'=>'To', 'cc'=>'Cc', 'bcc'=>'Bcc', 'from'=>'From', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead');
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1);
+	print '</td><td>';
+	print '<input type="text" name="rulevalue">';
+	print '</td>';
+	print '<td align="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+	// List filters
+	foreach($object->filters as $rulefilter)
+	{
+		$rulefilterobj=new EmailCollectorFilter($db);
+		$rulefilterobj->fetch($rulefilter['id']);
+
+		print '<tr class="oddeven">';
+		print '<td>'.$rulefilter['type'].'</td>';
+		print '<td>'.$rulefilter['rulevalue'].'</td>';
+		print '<td>'.$rulefilterobj->getLibStatut(3).'</td>';
+		print '</tr>';
+	}
+
+	print '</tr>';
+	print '</table>';
+
+	print '<div class="clearboth"></div><br>';
+
+	// Operations
+	print '<table class="border centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td>';
+	print '</tr>';
+	// Add operation
+	print '<tr class="oddeven">';
+	print '<td>';
+	$arrayoftypes=array('recordevent'=>'RecordEvent');
+	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1);
+	print '</td><td>';
+	print '<input type="text" name="operationparam">';
+	print '</td>';
+	print '<td align="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+	// List operations
+	foreach($object->actions as $ruleaction)
+	{
+		$ruleactionobj=new EmailcollectorAction($db);
+		$ruleactionobj->fetch($ruleaction['id']);
+
+		print '<tr class="oddeven">';
+		print '<td>'.$ruleactionobj['type'].'</td>';
+		print '<td>'.$ruleactionobj['actionparam'].'</td>';
+		print '<td>'.$ruleactionobj->getLibStatut(3).'</td>';
+		print '</tr>';
+	}
+
+	print '</tr>';
+	print '</table>';
+
 
 	print '</div>';
 	print '</div>';
