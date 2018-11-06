@@ -263,13 +263,14 @@ if (empty($reshook))
 	        $object->localtax1_type = $localtax1_type;
 	        $object->localtax2_type = $localtax2_type;
 
-            $object->type               	 = $type;
-            $object->status             	 = GETPOST('statut');
-            $object->status_buy            = GETPOST('statut_buy');
-			$object->status_batch          	= GETPOST('status_batch');
+            $object->type					= $type;
+            $object->status					= GETPOST('statut');
+            $object->status_buy				= GETPOST('statut_buy');
+			$object->status_batch			= GETPOST('status_batch');
+			$object->hidden					= GETPOST('hidden','int');
 
-            $object->barcode_type          = GETPOST('fk_barcode_type');
-            $object->barcode		           = GETPOST('barcode');
+            $object->barcode_type			= GETPOST('fk_barcode_type');
+            $object->barcode				= GETPOST('barcode');
             // Set barcode_type_xxx from barcode_type id
             $stdobject=new GenericObject($db);
     	    $stdobject->element='product';
@@ -391,6 +392,7 @@ if (empty($reshook))
                 $object->status                 = GETPOST('statut','int');
                 $object->status_buy             = GETPOST('statut_buy','int');
                 $object->status_batch	        = GETPOST('status_batch','aZ09');
+                $object->hidden					= GETPOST('hidden','int');
                 // removed from update view so GETPOST always empty
                 $object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
                 /*

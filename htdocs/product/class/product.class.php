@@ -399,6 +399,7 @@ class Product extends CommonObject
 
 		if (empty($this->status))    	$this->status = 0;
 		if (empty($this->status_buy))   $this->status_buy = 0;
+		if (empty($this->hidden))		$this->hidden = 0;
 
 		$price_ht=0;
 		$price_ttc=0;
@@ -524,6 +525,7 @@ class Product extends CommonObject
 					$sql.= ", finished";
 					$sql.= ", tobatch";
 					$sql.= ", fk_unit";
+					$sql.= ", hidden";
 					$sql.= ") VALUES (";
 					$sql.= "'".$this->db->idate($now)."'";
 					$sql.= ", ".$conf->entity;
@@ -547,6 +549,7 @@ class Product extends CommonObject
 					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
 					$sql.= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+					$sql.= ", ".$this->hidden;
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -769,6 +772,7 @@ class Product extends CommonObject
 		if (empty($this->localtax2_type))		$this->localtax2_type = '0';
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
+		if (empty($this->hidden))				$this->hidden = 0;
 
         if (empty($this->country_id))           $this->country_id = 0;
 
@@ -899,6 +903,7 @@ class Product extends CommonObject
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
 			$sql.= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
+			$sql.= ", hidden = " . $this->hidden;
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql.= " WHERE rowid = " . $id;
 
