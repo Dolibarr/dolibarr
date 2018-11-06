@@ -1074,6 +1074,9 @@ select.selectarrowonleft option {
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
      }
+     input[type=text], input[type=password] {
+		max-width: 180px;
+	}
 
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
