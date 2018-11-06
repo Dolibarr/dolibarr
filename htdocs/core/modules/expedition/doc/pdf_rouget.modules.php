@@ -731,14 +731,13 @@ class pdf_rouget extends ModelePdfExpedition
         	$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
         }
 
-		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT)) {
-
+		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT))
+		{
 	    	$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
 
 	    	$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
-
 		}
 
 		if (empty($conf->global->SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME))

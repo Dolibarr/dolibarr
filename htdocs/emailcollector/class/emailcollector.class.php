@@ -775,7 +775,7 @@ class EmailCollector extends CommonObject
 				$this->db->begin();
 
 				$overview = imap_fetch_overview($connection, $imapemail, 0);
-				$header = imap_fetchheader($connection ,$imapemail, 0);
+				$header = imap_fetchheader($connection, $imapemail, 0);
 				$message = imap_body($connection, $imapemail, 0);
 				// imap_fetchstructure($connection, $imapemail, 0);
 				// imap_fetchbody($connection, $imapemail, 1) may be text/plain, 2 may be text/html
