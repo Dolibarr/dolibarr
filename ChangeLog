@@ -8,8 +8,9 @@ For Users:
 NEW: Stable module: Website
 NEW: Stable module: WebDAV
 NEW: Stable module: Module Builder
-NEW: Stable module "Skype" has been replaced with module "Social Networks" to support more tools.
+NEW: Stable module "Skype" has been replaced with module "Social Networks" to support more services.
 NEW: Experimental module "TakePos"
+NEW: Experimental module "Ticket"
 NEW: Dolibarr can provide information in page title when multicompany is enabled of not, making
      Android application like DoliDroid able to provide native features for multicompany module.
 NEW: Compatibility with PHP 7.3
@@ -25,7 +26,7 @@ Following changes may create regressions for some external modules, but were nec
 * If you use some links like viewimages.php?modulepart=mycompany&file=... in you external modules, you must
   replace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
   modulepart=mycompany that now works like others).
-
+* Hidden option MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT has been renamed into SHIPPING_PDF_DISPLAY_AMOUNT_HT
 
 
 ***** ChangeLog for 8.0.3 compared to 8.0.2 *****
