@@ -113,7 +113,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport', 'contact')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
@@ -129,6 +129,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
+		}
+		else if ($object->element == 'contact')
+		{
+			$contact=$object;
+			if ($contact->id > 0) $sendtosocid=$contact->fetch_thirdparty()->id;
 		}
 		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
 
@@ -170,6 +175,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($val == 'thirdparty') // Id of third party
 				{
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				}
+				// Recipient was provided from combo list
+				elseif ($val == 'contact') // Id of contact
+				{
+					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
@@ -214,6 +224,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($val == 'thirdparty') // Id of third party
 				{
 					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+				}
+				// Recipient was provided from combo list
+				elseif ($val == 'contact') // Id of contact
+				{
+					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
