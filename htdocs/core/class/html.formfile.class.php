@@ -127,6 +127,7 @@ class FormFile
 
 			if ($maxmin > 0)
 			{
+				// MAX_FILE_SIZE doit précéder le champ input de type file
 				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
 			}
 
