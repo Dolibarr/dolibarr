@@ -947,7 +947,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromClone($socid=0)
 	{
-		global $user,$hookmanager;
+		global $user,$hookmanager, $conf;
 
 		$error=0;
 
@@ -996,6 +996,7 @@ class Facture extends CommonInvoice
 		$this->close_code         = '';
 		$this->close_note         = '';
 		$this->products = $this->lines;	// Tant que products encore utilise
+		$this->entity = $conf->entity;
 
 		// Loop on each line of new invoice
 		foreach($this->lines as $i => $line)
@@ -3348,7 +3349,16 @@ class Facture extends CommonInvoice
 			$mybool=false;
 
 			$file = $conf->global->FACTURE_ADDON.".php";
-			$classname = $conf->global->FACTURE_ADDON;
+			
+			$constant = 'FACTURE_ADDON_'.$this->entity;
+			
+			if (! empty($conf->global->$constant)) {
+				$classname = $conf->global->$constant; // for multicompany proposal sharing
+			} else {
+				$classname = $conf->global->FACTURE_ADDON;
+			}
+
+			
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
