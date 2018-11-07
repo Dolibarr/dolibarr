@@ -407,7 +407,7 @@ if ($socid > 0)
 	if($isCustomer) {
 		if($isSupplier) {
 			print '<div class="fichecenter">';
-			print '<div class="fichehalfleft">';
+			print '<div class="fichehalfleft fichehalfleft-lg">';
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 
@@ -542,7 +542,7 @@ if ($socid > 0)
 	if($isSupplier) {
 		if($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
-			print '<div class="fichehalfright">';
+			print '<div class="fichehalfright fichehalfright-lg">';
 			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
@@ -695,7 +695,7 @@ if ($socid > 0)
 	if($isCustomer) {
 		if($isSupplier) {
 			print '<div class="fichecenter">';
-			print '<div class="fichehalfleft">';
+			print '<div class="fichehalfleft fichehalfleft-lg">';
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 
@@ -848,7 +848,7 @@ if ($socid > 0)
 	if($isSupplier) {
 		if($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
-			print '<div class="fichehalfright">';
+			print '<div class="fichehalfright fichehalfright-lg">';
 			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
