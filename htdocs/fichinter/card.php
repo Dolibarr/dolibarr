@@ -258,7 +258,7 @@ if (empty($reshook))
 				// Extrafields
 				$extrafields = new ExtraFields($db);
 				$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-				$array_options = $extrafields->getOptionalsFromPost($extralabels);
+				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 		        $object->array_options = $array_options;
 
@@ -406,7 +406,7 @@ if (empty($reshook))
 		    	{
 		    		// Extrafields
 		    		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		    		$array_options = $extrafields->getOptionalsFromPost($extralabels);
+		    		$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 		    		$object->array_options = $array_options;
 

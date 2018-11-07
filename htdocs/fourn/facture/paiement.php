@@ -89,7 +89,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('paymentsupplier');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('paymentsupplier','','search_');
 
 $arrayfields=array();
 
@@ -570,25 +570,25 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
-	                        
+
 	                        // Date Max Payment
 	                        if ($objp->dlr > 0 )
 	                        {
 	                            print '<td align="center">';
 	                            print dol_print_date($db->jdate($objp->dlr), 'day');
-	                            
+
 	                            if ($invoice->hasDelay())
 	                            {
 	                                print img_warning($langs->trans('Late'));
 	                            }
-	                            
+
 	                            print '</td>';
 	                        }
 	                        else
 	                        {
 	                            print '<td align="center"><b>--</b></td>';
 	                        }
-	                        
+
 	                        // Multicurrency
 	                        if (!empty($conf->multicurrency->enabled))
 	                        {

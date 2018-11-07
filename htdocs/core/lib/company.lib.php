@@ -908,7 +908,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
     	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
     }
-    $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+    $search_array_options=$extrafields->getOptionalsFromPost($contactstatic->table_element,'','search_');
 
     // Purge search criteria
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers

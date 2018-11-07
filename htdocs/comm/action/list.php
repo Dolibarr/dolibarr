@@ -74,10 +74,14 @@ $filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new ActionComm($db);
+$hookmanager->initHooks(array('agendalist'));
+
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('actioncomm');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 // If not choice done on calendar owner, we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 {
@@ -116,10 +120,6 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 {
 	$filtert=$user->id;
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$object = new ActionComm($db);
-$hookmanager->initHooks(array('agendalist'));
 
 $arrayfields=array(
 	'a.id'=>array('label'=>"Ref", 'checked'=>1),

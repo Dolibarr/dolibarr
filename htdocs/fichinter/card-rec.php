@@ -152,7 +152,7 @@ if ($action == 'add') {
 		}
 	}
 } elseif ($action == 'createfrommodel') {
-	$newinter = new fichinter($db);
+	$newinter = new Fichinter($db);
 
 	// on récupère les enregistrements
 	$object->fetch($id);
@@ -176,7 +176,7 @@ if ($action == 'add') {
 	// on créer un nouvelle intervention
 	$extrafields = new ExtraFields($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($newinter->table_element);
-	$array_options = $extrafields->getOptionalsFromPost($extralabels);
+	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
 	$newinter->array_options = $array_options;
 
 	$newfichinterid = $newinter->create($user);
