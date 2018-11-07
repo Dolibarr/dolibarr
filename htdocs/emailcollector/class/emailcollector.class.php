@@ -523,28 +523,28 @@ class EmailCollector extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4');
-			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5');
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 6)
 		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
 		}
 	}
 
@@ -619,7 +619,7 @@ class EmailCollector extends CommonObject
 	 */
 	public function fetchFilters()
 	{
-		$this->rules = array();
+		$this->filters = array();
 
 		$sql='SELECT rowid, type, rulevalue, status FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter WHERE fk_emailcollector = '.$this->id;
 
@@ -636,6 +636,7 @@ class EmailCollector extends CommonObject
 			}
 			$this->db->free($resql);
 		}
+		else dol_print_error($this->db);
 
 		return 1;
 	}
@@ -659,11 +660,12 @@ class EmailCollector extends CommonObject
 			while($i < $num)
 			{
 				$obj=$this->db->fetch_object($resql);
-				$this->rules[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status);
+				$this->actions[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status);
 				$i++;
 			}
 			$this->db->free($resql);
 		}
+		else dol_print_error($this->db);
 	}
 
 

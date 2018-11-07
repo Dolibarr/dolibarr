@@ -19,3 +19,4 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD INDEX idx_emailcollector
 ALTER TABLE llx_emailcollector_emailcollectoraction ADD CONSTRAINT fk_emailcollectoraction_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
 -- END MODULEBUILDER INDEXES
 
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcollector_emailcollectoraction (fk_emailcollector, type);

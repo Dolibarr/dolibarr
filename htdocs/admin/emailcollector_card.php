@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollector.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class.php';
-include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 if (!$user->admin)
@@ -125,9 +125,10 @@ if ($action == 'confirm_collect')
 if (GETPOST('addfilter','alpha'))
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
-	$emailcollectorfilter->type = GETPOST('filtertype','alpha');
+	$emailcollectorfilter->type = GETPOST('filtertype','az09');
 	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
 	$emailcollectorfilter->fk_emailcollector = $object->id;
+	$emailcollectorfilter->status = 1;
 	$result = $emailcollectorfilter->create($user);
 
 	if ($result > 0)
@@ -137,6 +138,55 @@ if (GETPOST('addfilter','alpha'))
 	else
 	{
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	}
+}
+
+if ($action == 'deletefilter')
+{
+	$emailcollectorfilter = new EmailCollectorFilter($db);
+	$emailcollectorfilter->fetch(GETPOST('filterid','int'));
+	$result = $emailcollectorfilter->delete($user);
+	if ($result > 0)
+	{
+		$object->fetchFilters();
+	}
+	else
+	{
+		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	}
+}
+
+if (GETPOST('addoperation','alpha'))
+{
+	$emailcollectoroperation = new EmailCollectorAction($db);
+	$emailcollectoroperation->type = GETPOST('operationtype','az09');
+	$emailcollectoroperation->actionparam = GETPOST('actionparam', 'alpha');
+	$emailcollectoroperation->fk_emailcollector = $object->id;
+	$emailcollectoroperation->status = 1;
+	$result = $emailcollectoroperation->create($user);
+
+	if ($result > 0)
+	{
+		$object->fetchActions();
+	}
+	else
+	{
+		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	}
+}
+
+if ($action == 'deleteoperation')
+{
+	$emailcollectoroperation = new EmailCollectorAction($db);
+	$emailcollectoroperation->fetch(GETPOST('operationid','int'));
+	$result = $emailcollectoroperation->delete($user);
+	if ($result > 0)
+	{
+		$object->fetchActions();
+	}
+	else
+	{
+		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
 
@@ -368,9 +418,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$rulefilterobj->fetch($rulefilter['id']);
 
 		print '<tr class="oddeven">';
-		print '<td>'.$rulefilter['type'].'</td>';
+		print '<td>';
+		print $langs->trans($arrayoftypes[$rulefilter['type']]);
+		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
-		print '<td>'.$rulefilterobj->getLibStatut(3).'</td>';
+		print '<td align="right">';
+		//print $rulefilterobj->getLibStatut(3);
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
+		print '</td>';
 		print '</tr>';
 	}
 
@@ -389,7 +444,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>';
 	$arrayoftypes=array('recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 0, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	print '</td>';
@@ -402,9 +457,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="oddeven">';
-		print '<td>'.$ruleactionobj['type'].'</td>';
-		print '<td>'.$ruleactionobj['actionparam'].'</td>';
-		print '<td>'.$ruleactionobj->getLibStatut(3).'</td>';
+		print '<td>';
+		print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		print '</td>';
+		print '<td>'.$ruleaction['actionparam'].'</td>';
+		print '<td align="right">';
+		//print $ruleactionobj->getLibStatut(3);
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print '</td>';
 		print '</tr>';
 	}
 

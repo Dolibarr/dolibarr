@@ -1830,6 +1830,8 @@ EmailCollectorConfirmCollect=Do you want to run the collect for this collector n
 NoNewEmailToProcess=No new email to process
 NothingProcessed=Nothing done
 XEmailsDoneYActionsDone=%s emails analyzed, %s record/actions done by collector
+RecordEvent=Record event
+CreateLeadAndThirdParty=Create lead (and thirdparty if necessary)
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
