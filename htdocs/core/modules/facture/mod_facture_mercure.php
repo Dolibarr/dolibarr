@@ -137,15 +137,46 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $mask = '';
         if (is_object($facture) && $facture->type == 1) 
         {
-        	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+			$constant = 'FACTURE_MERCURE_MASK_REPLACEMENT_'.$facture->entity;
+			if (! empty($conf->global->$constant)) {
+				$mask = $conf->global->$constant; // for multicompany proposal sharing
+			} else {
+				$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+			}
         	if (! $mask)
         	{
-        		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+				$constant = 'FACTURE_MERCURE_MASK_INVOICE_'.$facture->entity;
+				if (! empty($conf->global->$constant)) {
+					$mask = $conf->global->$constant; // for multicompany proposal sharing
+				} else {
+					$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+				}
         	}
         }
-        else if (is_object($facture) && $facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
-		else if (is_object($facture) && $facture->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
-        else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+        else if (is_object($facture) && $facture->type == 2){
+			$constant = 'FACTURE_MERCURE_MASK_CREDIT_'.$facture->entity;
+			if (! empty($conf->global->$constant)) {
+				$mask = $conf->global->$constant; // for multicompany proposal sharing
+			} else {
+				$mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
+			}
+		}
+		else if (is_object($facture) && $facture->type == 3){
+			$constant = 'FACTURE_MERCURE_MASK_DEPOSIT_'.$facture->entity;
+			if (! empty($conf->global->$constant)) {
+				$mask = $conf->global->$constant; // for multicompany proposal sharing
+			} else {
+				$mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+			}
+		}
+        else {
+			$constant = 'FACTURE_MERCURE_MASK_INVOICE_'.$facture->entity;
+			if (! empty($conf->global->$constant)) {
+				$mask = $conf->global->$constant; // for multicompany proposal sharing
+			} else {
+				$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+			}
+		}
         if (! $mask)
         {
             $this->error='NotConfigured';

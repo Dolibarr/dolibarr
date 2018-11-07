@@ -139,7 +139,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 */
 	function getNextValue($objsoc,$facture,$mode='next')
 	{
-		global $db;
+		global $db, $conf;
 
 		$prefix=$this->prefixinvoice;
 
@@ -147,13 +147,15 @@ class mod_facture_mars extends ModeleNumRefFactures
 		else if ($facture->type == 2) $prefix=$this->prefixcreditnote;
 		else if ($facture->type == 3) $prefix=$this->prefixdeposit;
 		else $prefix=$this->prefixinvoice;
+		// Use object entity ID
+		$entity = ((isset($facture->entity) && is_numeric($facture->entity)) ? $facture->entity : $conf->entity);
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
-		$sql.= " AND entity IN (".getEntity('invoicenumber').")";
+		$sql.= " AND entity = $entity";
 
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
