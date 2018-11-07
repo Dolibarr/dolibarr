@@ -1357,6 +1357,23 @@ div.secondcolumn div.box {
 	}
 }
 
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 1599px)
+{
+    div.fichehalfleft-lg {
+    	float: none;
+    	width: auto;
+    }
+    div.fichehalfright-lg {
+    	float: none;
+    	width: auto;
+    }
+    
+    .fichehalfright-lg .ficheaddleft{
+    	padding-left:0;
+    }
+}
+
 /* For table into table into card */
 div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
     padding: 0 0 0 0;
