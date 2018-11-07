@@ -1359,8 +1359,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
         	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
-        //TODO check how ot work with new table actioncomm_resources and multiple contact affectation
-        if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
+
+	    // Work with new table actioncomm_resources and multiple contact affectation.
+	    if (is_object($objcon) && $objcon->id)
+	    {
+		    $sql.= " AND r.element_type = '" . $objcon->table_element . "'" .
+			    " AND r.fk_element = " . $objcon->id;
+	    }
+
         // Condition on actioncode
         if (! empty($actioncode))
         {
