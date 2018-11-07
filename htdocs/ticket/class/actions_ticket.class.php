@@ -827,6 +827,7 @@ class ActionsTicket
 
         global $mysoc, $conf, $langs;
 
+        $object = new Ticket($this->db);
         $error = 0;
         $ret = $object->fetch('', '', GETPOST('track_id','alpha'));
         $object->socid = $object->fk_soc;
