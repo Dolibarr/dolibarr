@@ -1204,15 +1204,14 @@ class ActionsTicket
     public function viewTicketMessages($show_private, $show_user = true)
     {
         global $conf, $langs, $user;
-		global $object;
 
         // Load logs in cache
-        $ret = $object->loadCacheMsgsTicket();
+        $ret = $this->dao->loadCacheMsgsTicket();
         $action = GETPOST('action');
 
         $this->viewTicketOriginalMessage($user, $action);
 
-        if (is_array($object->cache_msgs_ticket) && count($object->cache_msgs_ticket) > 0) {
+        if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
             print_titre($langs->trans('TicketMailExchanges'));
 
             print '<table class="border" style="width:100%;">';
@@ -1229,7 +1228,7 @@ class ActionsTicket
                 print '</td>';
             }
 
-            foreach ($object->cache_msgs_ticket as $id => $arraymsgs) {
+            foreach ($this->dao->cache_msgs_ticket as $id => $arraymsgs) {
                 if (!$arraymsgs['private']
                     || ($arraymsgs['private'] == "1" && $show_private)
                 ) {
