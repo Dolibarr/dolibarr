@@ -360,8 +360,8 @@ class modAdherent extends DolibarrModules
 				'frequency'=>1,
 				'unitfrequency'=> 3600 * 24,
 				'priority'=>50,
-				'status'=>0,
-				'test'=>true,
+				'status'=>1,
+				'test'=>'$conf->adherent->enabled',
 				'datestart'=>$datestart
 			),
         );

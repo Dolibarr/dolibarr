@@ -150,9 +150,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         host varchar(255), 
         user varchar(128), 
         password varchar(128),
-        source_directory varchar(255),
-        filter text,
-        actiontodos varchar(255),
+        source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
         datelastresult datetime, 
         lastresult varchar(255),
@@ -167,15 +165,46 @@ CREATE TABLE llx_emailcollector_emailcollector(
         -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
--- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_rowid (rowid);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
--- END MODULEBUILDER INDEXES
 
---ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector_emailcollector_fieldxyz(fieldx, fieldy);
 
---ALTER TABLE llx_emailcollector_emailcollector ADD CONSTRAINT llx_emailcollector_emailcollector_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
+CREATE TABLE llx_emailcollector_emailcollectoraction(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL, 
+	actionparam varchar(255) NULL, 
+	date_creation datetime NOT NULL, 
+	tms timestamp NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+CREATE TABLE llx_emailcollector_emailcollectorfilter(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL, 
+	rulevalue varchar(255) NULL, 
+	date_creation datetime NOT NULL, 
+	tms timestamp NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD INDEX idx_emailcollector_fk_emailcollector (fk_emailcollector);
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD CONSTRAINT fk_emailcollectorfilter_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
+
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD INDEX idx_emailcollector_fk_emailcollector (fk_emailcollector);
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD CONSTRAINT fk_emailcollectoraction_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
+
 
 
 

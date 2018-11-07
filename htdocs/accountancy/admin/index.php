@@ -41,7 +41,7 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Parameters ACCOUNTING_* and others
 $list = array (

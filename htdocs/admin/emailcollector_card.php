@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
  */
 
 /**
- *   	\file       htdocs/admin/emailcollectore/emailcollector_card.php
+ *   	\file       htdocs/admin/emailcollector_card.php
  *		\ingroup    emailcollector
  *		\brief      Page to create/edit/view emailcollector
  */
@@ -27,10 +26,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-dol_include_once('/emailcollector/class/emailcollector.class.php');
-dol_include_once('/emailcollector/lib/emailcollector.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollector.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 if (!$user->admin)
 	accessforbidden();
@@ -41,7 +42,7 @@ $langs->loadLangs(array("admin", "other"));
 // Get parameters
 $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action		= GETPOST('action', 'alpha');
+$action		= GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectcard';   // To manage different context of search
@@ -54,7 +55,7 @@ $diroutputmassaction = $conf->emailcollector->dir_output . '/temp/massgeneration
 $hookmanager->initHooks(array('emailcollectorcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('emailcollector');
-$search_array_options = $extrafields->getOptionalsFromPost($extralabels, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
 $search_all = trim(GETPOST("search_all", 'alpha'));
@@ -77,8 +78,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters = array();
@@ -91,25 +90,43 @@ if (empty($reshook))
 
 	$permissiontoadd=1;
 	$permissiontodelete=1;
-	if (empty($backtopage)) $backtopage = dol_buildpath('/emailcollector/emailcollector_card.php',1).'?id='.($id > 0 ? $id : '__ID__');
-	$backurlforlist = dol_buildpath('/emailcollector/emailcollector_list.php', 1);
+	if (empty($backtopage)) $backtopage = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.($id > 0 ? $id : '__ID__');
+	$backurlforlist = DOL_URL_ROOT.'/admin/emailcollector_list.php';
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-	
+
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
-	
+
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
 
+if ($action == 'confirm_collect')
+{
+	dol_include_once('/emailcollector/class/emailcollector.class.php');
+
+	$res = $object->doCollect();
+
+	if ($res == 0)
+	{
+		setEventMessages($object->output, null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($object->error, null, 'errors');
+	}
+
+	$action = '';
+}
+
+
+
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -144,6 +161,8 @@ if ($action == 'create') {
 	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
+
+	//unset($fields[]);
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
@@ -201,6 +220,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
 	$res = $object->fetch_optionals();
 
+	$object->fetchFilters();
+	$object->fetchActions();
+
 	$head = emailcollectorPrepareHead($object);
 	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'emailcollector');
 
@@ -218,7 +240,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneMyObject'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-	
+
 	// Confirmation of action process
 	if ($action == 'collect') {
 		$formquestion = array(
@@ -232,10 +254,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
 	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-	
+
 	// Print form confirm
 	print $formconfirm;
-	
+
 	// Object card
 	// ------------------------------------------------------------
 	$linkback = '<a href="' . dol_buildpath('/admin/emailcollector_list.php', 1) . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
@@ -300,30 +322,76 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</table>';
 
-
-	if ($action == 'confirm_collect')
+	// Filters
+	print '<table class="border centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
+	print '</tr>';
+	// Add filter
+	print '<tr class="oddeven">';
+	print '<td>';
+	$arrayoftypes=array('to'=>'To', 'cc'=>'Cc', 'bcc'=>'Bcc', 'from'=>'From', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead');
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1);
+	print '</td><td>';
+	print '<input type="text" name="rulevalue">';
+	print '</td>';
+	print '<td align="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+	// List filters
+	foreach($object->filters as $rulefilter)
 	{
-		print_fiche_titre($langs->trans('MessagesFetchingResults'), '', '');
+		$rulefilterobj=new EmailCollectorFilter($db);
+		$rulefilterobj->fetch($rulefilter['id']);
 
-		dol_include_once('/emailcollector/class/emailcollector.class.php');
-		$emailcollector = new EmailCollector($object);
-
-		$res = $emailcollector->collectEmails();
-		if (is_array($res)) {
-			if (count($res['actions_done']) > 0) {
-				setEventMessages($langs->trans('XActionsDone', count($res['actions_done'])), null, 'info');
-			} else {
-				setEventMessages($langs->trans('NoActionsdone'), null, 'info');
-			}
-		} else {
-			setEventMessages($langs->trans('NoEmailsToProcess'), null, 'info');
-		}
-		$action = '';
+		print '<tr class="oddeven">';
+		print '<td>'.$rulefilter['type'].'</td>';
+		print '<td>'.$rulefilter['rulevalue'].'</td>';
+		print '<td>'.$rulefilterobj->getLibStatut(3).'</td>';
+		print '</tr>';
 	}
+
+	print '</tr>';
+	print '</table>';
+
+	print '<div class="clearboth"></div><br>';
+
+	// Operations
+	print '<table class="border centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td>';
+	print '</tr>';
+	// Add operation
+	print '<tr class="oddeven">';
+	print '<td>';
+	$arrayoftypes=array('recordevent'=>'RecordEvent');
+	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1);
+	print '</td><td>';
+	print '<input type="text" name="operationparam">';
+	print '</td>';
+	print '<td align="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+	// List operations
+	foreach($object->actions as $ruleaction)
+	{
+		$ruleactionobj=new EmailcollectorAction($db);
+		$ruleactionobj->fetch($ruleaction['id']);
+
+		print '<tr class="oddeven">';
+		print '<td>'.$ruleactionobj['type'].'</td>';
+		print '<td>'.$ruleactionobj['actionparam'].'</td>';
+		print '<td>'.$ruleactionobj->getLibStatut(3).'</td>';
+		print '</tr>';
+	}
+
+	print '</tr>';
+	print '</table>';
+
+
 	print '</div>';
 	print '</div>';
-	
-	
+
+
 	print '<div class="clearboth"></div><br>';
 
 	dol_fiche_end();
@@ -334,9 +402,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-		
+
 		if (empty($reshook))
 		{
+			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit">' . $langs->trans("Edit") . '</a>' . "\n";
+
 			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=collect">' . $langs->trans("CollectNow") . '</a>' . "\n";
 
 			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a>' . "\n";

@@ -23,8 +23,6 @@ $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['ent
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
-
-if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
@@ -37,19 +35,22 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
+if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+
 // You can find your endpoint's secret in your webhook settings
-if (isset($_GET['connect'])){
+if (isset($_GET['connect']))
+{
 	if (isset($_GET['test']))
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
-        $servicestatus = 0;
+		$servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-        $servicestatus = 1;
+    $servicestatus = 1;
 	}
 }
 else {
@@ -57,15 +58,16 @@ else {
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
-        $servicestatus = 0;
+		$servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
-        $servicestatus = 1;
+		$servicestatus = 1;
 	}
 }
+
 $payload = @file_get_contents("php://input");
 $sig_header = $_SERVER["HTTP_STRIPE_SIGNATURE"];
 $event = null;
@@ -127,7 +129,7 @@ $stripe=new Stripe($db);
 if ($event->type == 'payout.created') {
 	$error=0;
 
-	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
+	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0)
 	{
@@ -172,7 +174,7 @@ if ($event->type == 'payout.created') {
 elseif ($event->type == 'payout.paid') {
 	global $conf;
 	$error=0;
-	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
 	if ($result)
 	{
 		$langs->load("errors");
@@ -187,16 +189,10 @@ elseif ($event->type == 'payout.paid') {
 		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
 
 		$accountto=new Account($db);
-		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANFERS);
+		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
 
-		if ($accountto->currency_code != $accountfrom->currency_code) {
-			$error++;
-			setEventMessages($langs->trans("ErrorTransferBetweenDifferentCurrencyNotPossible"), null, 'errors');
-		}
-
-		if ($accountto->id != $accountfrom->id)
+		if (($accountto->id != $accountfrom->id) && empty($error))
 		{
-
 			$bank_line_id_from=0;
 			$bank_line_id_to=0;
 			$result=0;
@@ -207,8 +203,7 @@ elseif ($event->type == 'payout.paid') {
 
 			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
 			if (! ($bank_line_id_from > 0)) $error++;
-			if ((! $error) && ($accountto->currency_code == $accountfrom->currency_code)) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
-			if ((! $error) && ($accountto->currency_code != $accountfrom->currency_code)) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount_to), '', '', $user);
+			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
 			if (! ($bank_line_id_to > 0)) $error++;
 
 			if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
@@ -217,11 +212,35 @@ elseif ($event->type == 'payout.paid') {
 			if (! ($result > 0)) $error++;
 		}
 
-		// TODO Use CMail and translation
-		$body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." a ete effectue sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date);
-		$subject = '[NOTIFICATION] Virement effectué';
-		$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-		mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers);
+		$subject = '[NOTIFICATION] Stripe payout done';
+		if (!empty($user->email)) {
+			$sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
+		} else {
+			$sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+		}
+		$replyto = $sendto;
+		$sendtocc = '';
+		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+			$sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+		}
+
+		$message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+
+		$mailfile = new CMailFile(
+			$subject,
+			$sendto,
+			$replyto,
+			$message,
+			array(),
+			array(),
+			array(),
+			$sendtocc,
+			'',
+			0,
+			-1
+			);
+
+		$ret = $mailfile->sendfile();
 
 		return 1;
 	}

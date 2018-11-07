@@ -42,7 +42,7 @@ class AssetType extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'group';
+	public $picto = 'invoice';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -51,9 +51,9 @@ class AssetType extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
-     * @var string Asset type label
-     */
-    public $label;
+	 * @var string Asset type label
+	 */
+	public $label;
 
 	/** @var string Accountancy code asset */
 	public $accountancy_code_asset;
@@ -107,12 +107,14 @@ class AssetType extends CommonObject
 		$sql.= ", accountancy_code_asset";
 		$sql.= ", accountancy_code_depreciation_asset";
 		$sql.= ", accountancy_code_depreciation_expense";
+		$sql.= ", note";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_code_asset)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
+		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -179,7 +181,8 @@ class AssetType extends CommonObject
 		$sql.= "label = '".$this->db->escape($this->label) ."',";
 		$sql.= "accountancy_code_asset = '".$this->db->escape($this->accountancy_code_asset)."',";
 		$sql.= "accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."',";
-		$sql.= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
+		$sql.= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."',";
+		$sql.= "note = '".$this->db->escape($this->note) ."'";
 		$sql.= " WHERE rowid =".$this->id;
 
 		$result = $this->db->query($sql);

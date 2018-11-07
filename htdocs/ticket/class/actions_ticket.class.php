@@ -258,7 +258,7 @@ class ActionsTicket
                         // Extrafields
                         $extrafields = new ExtraFields($this->db);
                         $extralabels = $extrafields->fetch_name_optionals_label($fichinter->table_element);
-                        $array_options = $extrafields->getOptionalsFromPost($extralabels);
+                        $array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
                         $fichinter->array_options = $array_options;
 
                         $id = $fichinter->create($user);
