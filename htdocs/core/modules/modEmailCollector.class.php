@@ -52,7 +52,7 @@ class modEmailCollector extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '75';
+		$this->module_position = '12';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -70,7 +70,7 @@ class modEmailCollector extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='generic';
+		$this->picto='email';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /dav/core/xxxxx) (0=disable, 1=enable)

@@ -37,7 +37,7 @@ if (!$user->admin)
 	accessforbidden();
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("admin", "other"));
+$langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -122,6 +122,23 @@ if ($action == 'confirm_collect')
 	$action = '';
 }
 
+if (GETPOST('addfilter','alpha'))
+{
+	$emailcollectorfilter = new EmailCollectorFilter($db);
+	$emailcollectorfilter->type = GETPOST('filtertype','alpha');
+	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
+	$emailcollectorfilter->fk_emailcollector = $object->id;
+	$result = $emailcollectorfilter->create($user);
+
+	if ($result > 0)
+	{
+		$object->fetchFilters();
+	}
+	else
+	{
+		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	}
+}
 
 
 
@@ -322,6 +339,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</table>';
 
+
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="action" value="updatefiltersactions">';
+	print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+	print '<input type="hidden" name="id" value="' . $object->id . '">';
+
 	// Filters
 	print '<table class="border centpercent">';
 	print '<tr class="liste_titre">';
@@ -330,8 +354,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add filter
 	print '<tr class="oddeven">';
 	print '<td>';
-	$arrayoftypes=array('to'=>'To', 'cc'=>'Cc', 'bcc'=>'Bcc', 'from'=>'From', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead');
-	print $form->selectarray('filtertype', $arrayoftypes, '', 1);
+	$arrayoftypes=array('from'=>'MailFrom', 'to'=>'MailTo', 'cc'=>'Cc', 'bcc'=>'Bcc', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead');
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="rulevalue">';
 	print '</td>';
@@ -365,7 +389,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>';
 	$arrayoftypes=array('recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	print '</td>';
@@ -387,6 +411,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</tr>';
 	print '</table>';
 
+	print '</form>';
 
 	print '</div>';
 	print '</div>';

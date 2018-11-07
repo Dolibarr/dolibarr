@@ -632,6 +632,7 @@ class EmailCollector extends CommonObject
 			{
 				$obj=$this->db->fetch_object($resql);
 				$this->filters[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'rulevalue'=>$obj->rulevalue, 'status'=>$obj->status);
+				$i++;
 			}
 			$this->db->free($resql);
 		}
@@ -659,6 +660,7 @@ class EmailCollector extends CommonObject
 			{
 				$obj=$this->db->fetch_object($resql);
 				$this->rules[$obj->rowid]=array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status);
+				$i++;
 			}
 			$this->db->free($resql);
 		}
