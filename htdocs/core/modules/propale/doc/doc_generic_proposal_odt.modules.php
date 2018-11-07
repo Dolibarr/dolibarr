@@ -390,10 +390,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-		                // retrieve contact information for use in proposal as contact_xxx tags
-                		$array_thirdparty_contact = array();
-                		if ($usecontact)
-                    			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in object as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
