@@ -372,7 +372,7 @@ else
 	    if (! empty($date_start) && ! empty($date_end))
 	    	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('facture').")";
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 	$sql.= " GROUP BY name, socid";
 	$sql.= $db->order($sortfield, $sortorder);
@@ -992,7 +992,7 @@ else
 				$sql.= " AND f.type IN (0,1,2,3,5)";
 		    if (! empty($date_start) && ! empty($date_end))
 		    	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-		    $sql.= " AND f.entity = ".$conf->entity;
+		    $sql.= " AND f.entity IN (".getEntity('facture').")";
 		    $sql.= " GROUP BY dm";
 		    $newsortfield = $sortfield;
 		    if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'dm';

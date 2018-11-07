@@ -321,11 +321,11 @@ dol_fiche_end();
  * List of invoices
  */
 
-$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
+$sql = 'SELECT f.rowid as facid, f.facnumber,f.entity, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql.= ' WHERE pf.fk_facture = f.rowid';
 $sql.= ' AND f.fk_soc = s.rowid';
-$sql.= ' AND f.entity = '.$conf->entity;
+$sql.= ' AND f.entity IN ('.getEntity('facture').')';
 $sql.= ' AND pf.fk_paiement = '.$object->id;
 $resql=$db->query($sql);
 if ($resql)
@@ -345,10 +345,12 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
+	if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED )print '<td>'.$langs->trans('Entity').'</td>';
 	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
     print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
     print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
     print '<td align="right">'.$langs->trans('Status').'</td>';
+	
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -379,7 +381,14 @@ if ($resql)
 			print '<td>';
 			print $thirdpartystatic->getNomUrl(1);
 			print '</td>';
-
+			
+			// Entity
+			if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED ){
+				print '<td>';
+				$mc->getInfo($objp->entity);
+				print $mc->label;
+				print '</td>';
+			}
 			// Expected to pay
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 

@@ -258,7 +258,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.= ")";
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('facture').")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql.= $db->order($sortfield,$sortorder);
 

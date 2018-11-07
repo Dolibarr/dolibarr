@@ -288,7 +288,7 @@ class RejetPrelevement
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
 		$sql.= " WHERE pf.fk_prelevement_lignes = ".$this->id;
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN  (".getEntity('facture').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)

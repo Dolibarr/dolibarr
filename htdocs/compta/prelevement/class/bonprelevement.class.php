@@ -681,7 +681,7 @@ class BonPrelevement extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 		//$sql.= " ,".MAIN_DB_PREFIX."c_paiement as cp";
 		$sql.= " WHERE f.fk_statut = 1";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture').")";
 		$sql.= " AND f.rowid = pfd.fk_facture";
 		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";
@@ -720,7 +720,7 @@ class BonPrelevement extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 		$sql.= " WHERE f.fk_statut = 1";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture').")";
 		$sql.= " AND f.rowid = pfd.fk_facture";
 		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";

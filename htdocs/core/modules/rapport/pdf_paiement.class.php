@@ -200,7 +200,7 @@ class pdf_paiement
 				$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
 				if (! empty($conf->banque->enabled))
 					$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
-				$sql.= " AND f.entity = ".$conf->entity;
+				$sql.= " AND f.entity IN (".getEntity('facture').")";
 				$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
 				if (! $user->rights->societe->client->voir && ! $socid)
 				{

@@ -290,7 +290,7 @@ if (!empty($search_societe))  $sql.= natural_search('s.nom', $search_societe);
 if (!empty($search_zip))      $sql.= natural_search('s.zip', $search_zip);
 if (!empty($search_town))     $sql.= natural_search('s.town', $search_town);
 if ($search_country > 0)      $sql.= ' AND s.fk_pays = '.$search_country.'';
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " AND f.entity IN (".getEntity('facture').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql.= " ORDER BY s.rowid";

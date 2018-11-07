@@ -206,7 +206,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 	    	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
 
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('facture').")";
 	if ($socid) $sql.= " AND f.fk_soc = $socid";
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm";
@@ -369,7 +369,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		$sql.= " WHERE f.fk_statut IN (1,2)";
 		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 		else $sql.= " AND f.type IN (0,1,2,3,5)";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture').")";
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		$sql.= " GROUP BY dm";

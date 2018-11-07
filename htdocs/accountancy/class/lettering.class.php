@@ -154,7 +154,7 @@ class lettering extends BookKeeping
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
 					$sql .= " WHERE payfac.fk_paiement = '" . $obj->url_id . "' ";
 					$sql .= " AND bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
-					$sql .= " AND fac.entity = ".$conf->entity;
+					$sql .= " AND fac.entity IN (".getEntity('facture').")";
 					$sql .= " AND ( ";
 					if (! empty($object->code_compta)) {
 						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
@@ -182,7 +182,7 @@ class lettering extends BookKeeping
 						$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (" . implode(',', $ids_fact) . "))";
 						$sql .= " WHERE code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
-						$sql .= " AND fac.entity = ".$conf->entity;
+						$sql .= " AND fac.entity IN (".getEntity('facture').")";
 						$sql .= " AND ( ";
 						if (! empty($object->code_compta)) {
 							$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";

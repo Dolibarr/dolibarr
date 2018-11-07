@@ -194,7 +194,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " AND f.entity IN (".getEntity('facture').")";
 $sql.= " AND pfd.traite = 0";
 $sql.= " AND pfd.fk_facture = f.rowid";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;

@@ -231,7 +231,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
 }
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " AND f.entity IN (".getEntity('facture').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";

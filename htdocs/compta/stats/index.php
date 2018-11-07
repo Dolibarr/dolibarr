@@ -170,7 +170,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 	else $sql.= " AND f.type IN (0,1,2,3,5)";
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('facture').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
 else if ($modecompta=="RECETTES-DEPENSES")
@@ -185,7 +185,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
 	$sql.= " WHERE p.rowid = pf.fk_paiement";
 	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('facture').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
 else if ($modecompta=="BOOKKEEPING")

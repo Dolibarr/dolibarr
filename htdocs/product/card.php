@@ -2052,7 +2052,7 @@ if ($action != 'create' && $action != 'edit')
  * All the "Add to" areas
  */
 
-if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action == '' || $action == 'view') && $object->status)
+if ( $object->id && ($action == '' || $action == 'view') && $object->status)
 {
     //Variable used to check if any text is going to be printed
     $html = '';

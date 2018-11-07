@@ -772,7 +772,7 @@ print '</tr>';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON (f.fk_soc = s.rowid)';
 		}
 
-		$sql.= ' WHERE f.entity = '.$conf->entity;
+		$sql.= ' WHERE f.entity IN ('.getEntity('facture').")";
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
 
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
@@ -1070,7 +1070,7 @@ if (! GETPOST('action'))
     $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
     $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
-    $sql.= ' AND f.entity = '.$conf->entity;
+    $sql.= ' AND f.entity IN ('.getEntity('facture').")";
     if ($socid)
     {
         $sql.= ' AND f.fk_soc = '.$socid;
