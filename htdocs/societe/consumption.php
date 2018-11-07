@@ -204,7 +204,7 @@ if ($type_element == 'invoice')
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture = f.rowid";
-	$where.= " AND f.entity = ".$conf->entity;
+	$where.= " AND f.entity IN (".getEntity('facture').")";
 	$dateprint = 'f.datef';
 	$doc_number='f.facnumber';
 	$thirdTypeSelect='customer';

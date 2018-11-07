@@ -272,7 +272,7 @@ if ($id)
 	$sql.= " AND pl.fk_prelevement_bons = p.rowid";
 	$sql.= " AND f.fk_soc = s.rowid";
 	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND f.entity = ".$conf->entity;
+	$sql.= " AND f.entity IN (".getEntity('facture').")";
 	$sql.= " AND pl.rowid=".$id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY $sortfield $sortorder ";

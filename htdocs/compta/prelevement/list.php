@@ -94,7 +94,7 @@ $sql.= " WHERE pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND pf.fk_prelevement_lignes = pl.rowid";
 $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " AND f.entity IN (".getEntity('facture').")";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_line) $sql.= " AND pl.rowid = '".$db->escape($search_line)."'";
 if ($search_bon) $sql.= natural_search("p.ref", $search_bon);

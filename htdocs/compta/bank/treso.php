@@ -103,6 +103,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     print '<br>';
 
 	$solde = $object->solde(0);
+	if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)$colspan = 6;
+	else $colspan = 5;
 
 	// Show next coming entries
     print '<div class="div-table-responsive">';
@@ -112,6 +114,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("DateDue").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
+	if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED )print '<td>'.$langs->trans("Entity").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td align="right">'.$langs->trans("Debit").'</td>';
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
@@ -127,7 +130,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 
 	print '<tr class="liste_titre">';
-	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td align="left" colspan="'.$colspan.'">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right" class="nowrap">&nbsp;</td>';
 	print '</tr>';
 
@@ -136,11 +139,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
   $sqls = array();
 
 	// Customer invoices
-	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
+	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr, f.entity,";
 	$sql.= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	$sql.= " WHERE f.entity = ".$conf->entity;
+	$sql.= " WHERE f.entity IN  (".getEntity('facture').")";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
   $sql.= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
   $sql.= " ORDER BY dlr ASC";
@@ -284,6 +287,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     			else print $langs->trans("NotDefined");
     			print "</td>";
     			print "<td>".$ref."</td>";
+				if($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED ){
+					if($obj->family == 'invoice'){
+						$mc->getInfo($obj->entity);
+						print "<td>".$mc->label."</td>";
+					}else print "<td></td>";
+						
+				}
     			print "<td>".$refcomp."</td>";
     			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
     			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };
@@ -309,7 +319,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
   // solde
 	print '<tr class="liste_total">';
-	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
+	print '<td align="left" colspan="'.$colspan.'">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
 	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
 	print '</tr>';
 
