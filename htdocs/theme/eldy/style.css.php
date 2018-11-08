@@ -331,7 +331,7 @@ input, select {
 }
 
 /* Focus definitions must be after standard definition */
-textarea:focus, button:focus {
+textarea:focus {
     /* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
@@ -1074,6 +1074,9 @@ select.selectarrowonleft option {
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
      }
+     input[type=text], input[type=password] {
+		max-width: 180px;
+	}
 
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
@@ -3313,6 +3316,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
+		width: 160px;
 	}
     .dashboardlineindicator {
         float: left;

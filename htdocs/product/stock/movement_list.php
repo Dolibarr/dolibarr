@@ -90,7 +90,7 @@ $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('movement');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 $arrayfields=array(
     'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),

@@ -63,7 +63,7 @@ $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user-
 $hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('thirdpartyaccount');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('thirdpartyaccount','','search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
 

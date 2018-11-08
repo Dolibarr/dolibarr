@@ -46,20 +46,21 @@ $search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all'
 $search_ref=GETPOST("search_ref", "alpha") ? GETPOST("search_ref", "alpha") : GETPOST("sref", "alpha");
 $filteremail=GETPOST('filteremail','alpha');
 
+$object = new Mailing($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('mailinglist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('mailing');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
     'm.titre'=>'Ref',
 );
 
-$object = new Mailing($db);
 
 
 
