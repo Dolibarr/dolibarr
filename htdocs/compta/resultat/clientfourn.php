@@ -773,7 +773,7 @@ else
 
 		            print '<tr class="oddeven"><td>&nbsp;</td>';
 
-		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/index.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 		            if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
 		            print '<td align="right">'.price(-$obj->amount).'</td>';

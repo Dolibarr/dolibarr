@@ -357,7 +357,6 @@ class MyObject extends CommonObject
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result = '';
-        $companylink = '';
 
         $label = '<u>' . $langs->trans("MyObject") . '</u>';
         $label.= '<br>';
