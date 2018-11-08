@@ -103,7 +103,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+		return array('filename'=>$filename, 'content-type' => mime_content_type($original_file),'content'=>base64_encode($file_content), 'encoding'=>'base64' );
 	}
 
 
