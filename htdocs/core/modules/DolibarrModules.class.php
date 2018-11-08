@@ -377,7 +377,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param string $options   String with options when disabling module:
      *                          - 'noboxes' = Do not insert boxes -
      *                          'newboxdefonly' = For boxes, insert def of
-     *                          boxes only and not boxes activation       
+     *                          boxes only and not boxes activation
      *
      * @return int                         1 if OK, 0 if KO
      */
@@ -470,7 +470,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * Disable function. Deletes the module constants and boxes from the database.
      *
      * @param string[] $array_sql SQL requests to be executed when module is disabled
-     * @param string   $options   Options when disabling module:     
+     * @param string   $options   Options when disabling module:
      *
      * @return int                     1 if OK, 0 if KO
      */
@@ -1352,13 +1352,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
                         if (! $err) {
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
-                            if(is_int($frequency)) { $sql.= ' frequency,'; 
+                            if(is_int($frequency)) { $sql.= ' frequency,';
                             }
-                            if(is_int($unitfrequency)) { $sql.= ' unitfrequency,'; 
+                            if(is_int($unitfrequency)) { $sql.= ' unitfrequency,';
                             }
-                            if(is_int($priority)) { $sql.= ' priority,'; 
+                            if(is_int($priority)) { $sql.= ' priority,';
                             }
-                            if(is_int($status)) { $sql.= ' status,'; 
+                            if(is_int($status)) { $sql.= ' status,';
                             }
                             $sql.= " entity, test)";
                             $sql.= " VALUES (";
@@ -1374,13 +1374,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                             $sql.= ($command?"'".$this->db->escape($command)."'":"null").",";
                             $sql.= ($parameters?"'".$this->db->escape($parameters)."'":"null").",";
                             $sql.= ($comment?"'".$this->db->escape($comment)."'":"null").",";
-                            if(is_int($frequency)) { $sql.= "'".$this->db->escape($frequency)."', "; 
+                            if(is_int($frequency)) { $sql.= "'".$this->db->escape($frequency)."', ";
                             }
-                            if(is_int($unitfrequency)) { $sql.= "'".$this->db->escape($unitfrequency)."', "; 
+                            if(is_int($unitfrequency)) { $sql.= "'".$this->db->escape($unitfrequency)."', ";
                             }
                             if(is_int($priority)) {$sql.= "'".$this->db->escape($priority)."', ";
                             }
-                            if(is_int($status)) { $sql.= "'".$this->db->escape($status)."', "; 
+                            if(is_int($status)) { $sql.= "'".$this->db->escape($status)."', ";
                             }
                             $sql.= $entity.",";
                             $sql.= "'".$this->db->escape($test)."'";
@@ -2201,7 +2201,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @param  string $options Options when enabling module ('', 'newboxdefonly', 'noboxes')
      *                         'noboxes' = Do not insert boxes 'newboxdefonly' = For boxes,
-     *                         insert def of boxes only and not boxes activation          
+     *                         insert def of boxes only and not boxes activation
      * @return int                1 if OK, 0 if KO
      */
     public function init($options = '')

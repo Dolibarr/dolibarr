@@ -654,7 +654,7 @@ class Product extends CommonObject
             if (! $error && ! $notrigger) {
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_CREATE', $user);
-                if ($result < 0) { $error++; 
+                if ($result < 0) { $error++;
                 }
                 // End call triggers
             }
@@ -975,7 +975,7 @@ class Product extends CommonObject
                 if (! $error && ! $notrigger) {
                                 // Call trigger
                                 $result=$this->call_trigger('PRODUCT_MODIFY', $user);
-                    if ($result < 0) { $error++; 
+                    if ($result < 0) { $error++;
                     }
                     // End call triggers
                 }
@@ -1089,7 +1089,7 @@ class Product extends CommonObject
             if (! $error && empty($notrigger)) {
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_DELETE', $user);
-                if ($result < 0) { $error++; 
+                if ($result < 0) { $error++;
                 }
                 // End call triggers
             }
@@ -4085,7 +4085,7 @@ class Product extends CommonObject
      *    This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
      *    If ENTREPOT_EXTRA_STATUS set, filtering on warehouse status possible.
      *
-     * @param  string $option '' = Load all stock info, also from closed and internal warehouses,                                                                                                                                                                                                                                 
+     * @param  string $option '' = Load all stock info, also from closed and internal warehouses,
      * @return int                   < 0 if KO, > 0 if OK
      * @see    load_virtual_stock(), loadBatchInfo()
      */
