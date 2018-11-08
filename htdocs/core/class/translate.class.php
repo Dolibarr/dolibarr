@@ -563,10 +563,6 @@ class Translate
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle','',1);
         }
-		elseif (preg_match('/^OppStatusShort([0-9A-Z]+)$/i',$key,$reg))
-        {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');
-        }
         elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i',$key,$reg))
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');

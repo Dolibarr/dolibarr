@@ -804,7 +804,7 @@ while ($i < min($num,$limit))
 		if (! empty($arrayfields['p.fk_opp_status']['checked']))
 		{
 			print '<td class="center">';
-			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
+			if ($obj->opp_status_code) print $langs->trans("OppStatus".$obj->opp_status_code);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

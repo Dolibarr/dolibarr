@@ -802,7 +802,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
                         print '</td>';
                         // Opp status
                         print '<td align="center">';
-            			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
+            			if ($obj->opp_status_code) print $langs->trans("OppStatus".$obj->opp_status_code);
             			print '</td>';
 			            // Opp percent
             			print '<td align="right">';
