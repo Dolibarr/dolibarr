@@ -200,6 +200,19 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$action='create';
 			$error++;
 		}
+		
+		if (!empty($taskref))
+		{
+		    $checkTaskExistObj = new Task($db);
+		    if($checkTaskExistObj->fetch(0,$taskref) > 0)
+		    {
+		        // TODO : create new trans key in develop like ErrorDuplicateRef using $taskref as parameter
+		        setEventMessages($langs->trans("ErrorDuplicateField"), null, 'errors');
+		        $action='create';
+		        $error++;
+		    }  
+		}
+		
 	    if (empty($label))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
