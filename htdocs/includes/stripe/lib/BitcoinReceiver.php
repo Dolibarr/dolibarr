@@ -6,9 +6,15 @@ namespace Stripe;
  * Class BitcoinReceiver
  *
  * @package Stripe
+ *
+ * @deprecated Bitcoin receivers are deprecated. Please use the sources API instead.
+ * @link https://stripe.com/docs/sources/bitcoin
  */
-class BitcoinReceiver extends ExternalAccount
+class BitcoinReceiver extends ApiResource
 {
+    use ApiOperations\All;
+    use ApiOperations\Retrieve;
+
     /**
      * @return string The class URL for this resource. It needs to be special
      *    cased because it doesn't fit into the standard resource pattern.
@@ -24,62 +30,17 @@ class BitcoinReceiver extends ExternalAccount
      */
     public function instanceUrl()
     {
-        $result = parent::instanceUrl();
-        if ($result) {
-            return $result;
+        if ($this['customer']) {
+            $base = Customer::classUrl();
+            $parent = $this['customer'];
+            $path = 'sources';
+            $parentExtn = urlencode(Util\Util::utf8($parent));
+            $extn = urlencode(Util\Util::utf8($this['id']));
+            return "$base/$parentExtn/$path/$extn";
         } else {
-            $id = $this['id'];
-            $id = Util\Util::utf8($id);
-            $extn = urlencode($id);
             $base = BitcoinReceiver::classUrl();
+            $extn = urlencode(Util\Util::utf8($this['id']));
             return "$base/$extn";
         }
-    }
-
-    /**
-     * @param string $id The ID of the Bitcoin Receiver to retrieve.
-     * @param array|string|null $opts
-     *
-     * @return BitcoinReceiver
-     */
-    public static function retrieve($id, $opts = null)
-    {
-        return self::_retrieve($id, $opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Collection of BitcoinReceivers
-     */
-    public static function all($params = null, $opts = null)
-    {
-        return self::_all($params, $opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return BitcoinReceiver The created Bitcoin Receiver item.
-     */
-    public static function create($params = null, $opts = null)
-    {
-        return self::_create($params, $opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return BitcoinReceiver The refunded Bitcoin Receiver item.
-     */
-    public function refund($params = null, $options = null)
-    {
-        $url = $this->instanceUrl() . '/refund';
-        list($response, $opts) = $this->_request('post', $url, $params, $options);
-        $this->refreshFrom($response, $opts);
-        return $this;
     }
 }

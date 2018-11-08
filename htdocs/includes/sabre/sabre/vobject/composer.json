@@ -1,0 +1,88 @@
+{
+    "name": "sabre/vobject",
+    "description" : "The VObject library for PHP allows you to easily parse and manipulate iCalendar and vCard objects",
+    "keywords" : [
+        "iCalendar",
+        "iCal",
+        "vCalendar",
+        "vCard",
+        "jCard",
+        "jCal",
+        "ics",
+        "vcf",
+        "xCard",
+        "xCal",
+        "freebusy",
+        "recurrence",
+        "availability",
+        "rfc2425",
+        "rfc2426",
+        "rfc2739",
+        "rfc4770",
+        "rfc5545",
+        "rfc5546",
+        "rfc6321",
+        "rfc6350",
+        "rfc6351",
+        "rfc6474",
+        "rfc6638",
+        "rfc6715",
+        "rfc6868"
+    ],
+    "homepage" : "http://sabre.io/vobject/",
+    "license" : "BSD-3-Clause",
+    "require" : {
+        "php"          : ">=5.5",
+        "ext-mbstring" : "*",
+        "sabre/xml"    : ">=1.5 <3.0"
+    },
+    "require-dev" : {
+        "phpunit/phpunit" : "*",
+        "sabre/cs"        : "^1.0.0"
+
+    },
+    "suggest" : {
+        "hoa/bench"       : "If you would like to run the benchmark scripts"
+    },
+    "authors" : [
+        {
+            "name" : "Evert Pot",
+            "email" : "me@evertpot.com",
+            "homepage" : "http://evertpot.com/",
+            "role" : "Developer"
+        },
+        {
+            "name" : "Dominik Tobschall",
+            "email" : "dominik@fruux.com",
+            "homepage" : "http://tobschall.de/",
+            "role" : "Developer"
+        },
+        {
+            "name" : "Ivan Enderlin",
+            "email" : "ivan.enderlin@hoa-project.net",
+            "homepage" : "http://mnt.io/",
+            "role" : "Developer"
+        }
+    ],
+    "support" : {
+        "forum" : "https://groups.google.com/group/sabredav-discuss",
+        "source" : "https://github.com/fruux/sabre-vobject"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Sabre\\VObject\\" : "lib/"
+        }
+    },
+    "bin" : [
+        "bin/vobject",
+        "bin/generate_vcards"
+    ],
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "4.0.x-dev"
+        }
+    },
+    "config" : {
+        "bin-dir" : "bin"
+    }
+}

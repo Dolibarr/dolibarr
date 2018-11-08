@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2017 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "other", "orders"));
 
 if (!$user->admin)
 accessforbidden();
@@ -57,9 +56,12 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
-    $maskvalue=GETPOST('maskinvoice','alpha');
+	$maskconstcredit=GETPOST('maskconstcredit','alpha');
+    $maskinvoice=GETPOST('maskinvoice','alpha');
+	$maskcredit=GETPOST('maskcredit','alpha');
 
-    if ($maskconstinvoice)  $res = dolibarr_set_const($db,$maskconstinvoice,$maskvalue,'chaine',0,'',$conf->entity);
+    if ($maskconstinvoice)  $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
+	if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -199,7 +201,7 @@ llxHeader("","");
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'title_setup');
 
 print "<br>";
@@ -233,7 +235,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-            $var=true;
 
             while (($file = readdir($handle))!==false)
             {

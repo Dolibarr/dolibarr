@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (!$user->admin)
 	accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("resource");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'resource'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -68,13 +67,13 @@ $textobject=$langs->transnoentitiesnoconv("ResourceSingular");
 
 llxHeader('',$langs->trans("ResourceSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ResourceSetup"),$linkback,'title_setup');
 print "<br>\n";
 
 $head=resource_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("ResourceSingular"), 0, 'action');
+dol_fiche_head($head, 'attributes', $langs->trans("ResourceSingular"), -1, 'action');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -42,8 +42,8 @@ if ($user->societe_id > 0)
 if (! $user->rights->facture->creer)
 accessforbidden();
 
-$langs->load("companies");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "orders"));
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -102,6 +102,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
@@ -149,13 +155,9 @@ if ($resql)
 
 	print "</tr>\n";
 
-	$var=true;
-
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-
-
 
 		print '<tr class="oddeven">';
 		print '<td>';

@@ -16,7 +16,7 @@ ResourceFormLabel_description=Resource beschrijving
 
 ResourcesLinkedToElement=Resources gekoppeld aan element
 
-ShowResource=Show resource
+ShowResource=Laat resource zien
 
 ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource met succes gecreeerd 
@@ -31,6 +31,6 @@ DictionaryResourceType=Type resources
 SelectResource=Kies resource
 
 IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+AssetNumber=Serienummer
+ResourceTypeCode=Code type resource
 ImportDataset_resource_1=Resources

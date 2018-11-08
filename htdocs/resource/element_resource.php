@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013		Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,10 +36,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-// Load traductions files requiredby by page
-$langs->load("resource");
-$langs->load("other");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');
@@ -96,7 +94,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 	else
 	{
 		$objstat = fetchObjectByElement($element_id, $element);
-
+		$objstat->element = $element; // For externals module, we need to keep @xx
 		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
 	}
 	if (! $error && $res > 0)

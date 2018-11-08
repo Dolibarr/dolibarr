@@ -32,14 +32,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("sendings");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
-$langs->load('stocks');
-$langs->load('other');
-$langs->load('propal');
+// Load translation files required by the page
+$langs->loadLangs(array('sendings', 'companies', 'bills', 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');

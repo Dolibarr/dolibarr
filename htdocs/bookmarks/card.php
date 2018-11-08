@@ -27,15 +27,15 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
-$langs->load("bookmarks");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('bookmarks', 'other'));
 
 // Security check
 if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 
-$id=GETPOST("id");
+$id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
 $title=GETPOST("title","alpha");
 $url=GETPOST("url","alpha");

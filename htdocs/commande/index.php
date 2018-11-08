@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 
 if (!$user->rights->commande->lire) accessforbidden();
 
-$langs->load("orders");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'bills'));
 
 // Security check
 $socid=GETPOST('socid','int');

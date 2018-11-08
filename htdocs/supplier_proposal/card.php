@@ -46,15 +46,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-$langs->load('companies');
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('propal');
-$langs->load('orders');
-$langs->load('products');
-$langs->load("deliveries");
-$langs->load('sendings');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'supplier_proposal', 'compta', 'bills', 'propal', 'orders', 'products', 'deliveries', 'sendings'));
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
@@ -67,6 +60,7 @@ $action = GETPOST('action', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
+$projectid = GETPOST('projectid', 'int');
 $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid','int');
 
@@ -265,7 +259,7 @@ if (empty($reshook))
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
 					$object->socid = GETPOST('socid');
-					$object->fk_project = GETPOST('projectid');
+					$object->fk_project = GETPOST('projectid','int');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
 					$object->note = GETPOST('note','none');
@@ -283,7 +277,7 @@ if (empty($reshook))
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->fk_project = GETPOST('projectid');
+				$object->fk_project = GETPOST('projectid','int');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note = GETPOST('note','none');
@@ -358,11 +352,19 @@ if (empty($reshook))
 
 									// Extrafields
 									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-										$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										$lines[$i]->fetch_optionals();
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->ref_supplier, $lines[$i]->fk_unit);
+									$result = $object->addline(
+										$desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx,
+										$lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product, $lines[$i]->remise_percent,
+										'HT', 0, $lines[$i]->info_bits, $product_type,
+										$lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line,
+										$lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+										$lines[$i]->ref_supplier, $lines[$i]->fk_unit
+									);
 
 									if ($result > 0) {
 										$lineid = $result;
@@ -527,8 +529,8 @@ if (empty($reshook))
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		$ref_supplier = GETPOST('fourn_ref','alpha');
-
-		if (GETPOST('prod_entry_mode') == 'free')
+		$prod_entry_mode = GETPOST('prod_entry_mode');
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
 			$price_ht = GETPOST('price_ht');
@@ -543,6 +545,7 @@ if (empty($reshook))
 
 		$qty = GETPOST('qty' . $predef);
 		$remise_percent = GETPOST('remise_percent' . $predef);
+		$price_ht_devise = GETPOST('multicurrency_price_ht');
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -556,17 +559,17 @@ if (empty($reshook))
 			}
 		}
 
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error ++;
 		}
 
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && $price_ht == '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
+		if ($prod_entry_mode == 'free' && empty($idprod) && $price_ht == '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error ++;
 		}
@@ -581,43 +584,58 @@ if (empty($reshook))
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
 			// Ecrase $txtva par celui du produit
-			if ((GETPOST('prod_entry_mode') != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+			if ($prod_entry_mode != 'free' && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 			{
 				$productsupplier = new ProductFournisseur($db);
 
-				if (empty($conf->global->SUPPLIER_PROPOSAL_WITH_NOPRICEDEFINED))	// TODO this test seems useless
-				{
-					$idprod=0;
-					if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
-				}
-				if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+				$idprod=0;
+				if (GETPOST('idprodfournprice','alpha') == -1 || GETPOST('idprodfournprice','alpha') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+
+				if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice','alpha'), $reg))
 				{
 					$idprod=$reg[1];
 					$res=$productsupplier->fetch($idprod);
-					// Call to init properties of $productsupplier
+					// Call to init some price properties of $productsupplier
 					// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-					$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+					if (! empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER))
+					{
+						$fksoctosearch = 0;
+						$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+						if ($productsupplier->fourn_socid != $socid)	// The price we found is for another supplier, so we clear supplier price
+						{
+							$productsupplier->ref_supplier = '';
+						}
+					}
+					else
+					{
+						$fksoctosearch = $object->thirdparty->id;
+						$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+					}
 				}
-				elseif (GETPOST('idprodfournprice') > 0)
+				elseif (GETPOST('idprodfournprice','alpha') > 0)
 				{
 					//$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
 					$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
-					$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+					$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice','alpha'), $qtytosearch);
 					$res=$productsupplier->fetch($idprod);
 				}
 
 				if ($idprod > 0)
 				{
-					$pu_ht = $productsupplier->fourn_pu;
-					$price_base_type = $productsupplier->fourn_price_base_type;
-					$type = $productsupplier->type;
 					$label = $productsupplier->label;
+
 					$desc = $productsupplier->description;
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
+
+					$pu_ht = $productsupplier->fourn_pu;
+
+					$type = $productsupplier->type;
+					$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
+
 					$ref_supplier = $productsupplier->ref_supplier;
 
-					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
-					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
+					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 					if (empty($tva_tx)) $tva_npr=0;
 					$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 					$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
@@ -643,8 +661,11 @@ if (empty($reshook))
 						$label,
 						$array_options,
 						$ref_supplier,
-						$fk_unit
-						);
+						$fk_unit,
+						'',
+						0,
+						$productsupplier->fourn_multicurrency_unitprice
+                    );
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 				}
 				if ($idprod == -99 || $idprod == 0)
@@ -662,7 +683,7 @@ if (empty($reshook))
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 				}
 			}
-			else if((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))    // Free product
+			else if((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))    // Free product.  // $price_ht is already set
 			{
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -680,20 +701,19 @@ if (empty($reshook))
 				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 				$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-				if (GETPOST('price_ht')!=='')
+				if ($price_ht !== '')
 				{
-					$price_base_type = 'HT';
-					$ht = price2num(GETPOST('price_ht'));
-					$ttc = 0;
+					$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 				}
 				else
 				{
-					$ttc = price2num(GETPOST('price_ttc'));
-					$ht = $ttc / (1 + ($tva_tx / 100));
-					$price_base_type = 'HT';
+					$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 				}
+				$price_base_type = 'HT';
+				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-				$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_supplier, $fk_unit);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_supplier, $fk_unit);
 				//$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit);
 			}
 
@@ -769,6 +789,7 @@ if (empty($reshook))
 
 	// Mise a jour d'une ligne dans la demande de prix
 	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
+
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx')))
@@ -807,6 +828,16 @@ if (empty($reshook))
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
 		if (! empty($productid)) {
+
+			$productsupplier = new ProductFournisseur($db);
+			if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY))
+			{
+				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $productid, 'none', GETPOST('socid','int')) < 0 )
+				{
+					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+				}
+			}
+
 			$product = new Product($db);
 			$res = $product->fetch($productid);
 
@@ -890,7 +921,7 @@ if (empty($reshook))
 
 	// Set project
 	else if ($action == 'classin' && $user->rights->supplier_proposal->creer) {
-		$object->setProject($_POST['projectid']);
+		$object->setProject(GETPOST('projectid'),'int');
 	}
 
 	// Delai de livraison
@@ -927,14 +958,16 @@ if (empty($reshook))
 	}
 
 	else if ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
 		{
-			$result = $object->insertExtraFields();
+			$result = $object->insertExtraFields('SUPPLIER_PROPOSAL_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -993,9 +1026,9 @@ if ($action == 'create')
 		$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 		$soc = $objectsrc->thirdparty;
 
-		$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+		$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0)); // TODO maybe add default value option
 		$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-		$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+		$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_supplier_percent)?$soc->remise_supplier_percent:0));
 		$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 
 		// Replicate extrafields
@@ -1047,6 +1080,21 @@ if ($action == 'create')
 		print '</td>';
 	}
 	print '</tr>' . "\n";
+
+	if ($soc->id > 0)
+	{
+		// Discounts for third party
+		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
+
+		$absolute_discount = $soc->getAvailableDiscounts('', '', 0, 1);
+
+		$thirdparty = $soc;
+		$discount_type = 1;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?socid=' . $thirdparty->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid'));
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+		print '</td></tr>';
+	}
 
 	// Terms of payment
 	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
@@ -1103,9 +1151,7 @@ if ($action == 'create')
 
 		$formproject = new FormProjets($db);
 
-		$projectid = 0;
-		if ($origin == 'project')
-			$projectid = ($originid ? $originid : 0);
+		if ($origin == 'project') $projectid = ($originid ? $originid : 0);
 
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
@@ -1131,7 +1177,7 @@ if ($action == 'create')
 	$parameters = array('colspan' => ' colspan="3"');
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -1343,6 +1389,7 @@ if ($action == 'create')
 	//$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -1386,6 +1433,29 @@ if ($action == 'create')
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
+
+	// Relative and absolute discounts
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
+	}
+
+	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
+
+	$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
+	$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+	$absolute_discount = price2num($absolute_discount, 'MT');
+	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
+	$thirdparty = $soc;
+	$discount_type = 1;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+	print '</td></tr>';
 
 	// Payment term
 	print '<tr><td class="titlefield">';
@@ -1631,7 +1701,9 @@ if ($action == 'create')
 
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector;
-	$forceall=1; $senderissupplier=2; $dateSelector=0;     // $senderissupplier=2 is same than 1 but disable test on minimum qty.
+	$forceall=1; $dateSelector=0;
+	$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty.
+	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
@@ -1720,9 +1792,9 @@ if ($action == 'create')
 				// Send
 				if ($object->statut == SupplierProposal::STATUS_VALIDATED || $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->supplier_proposal->send_advance) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Create an order

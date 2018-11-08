@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -292,11 +292,18 @@ class Loan extends CommonObject
 	{
 		$this->db->begin();
 
+		if (! is_numeric($this->nbterm))
+		{
+			$this->error='BadValueForParameterForNbTerm';
+			return -1;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan";
 		$sql.= " SET label='".$this->db->escape($this->label)."',";
 		$sql.= " capital='".price2num($this->db->escape($this->capital))."',";
 		$sql.= " datestart='".$this->db->idate($this->datestart)."',";
 		$sql.= " dateend='".$this->db->idate($this->dateend)."',";
+		$sql.= " nbterm=".$this->nbterm.",";
 		$sql.= " accountancy_account_capital = '".$this->db->escape($this->account_capital)."',";
 		$sql.= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql.= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
@@ -337,7 +344,7 @@ class Loan extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *  Return label of loan status (unpaid, paid)
@@ -362,8 +369,7 @@ class Loan extends CommonObject
 	function LibStatut($statut,$mode=0,$alreadypaid=-1)
 	{
 		global $langs;
-		$langs->load('customers');
-		$langs->load('bills');
+		$langs->loadLangs(array("customers","bills"));
 
 		if ($mode == 0)
 		{
@@ -431,13 +437,43 @@ class Loan extends CommonObject
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
 		$linkend = '</a>';
-			
+
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
 		$result .= $linkend;
-			
+
 		return $result;
+	}
+	
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 * 	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	function initAsSpecimen()
+	{
+	    global $user, $langs, $conf;
+	    
+	    $now=dol_now();
+	    
+	    // Initialise parameters
+	    $this->id = 0;
+	    $this->fk_bank = 1;
+	    $this->label = 'SPECIMEN';
+	    $this->specimen = 1;
+	    $this->socid = 1;
+	    $this->account_capital = 16;
+	    $this->account_insurance = 616;
+	    $this->account_interest = 518;
+	    $this->datestart = $now;
+	    $this->dateend = $now + (3600 * 24 * 365);
+	    $this->note_public = 'SPECIMEN';
+	    $this->capital = 20000;
+	    $this->nbterm = 48;
+	    $this->rate = 4.3;
 	}
 
 	/**

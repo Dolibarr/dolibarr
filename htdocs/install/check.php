@@ -35,7 +35,7 @@ $allowinstall = 0;
 $allowupgrade = false;
 $checksok = 1;
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):$langs->getDefaultLang();
+$setuplang=GETPOST("selectlang",'az09',3)?GETPOST("selectlang",'az09',3):$langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
@@ -62,7 +62,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
+print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];
@@ -76,8 +76,8 @@ if (! empty($useragent))
 
 
 // Check PHP version
-$arrayphpminversionerror = array(5,3,0);
-$arrayphpminversionwarning = array(5,3,0);
+$arrayphpminversionerror = array(5,4,0);
+$arrayphpminversionwarning = array(5,4,0);
 if (versioncompare(versionphparray(),$arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
@@ -252,8 +252,14 @@ if (! file_exists($conffile))
 }
 else
 {
+	if (dol_is_dir($conffile))
+	{
+		print '<img src="../theme/eldy/img/error.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir",$conffiletoshow);
+
+		$allowinstall=0;
+	}
 	// File exists but can't be modified
-	if (!is_writable($conffile))
+	elseif (!is_writable($conffile))
 	{
 		if ($confexists)
 		{
@@ -345,6 +351,10 @@ else
 			$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 			$conf->setValues($db);
+			// Reset forced setup after the setValues
+			if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+			$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL)?$conf->global->MAIN_VERSION_LAST_INSTALL:''));

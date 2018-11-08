@@ -99,7 +99,7 @@ $usefilter=0;
 $listofsessions=listOfSessions();
 $num=count($listofsessions);
 
-print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
+print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'', $num, ($num?$num:''),'setup');		// Do not show numer (0) if no session found (it means we can't know)
 
 $savehandler=ini_get("session.save_handler");
 $savepath=ini_get("session.save_path");
@@ -137,12 +137,8 @@ if ($savehandler == 'files')
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	$var=True;
-
 	foreach ($listofsessions as $key => $sessionentry)
 	{
-
-
 		print '<tr class="oddeven">';
 
 		// Login

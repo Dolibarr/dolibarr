@@ -38,8 +38,8 @@ if (! empty($conf->projet->enabled)) {
 }
 
 
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
 
 $action		= GETPOST('action','aZ09');
 $confirm	= GETPOST('confirm');
@@ -163,6 +163,7 @@ if ($id > 0 || ! empty($ref)){
 		print '<table class="border" width="100%">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 		print "</table>\n";

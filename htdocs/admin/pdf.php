@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
-$langs->load("admin");
-$langs->load("languages");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'languages', 'other'));
 
 $langs->load("companies");
 $langs->load("products");
@@ -133,7 +132,7 @@ if ($action == 'edit')	// Edit
 
 
     // Misc options
-    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
+    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','');
 
 	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
@@ -168,7 +167,7 @@ if ($action == 'edit')	// Edit
 
 
     // Addresses
-    print load_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
+    print load_fiche_titre($langs->trans("PDFAddressForging"),'','');
 
 	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
@@ -255,14 +254,15 @@ if ($action == 'edit')	// Edit
 	print '</table>';
 	print '</div>';
 
+
     print '<br>';
 
+
     // Localtaxes
+    $locales ='';
+    $text='';
     if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
     {
-        $locales ='';
-        $text='';
-
         if ($mysoc->useLocalTax(1))
         {
             $locales = $langs->transcountry("LT1",$mysoc->country_code);
@@ -279,30 +279,38 @@ if ($action == 'edit')	// Edit
             $text.= $form->selectyesno('MAIN_PDF_MAIN_HIDE_THIRD_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX : 0, 1);
             $text.= '</td></tr>';
         }
-
-        print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
-
-        print '<table summary="more" class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
-        print $text;
-
-        print '</table>';
-        print '<br>';
-
     }
 
+    $title = $langs->trans("PDFRulesForSalesTax");
+    if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
+    {
+   		$title.=' - '.$langs->trans("PDFLocaltax",$locales);
+    }
+
+    print load_fiche_titre($title,'','');
+
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    // Hide any information on Sale tax / VAT
+
+    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
+    print '</td></tr>';
+
+    // Locataxes
+    print $text;
+
+    print '</table>';
+    print '<br>';
+
+
     // Other
-    print load_fiche_titre($langs->trans("Other"),'','').'<br>';
+    print load_fiche_titre($langs->trans("Other"),'','');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
-
-    // Hide any PDF informations
-
-    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
-    print '</td></tr>';
 
     //Desc
 
@@ -491,11 +499,10 @@ else	// Show
     print '<br>';
 
     // Localtaxes
+    $locales ='';
+    $text='';
     if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
     {
-        $locales ='';
-        $text='';
-
         if ($mysoc->useLocalTax(1))
         {
             $locales = $langs->transcountry("LT1",$mysoc->country_code);
@@ -513,15 +520,26 @@ else	// Show
             $text.= '</td></tr>';
         }
 
-        print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
-
-        print '<table summary="more" class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
-        print $text;
-        print '</table>';
-        print '<br>';
-
     }
+
+    // Sales TAX / VAT information
+    $title=$langs->trans("PDFRulesForSalesTax",$locales);
+    if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) $title.=' - '.$langs->trans("PDFLocaltax",$locales);
+
+    print load_fiche_titre($title,'','');
+
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
+    print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
+    print '</td></tr>';
+
+    print $text;
+
+    print '</table>';
+    print '<br>';
+
 
     // Other
     print load_fiche_titre($langs->trans("Other"),'','');
@@ -557,12 +575,6 @@ else	// Show
 
 	print "</td>";
 	print '</tr>';
-
-    // Hide any PDF informations
-
-    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
-    print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
-    print '</td></tr>';
 
 	//Desc
 
@@ -601,7 +613,7 @@ else	// Show
 	 */
 
 	print '<br>';
-	print load_fiche_titre($langs->trans("Library"));
+	print load_fiche_titre($langs->trans("Library"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">'."\n";
@@ -610,18 +622,6 @@ else	// Show
 	print '<td>'.$langs->trans("Name").'</td>'."\n";
 	print '<td>'.$langs->trans("Value").'</td>'."\n";
 	print "</tr>\n";
-
-	if (! empty($dolibarr_pdf_force_fpdf))
-	{
-
-		print '<tr class="oddeven">'."\n";
-		print '<td>dolibarr_pdf_force_fpdf</td>'."\n";
-		print '<td>';
-		print $dolibarr_pdf_force_fpdf;
-		print '</td>';
-		print '</tr>';
-	}
-
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("LibraryToBuildPDF").'</td>'."\n";
@@ -656,17 +656,11 @@ else	// Show
 		print ' ('.@constant('TCPDI_PATH').')';
 		$i++;
 	}
-	print '<!-- $conf->global->MAIN_USE_FPDF = '.$conf->global->MAIN_USE_FPDF.' -->';
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
 	print "</table>\n";
 	print '</div>';
-
-	if (! empty($dolibarr_pdf_force_fpdf))
-	{
-		print info_admin($langs->trans("WarningUsingFPDF")).'<br>';
-	}
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';

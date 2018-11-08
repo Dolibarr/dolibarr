@@ -46,9 +46,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load("sendings");
-$langs->load("other");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('sendings', 'other', 'companies'));
 
 
 /*
@@ -275,17 +274,17 @@ foreach ($data as $val)
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		
-		
+
+
 		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-	
+
 		print '<td align="right">0</td>';
 		/*print '<td align="right">0</td>';
 		print '<td align="right">0</td>';*/
 		print '</tr>';
 	}
-	
+
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center">';
 	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a>';
@@ -305,7 +304,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

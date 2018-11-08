@@ -108,12 +108,15 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		global $db,$conf;
 
+		// Use object entity ID
+		$entity = ((isset($propal->entity) && is_numeric($propal->entity)) ? $propal->entity : $conf->entity);
+
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity = ".$entity;
 
 		$resql=$db->query($sql);
 		if ($resql)

@@ -28,9 +28,8 @@ if (! class_exists('Holiday')) {
 	require_once DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 }
 
-$langs->load("user");
-$langs->load("other");
-$langs->load("holiday");
+// Load translation files required by the page
+$langs->loadLangs(array('user', 'other', 'holiday'));
 
 if (empty($conf->holiday->enabled))
 {

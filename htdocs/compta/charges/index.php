@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -48,7 +48,7 @@ if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
 
 $search_account = GETPOST('search_account','int');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -139,7 +139,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 	$sql.= " WHERE cs.fk_type = c.id";
@@ -166,12 +166,10 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$total = 0;
 		$totalnb = 0;
 		$totalpaye = 0;
-		$var=true;
 
 		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
-			$var = !$var;
 			print '<tr class="oddeven">';
 			// Date
 			$date=$obj->periode;
@@ -260,7 +258,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as pv";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pv.fk_bank = b.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id";
 		$sql.= " WHERE pv.entity IN (".getEntity("tax").")";
 		if ($year > 0)
 		{
@@ -417,13 +415,12 @@ while($j<$numlt)
 			print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"pv.datep","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
-			$var=1;
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
 
 				$total = $total + $obj->amount;
-
 
 				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
@@ -458,7 +455,7 @@ while($j<$numlt)
 
 
 // Payment Salary
-if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
+if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 {
     if (! $mode || $mode != 'sconly')
     {
@@ -474,7 +471,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON s.fk_typepayment = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON s.fk_typepayment = pct.id";
 		$sql.= " , ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE s.entity IN (".getEntity('user').")";
         $sql.= " AND u.rowid = s.fk_user";
@@ -501,7 +498,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 			if (! empty($conf->banque->enabled)) print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
             print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
-            $var=1;
+
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);

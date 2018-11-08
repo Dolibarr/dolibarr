@@ -53,10 +53,8 @@ if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/s
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
-$langs->load("projects");
-$langs->load("companies");
-$langs->load("suppliers");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
 if (! empty($conf->facture->enabled))  	    $langs->load("bills");
 if (! empty($conf->commande->enabled)) 	    $langs->load("orders");
 if (! empty($conf->propal->enabled))   	    $langs->load("propal");
@@ -97,6 +95,7 @@ $projectid=$id;	// For backward compatibility
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 // Security check
 $socid=$object->socid;
@@ -146,7 +145,7 @@ $morehtmlref.='</div>';
 if (! $user->rights->projet->all->lire)
 {
     $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+    $object->next_prev_filter=" te.rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -185,9 +184,9 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 // Date start - end
 print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-$start = dol_print_date($object->date_start,'dayhour');
+$start = dol_print_date($object->date_start,'day');
 print ($start?$start:'?');
-$end = dol_print_date($object->date_end,'dayhour');
+$end = dol_print_date($object->date_end,'day');
 print ' - ';
 print ($end?$end:'?');
 if ($object->hasDelay()) print img_warning("Late");
@@ -291,7 +290,7 @@ $listofreferent=array(
 	'class'=>'SupplierProposal',
 	'table'=>'supplier_proposal',
 	'datefieldname'=>'date',
-    'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id.'&socid='.$socid,
+	'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id,	// No socid parameter here, the socid is often the customer and we create a supplier object
     'lang'=>'supplier_proposal',
     'buttonnew'=>'AddSupplierProposal',
     'testnew'=>$user->rights->supplier_proposal->creer,
@@ -551,8 +550,6 @@ print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
 
-$var = false;
-
 foreach ($listofreferent as $key => $value)
 {
 	$name=$langs->trans($value['name']);
@@ -607,6 +604,10 @@ foreach ($listofreferent as $key => $value)
 				if ($key == 'invoice')
 				{
 					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				}
+				if ($key == 'propal')
+				{
+					if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
 				}
 
 				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
@@ -697,6 +698,9 @@ foreach ($listofreferent as $key => $value)
 	$urlnew=$value['urlnew'];
 	$buttonnew=$value['buttonnew'];
     $testnew=$value['testnew'];
+	$exclude_select_element = array('payment_various');
+	if (!empty($value['exclude_select_element'])) $exclude_select_element[] = $value['exclude_select_element'];
+
 
 	if ($qualified)
 	{
@@ -717,7 +721,7 @@ foreach ($listofreferent as $key => $value)
 		    if (! empty($conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS)) $idtofilterthirdparty.=','.$conf->global->PROJECT_OTHER_THIRDPARTY_ID_TO_ADD_ELEMENTS;
 		}
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, array('payment_various')))
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename,$exclude_select_element))
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 			if (! $selectList || ($selectList<0))
@@ -744,9 +748,9 @@ foreach ($listofreferent as $key => $value)
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
 		{
 			$addform.='<div class="inline-block valignmiddle">';
-			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
+			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
+				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
             $addform.='<div>';
 		}
@@ -1137,9 +1141,12 @@ foreach ($listofreferent as $key => $value)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else // error
+		else
 		{
-			print $elementarray;
+			if (! is_array($elementarray))	// error
+			{
+				print $elementarray;
+			}
 		}
 		print "</table>";
 		print "<br>\n";

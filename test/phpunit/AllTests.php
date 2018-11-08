@@ -136,6 +136,8 @@ class AllTests
         require_once dirname(__FILE__).'/CommonObjectTest.php';
         $suite->addTestSuite('CommonObjectTest');
 
+        require_once dirname(__FILE__).'/ActionCommTest.php';
+        $suite->addTestSuite('ActionCommTest');
         require_once dirname(__FILE__).'/SocieteTest.php';
         $suite->addTestSuite('SocieteTest');
         require_once dirname(__FILE__).'/ContactTest.php';
@@ -156,6 +158,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/FichinterTest.php';
         $suite->addTestSuite('FichinterTest');
+        require_once dirname(__FILE__).'/TicketTest.php';
+        $suite->addTestSuite('TicketTest');
 
         require_once dirname(__FILE__).'/PropalTest.php';
         $suite->addTestSuite('PropalTest');
@@ -191,6 +195,8 @@ class AllTests
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/ExpenseReportTest.php';
         $suite->addTestSuite('ExpenseReportTest');
+        require_once dirname(__FILE__).'/LoanTest.php';
+        $suite->addTestSuite('LoanTest');
 
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
@@ -199,6 +205,9 @@ class AllTests
 
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
+
+        require_once dirname(__FILE__).'/AccountingAccountTest.php';
+        $suite->addTestSuite('AccountingAccountTest');
 
         require_once dirname(__FILE__).'/RestAPIUserTest.php';
         $suite->addTestSuite('RestAPIUserTest');

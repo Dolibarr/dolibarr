@@ -223,7 +223,6 @@ if ($user->rights->fournisseur->facture->lire)
 
 		if ($num > 0)
 		{
-			$var=True;
 			$total_ht=0;
 			$total_ttc=0;
 			$total_paid=0;

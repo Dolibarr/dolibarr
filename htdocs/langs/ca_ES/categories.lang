@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Etiqueta
 Rubriques=Etiquetes
-RubriquesTransactions=Etiquetes de transaccions
+RubriquesTransactions=Etiquetes d'assentaments
 categories=etiquetes
 NoCategoryYet=No s'ha creat cap etiqueta d'aquest tipus
 In=En
@@ -85,3 +85,4 @@ CategorieRecursivHelp=Si esta activat, el producte s'enllaçara a la categoria p
 AddProductServiceIntoCategory=Afegir el següent producte/servei
 ShowCategory=Mostra etiqueta
 ByDefaultInList=Per defecte en el llistat
+ChooseCategory=Tria la categoria

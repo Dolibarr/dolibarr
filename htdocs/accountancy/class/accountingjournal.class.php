@@ -36,7 +36,7 @@ class AccountingJournal extends CommonObject
 
 	public $code;
 	public $label;
-	public $nature;		// 0:various operations, 1:sale, 2:purchase, 3:bank, 4:expense-report, 9: has-new
+	public $nature;		// 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
 	public $active;
 
 	public $lines;
@@ -59,6 +59,8 @@ class AccountingJournal extends CommonObject
 	 */
 	function fetch($rowid = null, $journal_code = null)
 	{
+		global $conf;
+
 		if ($rowid || $journal_code)
 		{
 			$sql = "SELECT rowid, code, label, nature, active";
@@ -66,8 +68,11 @@ class AccountingJournal extends CommonObject
 			$sql .= " WHERE";
 			if ($rowid) {
 				$sql .= " rowid = " . (int) $rowid;
-			} elseif ($journal_code) {
+			}
+			elseif ($journal_code)
+			{
 				$sql .= " code = '" . $this->db->escape($journal_code) . "'";
+				$sql .= " AND entity  = " . $conf->entity;
 			}
 
 			dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
@@ -251,7 +256,7 @@ class AccountingJournal extends CommonObject
 	{
 		global $langs;
 
-		$langs->load("accountancy");
+		$langs->loadLangs(array("accountancy"));
 
 		if ($mode == 0)
 		{

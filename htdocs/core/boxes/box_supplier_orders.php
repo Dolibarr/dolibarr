@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -83,7 +82,7 @@ class box_supplier_orders extends ModeleBoxes
             $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " s.code_client, s.code_fournisseur,";
             $sql.= " s.logo,";
-            $sql.= " c.ref, c.tms, c.rowid, c.date_commande,";
+            $sql.= " c.rowid, c.ref, c.tms, c.date_commande,";
             $sql.= " c.total_ht,";
             $sql.= " c.tva as total_tva,";
             $sql.= " c.total_ttc,";
@@ -110,7 +109,7 @@ class box_supplier_orders extends ModeleBoxes
                     $date=$db->jdate($objp->date_commande);
 					$datem=$db->jdate($objp->tms);
 
-					$supplierorderstatic->id = $objp->id;
+					$supplierorderstatic->id = $objp->rowid;
 					$supplierorderstatic->ref = $objp->ref;
 
 					$thirdpartytmp->id = $objp->socid;

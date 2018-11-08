@@ -27,6 +27,7 @@ if (empty($conf) || ! is_object($conf))
 	print "Error, template page can't be called as URL";
 	exit;
 }
+if (! is_object($form)) $form=new Form($db);
 
 ?>
 <!-- BEGIN PHP TEMPLATE commonfields_edit.tpl.php -->
@@ -45,8 +46,10 @@ foreach($object->fields as $key => $val)
 	print ' class="titlefieldcreate';
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
-	print '"';
-	print '>'.$langs->trans($val['label']).'</td>';
+	print '">';
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+	else print $langs->trans($val['label']);
+	print '</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key)?GETPOST($key, 'int'):$object->$key;
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key,'none'):$object->$key;

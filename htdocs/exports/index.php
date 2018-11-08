@@ -24,17 +24,14 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
+// Load translation files required by the page
 $langs->load("exports");
-
 
 // Security check
 $result=restrictedArea($user,'export');
 
-
-
 $export=new Export($db);
 $export->load_arrays($user);
-
 
 /*
  * View
@@ -63,7 +60,6 @@ print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ExportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
-$var=true;
 if (count($export->array_export_code))
 {
 	foreach ($export->array_export_code as $key => $value)
@@ -97,11 +93,11 @@ if (count($export->array_export_code))
 {
 	if ($user->rights->export->creer)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'</a>';
+		print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'</a>';
+		print '<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	/*
 	 print '<form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
@@ -115,8 +111,7 @@ print '<br>';
 //print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
-// List of available export format
-$var=true;
+// List of available export formats
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
@@ -128,14 +123,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model=new ModeleExports($db);
 $liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 
-$var=true;
 foreach($liste as $key => $val)
 {
     if (preg_match('/__\(Disabled\)__/',$liste[$key]))
     {
     	$liste[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$liste[$key]);
     }
-
 
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';

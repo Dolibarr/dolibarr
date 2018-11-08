@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2011-2014 Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2011-2018 Alexandre Spangaro <aspangaro@zendsi.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,18 +22,18 @@ create table llx_payment_salary
   tms             timestamp,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
-  datep           date,                       -- date de paiement
-  datev           date,                       -- date de valeur (this field should not be here, only into bank tables)
-  salary          double(24,8),			  -- salary of user when payment was done
+  datep           date,                       -- payment date
+  datev           date,                       -- value date (this field should not be here, only into bank tables)
+  salary          double(24,8),               -- salary of user when payment was done
   amount          double(24,8) NOT NULL DEFAULT 0,
   fk_typepayment  integer NOT NULL,
-  num_payment     varchar(50),				  -- ref
+  num_payment     varchar(50),                -- ref
   label           varchar(255),
   datesp          date,                       -- date start period
   dateep          date,                       -- date end period    
-  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
+  entity          integer DEFAULT 1 NOT NULL, -- multi company id
   note            text,
-  fk_bank         integer,  
-  fk_user_author  integer,                    -- utilisateur qui a cree l'info
-  fk_user_modif   integer                     -- utilisateur qui a modifié l'info
+  fk_bank         integer,
+  fk_user_author  integer,                    -- user creating
+  fk_user_modif   integer                     -- user making last change
 )ENGINE=innodb;

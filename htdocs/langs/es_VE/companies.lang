@@ -18,12 +18,11 @@ ProfId3GB=-
 ProfId1HN=-
 ProfId2MX=Registro Patronal IVSS
 ProfId3MX=-
-VATIntra=RIF
-VATIntraShort=RIF
 CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> anticipos disponibles
 VATIntraCheckDesc=El link <b>%s</b> permite consultar al SENIAT el RIF. Se requiere acceso a internet para que el servicio funcione
 VATIntraCheckURL=http://contribuyente.seniat.gob.ve/BuscaRif/BuscaRif.jsp
 VATIntraCheckableOnEUSite=Verificar en la web del SENIAT
 VATIntraManualCheck=Puede también realizar una verificación manual en la página del SENIAT <a href="%s" target="_blank">%s</a>
 ContactOthers=Otra
+ExportDataset_company_2=Contactos de terceros y atributos
 InActivity=Abierta

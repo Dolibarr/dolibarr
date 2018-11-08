@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,16 +17,16 @@
  */
 
 /**
- *      \file       htdocs/loan/class/paymentloan.class.php
- *		\ingroup    facture
- *		\brief      File of class to manage payment of loans
+ *  \file       htdocs/loan/class/paymentloan.class.php
+ *  \ingroup    loan
+ *  \brief      File of class to manage payment of loans
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      PaymentLoan
- *		\brief      Class to manage payments of loans
+/** \class      PaymentLoan
+ *  \brief      Class to manage payments of loans
  */
 class PaymentLoan extends CommonObject
 {
@@ -37,8 +37,8 @@ class PaymentLoan extends CommonObject
 	var $datec='';
 	var $tms='';
 	var $datep='';
-    var $amounts=array();   // Array of amounts
-    var $amount_capital;    // Total amount of payment
+	var $amounts=array();   // Array of amounts
+	var $amount_capital;    // Total amount of payment
 	var $amount_insurance;
 	var $amount_interest;
 	var $fk_typepayment;
@@ -65,8 +65,8 @@ class PaymentLoan extends CommonObject
 
 	/**
 	 *  Create payment of loan into database.
-     *  Use this->amounts to have list of lines for the payment
-     *
+	 *  Use this->amounts to have list of lines for the payment
+	 *
 	 *  @param      User		$user   User making payment
 	 *  @return     int     			<0 if KO, id of payment if OK
 	 */
@@ -76,9 +76,9 @@ class PaymentLoan extends CommonObject
 
 		$error=0;
 
-        $now=dol_now();
+		$now=dol_now();
 
-        // Validate parameters
+		// Validate parameters
 		if (! $this->datepaid)
 		{
 			$this->error='ErrorBadValueForParameter';
@@ -98,11 +98,11 @@ class PaymentLoan extends CommonObject
 		if (isset($this->fk_user_creat))	$this->fk_user_creat = trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif = trim($this->fk_user_modif);
 
-        $totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
-        $totalamount = price2num($totalamount);
+		$totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
+		$totalamount = price2num($totalamount);
 
-        // Check parameters
-        if ($totalamount == 0) return -1; // Negative amounts are accepted for reject prelevement but not null
+		// Check parameters
+		if ($totalamount == 0) return -1; // Negative amounts are accepted for reject prelevement but not null
 
 
 		$this->db->begin();
@@ -127,7 +127,7 @@ class PaymentLoan extends CommonObject
 			}
 			else
 			{
-                $this->error=$this->db->lasterror();
+				$this->error=$this->db->lasterror();
 				$error++;
 			}
 
@@ -135,9 +135,9 @@ class PaymentLoan extends CommonObject
 
 		if ($totalamount != 0 && ! $error)
 		{
-		    $this->amount_capital=$totalamount;
-            $this->total=$totalamount;    // deprecated
-		    $this->db->commit();
+			$this->amount_capital=$totalamount;
+			$this->total=$totalamount;    // deprecated
+			$this->db->commit();
 			return $this->id;
 		}
 		else
@@ -168,15 +168,15 @@ class PaymentLoan extends CommonObject
 		$sql.= " t.amount_interest,";
 		$sql.= " t.fk_typepayment,";
 		$sql.= " t.num_payment,";
-        $sql.= " t.note_private,";
-        $sql.= " t.note_public,";
+		$sql.= " t.note_private,";
+		$sql.= " t.note_public,";
 		$sql.= " t.fk_bank,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id AND pt.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id;
 
@@ -327,15 +327,15 @@ class PaymentLoan extends CommonObject
 
 		$this->db->begin();
 
-	    if (! $error)
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_loan' AND url_id=".$this->id;
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
+			$sql.= " WHERE type='payment_loan' AND url_id=".$this->id;
 
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-            $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-        }
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		}
 
 		if (! $error)
 		{
@@ -381,95 +381,95 @@ class PaymentLoan extends CommonObject
 		}
 	}
 
-    /**
-     *      Add record into bank for payment with links between this bank record and invoices of payment.
-     *      All payment properties must have been set first like after a call to create().
-     *
-     *      @param	User	$user               Object of user making payment
-     *      @param  int		$fk_loan            Id of fk_loan to do link with this payment
-     *      @param  string	$mode               'payment_loan'
-     *      @param  string	$label              Label to use in bank record
-     *      @param  int		$accountid          Id of bank account to do link with
-     *      @param  string	$emetteur_nom       Name of transmitter
-     *      @param  string	$emetteur_banque    Name of bank
-     *      @return int                 		<0 if KO, >0 if OK
-     */
-    function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
-    {
-        global $conf;
+	/**
+	 *      Add record into bank for payment with links between this bank record and invoices of payment.
+	 *      All payment properties must have been set first like after a call to create().
+	 *
+	 *      @param	User	$user               Object of user making payment
+	 *      @param  int		$fk_loan            Id of fk_loan to do link with this payment
+	 *      @param  string	$mode               'payment_loan'
+	 *      @param  string	$label              Label to use in bank record
+	 *      @param  int		$accountid          Id of bank account to do link with
+	 *      @param  string	$emetteur_nom       Name of transmitter
+	 *      @param  string	$emetteur_banque    Name of bank
+	 *      @return int                 		<0 if KO, >0 if OK
+	 */
+	function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+	{
+		global $conf;
 
-        $error=0;
+		$error=0;
 
-        if (! empty($conf->banque->enabled))
-        {
-            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		if (! empty($conf->banque->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-            $acc = new Account($this->db);
-            $acc->fetch($accountid);
+			$acc = new Account($this->db);
+			$acc->fetch($accountid);
 
-            $total=$this->total;
-            if ($mode == 'payment_loan') $total=-$total;
+			$total=$this->total;
+			if ($mode == 'payment_loan') $total=-$total;
 
-            // Insert payment into llx_bank
-            $bank_line_id = $acc->addline(
-                $this->datepaid,
-                $this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
-                $label,
-                $total,
-                $this->num_payment,
-                '',
-                $user,
-                $emetteur_nom,
-                $emetteur_banque
-            );
+			// Insert payment into llx_bank
+			$bank_line_id = $acc->addline(
+				$this->datepaid,
+				$this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
+				$label,
+				$total,
+				$this->num_payment,
+				'',
+				$user,
+				$emetteur_nom,
+				$emetteur_banque
+			);
 
-            // Update fk_bank into llx_paiement.
-            // We know the payment who generated the account write
-            if ($bank_line_id > 0)
-            {
-                $result=$this->update_fk_bank($bank_line_id);
-                if ($result <= 0)
-                {
-                    $error++;
-                    dol_print_error($this->db);
-                }
+			// Update fk_bank into llx_paiement.
+			// We know the payment who generated the account write
+			if ($bank_line_id > 0)
+			{
+				$result=$this->update_fk_bank($bank_line_id);
+				if ($result <= 0)
+				{
+					$error++;
+					dol_print_error($this->db);
+				}
 
-                // Add link 'payment_loan' in bank_url between payment and bank transaction
-                $url='';
-                if ($mode == 'payment_loan') $url=DOL_URL_ROOT.'/loan/payment/card.php?id=';
-                if ($url)
-                {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(payment)', $mode);
-                    if ($result <= 0)
-                    {
-                        $error++;
-                        dol_print_error($this->db);
-                    }
-                }
+				// Add link 'payment_loan' in bank_url between payment and bank transaction
+				$url='';
+				if ($mode == 'payment_loan') $url=DOL_URL_ROOT.'/loan/payment/card.php?id=';
+				if ($url)
+				{
+					$result=$acc->add_url_line($bank_line_id, $this->id, $url, '(payment)', $mode);
+					if ($result <= 0)
+					{
+						$error++;
+						dol_print_error($this->db);
+					}
+				}
 
-                // Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                if ($mode == 'payment_loan')
-                {
-                    $result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
-                    if ($result <= 0) dol_print_error($this->db);
-                }
-            }
-            else
-            {
-                $this->error=$acc->error;
-                $error++;
-            }
-        }
+				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+				if ($mode == 'payment_loan')
+				{
+					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
+					if ($result <= 0) dol_print_error($this->db);
+				}
+			}
+			else
+			{
+				$this->error=$acc->error;
+				$error++;
+			}
+		}
 
-        if (! $error)
-        {
-            return 1;
-        }
-        else
-        {
-            return -1;
-        }
-    }
+		if (! $error)
+		{
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 
 	/**
@@ -512,7 +512,7 @@ class PaymentLoan extends CommonObject
 
 		if (!empty($this->id))
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment/card.php?id='.$this->id.'">';
+			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 
 			if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment").': '.$this->ref,'payment').$linkend.' ');

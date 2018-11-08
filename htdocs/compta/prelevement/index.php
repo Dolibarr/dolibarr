@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("withdrawals");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -71,7 +70,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $thirdpartystatic=new Societe($db);
 $invoicestatic=new Facture($db);
 $bprev = new BonPrelevement($db);
-$var=true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
@@ -117,7 +115,6 @@ if ($resql)
     print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
     if ($num)
     {
-        $var = True;
         while ($i < $num && $i < 20)
         {
             $obj = $db->fetch_object($resql);
@@ -184,7 +181,6 @@ if ($result)
 {
     $num = $db->num_rows($result);
     $i = 0;
-    $var=True;
 
     print"\n<!-- debut table -->\n";
     print '<table class="noborder" width="100%">';

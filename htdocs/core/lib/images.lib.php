@@ -37,7 +37,7 @@ $quality = 80;
  */
 function image_format_supported($file)
 {
-    $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm';   // See also into product.class.php
+    $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg';   // See also into product.class.php
 
     // Case filename is not a format image
     if (! preg_match('/('.$regeximgext.')$/i',$file,$reg)) return -1;

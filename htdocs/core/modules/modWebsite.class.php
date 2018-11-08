@@ -54,8 +54,6 @@ class modWebsite extends DolibarrModules
         $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 0;
         // Name of image file used for this module.
         $this->picto='globe';
 
@@ -80,7 +78,7 @@ class modWebsite extends DolibarrModules
 
         // New pages on tabs
         // -----------------
-       	//$this->tabs[] = array('data'=>'thirdparty:+website:WebSites:website:($conf->societe->enabled && $user->rights->societe->lire):/societe/website.php?mainmenu=home&id=__ID__');  					// To add a new tab identified by code tabname1
+       	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
         // Boxes
         //------

@@ -42,8 +42,8 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(900);	// Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action','aZ09');
-$setuplang=(GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):'auto');
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$argv[1]);
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -86,7 +86,7 @@ if (! is_writable($conffile))
 
 if ($action == "set")
 {
-    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
     print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
     $error=0;
@@ -201,8 +201,10 @@ if ($action == "set")
                 {
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }
-                else if ($conf->db->type == 'mssql')
+                else
                 {
+                    // Keyword ENGINE is MySQL-specific, so scrub it for
+                    // other database types (mssql, pgsql)
                     $buffer=preg_replace('/type=innodb/i','',$buffer);
                     $buffer=preg_replace('/ENGINE=innodb/i','',$buffer);
                 }
@@ -620,8 +622,17 @@ else
     print 'Parameter action=set not defined';
 }
 
+
+$ret=0;
+if (!$ok && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step2: end");
 
 pFooter($ok?0:1,$setuplang);
 
 if (isset($db) && is_object($db)) $db->close();
+
+// Return code if ran from command line
+if ($ret) exit($ret);
+

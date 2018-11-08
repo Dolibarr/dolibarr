@@ -54,7 +54,6 @@ class modDeplacement extends DolibarrModules
 		$this->version = 'dolibarr_deprecated';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = "trip";
 
 		// Data directories to create when module is enabled
@@ -108,12 +107,12 @@ class modDeplacement extends DolibarrModules
 		$this->rights[5][3] = 0;
 		$this->rights[5][4] = 'export';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		$r=0;
 
@@ -134,12 +133,12 @@ class modDeplacement extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('deplacement').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.(empty($user)?0:$user->id).' OR d.fk_soc IS NULL)';
-		
+
 		if (! empty($user))   // Not defined during migration process
 		{
     		$childids = $user->getAllChildIds();
     		$childids[]=$user->id;
-    		
+
     		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
 		}
 	}

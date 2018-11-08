@@ -77,15 +77,17 @@ class Subscription extends CommonObject
 			$this->error=$langs->trans("ErrorBadValueForDate");
 			return -1;
 		}
+		if (empty($this->datec)) $this->datec = $now;
+
 
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, datec, dateadh, datef, subscription, note)";
-        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($now)."',";
+        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($this->datec)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",";
-		$sql.= " '".$this->db->escape($this->note)."')";
+		$sql.= " '".$this->db->escape($this->note_public?$this->note_public:$this->note)."')";
 
 		$resql = $this->db->query($sql);
 		if (! $resql) {
@@ -324,6 +326,8 @@ class Subscription extends CommonObject
 		global $langs;
 
 		$result='';
+
+		$langs->load("members");
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
         $linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';

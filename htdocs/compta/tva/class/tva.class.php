@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Tva extends CommonObject
 {
-	//public $element='tva';			//!< Id that identify managed objects
-	//public $table_element='tva';	//!< Name of table without prefix where object is stored
+	public $element='tva';			//!< Id that identify managed objects
+	public $table_element='tva';	//!< Name of table without prefix where object is stored
 	public $picto='payment';
 
 	var $tms;
@@ -48,8 +48,6 @@ class Tva extends CommonObject
 	var $fk_user_creat;
 	var $fk_user_modif;
 
-
-
     /**
 	 *	Constructor
 	 *
@@ -58,9 +56,6 @@ class Tva extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        $this->element = 'tva';
-        $this->table_element = 'tva';
-        return 1;
     }
 
 
@@ -150,7 +145,7 @@ class Tva extends CommonObject
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -653,9 +648,10 @@ class Tva extends CommonObject
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			link option
      *  @param	int  	$notooltip		1=Disable tooltip
+     *  @param	string	$morecss			More CSS
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0)
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
 	{
 		global $langs, $conf;
 
@@ -669,6 +665,9 @@ class Tva extends CommonObject
         $linkclose='';
         if (empty($notooltip))
         {
+
+
+
         	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
         		$label=$langs->trans("ShowMyObject");

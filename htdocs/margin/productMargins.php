@@ -28,15 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+$TSelectedCats=GETPOST('categories', 'array');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -121,6 +120,16 @@ else {
 
 }
 
+// Categories
+$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+
+print '<tr>';
+print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="maxwidthonsmartphone" colspan="4">';
+print $form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'minwidth500');
+print '</td>';
+print '</tr>';
+
 // Start date
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
@@ -177,12 +186,18 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = d.fk_product";
+if (! empty($TSelectedCats)) {
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=p.rowid';
+}
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= ' AND f.entity IN ('.getEntity('facture').')';
 $sql.= " AND f.fk_statut > 0";
 $sql.= " AND d.fk_facture = f.rowid";
 if ($id > 0)
 	$sql.= " AND d.fk_product =".$id;
+if (! empty($TSelectedCats)) {
+	$sql .= ' AND cp.fk_categorie IN ('.implode(',', $TSelectedCats) . ')';
+}
 if (!empty($startdate))
   $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
 if (!empty($enddate))
@@ -241,8 +256,6 @@ if ($result)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num /*&& $i < $conf->liste_limit*/)
 		{
 			$objp = $db->fetch_object($result);
@@ -260,8 +273,6 @@ if ($result)
 				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
-
-
 
 			print '<tr class="oddeven">';
 			if ($id > 0) {

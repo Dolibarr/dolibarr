@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +56,10 @@ class Fichinter extends CommonObject
 	var $datet;
 	var $datem;
 	var $duration;
-	var $statut;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
+	var $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 	var $description;
-	var $fk_contrat;
+	var $fk_contrat = 0;
+	var $fk_project = 0;
 	var $extraparams=array();
 
 	var $lines = array();
@@ -87,24 +89,8 @@ class Fichinter extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		$this->products = array();
-		$this->fk_project = 0;
-		$this->fk_contrat = 0;
-		$this->statut = 0;
 
-		// List of language codes for status
-		$this->statuts[0]='Draft';
-		$this->statuts[1]='Validated';
-		$this->statuts[2]='StatusInterInvoiced';
-		$this->statuts[3]='Done';
-		$this->statuts_short[0]='Draft';
-		$this->statuts_short[1]='Validated';
-		$this->statuts_short[2]='StatusInterInvoiced';
-		$this->statuts_short[3]='Done';
-		$this->statuts_logo[0]='statut0';
-		$this->statuts_logo[1]='statut1';
-		$this->statuts_logo[2]='statut6';
-		$this->statuts_logo[3]='statut6';
+		$this->products = array();
 	}
 
 	/**
@@ -128,7 +114,7 @@ class Fichinter extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." fi.entity IN (".getEntity($this->element).")";
+		$sql.= " ".$clause." fi.entity IN (".getEntity('intervention').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -236,7 +222,7 @@ class Fichinter extends CommonObject
 				if (! $resql) $error++;
 			}
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -253,7 +239,7 @@ class Fichinter extends CommonObject
 			}
 
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_CREATE',$user);
@@ -292,12 +278,15 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
+		global $conf;
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
 	 	}
 	 	if (! dol_strlen($this->fk_project)) {
 	 		$this->fk_project = 0;
 	 	}
+
+	 	$error = 0;
 
 		$this->db->begin();
 
@@ -313,8 +302,16 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_MODIFY',$user);
@@ -348,7 +345,10 @@ class Fichinter extends CommonObject
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
+		if ($ref) {
+			$sql.= " WHERE f.entity IN (".getEntity('intervention').")";
+			$sql.= " AND f.ref='".$this->db->escape($ref)."'";
+		}
 		else $sql.= " WHERE f.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -366,8 +366,8 @@ class Fichinter extends CommonObject
 				$this->statut       = $obj->fk_statut;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
-				$this->datee        = $this->db->jdate($obj->dateo);
-				$this->dateo        = $this->db->jdate($obj->datee);
+				$this->dateo        = $this->db->jdate($obj->dateo);
+				$this->datee        = $this->db->jdate($obj->datee);
 				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
@@ -383,14 +383,12 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				// Retreive extrafields
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
-				*/
+				 */
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -588,9 +586,10 @@ class Fichinter extends CommonObject
 	 *  @param      int                     $hidedetails    Hide details of lines
 	 *  @param      int                     $hidedesc       Hide description
 	 *  @param      int                     $hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int                                     0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -609,7 +608,7 @@ class Fichinter extends CommonObject
 
 		$modelpath = "core/modules/fichinter/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
 	}
 
 	/**
@@ -632,22 +631,40 @@ class Fichinter extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-		global $langs;
+		// Init/load array of translation of status
+		if (empty($this->statuts) || empty($this->statuts_short))
+		{
+			global $langs;
+			$langs->load("fichinter");
+
+			$this->statuts[0]=$langs->trans('Draft');
+			$this->statuts[1]=$langs->trans('Validated');
+			$this->statuts[2]=$langs->trans('StatusInterInvoiced');
+			$this->statuts[3]=$langs->trans('Done');
+			$this->statuts_short[0]=$langs->trans('Draft');
+			$this->statuts_short[1]=$langs->trans('Validated');
+			$this->statuts_short[2]=$langs->trans('StatusInterInvoiced');
+			$this->statuts_short[3]=$langs->trans('Done');
+			$this->statuts_logo[0]='statut0';
+			$this->statuts_logo[1]='statut1';
+			$this->statuts_logo[2]='statut6';
+			$this->statuts_logo[3]='statut6';
+		}
 
 		if ($mode == 0)
-			return $langs->trans($this->statuts[$statut]);
+			return $this->statuts[$statut];
 		if ($mode == 1)
-			return $langs->trans($this->statuts_short[$statut]);
+			return $this->statuts_short[$statut];
 		if ($mode == 2)
-			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]).' '.$langs->trans($this->statuts_short[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts_short[$statut];
 		if ($mode == 3)
-			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]);
 		if ($mode == 4)
-			return img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]).' '.$langs->trans($this->statuts[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts[$statut];
 		if ($mode == 5)
-			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+			return '<span class="hideonsmartphone">'.$this->statuts_short[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
 		if ($mode == 6)
-			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+			return '<span class="hideonsmartphone">'.$this->statuts[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
 
 		return '';
 	}
@@ -663,7 +680,7 @@ class Fichinter extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $save_lastsearch_value=-1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result='';
 
@@ -691,6 +708,13 @@ class Fichinter extends CommonObject
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.=' class="classfortooltip"';
+
+			/*
+			$hookmanager->initHooks(array('fichinterdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			*/
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -701,6 +725,13 @@ class Fichinter extends CommonObject
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= $this->ref;
 		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array('intervnetiondao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}
@@ -783,7 +814,6 @@ class Fichinter extends CommonObject
 		$sql.= " f.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql.= " WHERE f.rowid = ".$id;
-		$sql.= " AND f.entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -887,7 +917,6 @@ class Fichinter extends CommonObject
 			// Delete object
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("Fichinter::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -951,7 +980,6 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql.= " SET datei = '".$this->db->idate($date_delivery)."'";
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND fk_statut = 0";
 
 			if ($this->db->query($sql))
@@ -985,7 +1013,6 @@ class Fichinter extends CommonObject
 			$sql.= " SET description = '".$this->db->escape($description)."',";
 			$sql.= " fk_user_modif = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 
 			if ($this->db->query($sql))
 			{
@@ -1018,7 +1045,6 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql.= " SET fk_contrat = '".$contractid."'";
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 
 			if ($this->db->query($sql))
 			{
@@ -1107,11 +1133,6 @@ class Fichinter extends CommonObject
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-			// Call trigger
-			$result=$this->call_trigger('INTERVENTION_CLONE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1223,6 +1244,8 @@ class Fichinter extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		$this->lines = array();
+
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;
@@ -1395,11 +1418,11 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->rowid=$this->id;
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->rowid;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -1461,7 +1484,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql.= ",date='".$this->db->idate($this->datei)."'";
 		$sql.= ",duree=".$this->duration;
 		$sql.= ",rang='".$this->db->escape($this->rang)."'";
-		$sql.= " WHERE rowid = ".$this->rowid;
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("FichinterLigne::update", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1470,7 +1493,6 @@ class FichinterLigne extends CommonObjectLine
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->rowid;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -1539,7 +1561,6 @@ class FichinterLigne extends CommonObjectLine
 			$sql.= " , dateo = ".(! empty($obj->dateo)?"'".$this->db->idate($obj->dateo)."'":"null");
 			$sql.= " , datee = ".(! empty($obj->datee)?"'".$this->db->idate($obj->datee)."'":"null");
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
-			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -1578,10 +1599,10 @@ class FichinterLigne extends CommonObjectLine
 
 		if ($this->statut == 0)
 		{
-			dol_syslog(get_class($this)."::deleteline lineid=".$this->rowid);
+			dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
 			$this->db->begin();
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->id;
 			$resql = $this->db->query($sql);
 
 			if ($resql)

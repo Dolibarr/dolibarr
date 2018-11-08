@@ -25,7 +25,7 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysql, php-adodb, php-nusoap, dejavu-sans-fonts
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-adodb, php-nusoap, dejavu-sans-fonts
 Requires: mysql-server, mysql
 #BuildRequires: desktop-file-utils
 
@@ -160,6 +160,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/adherents
 %_datadir/dolibarr/htdocs/admin
 %_datadir/dolibarr/htdocs/api
+%_datadir/dolibarr/htdocs/asset
 %_datadir/dolibarr/htdocs/asterisk
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/blockedlog
@@ -176,6 +177,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
 %_datadir/dolibarr/htdocs/custom
+%_datadir/dolibarr/htdocs/dav
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition
@@ -210,6 +212,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
+%_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices

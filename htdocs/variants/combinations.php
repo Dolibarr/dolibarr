@@ -71,7 +71,7 @@ if ($cancel) {
     unset($_SESSION['addvariant_'.$object->id]);
 }
 
-if (! $object->isProduct()) {
+if (! $object->isProduct() && ! $object->isService()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
 }
@@ -327,11 +327,31 @@ if (! empty($id) || ! empty($ref))
 
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
+			print dol_fiche_head();
+			$features = $_SESSION['addvariant_'.$object->id];
+			//First, sanitize
+			print '<div id="parttoaddvariant">';
+			if (! empty($features)) {
+				foreach ($features as $feature) {
+
+					$explode = explode(':', $feature);
+
+					if ($prodattr->fetch($explode[0]) < 0) {
+						continue;
+					}
+
+					if ($prodattr_val->fetch($explode[1]) < 0) {
+						continue;
+					}
+
+					print '<i>' . $prodattr->label . '</i>:'. $prodattr_val->value . ' ';
+				}
+			}
+			print '</div>';
+			print dol_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
-
-		print '<div id="parttoaddvariant"></div>';
 		print_fiche_titre($title);
 
 		if ($action == 'add') {
@@ -347,11 +367,11 @@ if (! empty($id) || ! empty($ref))
 				$prodattr_alljson[$each->id] = $each;
 			}
 
-		?>
+			?>
 
 		<script type="text/javascript">
 
-			variants_available = <?php echo json_encode($prodattr_alljson) ?>;
+			variants_available = <?php echo json_encode($prodattr_alljson); ?>;
 			variants_selected = {
 				index: [],
 				info: []
@@ -397,7 +417,7 @@ if (! empty($id) || ! empty($ref))
 
 					select.empty().append('<option value="">Loading...</option>');
 
-					jQuery.getJSON("<?php echo dol_buildpath('/variants/ajax/get_attribute_values.php', 2) ?>", {
+					jQuery.getJSON("ajax/get_attribute_values.php", {
 						id: jQuery(this).val()
 					}, function(data) {
 						if (data.error) {
@@ -425,8 +445,11 @@ if (! empty($id) || ! empty($ref))
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
-		print '<input type="hidden" name="action" value="create">'."\n";
-
+		print '<input type="hidden" name="action" value="' .  (($valueid > 0) ? "update" : "create") .'">'."\n";
+                if($valueid > 0) {
+                    print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
+                }
+                    
 		print dol_fiche_head();
 
 		?>
@@ -485,7 +508,7 @@ if (! empty($id) || ! empty($ref))
 		<?php
 		}
 
-		if (is_array($selectedvariant)) {
+		if (is_array($productCombination2ValuePairs1)) {
 		?>
 		<hr>
 		<table class="border" style="width: 100%">
@@ -494,18 +517,17 @@ if (! empty($id) || ! empty($ref))
 				<td class="tdtop">
 					<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-					if (is_array($selectedvariant))
+					if (is_array($productCombination2ValuePairs1))
 					{
-    					foreach ($selectedvariant as $key => $val) {
-    				        $tmp = explode(':',$val);
-    				        $result1 = $prodattr->fetch($tmp[0]);
-    				        $result2 = $prodattr_val->fetch($tmp[1]);
-    				        if ($result1 > 0 && $result2 > 0)
-    				        {
-    					       print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
-    					       // TODO Add delete link
-    				        }
-    					}
+                                            foreach ($productCombination2ValuePairs1 as $key => $val) {
+                                            $result1 = $prodattr->fetch($val->fk_prod_attr);
+                                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+                                                if ($result1 > 0 && $result2 > 0)
+                                                {
+                                                       print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
+                                                       // TODO Add delete link
+                                                }
+                                            }
 					}
 					?>
 					</div>
@@ -521,19 +543,20 @@ if (! empty($id) || ! empty($ref))
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
 			</tr>
-			<tr>
-				<td><label for="weight_impact"><?php echo $langs->trans('WeightImpact') ?></label></td>
-				<td><input type="text" id="weight_impact" name="weight_impact" value="<?php echo price($weight_impact) ?>"></td>
-			</tr>
-		</table>
-		<?php
+<?php   	if ($object->isProduct()) {
+				print '<tr>';
+				print '<td><label for="weight_impact">'.$langs->trans('WeightImpact').'</label></td>';
+				print '<td><input type="text" id="weight_impact" name="weight_impact" value="'.price($weight_impact).'"></td>';
+				print '</tr>';
+			}
+			print '</table>';
 		}
 
 		print dol_fiche_end();
         ?>
 
 		<div style="text-align: center">
-		<input type="submit" name="create" <?php if (! is_array($selectedvariant)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
+		<input type="submit" name="create" <?php if (! is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
 		&nbsp;
 		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
 		</div>
@@ -676,7 +699,7 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
 				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
-				<td class="liste_titre right"><?php echo $langs->trans('WeightImpact') ?></td>
+                <?php if ($object->isProduct()) print'<td class="liste_titre right">'.$langs->trans('WeightImpact').'</td>'; ?>
 				<td class="liste_titre center"><?php echo $langs->trans('OnSell') ?></td>
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
@@ -712,7 +735,7 @@ if (! empty($id) || ! empty($ref))
     					} ?>
     				</td>
     				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
-    				<td class="right"><?php echo ($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight') ?></td>
+                    <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight').'</td>'; ?>
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
     				<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
     				<td class="right">
@@ -745,7 +768,11 @@ if (! empty($id) || ! empty($ref))
 
 		print '</form>';
 	}
+} else {
+	llxHeader();
+	// not found
 }
+
 
 llxFooter();
 

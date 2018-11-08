@@ -240,6 +240,10 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 -- Regions India (id country=117)
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  117, 11701, '', 0, 'India', 1);
 
+-- Regions Indonesia (id country=118)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  118, 11801, '', 0, 'Indonesia', 1);
+
+
 -- Regions Maroc - Moroco (id country=12)
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 12, 1201, '', 0, 'Tanger-Tétouan', 1);
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 12, 1202, '', 0, 'Gharb-Chrarda-Beni Hssen', 1);

@@ -359,24 +359,6 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 
 
 /**
- * Make content of an input box selected when we click into input field.
- *
- * @param string	$htmlname	Id of html object
- * @param string	$addlink	Add a 'link to' after
- */
-function ajax_autoselect($htmlname, $addlink='')
-{
-	global $langs;
-	$out = '<script type="text/javascript">
-               jQuery(document).ready(function () {
-				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
-				});
-		    </script>';
-	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
-	return $out;
-}
-
-/**
  * Convert a html select field into an ajax combobox.
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
@@ -425,7 +407,8 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 					},
 					escapeMarkup: function(markup) {
 						return markup;
-					}
+					},
+					dropdownCssClass: \'ui-dialog\'
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";
@@ -563,7 +546,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- *  @return void
+ *  @return string              html for button on/off
  */
 function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
 {

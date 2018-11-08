@@ -160,7 +160,7 @@ class ExpenseReports extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int                     ID of Expense Report
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -228,7 +228,7 @@ class ExpenseReports extends DolibarrApi
      * @return int
      */
 /*
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
 		  }
@@ -290,7 +290,7 @@ class ExpenseReports extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
 		  }
@@ -380,7 +380,7 @@ class ExpenseReports extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = NULL) {
+    function put($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
 		  }

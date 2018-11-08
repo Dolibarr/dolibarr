@@ -182,7 +182,7 @@ class SupplierInvoices extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of supplier invoice
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
 			throw new RestException(401, "Insuffisant rights");
@@ -218,7 +218,7 @@ class SupplierInvoices extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
 			throw new RestException(401);

@@ -28,9 +28,8 @@ require ("../main.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
-$langs->load("products");
-$langs->load("companies");
-$langs->load("contracts");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield=GETPOST('sortfield','alpha');
 $sortorder=GETPOST('sortorder','alpha');

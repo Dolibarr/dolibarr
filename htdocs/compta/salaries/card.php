@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Charlie BENKE        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/compta/salaries/card.php
- *	\ingroup    salaries
- *	\brief      Page of salaries payments
+ *  \file       htdocs/compta/salaries/card.php
+ *  \ingroup    salaries
+ *  \brief      Page of salaries payments
  */
 
 require '../../main.inc.php';
@@ -30,13 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 
-
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("users");
-$langs->load("salaries");
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action','aZ09');
@@ -44,7 +39,7 @@ $action=GETPOST('action','aZ09');
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', '', '', 'payment');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new PaymentSalary($db);
 
@@ -73,7 +68,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
 
-	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement');
+	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
 
 	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;

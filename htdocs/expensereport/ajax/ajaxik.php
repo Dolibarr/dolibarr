@@ -34,8 +34,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-$langs->load('errors');
-$langs->load('trips');
+// Load translation files required by the page
+$langs->loadlangs(array('errors', 'trips'));
 
 /*
  * View

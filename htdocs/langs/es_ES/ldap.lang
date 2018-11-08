@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Contraseña del dominio
 YouMustChangePassNextLogon=La contraseña de <b>%s</b> en el dominio <b>%s</b> debe de ser modificada.
 UserMustChangePassNextLogon=El usuario debe cambiar de contraseña en la próxima conexión
 LDAPInformationsForThisContact=Información de la base de datos LDAP de este contacto
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Tipo de miembro sincronizado
 ContactSynchronized=Contacto sincronizado
 ForceSynchronize=Forzar sincronización Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Error de la lectura del directorio LDAP. Comprobar la configuración del módulo LDAP y la accesibilidad del anuario.
+PasswordOfUserInLDAP=Password of user in LDAP

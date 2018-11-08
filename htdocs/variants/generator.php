@@ -95,7 +95,7 @@ if ($_POST) {
 		$delete_prev_comb_res = 1;
 
 		if (!$donotremove) {
-			$delete_prev_comb_res = $combination->deleteByFkProductParent($id);
+			$delete_prev_comb_res = $combination->deleteByFkProductParent($user, $id);
 		}
 
 		//Current combinations will be deleted

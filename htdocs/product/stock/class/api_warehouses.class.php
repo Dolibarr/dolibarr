@@ -158,7 +158,7 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of warehouse
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
@@ -183,7 +183,7 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);

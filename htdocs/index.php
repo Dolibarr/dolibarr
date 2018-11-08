@@ -110,10 +110,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $boxstat='';
 
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("contracts");
+// Load translation files required by page
+$langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 if (empty($user->societe_id))
 {
@@ -262,7 +260,7 @@ if (empty($user->societe_id))
 	    );
 	    // Dashboard Link lines
 	    $links=array(
-	        DOL_URL_ROOT.'/user/index.php',
+	        DOL_URL_ROOT.'/user/list.php',
     	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
@@ -272,11 +270,11 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
     	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
     	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial&leftmenu=orders',
-    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy&leftmenu=customers_bills',
+    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=customers_bills',
     	    DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
     	    DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=ficheinter',
     	    DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers',
-	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=accountancy&leftmenu=suppliers_bills',
+	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=billing&leftmenu=suppliers_bills',
 	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
@@ -339,14 +337,14 @@ if (empty($user->societe_id))
 	    }
     }
 
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
 
     $boxstat.='</td></tr>';
     $boxstat.='</table>';
@@ -526,7 +524,7 @@ foreach($valid_dashboardlines as $board)
     }
 }
 //var_dump($totallate, $totaltodo);
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($totallate / $totaltodo * 100, 2);
+if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) && !empty($totaltodo)) $totallate = round($totallate / $totaltodo * 100, 2);
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
@@ -541,7 +539,8 @@ if ($showweather)
     $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
-    $text.='. '.$langs->trans("LateDesc");
+    else $text=$langs->transnoentitiesnoconv("NoItemLate");
+    $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
     //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
     $options='height="64px"';
     $boxwork.=showWeather($totallate,$text,$options);
@@ -583,12 +582,12 @@ if (! empty($valid_dashboardlines))
         $boxwork .="\n";
     }
 
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='</td></tr>';
 }
 else
@@ -616,20 +615,18 @@ print '<div class="fichecenter fichecenterbis">';
 
 $boxlist.='<div class="twocolumns">';
 
-$boxlist.='<div class="fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 $boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
 
-$boxlist.= '<div class="fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist.= '<div class="ficheaddleft">';
+$boxlist.= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlistb'];
 
-$boxlist.= '</div>';
 $boxlist.= '</div>';
 $boxlist.= "\n";
 

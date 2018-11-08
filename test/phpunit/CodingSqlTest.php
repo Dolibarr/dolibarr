@@ -72,7 +72,9 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
      */
     function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -163,10 +165,10 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
                 $result=strpos($filecontent,'"');
                 if ($result)
                 {
-                    $result=! strpos($filecontent,'["');
+                	$result=(! strpos($filecontent,'["') && ! strpos($filecontent,'{"'));
                 }
                 print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
-                $this->assertTrue($result===false, 'Found double quote that is not [" (used for json content) into '.$file.'. Bad.');
+                $this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
 
                 $result=strpos($filecontent,'int(');
                 print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
@@ -200,7 +202,7 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
                     else
                     {
                         // Test for non key files only
-                        $result=(strpos($filecontent,'KEY ') && strpos($filecontent,'PRIMARY KEY ') == 0);
+                        $result=(strpos($filecontent,'KEY ') && strpos($filecontent,'PRIMARY KEY') == 0);
                         print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
                         $this->assertTrue($result===false, 'Found KEY into '.$file.'. Bad.');
 

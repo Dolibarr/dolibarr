@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("bills");
-$langs->load("loan");
+$langs->loadLangs(array("bills","loan"));
 
 $chid=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -244,9 +243,6 @@ if ($action == 'create')
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
-
-	$var=True;
-
 
 	print '<tr class="oddeven">';
 

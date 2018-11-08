@@ -10,6 +10,7 @@ LoanCapital=Капитал
 Insurance=Застраховка
 Interest=Лихва
 Nbterms=Number of terms
+Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=Потвърдете изтриването на този за
 LoanDeleted=Заемът е изтрит успешно
 ConfirmPayLoan=Confirm classify paid this loan
 LoanPaid=Заем Платен
-# Calc
-LoanCalc=Калкулатор Банкови Заеми
-PurchaseFinanceInfo=Покупна и Финансова Информация
-SalePriceOfAsset=Продажна цена на Актив
-PercentageDown=Процетна Вноска
-LengthOfMortgage=Duration of loan
-AnnualInterestRate=Годишна Лихвена Тарифа
-ExplainCalculations=Обясняване на изчисленията
-ShowMeCalculationsAndAmortization=Покажате ми изчисленията и сумата за погашение
-MortgagePaymentInformation=Информация за Плащане на Ипотека
-DownPayment=Вноска
-DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
-InterestRateDesc=<b>Лихвената тарифа</b> = Годишният лихвен процент разделен на 100
-MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
-MonthlyInterestRateDesc=<b>Месечната лихвена тарифа</b> = Годишната лихвена тарифа разделена на 12 (за 12-те месеца в година)
-MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
-MonthlyPaymentDesc=Месечното плащане е базирано на следната формула
-AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
-AmountFinanced=Сума на финансиране
-AmortizationMonthlyPaymentOverYears=Сума за погасяване при Месечно Плащане: <b>%s</b> за %s години
-Totalsforyear=Totals for year
-MonthlyPayment=Месечно Плащане
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s ще върви към ЛИХВАТА
-GoToPrincipal=%s ще върви към ГЛАВНИЦАТА
-YouWillSpend=You will spend %s in year %s
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Лихва
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Конфигурация на модула заем
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+CreateCalcSchedule=Edit financial commitment

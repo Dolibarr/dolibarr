@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Mitglied %s freigegeben
 MemberModifiedInDolibarr=Mitglied %s geändert
 MemberResiliatedInDolibarr=Mitglied %s aufgehoben
 MemberDeletedInDolibarr=Mitglied %s gelöscht
-MemberSubscriptionAddedInDolibarr=Abonnement für Mitglied %s hinzugefügt
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Lieferung %s freigegeben
 ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markiert
 ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markiert
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
 AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> begrenzt die Ausgabe auf dem Benutzer <b>%s</b> nicht als Eigentümer zugewiesene Aktionen.
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> (Eigentümer und andere) zugewiesene Aktionen.
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> begrenzt die Ausgabe auf die dem Projekte <b>PROJECT_ID</b> zugewiesene Ereignissen.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Geburtstage von Kontakten anzeigen
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Besetzt
@@ -109,7 +112,7 @@ ExportCal=Export Kalender
 ExtSites=Importieren von externen Kalendern
 ExtSitesEnableThisTool=Zeige externe Kalender (im globalen Setup definiert) in der Agenda. Betrifft nicht benutzerdefinierte externe Kalender.
 ExtSitesNbOfAgenda=Anzahl der Kalender
-AgendaExtNb=Kalender Anzahl %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL Adresse um .ical Datei zu erreichen
 ExtSiteNoLabel=Keine Beschreibung
 VisibleTimeRange=Sichtbare Stunden Bereich

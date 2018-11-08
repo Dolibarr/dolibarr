@@ -33,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
+// Load translation files required by the page
+$langs->loadLangs(array("compta"));
+
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -141,7 +144,6 @@ if ($object->check_codeclient() != 0)
 print '</td>';
 print '</tr>';
 
-$langs->load('compta');
 print '<tr>';
 print '<td>';
 print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta, $object, $user->rights->societe->creer);

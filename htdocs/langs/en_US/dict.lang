@@ -5,7 +5,8 @@ CountryIT=Italy
 CountryES=Spain
 CountryDE=Germany
 CountryCH=Switzerland
-CountryGB=Great Britain
+# Warning, country code GB is for United Kingdom. UK Does not exists as country code in ISO standard.
+CountryGB=United Kingdom
 CountryUK=United Kingdom
 CountryIE=Ireland
 CountryCN=China
@@ -294,7 +295,7 @@ CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=thousandth
 #### Input reasons #####
-DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_INTE=Internetaaa
 DemandReasonTypeSRC_CAMP_MAIL=Mailing campaign
 DemandReasonTypeSRC_CAMP_EMAIL=EMailing campaign
 DemandReasonTypeSRC_CAMP_PHO=Phone campaign

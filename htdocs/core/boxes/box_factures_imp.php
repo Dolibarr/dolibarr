@@ -82,7 +82,7 @@ class box_factures_imp extends ModeleBoxes
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
+			$sql = "SELECT s.nom as name, s.rowid as socid, s.email,";
             $sql.= " s.code_client,";
             $sql.= " s.logo,";
 			$sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
@@ -130,9 +130,11 @@ class box_factures_imp extends ModeleBoxes
                     $facturestatic->total_ttc = $objp->total_ttc;
 					$facturestatic->statut = $objp->fk_statut;
 					$facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
+
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
                     $societestatic->client = 1;
+                    $societestatic->email = $objp->email;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
 

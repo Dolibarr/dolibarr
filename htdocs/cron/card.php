@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
-
-$langs->load("admin");
-$langs->load("cron");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'cron', 'members'));
 
 if (!$user->rights->cron->create) accessforbidden();
 
@@ -251,7 +250,7 @@ if ($action=='inactive')
 $form = new Form($db);
 $formCron = new FormCron($db);
 
-llxHeader('',$langs->trans("CronAdd"));
+llxHeader('',$langs->trans("CronTask"));
 
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
@@ -557,7 +556,7 @@ else
 
 	dol_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2&restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';
@@ -614,6 +613,22 @@ else
 	print $langs->trans($object->note);
 	print "</td></tr>";
 
+	if (! empty($conf->multicompany->enabled))
+	{
+		print '<tr><td>';
+		print $langs->trans('Entity')."</td><td>";
+		if (! $object->entity)
+		{
+			print $langs->trans("AllEntities");
+		}
+		else
+		{
+			$mc->getInfo($object->entity);
+			print $mc->label;
+		}
+		print "</td></tr>";
+	}
+
 	print '</table>';
     print '</div>';
 
@@ -664,13 +679,14 @@ else
 	print $langs->trans('CronDtNextLaunch');
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
-	//print '<strong>';
 	if (! $object->status) print $langs->trans("Disabled");
 	elseif (!empty($object->datenextrun)) { print img_picto('','object_calendarday').' '.dol_print_date($object->datenextrun,'dayhoursec');}
-	else {print $langs->trans('CronNone');}
-	//print '</strong>';
-	if ($object->maxnbrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("Finished"));
-	if ($object->datenextrun && $object->datenextrun < $now) print img_warning($langs->trans("Late"));
+	else { print $langs->trans('CronNone'); }
+	if ($object->status == Cronjob::STATUS_ENABLED)
+	{
+		if ($object->maxrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("MaxRunReached"));
+		elseif ($object->datenextrun && $object->datenextrun < $now) print img_warning($langs->trans("Late"));
+	}
 	print "</td></tr>";
 
 	print '</table>';
@@ -694,7 +710,9 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('CronLastResult')."</td><td>";
+	if ($object->lastresult) print '<span class="error">';
 	print $object->lastresult;
+	if ($object->lastresult) print '</span>';
 	print "</td></tr>";
 
 	print '<tr><td>';

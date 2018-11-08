@@ -111,7 +111,7 @@ class box_activity extends ModeleBoxes
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
-        		$sql.= " WHERE p.entity = ".$conf->entity;
+        		$sql.= " WHERE p.entity IN (".getEntity('propal').")";
         		$sql.= " AND p.fk_soc = s.rowid";
         		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;

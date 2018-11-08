@@ -18,7 +18,7 @@
 -- ============================================================================
 
 
--- Supprimme orphelins pour permettre montee de la cle
+-- Delete orphans
 -- V4 DELETE llx_commande FROM llx_commande LEFT JOIN llx_societe ON llx_commande.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL; 
 
 ALTER TABLE llx_commande ADD UNIQUE INDEX uk_commande_ref (ref, entity);

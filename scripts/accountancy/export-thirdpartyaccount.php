@@ -201,13 +201,9 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Phone") . '</td>';
 	print '<td align="left">' . $langs->trans("Fax") . '</td></tr>';
 
-	$var = True;
-
-	while ( $obj = $db->fetch_object($resql) ) {
-
-		$var = ! $var;
-
-		print '<tr'. $bc[$var].'>';
+	while ($obj = $db->fetch_object($resql))
+	{
+		print '<tr class="oddeven">';
 		print '<td>';
 		$thirdpartystatic->id = $obj->rowid;
 		$thirdpartystatic->name = $obj->name;

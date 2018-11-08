@@ -107,7 +107,7 @@ class Cpaiement
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
 
-		$sql.= 'id,';
+		$sql.= 'entity,';
 		$sql.= 'code,';
 		$sql.= 'libelle,';
 		$sql.= 'type,';
@@ -118,7 +118,7 @@ class Cpaiement
 
 		$sql .= ') VALUES (';
 
-		$sql .= ' '.(! isset($this->id)?'NULL':$this->id).',';
+		$sql .= ' '.(! isset($this->entity)?getEntity('c_paiement'):$this->entity).',';
 		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(! isset($this->type)?'NULL':$this->type).',';
@@ -186,7 +186,8 @@ class Cpaiement
 		$sql .= " t.module";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
-			$sql .= ' WHERE t.code = ' . '\'' . $ref . '\'';
+			$sql .= ' WHERE t.entity IN ('.getEntity('c_paiement').')';
+			$sql .= ' AND t.code = ' . '\'' . $ref . '\'';
 		} else {
 			$sql .= ' WHERE t.id = ' . $id;
 		}

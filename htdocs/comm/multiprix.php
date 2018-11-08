@@ -27,8 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$langs->load("orders");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'companies'));
 
 $id = GETPOST('id','int');
 $_socid = GETPOST("id",'int');

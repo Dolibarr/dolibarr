@@ -51,8 +51,6 @@ class modModuleBuilder extends DolibarrModules
         $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 1;
         // Name of image file used for this module.
         $this->picto='technic';
 
@@ -96,7 +94,7 @@ class modModuleBuilder extends DolibarrModules
             'langs'=>'modulebuilder',
             'position'=>100,
             'perms'=>'1',
-            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^admintools/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
 

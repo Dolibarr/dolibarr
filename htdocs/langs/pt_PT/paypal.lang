@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=Configuração do módulo do PayPal
-PaypalDesc=Esta oferta módulo de páginas para permitir o pagamento em <a href="http://www.paypal.com" target="_blank">PayPal</a> pelos clientes. Isto pode ser utilizado para um pagamento livre ou para um pagamento por um objecto Dolibarr particular (factura, ordem, ...)
+PaypalSetup=Configurar módulo do PayPal
+PaypalDesc=Este módulo oferece uma página para permitir o pagamento de clientes no <a href="http://www.paypal.com" target="_blank">PayPal</a>. Isto pode ser utilizado para um pagamento livre ou para um pagamento em particular de um objeto Dolibarr (fatura, ordem, ...)
 PaypalOrCBDoPayment=Pagar com Paypal (Cartão de Crédito ou Paypal)
 PaypalDoPayment=Pague com Paypal
 PAYPAL_API_SANDBOX=Modo de teste / sandbox
@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=Apenas Paypal
 ONLINE_PAYMENT_CSS_URL=URL opcional da folha de estilo CSS na página de pagamento online
 ThisIsTransactionId=Esta é id. da transação: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Adicionar o url de pagamento Paypal quando enviar um documento por correio eletrónico
-PredefinedMailContentLink=Pode clicar na hiperligação segura abaixo para efetuar o seu pagamento (Paypal), se este ainda não tiver sido efetuado.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Você está atualmente no modo %s "sandbox"
 NewOnlinePaymentReceived=Novo pagamento online recebido
 NewOnlinePaymentFailed=Novo pagamento em linha tentado, mas falhado
@@ -30,3 +29,6 @@ ErrorCode=Código de Erro
 ErrorSeverityCode=Código de Severidade do Erro
 OnlinePaymentSystem=Sistema de pagamento online
 PaypalLiveEnabled=Paypal ativado (caso contrário, este encontra-se em modo teste)
+PaypalImportPayment=Importar pagamentos do Paypal
+PostActionAfterPayment=Ações posteriores depois dos pagamentos
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

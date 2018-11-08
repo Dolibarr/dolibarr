@@ -59,16 +59,16 @@ class Products extends DolibarrApi
      *
      * @param 	int 	$id     			ID of product
      * @param	int		$includestockdata	Load also information about stock (slower)
-     * @return 	array|mixed data without useless information
+     * @return 	array|mixed 				Data without useless information
 	 *
-     * @throws RestException
      * @throws 401
+     * @throws 403
      * @throws 404
      */
     function get($id, $includestockdata=0)
     {
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
         $result = $this->product->fetch($id);
@@ -178,7 +178,7 @@ class Products extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of product
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
 			throw new RestException(401);
@@ -208,7 +208,7 @@ class Products extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
     	global $conf;
 
@@ -340,7 +340,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.array_merge(array($categories->error), $categories->errors));  
 		}
 
 		return $result;
@@ -374,7 +374,7 @@ class Products extends DolibarrApi
     	}
 
     	if ($result < 0) {
-    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    		throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
     	}
 
     	return array(
@@ -416,7 +416,7 @@ class Products extends DolibarrApi
     	}
 
     	if ($result < 0) {
-    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    		throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
     	}
 
     	throw new RestException(501, 'Feature not yet available');
@@ -451,7 +451,7 @@ class Products extends DolibarrApi
     	}
 
     	if ($result < 0) {
-    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    		throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
     	}
 
     	return array(

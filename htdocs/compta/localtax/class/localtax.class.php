@@ -29,7 +29,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Localtax extends CommonObject
 {
-    var $ltt;
+	public $element='localtax';			//!< Id that identify managed objects
+	public $table_element='localtax';	//!< Name of table without prefix where object is stored
+	public $picto='payment';
+
+	var $ltt;
 	var $tms;
 	var $datep;
 	var $datev;
@@ -132,7 +136,7 @@ class Localtax extends CommonObject
      *	@param		int		$notrigger		0=no, 1=yes (no update trigger)
      *	@return		int						<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update(User $user, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -149,8 +153,8 @@ class Localtax extends CommonObject
 		$this->db->begin();
 
 		// Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
-        $sql.= " localtaxtype=".$this->ltt.",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
+		$sql.= " localtaxtype=".$this->ltt.",";
 		$sql.= " tms='".$this->db->idate($this->tms)."',";
 		$sql.= " datep='".$this->db->idate($this->datep)."',";
 		$sql.= " datev='".$this->db->idate($this->datev)."',";
@@ -160,7 +164,7 @@ class Localtax extends CommonObject
 		$sql.= " fk_bank=".$this->fk_bank.",";
 		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
 		$sql.= " fk_user_modif=".$this->fk_user_modif;
-        $sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -255,12 +259,12 @@ class Localtax extends CommonObject
     }
 
 
- 	/**
- 	 *	Delete object in database
- 	 *
- 	 *	@param		User	$user		User that delete
- 	 *	@return		int					<0 if KO, >0 if OK
- 	 */
+	/**
+	 *	Delete object in database
+	 *
+	 *	@param		User	$user		User that delete
+	 *	@return		int					<0 if KO, >0 if OK
+	 */
 	function delete($user)
 	{
 		// Call trigger
@@ -285,11 +289,11 @@ class Localtax extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	function initAsSpecimen()
 	{
@@ -605,6 +609,31 @@ class Localtax extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
+	}
+
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	function LibStatut($status,$mode=0)
+	{
+		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+		return '';
 	}
 
 }

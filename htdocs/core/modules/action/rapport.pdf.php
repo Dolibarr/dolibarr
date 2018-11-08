@@ -179,7 +179,7 @@ class CommActionRapport
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 			$this->result = array('fullpath'=>$file);
-			
+
 			return 1;
 		}
 	}
@@ -291,7 +291,9 @@ class CommActionRapport
 					if ($code == 'AC_OTH_AUTO') $code='AC_AUTO';
 				}
 				$pdf->SetXY(60,$y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Action".$code)),32), 0, 'L', 0);
+				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
+				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort),32), 0, 'L', 0);
 				$y2 = $pdf->GetY();
 
 				// Description of event

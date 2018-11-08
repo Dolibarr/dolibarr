@@ -33,13 +33,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-$langs->load("agenda");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('agenda', 'admin', 'other'));
 
 $def = array();
 $actiontest=GETPOST('test','alpha');
 $actionsave=GETPOST('save','alpha');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'useragenda';   // To manage different context of search
 
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
@@ -68,8 +68,7 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','useragenda','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','useragenda','globalcard'));
 
 /*
  * Actions
@@ -158,7 +157,7 @@ dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

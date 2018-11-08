@@ -118,9 +118,9 @@ class PrestaShopWebservice
 	public function executeRequest($url, $curl_params = array())
 	{
 		$defaultParams = array(
-			CURLOPT_HEADER => TRUE,
-			CURLOPT_RETURNTRANSFER => TRUE,
-			CURLINFO_HEADER_OUT => TRUE,
+			CURLOPT_HEADER => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLINFO_HEADER_OUT => true,
 			CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
 			CURLOPT_USERPWD => $this->key.':',
 			CURLOPT_HTTPHEADER => array( 'Expect:' )

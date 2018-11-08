@@ -21,6 +21,7 @@
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure journals
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -30,13 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
-$langs->load("admin");
-$langs->load("compta");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","compta","accountancy"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
-$id=GETPOST('id','int');
+$id=35;
 $rowid=GETPOST('rowid','alpha');
 $code=GETPOST('code','alpha');
 
@@ -135,6 +135,7 @@ $elementList = array();
 			'3' => $langs->trans('AccountingJournalType3'),
 			'4' => $langs->trans('AccountingJournalType4'),
 			'5' => $langs->trans('AccountingJournalType5'),
+			'8' => $langs->trans('AccountingJournalType8'),
 			'9' => $langs->trans('AccountingJournalType9')
 	);
 
@@ -177,6 +178,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
 	}
+	if (! GETPOST('label','alpha'))
+	{
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+		$ok=0;
+	}
 
 	// Clean some parameters
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"]='';	// If empty, we force to null
@@ -208,7 +214,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
 			$sql.= $tabrowid[$id].",";
 		$sql.= $tabfieldinsert[$id];
-		$sql.=",active)";
+		$sql.=",active,entity)";
 		$sql.= " VALUES(";
 
 		// List of values
@@ -221,11 +227,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
-			if ($_POST[$listfieldvalue[$i]] == '' && ! ($listfieldvalue[$i] == 'code' && $id == 10)) $sql.="null";  // For vat, we want/accept code = ''
+			if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
 			else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
-		$sql.=",1)";
+		$sql.=",1,".$conf->entity.")";
 
 		dol_syslog("actionadd", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -275,6 +281,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$i++;
 		}
 		$sql.= " WHERE ".$rowidcol." = '".$rowid."'";
+		$sql.=" AND entity = ".$conf->entity;
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -298,6 +305,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 	else { $rowidcol="rowid"; }
 
 	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+	$sql.=" AND entity = ".$conf->entity;
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -326,6 +334,7 @@ if ($action == $acts[0])
 	elseif ($code) {
 		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
 	}
+	$sql.=" AND entity = ".$conf->entity;
 
 	$result = $db->query($sql);
 	if (!$result)
@@ -346,6 +355,7 @@ if ($action == $acts[1])
 	elseif ($code) {
 		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
 	}
+	$sql.=" AND entity = ".$conf->entity;
 
 	$result = $db->query($sql);
 	if (!$result)
@@ -389,34 +399,12 @@ if ($id)
 {
 	// Complete requete recherche valeurs avec critere de tri
 	$sql=$tabsql[$id];
+	$sql.= " WHERE a.entity = ".$conf->entity;
 
-	if ($search_country_id > 0)
-	{
-		if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
-		else $sql.=" WHERE ";
-		$sql.= " c.rowid = ".$search_country_id;
-	}
-
-	if ($sortfield)
-	{
-		// If sort order is "country", we use country_code instead
-		if ($sortfield == 'country') $sortfield='country_code';
-		$sql.= " ORDER BY ".$sortfield;
-		if ($sortorder)
-		{
-			$sql.=" ".strtoupper($sortorder);
-		}
-		$sql.=", ";
-		// Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-		$tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-		$tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-	}
-	else {
-		$sql.=" ORDER BY ";
-	}
-	$sql.=$tabsqlsort[$id];
+	// If sort order is "country", we use country_code instead
+	if ($sortfield == 'country') $sortfield='country_code';
+	$sql.=$db->order($sortfield,$sortorder);
 	$sql.=$db->plimit($listlimit+1,$offset);
-	//print $sql;
 
 	$fieldlist=explode(',',$tabfield[$id]);
 
@@ -431,7 +419,6 @@ if ($id)
 	if ($tabname[$id])
 	{
 		$alabelisused=0;
-		$var=false;
 
 		$fieldlist=explode(',',$tabfield[$id]);
 
@@ -511,7 +498,6 @@ if ($id)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var=true;
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
@@ -616,6 +602,7 @@ if ($id)
 
 					if (empty($reshook))
 					{
+                        $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
 
@@ -626,10 +613,12 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
-								$langs->load("accountancy");
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
-								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($obj->nature)?$key:$obj->{$fieldlist[$field]});
+								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature))?$key:$obj->{$fieldlist[$field]});
 							}
+							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+								$valuetoshow=$langs->trans($obj->label);
+                            }
 
 							$class='tddict';
 							// Show value for field
@@ -655,13 +644,7 @@ if ($id)
 					// Active
 					print '<td align="center" class="nowrap">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-					else
-				 	{
-				 		if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
-				 		else if (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
-				  		else if (isset($obj->type) && in_array($obj->type, array('system')) && ! empty($obj->active) && $obj->code != 'AC_OTH') print $langs->trans("UsedOnlyWithTypeOption");
-						else print $langs->trans("AlwaysActive");
-					}
+					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link

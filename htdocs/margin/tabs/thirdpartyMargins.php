@@ -199,15 +199,12 @@ if ($socid > 0)
 
     	if ($num > 0)
     	{
-    		$var=True;
     		while ($i < $num /*&& $i < $conf->liste_limit*/)
     		{
     			$objp = $db->fetch_object($result);
 
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
-
-
 
     			print '<tr class="oddeven">';
     			print '<td>';

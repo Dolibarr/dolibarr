@@ -30,14 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin'));
 
 $id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userperms';   // To manage different context of search
 
 if (! isset($id) || empty($id)) accessforbidden();
 
@@ -73,8 +74,7 @@ $object->getrights();
 $entity=$conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','userperms','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','userperms','globalcard'));
 
 
 /**
@@ -176,11 +176,9 @@ $db->commit();
 // Lecture des droits utilisateurs
 $permsuser = array();
 
-$sql = "SELECT DISTINCT r.id, r.libelle, r.module";
-$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
-$sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
-$sql.= " WHERE ur.fk_id = r.id";
-$sql.= " AND ur.entity = ".$entity;
+$sql = "SELECT DISTINCT ur.fk_id";
+$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
+$sql.= " WHERE ur.entity = ".$entity;
 $sql.= " AND ur.fk_user = ".$object->id;
 
 dol_syslog("get user perms", LOG_DEBUG);
@@ -192,7 +190,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		array_push($permsuser,$obj->id);
+		array_push($permsuser,$obj->fk_id);
 		$i++;
 	}
 	$db->free($result);
@@ -205,12 +203,10 @@ else
 // Lecture des droits groupes
 $permsgroupbyentity = array();
 
-$sql = "SELECT DISTINCT r.id, r.libelle, r.module, gu.entity";
-$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
-$sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
+$sql = "SELECT DISTINCT gr.fk_id, gu.entity";
+$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
-$sql.= " WHERE gr.fk_id = r.id";
-$sql.= " AND gr.entity = ".$entity;
+$sql.= " WHERE gr.entity = ".$entity;
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$object->id;
 
@@ -225,7 +221,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 		if (! isset($permsgroupbyentity[$obj->entity]))
 			$permsgroupbyentity[$obj->entity] = array();
-		array_push($permsgroupbyentity[$obj->entity], $obj->id);
+		array_push($permsgroupbyentity[$obj->entity], $obj->fk_id);
 		$i++;
 	}
 	$db->free($result);
@@ -243,7 +239,7 @@ else
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

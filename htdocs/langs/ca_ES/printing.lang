@@ -49,4 +49,6 @@ DirectPrintingJobsDesc=Aquesta pàgina llista els treballs de impressió torbats
 GoogleAuthNotConfigured=No s'ha configurat Google OAuth. Habilita el mòdul OAuth i indica un Google ID/Secret.
 GoogleAuthConfigured=Les credencials OAuth de Google es troben en la configuració del mòdul OAuth.
 PrintingDriverDescprintgcp=Variables de configuració del driver d'impressió Google Cloud Print.
+PrintingDriverDescprintipp=Variables de configuració per imprimir amb el controlador Cups.
 PrintTestDescprintgcp=Llista d'impressores per Google Cloud Print
+PrintTestDescprintipp=Llista d'impressores per a Cups.

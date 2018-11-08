@@ -325,11 +325,12 @@ class EcmDirectory // extends CommonObject
 	/**
 	 * 	Delete object on database and/or on disk
 	 *
-	 *	@param	User	$user		User that delete
-	 *  @param	string		$mode		'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	User	$user					User that delete
+	 *  @param	string	$mode					'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
+	 *  @param	int		$deletedirrecursive		1=Agree to delete content recursiveley (otherwise an error will be returned when trying to delete)
+	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	function delete($user, $mode='all')
+	function delete($user, $mode='all', $deletedirrecursive=0)
 	{
 		global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -368,7 +369,14 @@ class EcmDirectory // extends CommonObject
 		if ($mode != 'databaseonly')
 		{
 			$file = $conf->ecm->dir_output . "/" . $relativepath;
-			$result=@dol_delete_dir($file);
+			if ($deletedirrecursive)
+			{
+				$result=@dol_delete_dir_recursive($file, 0, 0);
+			}
+			else
+			{
+				$result=@dol_delete_dir($file, 0);
+			}
 		}
 
 		if ($result || ! @is_dir(dol_osencode($file)))

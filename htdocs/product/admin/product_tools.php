@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
-$langs->load("admin");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'products'));
 
 // Security check
 if (! $user->admin) accessforbidden();

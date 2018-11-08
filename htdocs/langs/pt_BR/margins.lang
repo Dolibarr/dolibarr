@@ -16,10 +16,8 @@ ForceBuyingPriceIfNullDetails=Se o preço de compra / custo não definido, e ess
 MARGIN_METHODE_FOR_DISCOUNT=Metodologia de margem para descontos globais
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global e tratado como o produto, serviço, ou somente sob o sub-total na margem.
 MARGIN_TYPE=Compra / Preço de custo sugerido por padrão para cálculo da margem de
-MargeType1=Margem de melhor preço com fornecedor
 MargeType2=Margem sobre o Preço Médio Ponderado (PMP)
 MargeType3=Margem sobre o preço de custo
-MarginTypeDesc=* Margem de melhor preço de compra = Preço de venda - o melhor preço com fornecedor definido na ficha de produto <br> * margem sobre o preço médio ponderado (WAP) = Preço de VENDA - produto Preço Médio Ponderado (WAP) ou melhor preço de fornecedor se WAP ainda não definido <br> * Margem sobre o preço de custo = preço de VENDA - preço de custo definido na ficha de produto ou WAP se o preço de custo não definido, ou melhor preço fornecedor, se ainda não WAP definido
 AgentContactType=Tipo contato do agente comercial
 AgentContactTypeDetails=Defina o tipo de contato (conectado coma as faturas) sera usado para o relatorio de margem dos representantes
 rateMustBeNumeric=Rata deve ser um valor numerico

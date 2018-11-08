@@ -24,8 +24,8 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
-$langs->load("admin");
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'hrm'));
 
 if (! $user->admin)
 	accessforbidden();
@@ -61,7 +61,7 @@ if ($page == -1) {
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 
 $form = new Form($db);
 $establishmenttmp=new Establishment($db);
@@ -69,7 +69,7 @@ $establishmenttmp=new Establishment($db);
 dol_htmloutput_mesg($mesg);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
@@ -97,8 +97,6 @@ if ($result)
 	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
 	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
-
-	$var=true;
 
 	if ($num > 0)
     {

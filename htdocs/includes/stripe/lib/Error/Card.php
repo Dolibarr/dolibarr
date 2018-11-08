@@ -15,23 +15,22 @@ class Card extends Base
     ) {
         parent::__construct($message, $httpStatus, $httpBody, $jsonBody, $httpHeaders);
         $this->stripeParam = $stripeParam;
+
+        // TODO: once Error\Base accepts the error code as an argument, pass it
+        //       in the call to parent::__construct() and stop setting it here.
         $this->stripeCode = $stripeCode;
 
         // This one is not like the others because it was added later and we're
         // trying to do our best not to change the public interface of this class'
-        // constructor. We should consider changing its implementation on the
-        // next major version bump of this library.
+        // constructor.
+        // TODO: make this a proper constructor argument in the next major
+        //       release.
         $this->declineCode = isset($jsonBody["error"]["decline_code"]) ? $jsonBody["error"]["decline_code"] : null;
     }
 
     public function getDeclineCode()
     {
         return $this->declineCode;
-    }
-
-    public function getStripeCode()
-    {
-        return $this->stripeCode;
     }
 
     public function getStripeParam()

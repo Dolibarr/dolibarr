@@ -51,3 +51,4 @@ PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito
 IBANNumber=CLABE Interbancaria
 BICNumber=Sucursal
+situationInvoiceShortcode_S=D

@@ -33,6 +33,7 @@ PropalStatusSigned=Undertecknats (behov fakturering)
 PropalStatusNotSigned=Inte undertecknat (stängt)
 PropalStatusBilled=Fakturerade
 PropalStatusDraftShort=Förslag
+PropalStatusValidatedShort=Validerade
 PropalStatusClosedShort=Stängt
 PropalStatusSignedShort=Signerad
 PropalStatusNotSignedShort=Inte undertecknat
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 månad
 TypeContact_propal_internal_SALESREPFOLL=Representanten följa upp förslag
 TypeContact_propal_external_BILLING=Kundfaktura kontakt
 TypeContact_propal_external_CUSTOMER=Kundkontakt följa upp förslag
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Ett fullständigt förslag modell (logo. ..)
 DefaultModelPropalCreate=Skapa standardmodell

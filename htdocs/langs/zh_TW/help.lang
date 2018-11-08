@@ -11,7 +11,7 @@ TypeOfSupport=源支持
 TypeSupportCommunauty=社區（免費）
 TypeSupportCommercial=商業
 TypeOfHelp=說明類型
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=需要幫助或支援嗎？
 Efficiency=效率
 TypeHelpOnly=只需要說明
 TypeHelpDev=說明+開發
@@ -22,5 +22,5 @@ ToGetHelpGoOnSparkAngels2=有時，是目前公司沒有可供您進行搜尋，
 BackToHelpCenter=否則，請點擊這裏進入<a href="%s">返回幫助中心主頁</a> 。
 LinkToGoldMember=你可以調用由Dolibarr預選您的語言（%s的按一下他的小工具（狀態和最高價格自動更新））的教練之一：
 PossibleLanguages=支持的語言
-SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=幫助 Dolibarr 專案，訂閱基金會
+SeeOfficalSupport=用您的語言給 Dolibarr 官方支持：<br><b><a href="%s" target="_blank">%s</a></b>

@@ -101,7 +101,7 @@ class ActionsCardProduct
 		$this->tpl['ref'] = $this->ref;
 
 		// Label
-		$this->tpl['label'] = $this->libelle;
+		$this->tpl['label'] = $this->label;
 
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
@@ -216,7 +216,7 @@ class ActionsCardProduct
 			$this->tpl['nblignes'] = 4;
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
 			{
-				$this->tpl['photos'] = $this->object->show_photos($conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
 			}
 
 			// Nature

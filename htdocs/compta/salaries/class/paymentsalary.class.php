@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class PaymentSalary extends CommonObject
 {
-	//public $element='payment_salary';			//!< Id that identify managed objects
-	//public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
-    public $picto='payment';
+	public $element='payment_salary';			//!< Id that identify managed objects
+	public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
+	public $picto='payment';
 
 	public $tms;
 	public $fk_user;
@@ -388,7 +388,11 @@ class PaymentSalary extends CommonObject
 						-abs($this->amount),
 						$this->num_payment,
 						'',
-						$user
+						$user,
+						'',
+						'',
+						'',
+						$this->datev
 					);
 
 					// Update fk_bank into llx_paiement.

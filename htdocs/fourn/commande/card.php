@@ -364,24 +364,34 @@ if (empty($reshook))
 		{
 			$productsupplier = new ProductFournisseur($db);
 
-			if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))	// TODO this test seems useless
-			{
-				$idprod=0;
-				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
-			}
-			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			$idprod=0;
+			if (GETPOST('idprodfournprice','alpha') == -1 || GETPOST('idprodfournprice','alpha') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice','alpha'), $reg))
 			{
 				$idprod=$reg[1];
-				$res=$productsupplier->fetch($idprod);
-				// Call to init properties of $productsupplier
+				$res=$productsupplier->fetch($idprod);	// Load product from its ID
+				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-				$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+				if (! empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER))
+				{
+					$fksoctosearch = 0;
+					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+					if ($productsupplier->fourn_socid != $socid)	// The price we found is for another supplier, so we clear supplier price
+					{
+						$productsupplier->ref_supplier = '';
+					}
+				}
+				else
+				{
+					$fksoctosearch = $object->thirdparty->id;
+					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+				}
 			}
-			elseif (GETPOST('idprodfournprice') > 0)
+			elseif (GETPOST('idprodfournprice','alpha') > 0)
 			{
 				$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
 				//$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
-				$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+				$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice','alpha'), $qtytosearch);
 				$res=$productsupplier->fetch($idprod);
 			}
 
@@ -393,23 +403,29 @@ if (empty($reshook))
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 				$type = $productsupplier->type;
+				$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
 
-				$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
-				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+				$ref_supplier = $productsupplier->ref_supplier;
+
+				$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
+				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 				if (empty($tva_tx)) $tva_npr=0;
 				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
+				$pu = $productsupplier->fourn_pu;
+				if (empty($pu)) $pu = 0;	// If pu is '' or null, we force to have a numeric value
+
 				$result=$object->addline(
 					$desc,
-					$productsupplier->fourn_pu,
+					$pu,
 					$qty,
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
-					$productsupplier->product_fourn_price_id,
-					$productsupplier->fourn_ref,
+					0,							// We already have the $idprod always defined
+					$ref_supplier,
 					$remise_percent,
 					'HT',
 					$pu_ttc,
@@ -419,7 +435,8 @@ if (empty($reshook))
 					$date_start,
 					$date_end,
 					$array_options,
-					$productsupplier->fk_unit
+					$productsupplier->fk_unit,
+                    $productsupplier->fourn_multicurrency_unitprice
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -437,7 +454,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 			}
 		}
-		else if (empty($error))
+		else if (empty($error)) // $price_ht is already set
 		{
 			$pu_ht = price2num($price_ht, 'MU');
 			$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -456,22 +473,19 @@ if (empty($reshook))
 			$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-			if (GETPOST('price_ht')!=='')
+			if ($price_ht !== '')
 			{
-				$price_base_type = 'HT';
-				$ht = price2num(GETPOST('price_ht'));
-				$ttc = 0;
+				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			}
 			else
 			{
-				$ttc = price2num(GETPOST('price_ttc'));
-				$ht = $ttc / (1 + ($tva_tx / 100));
-				$price_base_type = 'HT';
+				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
-
+			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
+			$result=$object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -555,9 +569,12 @@ if (empty($reshook))
 		}
 
 		$productsupplier = new ProductFournisseur($db);
-		if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
+		if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
 		{
-			setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
+			{
+				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+			}
 		}
 
 		$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
@@ -837,6 +854,8 @@ if (empty($reshook))
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			$action = '';
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+			exit;
 		}
 		else
 		{
@@ -850,7 +869,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php');
+			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -945,39 +964,29 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from add form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('supplierorderdao'));
-			$parameters=array('id'=>$object->id);
-
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
+				if ($result < 0)
 				{
-					$result=$object->insertExtraFields();
-
-					if ($result < 0)
-					{
-						$error++;
-					}
-
+					$error++;
+					setEventMessages($object->error,$object->errors,'errors');
 				}
 			}
-			else if ($reshook < 0) $error++;
 		}
-		else
-		{
+
+		if ($error)
 			$action = 'edit_extras';
-		}
 	}
 
 	/*
@@ -1070,8 +1079,6 @@ if (empty($reshook))
 							$fk_parent_line = 0;
 							$num = count($lines);
 
-							$productsupplier = new ProductFournisseur($db);
-
 							for($i = 0; $i < $num; $i ++)
 							{
 
@@ -1079,7 +1086,7 @@ if (empty($reshook))
 									continue;
 
 								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->product_desc);
 								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Reset fk_parent_line for no child products and special product
@@ -1095,43 +1102,57 @@ if (empty($reshook))
 									$array_option = $lines[$i]->array_options;
 								}
 
-								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
-								if ($result>=0)
+								$ref_supplier = '';
+								$product_fourn_price_id = 0;
+								if ($origin == "commande")
 								{
-									$tva_tx = $lines[$i]->tva_tx;
-
-									if ($origin=="commande")
+									$productsupplier = new ProductFournisseur($db);
+									$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
+									if ($result > 0)
 									{
-										$soc=new societe($db);
-										$soc->fetch($socid);
-										$tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $productsupplier->product_fourn_price_id);
+										$ref_supplier = $productsupplier->ref_supplier;
+										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
 									}
-
-									$result = $object->addline(
-										$desc,
-										$lines[$i]->subprice,
-										$lines[$i]->qty,
-										$tva_tx,
-										$lines[$i]->localtax1_tx,
-										$lines[$i]->localtax2_tx,
-										$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
-										$productsupplier->product_fourn_price_id,
-										$productsupplier->ref_supplier,
-										$lines[$i]->remise_percent,
-										'HT',
-										0,
-										$lines[$i]->product_type,
-										'',
-										'',
-										null,
-										null,
-										array(),
-										$lines[$i]->fk_unit,
-										0,
-										$element,
-										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
-									);
 								}
+								else
+								{
+									$ref_supplier = $lines[$i]->ref_fourn;
+									$product_fourn_price_id = 0;
+								}
+
+								$tva_tx = $lines[$i]->tva_tx;
+
+								if ($origin=="commande")
+								{
+									$soc=new societe($db);
+									$soc->fetch($socid);
+									$tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
+								}
+
+								$result = $object->addline(
+									$desc,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
+									$product_fourn_price_id,
+									$ref_supplier,
+									$lines[$i]->remise_percent,
+									'HT',
+									0,
+									$lines[$i]->product_type,
+									'',
+									'',
+									null,
+									null,
+									array(),
+									$lines[$i]->fk_unit,
+									0,
+									$element,
+									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
+								);
 
 								if ($result < 0) {
 									$error++;
@@ -1356,6 +1377,8 @@ if ($action=='create')
 
 	dol_htmloutput_events();
 
+	$currency_code = $conf->currency;
+
 	$societe='';
 	if ($socid>0)
 	{
@@ -1398,7 +1421,7 @@ if ($action=='create')
 		$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 		$shipping_method_id = (! empty($objectsrc->shipping_method_id)?$objectsrc->shipping_method_id:(! empty($soc->shipping_method_id)?$soc->shipping_method_id:0));
 		$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
-		$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+		$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_supplier_percent)?$soc->remise_supplier_percent:0));
 		$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
 		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
@@ -1436,7 +1459,7 @@ if ($action=='create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
-	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_percent . '">';
+	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_supplier_percent . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="' . $currency_tx . '">';
@@ -1476,6 +1499,21 @@ if ($action=='create')
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 	}
 	print '</td>';
+
+	if ($societe->id > 0)
+	{
+		// Discounts for third party
+		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
+
+		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
+
+		$thirdparty = $societe;
+		$discount_type = 1;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?socid=' . $thirdparty->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid'));
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+		print '</td></tr>';
+	}
 
 	// Ref supplier
 	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
@@ -1600,7 +1638,7 @@ if ($action=='create')
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -1642,7 +1680,7 @@ elseif (! empty($object->id))
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 
 	$head = ordersupplier_prepare_head($object);
@@ -1723,11 +1761,13 @@ elseif (! empty($object->id))
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct=new FormProduct($db);
+			$forcecombo=0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 			$formquestion=array(
-					//'text' => $langs->trans("ConfirmClone"),
-					//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
-					//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
+				//'text' => $langs->trans("ConfirmClone"),
+				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse','int'), 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 			);
 		}
 		$text=$langs->trans("ConfirmApproveThisOrder",$object->ref);
@@ -1792,6 +1832,7 @@ elseif (! empty($object->id))
 	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -1856,6 +1897,29 @@ elseif (! empty($object->id))
 	print '<tr><td class="titlefield">'.$langs->trans("AuthorRequest").'</td>';
 	print '<td>'.$author->getNomUrl(1, '', 0, 0, 0).'</td>';
 	print '</tr>';
+
+	// Relative and absolute discounts
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
+	}
+
+	$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
+	$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+	$absolute_discount = price2num($absolute_discount, 'MT');
+	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
+	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
+
+	$thirdparty = $societe;
+	$discount_type = 1;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+	print '</td></tr>';
 
 	// Conditions de reglement par defaut
 	$langs->load('bills');
@@ -2052,8 +2116,12 @@ elseif (! empty($object->id))
 	}
 
 	// Total
+	$alert = '';
+	if (! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT) && $object->total_ht < $object->thirdparty->supplier_order_min_amount) {
+		$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->supplier_order_min_amount));
+	}
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
-	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).$alert.'</td>';
 	print '</tr>';
 
 	// Total VAT
@@ -2129,8 +2197,10 @@ elseif (! empty($object->id))
 
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector;
-	$forceall=1; $senderissupplier=1; $dateSelector=0;
-	if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
+	$forceall=1; $dateSelector=0;
+	$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
+	//if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;
+	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 	// Show object lines
 	$inputalsopricewithtax=0;
@@ -2140,12 +2210,10 @@ elseif (! empty($object->id))
 	$num = count($object->lines);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer)
+	if ($object->statut == CommandeFournisseur::STATUS_DRAFT && $user->rights->fournisseur->commande->creer)
 	{
 		if ($action != 'editline')
 		{
-			$var = true;
-
 			// Add free products/services
 			$object->formAddObjectLine(1, $societe, $mysoc);
 
@@ -2172,6 +2240,7 @@ elseif (! empty($object->id))
 			// modified by hook
 			if (empty($reshook))
 			{
+				$object->fetchObjectLinked();		// Links are used to show or not button, so we load them now.
 
 				// Validate
 				if ($object->statut == 0 && $num > 0)
@@ -2263,7 +2332,7 @@ elseif (! empty($object->id))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 					}
 				}
 
@@ -2300,11 +2369,11 @@ elseif (! empty($object->id))
 				// Ship
 				if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 				{
-					if (in_array($object->statut, array(3,4))) {
+					if (in_array($object->statut, array(3,4,5))) {
 						if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
 						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
 						}
 					}
 				}
@@ -2394,7 +2463,8 @@ elseif (! empty($object->id))
 			print '<table class="noborder" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+			$date_com = dol_mktime(GETPOST('rehour','int'), GETPOST('remin','int'), GETPOST('resec','int'), GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+			if (empty($date_com)) $date_com=dol_now();
 			print $form->select_date($date_com,'',1,1,'',"commande",1,1,1);
 			print '</td></tr>';
 
@@ -2450,10 +2520,11 @@ elseif (! empty($object->id))
 				print '<table class="noborder" width="100%">';
 				//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 				print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-				print $form->select_date('','',1,1,'',"commande",1,1,1);
+				$datepreselected = dol_now();
+				print $form->select_date($datepreselected,'',1,1,'',"commande",1,1,1);
 				print "</td></tr>\n";
 
-				print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
+				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
 				$liv = array();
 				$liv[''] = '&nbsp;';
 				$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
@@ -2623,7 +2694,7 @@ elseif (! empty($object->id))
 
 							// Ensure that price is equal and warn user if it's not
 							$supplier_price = price($result_product["product"]["price_net"]); //Price of client tab in supplier dolibarr
-							$local_price = NULL; //Price of supplier as stated in product suppliers tab on this dolibarr, NULL if not found
+							$local_price = null; //Price of supplier as stated in product suppliers tab on this dolibarr, NULL if not found
 
 							$product_fourn = new ProductFournisseur($db);
 							$product_fourn_list = $product_fourn->list_product_fournisseur_price($line->fk_product);
@@ -2638,7 +2709,7 @@ elseif (! empty($object->id))
 								}
 							}
 
-							if ($local_price != NULL && $local_price != $supplier_price) {
+							if ($local_price != null && $local_price != $supplier_price) {
 								setEventMessages($line_id.$langs->trans("RemotePriceMismatch")." ".$supplier_price." - ".$local_price, null, 'warnings');
 							}
 
@@ -2695,7 +2766,7 @@ elseif (! empty($object->id))
 		}
 
 		// Presend form
-		$modelmail='supplier_order_send';
+		$modelmail='order_supplier_send';
 		$defaulttopic='SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
 		$trackid = 'sor'.$object->id;

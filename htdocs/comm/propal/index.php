@@ -27,8 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
 
-$langs->load("propal");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('propal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid','int');
@@ -172,6 +172,7 @@ if (! empty($conf->propal->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("DraftPropals").'</td></tr>';
@@ -199,7 +200,8 @@ if (! empty($conf->propal->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 	}
 }
 
@@ -214,7 +216,7 @@ $max=5;
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
 $sql.= " date_cloture as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -230,6 +232,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">'.$langs->trans("LastModifiedProposals",$max).'</td></tr>';
@@ -259,7 +262,7 @@ if ($resql)
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -278,7 +281,8 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table>";
+	print "</div><br>";
 }
 else dol_print_error($db);
 
@@ -292,7 +296,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 	$now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client";
+	$sql.= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -311,6 +316,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		$i = 0;
 		if ($num > 0)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
@@ -336,7 +342,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
 				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -365,7 +371,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
-			print "</table><br>";
+			print "</table>";
+			print "</div><br>";
 		}
 	}
 	else
@@ -396,6 +403,7 @@ if (! empty($conf->propal->enabled))
 	{
 		$num = $db->num_rows($resql);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
@@ -440,7 +448,8 @@ if (! empty($conf->propal->enabled))
 			}
 		}
 
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 	}
 	else dol_print_error($db);
 }
@@ -467,6 +476,7 @@ if (! empty($conf->propal->enabled))
 	{
 		$num = $db->num_rows($resql);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
@@ -510,7 +520,8 @@ if (! empty($conf->propal->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 	}
 	else dol_print_error($db);
 }

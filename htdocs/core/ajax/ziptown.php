@@ -120,6 +120,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 			$row_array['selectcountry_id'] = $row['fk_country'];
 			$row_array['state_id'] = $row['fk_county'];
 
+			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
 			$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
 
 			array_push($return_arr,$row_array);
