@@ -477,7 +477,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
-	if (count($contactsofproject))
+	if (is_array($contactsofproject) && count($contactsofproject))
 	{
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	}
