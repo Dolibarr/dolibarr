@@ -120,6 +120,7 @@ function societe_prepare_head(Societe $object)
     	$sql = "SELECT COUNT(n.rowid) as nb";
     	$sql.= " FROM ".MAIN_DB_PREFIX."projet as n";
     	$sql.= " WHERE fk_soc = ".$object->id;
+    	$sql.= " AND entity IN (".getEntity('project').")";
     	$resql=$db->query($sql);
     	if ($resql)
     	{
