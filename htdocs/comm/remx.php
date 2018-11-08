@@ -254,7 +254,7 @@ if ($socid > 0)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    
+
     if(! $isCustomer && ! $isSupplier) {
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
@@ -266,8 +266,8 @@ if ($socid > 0)
     	$db->close();
     	exit;
     }
-    
-    
+
+
 	print '<table class="border centpercent">';
 
 	if($isCustomer) {	// Calcul avoirs client en cours
@@ -293,7 +293,7 @@ if ($socid > 0)
 
 		print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
 		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
-	
+
 		if (! empty($user->fk_soc))    // No need to show this for external users
 		{
 			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
@@ -322,10 +322,10 @@ if ($socid > 0)
 		{
 			dol_print_error($db);
 		}
-		
+
 		print '<tr><td class="titlefield">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
 		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
-		
+
 		if (! empty($user->fk_soc))    // No need to show this for external users
 		{
 			print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountMy").'</td>';
@@ -344,11 +344,11 @@ if ($socid > 0)
     	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
 
     	print '<div class="underbanner clearboth"></div>';
- 
+
     	if($isCustomer && ! $isSupplier) {
     		print '<input type="hidden" name="discount_type" value="0" />';
     	}
-    	
+
     	if(! $isCustomer && $isSupplier) {
     		print '<input type="hidden" name="discount_type" value="1" />';
     	}
@@ -356,8 +356,8 @@ if ($socid > 0)
     	print '<table class="border" width="100%">';
 		if($isCustomer && $isSupplier) {
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
-			print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
-			print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+			print '<td><input type="radio" name="discount_type" id="discount_type_0" checked="checked" value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+			print ' &nbsp; <input type="radio" name="discount_type" id="discount_type_1" value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 			print '</td></tr>';
 		}
     	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
@@ -401,7 +401,7 @@ if ($socid > 0)
 	/*
 	 * Liste remises fixes client restant en cours (= liees a aucune facture ni ligne de facture)
 	 */
-	
+
 	print load_fiche_titre($langs->trans("DiscountStillRemaining"));
 
 	if($isCustomer) {
@@ -424,10 +424,11 @@ if ($socid > 0)
 		$sql.= " AND rc.discount_type = 0"; // Eliminate supplier discounts
 		$sql.= " AND (rc.fk_facture_line IS NULL AND rc.fk_facture IS NULL)";
 		$sql.= " ORDER BY rc.datec DESC";
-	
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -439,9 +440,9 @@ if ($socid > 0)
 			print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
-	
+
 			$showconfirminfo=array();
-	
+
 			$i = 0;
 			$num = $db->num_rows($resql);
 			if ($num > 0)
@@ -449,7 +450,7 @@ if ($socid > 0)
 	    		while ($i < $num)
 	    		{
 	    			$obj = $db->fetch_object($resql);
-	
+
 	    			print '<tr class="oddeven">';
 	    			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 	    			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
@@ -502,7 +503,7 @@ if ($socid > 0)
 	    			}
 	    			else print '<td>&nbsp;</td>';
 	    			print '</tr>';
-	
+
 	    			if ($_GET["action"]=='split' && GETPOST('remid') == $obj->rowid)
 	    			{
 	    				$showconfirminfo['rowid']=$obj->rowid;
@@ -517,7 +518,8 @@ if ($socid > 0)
 			}
 			$db->free($resql);
 			print "</table>";
-	
+			print '</div>';
+
 			if (count($showconfirminfo))
 			{
 				$amount1=price2num($showconfirminfo['amount_ttc']/2,'MT');
@@ -561,10 +563,11 @@ if ($socid > 0)
 		$sql.= " AND rc.discount_type = 1"; // Eliminate customer discounts
 		$sql.= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)";
 		$sql.= " ORDER BY rc.datec DESC";
-		
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table width="100%" class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -576,9 +579,9 @@ if ($socid > 0)
 			print '<td width="100" align="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
-			
+
 			$showconfirminfo=array();
-			
+
 			$i = 0;
 			$num = $db->num_rows($resql);
 			if ($num > 0)
@@ -586,7 +589,7 @@ if ($socid > 0)
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					
+
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
@@ -639,7 +642,7 @@ if ($socid > 0)
 					}
 					else print '<td>&nbsp;</td>';
 					print '</tr>';
-					
+
 					if ($_GET["action"]=='split' && GETPOST('remid') == $obj->rowid)
 					{
 						$showconfirminfo['rowid']=$obj->rowid;
@@ -654,7 +657,8 @@ if ($socid > 0)
 			}
 			$db->free($resql);
 			print "</table>";
-			
+			print '</div>';
+
 			if (count($showconfirminfo))
 			{
 				$amount1=price2num($showconfirminfo['amount_ttc']/2,'MT');
@@ -673,19 +677,19 @@ if ($socid > 0)
 			dol_print_error($db);
 		}
 
-		if($isCustomer) {
+		if ($isCustomer) {
 			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}
 	}
 
-	print '<br>';
+	print '<div class="clearboth"></div><br>';
 
 	/*
 	 * List discount consumed (=liees a une ligne de facture ou facture)
 	 */
-	
+
 	print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));
 
 	if($isCustomer) {
@@ -730,12 +734,13 @@ if ($socid > 0)
 		$sql2.= " AND rc.fk_user = u.rowid";
 		$sql2.= " AND rc.discount_type = 0"; // Eliminate supplier discounts
 		$sql2.= " ORDER BY dc DESC";
-	
+
 		$resql=$db->query($sql);
 		$resql2=null;
 		if ($resql) $resql2=$db->query($sql2);
 		if ($resql2)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -747,7 +752,7 @@ if ($socid > 0)
 			print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
-	
+
 			$tab_sqlobj=array();
 			$tab_sqlobjOrder=array();
 			$num = $db->num_rows($resql);
@@ -761,7 +766,7 @@ if ($socid > 0)
 	    		}
 			}
 			$db->free($resql);
-	
+
 			$num = $db->num_rows($resql2);
 			for ($i = 0;$i < $num;$i++)
 			{
@@ -771,7 +776,7 @@ if ($socid > 0)
 			}
 			$db->free($resql2);
 			array_multisort($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
-	
+
 			$num = count($tab_sqlobj);
 			if ($num > 0)
 			{
@@ -830,8 +835,9 @@ if ($socid > 0)
 			{
 			    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
-	
+
 			print "</table>";
+			print '</div>';
 		}
 		else
 		{
@@ -882,12 +888,13 @@ if ($socid > 0)
 		$sql2.= " AND rc.fk_user = u.rowid";
 		$sql2.= " AND rc.discount_type = 1"; // Eliminate customer discounts
 		$sql2.= " ORDER BY dc DESC";
-		
+
 		$resql=$db->query($sql);
 		$resql2=null;
 		if ($resql) $resql2=$db->query($sql2);
 		if ($resql2)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -899,7 +906,7 @@ if ($socid > 0)
 			print '<td width="100" align="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '</tr>';
-			
+
 			$tab_sqlobj=array();
 			$tab_sqlobjOrder=array();
 			$num = $db->num_rows($resql);
@@ -913,7 +920,7 @@ if ($socid > 0)
 				}
 			}
 			$db->free($resql);
-			
+
 			$num = $db->num_rows($resql2);
 			for ($i = 0;$i < $num;$i++)
 			{
@@ -923,7 +930,7 @@ if ($socid > 0)
 			}
 			$db->free($resql2);
 			array_multisort($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
-			
+
 			$num = count($tab_sqlobj);
 			if ($num > 0)
 			{
@@ -982,8 +989,9 @@ if ($socid > 0)
 			{
 				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
-			
+
 			print "</table>";
+			print '</div>';
 		}
 		else
 		{
