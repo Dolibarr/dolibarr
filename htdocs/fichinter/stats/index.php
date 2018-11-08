@@ -233,8 +233,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+    $filter = 's.client in (1,2,3)';
+	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
