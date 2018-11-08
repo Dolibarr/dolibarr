@@ -49,10 +49,7 @@ $endyear=$year;
 
 $object_status=GETPOST('object_status');
 
-$langs->load('interventions');
-$langs->load('companies');
-$langs->load('other');
-$langs->load('suppliers');
+$langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
 
 
 /*
@@ -62,11 +59,8 @@ $langs->load('suppliers');
 $form=new Form($db);
 $objectstatic=new FichInter($db);
 
-if ($mode == 'customer')
-{
-    $title=$langs->trans("InterventionStatistics");
-    $dir=$conf->ficheinter->dir_temp;
-}
+$title=$langs->trans("InterventionStatistics");
+$dir=$conf->ficheinter->dir_temp;
 
 llxHeader('', $title);
 
@@ -79,19 +73,18 @@ if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_sta
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
+    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filenamenb = $dir.'/interventionsnbinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
+    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
@@ -123,7 +116,6 @@ if (! $mesg)
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
@@ -283,7 +275,8 @@ foreach ($data as $val)
 {
 	$year = $val['year'];
 	while (! empty($year) && $oldyear > $year+1)
-	{ // If we have empty year
+	{
+        // If we have empty year
 		$oldyear--;
 
 		print '<tr '.$bc[$var].' height="24">';
