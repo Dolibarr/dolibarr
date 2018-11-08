@@ -19,7 +19,7 @@
  */
 
 /**
- *   	\file       htdocs/compta/sociales/index.php
+ *   	\file       htdocs/compta/list/index.php
  *		\ingroup    tax
  *		\brief      Page to list all social contributions
  */
@@ -55,19 +55,19 @@ if (! $sortorder) $sortorder="DESC";
 $year=GETPOST("year",'int');
 $filtre=GETPOST("filtre",'int');
 
-if (empty($_REQUEST['typeid']))
+if (! GETPOSTISSET('search_typeid'))
 {
 	$newfiltre=str_replace('filtre=','',$filtre);
 	$filterarray=explode('-',$newfiltre);
 	foreach($filterarray as $val)
 	{
 		$part=explode(':',$val);
-		if ($part[0] == 'cs.fk_type') $typeid=$part[1];
+		if ($part[0] == 'cs.fk_type') $search_typeid=$part[1];
 	}
 }
 else
 {
-	$typeid=$_REQUEST['typeid'];
+	$search_typeid=GETPOST('search_typeid','int');
 }
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
@@ -76,10 +76,11 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_label="";
 	$search_amount="";
 	$search_status='';
-    $typeid="";
+    $search_typeid="";
 	$year="";
 	$month="";
 }
+
 
 /*
  *	View
@@ -118,8 +119,8 @@ if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
 }
-if ($typeid) {
-    $sql .= " AND cs.fk_type=".$db->escape($typeid);
+if ($search_typeid) {
+    $sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
 $sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
 $sql.= $db->order($sortfield,$sortorder);
@@ -139,10 +140,14 @@ if ($resql)
 	$i = 0;
 
 	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($year)   $param.='&amp;year='.$year;
-	if ($typeid) $param.='&amp;typeid='.$typeid;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_ref)    $param.='&search_ref='.urlencode($search_ref);
+	if ($search_label)  $param.='&search_label='.urlencode($search_label);
+	if ($search_amount) $param.='&search_amount='.urlencode($search_amount);
+	if ($search_typeid) $param.='&search_typeid='.urlencode($search_typeid);
+	if ($search_status != '' && $search_status != '-1') $param.='&search_status='.urlencode($search_status);
+	if ($year)          $param.='&year='.urlencode($year);
 
 	$newcardbutton='';
 	if($user->rights->tax->charges->creer)
@@ -193,7 +198,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,0,0,'maxwidth100onsmartphone');
+	    $formsocialcontrib->select_type_socialcontrib($search_typeid,'search_typeid',1,0,0,'maxwidth100onsmartphone');
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';

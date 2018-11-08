@@ -2735,7 +2735,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.="\n<body>";
 
 
-		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
+		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu boostrap-iso">'."\n";
 
 		// REPLACEMENT OF LINKS When page called by website editor
 

@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
  */
 
 /**
- *   	\file       htdocs/admin/emailcollectore/emailcollector_card.php
+ *   	\file       htdocs/admin/emailcollector_card.php
  *		\ingroup    emailcollector
  *		\brief      Page to create/edit/view emailcollector
  */
@@ -27,16 +26,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-dol_include_once('/emailcollector/class/emailcollector.class.php');
-dol_include_once('/emailcollector/lib/emailcollector.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollector.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 if (!$user->admin)
 	accessforbidden();
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("admin", "other"));
+$langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -54,7 +55,7 @@ $diroutputmassaction = $conf->emailcollector->dir_output . '/temp/massgeneration
 $hookmanager->initHooks(array('emailcollectorcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('emailcollector');
-$search_array_options = $extrafields->getOptionalsFromPost($extralabels, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
 $search_all = trim(GETPOST("search_all", 'alpha'));
@@ -121,6 +122,73 @@ if ($action == 'confirm_collect')
 	$action = '';
 }
 
+if (GETPOST('addfilter','alpha'))
+{
+	$emailcollectorfilter = new EmailCollectorFilter($db);
+	$emailcollectorfilter->type = GETPOST('filtertype','az09');
+	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
+	$emailcollectorfilter->fk_emailcollector = $object->id;
+	$emailcollectorfilter->status = 1;
+	$result = $emailcollectorfilter->create($user);
+
+	if ($result > 0)
+	{
+		$object->fetchFilters();
+	}
+	else
+	{
+		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	}
+}
+
+if ($action == 'deletefilter')
+{
+	$emailcollectorfilter = new EmailCollectorFilter($db);
+	$emailcollectorfilter->fetch(GETPOST('filterid','int'));
+	$result = $emailcollectorfilter->delete($user);
+	if ($result > 0)
+	{
+		$object->fetchFilters();
+	}
+	else
+	{
+		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	}
+}
+
+if (GETPOST('addoperation','alpha'))
+{
+	$emailcollectoroperation = new EmailCollectorAction($db);
+	$emailcollectoroperation->type = GETPOST('operationtype','az09');
+	$emailcollectoroperation->actionparam = GETPOST('actionparam', 'alpha');
+	$emailcollectoroperation->fk_emailcollector = $object->id;
+	$emailcollectoroperation->status = 1;
+	$result = $emailcollectoroperation->create($user);
+
+	if ($result > 0)
+	{
+		$object->fetchActions();
+	}
+	else
+	{
+		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	}
+}
+
+if ($action == 'deleteoperation')
+{
+	$emailcollectoroperation = new EmailCollectorAction($db);
+	$emailcollectoroperation->fetch(GETPOST('operationid','int'));
+	$result = $emailcollectoroperation->delete($user);
+	if ($result > 0)
+	{
+		$object->fetchActions();
+	}
+	else
+	{
+		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	}
+}
 
 
 
@@ -218,6 +286,9 @@ if (($id || $ref) && $action == 'edit')
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
 	$res = $object->fetch_optionals();
+
+	$object->fetchFilters();
+	$object->fetchActions();
 
 	$head = emailcollectorPrepareHead($object);
 	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'emailcollector');
@@ -317,6 +388,90 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
+
+
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="action" value="updatefiltersactions">';
+	print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+	print '<input type="hidden" name="id" value="' . $object->id . '">';
+
+	// Filters
+	print '<table class="border centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
+	print '</tr>';
+	// Add filter
+	print '<tr class="oddeven">';
+	print '<td>';
+	$arrayoftypes=array('from'=>'MailFrom', 'to'=>'MailTo', 'cc'=>'Cc', 'bcc'=>'Bcc', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead');
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1);
+	print '</td><td>';
+	print '<input type="text" name="rulevalue">';
+	print '</td>';
+	print '<td align="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+	// List filters
+	foreach($object->filters as $rulefilter)
+	{
+		$rulefilterobj=new EmailCollectorFilter($db);
+		$rulefilterobj->fetch($rulefilter['id']);
+
+		print '<tr class="oddeven">';
+		print '<td>';
+		print $langs->trans($arrayoftypes[$rulefilter['type']]);
+		print '</td>';
+		print '<td>'.$rulefilter['rulevalue'].'</td>';
+		print '<td align="right">';
+		//print $rulefilterobj->getLibStatut(3);
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
+		print '</td>';
+		print '</tr>';
+	}
+
+	print '</tr>';
+	print '</table>';
+
+	print '<div class="clearboth"></div><br>';
+
+	// Operations
+	print '<table class="border centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td>';
+	print '</tr>';
+	// Add operation
+	print '<tr class="oddeven">';
+	print '<td>';
+	$arrayoftypes=array('recordevent'=>'RecordEvent');
+	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
+	print $form->selectarray('operationtype', $arrayoftypes, '', 0, 0, 0, '', 1);
+	print '</td><td>';
+	print '<input type="text" name="operationparam">';
+	print '</td>';
+	print '<td align="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+	// List operations
+	foreach($object->actions as $ruleaction)
+	{
+		$ruleactionobj=new EmailcollectorAction($db);
+		$ruleactionobj->fetch($ruleaction['id']);
+
+		print '<tr class="oddeven">';
+		print '<td>';
+		print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		print '</td>';
+		print '<td>'.$ruleaction['actionparam'].'</td>';
+		print '<td align="right">';
+		//print $ruleactionobj->getLibStatut(3);
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print '</td>';
+		print '</tr>';
+	}
+
+	print '</tr>';
+	print '</table>';
+
+	print '</form>';
 
 	print '</div>';
 	print '</div>';

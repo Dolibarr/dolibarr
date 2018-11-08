@@ -101,7 +101,7 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Login -->
 <div class="trinputlogin">
-<div class="tagtd nowrap center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
 </span>
@@ -135,7 +135,7 @@ if (! empty($morelogincontent)) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tdinputlogin nowrap none center valignmiddle tdinputlogin">
+	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
 
 	<table class="login_table_securitycode centpercent">
 	<tr class="valignmiddle">
