@@ -25,19 +25,19 @@
 		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
 
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedCATCH">
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedCatch">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedFOREACH">
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForeach">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedIF">
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedIf">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSE">
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedElse">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedELSEIF">
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedElseif">
 		<severity>0</severity>
 	</rule>
 	
