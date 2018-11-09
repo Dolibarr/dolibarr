@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2016 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI     <info@inovea-conseil.com>
@@ -473,20 +473,44 @@ class BonPrelevement extends CommonObject
 							}
 						}
 
-						// Make one payment per customer
-						foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts)
-						{
+						if (empty($conf->global->WITHDRAWAL_DISABLE_PAYMENT_PER_CUSTOMER)) {
+
+							// Make one payment per customer
+							foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts) {
+								$paiement = new Paiement($this->db);
+								$paiement->datepaye = $date;
+								$paiement->amounts = $cursoramounts;        // Array with detail of dispatching of payments for each invoice
+								$paiement->paiementid = 3;                    //
+								$paiement->num_paiement = $this->ref;            // Set ref of direct debit note
+								$paiement->id_prelevement = $this->id;
+
+								$paiement_id = $paiement->create($user);
+								if ($paiement_id < 0) {
+									dol_syslog(get_class($this) . "::set_infocredit AddPayment Error");
+									$error++;
+								} else {
+									$result = $paiement->addPaymentToBank($user, 'payment', '(WithdrawalPayment)', $bankaccount, '', '');
+									if ($result < 0) {
+										dol_syslog(get_class($this) . "::set_infocredit AddPaymentToBank Error");
+										$error++;
+									}
+								}
+								//var_dump($paiement->amounts);
+								//var_dump($thirdpartyid);
+								//var_dump($cursoramounts);
+							}
+						} else {
 							$paiement = new Paiement($this->db);
-							$paiement->datepaye     = $date;
-							$paiement->amounts      = $cursoramounts;		// Array with detail of dispatching of payments for each invoice
-							$paiement->paiementid   = 3; 					//
-							$paiement->num_paiement = $this->ref;			// Set ref of direct debit note
+							$paiement->datepaye     = $date ;
+							$paiement->amounts      = $amounts;
+							$paiement->paiementid   = 3; //
+							$paiement->num_paiement = $this->ref ;
 							$paiement->id_prelevement = $this->id;
 
 							$paiement_id = $paiement->create($user);
 							if ($paiement_id < 0)
 							{
-								dol_syslog(get_class($this)."::set_infocredit AddPayment Error");
+								dol_syslog("BonPrelevement::set_credite AddPayment Error");
 								$error++;
 							}
 							else
@@ -494,15 +518,12 @@ class BonPrelevement extends CommonObject
 								$result=$paiement->addPaymentToBank($user,'payment','(WithdrawalPayment)',$bankaccount,'','');
 								if ($result < 0)
 								{
-									dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error");
+									dol_syslog("BonPrelevement::set_credite AddPaymentToBank Error");
 									$error++;
 								}
 							}
-							//var_dump($paiement->amounts);
-							//var_dump($thirdpartyid);
-							//var_dump($cursoramounts);
-						}
 
+						}
 						// Update withdrawal line
 						// TODO: Translate to ligneprelevement.class.php
 						$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";

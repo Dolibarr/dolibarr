@@ -67,6 +67,7 @@ NumeroNationalEmetter=National Transmitter Number
 WithBankUsingRIB=For bank accounts using RIB
 WithBankUsingBANBIC=For bank accounts using IBAN/BIC/SWIFT
 BankToReceiveWithdraw=Bank account to receive direct debit
+PrelevementDisablePaymentPerCustomer=Disable make one payment per customer of witdhdrawal.<br>If the option is active a single payment will be made for the entire withdrawal
 CreditDate=Credit on
 WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country %s (Your country is not supported)
 ShowWithdraw=Show Withdraw
