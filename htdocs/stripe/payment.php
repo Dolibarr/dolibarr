@@ -87,9 +87,9 @@ if (! empty($conf->stripe->enabled))
 		$service = 'StripeLive';
 		$servicestatus = 0;
 	}
-     
-$stripe=new Stripe($db); 
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+
+	$stripe=new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
 }
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
@@ -306,14 +306,14 @@ if (empty($reshook))
 				$paiementcode ="CB";
 			}
 		}
-    
-    
+
+
 
 		$societe = new Societe($db);
 		$societe->fetch($facture->socid);
-		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');  
-    
-    $stripecu = $stripe->getStripeCustomerAccount($societe->id, $servicestatus);		// Get thirdparty cu_...
+		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
+
+		$stripecu = $stripe->getStripeCustomerAccount($societe->id, $servicestatus);		// Get thirdparty cu_...
 
 		$charge=$stripe->createPaymentStripe($stripeamount,$facture->multicurrency_code,"invoice",$facid,$source,$stripecu,$stripeacc,$servicestatus);
 
@@ -393,7 +393,7 @@ if (empty($reshook))
 			exit;
 		}
 		else
-		{                                                                                                               
+		{
 			$loc = DOL_URL_ROOT.'/stripe/payment.php?facid='.$facid.'&action=create&error='.$charge->message;
 			$db->rollback();
 
