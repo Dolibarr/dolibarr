@@ -84,8 +84,8 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		$ldap->serverPort=$ldapport;
 		$ldap->ldapProtocolVersion=$ldapversion;
 		$ldap->serverType=$ldapservertype;
-		$ldap->searchUser=$ldapadminlogin;
-		$ldap->searchPassword=$ldapadminpass;
+		$ldap->searchUser=$usertotest;
+		$ldap->searchPassword=$passwordtotest;
 
 		if ($ldapdebug)
 		{
@@ -107,7 +107,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 
 		// If admin login provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
-		if ($ldapadminlogin)
+		if ($usertotest)
 		{
 			$result=$ldap->connect_bind();
 			if ($result > 0)
