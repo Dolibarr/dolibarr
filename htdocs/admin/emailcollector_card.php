@@ -175,9 +175,9 @@ if ($action == 'confirm_collect')
 {
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
-	$res = $object->doCollect();
+	$res = $object->doCollectOneCollector();
 
-	if ($res == 0)
+	if ($res > 0)
 	{
 		setEventMessages($object->output, null, 'mesgs');
 	}

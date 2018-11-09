@@ -85,7 +85,7 @@ class EmailCollector extends CommonObject
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
 		'user'          => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myacount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>1, 'comment'=>"IMAP password"),
-		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox'),
+		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
 		//'filter'		=> array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
 		//'actiontodo'	=> array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
 		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'comment'=>"Where to store messages once processed"),
@@ -318,33 +318,9 @@ class EmailCollector extends CommonObject
 
         $socid = $user->societe_id ? $user->societe_id : '';
 
-        // If the internal user must only see his customers, force searching by him
-        if (! $user->rights->societe->client->voir && !$socid) {
-            $search_sale = $user->id;
-        }
 		$sql = "SELECT s.rowid";
-        //if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-        //    $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        //}
-        $sql.= " FROM ".MAIN_DB_PREFIX."emailcollector as s";
-
-        //if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-        //    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-        //}
-        //$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-        //$sql.= " WHERE s.fk_stcomm = st.id";
-
-		// Example of use $mode
-        //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
-        //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
-
+        $sql.= " FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector as s";
         $sql.= ' WHERE s.entity IN ('.getEntity('emailcollector').')';
-        //if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-        //    $sql.= " AND s.fk_soc = sc.fk_soc";
-        //}
-        //if ($socid) {
-        //    $sql.= " AND s.fk_soc = ".$socid;
-        //}
         if ($activeOnly) {
             $sql.= " AND s.status = 1";
         }
@@ -359,10 +335,10 @@ class EmailCollector extends CommonObject
         }
 
         $result = $this->db->query($sql);
-
         if ($result) {
             $num = $this->db->num_rows($result);
-            while ($i < $num) {
+            while ($i < $num)
+            {
                 $obj = $this->db->fetch_object($result);
                 $emailcollector_static = new EmailCollector($this->db);
                 if ($emailcollector_static->fetch($obj->rowid)) {
@@ -371,11 +347,12 @@ class EmailCollector extends CommonObject
                 $i++;
             }
         } else {
-            dol_syslog(__METHOD__.':: Error when retrieve emailcollector list', LOG_ERR);
+        	$this->errors[] = 'EmailCollector::fetchAll Error when retrieve emailcollector list';
+            dol_syslog('EmailCollector::fetchAll Error when retrieve emailcollector list', LOG_ERR);
             $ret = -1;
         }
         if (! count($obj_ret)) {
-            dol_syslog(__METHOD__.':: No emailcollector found', LOG_DEBUG);
+        	dol_syslog('EmailCollector::fetchAll No emailcollector found', LOG_DEBUG);
         }
 
         return $obj_ret;
@@ -676,14 +653,40 @@ class EmailCollector extends CommonObject
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doCollect()
+	{
+		global $user;
+
+		$nberror = 0;
+
+		$arrayofcollectors = $this->fetchAll($user, 1);
+
+		// Loop on each collector
+		foreach($arrayofcollectors as $emailcollector)
+		{
+			$result = $emailcollector->doCollectOneCollector();
+			dol_syslog("doCollect result = ".$result." for emailcollector->id = ".$emailcollector->id);
+
+			$this->error.='EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
+			if (! empty($emailcollector->errors)) $this->error.=join('<br>', $emailcollector->errors);
+			$this->output.='EmailCollector ID '.$emailcollector->id.': '.$emailcollector->output.'<br>';
+		}
+
+		return $nberror;
+	}
+
+	/**
+	 * Execute collect for current collector loaded previously with fetch.
+	 *
+	 * @return	int			<0 if KO, >0 if OK
+	 */
+	public function doCollectOneCollector()
 	{
 		global $conf, $langs, $user;
 
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
-		dol_syslog("EmailCollector::doCollect start", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector start", LOG_DEBUG);
 
 		$error = 0;
 		$this->output = '';
@@ -803,11 +806,11 @@ class EmailCollector extends CommonObject
 				// Move email
 				if (! $errorforactions && $targetdir)
 				{
-					dol_syslog("EmailCollector::doCollect move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
+					dol_syslog("EmailCollector::doCollectOneCollector move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
 					$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
 					if ($res == false) {
 						$error++;
-						$this->errors = imap_last_error();
+						$this->error = imap_last_error();
 						dol_syslog(imap_last_error());
 					}
 				}
@@ -830,11 +833,12 @@ class EmailCollector extends CommonObject
 
 		$this->datelastresult = $now;
 		$this->lastresult = $this->output;
+		$this->codelastresult = ($error ? 'KO' : 'OK');
 		$this->update($user);
 
-		dol_syslog("EmailCollector::doCollect end", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
 
-		return $error;
+		return $error?-1:1;
 	}
 
 	/**
