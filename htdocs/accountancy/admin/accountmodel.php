@@ -44,7 +44,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","companies","resource","holiday","compta","accountancy","hrm"));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=31;
 $rowid=GETPOST('rowid','alpha');

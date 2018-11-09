@@ -41,7 +41,7 @@ $langs->loadLangs(array("accountancy"));
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
 
 // Load variable for pagination
@@ -151,6 +151,7 @@ if ($action == 'export_csv')
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'balance';
+	$type_export = 'balance';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);

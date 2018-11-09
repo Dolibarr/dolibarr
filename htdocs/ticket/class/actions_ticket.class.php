@@ -258,7 +258,7 @@ class ActionsTicket
                         // Extrafields
                         $extrafields = new ExtraFields($this->db);
                         $extralabels = $extrafields->fetch_name_optionals_label($fichinter->table_element);
-                        $array_options = $extrafields->getOptionalsFromPost($extralabels);
+                        $array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
                         $fichinter->array_options = $array_options;
 
                         $id = $fichinter->create($user);
@@ -827,6 +827,7 @@ class ActionsTicket
 
         global $mysoc, $conf, $langs;
 
+        $object = new Ticket($this->db);
         $error = 0;
         $ret = $object->fetch('', '', GETPOST('track_id','alpha'));
         $object->socid = $object->fk_soc;
@@ -1203,15 +1204,14 @@ class ActionsTicket
     public function viewTicketMessages($show_private, $show_user = true)
     {
         global $conf, $langs, $user;
-		global $object;
 
         // Load logs in cache
-        $ret = $object->loadCacheMsgsTicket();
+        $ret = $this->dao->loadCacheMsgsTicket();
         $action = GETPOST('action');
 
         $this->viewTicketOriginalMessage($user, $action);
 
-        if (is_array($object->cache_msgs_ticket) && count($object->cache_msgs_ticket) > 0) {
+        if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
             print_titre($langs->trans('TicketMailExchanges'));
 
             print '<table class="border" style="width:100%;">';
@@ -1228,7 +1228,7 @@ class ActionsTicket
                 print '</td>';
             }
 
-            foreach ($object->cache_msgs_ticket as $id => $arraymsgs) {
+            foreach ($this->dao->cache_msgs_ticket as $id => $arraymsgs) {
                 if (!$arraymsgs['private']
                     || ($arraymsgs['private'] == "1" && $show_private)
                 ) {

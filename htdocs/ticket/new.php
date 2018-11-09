@@ -37,7 +37,7 @@ $contactid = GETPOST('contactid', 'int');
 $msg_id = GETPOST('msg_id', 'int');
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
-$action = GETPOST('action', 'alpha', 3);
+$action = GETPOST('action', 'aZ09');
 
 // Protection if external user
 if (!$user->rights->ticket->read || !$user->rights->ticket->write) {

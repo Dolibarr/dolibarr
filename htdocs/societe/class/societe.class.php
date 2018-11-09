@@ -13,6 +13,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -947,6 +948,24 @@ class Societe extends CommonObject
 			// We don't check when update called during a create because verify was already done.
 			// For a merge, we suppose source data is clean and a customer code of a deleted thirdparty must be accepted into a target thirdparty with empty code without duplicate error
 			$result = $this->verify();
+
+			// If there is only one error and error is ErrorBadCustomerCodeSyntax and we don't change customer code, we allow the update
+			// So we can update record that were using and old numbering rule.
+			if (is_array($this->errors))
+			{
+				if (in_array('ErrorBadCustomerCodeSyntax', $this->errors) && is_object($this->oldcopy) && $this->oldcopy->code_client == $this->code_client)
+				{
+					if (($key = array_search('ErrorBadCustomerCodeSyntax', $this->errors)) !== false) unset($this->errors[$key]);	// Remove error message
+				}
+				if (in_array('ErrorBadSupplierCodeSyntax', $this->errors) && is_object($this->oldcopy) && $this->oldcopy->code_fournisseur == $this->code_fournisseur)
+				{
+					if (($key = array_search('ErrorBadSupplierCodeSyntax', $this->errors)) !== false) unset($this->errors[$key]);	// Remove error message
+				}
+				if (empty($this->errors))	// If there is no more error, we can make like if there is no error at all
+				{
+					$result = 0;
+				}
+			}
 		}
 
 		if ($result >= 0)
@@ -1506,6 +1525,19 @@ class Societe extends CommonObject
 				{
 					$error++;
 					dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+				}
+			}
+
+			// Remove links to subsidiaries companies
+			if (! $error)
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+				$sql.= " SET parent = NULL";
+				$sql.= " WHERE parent = " . $id;
+				if (! $this->db->query($sql))
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
 				}
 			}
 
@@ -3827,6 +3859,7 @@ class Societe extends CommonObject
 	 *
 	 *  @return		int				Amount in debt for thirdparty
 	 *  @deprecated
+	 *  @see getOutstandingBills()
 	 */
 	function get_OutstandingBill()
 	{

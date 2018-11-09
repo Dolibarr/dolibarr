@@ -28,7 +28,7 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 /**
  * Class DataPolicy
  */
-Class DataPolicy extends Contact
+Class DataPolicy
 {
 	/**
 	 * getAllContactNotInformed

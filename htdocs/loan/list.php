@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/loan/index.php
+ *  \file       htdocs/loan/list.php
  *  \ingroup    loan
  *  \brief      Page to list all loans
  */

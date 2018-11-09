@@ -552,7 +552,8 @@ if ($showweather)
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
-	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
+	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
+	
     foreach($valid_dashboardlines as $board)
     {
         if (empty($board->nbtodo)) $nbworkboardempty++;
@@ -592,6 +593,8 @@ if (! empty($valid_dashboardlines))
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    
+    $boxwork .='</div>';
     $boxwork .='</td></tr>';
 }
 else
