@@ -751,16 +751,17 @@ SCRIPT;
 				$num = count($product_fourn_list);
 				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
 
-			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
-			    print '<div class="div-table-responsive">';
-			    print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder" width="100%">';
 				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
 				$param="&id=".$object->id;
 				print '<tr class="liste_titre">';
+				print_liste_field_titre("AppliedPricesFrom",$_SERVER["PHP_SELF"],"pfp.datec","",$param,"",$sortfield,$sortorder);
 				print_liste_field_titre("Suppliers",$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 				print_liste_field_titre("SupplierRef",$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
 				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre("Availability",$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
@@ -788,10 +789,13 @@ SCRIPT;
 					{
 						print '<tr class="oddeven">';
 
+						// Date from
+						print '<td>'.dol_print_date($productfourn->date_creation, 'dayhour').'</td>';
+
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
 
-						// Supplier
+						// Supplier ref
 						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
 
 						// Availability
