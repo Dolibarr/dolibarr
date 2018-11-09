@@ -28,7 +28,7 @@
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedCatch">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForEach">
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedForeach">
 		<severity>0</severity>
 	</rule>
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedIf">
@@ -37,7 +37,7 @@
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedElse">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedElseIf">
+	<rule ref="Generic.CodeAnalysis.EmptyStatement.DetectedElseif">
 		<severity>0</severity>
 	</rule>
 	
