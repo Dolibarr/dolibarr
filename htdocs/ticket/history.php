@@ -40,7 +40,7 @@ $langs->loadLangs(array('companies', 'other', 'ticket'));
 $id = GETPOST('id', 'int');
 $track_id = GETPOST('track_id', 'alpha', 3);
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha', 3);
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if (!$user->rights->ticket->read) {

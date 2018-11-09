@@ -631,7 +631,7 @@ if ($ispaymentok)
 				$paiement->num_paiement = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 				$paiement->ext_payment_id = $TRANSACTIONID;
-				$paiement->ext_payment_site = $paymentmethod;
+				$paiement->ext_payment_site = $service;
 
 				if (! $error)
 				{

@@ -2171,8 +2171,10 @@ class Holiday extends CommonObject
 		$this->description='SPECIMEN description';
 		$this->date_debut=dol_now();
 		$this->date_fin=dol_now()+(24*3600);
+		$this->date_valid=dol_now();
 		$this->fk_validator=1;
 		$this->halfday=0;
 		$this->fk_type=1;
+		$this->statut=Holiday::STATUS_VALIDATED;
 	}
 }

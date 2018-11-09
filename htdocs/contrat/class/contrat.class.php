@@ -2581,7 +2581,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 * @var float
 	 * @deprecated Use $price_ht instead
-	 * @see price_ht
+	 * @see $price_ht
 	 */
 	public $price;
 

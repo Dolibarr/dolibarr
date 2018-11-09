@@ -8,7 +8,7 @@
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       ThibaultFOUCART         <support@ptibogxiv.net>
+ * Copyright (C) 2018       Thibault FOUCART         <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,21 +63,6 @@ $addwarning=0;
 $multicurrency_amounts=array();
 $multicurrency_amountsresttopay=array();
 
-if (! empty($conf->stripe->enabled))
-{
-	$service = 'StripeTest';
-	$servicestatus = 0;
-	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
-	{
-		$service = 'StripeLive';
-		$servicestatus = 0;
-	}
-
-	$stripe = new Stripe($db);
-	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus);		// Get thirdparty cu_...
-}
-
 // Security check
 $socid=0;
 if ($user->societe_id > 0)
@@ -91,6 +76,20 @@ $object=new Facture($db);
 if ($facid > 0)
 {
 	$ret=$object->fetch($facid);
+}
+
+if (! empty($conf->stripe->enabled))
+{
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+	{
+		$service = 'StripeLive';
+		$servicestatus = 0;
+	}
+
+	$stripe=new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
 }
 
 // Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
@@ -308,11 +307,15 @@ if (empty($reshook))
 			}
 		}
 
+
+
 		$societe = new Societe($db);
 		$societe->fetch($facture->socid);
 		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
 
-		$charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$source,$customer->id,$stripe->getStripeAccount($conf->entity));
+		$stripecu = $stripe->getStripeCustomerAccount($societe->id, $servicestatus);		// Get thirdparty cu_...
+
+		$charge=$stripe->createPaymentStripe($stripeamount,$facture->multicurrency_code,"invoice",$facid,$source,$stripecu,$stripeacc,$servicestatus);
 
 		if (!$error)
 		{
@@ -324,6 +327,8 @@ if (empty($reshook))
 			$paiement->paiementid   = dol_getIdFromCode($db,$paiementcode,'c_paiement');
 			$paiement->num_paiement = $charge->message;
 			$paiement->note         = GETPOST('comment');
+			$paiement->ext_payment_id = $charge->id;
+			$paiement->ext_payment_site = $service;
 		}
 
 		if (! $error)
@@ -389,7 +394,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			$loc = DOL_URL_ROOT.'/stripeconnect/payment.php?facid='.$facid.'&action=create&error='.$e->getMessage();
+			$loc = DOL_URL_ROOT.'/stripe/payment.php?facid='.$facid.'&action=create&error='.$charge->message;
 			$db->rollback();
 
 			header('Location: '.$loc);

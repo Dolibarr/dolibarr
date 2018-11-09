@@ -417,8 +417,8 @@ if (empty($reshook))
 	        $object->idprof5				= trim(GETPOST('idprof5', 'alpha'));
 	        $object->idprof6				= trim(GETPOST('idprof6', 'alpha'));
 	        $object->prefix_comm			= GETPOST('prefix_comm', 'alpha');
-	        $object->code_client			= GETPOST('customer_code', 'alpha');
-	        $object->code_fournisseur		= GETPOST('supplier_code', 'alpha');
+	        $object->code_client			= GETPOSTISSET('customer_code')?GETPOST('customer_code', 'alpha'):GETPOST('code_client', 'alpha');
+	        $object->code_fournisseur		= GETPOSTISSET('supplier_code')?GETPOST('supplier_code', 'alpha'):GETPOST('code_fournisseur', 'alpha');
 	        $object->capital				= GETPOST('capital', 'alpha');
 	        $object->barcode				= GETPOST('barcode', 'alpha');
 

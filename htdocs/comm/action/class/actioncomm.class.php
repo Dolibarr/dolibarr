@@ -1679,13 +1679,19 @@ class ActionComm extends CommonObject
     	$this->output = '';
 		$this->error='';
 
-    	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
+    	if (empty($conf->agenda->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
+		if (empty($conf->global->AGENDA_REMINDER_EMAIL))
     	{
     		$langs->load("agenda");
     		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
     		return 0;
     	}
-
+		
     	$now = dol_now();
 
     	dol_syslog(__METHOD__, LOG_DEBUG);

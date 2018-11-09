@@ -144,7 +144,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('societe');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('societe','','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(

@@ -78,7 +78,7 @@ $diroutputmassaction=$conf->holiday->dir_output . '/temp/massgeneration/'.$user-
 $hookmanager->initHooks(array('holidaylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('holiday');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="cp.rowid";

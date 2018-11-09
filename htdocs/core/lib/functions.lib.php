@@ -668,7 +668,7 @@ function dol_include_once($relpath, $classname='')
 
 
 /**
- *	Return path of url or filesystem. Return alternate root if exists.
+ *	Return path of url or filesystem. Can check into alternate dir or alternate dir + main dir depending on value of $returnemptyifnotfound.
  *
  * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type						0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
@@ -688,7 +688,10 @@ function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
 		$res = DOL_DOCUMENT_ROOT.'/'.$path;		// Standard default path
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
-			if ($key == 'main') continue;
+			if ($key == 'main')
+			{
+				continue;
+			}
 			if (file_exists($dirroot.'/'.$path))
 			{
 				$res=$dirroot.'/'.$path;
@@ -1035,6 +1038,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		}
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
+		$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message);	// protection to avoid to have value of password in log
+
 		// If adding log inside HTML page is required
 		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
 		{
@@ -1042,7 +1047,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
-		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
+		// If html log tag enabled and url parameter log defined, we show output log on HTML comments
 		if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
 		{
 			print "\n\n<!-- Log start\n";
@@ -6808,7 +6813,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strRights		String with condition to check
- * @return 	boolean						True or False. Return true if strRights is ''
+ * @return 	boolean						True or False. Return True if strRights is ''
  */
 function verifCond($strRights)
 {
@@ -6820,13 +6825,8 @@ function verifCond($strRights)
 	$rights = true;
 	if ($strRights != '')
 	{
-		//$tab_rights = explode('&&', $strRights);
-		//$i = 0;
-		//while (($i < count($tab_rights)) && ($rights == true)) {
 		$str = 'if(!(' . $strRights . ')) { $rights = false; }';
-		dol_eval($str);
-		//	$i++;
-		//}
+		dol_eval($str);		// The dol_eval must contains all the global $xxx used into a condition
 	}
 	return $rights;
 }
@@ -6843,8 +6843,8 @@ function verifCond($strRights)
 function dol_eval($s, $returnvalue=0, $hideerrors=1)
 {
 	// Only global variables can be changed by eval function and returned to caller
-	global $db, $langs, $user, $conf;
-	global $mainmenu, $leftmenu;
+	global $db, $langs, $user, $conf, $website, $websitepage;
+	global $action, $mainmenu, $leftmenu;
 	global $rights;
 	global $object;
 	global $mysoc;
@@ -7288,7 +7288,8 @@ function dol_getmypid()
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
- * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
+ * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '1,3,4') for search into a multiselect string ('1,2')
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
@@ -7372,11 +7373,9 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 			else if ($mode == 4)
 			{
 			    $tmparray=explode(',',trim($crit));
-
 			    if (count($tmparray))
 			    {
 			        $listofcodes='';
-
 			        foreach($tmparray as $val)
 			        {
 			            if ($val)
@@ -7385,7 +7384,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 			                $newres .= ' OR '. $field . ' = \'' . $db->escape(trim($val)) . '\'';
 			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . '\'';
 			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . ',%\'';
-					$newres .= ')';
+			                $newres .= ')';
 			                $i2++;
 			            }
 			        }

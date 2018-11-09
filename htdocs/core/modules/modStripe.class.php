@@ -92,7 +92,7 @@ class modStripe extends DolibarrModules
 
         // Main menu entries
         $r=0;
-        $this->menu[$r]=array(
+       /* $this->menu[$r]=array(
         	'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
         	'leftmenu'=>'customers_bills_payment_stripe',
@@ -106,7 +106,7 @@ class modStripe extends DolibarrModules
 	        'target'=>'',
 	        'user'=>2
         );				                // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
+        $r++;*/
 
         $this->menu[$r] = array(
         	'fk_menu'=>'fk_mainmenu=bank',
