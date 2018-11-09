@@ -90,7 +90,8 @@ class EmailCollector extends CommonObject
 		//'actiontodo'	=> array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
 		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'comment'=>"Where to store messages once processed"),
 		'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1,),
-		'lastresult'    => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
+		'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
+		'lastresult'    => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1,),
 		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>0, 'enabled'=>1, 'position'=>61, 'notnull'=>-1,),
 		'note_private'  => array('type'=>'html', 'label'=>'NotePrivate', 'visible'=>0, 'enabled'=>1, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
@@ -717,23 +718,16 @@ class EmailCollector extends CommonObject
 		$this->fetchActions();
 
 		$sourcedir = $this->source_directory;
-		$targetdir = ($this->target_directory ? $server.$this->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
+		$targetdir = ($this->target_directory ? $this->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
 
-		// Connect to IMAP
-		$flags ='/service=imap';		// IMAP
-		$flags.='/ssl';					// '/tls'
-		$flags.='/novalidate-cert';
-		//$flags.='/readonly';
-		//$flags.='/debug';
-
-		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
-		$connectstring = $connectstringserver.imap_utf7_encode($sourcedir);
+		$connectstringserver = $this->getConnectStringIMAP();
+		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstring, $this->user, $this->password);
+		$connection = imap_open($connectstringsource, $this->user, $this->password);
 		if (! $connection)
 		{
-			$this->error = 'Failed to open IMAP connection '.$connectstring;
+			$this->error = 'Failed to open IMAP connection '.$connectstringsource;
 			return -3;
 		}
 
@@ -743,23 +737,24 @@ class EmailCollector extends CommonObject
 		{
 			if (empty($rule['status'])) continue;
 
-			if ($rule['key'] == 'to')      $search=($search?' ':'').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
-			if ($rule['key'] == 'bcc')     $search=($search?' ':'').'BCC';
-			if ($rule['key'] == 'cc')      $search=($search?' ':'').'CC';
-			if ($rule['key'] == 'from')    $search=($search?' ':'').'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
-			if ($rule['key'] == 'subject') $search=($search?' ':'').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
-			if ($rule['key'] == 'body')    $search=($search?' ':'').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
-			if ($rule['key'] == 'seen')    $search=($search?' ':'').'SEEN';
-			if ($rule['key'] == 'unseen')  $search=($search?' ':'').'UNSEEN';
+			if ($rule['type'] == 'to')      $search.=($search?' ':'').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['type'] == 'bcc')     $search.=($search?' ':'').'BCC';
+			if ($rule['type'] == 'cc')      $search.=($search?' ':'').'CC';
+			if ($rule['type'] == 'from')    $search.=($search?' ':'').'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['type'] == 'subject') $search.=($search?' ':'').'SUBJECT "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['type'] == 'body')    $search.=($search?' ':'').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
+			if ($rule['type'] == 'seen')    $search.=($search?' ':'').'SEEN';
+			if ($rule['type'] == 'unseen')  $search.=($search?' ':'').'UNSEEN';
 		}
 
 		if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
 		{
 			$fromdate=0;
-			if ($this->datelastresult) $fromdate = $this->datelastresult;
+			if ($this->datelastresult && $this->codelastresult == 'OK') $fromdate = $this->datelastresult;
 			if ($fromdate > 0) $search.=($search?' ':'').'SINCE '.dol_print_date($fromdate - 1,'dayhourrfc');
 		}
 		dol_syslog("search string = ".$search);
+		//var_dump($search);exit;
 
 		$nbemailprocessed=0; $nbactiondone=0;
 
@@ -840,5 +835,24 @@ class EmailCollector extends CommonObject
 		dol_syslog("EmailCollector::doCollect end", LOG_DEBUG);
 
 		return $error;
+	}
+
+	/**
+	 * Return the connectstring to use with IMAP connection function
+	 *
+	 * @return string
+	 */
+	function getConnectStringIMAP()
+	{
+		// Connect to IMAP
+		$flags ='/service=imap';		// IMAP
+		$flags.='/ssl';					// '/tls'
+		$flags.='/novalidate-cert';
+		//$flags.='/readonly';
+		//$flags.='/debug';
+
+		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
+
+		return $connectstringserver;
 	}
 }

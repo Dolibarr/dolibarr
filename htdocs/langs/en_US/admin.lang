@@ -1827,11 +1827,13 @@ DateLastResult=Date last collect
 LastResult=Last result
 EmailCollectorConfirmCollectTitle=Email collect confirmation
 EmailCollectorConfirmCollect=Do you want to run the collect for this collector now ?
-NoNewEmailToProcess=No new email to process
+NoNewEmailToProcess=No new email (matching filters) to process
 NothingProcessed=Nothing done
 XEmailsDoneYActionsDone=%s emails analyzed, %s record/actions done by collector
 RecordEvent=Record event
 CreateLeadAndThirdParty=Create lead (and thirdparty if necessary)
+CodeLastResult=Result code of last collect
+NbOfEmailsInInbox=Number of email in source directory
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

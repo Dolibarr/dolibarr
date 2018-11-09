@@ -153,6 +153,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
         datelastresult datetime, 
+        codelastresult varchar(16), 
         lastresult varchar(255),
         note_public text, 
         note_private text, 
