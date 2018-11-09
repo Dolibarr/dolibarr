@@ -121,7 +121,7 @@ if ($action == "deletenotif")
     exit;
 }
 
-//Activate "Disable prospect/customer type"
+//Activate or Disable one payment by customer
 if ($action=="setdisablepaymentpercustomer") {
 	$setdisablepaymentcustomer = GETPOST('value','int');
 	$res = dolibarr_set_const($db, "WITHDRAWAL_DISABLE_PAYMENT_PER_CUSTOMER", $setdisablepaymentcustomer,'yesno',0,'',$conf->entity);
