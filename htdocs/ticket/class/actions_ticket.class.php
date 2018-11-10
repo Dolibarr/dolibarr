@@ -845,11 +845,11 @@ class ActionsTicket
         }
 
         if (!$error) {
-            $object->message = GETPOST("message");
+            $object->message = (string) GETPOST("message");
             $id = $object->createTicketMessage($user);
             if ($id <= 0) {
                 $error++;
-                $this->errors = $object->error;
+                $this->error = $object->error;
                 $this->errors = $object->errors;
                 $action = 'add_message';
             }
