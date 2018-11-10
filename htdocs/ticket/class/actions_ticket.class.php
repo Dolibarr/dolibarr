@@ -845,7 +845,7 @@ class ActionsTicket
         }
 
         if (!$error) {
-            $object->message = GETPOST("message");
+            $object->message = (string) GETPOST("message");
             $id = $object->createTicketMessage($user);
             if ($id <= 0) {
                 $error++;
