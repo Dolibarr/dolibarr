@@ -849,7 +849,7 @@ class ActionsTicket
             $id = $object->createTicketMessage($user);
             if ($id <= 0) {
                 $error++;
-                $this->errors = $object->error;
+                $this->error = $object->error;
                 $this->errors = $object->errors;
                 $action = 'add_message';
             }
