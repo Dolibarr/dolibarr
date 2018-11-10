@@ -35,7 +35,7 @@ $langs->load("categories");
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action','aZ09');
+$action=(GETPOST('action','aZ09')?GETPOST('action','aZ09'):'edit');
 $confirm=GETPOST('confirm');
 $cancel=GETPOST('cancel','alpha');
 
