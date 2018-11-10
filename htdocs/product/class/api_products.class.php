@@ -110,7 +110,7 @@ class Products extends DolibarrApi
      * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
      * @return array                Array of product objects
      */
-    function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $category=0, $sqlfilters = '')
+    function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -129,11 +129,12 @@ class Products extends DolibarrApi
             $sql.= " AND c.fk_categorie = ".$db->escape($category);
             $sql.= " AND c.fk_product = t.rowid ";
         }
-        // Show products
-        if ($mode == 1) { $sql.= " AND t.fk_product_type = 0";
-        }
-        // Show services
-        if ($mode == 2) { $sql.= " AND t.fk_product_type = 1";
+        if ($mode == 1) {
+            // Show only products
+            $sql.= " AND t.fk_product_type = 0";
+        } elseif ($mode == 2) { 
+            // Show only services
+            $sql.= " AND t.fk_product_type = 1";
         }
         // Add sql filters
         if ($sqlfilters) {
@@ -158,6 +159,7 @@ class Products extends DolibarrApi
         if ($result) {
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
+            $i = 0;
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
