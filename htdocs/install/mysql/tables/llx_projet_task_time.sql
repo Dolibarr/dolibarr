@@ -31,6 +31,5 @@ create table llx_projet_task_time
   import_key	   varchar(14),					-- Import key
   datec            date,						-- Date creation time
   tms              timestamp,					-- Date update time
-  status  enum('PLANNED','DRAFT','SUBMITTED','APPROVED','CANCELLED','REJECTED','CHALLENGED','INVOICED','UNDERAPPROVAL') DEFAULT 'DRAFT';
   note             text							-- A comment
 )ENGINE=innodb;
