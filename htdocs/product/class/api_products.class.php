@@ -132,7 +132,7 @@ class Products extends DolibarrApi
         if ($mode == 1) {
             // Show only products
             $sql.= " AND t.fk_product_type = 0";
-        } elseif ($mode == 2) { 
+        } elseif ($mode == 2) {
             // Show only services
             $sql.= " AND t.fk_product_type = 1";
         }
