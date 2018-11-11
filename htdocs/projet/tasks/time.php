@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>

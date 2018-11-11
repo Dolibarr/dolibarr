@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
