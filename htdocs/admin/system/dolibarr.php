@@ -142,6 +142,9 @@ print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td colspan=
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
 print '</td><td align="right">';
+print '<!-- session.gc_maxlifetime = '.ini_get("session.gc_maxlifetime").' -->'."\n";
+print '<!-- session.gc_probability = '.ini_get("session.gc_probability").' -->'."\n";
+print '<!-- session.gc_divisor = '.ini_get("session.gc_divisor").' -->'."\n";
 print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print "</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
