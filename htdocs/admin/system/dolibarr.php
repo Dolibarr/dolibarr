@@ -140,7 +140,7 @@ print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Session")
 print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td colspan="2">'.session_save_path().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").' (session.gc_maxlifetime)</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
 print '</td><td align="right">';
 print '<!-- session.gc_maxlifetime = '.ini_get("session.gc_maxlifetime").' -->'."\n";
 print '<!-- session.gc_probability = '.ini_get("session.gc_probability").' -->'."\n";
