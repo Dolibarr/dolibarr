@@ -55,7 +55,7 @@ $AdherentsResilies=array();
 
 $AdherentType=array();
 
-// Liste les adherents
+// Members list
 $sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
@@ -92,7 +92,7 @@ if ($result)
 
 $now=dol_now();
 
-// List members up to date
+// Members up to date list
 // current rule: uptodate = the end date is in future whatever is type
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
@@ -140,7 +140,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     	foreach($listofsearchfields as $key => $value)
     	{
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
+    		print '<tr class="oddeven">';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
     		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
     		print '</tr>';

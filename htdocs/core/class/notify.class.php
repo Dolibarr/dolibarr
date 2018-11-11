@@ -631,13 +631,13 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$link);
 						break;
 					case 'PROPAL_VALIDATE':
-						$link='<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
+						$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$link);
 						break;
 					case 'PROPAL_CLOSE_SIGNED':
-						$link='<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
+						$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$link);

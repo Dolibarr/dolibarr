@@ -30,7 +30,7 @@ $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode='customer';
-if ($mode == 'customer' && ! $user->rights->ficheinter->lire) accessforbidden();
+if (! $user->rights->ficheinter->lire) accessforbidden();
 
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
@@ -50,7 +50,7 @@ $endyear=$year;
 $object_status=GETPOST('object_status');
 
 // Load translation files required by the page
-$langs->loadLangs(array("interventions","suppliers","companies","other"));
+$langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
 
 
 /*
@@ -60,11 +60,8 @@ $langs->loadLangs(array("interventions","suppliers","companies","other"));
 $form=new Form($db);
 $objectstatic=new FichInter($db);
 
-if ($mode == 'customer')
-{
-    $title=$langs->trans("InterventionStatistics");
-    $dir=$conf->ficheinter->dir_temp;
-}
+$title=$langs->trans("InterventionStatistics");
+$dir=$conf->ficheinter->dir_temp;
 
 llxHeader('', $title);
 
@@ -77,19 +74,18 @@ if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_sta
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
+    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filenamenb = $dir.'/interventionsnbinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
+    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
@@ -121,20 +117,17 @@ if (! $mesg)
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
+    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filenameamount = $dir.'/interventionsamountinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsamountinyear-'.$year.'.png';
+    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
@@ -169,14 +162,12 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
+    $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filename_avg = $dir.'/interventionsaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstatssupplier&file=interventionsaverage-'.$year.'.png';
+    $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
@@ -219,13 +210,12 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/fichinter/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') $type='order_stats';
-if ($mode == 'supplier') $type='supplier_order_stats';
+$type = 'fichinter_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
@@ -244,9 +234,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+    $filter = 's.client in (1,2,3)';
+	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
@@ -288,7 +277,8 @@ foreach ($data as $val)
 {
 	$year = $val['year'];
 	while (! empty($year) && $oldyear > $year+1)
-	{ // If we have empty year
+	{
+        // If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';

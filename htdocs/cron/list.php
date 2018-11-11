@@ -62,15 +62,16 @@ $securitykey = GETPOST('securitykey','alpha');
 
 $diroutputmassaction=$conf->cronjob->dir_output . '/temp/massgeneration/'.$user->id;
 
+$object = new Cronjob($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('cronjoblist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('cronjob');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
-$object = new Cronjob($db);
 
 
 /*
@@ -191,7 +192,7 @@ if (empty($reshook))
 				$result = 0;
 				if ($massaction == 'disable') $result = $tmpcron->setStatut(Cronjob::STATUS_DISABLED);
 				elseif ($massaction == 'enable') $result = $tmpcron->setStatut(Cronjob::STATUS_ENABLED);
-				else dol_print_error($db, 'Bad value for massaction');
+				//else dol_print_error($db, 'Bad value for massaction');
 				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
 			}
 			else

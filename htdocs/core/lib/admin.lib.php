@@ -944,7 +944,6 @@ function activateModule($value,$withdeps=1)
                 	$activate = false;
                 	foreach ($modulesdir as $dir)
                 	{
-                		var_dump($modulestring);
                 		if (file_exists($dir.$modulestring.".class.php"))
                 		{
                 			$resarray = activateModule($modulestring);
@@ -1354,7 +1353,8 @@ function complete_elementList_with_modules(&$elementList)
 /**
  *	Show array with constants to edit
  *
- *	@param	array	$tableau		Array of constants array('key'=>type, ) where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
+ *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
+ *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
  *  @param  string  $helptext       Help
  *	@return	void
@@ -1378,17 +1378,28 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
     if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
+    $label='';
     $listofparam=array();
     foreach($tableau as $key => $const)	// Loop on each param
     {
+    	$label='';
     	// $const is a const key like 'MYMODULE_ABC'
-    	if (is_numeric($key)) {
+    	if (is_numeric($key)) {		// Very old behaviour
     		$type = 'string';
     	}
     	else
     	{
-    		$type = $const;
-    		$const = $key;
+    		if (is_array($const))
+    		{
+    			$type = $const['type'];
+				$label = $const['label'];
+    			$const = $key;
+    		}
+    		else
+    		{
+    			$type = $const;
+    			$const = $key;
+    		}
     	}
 
         $sql = "SELECT ";
@@ -1429,7 +1440,7 @@ function form_constantes($tableau, $strictw3c=0, $helptext='')
             print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
             print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type?$obj->type:'string').'">';
 
-            print $langs->trans('Desc'.$const);
+            print ($label ? $label : $langs->trans('Desc'.$const));
 
             if ($const == 'ADHERENT_MAILMAN_URL')
             {

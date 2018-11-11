@@ -818,7 +818,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->type_code   = $object->actiontypecode;		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
+		$actioncomm->note        = $object->actionmsg;          // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
@@ -831,19 +831,22 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action
 		$actioncomm->userownerid = $user->id;	// Owner of action
-        // Fields when action is en email (content should be added into note)
-		$actioncomm->email_msgid = $object->email_msgid;
-		$actioncomm->email_from  = $object->email_from;
-		$actioncomm->email_sender= $object->email_sender;
-		$actioncomm->email_to    = $object->email_to;
-		$actioncomm->email_tocc  = $object->email_tocc;
-		$actioncomm->email_tobcc = $object->email_tobcc;
+        // Fields defined when action is an email (content should be into object->actionmsg to be added into note, subject into object->actionms2 to be added into label)
+		$actioncomm->email_msgid   = $object->email_msgid;
+		$actioncomm->email_from    = $object->email_from;
+		$actioncomm->email_sender  = $object->email_sender;
+		$actioncomm->email_to      = $object->email_to;
+		$actioncomm->email_tocc    = $object->email_tocc;
+		$actioncomm->email_tobcc   = $object->email_tobcc;
 		$actioncomm->email_subject = $object->email_subject;
-		$actioncomm->errors_to   = $object->errors_to;
+		$actioncomm->errors_to     = $object->errors_to;
 
 		$actioncomm->fk_element  = $elementid;
 		$actioncomm->elementtype = $elementtype;
 
+		if (property_exists($object,'attachedfiles') && is_array($object->attachedfiles) && count($object->attachedfiles)>0) {
+			$actioncomm->attachedfiles=$object->attachedfiles;
+		}
 		if (property_exists($object,'sendtouserid') && is_array($object->sendtouserid) && count($object->sendtouserid)>0) {
 			$actioncomm->userassigned=$object->sendtouserid;
 		}

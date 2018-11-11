@@ -317,13 +317,19 @@ class FormProjets
 	 *  @param	string	$morecss        More css added to the select component
 	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
 	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
+	 *  @param	User	$usertofilter	User object to use for filtering
 	 *	@return int         			Nbr of project if OK, <0 if KO
 	 */
-	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500', $projectsListId='', $showproject='all')
+	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500', $projectsListId='', $showproject='all', $usertofilter=null)
 	{
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		if (is_null($usertofilter))
+		{
+			$usertofilter = $user;
+		}
 
 		$out='';
 
@@ -332,10 +338,10 @@ class FormProjets
 
 		if (empty($projectsListId))
 		{
-			if (empty($user->rights->projet->all->lire))
+			if (empty($usertofilter->rights->projet->all->lire))
 			{
 				$projectstatic=new Project($this->db);
-				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter,0,1);
 			}
 		}
 
@@ -381,7 +387,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire))
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire))
 					{
 						// Do nothing
 					}
@@ -648,7 +654,7 @@ class FormProjets
 					$sellist .= '>';
 					if ($useshortlabel)
 					{
-						$finallabel = ($langs->transnoentitiesnoconv("OppStatusShort".$obj->code) != "OppStatusShort".$obj->code ? $langs->transnoentitiesnoconv("OppStatusShort".$obj->code) : $obj->label);
+						$finallabel = ($langs->transnoentitiesnoconv("OppStatus".$obj->code) != "OppStatus".$obj->code ? $langs->transnoentitiesnoconv("OppStatus".$obj->code) : $obj->label);
 					}
 					else
 					{

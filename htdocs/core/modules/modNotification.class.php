@@ -41,7 +41,11 @@ class modNotification extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 600;
 
+		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
+		// It is used to group modules in module setup page
 		$this->family = "interface";
+		// Module position in the family on 2 digits ('01', '10', '20', ...)
+		$this->module_position = '01';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "EMail notifications (push) on business Dolibarr events";
