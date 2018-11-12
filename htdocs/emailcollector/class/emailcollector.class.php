@@ -980,7 +980,6 @@ class EmailCollector extends CommonObject
 							$errorforactions++;
 							$this->errors = $actioncomm->errors;
 						}
-
 					}
 					elseif ($operation['type'] == 'aaa')
 					{
