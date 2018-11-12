@@ -930,18 +930,17 @@ class EmailCollector extends CommonObject
 					if ($errorforactions) break;
 					if (empty($operation['status'])) continue;
 
-
 					// Make Operation
 					if ($operation['type'] == 'recordevent')
 					{
 						$actioncode = 'EMAIL_IN';
-						var_dump($structure);
+
 						// Insert record of emails sent
 						$actioncomm = new ActionComm($this->db);
 
 						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$actioncomm->code        = 'AC_'.$actioncode;
-						$actioncomm->label       = $subject;
+						$actioncomm->label       = $langs->trans("EmailReceived").' - '.$langs->trans("From").' '.$from;
 						$actioncomm->note        = $messagetext;
 						$actioncomm->fk_project  = 0;
 						$actioncomm->datep       = $date;
@@ -983,8 +982,11 @@ class EmailCollector extends CommonObject
 						}
 
 					}
-					var_dump($actioncomm);exit;
+					elseif ($operation['type'] == 'aaa')
+					{
 
+
+					}
 
 					if (! $errorforactions)
 					{
