@@ -23,8 +23,11 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
 
 /**
  * Class for EmailCollector
@@ -648,6 +651,25 @@ class EmailCollector extends CommonObject
 
 
 	/**
+	 * Return the connectstring to use with IMAP connection function
+	 *
+	 * @return string
+	 */
+	function getConnectStringIMAP()
+	{
+		// Connect to IMAP
+		$flags ='/service=imap';		// IMAP
+		$flags.='/ssl';					// '/tls'
+		$flags.='/novalidate-cert';
+		//$flags.='/readonly';
+		//$flags.='/debug';
+
+		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
+
+		return $connectstringserver;
+	}
+
+	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, paramerts come from the schedule job setup field 'Parameters'
 	 *
@@ -757,13 +779,16 @@ class EmailCollector extends CommonObject
 			if ($fromdate > 0) $search.=($search?' ':'').'SINCE '.dol_print_date($fromdate - 1,'dayhourrfc');
 		}
 		dol_syslog("search string = ".$search);
-		//var_dump($search);exit;
+		//var_dump($search);
 
 		$nbemailprocessed=0; $nbactiondone=0;
+		$projectstatic=new Project($this->db);
+		$thirdpartystatic=new Societe($this->db);
+		$contactstatic=new Contact($this->db);
 
 		// Scan IMAP inbox
 		$arrayofemail= imap_search($connection, $search);
-		//var_dump($arrayofemail);
+		//var_dump($arrayofemail);exit;
 
 		// Loop on each email found
 		if (! empty($arrayofemail) && count($arrayofemail) > 0)
@@ -778,14 +803,126 @@ class EmailCollector extends CommonObject
 
 				$overview = imap_fetch_overview($connection, $imapemail, 0);
 				$header = imap_fetchheader($connection, $imapemail, 0);
-				$message = imap_body($connection, $imapemail, 0);
-				// imap_fetchstructure($connection, $imapemail, 0);
-				// imap_fetchbody($connection, $imapemail, 1) may be text/plain, 2 may be text/html
+				//$message = imap_body($connection, $imapemail, 0);
+				$structure = imap_fetchstructure($connection, $imapemail, 0);
+				$partplain = $parthtml = -1;
+				// Loop to get part html and plain
+				foreach($structure->parts as $key => $part)
+				{
+					if ($part->subtype == 'HTML') $parthtml=$key;
+					if ($part->subtype == 'PLAIN') $partplain=$key;
+				}
 
-				/*var_dump($overview);
-				var_dump($header);
-				var_dump($message);
-				*/
+				$matches=array();
+				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
+				$headers = array_combine($matches[1], $matches[2]);
+				//var_dump($headers);
+
+				$messagetext = imap_fetchbody($connection, $imapemail, ($parthtml >= 0 ? $parthtml : ($partplain >= 0 ? $partplain : 0)));
+
+				//var_dump($overview);
+				//var_dump($header);
+				//var_dump($message);
+				//var_dump($messagetext);
+				$fromstring=$overview[0]->from;
+				$sender=$overview[0]->sender;
+				$to=$overview[0]->to;
+				$sendtocc=$overview[0]->cc;
+				$sendtobcc=$overview[0]->bcc;
+				$date=$overview[0]->udate;
+				$msgid=$overview[0]->message_id;
+				$subject=$overview[0]->subject;
+
+				$reg=array();
+				if (preg_match('/^(.*)<(.*)>$/', $fromstring, $reg))
+				{
+					$from=$reg[1];
+					$fromtext=$reg[0];
+				}
+				else
+				{
+					$from = $fromstring;
+					$fromtext='';
+				}
+				$fk_element_id = 0; $fk_element_type = '';
+				$contactid = 0; $thirdpartyid = 0; $projectid = 0;
+
+				// Analyze TrackId
+				$reg=array();
+				if (! empty($headers['X-Dolibarr-TrackId']) && preg_match('/:\s*([a-z]+)([0-9]+)$/', $headers['X-Dolibarr-TrackId'], $reg))
+				{
+					$objectid = 0;
+					$objectemail = null;
+					if ($reg[0] == 'inv')
+					{
+						$objectid = $reg[1];
+						$objectemail = new Facture($this->db);
+					}
+					if ($reg[0] == 'proj')
+					{
+						$objectid = $reg[1];
+						$objectemail = new Project($this->db);
+					}
+					if ($reg[0] == 'con')
+					{
+						$objectid = $reg[1];
+						$objectemail = new Contact($this->db);
+					}
+					if ($reg[0] == 'thi')
+					{
+						$objectid = $reg[1];
+						$objectemail = new Societe($this->db);
+					}
+					if ($reg[0] == 'use')
+					{
+						$objectid = $reg[1];
+						$objectemail = new User($this->db);
+					}
+
+					$result = $objectemail->fetch($objectid);
+					if ($result > 0)
+					{
+						$fk_element_id = $objectemail->id;
+						$fk_element_type = $objectemail->element;
+						// Fix fk_element_type
+						if ($fk_element_type == 'facture') $fk_element_type = 'invoice';
+
+						$thirdpartyid = $objectemail->fk_soc;
+						$projectid = isset($objectemail->fk_project)?$objectemail->fk_project:$objectemail->fk_projet;
+					}
+				}
+
+				// Project
+				$projectstatic->id=0;
+				if ($projectid > 0)
+				{
+					$result = $projectstatic->fetch($projectid);
+					if ($result <= 0) $projectstatic->id = 0;
+				}
+				// Contact
+				$contactstatic->id=0;
+				if ($contactid > 0)
+				{
+					$result = $contactstatic->fetch($contactid);
+					if ($result <= 0) $contactstatic->id = 0;
+				}
+				else	// Try to find contact using email
+				{
+					$contactstatic->fetch(0, null, '', $from);
+				}
+				// Thirdparty
+				$thirdpartystatic->id=0;
+				if ($thirdpartyid > 0)
+				{
+					$result = $thirdpartystatic->fetch($thirdpartyid);
+					if ($result <= 0) $thirdpartystatic->id = 0;
+				}
+				else	// Try to find thirdparty using email
+				{
+					$thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
+				}
+
+				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 				// Do operationss
 				foreach($this->actions as $operation)
@@ -793,8 +930,60 @@ class EmailCollector extends CommonObject
 					if ($errorforactions) break;
 					if (empty($operation['status'])) continue;
 
-					// Make Operation
 
+					// Make Operation
+					if ($operation['type'] == 'recordevent')
+					{
+						$actioncode = 'EMAIL_IN';
+						var_dump($structure);
+						// Insert record of emails sent
+						$actioncomm = new ActionComm($this->db);
+
+						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+						$actioncomm->code        = 'AC_'.$actioncode;
+						$actioncomm->label       = $subject;
+						$actioncomm->note        = $messagetext;
+						$actioncomm->fk_project  = 0;
+						$actioncomm->datep       = $date;
+						$actioncomm->datef       = $date;
+						$actioncomm->percentage  = -1;   // Not applicable
+						$actioncomm->socid       = $thirdpartystatic->id;
+						$actioncomm->contactid   = $contactstatic->id;
+						$actioncomm->authorid    = $user->id;   // User saving action
+						$actioncomm->userownerid = $user->id;	// Owner of action
+						// Fields when action is en email (content should be added into note)
+						$actioncomm->email_msgid = $msgid;
+						$actioncomm->email_from  = $fromstring;
+						$actioncomm->email_sender= $sender;
+						$actioncomm->email_to    = $to;
+						$actioncomm->email_tocc  = $sendtocc;
+						$actioncomm->email_tobcc = $sendtobcc;
+						$actioncomm->email_subject = $subject;
+						$actioncomm->errors_to   = '';
+
+						$object->email_msgid = $mailfile->msgid;	// @TODO Set msgid into $mailfile after sending to have it defined here
+						$object->email_from = $from;
+						$object->email_subject = $subject;
+						$object->email_to = $to;
+						$object->email_tocc = $sendtocc;
+						$object->email_tobcc = $sendtobcc;
+						$object->email_subject = $subject;
+
+
+						$actioncomm->fk_element  = $fk_element_id;
+						$actioncomm->elementtype = $fk_element_type;
+
+						//$actioncomm->extraparams = $extraparams;
+
+						$result = $actioncomm->create($user);
+						if ($result <= 0)
+						{
+							$errorforactions++;
+							$this->errors = $actioncomm->errors;
+						}
+
+					}
+					var_dump($actioncomm);exit;
 
 
 					if (! $errorforactions)
@@ -816,6 +1005,8 @@ class EmailCollector extends CommonObject
 				}
 
 				$nbemailprocessed++;
+
+				unset($objectemail);
 
 				$this->db->commit();
 			}
@@ -839,24 +1030,5 @@ class EmailCollector extends CommonObject
 		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
 
 		return $error?-1:1;
-	}
-
-	/**
-	 * Return the connectstring to use with IMAP connection function
-	 *
-	 * @return string
-	 */
-	function getConnectStringIMAP()
-	{
-		// Connect to IMAP
-		$flags ='/service=imap';		// IMAP
-		$flags.='/ssl';					// '/tls'
-		$flags.='/novalidate-cert';
-		//$flags.='/readonly';
-		//$flags.='/debug';
-
-		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
-
-		return $connectstringserver;
 	}
 }

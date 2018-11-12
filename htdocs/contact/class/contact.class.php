@@ -87,17 +87,17 @@ class Contact extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see state_id
+	 * @see $state_id
 	 */
 	public $fk_departement;
 	/**
 	 * @deprecated
-	 * @see state_code
+	 * @see $state_code
 	 */
 	public $departement_code;
 	/**
 	 * @deprecated
-	 * @see state
+	 * @see $state
 	 */
 	public $departement;
 	public $state_id;	        	// Id of department
@@ -688,7 +688,7 @@ class Contact extends CommonObject
      *  @param		string	$email		Email
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=0, $ref_ext='', $email='')
+	function fetch($id, $user=null, $ref_ext='', $email='')
 	{
 		global $langs;
 
