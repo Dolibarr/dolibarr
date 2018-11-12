@@ -3,7 +3,7 @@
 # Script to extrac a database with demo values.
 # Note: "dialog" tool need to be available if no parameter provided.
 #
-# Regis Houssin       - regis.houssin@capnetworks.com
+# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # Usage: savedemo.sh

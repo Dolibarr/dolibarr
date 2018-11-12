@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2010 Florian Henry  <florian.henry<àopen-concept.pro>
  * Copyright (C) 2014 Marcos García  <marcosgdf@gmail.com>
  *
