@@ -85,6 +85,9 @@ class Commande extends CommonOrder
     public $facturee;
     public $billed;		// billed or not
 
+    /**
+     * @var int Draft Status of the order
+     */
     public $brouillon;
     public $cond_reglement_code;
 
@@ -233,7 +236,7 @@ class Commande extends CommonOrder
                 $mybool|=@include_once $dir.$file;
             }
 
-            if (! $mybool)
+            if ($mybool === false)
             {
                 dol_print_error('',"Failed to include file ".$file);
                 return '';
@@ -407,6 +410,7 @@ class Commande extends CommonOrder
         {
             $this->ref = $num;
             $this->statut = self::STATUS_VALIDATED;
+            $this->brouillon = 0;
         }
 
         if (! $error)
@@ -3873,6 +3877,7 @@ class OrderLine extends CommonOrderLine
         {
             $objp = $this->db->fetch_object($result);
             $this->rowid            = $objp->rowid;
+            $this->id				= $objp->rowid;
             $this->fk_commande      = $objp->fk_commande;
             $this->fk_parent_line   = $objp->fk_parent_line;
             $this->label            = $objp->custom_label;

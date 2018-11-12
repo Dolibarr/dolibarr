@@ -533,7 +533,7 @@ if (! empty($arrayfields['p.public']['checked']))
 if (! empty($arrayfields['p.fk_opp_status']['checked']))
 {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 1, 1, 0, 'maxwidth100');
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100');
 	print '</td>';
 }
 if (! empty($arrayfields['p.opp_amount']['checked']))
@@ -742,7 +742,7 @@ while ($i < min($num,$limit))
 		if (! empty($arrayfields['p.fk_opp_status']['checked']))
 		{
 			print '<td class="center">';
-			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
+			if ($obj->opp_status_code) print $langs->trans("OppStatus".$obj->opp_status_code);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

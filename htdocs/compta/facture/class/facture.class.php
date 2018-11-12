@@ -1700,9 +1700,9 @@ class Facture extends CommonInvoice
 			$facligne->total_ttc = -$remise->amount_ttc;
 
 			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
-			$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
-			$facligne->multicurrency_total_tva = -$remise->multicurrency_total_tva;
-			$facligne->multicurrency_total_ttc = -$remise->multicurrency_total_ttc;
+			$facligne->multicurrency_total_ht = -$remise->multicurrency_amount_ht;
+			$facligne->multicurrency_total_tva = -$remise->multicurrency_amount_tva;
+			$facligne->multicurrency_total_ttc = -$remise->multicurrency_amount_ttc;
 
 			$lineid=$facligne->insert();
 			if ($lineid > 0)
@@ -4305,6 +4305,7 @@ class FactureLigne extends CommonInvoiceLine
 			$objp = $this->db->fetch_object($result);
 
 			$this->rowid				= $objp->rowid;
+			$this->id					= $objp->rowid;
 			$this->fk_facture			= $objp->fk_facture;
 			$this->fk_parent_line		= $objp->fk_parent_line;
 			$this->label				= $objp->custom_label;

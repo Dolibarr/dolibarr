@@ -309,9 +309,9 @@ class doc_generic_contract_odt extends ModelePDFContract
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-				// retrieve contact information for use in contract as contact_xxx tags
+				// retrieve contact information for use in order as contact_xxx tags
 				$array_thirdparty_contact = array();
-				if ($usecontact) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$substitutionarray = array_merge($substitutionarray,$array_contract,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($substitutionarray, $outputlangs, $object);
