@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,22 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefixinvoice='FA';
-	var $prefixcreditnote='AV';
-	var $prefixdeposit='AC';
-	var $error='';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefixinvoice='FA';
+
+	public $prefixcreditnote='AV';
+
+	public $prefixdeposit='AC';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -232,6 +243,5 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		return $this->getNextValue($objsoc,$objforref,$mode);
 	}
-
 }
 

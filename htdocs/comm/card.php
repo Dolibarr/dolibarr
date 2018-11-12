@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
- * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
@@ -45,8 +45,8 @@ if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/c
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->ficheinter->enabled)) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
-$langs->load("companies");
-$langs->load('banks');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'banks'));
 
 if (! empty($conf->contrat->enabled))  $langs->load("contracts");
 if (! empty($conf->commande->enabled)) $langs->load("orders");
@@ -82,7 +82,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('commcard','globalcard'));
+$hookmanager->initHooks(array('thirdpartycomm','globalcard'));
 
 
 /*
@@ -177,16 +177,27 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
+	// update order min amount
+	if ($action == 'setorder_min_amount')
+	{
+		$object->fetch($id);
+		$object->order_min_amount=price2num(GETPOST('order_min_amount','alpha'));
+		$result=$object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
 	if ($action == 'update_extras') {
         $object->fetch($id);
 
+        $object->oldcopy = dol_clone($object);
+
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
         if ($ret < 0) $error++;
         if (! $error)
         {
-			$result = $object->insertExtraFields();
+        	$result = $object->insertExtraFields('COMPANY_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -211,7 +222,7 @@ if ($id > 0 && empty($object->id))
 {
 	// Load data of third party
 	$res=$object->fetch($id);
-	if ($object->id <= 0) dol_print_error($db,$object->error,$object->errors);
+	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
 }
 
 $title=$langs->trans("CustomerCard");
@@ -220,7 +231,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
 
-if ($id > 0)
+if ($object->id > 0)
 {
 	$head = societe_prepare_head($object);
 
@@ -267,29 +278,38 @@ if ($id > 0)
 		print '</tr>';
 	}
 
+	// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.
+	// We don't need them into customer profile.
+	// Except for spain and localtax where localtax depends on buyer and not seller
+
 	// VAT is used
+	/*
 	print '<tr>';
-	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td>';
+	print '<td class="nowrap">';
+	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
+	print '</td>';
 	print '<td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
+	*/
 
-	// Local Taxes
-	// TODO Move this on same record than VATIsUsed
-	if ($mysoc->localtax1_assuj=="1")
+	if ($mysoc->country_code == 'ES')
 	{
-		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-		print yn($object->localtax1_assuj);
-		print '</td></tr>';
+		// Local Taxes
+		if ($mysoc->localtax1_assuj=="1")
+		{
+			print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
+			print yn($object->localtax1_assuj);
+			print '</td></tr>';
+		}
+		if ($mysoc->localtax1_assuj=="1")
+		{
+			print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
+			print yn($object->localtax2_assuj);
+			print '</td></tr>';
+		}
 	}
-	if ($mysoc->localtax1_assuj=="1")
-	{
-		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-		print yn($object->localtax2_assuj);
-		print '</td></tr>';
-	}
-
 
 	// TVA Intra
 	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
@@ -405,8 +425,24 @@ if ($id > 0)
 	    print '</tr>';
 	}
 
+	if ($object->client)
+	{
+		if (! empty($conf->commande->enabled) && ! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT))
+		{
+		    print '<!-- Minimim amount for orders -->'."\n";
+		    print '<tr class="nowrap">';
+		    print '<td>';
+		    print $form->editfieldkey("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer);
+		    print '</td><td>';
+		    print $form->editfieldval("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
+		    print '</td>';
+		    print '</tr>';
+		}
+	}
+
+
 	// Multiprice level
-	if (! empty($conf->global->PRODUIT_MULTIPRICES))
+	if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 	{
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -529,7 +565,7 @@ if ($id > 0)
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
+	print '<div class="underbanner clearboth"></div>';
 
 	$boxstat = '';
 
@@ -538,7 +574,7 @@ if ($id > 0)
 
 	// Lien recap
 	$boxstat.='<div class="box">';
-	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
+	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
 
 	if (! empty($conf->propal->enabled))
@@ -552,7 +588,7 @@ if ($id > 0)
 		$link=DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat.='</div>';
@@ -570,7 +606,7 @@ if ($id > 0)
 		$link=DOL_URL_ROOT.'/commande/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat.='</div>';
@@ -588,7 +624,7 @@ if ($id > 0)
 		$link=DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat.='</div>';
@@ -604,7 +640,7 @@ if ($id > 0)
 		$link=DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-		$boxstat.='<div class="boxstats">';
+		$boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 		$boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 		$boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstat.='</div>';
@@ -630,7 +666,7 @@ if ($id > 0)
 	 */
 	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
-		$propal_static = new Propal($db);
+		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
         $sql.= ", p.tva as total_tva";
@@ -640,18 +676,19 @@ if ($id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql.= " AND s.rowid = ".$object->id;
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " AND p.entity IN (".getEntity('propal').")";
 		$sql.= " ORDER BY p.datep DESC";
 
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
-			$num = $db->num_rows($resql);
+			$propal_static = new Propal($db);
 
+			$num = $db->num_rows($resql);
             if ($num > 0)
             {
-		        print '<table class="noborder" width="100%">';
+            	print '<div class="div-table-responsive-no-min">';
+            	print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' <span class="badge">'.$num.'</span></a></td>';
@@ -684,7 +721,11 @@ if ($id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -697,8 +738,6 @@ if ($id > 0)
 	 */
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
-		$commande_static=new Commande($db);
-
         $sql = "SELECT s.nom, s.rowid";
         $sql.= ", c.rowid as cid, c.total_ht";
         $sql.= ", c.tva as total_tva";
@@ -714,14 +753,14 @@ if ($id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
-			$num = $db->num_rows($resql);
+			$commande_static=new Commande($db);
 
+			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
 				// Check if there are orders billable
 				$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-				$sql2.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
+				$sql2.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as billed';
 				$sql2.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 				$sql2.= ', '.MAIN_DB_PREFIX.'commande as c';
 				$sql2.= ' WHERE c.fk_soc = s.rowid';
@@ -733,6 +772,7 @@ if ($id > 0)
 				$orders2invoice = $db->num_rows($resql2);
 				$db->free($resql2);
 
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
@@ -749,14 +789,16 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 
+				$commande_static->id = $objp->cid;
+				$commande_static->ref = $objp->ref;
+				$commande_static->ref_client=$objp->ref_client;
+				$commande_static->total_ht = $objp->total_ht;
+				$commande_static->total_tva = $objp->total_tva;
+				$commande_static->total_ttc = $objp->total_ttc;
+				$commande_static->billed = $objp->billed;
+
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
-                $commande_static->id = $objp->cid;
-                $commande_static->ref = $objp->ref;
-                $commande_static->ref_client=$objp->ref_client;
-                $commande_static->total_ht = $objp->total_ht;
-                $commande_static->total_tva = $objp->total_tva;
-                $commande_static->total_ttc = $objp->total_ttc;
                 print $commande_static->getNomUrl(1);
 				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
@@ -765,7 +807,11 @@ if ($id > 0)
 			}
 			$db->free($resql);
 
-			if ($num >0) print "</table>";
+			if ($num >0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -776,9 +822,8 @@ if ($id > 0)
     /*
      *   Last shipments
      */
-    if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
-        $sendingstatic = new Expedition($db);
-
+    if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire)
+    {
         $sql = 'SELECT e.rowid as id';
         $sql.= ', e.ref';
         $sql.= ', e.date_creation';
@@ -797,12 +842,14 @@ if ($id > 0)
         $sql.= " ORDER BY e.date_creation DESC";
 
         $resql = $db->query($sql);
-        if ($resql) {
-            $var = true;
-            $num = $db->num_rows($resql);
-            $i = 0;
+        if ($resql)
+        {
+        	$sendingstatic = new Expedition($db);
+
+        	$num = $db->num_rows($resql);
             if ($num > 0) {
-                print '<table class="noborder" width="100%">';
+            	print '<div class="div-table-responsive-no-min">';
+            	print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
@@ -811,12 +858,16 @@ if ($id > 0)
                 print '</tr>';
             }
 
-            while ($i < $num && $i < $MAXLIST) {
+            $i = 0;
+            while ($i < $num && $i < $MAXLIST)
+            {
                 $objp = $db->fetch_object($resql);
-                print '<tr class="oddeven">';
-                print '<td class="nowrap">';
+
                 $sendingstatic->id = $objp->id;
                 $sendingstatic->ref = $objp->ref;
+
+                print '<tr class="oddeven">';
+                print '<td class="nowrap">';
                 print $sendingstatic->getNomUrl(1);
                 print '</td>';
                 if ($objp->date_creation > 0) {
@@ -832,7 +883,10 @@ if ($id > 0)
             $db->free($resql);
 
             if ($num > 0)
+            {
                 print "</table>";
+                print '</div>';
+            }
         } else {
             dol_print_error($db);
         }
@@ -843,9 +897,7 @@ if ($id > 0)
 	 */
 	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
-		$contratstatic=new Contrat($db);
-
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc, c.date_contrat as dcon, c.ref_supplier as refsup";
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
 		$sql.= " AND s.rowid = ".$object->id;
@@ -855,11 +907,13 @@ if ($id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$contrat=new Contrat($db);
+
 			$num = $db->num_rows($resql);
-			if ($num >0 )
+			if ($num >0)
 			{
-		        print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder" width="100%">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
@@ -868,25 +922,27 @@ if ($id > 0)
 				print '</tr></table></td>';
 				print '</tr>';
 			}
+
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
-				$contrat=new Contrat($db);
-
 				$objp = $db->fetch_object($resql);
+
+				$contrat->id=$objp->id;
+				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
+				$contrat->ref_customer=$objp->refcus;
+				$contrat->ref_supplier=$objp->refsup;
+				$contrat->fetch_lines();
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
-				$contrat->id=$objp->id;
-				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
 				print $contrat->getNomUrl(1,12);
 				print "</td>\n";
 				print '<td class="nowrap">'.dol_trunc($objp->refsup,12)."</td>\n";
 				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dcon),'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
-				print '<td align="right" class="nowrap">';
-				$contrat->fetch_lines();
+				print '<td align="right" class="nowraponall">';
 				print $contrat->getLibStatut(4);
 				print "</td>\n";
 				print '</tr>';
@@ -894,7 +950,11 @@ if ($id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -914,24 +974,24 @@ if ($id > 0)
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " ORDER BY f.tms DESC";
 
-		$fichinter_static=new Fichinter($db);
-
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$fichinter_static=new Fichinter($db);
+
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
-		        print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder" width="100%">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' <span class="badge">'.$num.'</span></td>';
 				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
-
 			}
+
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
@@ -951,7 +1011,11 @@ if ($id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -964,14 +1028,12 @@ if ($id > 0)
 	 */
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-		$invoicetemplate = new FactureRec($db);
-
 		$sql = 'SELECT f.rowid as id, f.titre as ref, f.amount';
 		$sql.= ', f.total as total_ht';
 		$sql.= ', f.tva as total_tva';
 		$sql.= ', f.total_ttc';
 		$sql.= ', f.datec as dc';
-		$sql.= ', f.date_last_gen';
+		$sql.= ', f.date_last_gen, f.date_when';
 		$sql.= ', f.frequency';
 		$sql.= ', f.unit_frequency';
 		$sql.= ', f.suspended as suspended';
@@ -988,11 +1050,12 @@ if ($id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$invoicetemplate = new FactureRec($db);
+
 			$num = $db->num_rows($resql);
-			$i = 0;
 			if ($num > 0)
 			{
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
@@ -1001,12 +1064,11 @@ if ($id > 0)
 				print '</tr>';
 			}
 
+			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
 				$invoicetemplate->id = $objp->id;
 				$invoicetemplate->ref = $objp->ref;
 				$invoicetemplate->suspended = $objp->suspended;
@@ -1015,6 +1077,11 @@ if ($id > 0)
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
+				$invoicetemplate->date_last_gen = $objp->date_last_gen;
+				$invoicetemplate->date_when = $objp->date_when;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
 				if ($objp->frequency && $objp->date_last_gen > 0)
@@ -1052,7 +1119,11 @@ if ($id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -1065,8 +1136,6 @@ if ($id > 0)
 	 */
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-		$facturestatic = new Facture($db);
-
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount';
         $sql.= ', f.total as total_ht';
         $sql.= ', f.tva as total_tva';
@@ -1086,12 +1155,13 @@ if ($id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$facturestatic = new Facture($db);
+
 			$num = $db->num_rows($resql);
-			$i = 0;
 			if ($num > 0)
 			{
-		        print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
@@ -1100,18 +1170,20 @@ if ($id > 0)
 				print '</tr>';
 			}
 
+			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = $objp->facnumber;
 				$facturestatic->type = $objp->type;
-                $facturestatic->total_ht = $objp->total_ht;
-                $facturestatic->total_tva = $objp->total_tva;
-                $facturestatic->total_ttc = $objp->total_ttc;
+				$facturestatic->total_ht = $objp->total_ht;
+				$facturestatic->total_tva = $objp->total_tva;
+				$facturestatic->total_ttc = $objp->total_ttc;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
 				print $facturestatic->getNomUrl(1);
 				print '</td>';
 				if ($objp->df > 0)
@@ -1139,7 +1211,11 @@ if ($id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -1225,7 +1301,6 @@ if ($id > 0)
 
     				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-
     			}
     		}
     	}
@@ -1268,14 +1343,13 @@ if ($id > 0)
         // List of done actions
 		show_actions_done($conf,$langs,$db,$object);
 	}
-
 }
 else
 {
-	dol_print_error($db,'Bad value for socid parameter');
+	$langs->load("errors");
+	print $langs->trans('ErrorRecordNotFound');
 }
 
 // End of page
 llxFooter();
-
 $db->close();

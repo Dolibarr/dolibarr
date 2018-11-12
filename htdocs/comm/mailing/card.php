@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@uers.sourceforge.net>
- * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->load("mails");
 
 if (! $user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->societe_id > 0)) accessforbidden();
@@ -244,7 +245,7 @@ if (empty($reshook))
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__']=dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 							}
 						}
-						/* For backward compatibility */
+						/* For backward compatibility, deprecated */
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 						{
 							$substitutionarray['__SECUREKEYPAYPAL__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
@@ -746,7 +747,7 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'" autofocus="autofocus"></td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
@@ -754,7 +755,7 @@ if ($action == 'create')
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -873,7 +874,7 @@ else
 				}
 			}
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright='';
 			$nbtry = $nbok = 0;
@@ -967,7 +968,7 @@ else
 			 * Boutons d'action
 			 */
 
-			if (GETPOST('cancel','alpha') || $confirm=='no' || $action == '' || in_array($action,array('settodraft', 'valid','delete','sendall','clone')))
+			if (GETPOST('cancel','alpha') || $confirm=='no' || $action == '' || in_array($action,array('settodraft','valid','delete','sendall','clone','test')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
@@ -1071,7 +1072,9 @@ else
 			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			    print load_fiche_titre($langs->trans("TestMailing"));
 
-				// Create l'objet formulaire mail
+			    dol_fiche_head(null, '', '', -1);
+
+			    // Create l'objet formulaire mail
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
@@ -1099,6 +1102,10 @@ else
 				print $formmail->get_form();
 
 				print '<br>';
+
+				dol_fiche_end();
+
+				print dol_set_focus('#sendto');
 			}
 
 
@@ -1114,7 +1121,7 @@ else
 
 			dol_fiche_head('', '', '', -1);
 
-			print '<table class="border" width="100%">';
+			print '<table class="bordernooddeven" width="100%">';
 
 			// Subject
 			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
@@ -1158,7 +1165,6 @@ else
 			print '</div>';
 
 			dol_fiche_end();
-
 		}
 		else
 		{
@@ -1229,7 +1235,7 @@ else
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			if (empty($reshook))
 			{
 				print $object->showOptionals($extrafields,'edit');
 			}
@@ -1260,7 +1266,7 @@ else
 
 			dol_fiche_head(null, '', '', -1);
 
-			print '<table class="border" width="100%">';
+			print '<table class="bordernooddeven" width="100%">';
 
 			// Subject
 			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
@@ -1351,5 +1357,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

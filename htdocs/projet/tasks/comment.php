@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *	\brief      Page of a project task
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $idcomment=GETPOST('idcomment','int');
@@ -53,7 +53,7 @@ $socid=0;
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('projecttaskcard','globalcard'));
+$hookmanager->initHooks(array('projecttaskcommentcard','globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);
@@ -97,11 +97,12 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
 	{
+		$result=$object->fetch_optionals();
+
 		$result=$object->fetchComments();
 		if ($result<0){
 			setEventMessages($object->error,$object->errors,'errors');
 		}
-
 
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -274,10 +275,9 @@ if ($id > 0 || ! empty($ref))
 
 		// Include comment tpl view
 		include DOL_DOCUMENT_ROOT . '/core/tpl/bloc_comment.tpl.php';
-
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

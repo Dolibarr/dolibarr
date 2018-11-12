@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne		<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2015       	Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016       	Charlie Benke           <charlie@patas-monkey.com>
+/* Copyright (C) 2003-2005	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,19 @@
  */
 abstract class CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    /**
+     * @var string[]    Array of error strings
+     */
+    public $errors = array();
+
+	/**
+     * @var DoliDB Database handler.
+     */
 	protected $db;
 
 
@@ -42,12 +55,13 @@ abstract class CommonDocGenerator
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	*/
-	public function __construct($db) {
-		$this->db = $db;
-		return 1;
-	}
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -57,6 +71,7 @@ abstract class CommonDocGenerator
      */
     function get_substitutionarray_user($user,$outputlangs)
     {
+        // phpcs:enable
         global $conf;
 
         $logotouse=$conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
@@ -84,6 +99,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -93,6 +109,7 @@ abstract class CommonDocGenerator
      */
     function get_substitutionarray_mysoc($mysoc,$outputlangs)
     {
+        // phpcs:enable
         global $conf;
 
         if (empty($mysoc->forme_juridique) && ! empty($mysoc->forme_juridique_code))
@@ -142,6 +159,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -151,6 +169,7 @@ abstract class CommonDocGenerator
      */
     function get_substitutionarray_thirdparty($object,$outputlangs)
     {
+        // phpcs:enable
         global $conf;
 
         if (empty($object->country) && ! empty($object->country_code))
@@ -203,7 +222,7 @@ abstract class CommonDocGenerator
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
         	$extralabels = $extrafields->fetch_name_optionals_label('societe',true);
-        	$object->fetch_optionals($object->id,$extralabels);
+        	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
@@ -221,15 +240,18 @@ abstract class CommonDocGenerator
 		return $array_thirdparty;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param	Contact 		$object        	contact
+	 * @param	Contact 	$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
-	 * @param   array_key	$array_key	    Name of the key for return array
-	 * @return	array of substitution key->code
+	 * @param   array		$array_key	    Name of the key for return array
+	 * @return	array 						Array of substitution key->code
 	 */
-	function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object') {
+    function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
+    {
+        // phpcs:enable
 		global $conf;
 
 		if(empty($object->country) && ! empty($object->country_code))
@@ -274,7 +296,7 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
-		$object->fetch_optionals($object->id, $extralabels);
+		$object->fetch_optionals();
 
 		foreach($extrafields->attribute_label as $key => $label)
 		{
@@ -292,6 +314,7 @@ abstract class CommonDocGenerator
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -300,6 +323,7 @@ abstract class CommonDocGenerator
      */
     function get_substitutionarray_other($outputlangs)
     {
+        // phpcs:enable
     	global $conf;
 
     	$now=dol_now('gmt');	// gmt
@@ -316,10 +340,19 @@ abstract class CommonDocGenerator
    			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
+
+    	foreach($conf->global as $key => $val)
+    	{
+    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
+    		else $newval = $val;
+    		$array_other['__['.$key.']__'] = $newval;
+    	}
+
     	return $array_other;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -330,6 +363,7 @@ abstract class CommonDocGenerator
 	 */
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$sumpayed=$sumdeposit=$sumcreditnote='';
@@ -345,17 +379,19 @@ abstract class CommonDocGenerator
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
+		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
+
 		$resarray=array(
 		$array_key.'_id'=>$object->id,
 		$array_key.'_ref'=>$object->ref,
 		$array_key.'_ref_ext'=>$object->ref_ext,
-		$array_key.'_ref_customer'=>$object->ref_client,
-		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
+		$array_key.'_ref_customer'=>(! empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
+		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
-        $array_key.'_hour'=>dol_print_date($object->date,'hour'),
-		$array_key.'_date'=>dol_print_date($object->date,'day'),
-		$array_key.'_date_rfc'=>dol_print_date($object->date,'dayrfc'),
+        $array_key.'_hour'=>dol_print_date($date,'hour'),
+		$array_key.'_date'=>dol_print_date($date,'day'),
+		$array_key.'_date_rfc'=>dol_print_date($date,'dayrfc'),
 		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement,'day'):''),
 	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite,'day'):''),
 		$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
@@ -425,7 +461,7 @@ abstract class CommonDocGenerator
 			{
 				$object->fetch_projet();
 			}
-			
+
 			$resarray[$array_key.'_project_ref'] = $object->project->ref;
 			$resarray[$array_key.'_project_title'] = $object->project->title;
 			$resarray[$array_key.'_project_description'] = $object->project->description;
@@ -457,27 +493,30 @@ abstract class CommonDocGenerator
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-			$object->fetch_optionals($object->id,$extralabels);
+			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
 		return $resarray;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$line				Array of lines
+	 *	@param  Object			$line				Object line
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_lines($line,$outputlangs)
+	function get_substitutionarray_lines($line, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$resarray= array(
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
+			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
 			'line_product_label'=>$line->product_label,
 			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
@@ -510,7 +549,7 @@ abstract class CommonDocGenerator
 		    'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
 		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
-		
+
 		    // Units
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
@@ -524,23 +563,34 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-		$line->fetch_optionals($line->rowid,$extralabels);
+		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+
+		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
+		if (isset($line->fk_product) && $line->fk_product > 0)
+		{
+			$tmpproduct = new Product($this->db);
+			$result = $tmpproduct->fetch($line->fk_product);
+			foreach($tmpproduct->array_options as $key=>$label)
+				$resarray["line_product_".$key] = $label;
+		}
 
 		return $resarray;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   Expedition			$object             Main object to use as data source
+     * @param   Expedition		$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   array_key		$array_key	        Name of the key for return array
+     * @param   array			$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
     function get_substitutionarray_shipment($object,$outputlangs,$array_key='object')
     {
+        // phpcs:enable
     	global $conf;
 		dol_include_once('/core/lib/product.lib.php');
 		$object->list_delivery_methods($object->shipping_method_id);
@@ -578,30 +628,33 @@ abstract class CommonDocGenerator
     	}
 
     	// Retrieve extrafields
-    	if(is_array($object->array_options) && count($object->array_options))
+    	if (is_array($object->array_options) && count($object->array_options))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
     		$extralabels = $extrafields->fetch_name_optionals_label('expedition',true);
-    		$object->fetch_optionals($object->id,$extralabels);
+    		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
     	}
+
     	return $array_shipment;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *	Define array with couple substitution key => substitution value
+     *  Define array with couple substitution key => substitution value
      *
-     *	@param  array			$line				Array of lines
+     *	@param  ExpeditionLigne	$line				Object line
      *	@param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    function get_substitutionarray_shipment_lines($line,$outputlangs)
+    function get_substitutionarray_shipment_lines($line, $outputlangs)
     {
-    	global $conf;
-		dol_include_once('/core/lib/product.lib.php');
+        // phpcs:enable
+        global $conf;
+        dol_include_once('/core/lib/product.lib.php');
 
         $resarray = array(
 	    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
@@ -623,13 +676,13 @@ abstract class CommonDocGenerator
 	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
     	);
 
-		// Retrieve extrafields
+        // Retrieve extrafields
         $extrafieldkey = $line->element;
         $array_key = "line";
         require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         $extrafields = new ExtraFields($this->db);
         $extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
-        $line->fetch_optionals($line->rowid, $extralabels);
+        $line->fetch_optionals();
 
         $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
 
@@ -637,6 +690,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -645,15 +699,17 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
+    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
+    {
+        // phpcs:enable
         $array_other = array();
-        if(!empty($object)) {
+        if (!empty($object)) {
             foreach($object as $key => $value) {
-                if(!empty($value)) {
-                    if(!is_array($value) && !is_object($value)) {
+                if (!empty($value)) {
+                    if (!is_array($value) && !is_object($value)) {
                         $array_other['object_'.$key] = $value;
                     }
-                    if(is_array($value) && $recursive){
+                    if (is_array($value) && $recursive) {
                         $array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value,$outputlangs,false);
                     }
                 }
@@ -663,6 +719,7 @@ abstract class CommonDocGenerator
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Fill array with couple extrafield key => extrafield value
      *
@@ -673,8 +730,9 @@ abstract class CommonDocGenerator
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-	function fill_substitutionarray_with_extrafields($object,$array_to_fill,$extrafields,$array_key,$outputlangs)
+    function fill_substitutionarray_with_extrafields($object,$array_to_fill,$extrafields,$array_key,$outputlangs)
 	{
+        // phpcs:enable
 		global $conf;
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
@@ -716,18 +774,41 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
+			else if($extrafields->attribute_type[$key] == 'link')
+			{
+				$id = $object->array_options['options_'.$key];
+				if ($id != "")
+				{
+					$param = $extrafields->attribute_param[$key];
+					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
+					$InfoFieldList = explode(":", $param_list[0]);
+					$classname=$InfoFieldList[0];
+					$classpath=$InfoFieldList[1];
+					if (! empty($classpath))
+					{
+						dol_include_once($InfoFieldList[1]);
+						if ($classname && class_exists($classname))
+						{
+							$tmpobject = new $classname($this->db);
+							$tmpobject->fetch($id);
+							// completely replace the id with the linked object name
+							$object->array_options['options_'.$key] = $tmpobject->name;
+						}
+					}
+				}
+			}
+
 			$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 		}
 
 		return $array_to_fill;
-
 	}
 
 
 	/**
 	 * Rect pdf
 	 *
-	 * @param	PDF		$pdf			Object PDF
+	 * @param	TCPDF	$pdf			Object PDF
 	 * @param	float	$x				Abscissa of first point
 	 * @param	float	$y		        Ordinate of first point
 	 * @param	float	$l				??
@@ -738,10 +819,232 @@ abstract class CommonDocGenerator
 	 */
     function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
     {
-	    if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
-	    $pdf->line($x+$l, $y, $x+$l, $y+$h);
-	    if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
-	    $pdf->line($x, $y+$h, $x, $y);
+        if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
+        $pdf->line($x+$l, $y, $x+$l, $y+$h);
+        if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
+        $pdf->line($x, $y+$h, $x, $y);
+    }
+
+
+    /**
+     *   	uasort callback function to Sort colums fields
+     *
+     *   	@param	array			$a    			PDF lines array fields configs
+     *   	@param	array			$b    			PDF lines array fields configs
+     *      @return	int								Return compare result
+     */
+    function columnSort($a, $b)
+    {
+        if(empty($a['rank'])){ $a['rank'] = 0; }
+        if(empty($b['rank'])){ $b['rank'] = 0; }
+        if ($a['rank'] == $b['rank']) {
+            return 0;
+        }
+        return ($a['rank'] > $b['rank']) ? -1 : 1;
+    }
+
+    /**
+     *   	Prepare Array Column Field
+     *
+     *   	@param	object			$object				common object
+     *   	@param	Translate		$outputlangs		langs
+     *      @param	int				$hidedetails		Do not show line details
+     *      @param	int				$hidedesc			Do not show desc
+     *      @param	int				$hideref			Do not show ref
+     *      @return	null
+     */
+    function prepareArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0)
+    {
+        global $conf;
+
+        $this->defineColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
+
+
+        // Sorting
+        uasort ( $this->cols, array( $this, 'columnSort' ) );
+
+        // Positionning
+        $curX = $this->page_largeur-$this->marge_droite; // start from right
+
+        // Array witdh
+        $arrayWidth = $this->page_largeur-$this->marge_droite-$this->marge_gauche;
+
+        // Count flexible column
+        $totalDefinedColWidth = 0;
+        $countFlexCol = 0;
+        foreach ($this->cols as $colKey =>& $colDef)
+        {
+            if(!$this->getColumnStatus($colKey)) continue; // continue if desable
+
+            if(!empty($colDef['scale'])){
+                // In case of column widht is defined by percentage
+                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100 );
+            }
+
+            if(empty($colDef['width'])){
+                $countFlexCol++;
+            }
+            else{
+                $totalDefinedColWidth += $colDef['width'];
+            }
+        }
+
+        foreach ($this->cols as $colKey =>& $colDef)
+        {
+            // setting empty conf with default
+            if(!empty($colDef['title'])){
+                $colDef['title'] = array_replace($this->defaultTitlesFieldsStyle, $colDef['title']);
+            }
+            else{
+                $colDef['title'] = $this->defaultTitlesFieldsStyle;
+            }
+
+            // setting empty conf with default
+            if(!empty($colDef['content'])){
+                $colDef['content'] = array_replace($this->defaultContentsFieldsStyle, $colDef['content']);
+            }
+            else{
+                $colDef['content'] = $this->defaultContentsFieldsStyle;
+            }
+
+            if($this->getColumnStatus($colKey))
+            {
+                // In case of flexible column
+                if(empty($colDef['width'])){
+                    $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
+                }
+
+                // Set positions
+                $lastX = $curX;
+                $curX = $lastX - $colDef['width'];
+                $colDef['xStartPos'] = $curX;
+                $colDef['xEndPos']   = $lastX;
+            }
+        }
+    }
+
+    /**
+     *   	get column content width from column key
+     *
+     *   	@param	string			$colKey    		the column key
+     *      @return	float      width in mm
+     */
+    function getColumnContentWidth($colKey)
+    {
+        $colDef = $this->cols[$colKey];
+        return  $colDef['width'] - $colDef['content']['padding'][3] - $colDef['content']['padding'][1];
+    }
+
+
+    /**
+     *   	get column content X (abscissa) left position from column key
+     *
+     *   	@param	string    $colKey    		the column key
+     *      @return	float      X position in mm
+     */
+    function getColumnContentXStart($colKey)
+    {
+        $colDef = $this->cols[$colKey];
+        return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
+    }
+
+    /**
+     *   	get column position rank from column key
+     *
+     *   	@param	string		$colKey    		the column key
+     *      @return	int         rank on success and -1 on error
+     */
+    function getColumnRank($colKey)
+    {
+        if(!isset($this->cols[$colKey]['rank'])) return -1;
+        return  $this->cols[$colKey]['rank'];
+    }
+
+    /**
+     *   	get column position rank from column key
+     *
+     *   	@param	string		$newColKey    	the new column key
+     *   	@param	array		$defArray    	a single column definition array
+     *   	@param	string		$targetCol    	target column used to place the new column beside
+     *   	@param	bool		$insertAfterTarget    	insert before or after target column ?
+     *      @return	int         new rank on success and -1 on error
+     */
+    function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
+    {
+        // prepare wanted rank
+        $rank = -1;
+
+        // try to get rank from target column
+        if(!empty($targetCol)){
+            $rank = $this->getColumnRank($targetCol);
+            if($rank>=0 && $insertAfterTarget){ $rank++; }
+        }
+
+        // get rank from new column definition
+        if($rank<0 && !empty($defArray['rank'])){
+            $rank = $defArray['rank'];
+        }
+
+        // error: no rank
+        if($rank<0){ return -1; }
+
+        foreach ($this->cols as $colKey =>& $colDef)
+        {
+            if( $rank <= $colDef['rank'])
+            {
+                $colDef['rank'] = $colDef['rank'] + 1;
+            }
+        }
+
+        $defArray['rank'] = $rank;
+        $this->cols[$newColKey] = $defArray; // array_replace is used to preserve keys
+
+        return $rank;
+    }
+
+
+    /**
+     *   	print standard column content
+     *
+     *   	@param	PDF		    $pdf    	pdf object
+     *   	@param	float		$curY    	curent Y position
+     *   	@param	string		$colKey    	the column key
+     *   	@param	string		$columnText   column text
+     *      @return	int         new rank on success and -1 on error
+     */
+    function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
+    {
+        global $hookmanager;
+
+        $parameters=array(
+            'object' => $object,
+            'curY' => &$curY,
+            'columnText' => $columnText,
+            'colKey' => $colKey
+        );
+        $reshook=$hookmanager->executeHooks('printStdColumnContent',$parameters,$this);    // Note that $action and $object may have been modified by hook
+        if ($reshook < 0) setEventMessages($hookmanager->error,$hookmanager->errors,'errors');
+        if (!$reshook)
+        {
+            if(empty($columnText)) return;
+            $pdf->SetXY($this->getColumnContentXStart($colKey),$curY); // Set curent position
+            $colDef = $this->cols[$colKey];
+            $pdf->MultiCell( $this->getColumnContentWidth($colKey),2, $columnText,'',$colDef['content']['align']);
+        }
+    }
+
+
+    /**
+     *   	get column status from column key
+     *
+     *   	@param	string			$colKey    		the column key
+     *      @return	float      width in mm
+     */
+    function getColumnStatus($colKey)
+    {
+        if( !empty($this->cols[$colKey]['status'])){
+            return true;
+        }
+        else  return  false;
     }
 }
-

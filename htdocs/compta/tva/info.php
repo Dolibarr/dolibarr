@@ -26,8 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -37,10 +37,27 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+$object = new Tva($db);
+
+
+
+/*
+ * Actions
+ */
+
+if ($action == 'setlib' && $user->rights->tax->charges->creer)
+{
+	$object->fetch($id);
+	$result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	if ($result < 0)
+		setEventMessages($object->error, $object->errors, 'errors');
+}
+
 
 /*
  * View
  */
+
 $title=$langs->trans("VAT") . " - " . $langs->trans("Info");
 $help_url='';
 llxHeader("",$title,$helpurl);
@@ -53,7 +70,13 @@ $head = vat_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
+$morehtmlref='<div class="refidno">';
+// Label of social contribution
+$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+$morehtmlref.='</div>';
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 

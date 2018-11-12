@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016  Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016  Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017  Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2016-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,13 +33,13 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-// Langs
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("accountancy"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
-$search_doc_type = GETPOST("search_doc_type");
-$search_doc_ref = GETPOST("search_doc_ref");
+$search_doc_type = GETPOST("search_doc_type", 'alpha');
+$search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
@@ -78,6 +79,7 @@ $search_direction = GETPOST('search_direction', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
+$search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -137,10 +139,13 @@ $arrayfields=array(
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
 	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
+	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 );
+
+if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
 
 
 /*
@@ -175,6 +180,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_date_modification_end = '';
 	$search_debit = '';
 	$search_credit = '';
+	$search_lettering_code = '';
 }
 
 // Must be after the remove filter action, before the export.
@@ -271,6 +277,11 @@ if (! empty($search_credit)) {
 	$filter['t.credit'] = $search_credit;
 	$param .= '&search_credit=' . urlencode($search_credit);
 }
+if (! empty($search_lettering_code)) {
+	$filter['t.lettering_code'] = $search_lettering_code;
+	$param .= '&search_lettering_code=' . urlencode($search_lettering_code);
+ }
+
 
 if ($action == 'delbookkeeping') {
 
@@ -335,7 +346,7 @@ if ($action == 'delmouvconfirm') {
 	}
 }
 
-// Export into a file with format defined into setup
+// Export into a file with format defined into setup (FEC, CSV, ...)
 if ($action == 'export_file') {
 
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
@@ -348,7 +359,9 @@ if ($action == 'export_file') {
 	{
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines);
-		if (!empty($accountancyexport->errors)) {
+
+		if (!empty($accountancyexport->errors))
+		{
 			setEventMessages('', $accountancyexport->errors, 'errors');
 		}
 		exit;
@@ -437,10 +450,12 @@ else $button.= $langs->trans("ExportList");
 $button.= '</a>';
 
 
-$groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
+$groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
+$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewAccountingMvt").'</span>';
+$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+$newcardbutton.= '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$addbutton, '', $limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$newcardbutton, '', $limit);
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
@@ -462,11 +477,11 @@ if (! empty($arrayfields['t.doc_date']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
@@ -542,6 +557,13 @@ if (! empty($arrayfields['t.credit']['checked']))
 	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
 	print '</td>';
 }
+// Lettering code
+if (! empty($arrayfields['t.lettering_code']['checked']))
+{
+	print '<td class="liste_titre center">';
+	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="' . $search_lettering_code . '"/>';
+	print '</td>';
+}
 // Code journal
 if (! empty($arrayfields['t.code_journal']['checked']))
 {
@@ -553,11 +575,11 @@ if (! empty($arrayfields['t.date_creation']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_creation_start, 'date_creation_start', 0, 0, 1);
+	print $form->selectDate($search_date_creation_start, 'date_creation_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_creation_end, 'date_creation_end', 0, 0, 1);
+	print $form->selectDate($search_date_creation_end, 'date_creation_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
@@ -567,11 +589,11 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_modification_start, 'date_modification_start', 0, 0, 1);
+	print $form->selectDate($search_date_modification_start, 'date_modification_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_modification_end, 'date_modification_end', 0, 0, 1);
+	print $form->selectDate($search_date_modification_end, 'date_modification_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
@@ -591,6 +613,7 @@ if (! empty($arrayfields['t.subledger_account']['checked']))	print_liste_field_t
 if (! empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, 'align="right"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -676,6 +699,13 @@ if ($num > 0)
 			$totalarray['totalcredit'] += $line->credit;
 		}
 
+		// Lettering code
+		if (! empty($arrayfields['t.lettering_code']['checked']))
+		{
+			print '<td align="center">' . $line->lettering_code . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
 		// Journal code
 		if (! empty($arrayfields['t.code_journal']['checked']))
 		{
@@ -701,7 +731,7 @@ if ($num > 0)
 		}
 
 		// Action column
-		print '<td align="center">';
+		print '<td align="center" class="nowraponall">';
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
 		print '</td>';
@@ -730,7 +760,6 @@ if ($num > 0)
 				else print '<td></td>';
 		}
 		print '</tr>';
-
 	}
 }
 
@@ -739,12 +768,12 @@ print '</div>';
 
 // TODO Replace this with mass delete action
 print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a>';
+print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
 print '</div>';
 
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

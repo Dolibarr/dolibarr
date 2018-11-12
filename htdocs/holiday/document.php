@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("holidays");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'holidays', 'companies'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -59,7 +59,7 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortfield) $sortfield="position_name";
 
 
 $object = new Holiday($db);
@@ -100,7 +100,7 @@ if ($object->id)
 	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1,'holiday');
 
 
-	// Construit liste des fichiers
+	// Build file list
 	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
@@ -111,7 +111,7 @@ if ($object->id)
 
 	$linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 
 	print '<div class="fichecenter">';
@@ -153,7 +153,7 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
-        $form->select_date($object->date_debut,'date_debut_');
+        print $form->selectDate($object->date_debut, 'date_debut_');
         print ' &nbsp; &nbsp; ';
 		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
         print '</td>';
@@ -175,9 +175,9 @@ if ($object->id)
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
-        $form->select_date($object->date_fin,'date_fin_');
+        print $form->selectDate($object->date_fin, 'date_fin_');
         print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
         print '</td>';
         print '</tr>';
     }
@@ -211,7 +211,7 @@ if ($object->id)
     }
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 
     print '</tbody>';
     print '</table>'."\n";
@@ -296,7 +296,6 @@ else
 	print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

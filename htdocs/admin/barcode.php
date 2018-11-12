@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
@@ -74,7 +75,6 @@ else if ($action == 'update')
 else if ($action == 'updateengine')
 {
     // TODO Update engines.
-
 }
 
 if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
@@ -157,7 +157,6 @@ foreach($dirbarcode as $reldir)
 /*
  *  CHOIX ENCODAGE
  */
-$var=true;
 
 print '<br>';
 print load_fiche_titre($langs->trans("BarcodeEncodeModule"),'','');
@@ -185,7 +184,6 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$var=true;
 
 	while ($i <	$num)
 	{
@@ -277,7 +275,6 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -308,7 +305,7 @@ if (! empty($conf->product->enabled))
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" align="right">';
-	$formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"PRODUIT_DEFAULT_BARCODE_TYPE",1);
+	print $formbarcode->selectBarcodeType($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE, "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td></tr>';
 }
 
@@ -319,7 +316,7 @@ if (! empty($conf->societe->enabled))
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" align="right">';
-	print $formbarcode->select_barcode_type($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY,"GENBARCODE_BARCODETYPE_THIRDPARTY",1);
+	print $formbarcode->selectBarcodeType($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY, "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
 	print '</td></tr>';
 }
 
@@ -371,7 +368,6 @@ if ($conf->produit->enabled)
 	    			}
 
 	    			$modBarCode = new $file();
-	    			$var = !$var;
 
 	    			print '<tr class="oddeven">';
 	    			print '<td>'.(isset($modBarCode->name)?$modBarCode->name:$modBarCode->nom)."</td><td>\n";
@@ -408,5 +404,6 @@ if ($conf->produit->enabled)
 
 print "<br>";
 
+// End of page
 llxFooter();
 $db->close();

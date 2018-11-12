@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *	\brief      Page activite perso du module projet
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -39,7 +39,7 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 
-
+// Load translation files required by the page
 $langs->load("projects");
 
 
@@ -145,12 +145,10 @@ $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$var=true;
 	$total=0;
 
 	while ($row = $db->fetch_object($resql))
 	{
-
 		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
@@ -202,12 +200,10 @@ $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$var=true;
 	$total=0;
 
 	while ($row = $db->fetch_object($resql))
 	{
-
 		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
@@ -263,11 +259,9 @@ if ($db->type != 'pgsql')
     if ( $resql )
     {
     	$total = 0;
-    	$var=true;
 
     	while ($row = $db->fetch_object($resql))
     	{
-
     		print '<tr class="oddeven">';
     		print '<td>';
     		$projectstatic->id=$row->rowid;
@@ -320,8 +314,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     $resql = $db->query($sql);
     if ( $resql )
     {
-    	$var=false;
-
     	while ($row = $db->fetch_object($resql))
     	{
     		print '<tr class="oddeven">';
@@ -333,7 +325,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print '</td>';
     		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
-
     	}
     	$db->free($resql);
     }
@@ -369,7 +360,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	$sql.= " AND p.rowid in (".$projectsListId.")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
-	$var=false;
 	$resql = $db->query($sql);
 	if ( $resql )
 	{
@@ -385,7 +375,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 			print "</tr>\n";
-
 		}
 		$db->free($resql);
 	}
@@ -463,8 +452,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	$sql.= " ORDER BY t.dateo desc, t.rowid desc, t.datee";
 	$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
 
-	$var=true;
-
 	dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ( $resql )
@@ -491,7 +478,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		while ($i < $num && $i < $max)
 		{
 			$obj = $db->fetch_object($resql);
-
 
 			$username='';
 			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
@@ -582,13 +568,11 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	{
 		dol_print_error($db);
 	}
-
 }
 
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

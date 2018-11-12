@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
  * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
+ * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,15 @@
  */
 class FormProjets
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -40,9 +48,9 @@ class FormProjets
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Output a combo list with projects qualified for a third party / user
 	 *
@@ -65,6 +73,7 @@ class FormProjets
 	 */
 	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode = 0, $filterkey = '', $nooutput=0, $forceaddid=0, $morecss='', $htmlid='')
 	{
+        // phpcs:enable
 		global $langs,$conf,$form;
 
 		$out='';
@@ -110,6 +119,7 @@ class FormProjets
 		else return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array with projects qualified for a third party
 	 *
@@ -132,6 +142,7 @@ class FormProjets
 	 */
 	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='', $morecss='maxwidth500')
 	{
+        // phpcs:enable
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -139,10 +150,10 @@ class FormProjets
 		if (empty($htmlid)) $htmlid = $htmlname;
 
 		$out='';
-        $outarray=array();
+		$outarray=array();
 
 		$hideunselectables = false;
-		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		$projectsListId = false;
 		if (empty($user->rights->projet->all->lire))
@@ -224,7 +235,7 @@ class FormProjets
 						}
 						else if ($obj->fk_statut == 2)
 						{
-							if ($discard_close == 2) $disabled=1;
+							if ($discard_closed == 2) $disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Closed");
 						}
 						else if ( empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
@@ -292,7 +303,7 @@ class FormProjets
 	}
 
 	/**
-	 *	Output a combo list with projects qualified for a third party
+	 *	Output a combo list with tasks qualified for a third party
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id task preselected
@@ -304,24 +315,34 @@ class FormProjets
      *  @param	int		$forcefocus		Force focus on field (works with javascript only)
      *  @param	int		$disabled		Disabled
 	 *  @param	string	$morecss        More css added to the select component
+	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
+	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
+	 *  @param	User	$usertofilter	User object to use for filtering
 	 *	@return int         			Nbr of project if OK, <0 if KO
 	 */
-	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500')
+	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty='1', $discard_closed=0, $forcefocus=0, $disabled=0, $morecss='maxwidth500', $projectsListId='', $showproject='all', $usertofilter=null)
 	{
 		global $user,$conf,$langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		if (is_null($usertofilter))
+		{
+			$usertofilter = $user;
+		}
+
 		$out='';
 
 		$hideunselectables = false;
-		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
-		$projectsListId = false;
-		if (empty($user->rights->projet->all->lire))
+		if (empty($projectsListId))
 		{
-			$projectstatic=new Project($this->db);
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+			if (empty($usertofilter->rights->projet->all->lire))
+			{
+				$projectstatic=new Project($this->db);
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertofilter,0,1);
+			}
 		}
 
 		// Search all projects
@@ -332,7 +353,7 @@ class FormProjets
 		$sql.= ', '.MAIN_DB_PREFIX.'projet_task as t';
 		$sql.= " WHERE p.entity IN (".getEntity('project').")";
 		$sql.= " AND t.fk_projet = p.rowid";
-		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		$sql.= " ORDER BY p.ref, t.ref ASC";
@@ -366,7 +387,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire))
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($usertofilter->rights->societe->lire))
 					{
 						// Do nothing
 					}
@@ -378,31 +399,38 @@ class FormProjets
 							continue;
 						}
 
-						$labeltoshow=dol_trunc($obj->ref,18);     // Project ref
-						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
-						//else $labeltoshow.=' ('.$langs->trans("Private").')';
-						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+						$labeltoshow = '';
 
-						if ($obj->name) $labeltoshow.=' ('.$obj->name.')';
+						if ($showproject == 'all')
+						{
+							$labeltoshow.=dol_trunc($obj->ref,18);     // Project ref
+							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
+							//else $labeltoshow.=' ('.$langs->trans("Private").')';
+							$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
 
-						$disabled=0;
-						if ($obj->fk_statut == 0)
-						{
-							$disabled=1;
-							$labeltoshow.=' - '.$langs->trans("Draft");
+							if ($obj->name) $labeltoshow.=' ('.$obj->name.')';
+
+							$disabled=0;
+							if ($obj->fk_statut == 0)
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Draft");
+							}
+							else if ($obj->fk_statut == 2)
+							{
+								if ($discard_closed == 2) $disabled=1;
+								$labeltoshow.=' - '.$langs->trans("Closed");
+							}
+							else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							{
+								$disabled=1;
+								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+							}
+							$labeltoshow.=' - ';
 						}
-						else if ($obj->fk_statut == 2)
-						{
-							if ($discard_closed == 2) $disabled=1;
-							$labeltoshow.=' - '.$langs->trans("Closed");
-						}
-						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
-						{
-							$disabled=1;
-							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
-						}
+
 						// Label for task
-						$labeltoshow.=' - '.$obj->tref.' '.dol_trunc($obj->tlabel,$maxlength);
+						$labeltoshow.=$obj->tref.' '.dol_trunc($obj->tlabel,$maxlength);
 
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
@@ -449,6 +477,7 @@ class FormProjets
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
@@ -456,19 +485,21 @@ class FormProjets
 	 *    @param	string		$socid				If of thirdparty to use as filter or 'id1,id2,...'
 	 *    @param	string		$morecss			More CSS
 	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
+	 *    @param	string		$projectkey			Equivalent key  to fk_projet for actual table_element
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2)
+	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2,$projectkey="fk_projet")
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$linkedtothirdparty=false;
-		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','chargesociales'))) $linkedtothirdparty=true;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','payment_salary','payment_various','chargesociales'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
-		$projectkey="fk_projet";
+
 		//print $table_element;
 		switch ($table_element)
 		{
@@ -507,6 +538,9 @@ class FormProjets
 			case 'stock_mouvement':
 				$sql = 'SELECT t.rowid, t.label as ref';
 				$projectkey='fk_origin';
+				break;
+			case "payment_salary":
+				$sql = "SELECT t.rowid, t.num_payment as ref";	// TODO In a future fill and use real ref field
 				break;
 			case "payment_various":
 				$sql = "SELECT t.rowid, t.num_payment as ref";
@@ -601,10 +635,16 @@ class FormProjets
 			if ($num > 0)
 			{
 				$sellist = '<select class="flat oppstatus'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-				if ($showempty) $sellist.= '<option value="-1">&nbsp;</option>';    // Without &nbsp, strange move of screen when switching value
-				if ($showallnone) $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>--'.$langs->trans("OnlyOpportunitiesShort").'--</option>';
-				if ($showallnone) $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>--'.$langs->trans("OpenedOpportunitiesShort").'--</option>';
-				if ($showallnone) $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>--'.$langs->trans("NotAnOpportunityShort").'--</option>';
+				if ($showempty) {
+                    // Without &nbsp, strange move of screen when switching value
+                    $sellist.= '<option value="-1">&nbsp;</option>';
+                }
+				if ($showallnone) {
+                    $sellist.= '<option value="all"'.($preselected == 'all'?' selected="selected"':'').'>-- '.$langs->trans("OnlyOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="openedopp"'.($preselected == 'openedopp'?' selected="selected"':'').'>-- '.$langs->trans("OpenedOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="notopenedopp"'.($preselected == 'notopenedopp'?' selected="selected"':'').'>-- '.$langs->trans("NotOpenedOpportunitiesShort").' --</option>';
+				    $sellist.= '<option value="none"'.($preselected == 'none'?' selected="selected"':'').'>-- '.$langs->trans("NotAnOpportunityShort").' --</option>';
+                }
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -614,7 +654,7 @@ class FormProjets
 					$sellist .= '>';
 					if ($useshortlabel)
 					{
-						$finallabel = ($langs->transnoentitiesnoconv("OppStatusShort".$obj->code) != "OppStatusShort".$obj->code ? $langs->transnoentitiesnoconv("OppStatusShort".$obj->code) : $obj->label);
+						$finallabel = ($langs->transnoentitiesnoconv("OppStatus".$obj->code) != "OppStatus".$obj->code ? $langs->transnoentitiesnoconv("OppStatus".$obj->code) : $obj->label);
 					}
 					else
 					{
@@ -645,5 +685,4 @@ class FormProjets
 			return -1;
 		}
 	}
-
 }

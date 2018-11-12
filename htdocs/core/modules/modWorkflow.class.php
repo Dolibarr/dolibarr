@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,8 +56,6 @@ class modWorkflow extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 2;
         // Name of png file (without png) used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -70,9 +68,11 @@ class modWorkflow extends DolibarrModules
         $this->config_page_url = array('workflow.php');
 
         // Dependencies
-        $this->depends = array();       // List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();    // List of modules id to disable if this one is disabled
-        $this->phpmin = array(5,2);                 // Minimum version of PHP required by module
+       $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(2,8);  // Minimum version of Dolibarr required by module
         $this->langfiles = array("@workflow");
 

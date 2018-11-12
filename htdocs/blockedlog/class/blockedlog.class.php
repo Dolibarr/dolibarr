@@ -18,9 +18,6 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
-
-
-
 /*ini_set('unserialize_callback_func', 'mycallback');
 
 function mycallback($classname)
@@ -42,13 +39,21 @@ class BlockedLog
 	 * @var int
 	 */
 	public $id;
+
 	/**
 	 * Entity
 	 * @var int
 	 */
 	public $entity;
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
 	public $errors = array();
 
 	/**
@@ -171,6 +176,7 @@ class BlockedLog
 
 	/**
 	 *  Try to retrieve source object (it it still exists)
+     * @return string
 	 */
 	public function getObjectLink()
 	{
@@ -281,11 +287,11 @@ class BlockedLog
 		}
 
 		return '<i class="opacitymedium">'.$langs->trans('ImpossibleToReloadObject', $this->element, $this->fk_object).'</i>';
-
 	}
 
 	/**
 	 *      try to retrieve user author
+     * @return string
 	 */
 	public function getUser()
 	{
@@ -609,7 +615,8 @@ class BlockedLog
 	 *	@param      int		$id       	Id of object to load
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($id) {
+    public function fetch($id)
+    {
 
 		global $langs;
 
@@ -672,7 +679,6 @@ class BlockedLog
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 
@@ -705,14 +711,13 @@ class BlockedLog
 	 *
 	 *	@return	boolean
 	 */
-	public function setCertified() {
+    public function setCertified()
+    {
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".$this->id);
 		if($res===false) return false;
 
 		return true;
-
-
 	}
 
 	/**
@@ -722,7 +727,8 @@ class BlockedLog
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	public function create($user, $forcesignature='') {
+    public function create($user, $forcesignature='')
+    {
 
 		global $conf,$langs,$hookmanager;
 
@@ -749,11 +755,12 @@ class BlockedLog
 			return -2;
 		}
 
-		if (empty($this->action) || empty($this->fk_user) || empty($this->user_fullname)) {
+		if (empty($this->action)) {
 			$this->error=$langs->trans("BadParameterWhenCallingCreateOfBlockedLog");
 			dol_syslog($this->error, LOG_WARNING);
 			return -3;
 		}
+		if (empty($this->fk_user)) $this->user_fullname='(Anonymous)';
 
 		$this->date_creation = dol_now();
 
@@ -940,17 +947,14 @@ class BlockedLog
 
 	 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
-
 		}
 		else if ($element=='not_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 0";
-
 		}
 		else if ($element=='just_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 1";
-
 		}
 		else{
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
@@ -1028,6 +1032,7 @@ class BlockedLog
 	 * Check if module was already used or not for at least one recording.
 	 *
 	 * @param	int		$ignoresystem		Ignore system events for the test
+     * @return bool
 	 */
 	function alreadyUsed($ignoresystem=0)
 	{
@@ -1052,6 +1057,4 @@ class BlockedLog
 
 		return $result;
 	}
-
 }
-

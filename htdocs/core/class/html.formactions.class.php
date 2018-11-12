@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,15 @@
  */
 class FormActions
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -41,10 +48,10 @@ class FormActions
     function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Show list of action status
      *
@@ -59,6 +66,7 @@ class FormActions
      */
     function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
+        // phpcs:enable
         global $langs,$conf;
 
         $listofstatus = array(
@@ -194,15 +202,16 @@ class FormActions
             $projectid = $object->fk_project;
             if ($typeelement == 'project') $projectid = $object->id;
 
+            $newcardbutton='';
 			if (! empty($conf->agenda->enabled))
 			{
-				$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:($socid>0?'&socid='.$socid:'')).($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">';
-				$buttontoaddnewevent.= $langs->trans("AddEvent");
-				$buttontoaddnewevent.= '</a>';
+				$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:($socid>0?'&socid='.$socid:'')).($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'"><span class="valignmiddle">'.$langs->trans("AddEvent").'</span>';
+				$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+				$newcardbutton.= '</a>';
 			}
 
         	print '<!-- formactions->showactions -->'."\n";
-        	print load_fiche_titre($title, $buttontoaddnewevent, '', 0, 0, '', $morehtmlright);
+        	print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlright);
 
         	$page=0; $param='';
 
@@ -305,6 +314,7 @@ class FormActions
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Output html select list of type of event
      *
@@ -319,6 +329,7 @@ class FormActions
      */
     function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
+        // phpcs:enable
         global $langs,$user,$form,$conf;
 
         if (! is_object($form)) $form=new Form($db);
@@ -358,5 +369,4 @@ class FormActions
         else print $out;
         return '';
     }
-
 }

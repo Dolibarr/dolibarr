@@ -11,7 +11,9 @@ MailFrom=Gönderen
 MailErrorsTo=Hatalar
 MailReply=Yanıtla
 MailTo=Alıcı(lar)
+MailToUsers=To user(s)
 MailCC=Kopyala
+MailToCCUsers=Copy to users(s)
 MailCCC=Önbelleğe kopyala
 MailTopic=EPosta konusu
 MailText=Mesaj
@@ -164,4 +166,4 @@ InGoingEmailSetup=Gelen e-posta kurulumu
 OutGoingEmailSetupForEmailing=Giden e-posta kurulumu (toplu e-posta için)
 DefaultOutgoingEmailSetup=Varsayılan giden e-posta kurulumu
 Information=Bilgi
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

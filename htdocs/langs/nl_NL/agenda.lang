@@ -37,7 +37,7 @@ AgendaExtSitesDesc=Op deze pagina kunt configureren externe agenda.
 ActionsEvents=Gebeurtenissen waarvoor Dolibarr automatisch een item zal maken in de agenda
 EventRemindersByEmailNotEnabled=Herinneringen via e-mail van agenda afspraken is niet aangezet in de module set-up van het Agenda onderdeel.
 ##### Agenda event labels #####
-NewCompanyToDolibarr=Relatie %s aangemaakt
+NewCompanyToDolibarr=Derde partij %s aangemaakt
 ContractValidatedInDolibarr=Contract %s gevalideerd
 PropalClosedSignedInDolibarr=Voorstel %s getekend
 PropalClosedRefusedInDolibarr=Voorstel %s afgewezen
@@ -53,9 +53,9 @@ MemberValidatedInDolibarr=Lid %s gevalideerd
 MemberModifiedInDolibarr=Lid %s gewijzigd
 MemberResiliatedInDolibarr=Lidmaatschap %s beëindigd
 MemberDeletedInDolibarr=Lid %s verwijderd
-MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
-MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s gewijzigd
-MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Verzending %s gevalideerd
 ShipmentClassifyClosedInDolibarr=Verzending %s geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s geclassificeerd als heropend
@@ -97,10 +97,10 @@ DateActionStart=Startdatum
 DateActionEnd=Einddatum
 AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
 AgendaUrlOptions3=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
-AgendaUrlOptionsNotAdmin=<b>login=%s</b> om uitvoer van acties die niet zijn toegewezen aan gebruiker <b>%s</b> te beperken.
-AgendaUrlOptions4=<b> logint = %s </b>om de uitvoer te beperken tot acties die zijn toegewezen aan gebruiker <b> %s </b>(eigenaar en anderen).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties gekoppeld aan project<b>PROJECT_ID</b> te beperken.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> niet opnemen in automatische gebeurtenis.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Verjaardagen van contacten weergeven
 AgendaHideBirthdayEvents=Verjaardagen van contacten verbergen
 Busy=Bezig
@@ -112,7 +112,7 @@ ExportCal=Export kalender
 ExtSites=Externe agenda
 ExtSitesEnableThisTool=Toon externe kalenders (gedefinieerd in de globale setup) in de agenda. Heeft geen invloed op de externe agenda's gedefinieerd door gebruikers.
 ExtSitesNbOfAgenda=Aantal kalenders
-AgendaExtNb=Kalender nr. %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL aan. Ical bestand te openen
 ExtSiteNoLabel=Geen omschrijving
 VisibleTimeRange=Zichtbare werktijd

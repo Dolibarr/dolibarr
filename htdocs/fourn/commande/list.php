@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +25,8 @@
 /**
  *   \file       htdocs/fourn/commande/list.php
  *   \ingroup    fournisseur
- *   \brief      List of suppliers orders
+ *   \brief      List of vendor orders
  */
-
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -40,19 +40,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load('deliveries');
-$langs->load('companies');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('projects');
+$langs->loadLangs(array("orders","sendings",'deliveries','companies','compta','bills','projects','suppliers'));
 
 $action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierorderlist';
 
 $search_orderyear=GETPOST("search_orderyear","int");
 $search_ordermonth=GETPOST("search_ordermonth","int");
@@ -111,16 +106,14 @@ if (! $sortorder) $sortorder='DESC';
 
 if ($search_status == '') $search_status=-1;
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierorderlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new CommandeFournisseur($db);
+$hookmanager->initHooks(array('supplierorderlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('commande_fournisseur');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -270,7 +263,6 @@ if (empty($reshook))
 				$res = $object->create($user);
 
 				if($res > 0) $nb_bills_created++;
-
 			}
 
 			if ($object->id > 0)
@@ -435,7 +427,7 @@ if (empty($reshook))
 		if (! $error)
 		{
 			$db->commit();
-			setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 		}
 		else
 		{
@@ -475,7 +467,7 @@ if ($status)
 {
 	if ($status == '1,2,3') $title.=' - '.$langs->trans("StatusOrderToProcessShort");
 	if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
-	else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
+	else $title.=' - '.$commandestatic->LibStatut($status);
 }
 if ($search_billed > 0) $title.=' - '.$langs->trans("Billed");
 
@@ -587,6 +579,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -646,6 +643,14 @@ if ($resql)
 	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+	$newcardbutton='';
+	if($user->rights->fournisseur->commande->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewOrder').'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
+
 	// Lignes des champs de filtre
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -657,8 +662,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendOrderRef";
 	$modelmail="order_supplier_send";
@@ -677,7 +681,7 @@ if ($resql)
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->select_date('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', '', '', '', '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -709,7 +713,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter='';
@@ -816,19 +820,19 @@ if ($resql)
 	// Date order
 	if (! empty($arrayfields['cf.date_commande']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
 		$formother->select_year($search_orderyear?$search_orderyear:-1,'search_orderyear',1, 20, 5);
 		print '</td>';
 	}
 	// Date delivery
 	if (! empty($arrayfields['cf.date_delivery']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
-		$formother->select_year($search_deliveryyear?$search_deliveryyear:-1,'search_deliveryyear',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
+		$formother->select_year($search_deliveryyear?$search_deliveryyear:-1, 'search_deliveryyear', 1, 20, 5);
 		print '</td>';
 	}
 	if (! empty($arrayfields['cf.total_ht']['checked']))
@@ -933,12 +937,10 @@ if ($resql)
 	$projectstatic=new Project($db);
 
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-
 
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
@@ -1125,7 +1127,7 @@ if ($resql)
 		// Status
 		if (! empty($arrayfields['cf.fk_statut']['checked']))
 		{
-			print '<td align="right" class="nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed, 1).'</td>';
+			print '<td align="right" class="nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Billed
@@ -1175,32 +1177,26 @@ if ($resql)
 	print '</div>';
 	print "</form>\n";
 
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		/*
-	     * Show list of available documents
-	     */
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
-
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->fournisseur->commande->lire;
-		$delallowed=$user->rights->fournisseur->commande->creer;
-
-		print $formfile->showdocuments('massfilesarea_supplier_order','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
-
 	$db->free($resql);
+
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
+
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
+
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->fournisseur->commande->lire;
+	$delallowed=$user->rights->fournisseur->commande->creer;
+
+	print $formfile->showdocuments('massfilesarea_supplier_order','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 else
 {
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

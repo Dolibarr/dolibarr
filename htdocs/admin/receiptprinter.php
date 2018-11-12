@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 
-$langs->load("admin");
-$langs->load("receiptprinter");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","receiptprinter"));
 
 if (! $user->admin) accessforbidden();
 
@@ -52,6 +52,12 @@ if (!$mode) $mode='config';
 
 // used in library escpos maybe useful if php doesn't support gzdecode
 if (!function_exists('gzdecode')) {
+    /**
+     * Gzdecode
+     *
+     * @param string    $data   data to deflate
+     * @return string           data deflated
+     */
     function gzdecode($data)
     {
         return gzinflate(substr($data,10,-8));
@@ -232,7 +238,6 @@ if ($mode == 'config' && $user->admin)
     print $langs->trans("ReceiptPrinterDesc")."<br><br>\n";
 
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Name").'</th>';
     print '<th>'.$langs->trans("Type").'</th>';
@@ -244,14 +249,15 @@ if ($mode == 'config' && $user->admin)
     print "</tr>\n";
     $ret = $printer->listprinters();
     $nbofprinters = count($printer->listprinters);
-    
+
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
-        for ($line=0; $line < $nbofprinters; $line++) {
-            $var = !$var;
+        for ($line=0; $line < $nbofprinters; $line++)
+        {
             print '<tr class="oddeven">';
-            if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) {
+            if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid)
+            {
                 print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
                 $ret = $printer->selectTypePrinter($printer->listprinters[$line]['fk_type']);
@@ -285,7 +291,7 @@ if ($mode == 'config' && $user->admin)
         }
     }
 
-    if ($action!='editprinter') 
+    if ($action!='editprinter')
     {
         if ($nbofprinters > 0)
         {
@@ -299,7 +305,7 @@ if ($mode == 'config' && $user->admin)
             print '<th></th>';
             print "</tr>\n";
         }
-        
+
         print '<tr>';
         print '<td><input size="50" type="text" name="printername"></td>';
         $ret = $printer->selectTypePrinter();
@@ -315,7 +321,7 @@ if ($mode == 'config' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-    
+
     if ($action!='editprinter') {
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
     } else {
@@ -324,29 +330,29 @@ if ($mode == 'config' && $user->admin)
     print '</form>';
 
     print '<div><p></div>';
-    
+
     dol_fiche_head();
-    
+
     print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
-    print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
-    print '<tr '.$bc[0].'><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
-    print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
-    print '<tr '.$bc[0].'><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
-    //print '<tr '.$bc[1].'><td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_FILE_PRINT").':</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
+    //print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_JAVA").':</td><td>'.$langs->trans("CONNECTOR_JAVA_HELP").'</td></tr>';
     print '</table>';
     dol_fiche_end();
 
     print '<div><p></div>';
-    
+
     dol_fiche_head();
     print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
-    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_DEFAULT").':</td><td>'.$langs->trans("PROFILE_DEFAULT_HELP").'</td></tr>';
-    print '<tr '.$bc[0].'><td>'.$langs->trans("PROFILE_SIMPLE").':</td><td>'.$langs->trans("PROFILE_SIMPLE_HELP").'</td></tr>';
-    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_EPOSTEP").':</td><td>'.$langs->trans("PROFILE_EPOSTEP_HELP").'</td></tr>';
-    print '<tr '.$bc[0].'><td>'.$langs->trans("PROFILE_P822D").':</td><td>'.$langs->trans("PROFILE_P822D_HELP").'</td></tr>';
-    print '<tr '.$bc[1].'><td>'.$langs->trans("PROFILE_STAR").':</td><td>'.$langs->trans("PROFILE_STAR_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_DEFAULT").':</td><td>'.$langs->trans("PROFILE_DEFAULT_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_SIMPLE").':</td><td>'.$langs->trans("PROFILE_SIMPLE_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_EPOSTEP").':</td><td>'.$langs->trans("PROFILE_EPOSTEP_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_P822D").':</td><td>'.$langs->trans("PROFILE_P822D_HELP").'</td></tr>';
+    print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_STAR").':</td><td>'.$langs->trans("PROFILE_STAR_HELP").'</td></tr>';
     print '</table>';
     dol_fiche_end();
 }
@@ -365,7 +371,6 @@ if ($mode == 'template' && $user->admin)
 
     print $langs->trans("ReceiptPrinterTemplateDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Name").'</th>';
     print '<th>'.$langs->trans("Template").'</th>';
@@ -379,8 +384,8 @@ if ($mode == 'template' && $user->admin)
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
         $max = count($printer->listprinterstemplates);
-        for ($line=0; $line < $max; $line++) {
-            $var = !$var;
+        for ($line=0; $line < $max; $line++)
+        {
             print '<tr class="oddeven">';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
                 print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
@@ -419,14 +424,13 @@ if ($mode == 'template' && $user->admin)
     print '</form>';
     print '<div><p></div>';
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Tag").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
     $max = count($printer->tags);
-    for ($tag=0; $tag < $max; $tag++) {
-        $var = !$var;
+    for ($tag=0; $tag < $max; $tag++)
+    {
         print '<tr class="oddeven">';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
         print '</tr>';
@@ -434,22 +438,20 @@ if ($mode == 'template' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-
 }
 
 // to remove after test
-$object=new stdClass();
-$object->date_time = '2015-11-02 22:30:25';
-$object->id = 1234;
-$object->customer_firstname  = 'John';
-$object->customer_lastname  = 'Deuf';
-$object->vendor_firstname  = 'Jim';
-$object->vendor_lastname  = 'Big';
-$object->barcode = '3700123862396';
+// $object=new stdClass();
+// $object->date_time = '2015-11-02 22:30:25';
+// $object->id = 1234;
+// $object->customer_firstname  = 'John';
+// $object->customer_lastname  = 'Deuf';
+// $object->vendor_firstname  = 'Jim';
+// $object->vendor_lastname  = 'Big';
+// $object->barcode = '3700123862396';
 //$printer->sendToPrinter($object, 1, 16);
 //setEventMessages($printer->error, $printer->errors, 'errors');
 
+// End of page
 llxFooter();
-
 $db->close();
-

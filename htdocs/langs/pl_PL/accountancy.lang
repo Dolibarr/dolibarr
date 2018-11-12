@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Księgowość
 ACCOUNTING_EXPORT_SEPARATORCSV=Separator kolumn dla eksportowanego pliku
 ACCOUNTING_EXPORT_DATE=Format daty dla eksportowanego pliku 
 ACCOUNTING_EXPORT_PIECE=Exportuj ilość sztuk
@@ -39,11 +40,11 @@ AccountWithNonZeroValues=Accounts with non zero values
 ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Główne konto księgowe dla klientów nie zdefiniowane w ustawieniach
-MainAccountForSuppliersNotDefined=Główne konto księgowe dla dostawców nie zdefiniowane w ustawieniach
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Główne konto księgowe dla użytkowników nie zdefiniowane w ustawieniach
 MainAccountForVatPaymentNotDefined=Główne konto księgowe dla płatności VAT nie zdefiniowane w ustawieniach
 
-AccountancyArea=Obszar księgowości
+AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
 AccountancyAreaDescActionOnce=Następujące akcje są wykonywane zwykle tylko raz lub raz w roku...
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from m
 AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
 
 AccountancyAreaDescVat=Krok %s: Zdefiniuj konta księgowe dla każdej stawki VAT. W tym celu użyj pozycji menu %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=Krok %s: Zdefiniuj domyślne konta księgowe dla płatności i wynagrodzeń. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescContrib=Krok %s: Zdefiniuj domyślne konta księgowe dla kosztów specjalnych (różne podatki, ZUS). W tym celu użyj pozycji menu %s.
@@ -89,7 +91,7 @@ MenuProductsAccounts=Konta produktów
 ProductsBinding=Konta produktów
 Ventilation=Dowiązane do kont
 CustomersVentilation=Powiązania do faktury klienta
-SuppliersVentilation=Powiązania do faktury dostawcy
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Expense report binding
 CreateMvts=Utwórz nową transakcję
 UpdateMvts=Modyfikacja transakcji
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Długość głównych kont księgowych (jeżeli ustaw
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zero at the end of an accounting account. Needed by some countries (like switzerland). If keep to off (default), you can set the 2 following parameters to ask application to add virtual zero.
 BANK_DISABLE_DIRECT_INPUT=Wyłącz bezpośrednią rejestrację transakcji na koncie bankowym
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Dziennik sprzedaży
 ACCOUNTING_PURCHASE_JOURNAL=Dziennik zakupów
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Dziennik różnic
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Dziennik raportów kosztowych
 ACCOUNTING_SOCIAL_JOURNAL=Czasopismo Społecznego
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto księgowe dla przelewów
 ACCOUNTING_ACCOUNT_SUSPENSE=Konto księgowe dla oczekujących
@@ -185,11 +189,12 @@ ListeMvts=Lista ruchów
 ErrorDebitCredit=Debetowych i kredytowych nie może mieć wartość w tym samym czasie
 AddCompteFromBK=Dodaj konta księgowe do grupy
 ReportThirdParty=Lista kont kontrahentów
-DescThirdPartyReport=Consult here the list of the third party customers and suppliers and their accounting accounts
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=Lista kont księgowych
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Grupa konta
 Pcgsubtype=Podgrupa konta
@@ -204,8 +209,8 @@ DescVentilDoneCustomer=Consult here the list of the lines of invoices customers 
 DescVentilTodoCustomer=Powiąż pozycje faktury aktualnie nie związane  z kontem księgowym produktu
 ChangeAccount=Zmień konto księgowe dla zaznaczonych produktów/usług na następujące konto księgowe:
 Vide=-
-DescVentilSupplier=Consult here the list of supplier invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Skonsultuj się tutaj listę linii dostawcy faktur i ich koncie księgowym
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
 DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
@@ -215,7 +220,7 @@ ValidateHistory=Dowiąż automatycznie
 AutomaticBindingDone=Automatyczne dowiązanie ukończone
 
 ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąc tego konta księgowego, ponieważ jest w użyciu
-MvtNotCorrectlyBalanced=Ruch nie zbilansowany poprawnie. Uznanie = %s. Obciążenie = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Karta dowiązania
 GeneralLedgerIsWritten=Transakcje zapisane w księdze głównej
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -293,4 +298,9 @@ Binded=Lines bound
 ToBind=Linie do dowiązania
 UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
+## Import
+ImportAccountingEntries=Accounting entries
+
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

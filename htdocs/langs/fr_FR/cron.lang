@@ -79,5 +79,5 @@ CronCannotLoadObject=Le fichier de classe %s a été chargé, mais l'objet %s n'
 UseMenuModuleToolsToAddCronJobs=Aller à la page "Accueil - Outils administration - Travaux planifiées" pour voir la listes des travaux programmées et les modifier.
 JobDisabled=Travail désactivé
 MakeLocalDatabaseDumpShort=Sauvegarde locale de base
-MakeLocalDatabaseDump=Créez un fichier dump de base local. Les paramètres sont: compression ('gz' ou 'bz' ou 'none'), type de sauvegarde ('mysql' ou 'pgsql'), 1, 'auto' ou nom du fichier à générer, nb de fichiers de sauvegarde à garder
+MakeLocalDatabaseDump=Créez un fichier dump de base local. Les paramètres sont: compression ('gz' ou 'bz' ou 'none'), type de sauvegarde ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nom du fichier à générer, nb de fichiers de sauvegarde à garder
 WarningCronDelayed=Attention, à des fins de performance, quelle que soit la prochaine date d'exécution des travaux activés, vos travaux peuvent être retardés jusqu'à %s heures avant d'être exécutés.

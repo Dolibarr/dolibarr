@@ -49,8 +49,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load('companies');
-$langs->load('projects');
+// Load translation files required by the page
+$langs->loadlangs(array('companies', 'projects'));
 
 
 /*
@@ -167,6 +167,8 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -174,7 +176,6 @@ print '<td align="right">'.$langs->trans("NbOfTasks").'</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data_all_year as $val)
 {
 	$year = $val['year'];
@@ -182,13 +183,13 @@ foreach ($data_all_year as $val)
 	{	// If we have empty year
 		$oldyear--;
 
-		print '<tr '.$bc[$var].' height="24">';
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '</tr>';
 	}
 
-	print '<tr '.$bc[$var].' height="24">';
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '</tr>';
@@ -196,10 +197,11 @@ foreach ($data_all_year as $val)
 }
 
 print '</table>';
+print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow.= '<table class="border" width="100%"><tr valign="top"><td align="center">';
+$stringtoshow.= '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
 	$stringtoshow.= $px1->show();
@@ -213,6 +215,6 @@ print $stringtoshow;
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-
+// End of page
 llxFooter();
 $db->close();

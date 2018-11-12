@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
  * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ class Translate
 	 *  Return active language code for current user
 	 * 	It's an accessor for this->defaultlang
 	 *
-	 *  @param	int		$mode       0=Long language code, 1=Short language code
+	 *  @param	int		$mode       0=Long language code, 1=Short language code (en, fr, es, ...)
 	 *  @return string      		Language code used (en_US, en_AU, fr_FR, ...)
 	 */
 	function getDefaultLang($mode=0)
@@ -542,7 +542,7 @@ class Translate
 	 */
 	private function getTradFromKey($key)
 	{
-		global $db;
+		global $conf, $db;
 
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
 
@@ -563,10 +563,6 @@ class Translate
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle','',1);
         }
-		elseif (preg_match('/^OppStatusShort([0-9A-Z]+)$/i',$key,$reg))
-        {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');
-        }
         elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i',$key,$reg))
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');
@@ -576,6 +572,13 @@ class Translate
         	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
         }
+
+        /* Disabled. There is too many cases where translation of $newstr is not defined is normal (like when output with setEventMessage an already translated string)
+        if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
+        {
+        	dol_syslog(__METHOD__." MAIN_FEATURES_LEVEL=DEVELOP: missing translation for key '".$newstr."' in ".$_SERVER["PHP_SELF"], LOG_DEBUG);
+        }*/
+
         return $newstr;
 	}
 
@@ -652,11 +655,12 @@ class Translate
 	 *  @param  string	$param2     chaine de param2
 	 *  @param  string	$param3     chaine de param3
 	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
-	function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
+	function transnoentities($key, $param1='', $param2='', $param3='', $param4='', $param5='')
 	{
-		return $this->convToOutputCharset($this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4));
+		return $this->convToOutputCharset($this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4, $param5));
 	}
 
 
@@ -672,9 +676,10 @@ class Translate
 	 *  @param  string	$param2     chaine de param2
 	 *  @param  string	$param3     chaine de param3
 	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string
 	 */
-	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
+	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='', $param5='')
 	{
 		global $conf;
 
@@ -697,7 +702,7 @@ class Translate
             if (! preg_match('/^Format/',$key))
             {
             	//print $str;
-           		$str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+           		$str=sprintf($str, $param1, $param2, $param3, $param4, $param5);	// Replace %s and %d except for FormatXXX strings.
             }
 
             return $str;
@@ -753,6 +758,7 @@ class Translate
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of all available languages
 	 *
@@ -763,6 +769,7 @@ class Translate
 	 */
 	function get_available_languages($langdir=DOL_DOCUMENT_ROOT,$maxlength=0,$usecode=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		// We scan directory langs to detect available languages
@@ -792,6 +799,7 @@ class Translate
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
@@ -801,6 +809,7 @@ class Translate
 	 */
 	function file_exists($filename,$searchalt=0)
 	{
+        // phpcs:enable
 		// Test si fichier dans repertoire de la langue
 		foreach($this->dir as $searchdir)
 		{
@@ -1015,6 +1024,7 @@ class Translate
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return an array with content of all loaded translation keys (found into this->tab_translate) so
 	 * we get a substitution array we can use for substitutions (for mail or ODT generation for example)
@@ -1023,10 +1033,12 @@ class Translate
 	 */
 	function get_translations_for_substitutions()
 	{
+        // phpcs:enable
 		$substitutionarray = array();
 
 		foreach($this->tab_translate as $code => $label) {
 			$substitutionarray['lang_'.$code] = $label;
+			$substitutionarray['__('.$code.')__'] = $label;
 		}
 
 		return $substitutionarray;

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
-$langs->load("companies");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
 
 $id		= GETPOST('id','int');
 $action	= GETPOST('action','alpha');
@@ -199,7 +200,7 @@ if ($action == 'edit')
     // Date To Birth
     print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
     $form=new Form($db);
-    print $form->select_date($object->birthday,'birthday',0,0,1,"perso", 1,0,1);
+    print $form->selectDate($object->birthday, 'birthday', 0, 0, 1, "perso", 1,0);
     print '</td>';
 
     print '<td colspan="2">'.$langs->trans("Alert").': ';

@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Comptabilité
 ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonnes pour le fichier exporté
 ACCOUNTING_EXPORT_DATE=Format de date pour le fichier d'exportation
 ACCOUNTING_EXPORT_PIECE=Exporter la référence de la pièce ?
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=Étape %s : Créer un modèle de plan de compte de
 AccountancyAreaDescChart=Étape %s : Créer ou vérifier le contenu de votre plan de compte depuis le menu %s
 
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
+AccountancyAreaDescDefault=ÉTAPE %s: Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
 AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes de la comptabilité générale (
 ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes comptables de Tiers (Si vous définissez la valeur à 6 ici, le compte « 401 » apparaîtra comme « 401000 » à l'écran)
 ACCOUNTING_MANAGE_ZERO=Permettre de gérer un nombre différent de zéro à la fin d'un compte comptable. Nécessaire par certains pays (comme la Suisse). Si conservé à Non (par défaut), vous pouvez définir les 2 paramètres suivants pour demander à l'application d'ajouter des zéros virtuels.
 BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banque
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activer l'export brouillon sur les journaux comptables
 
 ACCOUNTING_SELL_JOURNAL=Journal des ventes
 ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal des opérations diverses
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Journal des notes de frais
 ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
+ACCOUNTING_HAS_NEW_JOURNAL=Journal des A -nouveaux
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de tranfert
 ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
@@ -190,6 +194,7 @@ ListAccounts=Liste des comptes comptables
 UnknownAccountForThirdparty=Compte de tiers inconnu. %s sera utilisé
 UnknownAccountForThirdpartyBlocking=Compte de tiers inconnu. Erreur bloquante.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte tiers inconnu et compte d'attente non défini. Erreur blocante.
+PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
 
 Pcgtype=Groupe de comptes comptables
 Pcgsubtype=Sous-groupe de comptes comptables
@@ -215,7 +220,7 @@ ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaison automatique faite
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
-MvtNotCorrectlyBalanced=Mouvement non équilibré. Crédit = %s. Débit = %s
+MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crébit = %s
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être journalisées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà comptabilisées.
@@ -293,4 +298,9 @@ Binded=Lignes liées
 ToBind=Lignes à lier
 UseMenuToSetBindindManualy=L'autodection n'est pas possible, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement
 
+## Import
+ImportAccountingEntries=Écritures comptables
+
 WarningReportNotReliable=Attention : ce rapport n'est pas basé sur le grand livre et ne contient donc pas les écritures manuelles qui lui ont été ajoutées. Si votre journalisation est à jour, la vue depuis le grand livre sera plus précise.
+ExpenseReportJournal=Journal des notes de frais
+InventoryJournal=Journal d'inventaire

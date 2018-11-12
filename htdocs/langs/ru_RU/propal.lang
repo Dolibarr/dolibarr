@@ -33,6 +33,7 @@ PropalStatusSigned=Подпись (в законопроекте)
 PropalStatusNotSigned=Не подписал (закрытые)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=Черновик
+PropalStatusValidatedShort=Утверждена
 PropalStatusClosedShort=Закрытые
 PropalStatusSignedShort=Подпись
 PropalStatusNotSignedShort=Не подписано
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 месяц
 TypeContact_propal_internal_SALESREPFOLL=Представитель следующие меры предложение
 TypeContact_propal_external_BILLING=свяжитесь со счета
 TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Полный текст предложения модели (logo. ..)
 DefaultModelPropalCreate=Создание модели по умолчанию

@@ -2,7 +2,7 @@
 
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,9 +22,8 @@
 /**
  * 	\defgroup   produit     Module product variants
  *  \brief      Module to manage product combinations based on product attributes
- *  \file       htdocs/core/modules/modAttributes.class.php
+ *  \file       htdocs/core/modules/modVariants.class.php
  *  \ingroup    produit
- *  \brief      File to describe module to manage catalog of predefined products
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -62,8 +61,6 @@ class modVariants extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 0;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -77,18 +74,14 @@ class modVariants extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array(
-			'admin.php@variants'
-		);
+		$this->config_page_url = array('admin.php@variants');
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
-		$this->depends = array(
-			'modProduct'
-		);		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->conflictwith = array();	// List of modules id this module is in conflict with
-		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
+		$this->depends = array('modProduct');	// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("products");
 
@@ -114,24 +107,5 @@ class modVariants extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
-
-		// Main menu entries
-		$this->menu = array(
-			array(
-				'fk_menu' => 'fk_mainmenu=products,fk_leftmenu=product',
-				'type' => 'left',
-				'titre' => 'VariantAttributes',
-				'mainmenu' => 'products',
-				'leftmenu' => 'product',
-				'url' => '/variants/list.php',
-				'langs' => 'products',
-				'position' => 100,
-				'enabled' => '$conf->product->enabled',
-				'perms' => 1,
-				'target' => '',
-				'user' => 0
-			)
-		);			// List of menus to add
 	}
 }
-

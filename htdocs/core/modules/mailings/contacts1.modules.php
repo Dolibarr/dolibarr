@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,10 @@ class mailing_contacts1 extends MailingTargets
 	var $require_admin=0;                               // Module mailing actif pour user admin ou non
 	var $picto='contact';
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**
@@ -71,7 +74,7 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label,";
 		$statssql[0].= " count(distinct(c.email)) as nb";
 		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$statssql[0].= " WHERE c.entity IN (".getEntity('societe').")";
+		$statssql[0].= " WHERE c.entity IN (".getEntity('socpeople').")";
 		$statssql[0].= " AND c.email != ''";      // Note that null != '' is false
 		$statssql[0].= " AND c.no_email = 0";
 		$statssql[0].= " AND c.statut = 1";
@@ -95,7 +98,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql  = "SELECT count(distinct(c.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
-		$sql.= " WHERE c.entity IN (".getEntity('societe').")";
+		$sql.= " WHERE c.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND c.email != ''"; // Note that null != '' is false
 		$sql.= " AND c.no_email = 0";
 		$sql.= " AND c.statut = 1";
@@ -113,17 +116,16 @@ class mailing_contacts1 extends MailingTargets
 	function formFilter()
 	{
 		global $langs;
-		$langs->load("companies");
-		$langs->load("commercial");
-		$langs->load("suppliers");
-		$langs->load("categories");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("commercial","companies","suppliers","categories"));
 
 		$s='';
 
 		// Add filter on job position
 		$sql = "SELECT sp.poste, count(distinct(sp.email)) AS nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
+		$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		/*$sql.= " AND sp.email != ''";    // Note that null != '' is false
 		 $sql.= " AND sp.no_email = 0";
 		 $sql.= " AND sp.statut = 1";*/
@@ -161,7 +163,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
 		//$sql.= " AND sp.no_email = 0";
 		//$sql.= " AND sp.email != ''";
-		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		//$sql.= " AND sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND cs.fk_categorie = c.rowid";
 		$sql.= " AND cs.fk_socpeople = sp.rowid";
 		$sql.= " GROUP BY c.label";
@@ -236,7 +238,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
 		//$sql.= " AND sp.no_email = 0";
 		//$sql.= " AND sp.email != ''";
-		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		//$sql.= " AND sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND cs.fk_categorie = c.rowid";
 		$sql.= " AND cs.fk_soc = sp.fk_soc";
 		$sql.= " GROUP BY c.label";
@@ -278,7 +280,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE sp.statut = 1";     // Note that null != '' is false
 		//$sql.= " AND sp.no_email = 0";
 		//$sql.= " AND sp.email != ''";
-		//$sql.= " AND sp.entity IN (".getEntity('societe').")";
+		//$sql.= " AND sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND cs.fk_categorie = c.rowid";
 		$sql.= " AND cs.fk_soc = sp.fk_soc";
 		$sql.= " GROUP BY c.label";
@@ -324,15 +326,17 @@ class mailing_contacts1 extends MailingTargets
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Ajoute destinataires dans table des cibles
 	 *
-	 *  @param	int		$mailing_id    	Id of emailing
+	 *  @param  int		$mailing_id    	Id of emailing
 	 *  @param  array	$filtersarray   Optional filter data (deprecated)
 	 *  @return int           			<0 si erreur, nb ajout si ok
 	 */
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		$filter = GETPOST('filter','alpha');
@@ -374,7 +378,7 @@ class mailing_contacts1 extends MailingTargets
     	if ($filter_category_customer <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as c2s";
     	if ($filter_category_supplier <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c3";
     	if ($filter_category_supplier <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_fournisseur as c3s";
-    	$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
+    	$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND sp.email <> ''";
 		$sql.= " AND sp.no_email = 0";
 		$sql.= " AND sp.statut = 1";
@@ -446,6 +450,4 @@ class mailing_contacts1 extends MailingTargets
 
 		return parent::add_to_target($mailing_id, $cibles);
 	}
-
 }
-

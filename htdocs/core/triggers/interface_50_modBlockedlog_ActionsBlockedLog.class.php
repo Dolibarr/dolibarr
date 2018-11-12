@@ -23,7 +23,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
 
 /**
@@ -33,7 +32,16 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 {
 	public $family = 'system';
 	public $description = "Triggers of this module add action for BlockedLog module.";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
+
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
 
 	/**
@@ -56,6 +64,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b=new BlockedLog($this->db);
 
 		// Tracked events
@@ -133,5 +142,4 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 1;
 		}
     }
-
 }

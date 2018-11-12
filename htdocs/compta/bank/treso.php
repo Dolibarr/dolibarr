@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015	   Marcos García			   <marcosgdf@gmail.com
@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("bills");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies'));
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
@@ -50,6 +48,9 @@ $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fie
 
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('banktreso','globalcard'));
 
 /*
  * View
@@ -117,8 +118,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
-	$var=true;
-
 	// Current balance
 
 	print '<tr class="liste_total">';
@@ -134,6 +133,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 
 	// Remainder to pay in future
+  $sqls = array();
 
 	// Customer invoices
 	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
@@ -142,79 +142,55 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
-    $sql.= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
-    $sql.= " ORDER BY dlr ASC";
+  $sql.= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
+  $sql.= " ORDER BY dlr ASC";
+  $sqls[] = $sql;
 
 	// Supplier invoices
-	$sql2= " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref as ref, ff.ref_supplier as ref_supplier, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
-	$sql2.= " s.rowid as socid, s.nom as name, s.fournisseur";
-	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
-	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
-	$sql2.= " WHERE ff.entity = ".$conf->entity;
-	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
-    $sql2.= " AND (ff.fk_account IN (0, ".$object->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
-    $sql2.= " ORDER BY dlr ASC";
+	$sql = " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref as ref, ff.ref_supplier as ref_supplier, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
+	$sql.= " s.rowid as socid, s.nom as name, s.fournisseur";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
+	$sql.= " WHERE ff.entity = ".$conf->entity;
+	$sql.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
+  $sql.= " AND (ff.fk_account IN (0, ".$object->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
+  $sql.= " ORDER BY dlr ASC";
+  $sqls[] = $sql;
 
 	// Social contributions
-	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
-    $sql3.= ", cs.fk_account";
-	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
-	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
-	$sql3.= " WHERE cs.entity = ".$conf->entity;
-	$sql3.= " AND cs.paye = 0";	// Not paid
-    $sql3.= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
-	$sql3.= " ORDER BY dlr ASC";
+	$sql = " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
+  $sql.= ", cs.fk_account";
+	$sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
+	$sql.= " WHERE cs.entity = ".$conf->entity;
+	$sql.= " AND cs.paye = 0";	// Not paid
+  $sql.= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
+	$sql.= " ORDER BY dlr ASC";
+  $sqls[] = $sql;
+
+  // others sql
+  $parameters = array();
+  $reshook = $hookmanager->executeHooks('addMoreSQL', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+  if(empty($reshook) and isset($hookmanager->resArray['sql'])){
+    $sqls[] = $hookmanager->resArray['sql'];
+  }
 
 	$error=0;
 	$tab_sqlobjOrder=array();
 	$tab_sqlobj=array();
 
-	// List customer invoices
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$num = $db->num_rows($result);
-		for ($i = 0;$i < $num;$i++)
-		{
-			$sqlobj = $db->fetch_object($result);
-			$tab_sqlobj[] = $sqlobj;
-			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
-		}
-		$db->free($result);
-	}
-	else $error++;
-
-	// List supplier invoices
-	$result2=$db->query($sql2);
-	if ($result2)
-	{
-		$num = $db->num_rows($result2);
-		for ($i = 0;$i < $num;$i++)
-		{
-			$sqlobj = $db->fetch_object($result2);
-			$tab_sqlobj[] = $sqlobj;
-			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
-		}
-		$db->free($result2);
-	}
-	else $error++;
-
-	// List social contributions
-	$result3=$db->query($sql3);
-	if ($result3)
-	{
-		$num = $db->num_rows($result3);
-
-		for ($i = 0;$i < $num;$i++)
-		{
-			$sqlobj = $db->fetch_object($result3);
-			$tab_sqlobj[] = $sqlobj;
-			$tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
-		}
-		$db->free($result3);
-	}
-	else $error++;
-
+  foreach($sqls as $sql){
+    $resql = $db->query($sql);
+    if($resql){
+      while($sqlobj = $db->fetch_object($resql)){
+        $tab_sqlobj[] = $sqlobj;
+        $tab_sqlobjOrder[]= $db->jdate($sqlobj->dlr);
+      }
+      $db->free($resql);
+    }else{
+      $error++;
+    }
+  }
 
 	// Sort array
 	if (! $error)
@@ -232,7 +208,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 		$num = count($tab_sqlobj);
 
-		//$num = $db->num_rows($result);
 		$i = 0;
 		while ($i < $num)
 		{
@@ -240,7 +215,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$ref = '';
 			$refcomp = '';
 
-			//$obj = $db->fetch_object($result);
 			$obj = array_shift($tab_sqlobj);
 
 			if ($obj->family == 'invoice_supplier')
@@ -288,6 +262,14 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
 
+      $parameters = array('obj' => $obj);
+      $reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+      if(empty($reshook)){
+        $ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : '';
+        $refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : '';
+        $paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : 0;
+      }
+
 			$total_ttc = $obj->total_ttc;
 			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
 			$solde += $total_ttc;
@@ -295,8 +277,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			// We discard lines with a remainder to pay to 0
 			if (price2num($total_ttc) != 0)
 			{
-
-
     			// Show line
     			print '<tr class="oddeven">';
     			print '<td>';
@@ -319,20 +299,28 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		dol_print_error($db);
 	}
 
-	// Solde actuel
+	// Other lines
+	$parameters = array('solde' => $solde);
+	$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if(empty($reshook)){
+		print $hookmanager->resPrint;
+    $solde = isset($hookmanager->resArray['solde']) ? $hookmanager->resArray['solde'] : $solde;
+	}
 
+  // solde
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
 	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
 	print '</tr>';
 
 	print "</table>";
-    print "</div>";
+  print "</div>";
 }
 else
 {
 	print $langs->trans("ErrorBankAccountNotFound");
 }
 
+// End of page
 llxFooter();
 $db->close();

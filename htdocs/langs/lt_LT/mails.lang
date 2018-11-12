@@ -11,7 +11,9 @@ MailFrom=Siuntėjas
 MailErrorsTo=Klaidos
 MailReply=Atsakyti
 MailTo=Gavėjas (-ai)
+MailToUsers=To user(s)
 MailCC=Kopijuoti į
+MailToCCUsers=Copy to users(s)
 MailCCC=Sparčiosios tarpinės atminties (cache) kopija į
 MailTopic=E-pašto viršus
 MailText=Pranešimas
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Informacija
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

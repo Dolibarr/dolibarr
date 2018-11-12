@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 ThirdPartyBankCode=Third party bank code or BSB
-RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved

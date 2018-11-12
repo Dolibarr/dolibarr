@@ -23,11 +23,11 @@
 
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
-require_once("../master.inc.php");
-require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
-require_once(DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require "../master.inc.php";
+require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
+require_once DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php";
+require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
 
 
 dol_syslog("Call Contact webservices interfaces");
@@ -311,7 +311,7 @@ function getContact($authentication,$id,$ref_ext)
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
             	//Get extrafield values
-            	$contact->fetch_optionals($contact->id,$extralabels);
+            	$contact->fetch_optionals();
 
             	foreach($extrafields->attribute_label as $key=>$label)
             	{

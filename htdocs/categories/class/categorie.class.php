@@ -2,14 +2,15 @@
 /* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
  * Copyright (C) 2005       Davoleau Brice          <brice.davoleau@gmail.com>
  * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013-2016  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,9 @@ class Categorie extends CommonObject
 	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'category';
 
 
@@ -72,6 +76,10 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 	);
+
+    /**
+	 * @var array Code mapping from ID
+	 */
 	public static $MAP_ID_TO_CODE = array(
 		0 => 'product',
 		1 => 'supplier',
@@ -100,7 +108,8 @@ class Categorie extends CommonObject
         'bank_account' => 'account',
         'project'  => 'project',
 	);
-	/**
+
+    /**
 	 * @var array Category tables mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -116,7 +125,8 @@ class Categorie extends CommonObject
         'bank_account'=> 'account',
         'project'  => 'project',
 	);
-	/**
+
+    /**
 	 * @var array Object class mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -132,7 +142,8 @@ class Categorie extends CommonObject
 		'bank_account'  => 'Account',
         'project'  => 'Project',
 	);
-	/**
+
+    /**
 	 * @var array Object table mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
@@ -148,12 +159,31 @@ class Categorie extends CommonObject
         'project'  => 'projet',
 	);
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='category';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='categorie';
 
+	/**
+     * @var int ID
+     */
 	public $fk_parent;
-	public $label;
+
+	/**
+     * @var string Category label
+     */
+   	public $label;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	/**
 	 * @var string     Color
 	 */
@@ -176,7 +206,14 @@ class Categorie extends CommonObject
 	 */
 	public $type;
 
-	public $cats = array();			// Categories table in memory
+	/**
+	 * @var array Categories table in memory
+	 */
+	public $cats = array();
+
+    /**
+	 * @var array Mother of table
+	 */
 	public $motherof = array();
 
 	/**
@@ -236,7 +273,9 @@ class Categorie extends CommonObject
 				$this->type			= $res['type'];
 				$this->entity		= $res['entity'];
 
-				$this->fetch_optionals($this->id,null);
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				$this->db->free($resql);
 
@@ -336,28 +375,23 @@ class Categorie extends CommonObject
 
 				$action='create';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO the hook duplicates the trigger !!
-				$hookmanager->initHooks(array('HookModuleNamedao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				if (! $error)
+				{
+	                // Call trigger
+    	            $result=$this->call_trigger('CATEGORY_CREATE',$user);
+        	        if ($result < 0) { $error++; }
+            	    // End call triggers
+				}
 
                 if ( ! $error )
                 {
@@ -430,28 +464,23 @@ class Categorie extends CommonObject
 		{
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			// TODO the hook duplicates the trigger !!
-			$hookmanager->initHooks(array('HookCategorydao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
-            // Call trigger
-            $result=$this->call_trigger('CATEGORY_MODIFY',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
+			if (! $error)
+			{
+	            // Call trigger
+    	        $result=$this->call_trigger('CATEGORY_MODIFY',$user);
+        	    if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            	// End call triggers
+			}
 
 			$this->db->commit();
 
@@ -506,112 +535,27 @@ class Categorie extends CommonObject
 				$error++;
 			}
 		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_societe";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_fournisseur";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-			$sql .= " WHERE fk_categorie = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
-			}
-		}
-		if (! $error)
-		{
-		    $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql .= " WHERE fk_categ = ".$this->id;
-		    if (!$this->db->query($sql))
-		    {
-		        $this->error=$this->db->lasterror();
-		        dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-		        $error++;
-		    }
-		}
 
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_lang";
-			$sql .= " WHERE fk_category = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
-				$error++;
-			}
-		}
-
-		// Delete category
-		if (! $error)
-		{
-			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie";
-			$sql .= " WHERE rowid = ".$this->id;
-			if (!$this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				$error++;
-			}
-		}
+        $arraydelete = array(
+            'categorie_societe' => 'fk_categorie',
+            'categorie_fournisseur' => 'fk_categorie',
+            'categorie_product' => 'fk_categorie',
+            'categorie_member' => 'fk_categorie',
+            'categorie_contact' => 'fk_categorie',
+            'categorie_account' => 'fk_categorie',
+            'bank_class' => 'fk_categ',
+            'categorie_lang' => 'fk_category',
+            'categorie' => 'rowid',
+        );
+        foreach ($arraydelete as $key => $value) {
+            $sql  = "DELETE FROM " . MAIN_DB_PREFIX . $key;
+            $sql .= " WHERE ".$value." = ".$this->id;
+            if (!$this->db->query($sql)) {
+                $this->errors[] = $this->db->lasterror();
+                dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+                $error++;
+            }
+        }
 
 		// Removed extrafields
 		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -636,6 +580,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Link an object to the category
 	 *
@@ -645,23 +590,12 @@ class Categorie extends CommonObject
 	 */
 	function add_type($obj, $type)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf;
 
 		$error=0;
 
 		if ($this->id == -1) return -2;
-
-		// For backward compatibility
-		if ($type == 'societe')
-		{
-			$type = 'customer';
-			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
-		}
-		elseif ($type == 'fournisseur')
-		{
-			$type = 'supplier';
-			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
-		}
 
         $this->db->begin();
 
@@ -713,11 +647,11 @@ class Categorie extends CommonObject
 				}
 			}
 
-			// Save object we want to link category to into category instance to provide information to trigger
-			$this->linkto=$obj;
+
 
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_LINK',$user);
+			$this->context=array('linkto'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
+			$result=$this->call_trigger('CATEGORY_LINK',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -731,7 +665,6 @@ class Categorie extends CommonObject
 			    $this->db->rollback();
 			    return -2;
 			}
-
 		}
 		else
 		{
@@ -749,6 +682,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Delete object from category
 	 *
@@ -759,6 +693,7 @@ class Categorie extends CommonObject
 	 */
 	function del_type($obj,$type)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf;
 
 		$error=0;
@@ -781,11 +716,9 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// Save object we want to unlink category off into category instance to provide information to trigger
-			$this->unlinkoff=$obj;
-
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_UNLINK',$user);
+			$this->context=array('unlinkoff'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
+			$result=$this->call_trigger('CATEGORY_UNLINK',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -813,7 +746,7 @@ class Categorie extends CommonObject
 	 *
 	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
-	 * @return  mixed                  -1 if KO, array of instance of object if OK
+	 * @return  array|int              -1 if KO, array of instance of object if OK
 	 * @see containsObject
 	 */
 	function getObjectsInCateg($type, $onlyids=0)
@@ -886,7 +819,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sortorder	Sort order
 	 * @param	int		$limit		Limit for list
 	 * @param	int		$page		Page number
-	 * @return	array				Array of categories
+	 * @return	array|int			Array of categories, 0 if no cat, -1 on error
 	 */
 	function getListForItem($id, $type='customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -915,23 +848,22 @@ class Categorie extends CommonObject
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
+		$sql.= $this->db->order($sortfield, $sortorder);
+
+		$offset = 0;
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);
-		}
-
-		$sql.= $this->db->order($sortfield, $sortorder);
-		if ($limit)	{
-			if ($page < 0)
+			if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			{
 				$page = 0;
+				$offset = 0;
 			}
-			$offset = $limit * $page;
-
-			$sql.= $this->db->plimit($limit + 1, $offset);
 		}
+
+		$sql.= $this->db->plimit($limit + 1, $offset);
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -975,6 +907,7 @@ class Categorie extends CommonObject
 		return $categories;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Return childs of a category
 	 *
@@ -982,6 +915,7 @@ class Categorie extends CommonObject
 	 */
 	function get_filles()
 	{
+        // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent = ".$this->id;
 
@@ -1004,6 +938,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
 	 *
@@ -1011,6 +946,7 @@ class Categorie extends CommonObject
 	 */
 	private function load_motherof()
 	{
+        // phpcs:enable
 		global $conf;
 
 		$this->motherof=array();
@@ -1038,6 +974,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Rebuilding the category tree as an array
 	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
@@ -1051,10 +988,11 @@ class Categorie extends CommonObject
 	 * @param   string 	$type        	Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
 	 * @param   int    	$markafterid 	Removed all categories including the leaf $markafterid in category tree.
 	 *
-	 * @return  array               	Array of categories. this->cats and this->motherof are set.
+	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
 	function get_full_arbo($type, $markafterid=0)
 	{
+        // phpcs:enable
 	    global $conf, $langs;
 
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
@@ -1066,7 +1004,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent, c.visible";	// Distinct reduce pb with old tables with duplicates
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
@@ -1086,6 +1024,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['label'] = ! empty($obj->label_trans) ? $obj->label_trans : $obj->label;
 				$this->cats[$obj->rowid]['description'] = ! empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$this->cats[$obj->rowid]['color'] = $obj->color;
+				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$i++;
 			}
 		}
@@ -1129,6 +1068,7 @@ class Categorie extends CommonObject
 		return $this->cats;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel
 	 *
@@ -1138,6 +1078,7 @@ class Categorie extends CommonObject
 	 */
 	function build_path_from_id_categ($id_categ,$protection=1000)
 	{
+        // phpcs:enable
 		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		if (! empty($this->cats[$id_categ]['fullpath']))
@@ -1171,6 +1112,7 @@ class Categorie extends CommonObject
 		return;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Display content of $this->cats
 	 *
@@ -1178,6 +1120,7 @@ class Categorie extends CommonObject
 	 */
 	function debug_cats()
 	{
+        // phpcs:enable
 		// Display $this->cats
 		foreach($this->cats as $key => $val)
 		{
@@ -1192,15 +1135,17 @@ class Categorie extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Returns all categories
 	 *
 	 *	@param	int			$type		Type of category (0, 1, ...)
 	 *	@param	boolean		$parent		Just parent categories if true
-	 *	@return	array					Table of Object Category
+	 *	@return	array|int				Table of Object Category, -1 on error
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
+        // phpcs:enable
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
@@ -1229,30 +1174,7 @@ class Categorie extends CommonObject
 		}
 	}
 
-	/**
-	 * 	Returns total number of categories
-	 *
-	 *	@return		int		Number of categories
-	 *	@deprecated function not used ?
-	 */
-	function get_nb_categories()
-	{
-		$sql = "SELECT count(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category').")";
-		$res = $this->db->query($sql);
-		if ($res)
-		{
-			$res = $this->db->fetch_array($res);
-			return $res[0];
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
@@ -1260,6 +1182,7 @@ class Categorie extends CommonObject
 	 */
 	function already_exists()
 	{
+        // phpcs:enable
 		$type=$this->type;
 
 		if (! is_numeric($type)) $type=$this->MAP_ID[$type];
@@ -1302,6 +1225,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns the top level categories (which are not girls)
 	 *
@@ -1310,9 +1234,11 @@ class Categorie extends CommonObject
 	 */
 	function get_main_categories($type=null)
 	{
+        // phpcs:enable
 		return $this->get_all_categories($type, true);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns the path of the category, with the names of the categories
 	 * separated by $sep (" >> " by default)
@@ -1324,6 +1250,7 @@ class Categorie extends CommonObject
 	 */
 	function print_all_ways($sep = " &gt;&gt; ", $url='', $nocolor=0)
 	{
+        // phpcs:enable
 		$ways = array();
 
 		$allways = $this->get_all_ways(); // Load array of categories
@@ -1370,6 +1297,7 @@ class Categorie extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
@@ -1377,6 +1305,7 @@ class Categorie extends CommonObject
 	 */
 	function get_meres()
 	{
+        // phpcs:enable
 		$parents = array();
 
 		$sql = "SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie";
@@ -1404,6 +1333,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Returns in a table all possible paths to get to the category
 	 * 	starting with the major categories represented by Tables of categories
@@ -1412,6 +1342,7 @@ class Categorie extends CommonObject
 	 */
 	function get_all_ways()
 	{
+        // phpcs:enable
 		$ways = array();
 
 		$parents=$this->get_meres();
@@ -1443,7 +1374,7 @@ class Categorie extends CommonObject
 	 * @param   string|int	$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
 	 * @param   string 		$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
 	 *                      	    labels, 'id'= Get array of category IDs
-	 * @return  mixed           	Array of category objects or < 0 if KO
+	 * @return  array|int           Array of category objects or < 0 if KO
 	 */
 	function containing($id, $type, $mode='object')
 	{
@@ -1525,7 +1456,7 @@ class Categorie extends CommonObject
  	 * 	@param		string		$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
 	 * 	@param		boolean		$exact		Exact string search (true/false)
 	 * 	@param		boolean		$case		Case sensitive (true/false)
-	 * 	@return		array					Array of category id
+	 * 	@return		array|int				Array of category id, -1 if error
 	 */
 	function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
@@ -1618,6 +1549,7 @@ class Categorie extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
 	 *
@@ -1627,6 +1559,7 @@ class Categorie extends CommonObject
 	 */
 	function add_photo($sdir, $file)
 	{
+        // phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
@@ -1667,6 +1600,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Return tableau de toutes les photos de la categorie
 	 *
@@ -1676,6 +1610,7 @@ class Categorie extends CommonObject
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$nbphoto=0;
@@ -1722,6 +1657,7 @@ class Categorie extends CommonObject
 		return $tabobj;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Efface la photo de la categorie et sa vignette
 	 *
@@ -1730,6 +1666,7 @@ class Categorie extends CommonObject
 	 */
 	function delete_photo($file)
 	{
+        // phpcs:enable
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
@@ -1750,6 +1687,7 @@ class Categorie extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load size of image file
 	 *
@@ -1758,6 +1696,7 @@ class Categorie extends CommonObject
 	 */
 	function get_image_size($file)
 	{
+        // phpcs:enable
 		$infoImg = getimagesize($file); // Recuperation des infos de l'image
 		$this->imgWidth = $infoImg[0]; // Largeur de l'image
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
@@ -1871,7 +1810,6 @@ class Categorie extends CommonObject
 	            {
 	                $this->label		= $obj->label;
 	                $this->description	= $obj->description;
-
 	            }
 	            $this->multilangs["$obj->lang"]["label"]		= $obj->label;
 	            $this->multilangs["$obj->lang"]["description"]	= $obj->description;

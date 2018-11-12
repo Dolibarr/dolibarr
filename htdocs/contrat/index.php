@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,13 +24,12 @@
  *		\brief      Home page of contract area
  */
 
-require ("../main.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require "../main.inc.php";
+require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
-$langs->load("products");
-$langs->load("companies");
-$langs->load("contracts");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield=GETPOST('sortfield','alpha');
 $sortorder=GETPOST('sortorder','alpha');
@@ -280,7 +279,6 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				print '</tr>';
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
-
 			}
 		}
 		else
@@ -366,7 +364,6 @@ if ($result)
 	$db->free($result);
 
 	print "</table>";
-
 }
 else
 {
@@ -445,7 +442,6 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
-
 }
 else
 {
@@ -524,7 +520,6 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
-
 }
 else
 {
@@ -604,7 +599,6 @@ if ($resql)
 	$db->free();
 
 	print "</table>";
-
 }
 else
 {

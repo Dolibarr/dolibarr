@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 if ($_POST) {
 	if (empty($ref) || empty($label)) {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
 
 		$prodattr = new ProductAttribute($db);
@@ -38,7 +39,7 @@ if ($_POST) {
 
 		$resid = $prodattr->create($user);
 		if ($resid > 0) {
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			if ($backtopage)
 			{
 				header('Location: '.$backtopage);
@@ -49,7 +50,7 @@ if ($_POST) {
 			}
 			exit;
 		} else {
-			setEventMessage($langs->trans('ErrorRecordAlreadyExists'), 'errors');
+			setEventMessages($langs->trans('ErrorRecordAlreadyExists'), $prodattr->errors, 'errors');
 		}
 	}
 }
@@ -65,7 +66,7 @@ $title = $langs->trans('NewProductAttribute');
 
 llxHeader('', $title);
 
-print_fiche_titre($title);
+print load_fiche_titre($title);
 
 dol_fiche_head();
 
@@ -97,5 +98,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

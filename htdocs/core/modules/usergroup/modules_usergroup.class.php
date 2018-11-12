@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  *	    \class      ModeleProductCode
  *		\brief  	Parent class for product code generators
  */
- 
+
 /**
  *  \file       htdocs/core/modules/contract/modules_contract.php
  *  \ingroup    contract
@@ -32,16 +32,20 @@
  */
 
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
- 
+
 /**
  *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFUserGroup extends CommonDocGenerator
 {
-	var $error='';
-
-
 	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
 	 *	Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
@@ -50,13 +54,14 @@ abstract class ModelePDFUserGroup extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
-		$type='group';
-		$liste=array();
+		$type = 'group';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
-		return $liste;
+		$list = getListOfModels($db, $type, $maxfilenamelength);
+		return $list;
 	}
 }

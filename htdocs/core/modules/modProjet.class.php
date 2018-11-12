@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Charles-Fr BENKE	<charles.fr@benke.fr>
  *
@@ -36,7 +36,6 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
  */
 class modProjet extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -50,7 +49,7 @@ class modProjet extends DolibarrModules
 		$this->numero = 400;
 
 		$this->family = "projects";
-		$this->module_position = 10;
+		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des projets";
@@ -58,17 +57,18 @@ class modProjet extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->config_page_url = array("project.php@projet");
 		$this->picto='project';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/projet/temp");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->conflictwith = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->langfiles = array('projects');
 
 		// Constants
@@ -353,15 +353,14 @@ class modProjet extends DolibarrModules
 			}
 		}
 
-		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'project' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','project',".$conf->entity.")",
-		);
+		$sql = array();
+		$sql[] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[3][2])."' AND type = 'task' AND entity = ".$conf->entity;
+		$sql[] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."','task',".$conf->entity.")";
+		$sql[] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'beluga' AND type = 'project' AND entity = ".$conf->entity;
+		$sql[] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('beluga','project',".$conf->entity.")";
+		$sql[] ="DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'baleine' AND type = 'project' AND entity = ".$conf->entity;
+		$sql[] ="INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('baleine','project',".$conf->entity.")";
 
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[3][2])."' AND type = 'task' AND entity = ".$conf->entity,
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[3][2])."','task',".$conf->entity.")"
-		);
 
 		return $this->_init($sql,$options);
 	}

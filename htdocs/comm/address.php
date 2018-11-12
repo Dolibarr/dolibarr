@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/address.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'commercial'));
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -151,7 +151,6 @@ if ($action == 'add' || $action == 'update')
             $action= "edit";
         }
     }
-
 }
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
@@ -291,7 +290,6 @@ if ($action == 'create')
         print '</div>'."\n";
 
         print '</form>'."\n";
-
     }
 }
 elseif ($action == 'edit')
@@ -486,7 +484,6 @@ else
         }
         print '</div>';
     }
-
 }
 
 

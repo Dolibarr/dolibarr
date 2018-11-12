@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->facture->lire)
 accessforbidden();
 
-
+// Load translation files required by the page
 $langs->load("companies");
 
 $mode=GETPOST("mode");
@@ -172,13 +172,9 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
-	$var=true;
-
 	while ($i < min($num,$conf->liste_limit))
 	{
 		$obj = $db->fetch_object($resql);
-
-
 
 		print '<tr class="oddeven">';
 		print '<td>';

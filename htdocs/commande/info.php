@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,8 +33,8 @@ if (! empty($conf->projet->enabled)) {
 
 if (!$user->rights->commande->lire)	accessforbidden();
 
-$langs->load("orders");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings'));
 
 $socid=0;
 $comid = GETPOST("id",'int');
@@ -128,5 +128,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

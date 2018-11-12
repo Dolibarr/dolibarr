@@ -35,7 +35,7 @@ class Interventions extends DolibarrApi
     static $FIELDS = array(
       'socid',
       'fk_project',
-      'description'
+      'description',
     );
 
     /**
@@ -44,7 +44,7 @@ class Interventions extends DolibarrApi
     static $FIELDSLINE = array(
       'description',
       'date',
-      'duree'
+      'duree',
     );
 
     /**
@@ -106,7 +106,8 @@ class Interventions extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -188,7 +189,7 @@ class Interventions extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of intervention
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -217,7 +218,8 @@ class Interventions extends DolibarrApi
      * @return int
      */
     /* TODO
-    function getLines($id) {
+    function getLines($id)
+    {
     	if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
     		throw new RestException(401);
     	}
@@ -249,7 +251,7 @@ class Interventions extends DolibarrApi
      *
      * @return  int
      */
-    function postLine($id, $request_data = NULL)
+    function postLine($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
                           throw new RestException(401, "Insuffisant rights");
@@ -283,6 +285,38 @@ class Interventions extends DolibarrApi
         else {
         	throw new RestException(400, $this->fichinter->error);
         }
+    }
+
+    /**
+     * Delete order
+     *
+     * @param   int     $id         Order ID
+     * @return  array
+     */
+    function delete($id)
+    {
+    	if(! DolibarrApiAccess::$user->rights->ficheinter->supprimer) {
+    		throw new RestException(401);
+    	}
+    	$result = $this->fichinter->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Intervention not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('commande',$this->fichinter->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	if( ! $this->fichinter->delete(DolibarrApiAccess::$user)) {
+    		throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->error);
+    	}
+
+    	return array(
+	    	'success' => array(
+		    	'code' => 200,
+		    	'message' => 'Intervention deleted'
+	    	)
+    	);
     }
 
     /**
@@ -391,7 +425,8 @@ class Interventions extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
     	$object = parent::_cleanObjectDatas($object);
 
@@ -420,6 +455,4 @@ class Interventions extends DolibarrApi
         }
         return $fichinter;
     }
-
-
 }

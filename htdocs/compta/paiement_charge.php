@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
+/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/paiement_charge.php
- *		\ingroup    tax
- *		\brief      Page to add payment of a tax
+ *      \file       htdocs/compta/paiement_charge.php
+ *      \ingroup    tax
+ *      \brief      Page to add payment of a tax
  */
 
 require '../main.inc.php';
@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Load translation files required by the page
 $langs->load("bills");
 
 $chid=GETPOST("id", 'int');
@@ -146,7 +147,6 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
             }
         }
 	}
-
 }
 
 
@@ -225,7 +225,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
-	$form->select_date($datepayment,'','','','',"add_payment",1,1);
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -271,15 +271,12 @@ if ($action == 'create')
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	$total=0;
 	$totalrecu=0;
 
 	while ($i < $num)
 	{
 		$objp = $charge;
-
-
 
 		print '<tr class="oddeven">';
 
@@ -324,7 +321,7 @@ if ($action == 'create')
 	if ($i > 1)
 	{
 		// Print total
-		print "<tr ".$bc[!$var].">";
+		print '<tr class="oddeven">';
 		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";

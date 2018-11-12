@@ -2,7 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,12 +25,12 @@
  */
 
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
-$langs->load("admin");
-$langs->load("cron");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'cron'));
 
 if (! $user->admin)
 	accessforbidden();

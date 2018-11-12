@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
@@ -32,9 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 class InterfaceWorkflowManager extends DolibarrTriggers
 {
+	/**
+	 * @var string Image of the trigger
+	 */
 	public $picto = 'technic';
+
 	public $family = 'core';
 	public $description = "Triggers of this module allows to manage workflows";
+
+	/**
+	 * Version of the trigger
+	 * @var string
+	 */
 	public $version = self::VERSION_DOLIBARR;
 
 	/**
@@ -94,7 +103,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         if ($action == 'ORDER_CLASSIFY_BILLED')
         {
         	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
-        	if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL))
+        	if (! empty($conf->propal->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL))
         	{
         		$object->fetchObjectLinked('','propal',$object->id,$object->element);
 				if (! empty($object->linkedObjects))
@@ -123,7 +132,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
 
 			// First classify billed the order to allow the proposal classify process
-			if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
+			if (! empty($conf->commande->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
         	{
         		$object->fetchObjectLinked('','commande',$object->id,$object->element);
         		if (! empty($object->linkedObjects))
@@ -146,7 +155,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	}
 
 			// Second classify billed the proposal.
-        	if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL))
+        	if (! empty($conf->propal->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL))
         	{
         		$object->fetchObjectLinked('','propal',$object->id,$object->element);
         		if (! empty($object->linkedObjects))
@@ -253,7 +262,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         {
         	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
 
-        	if (! empty($conf->commande->enabled) && ! empty($conf->expedition->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING))
+        	if (! empty($conf->commande->enabled) && ! empty($conf->expedition->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING))
         	{
         		$qtyshipped=array();
         		$qtyordred=array();
@@ -309,5 +318,4 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
         return 0;
     }
-
 }

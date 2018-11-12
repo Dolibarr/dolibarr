@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2015	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry <jfefe@aternatik.fr>
  *
@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (!$user->admin)
     accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'agenda'));
 
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
@@ -203,6 +202,6 @@ print "</form>\n";
 
 print "<br>";
 
+// End of page
 llxFooter();
-
 $db->close();

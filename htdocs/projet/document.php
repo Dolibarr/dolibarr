@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load('projects');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'other'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
@@ -139,7 +139,7 @@ if ($object->id > 0)
 
 	// Files infos
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 	print "</table>\n";
 
@@ -152,13 +152,12 @@ if ($object->id > 0)
 	$permission = ($userWrite > 0);
 	$permtoedit = ($userWrite > 0);
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
 }
 else
 {
 	dol_print_error('','NoRecordFound');
 }
 
+// End of page
 llxFooter();
-
 $db->close();

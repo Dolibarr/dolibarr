@@ -112,7 +112,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-	/**
+
+    /**
 	 * End phpunit tests
 	 *
 	 * @return	void
@@ -123,6 +124,30 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * testIsValidMXRecord
+     *
+     * @return void
+     */
+    public function testIsValidMXRecord()
+    {
+    	// Nb of line is same than entry text
+
+    	$input="yahoo.com";
+    	$result=isValidMXRecord($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(1, $result);
+
+    	$input="yhaoo.com";
+    	$result=isValidMXRecord($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(0, $result);
+
+    	$input="dolibarr.fr";
+    	$result=isValidMXRecord($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(0, $result);
+    }
 
     /**
      * testDolGetFirstLineOfText
@@ -347,6 +372,12 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='<a class="azerty" href="https://xxx.com/aaa/image.png" />';
         $after=dol_textishtml($input);
         $this->assertTrue($after, 'Test with a tag');
+        $input='This is a text with&nbsp;html spaces';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after, 'Test with a &nbsp;');
+        $input='This is a text with accent &eacute;';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after, 'Test with a &eacute;');
 
         // False
         $input='xxx < br>';
@@ -361,7 +392,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
         $after=dol_textishtml($input);
         $this->assertFalse($after);
-
     }
 
 
@@ -433,17 +463,21 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
      */
     public function testDolStringNohtmltag()
     {
-        $text="A\nstring\n";
+        $text="A\nstring\n\nand more\n";
         $after=dol_string_nohtmltag($text,0);
-        $this->assertEquals("A\nstring",$after,"test1");
+        $this->assertEquals("A\nstring\n\nand more",$after,"test1a");
 
-        $text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+        $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 0);
-        $this->assertEquals("A string\n\nwith html tag and '<' chars",$after,"test2");
+        $this->assertEquals("A string\n\n\n\n\nwith html tag",$after,"test2a 2 br and 3 \n give 5 \n");
 
-        $text="A <b>string<b>\n\nwith tag with < chars<br>\n";
+        $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 1);
-        $this->assertEquals("A string with tag with < chars",$after,"test3");
+        $this->assertEquals("A string with html tag",$after,"test2b 2 br and 3 \n give 1 space");
+
+        $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
+        $after=dol_string_nohtmltag($text, 2);
+        $this->assertEquals("A string\n\nwith html tag",$after,"test2c 2 br and 3 \n give 2 \n");
 
         $text="A string<br>Another string";
         $after=dol_string_nohtmltag($text,0);
@@ -460,6 +494,18 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $text='<a href="/myurl" title="&lt;u&gt;Afficher projet&lt;/u&gt;">DEF</a>';
         $after=dol_string_nohtmltag($text,1);
         $this->assertEquals("DEF",$after,"test7");
+
+        $text='<a href="/myurl" title="<u>A title</u>">HIJ</a>';
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("HIJ",$after,"test8");
+
+        $text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+        $after=dol_string_nohtmltag($text, 0);
+        $this->assertEquals("A string\n\nwith html tag and '<' chars",$after,"test9");
+
+        $text="A <b>string<b>\n\nwith tag with < chars<br>\n";
+        $after=dol_string_nohtmltag($text, 1);
+        $this->assertEquals("A string with tag with < chars",$after,"test10");
 
         return true;
     }
@@ -792,7 +838,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $object->country_code='CA';
         $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
         $this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
-
     }
 
 
@@ -812,13 +857,17 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $this->assertContains('theme',$s,'testImgPicto2');
         $this->assertContains('style="float: right"',$s,'testImgPicto2');
 
-        $s=img_picto('title','/fullpath/img.png','',1);
+        $s=img_picto('title', '/fullpath/img.png', '', 1);
         print __METHOD__." s=".$s."\n";
         $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto3');
 
-        $s=img_picto('title','/fullpath/img.png','',true);
+        $s=img_picto('title', '/fullpath/img.png', '', true);
         print __METHOD__." s=".$s."\n";
         $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto4');
+
+        $s=img_picto('title', 'delete', '', 0, 1);
+        print __METHOD__." s=".$s."\n";
+        $this->assertEquals(DOL_URL_ROOT.'/theme/eldy/img/delete.png',$s,'testImgPicto5');
     }
 
     /**
@@ -959,7 +1008,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         // Test RULE 5 (FR-US)
         $vat=get_default_tva($companyfr,$companyus,0);
         $this->assertEquals(0,$vat,'RULE 5 ECOMMERCE_200238EC');
-
     }
 
     /**
@@ -1069,7 +1117,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testDolNl2Br() {
+    public function testDolNl2Br()
+    {
 
 		//String to encode
 		$string = "a\na";
@@ -1160,5 +1209,4 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		return true;
 	}
-
 }

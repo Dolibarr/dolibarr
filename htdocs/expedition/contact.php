@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -266,9 +265,8 @@ if ($id > 0 || ! empty($ref))
 	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 	    if ($res) break;
 	}
-
 }
 
+// End of page
 llxFooter();
-
 $db->close();

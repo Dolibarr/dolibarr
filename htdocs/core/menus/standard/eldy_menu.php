@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,11 @@
  */
 class MenuManager
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $type_user;									// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // To store default target to use onto links
 	var $name="eldy";
@@ -111,7 +115,8 @@ class MenuManager
 
 
     /**
-     *  Show menu
+     *  Show menu.
+     *  Module defined in sql tables are stored into this->tabMenu BEFORE this is called.
      *
      *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
      *  @param	array	$moredata		An array with more data to output
@@ -310,8 +315,6 @@ class MenuManager
 	        				}
 	        				print '</li>'."\n";
        					}
-
-
        				}
         			//var_dump($submenu);
         			print '</ul>';
@@ -330,6 +333,5 @@ class MenuManager
         //print 'xx'.$mode;
         return 0;
     }
-
 }
 

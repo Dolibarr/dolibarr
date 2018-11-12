@@ -26,7 +26,6 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -34,14 +33,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("main");
-$langs->load("accountancy");
-$langs->load("trips");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","other","accountancy","trips","productbatch"));
 
 $account_parent = GETPOST('account_parent','int');
 $changeaccount = GETPOST('changeaccount');
@@ -216,6 +209,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -238,8 +236,6 @@ if ($result) {
 	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
 	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
-	if ($search_country)	$param .= "&search_country=" . urlencode($search_country);
-	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -351,6 +347,6 @@ if ($result) {
 	print $db->lasterror();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

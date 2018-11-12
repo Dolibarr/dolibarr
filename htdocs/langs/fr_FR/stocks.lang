@@ -203,3 +203,4 @@ RegulateStock=Réguler le stock
 ListInventory=Liste
 StockSupportServices=La gestion des stock s'applique aussi aux services
 StockSupportServicesDesc=Par défaut, seul les produits/services de type "produit" peuvent bénéficier d'une gestion de stock. En activant ce paramètre, et si le module Services est activé, la gestion de stock pourra être appliquée aux articles de type "service".
+ReceiveProducts=Recevoir produits

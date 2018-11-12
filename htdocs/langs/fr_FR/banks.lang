@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banque
-MenuBankCash=Banques/Caisses
+MenuBankCash=Banques | Caisses
 MenuVariousPayment=Opérations diverses
 MenuNewVariousPayment=Nouveau paiement divers
 BankName=Nom de la banque
@@ -160,5 +160,6 @@ VariousPayment=Opérations diverses
 VariousPayments=Opérations diverses
 ShowVariousPayment=Afficher les opérations diverses
 AddVariousPayment=Créer paiements divers
+SEPAMandate=Mandat SEPA
 YourSEPAMandate=Votre mandat SEPA
 FindYourSEPAMandate=Voici votre mandat SEPA pour autoriser notre société à réaliser les prélèvements depuis votre compte bancaire. Merci de retourner ce mandat signé (scan du document signé) ou en l'envoyant par courrier à 

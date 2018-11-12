@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $search_project_user = GETPOST('search_project_user','int');
 $mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
@@ -266,7 +265,6 @@ if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$soci
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= $db->order($sortfield, $sortorder);
 
-$var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -320,7 +318,6 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

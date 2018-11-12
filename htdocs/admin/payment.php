@@ -26,10 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load('other');
-$langs->load('bills');
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "other", "errors", "bills"));
 
 if (! $user->admin) accessforbidden();
 
@@ -85,7 +83,6 @@ if ($action == 'setparams')
 	{
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-
 }
 
 
@@ -131,8 +128,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-            $var=true;
-
             while (($file = readdir($handle))!==false)
             {
                 if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
@@ -221,7 +216,6 @@ foreach ($dirmodels as $reldir)
                             print '</td>';
 
                             print "</tr>\n";
-
                         }
                     }
                 }
@@ -249,7 +243,6 @@ print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
 // Allow payments on different thirdparties bills but same parent company
-$var=! $var;
 print '<tr class="oddeven"><td>';
 print $langs->trans("PaymentOnDifferentThirdBills");
 print '</td><td width="60" align="center">';
@@ -267,7 +260,6 @@ print '</form>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

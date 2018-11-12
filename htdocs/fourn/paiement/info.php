@@ -28,9 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-$langs->load("bills");
-$langs->load("suppliers");
-$langs->load("companies");
+$langs->loadLangs(array("bills", "suppliers", "companies"));
 
 $id			= GETPOST('id','int');
 
@@ -57,6 +55,6 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
+// End of page
 llxFooter();
-
 $db->close();

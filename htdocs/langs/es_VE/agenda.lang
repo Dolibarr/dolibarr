@@ -1,4 +1,2 @@
 # Dolibarr language file - Source file is en_US - agenda
 ListOfEvents=lista de acontecimientos (calendario interno)
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaExtNb=Calendar no. %s

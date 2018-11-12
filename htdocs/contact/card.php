@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,10 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
-$langs->load("commercial");
+
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg=''; $error=0; $errors=array();
 
@@ -186,6 +186,8 @@ if (empty($reshook))
         $object->country_id		= GETPOST("country_id",'int');
         $object->state_id		= GETPOST("state_id",'int');
         $object->skype			= GETPOST("skype",'alpha');
+        $object->twitter		= GETPOST("twitter",'alpha');
+        $object->facebook		= GETPOST("facebook",'alpha');
         $object->email			= GETPOST("email",'alpha');
         $object->phone_pro		= GETPOST("phone_pro",'alpha');
         $object->phone_perso	= GETPOST("phone_perso",'alpha');
@@ -358,6 +360,8 @@ if (empty($reshook))
 
             $object->email			= GETPOST("email",'alpha');
             $object->skype			= GETPOST("skype",'alpha');
+            $object->twitter		= GETPOST("twitter",'alpha');
+            $object->facebook		= GETPOST("facebook",'alpha');
             $object->phone_pro		= GETPOST("phone_pro",'alpha');
             $object->phone_perso	= GETPOST("phone_perso",'alpha');
             $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
@@ -468,7 +472,8 @@ else
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        $res=$object->fetch_optionals();
+        if ($res < 0) { dol_print_error($db,$object->error); exit; }
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -607,7 +612,15 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+                }
+                else
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+                }
+
                 if ($object->country_id)
                 {
                     print $formcompany->select_state(GETPOST("state_id",'alpha')?GETPOST("state_id",'alpha'):$object->state_id,$object->country_code,'state_id');
@@ -649,13 +662,28 @@ else
 
             // Instant message and no email
             print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-            print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("jabberid",'alpha')?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
 
-            // Skype
-            if (! empty($conf->skype->enabled))
+            if (! empty($conf->socialnetworks->enabled))
             {
-                print '<tr><td><label for="skype">'.$langs->trans("Skype").'</label></td>';
-                print '<td colspan="3"><input name="skype" id="skype" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("skype",'alpha')?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+            	// Skype
+            	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+            	{
+            		print '<tr><td><label for="skype">'.fieldLabel('Skype','skype').'</label></td>';
+            		print '<td colspan="3"><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+            	}
+            	// Twitter
+            	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+            	{
+            		print '<tr><td><label for="twitter">'.fieldLabel('Twitter','twitter').'</label></td>';
+            		print '<td colspan="3"><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
+            	}
+            	// Facebook
+            	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            	{
+            		print '<tr><td><label for="facebook">'.fieldLabel('Facebook','facebook').'</label></td>';
+            		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
+            	}
             }
 
             // Visibility
@@ -677,7 +705,7 @@ else
             $parameters=array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
             }
@@ -696,11 +724,11 @@ else
             $form=new Form($db);
             if ($object->birthday)
             {
-                print $form->select_date($object->birthday,'birthday',0,0,0,"perso", 1, 0, 1);
+                print $form->selectDate($object->birthday, 'birthday', 0, 0, 0, "perso", 1, 0);
             }
             else
             {
-                print $form->select_date('','birthday',0,0,1,"perso", 1, 0, 1);
+                print $form->selectDate('', 'birthday', 0, 0, 1, "perso", 1, 0);
             }
             print '</td>';
 
@@ -852,7 +880,15 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                }
+                else
+                {
+                    print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+                }
+
                 print $formcompany->select_state($object->state_id,isset($_POST["country_id"])?GETPOST("country_id"):$object->country_id,'state_id');
                 print '</td></tr>';
             }
@@ -897,11 +933,26 @@ else
 			}
             print '</tr>';
 
-            // Skype
-            if (! empty($conf->skype->enabled))
+            if (! empty($conf->socialnetworks->enabled))
             {
-                print '<tr><td><label for="skype">'.$langs->trans("Skype").'</label></td>';
-	            print '<td><input name="skype" id="skype" type="text" class="minwidth100" maxlength="80" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
+            	// Skype
+            	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+            	{
+            		print '<tr><td><label for="skype">'.fieldLabel('Skype','skype').'</label></td>';
+            		print '<td><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+            	}
+            	// Twitter
+            	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+            	{
+            		print '<tr><td><label for="twitter">'.fieldLabel('Twitter','twitter').'</label></td>';
+            		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter",'alpha'):$object->twitter).'"></td></tr>';
+            	}
+            	// Facebook
+            	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            	{
+            		print '<tr><td><label for="facebook">'.fieldLabel('Facebook','facebook').'</label></td>';
+            		print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook",'alpha'):$object->facebook).'"></td></tr>';
+            	}
             }
 
             // Visibility
@@ -946,7 +997,7 @@ else
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
             }
@@ -1062,7 +1113,6 @@ else
                 else $text.=$langs->trans("UserWillBeInternalUser");
             }
             print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
-
         }
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -1231,7 +1281,6 @@ else
         }
 
         print "</div>";
-
     }
 }
 

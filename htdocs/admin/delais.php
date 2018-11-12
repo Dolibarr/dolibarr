@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Simon Tosser            <simon@kornog-computing.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (! $user->admin) accessforbidden();
@@ -131,6 +132,13 @@ $modules=array(
 		),
 );
 
+$labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
+
+
+/*
+ * Actions
+ */
+
 if ($action == 'update')
 {
 	foreach($modules as $module => $delays)
@@ -154,10 +162,9 @@ if ($action == 'update')
 	$plus='';
 	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $plus = '_PERCENTAGE';
 	// Update values
-	for($i=0;$i<4;$i++) {
+	for($i=0; $i<4; $i++) {
     	if(isset($_POST['MAIN_METEO'.$plus.'_LEVEL'.$i])) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'),'chaine',0,'',$conf->entity);
     }
-
 }
 
 
@@ -182,7 +189,6 @@ if ($action == 'edit')
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    $var=true;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
@@ -211,9 +217,10 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=false;
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
+	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (empty($conf->global->MAIN_DISABLE_METEO)?0:$conf->global->MAIN_DISABLE_METEO));
+	print '</td></tr>';
 
 	print '</table>';
 }
@@ -225,7 +232,6 @@ else
 
 	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
-    $var=true;
 
     foreach($modules as $module => $delays)
     {
@@ -251,12 +257,12 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=false;
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
+	print $labelmeteo[$conf->global->MAIN_DISABLE_METEO];
+	print '</td></tr>';
 
 	print '</table>';
-
 }
 
 print '<br>';
@@ -274,7 +280,6 @@ if($action == 'edit') {
 	print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
 
 	print '<br><br>';
-
 } else {
 	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) print $langs->trans('MeteoStdModEnabled');
 	else print $langs->trans('MeteoPercentageModEnabled');
@@ -364,7 +369,6 @@ if ($action == 'edit') {
 	</script>
 
 	<?php
-
 } else {
 
 	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
@@ -387,7 +391,6 @@ if ($action == 'edit') {
 		print '&gt; '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
 		print '</div>';
 		print '</div>';
-
 	} else {
 
 		print '<div>';
@@ -408,7 +411,6 @@ if ($action == 'edit') {
 		print '&gt; '.$level3;
 		print '</div>';
 		print '</div>';
-
 	}
 }
 
@@ -418,14 +420,13 @@ if($action == 'edit') {
 
 	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 	print '<br></form>';
-
 } else {
 
 	// Boutons d'action
 	print '<br><div class="tabsAction">';
 	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
-
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
-SmsSetup=Sms configuração
+SmsSetup=Configurar Sms
 SmsDesc=Esta página permite que você defina opções globais de SMS ou características
 SmsCard=Ficha de SMS
 AllSms=Todos Campanhas SMS

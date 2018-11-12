@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load('supplier_proposal');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'admin', 'supplier_proposal'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -87,10 +86,8 @@ print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-$var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
-
     print '<tr class="oddeven">';
     print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
@@ -146,6 +143,6 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

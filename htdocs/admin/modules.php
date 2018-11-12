@@ -3,10 +3,11 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","modulebuilder"));
 
 $mode=GETPOST('mode', 'alpha');
 if (empty($mode)) $mode='common';
 $action=GETPOST('action','alpha');
+//var_dump($_POST);exit;
 $value=GETPOST('value', 'alpha');
 $page_y=GETPOST('page_y','int');
 $search_keyword=GETPOST('search_keyword','alpha');
@@ -54,7 +57,7 @@ $options['categorie'] = ((GETPOST('categorie', 'int')?GETPOST('categorie', 'int'
 $options['start']     = ((GETPOST('start', 'int')?GETPOST('start', 'int'):0) + 0);
 $options['end']       = ((GETPOST('end', 'int')?GETPOST('end', 'int'):0) + 0);
 $options['search']    = GETPOST('search_keyword', 'alpha');
-$dolistore            = new Dolistore();
+$dolistore            = new Dolistore(false);
 
 
 if (! $user->admin)
@@ -78,10 +81,13 @@ $familyinfo=array(
 );
 
 $param='';
-if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
-if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+if (! GETPOST('buttonreset','alpha'))
+{
+	if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
+	if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
+	if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
+	if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+}
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
@@ -267,14 +273,13 @@ $dirins_ok=(dol_is_dir($dirins));
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url, '', '', '', $morejs, $morecss, 0, 0);
 
-$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
-$arrayofwarnings=array();    // Array of warning each module want to show when activated
-$arrayofwarningsext=array();    // Array of warning each module want to show when we activate an external module
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-
+$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofwarnings=array();    // Array of warning each module want to show when activated
+$arrayofwarningsext=array();    // Array of warning each module want to show when we activate an external module
 $filename = array();
 $modules = array();
 $orders = array();
@@ -358,8 +363,6 @@ foreach ($modulesdir as $dir)
 		    			            $filename[$i]= $modName;
 		    					    $modules[$modName] = $objMod;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
@@ -368,13 +371,11 @@ foreach ($modulesdir as $dir)
 		    			            	$familykey = $objMod->family;
 		    			            }
 
-		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'500');
-		    			            if ($moduleposition == 500 && ($objMod->isCoreOrExternalModule() == 'external'))
+		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'50');
+		    			            if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external'))
 		    			            {
-		    			                $moduleposition = 800;
+		    			            	$moduleposition = '80';		// External modules at end by default
 		    			            }
-
-		    			            if ($special == 1) $familykey='interface';
 
 		    			            // Add list of warnings to show into arrayofwarnings and arrayofwarningsext
 		    			            if (! empty($objMod->warnings_activation))
@@ -390,7 +391,7 @@ foreach ($modulesdir as $dir)
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -433,9 +434,7 @@ if ($action == 'reset_confirm' && $user->admin)
 
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
-
 	}
-
 }
 
 print $formconfirm;
@@ -531,12 +530,9 @@ if ($mode == 'common')
     	$objMod  = $modules[$modName];
     	$dirofmodule = $dirmod[$key];
 
-    	$special = $objMod->special;
-
-    	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
+    	//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
     	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
-    	if (($special >= 4 && $mode != 'expdev')
-    		|| ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental')) continue;    // Discard if not for current tab
+    	if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
         {
@@ -600,17 +596,18 @@ if ($mode == 'common')
         }
 
         // Print a separator if we change family
-        if ($familykey!=$oldfamily)
-        {
-        	if ($oldfamily) print '</table></div><br>';
+        if ($familykey != $oldfamily) {
+            if ($oldfamily) {
+                print '</table></div><br>';
+            }
 
-            $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
-            print_fiche_titre($familytext, '', '');
+            $familytext = empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
+            print load_fiche_titre($familytext, '', '');
 
             print '<div class="div-table-responsive">';
-        	print '<table class="tagtable liste" summary="list_of_modules">'."\n";
+            print '<table class="tagtable liste" summary="list_of_modules">'."\n";
 
-        	$atleastoneforfamily=0;
+            $atleastoneforfamily=0;
         }
 
         $atleastoneforfamily++;
@@ -640,6 +637,7 @@ if ($mode == 'common')
         }
 
         print '<tr class="oddeven">'."\n";
+        if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) print '<td width="20px">'.++$linenum.'</td>';
 
         // Picto + Name of module
         print '  <td width="200px">';
@@ -672,6 +670,17 @@ if ($mode == 'common')
         // Version
         print '<td class="center nowrap" width="120px">';
         print $versiontrans;
+        if(!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)){
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+            if (!empty($objMod->url_last_version)) {
+                $newversion = getURLContent($objMod->url_last_version);
+                if(isset($newversion['content'])){
+                    if (version_compare($newversion['content'], $versiontrans) > 0) {
+                        print "&nbsp;<span class='butAction' title='" . $langs->trans('LastStableVersion') . "'>".$newversion['content']."</span>";
+                    }
+                }
+            }
+        }
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
@@ -701,16 +710,13 @@ if ($mode == 'common')
         			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
         			print img_picto($langs->trans("Activated"),'switch_on');
         			print '</a>';
-
         		}
         		else {
 
         			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
         			print img_picto($langs->trans("Activated"),'switch_on');
         			print '</a>';
-
         		}
-
         	}
         	print '</td>'."\n";
 
@@ -765,7 +771,6 @@ if ($mode == 'common')
         	{
         		print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         	}
-
         }
         else	// Module not yet activated
 		{
@@ -801,7 +806,7 @@ if ($mode == 'common')
 	        	        {
         	        	    foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage)
         	        	    {
-        	        	        if ($keycountry == 'always' || $keycountry == $mysoc->country_code)
+        	        	    	if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry)))
         	        	        {
         	        	            $warningmessage .= ($warningmessage?"\n":"").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
         	        	            $warningmessage .= ($warningmessage?"\n":"").($warningmessage?"\n":"").$langs->trans("Module").' : '.$objMod->getName();
@@ -835,6 +840,8 @@ if ($mode == 'common')
     }
 
     dol_fiche_end();
+
+    print '<br>';
 
     // Show warning about external users
     print info_admin(showModulesExludedForExternal($modules))."\n";
@@ -1004,8 +1011,39 @@ if ($mode == 'deploy')
 			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
-			print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+
+			print $langs->trans("YouCanSubmitFile");
+
+			$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
+			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+			if (preg_match('/k$/i',$maxphp)) $maxphp=$maxphp*1;
+			if (preg_match('/m$/i',$maxphp)) $maxphp=$maxphp*1024;
+			if (preg_match('/g$/i',$maxphp)) $maxphp=$maxphp*1024*1024;
+			if (preg_match('/t$/i',$maxphp)) $maxphp=$maxphp*1024*1024*1024;
+			// Now $max and $maxphp are in Kb
+			$maxmin = $max;
+			if ($maxphp > 0) $maxmin=min($max,$maxphp);
+
+			if ($maxmin > 0)
+			{
+				print '<script type="text/javascript">
+				$(document).ready(function() {
+					jQuery("#fileinstall").on("change", function() {
+						if(this.files[0].size > '.($maxmin*1024).'){
+							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
+							this.value = "";
+						};
+					});
+				});
+				</script>'."\n";
+				// MAX_FILE_SIZE doit précéder le champ input de type file
+				print '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
+			}
+
+			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
+
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+
 			print '</form>';
 
 			print '<br>';
@@ -1052,7 +1090,7 @@ if ($mode == 'develop')
 	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
-	print '<td>'.$langs->trans("TryToUseTheModuleBuilder").'</td>';
+	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
 	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
 	print '</tr>';
 
@@ -1070,8 +1108,6 @@ if ($mode == 'develop')
 	dol_fiche_end();
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

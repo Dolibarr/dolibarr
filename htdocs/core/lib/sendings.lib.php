@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ function shipping_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -79,6 +79,17 @@ function shipping_prepare_head($object)
     	$h++;
 	}
 
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	$head[$h][2] = 'documents';
+	$h++;
+
     $nbNote = 0;
     if (!empty($object->note_private)) $nbNote++;
     if (!empty($object->note_public)) $nbNote++;
@@ -110,8 +121,8 @@ function delivery_prepare_head($object)
 {
 	global $langs, $conf, $user;
 
-	$langs->load("sendings");
-	$langs->load("deliveries");
+	// Load translation files required by the page
+    $langs->loadLangs(array("sendings","deliveries"));
 
 	$h = 0;
 	$head = array();
@@ -230,11 +241,10 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			}
 			print "</tr>\n";
 
-			$var=True;
 			while ($i < $num)
 			{
-
 				$objp = $db->fetch_object($resql);
+
 				print '<tr class="oddeven">';
 
 				// Sending id
@@ -354,7 +364,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
 								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
-								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
+								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 								$detail.= '<br>';
 				            }
 				            print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);

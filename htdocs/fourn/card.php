@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -37,12 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->load('companies');
-$langs->load('suppliers');
-$langs->load('products');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('commercial');
+// Load translation files required by page
+$langs->loadLangs(array(
+	'companies',
+	'suppliers',
+	'products',
+	'bills',
+	'orders',
+	'commercial',
+));
 
 $action	= GETPOST('action','aZ09');
 $cancelbutton = GETPOST('cancel','alpha');
@@ -101,19 +104,33 @@ if (empty($reshook))
 		$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
 		if ($result < 0) dol_print_error($db,$object->error);
 	}
+
+	// update supplier order min amount
+	if ($action == 'setsupplier_order_min_amount')
+	{
+		$object->fetch($id);
+		$object->supplier_order_min_amount=price2num(GETPOST('supplier_order_min_amount','alpha'));
+		$result=$object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
 	if ($action == 'update_extras') {
         $object->fetch($id);
 
+        $object->oldcopy = dol_clone($object);
+
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 
         if ($ret < 0) $error++;
+
         if (! $error)
         {
-            $result = $object->insertExtraFields();
+            $result = $object->insertExtraFields('COMPANY_MODIFY');
             if ($result < 0) $error++;
         }
+
         if ($error) $action = 'edit_extras';
     }
 }
@@ -182,7 +199,9 @@ if ($object->id > 0)
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans('VATIsUsed').'</td><td>';
+	print '<td class="titlefield">';
+	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
+	print '</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -246,6 +265,51 @@ if ($object->id > 0)
 	print "</td>";
 	print '</tr>';
 
+	// Relative discounts (Discounts-Drawbacks-Rebates)
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans("CustomerRelativeDiscountShort");
+	print '<td><td align="right">';
+	if ($user->rights->societe->creer && !$user->societe_id > 0)
+	{
+		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+	}
+	print '</td></tr></table>';
+	print '</td><td>'.($object->remise_supplier_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_supplier_percent.'%</a>':'').'</td>';
+	print '</tr>';
+
+	// Absolute discounts (Discounts-Drawbacks-Rebates)
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding">';
+	print '<tr><td class="nowrap">';
+	print $langs->trans("CustomerAbsoluteDiscountShort");
+	print '<td><td align="right">';
+	if ($user->rights->societe->creer && !$user->societe_id > 0)
+	{
+		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+	}
+	print '</td></tr></table>';
+	print '</td>';
+	print '<td>';
+	$amount_discount=$object->getAvailableDiscounts('', '', 0, 1);
+	if ($amount_discount < 0) dol_print_error($db,$object->error);
+	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount,1,$langs,1,-1,-1,$conf->currency).'</a>';
+	//else print $langs->trans("DiscountNone");
+	print '</td>';
+	print '</tr>';
+
+	if (! empty($conf->fournisseur->enabled) && ! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT))
+	{
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("OrderMinAmount",'supplier_order_min_amount',$object->supplier_order_min_amount,$object,$user->rights->societe->creer);
+		print '</td><td>';
+		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+		print $form->editfieldval("OrderMinAmount",'supplier_order_min_amount',$object->supplier_order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->supplier_order_min_amount != '' ? price($object->supplier_order_min_amount) : ''));
+		print '</td>';
+		print '</tr>';
+	}
+
 	// Categories
 	if (! empty($conf->categorie->enabled))
 	{
@@ -292,9 +356,11 @@ if ($object->id > 0)
 	// Nbre max d'elements des petites listes
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
+	print '<div class="underbanner clearboth"></div>';
+
 	// Lien recap
 	$boxstat.='<div class="box">';
-	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
+	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
 
 	if ($conf->supplier_proposal->enabled)
@@ -308,7 +374,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat.='</div>';
@@ -326,7 +392,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat.='</div>';
@@ -344,7 +410,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat.='</div>';
@@ -355,7 +421,7 @@ if ($object->id > 0)
 	    $link=DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
-	    $boxstat.='<div class="boxstats">';
+	    $boxstat.='<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
 	    $boxstat.='<span class="boxstatstext">'.img_object("",$icon).' '.$text.'</span><br>';
 	    $boxstat.='<span class="boxstatsindicator'.($outstandingOpened>0?' amountremaintopay':'').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 	    $boxstat.='</div>';
@@ -368,8 +434,6 @@ if ($object->id > 0)
 
 	print $boxstat;
 
-
-	$var=true;
 
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
@@ -488,11 +552,9 @@ if ($object->id > 0)
 	            print '</td></tr>';
 	        }
 
-	        $var = True;
 	        while ($i < $num && $i <= $MAXLIST)
 	        {
 	            $obj = $db->fetch_object($resql);
-
 
 	            print '<tr class="oddeven">';
 	            print '<td class="nowrap">';
@@ -593,11 +655,9 @@ if ($object->id > 0)
     			print '</td></tr>';
 			}
 
-			$var = True;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
-
 
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
@@ -666,7 +726,7 @@ if ($object->id > 0)
     			print '</tr></table>';
     			print '</td></tr>';
 			}
-			$var=True;
+
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);
@@ -824,6 +884,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
- * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@inodbox.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
@@ -36,10 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("orders");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'orders', 'other'));
 
 if (! $user->admin) accessforbidden();
 
@@ -286,7 +284,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
 
 			while (($file = readdir($handle))!==false)
 			{
@@ -406,7 +403,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -537,7 +533,6 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
-$var=true;
 
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
@@ -545,7 +540,6 @@ $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
-$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
@@ -685,7 +679,6 @@ print "</td></tr>\n";
 
 print '</table>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -252,6 +252,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 
         // This is code copied from main.inc.php !!!!!!!!!!!!!!!
 
+        // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
         /**
          * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
          *
@@ -259,20 +260,21 @@ class CoreTest extends PHPUnit_Framework_TestCase
          * @param       string $type    1=GET, 0=POST, 2=PHP_SELF
          * @return      int             >0 if there is an injection
          */
-        function test_sql_and_script_inject($val, $type)
+        function testSqlAndScriptInject($val, $type)
         {
+            // phpcs:enable
 		    $inj = 0;
 		    // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
 		    if ($type != 2)
 		    {
-		        $inj += preg_match('/delete\s+from/i',	 $val);
-		        $inj += preg_match('/create\s+table/i',	 $val);
-		        $inj += preg_match('/update.+set.+=/i',  $val);
-		        $inj += preg_match('/insert\s+into/i', 	 $val);
-		        $inj += preg_match('/select.+from/i', 	 $val);
-		        $inj += preg_match('/union.+select/i', 	 $val);
-		        $inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
-		        $inj += preg_match('/(\.\.%2f)+/i',		 $val);
+		        $inj += preg_match('/delete\s+from/i', $val);
+		        $inj += preg_match('/create\s+table/i', $val);
+		        $inj += preg_match('/update.+set.+=/i', $val);
+		        $inj += preg_match('/insert\s+into/i', $val);
+		        $inj += preg_match('/select.+from/i', $val);
+		        $inj += preg_match('/union.+select/i', $val);
+		        $inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
+		        $inj += preg_match('/(\.\.%2f)+/i', $val);
 		    }
 		    // For XSS Injection done by adding javascript with script
 		    // This is all cases a browser consider text is javascript:
@@ -308,55 +310,55 @@ class CoreTest extends PHPUnit_Framework_TestCase
         $expectedresult=0;
 
         $_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
-        $result=test_sql_and_script_inject($_SERVER["PHP_SELF"], 2);
-        $this->assertEquals($expectedresult, $result, 'Error on test_sql_and_script_inject 1a');
+        $result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+        $this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject 1a');
 
         // Should detect XSS
         $expectedresult=1;
 
         $_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices;badaction';
-        $result=test_sql_and_script_inject($_SERVER["PHP_SELF"], 2);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject 1b');
+        $result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject 1b');
 
         $test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject aaa');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa');
 
         $test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
-        $result=test_sql_and_script_inject($test, 2);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject aaa2');
+        $result=testSqlAndScriptInject($test, 2);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa2');
 
         $test='<IMG SRC=# onmouseover="alert(1)">';
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject aaa3');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa3');
         $test='<IMG SRC onmouseover="alert(1)">';
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject aaa4');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa4');
         $test='<IMG onmouseover="alert(1)">';
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject aaa5');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa5');
         $test='<IMG SRC=/ onerror="alert(1)">';
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject aaa6');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa6');
 		$test='<IMG SRC=" &#14;  javascript:alert(1);">';
-		$result=test_sql_and_script_inject($test, 0);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject aaa7');
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject aaa7');
 
 		$test='<IMG SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;>';
-		$result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject bbb');
+		$result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject bbb');
 
         $test='<SCRIPT SRC=http://xss.rocks/xss.js></SCRIPT>';
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject ccc');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject ccc');
 
         $test='<IMG SRC="javascript:alert(\'XSS\');">';
-        $result=test_sql_and_script_inject($test, 1);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject ddd');
+        $result=testSqlAndScriptInject($test, 1);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject ddd');
 
         $test='<IMG """><SCRIPT>alert("XSS")</SCRIPT>">';
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject eee');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject eee');
 
         $test='<!-- Google analytics -->
 			<script>
@@ -369,30 +371,30 @@ class CoreTest extends PHPUnit_Framework_TestCase
 			  ga(\'send\', \'pageview\');
 
 			</script>';
-        $result=test_sql_and_script_inject($test, 0);
-        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject eee');
+        $result=testSqlAndScriptInject($test, 0);
+        $this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject eee');
 
         $test="<IMG SRC=\"jav\tascript:alert('XSS');\">";		// Is locked by some brwoser like chrome because the default directive no-referrer-when-downgrade is sent when requesting the SRC and then refused because of browser protection on img src load without referrer.
 		$test="<IMG SRC=\"jav&#x0D;ascript:alert('XSS');\">";	// Same
 
 		$test='<SCRIPT/XSS SRC="http://xss.rocks/xss.js"></SCRIPT>';
-		$result=test_sql_and_script_inject($test, 0);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject fff1');
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject fff1');
 		$test='<SCRIPT/SRC="http://xss.rocks/xss.js"></SCRIPT>';
-		$result=test_sql_and_script_inject($test, 0);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject fff2');
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject fff2');
 
 		// This case seems to be filtered by browsers now.
 		$test='<BODY onload!#$%&()*~+-_.,:;?@[/|\]^`=alert(1)>';
-		//$result=test_sql_and_script_inject($test, 0);
-		//$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject ggg');
+		//$result=testSqlAndScriptInject($test, 0);
+		//$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject ggg');
 
 		$test='<iframe src=http://xss.rocks/scriptlet.html <';
-		$result=test_sql_and_script_inject($test, 0);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject hhh');
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject hhh');
 
 		$test='Set.constructor`alert\x281\x29```';
-		$result=test_sql_and_script_inject($test, 0);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on test_sql_and_script_inject iii');
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject iii');
     }
 }

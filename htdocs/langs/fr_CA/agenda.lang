@@ -17,11 +17,9 @@ ShippingSentByEMail=Bon expédition %s envoyé par EMail
 InterventionSentByEMail=Intervention %s envoyée par EMail
 ProposalDeleted=Proposition supprimée
 AgendaModelModule=Modèles de document pour l'événement
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaShowBirthdayEvents=Afficher les dates d'anniversaire des contacts
 AgendaHideBirthdayEvents=Cacher les dates d'anniversaire des contacts
 ExportDataset_event1=Liste évênements de l'agenda
-AgendaExtNb=Calendar no. %s
 VisibleTimeRange=Plage d'heures visibles
 VisibleDaysRange=Plage de jours visibles
 CloneAction=Dupliquer événement

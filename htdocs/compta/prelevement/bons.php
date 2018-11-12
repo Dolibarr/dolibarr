@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,20 +24,19 @@
  * 	\brief      Page liste des bons de prelevements
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("widthdrawals");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
@@ -87,6 +86,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -101,6 +105,14 @@ if ($result)
 
   $selectedfields='';
 
+  $newcardbutton='';
+  if ($user->rights->prelevement->bons->creer)
+  {
+  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle">'.$langs->trans('NewStandingOrder').'</span>';
+  	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+  	$newcardbutton.= '</a>';
+  }
+
   // Lines of title fields
   print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
   if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -112,7 +124,7 @@ if ($result)
   print '<input type="hidden" name="page" value="'.$page.'">';
   print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-  print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+  print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
 
   $moreforfilter='';
 
@@ -171,7 +183,6 @@ else
   dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

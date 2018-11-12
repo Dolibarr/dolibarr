@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -157,14 +157,22 @@ if ($fourn_id > 0)
 {
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
+
+$sql .= $db->order($sortfield,$sortorder);
+
 // Count total nb of records without orderby and limit
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
-$sql .= $db->order($sortfield,$sortorder);
+
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("fourn/product/list.php:", LOG_DEBUG);
@@ -253,7 +261,7 @@ if ($resql)
 	print "</tr>\n";
 
 	$oldid = '';
-	$var=True;
+
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
@@ -300,5 +308,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -131,7 +131,6 @@ StartUpload=Commence le téléchargement
 CancelUpload=Annuler le chargement
 FileIsTooBig=Les fichiers sont trop gros
 PleaseBePatient=Merci de patienter…
-RequestToResetPasswordReceived=Une requête pour changer votre mot de passe Dolibarr a été reçue
 NewKeyIs=Voici vos nouvelles clés pour vous connecter
 NewKeyWillBe=Votre nouvelle clé de connexion au logiciel sera
 ClickHereToGoTo=Cliquez ici pour aller à %s

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - other
-SecurityCode=Código de segurança
 Tools=Ferramentas
 Birthday=Aniversário
 DateToBirth=Data de nascimento
@@ -115,7 +114,6 @@ StartUpload=Iniciar o "upload"
 CancelUpload=Cancelar o "upload"
 FileIsTooBig=Tamanho do arquivo grande de mais
 PleaseBePatient=Por favor aguarde....
-RequestToResetPasswordReceived=Recebemos a pedido de mudar a sua senha do Dolibarr
 NewKeyIs=Estas sao as suas novas chaves de acesso
 NewKeyWillBe=Sua nova chave de acesso do software sera
 ClickHereToGoTo=Clickar aqui para ir a %s

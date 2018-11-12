@@ -21,7 +21,6 @@ MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Définit si une remise globale est traitée 
 MARGIN_TYPE=Prix ​​d'achat / coût suggéré par défaut pour le calcul de la marge
 MargeType2=Marge sur le prix moyen pondéré (WAP)
 MargeType3=Marge sur prix coûté
-MarginTypeDesc=* Marge sur le meilleur prix d'achat = Prix de vente - Meilleur prix fournisseur défini sur la carte du produit <br> * Marge sur le prix moyen pondéré (WAP) = Prix de vente - Prix moyen pondéré du produit (WAP) ou meilleur prix fournisseur si WAP n'est pas encore défini < Br> * Marge sur prix de coût = Prix de vente - Prix de coût défini sur la carte de produit ou WAP si le prix de revient n'est pas défini ou le meilleur prix de fournisseur si WAP n'est pas encore défini
 CostPrice=Prix ​​de revient
 UnitCharges=Frais unitaires
 Charges=Des charges
@@ -31,4 +30,3 @@ rateMustBeNumeric=Le taux doit être une valeur numérique
 markRateShouldBeLesserThan100=Le taux de marquage devrait être inférieur à 100
 ShowMarginInfos=Afficher les infos de marge
 CheckMargins=Détail des marges
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

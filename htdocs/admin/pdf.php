@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,13 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
-$langs->load("admin");
-$langs->load("languages");
-$langs->load("other");
-
-$langs->load("companies");
-$langs->load("products");
-$langs->load("members");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members'));
 
 if (! $user->admin) accessforbidden();
 
@@ -55,29 +50,31 @@ if ($cancel) {
 
 if ($action == 'update')
 {
-	dolibarr_set_const($db, "MAIN_PDF_FORMAT",    $_POST["MAIN_PDF_FORMAT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_FORMAT", $_POST["MAIN_PDF_FORMAT"],'chaine',0,'', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT",    $_POST["MAIN_PDF_MARGIN_LEFT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT",   $_POST["MAIN_PDF_MARGIN_RIGHT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP",     $_POST["MAIN_PDF_MARGIN_TOP"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM",  $_POST["MAIN_PDF_MARGIN_BOTTOM"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT", $_POST["MAIN_PDF_MARGIN_LEFT"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", $_POST["MAIN_PDF_MARGIN_RIGHT"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP", $_POST["MAIN_PDF_MARGIN_TOP"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM", $_POST["MAIN_PDF_MARGIN_BOTTOM"],'chaine',0,'', $conf->entity);
 
-    dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT",    $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS", $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS", $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS", $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS",    $_POST["MAIN_TVAINTRA_NOT_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION",     $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS",     $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", $_POST["MAIN_TVAINTRA_NOT_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'', $conf->entity);
+
+	dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", $_POST["MAIN_INVERT_SENDER_RECIPIENT"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION", $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"],'chaine',0,'', $conf->entity);
 
 
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX",    $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX",     $_POST["MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX", $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"],'chaine',0,'', $conf->entity);
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX", $_POST["MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -133,7 +130,7 @@ if ($action == 'edit')	// Edit
 
 
     // Misc options
-    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
+    print load_fiche_titre($langs->trans("DictionaryPaperFormat"),'','');
 
 	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
@@ -168,7 +165,7 @@ if ($action == 'edit')	// Edit
 
 
     // Addresses
-    print load_fiche_titre($langs->trans("PDFAddressForging"),'','').'<br>';
+    print load_fiche_titre($langs->trans("PDFAddressForging"),'','');
 
 	print '<div class="div-table-responsive-no-min">';
     print '<table summary="more" class="noborder" width="100%">';
@@ -255,14 +252,15 @@ if ($action == 'edit')	// Edit
 	print '</table>';
 	print '</div>';
 
+
     print '<br>';
 
+
     // Localtaxes
+    $locales ='';
+    $text='';
     if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
     {
-        $locales ='';
-        $text='';
-
         if ($mysoc->useLocalTax(1))
         {
             $locales = $langs->transcountry("LT1",$mysoc->country_code);
@@ -279,30 +277,38 @@ if ($action == 'edit')	// Edit
             $text.= $form->selectyesno('MAIN_PDF_MAIN_HIDE_THIRD_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX : 0, 1);
             $text.= '</td></tr>';
         }
-
-        print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
-
-        print '<table summary="more" class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
-        print $text;
-
-        print '</table>';
-        print '<br>';
-
     }
 
+    $title = $langs->trans("PDFRulesForSalesTax");
+    if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
+    {
+   		$title.=' - '.$langs->trans("PDFLocaltax",$locales);
+    }
+
+    print load_fiche_titre($title,'','');
+
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    // Hide any information on Sale tax / VAT
+
+    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
+    print '</td></tr>';
+
+    // Locataxes
+    print $text;
+
+    print '</table>';
+    print '<br>';
+
+
     // Other
-    print load_fiche_titre($langs->trans("Other"),'','').'<br>';
+    print load_fiche_titre($langs->trans("Other"),'','');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
-
-    // Hide any PDF informations
-
-    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
-    print '</td></tr>';
 
     //Desc
 
@@ -491,11 +497,10 @@ else	// Show
     print '<br>';
 
     // Localtaxes
+    $locales ='';
+    $text='';
     if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
     {
-        $locales ='';
-        $text='';
-
         if ($mysoc->useLocalTax(1))
         {
             $locales = $langs->transcountry("LT1",$mysoc->country_code);
@@ -512,16 +517,26 @@ else	// Show
             $text.= yn($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX,1);
             $text.= '</td></tr>';
         }
-
-        print load_fiche_titre($langs->trans("PDFLocaltax",$locales),'','');
-
-        print '<table summary="more" class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
-        print $text;
-        print '</table>';
-        print '<br>';
-
     }
+
+    // Sales TAX / VAT information
+    $title=$langs->trans("PDFRulesForSalesTax",$locales);
+    if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) $title.=' - '.$langs->trans("PDFLocaltax",$locales);
+
+    print load_fiche_titre($title,'','');
+
+    print '<table summary="more" class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
+    print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
+    print '</td></tr>';
+
+    print $text;
+
+    print '</table>';
+    print '<br>';
+
 
     // Other
     print load_fiche_titre($langs->trans("Other"),'','');
@@ -558,37 +573,36 @@ else	// Show
 	print "</td>";
 	print '</tr>';
 
-    // Hide any PDF informations
-
-    print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
-    print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
-    print '</td></tr>';
-
-	//Desc
+	// Hide Desc
 
 	print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC,1);
 	print '</td></tr>';
 
-	//Ref
+	// Hide Ref
 
 	print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF,1);
 	print '</td></tr>';
 
-	//Details
+	// Hide Details
 
 	print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
 	print '</td></tr>';
 
+	// Invert sender and recipient
+	print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_INVERT_SENDER_RECIPIENT,1);
+	print '</td></tr>';
 
-    print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
+	// Use French location
+	print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_PDF_USE_ISO_LOCATION,1);
 	print '</td></tr>';
 
 
-    print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
+	print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
 	print $arraydetailsforpdffoot[($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0)];
 	print '</td></tr>';
 
@@ -601,7 +615,7 @@ else	// Show
 	 */
 
 	print '<br>';
-	print load_fiche_titre($langs->trans("Library"));
+	print load_fiche_titre($langs->trans("Library"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">'."\n";
@@ -610,18 +624,6 @@ else	// Show
 	print '<td>'.$langs->trans("Name").'</td>'."\n";
 	print '<td>'.$langs->trans("Value").'</td>'."\n";
 	print "</tr>\n";
-
-	if (! empty($dolibarr_pdf_force_fpdf))
-	{
-
-		print '<tr class="oddeven">'."\n";
-		print '<td>dolibarr_pdf_force_fpdf</td>'."\n";
-		print '<td>';
-		print $dolibarr_pdf_force_fpdf;
-		print '</td>';
-		print '</tr>';
-	}
-
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("LibraryToBuildPDF").'</td>'."\n";
@@ -656,17 +658,11 @@ else	// Show
 		print ' ('.@constant('TCPDI_PATH').')';
 		$i++;
 	}
-	print '<!-- $conf->global->MAIN_USE_FPDF = '.$conf->global->MAIN_USE_FPDF.' -->';
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
 	print "</table>\n";
 	print '</div>';
-
-	if (! empty($dolibarr_pdf_force_fpdf))
-	{
-		print info_admin($langs->trans("WarningUsingFPDF")).'<br>';
-	}
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
@@ -674,7 +670,6 @@ else	// Show
 	print '<br>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

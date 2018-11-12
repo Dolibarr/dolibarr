@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -73,10 +73,7 @@ $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
 $enablemodules=GETPOST("enablemodules",'alpha',3)?GETPOST("enablemodules",'alpha',3):(empty($argv[3])?'':$argv[3]);
 
-$langs->load('admin');
-$langs->load('install');
-$langs->load("bills");
-$langs->load("suppliers");
+$langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
 if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
@@ -112,7 +109,7 @@ pHeader('','step5',GETPOST('action','aZ09')?GETPOST('action','aZ09'):'upgrade','
 
 if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
 {
-    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
@@ -198,6 +195,32 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $versiontoarray=explode('.',$versionto);
         $versionranarray=explode('.',DOL_VERSION);
 
+
+        // Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN birth date';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemployment date';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemploymentend date';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_range integer';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_c_exp_tax_cat integer';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN langs varchar(24)';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fieldcomputed text';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fielddefault varchar(255)';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX."extrafields ADD COLUMN enabled varchar(255) DEFAULT '1'";
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN help text';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL';
+        $db->query($sql, 1);
+
+
         $afterversionarray=explode('.','2.0.0');
         $beforeversionarray=explode('.','2.7.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -260,7 +283,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_rename_directories($db,$langs,$conf,'/societe','/mycompany');
         }
 
-        // Script for VX (X<2.8) -> V2.8
+        // Script for 2.8
         $afterversionarray=explode('.','2.7.9');
         $beforeversionarray=explode('.','2.8.9');
         //print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
@@ -287,7 +310,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_project_task_actors($db,$langs,$conf);
         }
 
-        // Script for VX (X<2.9) -> V2.9
+        // Script for 2.9
         $afterversionarray=explode('.','2.8.9');
         $beforeversionarray=explode('.','2.9.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -301,7 +324,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_shipping_delivery2($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.0) -> V3.0
+        // Script for 3.0
         $afterversionarray=explode('.','2.9.9');
         $beforeversionarray=explode('.','3.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -309,7 +332,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             // No particular code
         }
 
-        // Script for VX (X<3.1) -> V3.1
+        // Script for 3.1
         $afterversionarray=explode('.','3.0.9');
         $beforeversionarray=explode('.','3.1.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -319,7 +342,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_actioncomm_element($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.2) -> V3.2
+        // Script for 3.2
         $afterversionarray=explode('.','3.1.9');
         $beforeversionarray=explode('.','3.2.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -331,7 +354,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_clean_association($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.3) -> V3.3
+        // Script for 3.3
         $afterversionarray=explode('.','3.2.9');
         $beforeversionarray=explode('.','3.3.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -339,7 +362,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_categorie_association($db,$langs,$conf);
         }
 
-		// Script for VX (X<3.4) -> V3.4
+		// Script for 3.4
 		// No specific scripts
 
         // Tasks to do always and only into last targeted version
@@ -350,7 +373,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
        	    migrate_event_assignement($db,$langs,$conf);
         }
 
-        // Scripts for last version
+        // Scripts for 3.9
         $afterversionarray=explode('.','3.7.9');
         $beforeversionarray=explode('.','3.8.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -358,7 +381,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	// No particular code
         }
 
-        // Scripts for last version
+        // Scripts for 4.0
         $afterversionarray=explode('.','3.9.9');
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -366,7 +389,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_rename_directories($db,$langs,$conf,'/fckeditor','/medias');
         }
 
-        // Scripts for last version
+        // Scripts for 5.0
         $afterversionarray=explode('.','4.0.9');
         $beforeversionarray=explode('.','5.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -378,7 +401,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_remise_except_entity($db,$langs,$conf);
         }
 
-        // Scripts for last version
+        // Scripts for 6.0
         $afterversionarray=explode('.','5.0.9');
         $beforeversionarray=explode('.','6.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -399,7 +422,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	}
         }
 
-        // Scripts for last version
+        // Scripts for 7.0
         $afterversionarray=explode('.','6.0.9');
         $beforeversionarray=explode('.','7.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -409,13 +432,30 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
         	migrate_reset_blocked_log($db,$langs,$conf);
         }
+
+        // Scripts for 8.0
+        $afterversionarray=explode('.','7.0.9');
+        $beforeversionarray=explode('.','8.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
+        }
+
+        // Scripts for 9.0
+        $afterversionarray=explode('.','8.0.9');
+        $beforeversionarray=explode('.','9.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	//migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
+        }
     }
 
-	// Code executed only if migrate is LAST ONE. Must always be done.
+	// Code executed only if migration is LAST ONE. Must always be done.
 	if (versioncompare($versiontoarray,$versionranarray) >= 0 || versioncompare($versiontoarray,$versionranarray) <= -3)
 	{
 		// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
 		$listofmodule=array(
+			'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
 			'MAIN_MODULE_AGENDA'=>'newboxdefonly',
 			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
 			'MAIN_MODULE_CRON'=>'newboxdefonly',
@@ -428,17 +468,15 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
 			'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
 			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
+			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
 			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
+			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
 			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-			'MAIN_MODULE_USER'=>'newboxdefonly',
-			'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
-			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-			'MAIN_MODULE_CRON'=>'newboxdefonly',
-			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
-			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
-
-			'MAIN_MODULE_USER'=>'newboxdefonly',        //This one must be always done and only into last targeted version)
+			'MAIN_MODULE_USER'=>'newboxdefonly',		//This one must be always done and only into last targeted version)
+			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
+			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
 		);
 		migrate_reload_modules($db,$langs,$conf,$listofmodule);
 
@@ -531,7 +569,7 @@ else
 
 $ret=0;
 if ($error && isset($argv[1])) $ret=1;
-dol_syslog("Exit ".$ret);
+dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("--- upgrade2: end");
 pFooter($error?2:0,$setuplang);
@@ -2257,7 +2295,6 @@ function migrate_detail_livraison($db,$langs,$conf)
                     print ". ";
                     $i++;
                 }
-
             }
 
             if ($error == 0)
@@ -2345,7 +2382,6 @@ function migrate_stocks($db,$langs,$conf)
                 print ". ";
                 $i++;
             }
-
         }
 
         if ($error == 0)
@@ -2600,7 +2636,6 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 //print ". ";
                 $i++;
             }
-
         }
         else print $langs->trans('AlreadyDone')."<br>\n";
 
@@ -2666,7 +2701,6 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 //print ". ";
                 $i++;
             }
-
         }
         else
         {
@@ -4391,49 +4425,50 @@ function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
  */
 function migrate_delete_old_files($db,$langs,$conf)
 {
-    $result=true;
+	$result=true;
 
-    dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
+	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
-    // List of files to delete
-    $filetodeletearray=array(
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
-    DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
+	// List of files to delete
+	$filetodeletearray=array(
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modSkype.class.php',
+		DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
 
-    DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
-    DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
-    DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
-    DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
-    DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
-    DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
-
+		DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
+		DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
+		DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
+		DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
+		DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
+		DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php',
+		DOL_DOCUMENT_ROOT.'/support/online.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)
@@ -4687,36 +4722,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $forc
 			if ($res) {
 				$mod=new modOpenSurvey($db);
 				$mod->remove('noboxes');  // We need to remove because menu entries has changed
-				$mod->init($reloadmode);
-			}
-		}
-		elseif ($moduletoreload == 'MAIN_MODULE_SALARIES')    // Permission has changed into 6.0
-		{
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Salaries module");
-			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSalaries.class.php';
-			if ($res) {
-				$mod=new modSalaries($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		}
-		elseif ($moduletoreload == 'MAIN_MODULE_USER')    // Permission has changed into 3.0
-		{
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate User module");
-			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
-			if ($res) {
-				$mod=new modUser($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		}
-		elseif ($moduletoreload == 'MAIN_MODULE_WEBSITE')    // Module added in 7.0
-		{
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Website module");
-			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modWebsite.class.php';
-			if ($res) {
-				$mod=new modWebsite($db);
-				//$mod->remove('noboxes');
 				$mod->init($reloadmode);
 			}
 		}

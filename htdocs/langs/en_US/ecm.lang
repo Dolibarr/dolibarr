@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Nb of documents in directory
+ECMNbOfDocs=No. of documents in directory
 ECMSection=Directory
 ECMSectionManual=Manual directory
 ECMSectionAuto=Automatic directory
@@ -39,12 +39,12 @@ ShowECMSection=Show directory
 DeleteSection=Remove directory
 ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Relative directory for files
-CannotRemoveDirectoryContainsFiles=Removed not possible because it contains some files
+CannotRemoveDirectoryContainsFilesOrDirs=Removal not possible because it contains some files or sub-directories
+CannotRemoveDirectoryContainsFiles=Removal not possible because it contains some files
 ECMFileManager=File manager
 ECMSelectASection=Select a directory in the tree...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Resync" button first to synchronize disk and database to get content of this directory.
 ReSyncListOfDir=Resync list of directories
 HashOfFileContent=Hash of file content
-FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
-FileSharedViaALink=File shared via a link
 NoDirectoriesFound=No directories found
+FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)

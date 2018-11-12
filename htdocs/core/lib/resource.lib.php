@@ -77,6 +77,16 @@ function resource_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/resource/agenda.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	{
+		$head[$h][1].= '/';
+		$head[$h][1].= $langs->trans("Agenda");
+	}
+	$head[$h][2] = 'agenda';
+	$h++;
+
 	/*$head[$h][0] = DOL_URL_ROOT.'/resource/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
@@ -87,7 +97,13 @@ function resource_prepare_head($object)
 	return $head;
 }
 
-function resource_admin_prepare_head() {
+/**
+ * Prepare head for admin tabs
+ *
+ * @return  array               Array of head entries
+ */
+function resource_admin_prepare_head()
+{
 
 	global $langs, $conf, $user;
 
@@ -113,5 +129,4 @@ function resource_admin_prepare_head() {
 	complete_head_from_modules($conf,$langs,null,$head,$h,'resource_admin','remove');
 
 	return $head;
-
 }

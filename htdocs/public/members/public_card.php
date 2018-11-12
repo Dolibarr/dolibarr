@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2007-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,9 @@
  * 	\brief      File to show a public card of a member
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))		define("NOLOGIN",1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		define('NOIPCHECK','1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -42,10 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
 
 
-$langs->load("main");
-$langs->load("members");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("main", "members", "companies", "other"));
 
 $id=GETPOST('id','int');
 $object = new Adherent($db);
@@ -77,7 +75,7 @@ if ($id > 0)
 {
 	$res=$object->fetch($id);
 	if ($res < 0) { dol_print_error($db,$object->error); exit; }
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 	print load_fiche_titre($langs->trans("MemberCard"), '', '');
 
@@ -107,7 +105,7 @@ if ($id > 0)
 			print $form->showphoto('memberphoto', $object, 64);
 			print '</td></tr>'."\n";
 		}
-		//  foreach($objecto->attribute_label as $key=>$value){
+		//  foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$value){
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
 
@@ -115,7 +113,6 @@ if ($id > 0)
 
 		print '</table>';
 	}
-
 }
 
 

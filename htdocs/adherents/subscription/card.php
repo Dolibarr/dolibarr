@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +30,8 @@ if (! empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("members");
-$langs->load("users");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","bills","users"));
 
 $adh = new Adherent($db);
 $object = new Subscription($db);
@@ -211,13 +210,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($object->dateh,'datesub',1,1,0,'update',1);
+	print $form->selectDate($object->dateh, 'datesub', 1, 1, 0, 'update', 1);
 	print '</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($object->datef,'datesubend',0,0,0,'update',1);
+	print $form->selectDate($object->datef, 'datesubend', 0, 0, 0, 'update', 1);
 	print '</td>';
     print '</tr>';
 
@@ -417,7 +416,6 @@ if ($rowid && $action != 'edit')
     print '</div></div></div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

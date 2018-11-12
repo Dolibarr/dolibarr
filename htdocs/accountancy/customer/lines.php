@@ -17,7 +17,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -27,20 +26,16 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("compta");
-$langs->load("main");
-$langs->load("accountancy");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","compta","accountancy","productbatch"));
 
 $account_parent = GETPOST('account_parent');
 $changeaccount = GETPOST('changeaccount');
@@ -140,7 +135,6 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 
 		$account_parent = '';   // Protection to avoid to mass apply it a second time
 	}
-
 }
 
 
@@ -173,20 +167,25 @@ print '<script type="text/javascript">
 /*
  * Customer Invoice lines
  */
-$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.datef, f.ref_client,";
-$sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
-$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
-$sql .= " fd.situation_percent, co.label as country, s.tva_intra";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
-$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
-$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
-$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
-$sql .= " WHERE fd.fk_code_ventilation > 0 ";
-$sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";   // We don't share object for accountancy
-$sql .= " AND f.fk_statut > 0";
+$sql = "SELECT f.rowid as facid, f.facnumber as ref, f.type, f.datef, f.ref_client,";
+$sql.= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
+$sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
+$sql.= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
+$sql.= " fd.situation_percent,";
+$sql.= " co.code as country_code, co.label as country,";
+$sql.= " s.tva_intra";
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+$sql.= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
+$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
+$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
+$sql.= " WHERE fd.fk_code_ventilation > 0";
+$sql.= " AND f.entity IN (" . getEntity('facture', 0) . ")";   // We don't share object for accountancy
+$sql.= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
 } else {
@@ -230,7 +229,18 @@ else if ($search_year > 0)
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if (strlen(trim($search_country))) {
-	$sql .= natural_search("co.label", $search_country);
+	$arrayofcode = getCountriesInEEC();
+	$country_code_in_EEC = $country_code_in_EEC_without_me = '';
+	foreach ($arrayofcode as $key => $value)
+	{
+		$country_code_in_EEC.=($country_code_in_EEC ? "," : "")."'".$value."'";
+		if ($value != $mysoc->country_code) $country_code_in_EEC_without_me.=($country_code_in_EEC_without_me ? "," : "")."'".$value."'";
+	}
+	if ($search_country == 'special_allnotme')     $sql .= " AND co.code <> '".$db->escape($mysoc->country_code)."'";
+	elseif ($search_country == 'special_eec')      $sql .= " AND co.code IN (".$country_code_in_EEC.")";
+	elseif ($search_country == 'special_eecnotme') $sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
+	elseif ($search_country == 'special_noteec')   $sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
+	else $sql .= natural_search(array("co.code","co.label"), $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
 	$sql .= natural_search("s.tva_intra", $search_tvaintra);
@@ -244,6 +254,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -291,11 +306,11 @@ if ($result) {
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
-	print '<td class="liste_titre center">';
-   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-   	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+	print '<td class="liste_titre center nowraponall">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
+   	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
    	$formother->select_year($search_year,'search_year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
@@ -303,9 +318,12 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="right flat maxwidth50" placeholder="%" name="search_vat" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
+	print '<td class="liste_titre">';
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth200', 'code2', 1, 0, 1);
+	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
+	print '</td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="' . dol_escape_htmltag($search_tvaintra) . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tavintra" value="' . dol_escape_htmltag($search_tavintra) . '"></td>';
 	print '<td class="liste_titre" align="center">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
@@ -320,9 +338,9 @@ if ($result) {
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "fd.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "fd.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	$clickpicto=$form->showCheckAddButtons();
 	print_liste_field_titre($clickpicto, '', '', '', '', 'align="center"');
 	print "</tr>\n";
@@ -333,8 +351,9 @@ if ($result) {
 	while ( $objp = $db->fetch_object($result) ) {
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
 
-		$facture_static->ref = $objp->facnumber;
+		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
+		$facture_static->type = $objp->ftype;
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -343,10 +362,11 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
+		// Line id
 		print '<td>' . $objp->rowid . '</td>';
 
 		// Ref Invoice
-		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
+		print '<td class="nowraponall">' . $facture_static->getNomUrl(1) . '</td>';
 
 		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
@@ -357,23 +377,25 @@ if ($result) {
 		if ($objp->product_label) print '<br>'.$objp->product_label;
 		print '</td>';
 
-		print '<td>';
+		print '<td class="tdoverflowonsmartphone">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text,$trunclength), $objp->description);
 		print '</td>';
 
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
+
 		print '<td align="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
+
+		print '<td>' . $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')</td>';
+
+		print '<td>' . $objp->tva_intra . '</td>';
+
 		print '<td align="center">';
 		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')).'">';
 		print img_edit();
 		print '</a>';
 		print '</td>';
-
-		print '<td>' . $objp->country .'</td>';
-
-		print '<td>' . $objp->tva_intra . '</td>';
 
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 
@@ -393,6 +415,6 @@ if ($result) {
 	print $db->lasterror();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -215,6 +215,8 @@ switch ($action)
 		$invoice->note_private=$note;
 		$invoice->cond_reglement_id=$cond_reglement_id;
 		$invoice->mode_reglement_id=$mode_reglement_id;
+		$invoice->module_source = 'cashdesk';
+		$invoice->pos_source = '0';
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
@@ -253,7 +255,7 @@ switch ($action)
 			}
 			else
 			{
-				setEventMessage($invoice->error, $invoice->errors, 'errors');
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
 			    $error++;
 			}
 
@@ -324,9 +326,8 @@ switch ($action)
                     	{
                     		// We set status to payed
                     		$result=$invoice->set_paid($user);
-                  			//print 'eeeee';exit;
+                  			//print 'set paid';exit;
                     	}
-
                     }
 				}
 				else

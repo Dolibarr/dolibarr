@@ -36,18 +36,22 @@ class MyObject extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'myobject';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'mymodule_myobject';
+
 	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+
 	/**
 	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -60,6 +64,7 @@ class MyObject extends CommonObject
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'position' is the sort order of field.
@@ -68,8 +73,8 @@ class MyObject extends CommonObject
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
-	 *  'showoncombobox' if field must be shown into the label of combobox
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -80,32 +85,62 @@ class MyObject extends CommonObject
 	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
+	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
 	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
-		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
-		'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
+		'description'   =>array('type'=>'text',			'label'=>'Description',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
 		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
 	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		//'date_validation'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510, 'foreignkey'=>'llx_user.rowid'),
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
-	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Canceled')),
 	);
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var string Ref
+	 */
 	public $ref;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
-	public $label;
+
+	/**
+     * @var string label
+     */
+    public $label;
+
 	public $amount;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $date_creation;
 	public $tms;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -117,18 +152,22 @@ class MyObject extends CommonObject
 	 * @var int    Name of subtable line
 	 */
 	//public $table_element_line = 'myobjectdet';
+
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
 	//public $fk_element = 'fk_myobject';
+
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
 	//public $class_element_line = 'MyObjectline';
+
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('myobjectdet');
+
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
 	 */
@@ -143,12 +182,33 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible']=0;
+		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled']=0;
+
+		// Unset fields that are disabled
+		foreach($this->fields as $key => $val)
+		{
+			if (isset($val['enabled']) && empty($val['enabled']))
+			{
+				unset($this->fields[$key]);
+			}
+		}
+
+		// Translate some data of arrayofkeyval
+		foreach($this->fields as $key => $val)
+		{
+			if (is_array($this->fields['status']['arrayofkeyval']))
+			{
+				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				{
+					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+				}
+			}
+		}
 	}
 
 	/**
@@ -172,7 +232,7 @@ class MyObject extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $hookmanager, $langs;
+		global $langs, $hookmanager, $extrafields;
 	    $error = 0;
 
 	    dol_syslog(__METHOD__, LOG_DEBUG);
@@ -192,6 +252,20 @@ class MyObject extends CommonObject
 	    $object->ref = "copy_of_".$object->ref;
 	    $object->title = $langs->trans("CopyOf")." ".$object->title;
 	    // ...
+	    // Clear extrafields that are unique
+	    if (is_array($object->array_options) && count($object->array_options) > 0)
+	    {
+	    	$extrafields->fetch_name_optionals_label($this->element);
+	    	foreach($object->array_options as $key => $option)
+	    	{
+	    		$shortkey = preg_replace('/options_/', '', $key);
+	    		if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+	    		{
+	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+	    			unset($object->array_options[$key]);
+	    		}
+	    	}
+	    }
 
 	    // Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -276,14 +350,13 @@ class MyObject extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
-		global $db, $conf, $langs;
+		global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result = '';
-        $companylink = '';
 
         $label = '<u>' . $langs->trans("MyObject") . '</u>';
         $label.= '<br>';
@@ -309,6 +382,13 @@ class MyObject extends CommonObject
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+            /*
+             $hookmanager->initHooks(array('myobjectdao'));
+             $parameters=array('id'=>$this->id);
+             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+             */
         }
         else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
@@ -322,66 +402,78 @@ class MyObject extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
+		global $action,$hookmanager;
+		$hookmanager->initHooks(array('myobjectdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
+
 		return $result;
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	public function LibStatut($status, $mode=0)
 	{
-		global $langs;
+		// phpcs:enable
+		if (empty($this->labelstatus))
+		{
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelstatus[1] = $langs->trans('Enabled');
+			$this->labelstatus[0] = $langs->trans('Disabled');
+		}
 
 		if ($mode == 0)
 		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			return $this->labelstatus[$status];
 		}
-		if ($mode == 1)
+		elseif ($mode == 1)
 		{
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			return $this->labelstatus[$status];
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			elseif ($status == 0) return img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4', '', false, 0, 0, '', 'valignmiddle');
+			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5', '', false, 0, 0, '', 'valignmiddle');
 		}
 	}
 
@@ -391,7 +483,7 @@ class MyObject extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql.= ' fk_user_creat, fk_user_modif';
@@ -431,7 +523,6 @@ class MyObject extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -453,22 +544,32 @@ class MyObject extends CommonObject
 
 	/**
 	 * Action executed by scheduler
-	 * CAN BE A CRON TASK
+	 * CAN BE A CRON TASK. In such a case, paramerts come from the schedule job setup field 'Parameters'
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
+	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
 
+		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
+
+		$error = 0;
 		$this->output = '';
 		$this->error='';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$now = dol_now();
+
+		$this->db->begin();
+
 		// ...
 
-		return 0;
+		$this->db->commit();
+
+		return $error;
 	}
 }
 

@@ -34,12 +34,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("admin");
-$langs->load("accountancy");
-$langs->load("salaries");
-$langs->load("loan");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","admin","accountancy","salaries","loan"));
 
 // Security check
 if (empty($user->rights->accounting->chartofaccount))
@@ -47,7 +43,7 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 $list_account_main = array (
@@ -80,7 +76,7 @@ $list_account = array (
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 
-if (GETPOST('change_chart'))
+if (GETPOST('change_chart', 'alpha'))
 {
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -194,5 +190,6 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

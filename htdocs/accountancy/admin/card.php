@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
@@ -74,25 +73,28 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number');
+			$account_number = GETPOST('account_number','string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number'));
+			$account_number = clean_account(GETPOST('account_number','string'));
 		}
 
-		if (GETPOST('account_parent') <= 0) {
+		if (GETPOST('account_parent','int') <= 0)
+		{
 			$account_parent = 0;
-		} else {
+		}
+		else
+		{
 			$account_parent = GETPOST('account_parent','int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
-		$object->pcg_type = GETPOST('pcg_type');
-		$object->pcg_subtype = GETPOST('pcg_subtype');
+		$object->pcg_type = GETPOST('pcg_type','alpha');
+		$object->pcg_subtype = GETPOST('pcg_subtype','alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
-		$object->account_category = GETPOST('account_category');
+		$object->account_category = GETPOST('account_category','alpha');
 		$object->label = GETPOST('label', 'alpha');
 		$object->active = 1;
 
@@ -136,25 +138,28 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number');
+			$account_number = GETPOST('account_number','string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number'));
+			$account_number = clean_account(GETPOST('account_number','string'));
 		}
 
-		if (GETPOST('account_parent') <= 0) {
+		if (GETPOST('account_parent','int') <= 0)
+		{
 			$account_parent = 0;
-		} else {
+		}
+		else
+		{
 			$account_parent = GETPOST('account_parent','int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
-		$object->pcg_type = GETPOST('pcg_type');
-		$object->pcg_subtype = GETPOST('pcg_subtype');
+		$object->pcg_type = GETPOST('pcg_type','alpha');
+		$object->pcg_subtype = GETPOST('pcg_subtype','alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
-		$object->account_category = GETPOST('account_category');
+		$object->account_category = GETPOST('account_category','alpha');
 		$object->label = GETPOST('label', 'alpha');
 
 		$result = $object->update($user);
@@ -188,18 +193,21 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 	}
 }
 
+
 /*
  * View
  */
-$title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
-$helpurl = '';
-llxheader('', $title, $helpurl);
 
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $accountsystem = new AccountancySystem($db);
 $accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
+
+$title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
+$helpurl = '';
+llxheader('', $title, $helpurl);
+
 
 // Create mode
 if ($action == 'create') {
@@ -330,7 +338,7 @@ else if ($id > 0 || $ref) {
 			print '</form>';
 		} else {
 			// View mode
-			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php">' . $langs->trans("BackToList") . '</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
 
@@ -395,6 +403,6 @@ else if ($id > 0 || $ref) {
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

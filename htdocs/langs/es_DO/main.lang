@@ -19,5 +19,3 @@ FormatDateHourShort=%m/%d/%Y %I:%M %p
 FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
-MaxNbOfRecordPerPage=Max number of record per page
-LineNb=Line no.

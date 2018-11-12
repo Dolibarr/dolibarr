@@ -39,9 +39,15 @@ TypeOfLeaveId=Tipus d'identificador de baixa
 TypeOfLeaveCode=Tipus de codi de baixa
 TypeOfLeaveLabel=Tipus d'etiqueta de baixa
 NbUseDaysCP=Nombre de dies lliures consumits
+<<<<<<< HEAD
+NbUseDaysCPShort=Days consumed
+NbUseDaysCPShortInMonth=Days consumed in month
+DateStartInMonth=Start date in month
+=======
 NbUseDaysCPShort=Dies consumits
 NbUseDaysCPShortInMonth=Dies consumits al mes
 DateStartInMonth=Data d'inici al mes
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 DateEndInMonth=End date in month
 EditCP=Modificar
 DeleteCP=Eliminar
@@ -97,7 +103,11 @@ AllHolidays=Totes les sol·licituds de permís
 HalfDay=Mig dia
 NotTheAssignedApprover=No sou l'aprovador assignat
 LEAVE_PAID=Vacances pagades
+<<<<<<< HEAD
+LEAVE_SICK=Sick leave
+=======
 LEAVE_SICK=Baixa per enfermetat
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 LEAVE_OTHER=Other leave
 LEAVE_PAID_FR=Vacances pagades
 ## Configuration du Module ##

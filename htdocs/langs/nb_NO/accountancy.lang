@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Regnskap
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
 ACCOUNTING_EXPORT_PIECE=Eksporter antall enheter
@@ -39,11 +40,11 @@ AccountWithNonZeroValues=Kontoer med ingen nullverdier
 ListOfAccounts=Liste over kontoer
 
 MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
-MainAccountForSuppliersNotDefined=Hoved regnskapskonto for leverandører som ikke er definert i oppsettet
+MainAccountForSuppliersNotDefined=Hovedregnskapskonto for leverandører som ikke er definert i oppsettet
 MainAccountForUsersNotDefined=Hoved regnskapskonto for brukere som ikke er definert i oppsettet
 MainAccountForVatPaymentNotDefined=Hoved regnskapskonto for MVA-betaling ikke definert i oppsettet
 
-AccountancyArea=Område for regnskap
+AccountancyArea=Regnskapsområde
 AccountancyAreaDescIntro=Bruk av regnskapsmodulen er gjort i flere skritt:
 AccountancyAreaDescActionOnce=Følgende tiltak blir vanligvis utført en gang, eller en gang i året ...
 AccountancyAreaDescActionOnceBis=De neste skrittene bør gjøres for å spare tid i fremtiden ved å foreslå deg riktig standardregnskapskonto når du foretar journalføringen (skriv inn post i journaler og hovedbok)
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=TRINN %s: Lag en kontomodell fra menyen %s
 AccountancyAreaDescChart=TRINN %s: Opprett eller kontroller innhold i din kontoplan fra meny %s
 
 AccountancyAreaDescVat=TRINN %s: Definer regnskapskonto for hver MVA-sats. Bruk menyoppføringen %s.
+AccountancyAreaDescDefault=TRINN %s: Definer standard regnskapskontoer. For dette, bruk menyoppføringen %s.
 AccountancyAreaDescExpenseReport=TRINN %s: Definer standard regnskapskontoer for hver type kostnadsrapport. Bruk menyoppføringen %s.
 AccountancyAreaDescSal=TRINN %s: Definer standard regnskapskonto for betaling av lønn. Bruk menyoppføring %s.
 AccountancyAreaDescContrib=TRINN %s: Definer standard regnskapskonto for spesialutgifter (diverse avgifter). Bruk menyoppføringen %s.
@@ -89,7 +91,7 @@ MenuProductsAccounts=Varekontoer
 ProductsBinding=Varekontoer
 Ventilation=Binding til kontoer
 CustomersVentilation=Binding av kundefakturaer
-SuppliersVentilation=Binding av leverandørfakturaer
+SuppliersVentilation=Leverandørfaktura-bindinger
 ExpenseReportsVentilation=Utgiftsrapport-binding
 CreateMvts=Opprett ny transaksjon
 UpdateMvts=Endre en transaksjon
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Lengden på de generelle regnskapskontoene (Hvis du s
 ACCOUNTING_LENGTH_AACCOUNT=Lengden på tredjeparts regnskapskontoer (Hvis du angir verdien til 6 her, vil kontoen '401' vises som '401000' på skjermen)
 ACCOUNTING_MANAGE_ZERO=Tillat å administrere forskjellig antall nuller på slutten av en regnskapskonto. Nødvendig for enkelte land (som Sveits). Hvis du holder den av (standard), kan du angi de 2 følgende parametrene for å be om å legge til virtuell null.
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkteregistrering av transaksjoner på bankkonto
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktiver eksportutkast i journal
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diverseprotokoll
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Utgiftsjournal
 ACCOUNTING_SOCIAL_JOURNAL=Sosialjournal
+ACCOUNTING_HAS_NEW_JOURNAL=Har ny journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Regnskapskonto for overførsel
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskapskonto for vent
@@ -185,11 +189,12 @@ ListeMvts=Liste over bevegelser
 ErrorDebitCredit=Debet og kredit kan ikke ha en verdi samtidig
 AddCompteFromBK=Legg til regnskapskontoer til gruppen
 ReportThirdParty=List tredjepartskonto
-DescThirdPartyReport=Liste over kunder og leverandører og deres regnskapskontoer
+DescThirdPartyReport=Liste over tredjeparts kunder og leverandører og deres regnskapsregnskap
 ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
+PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
 
 Pcgtype=Kontogruppe
 Pcgsubtype=Konto-undergruppe
@@ -204,8 +209,8 @@ DescVentilDoneCustomer=Liste over kunde-fakturalinjer og deres vare-regnskapskon
 DescVentilTodoCustomer=Bind fakturalinjer som ikke allerede er bundet, til en vare-regnskapskonto
 ChangeAccount=Endre regnskapskonto for valgte vare-/tjenestelinjer til følgende konto:
 Vide=-
-DescVentilSupplier=Liste over leverandørfaktura-linjer bundet eller ikke bundet til en vare-regnskapskonto
-DescVentilDoneSupplier=Liste over leverandørfakturalinjer og tilhørende regnskapskonto
+DescVentilSupplier=Liste over leverandør-fakturalinjer som er bundet eller ikke ennå bundet til en vareregnskapskonto
+DescVentilDoneSupplier=Liste over leverandør-fakturalinjer av og deres regnskapskonto
 DescVentilTodoExpenseReport=Bind utgiftsrapport-linjer til en gebyr-regnskapskonto
 DescVentilExpenseReport=Liste over utgiftsrapport-linjer bundet (eller ikke) til en gebyr-regnskapskonto
 DescVentilExpenseReportMore=Hvis du setter opp regnskapskonto med type utgiftsrapport-linjer, vil programmet være i stand til å gjøre alle bindinger mellom utgiftsrapport-linjer og regnskapskontoer med et klikk på knappen <strong>"%s"</strong>. Hvis du fortsatt har noen linjer som ikke er bundet til en konto, må du foreta en manuell binding fra menyen "<strong>%s</strong>".
@@ -215,7 +220,7 @@ ValidateHistory=Bind automatisk
 AutomaticBindingDone=Automatisk binding utført
 
 ErrorAccountancyCodeIsAlreadyUse=Feil, du kan ikke slette denne regnskapskontoen fordi den er i bruk
-MvtNotCorrectlyBalanced=Bevegelsen er ikke riktig balansert. Kreditt = %s. Debet = %s
+MvtNotCorrectlyBalanced=Bevegelse er ikke riktig balansert. Debet = %s | Kreditt = %s
 FicheVentilation=Binding-kort
 GeneralLedgerIsWritten=Transaksjoner blir skrevet inn i hovedboken
 GeneralLedgerSomeRecordWasNotRecorded=Noen av transaksjonene kunne ikke journalføres. Hvis det ikke er noen annen feilmelding, er dette trolig fordi de allerede var journalført.
@@ -234,7 +239,7 @@ AccountingJournal=Regnskapsjournal
 NewAccountingJournal=Ny regnskapsjourna
 ShowAccoutingJournal=Vis regnskapsjournal
 Nature=Natur
-AccountingJournalType1=Miscellaneous operations
+AccountingJournalType1=Diverse operasjoner
 AccountingJournalType2=Salg
 AccountingJournalType3=Innkjøp
 AccountingJournalType4=Bank
@@ -293,4 +298,9 @@ Binded=Bundne linjer
 ToBind=Linjer som skal bindes
 UseMenuToSetBindindManualy=Autodeteksjon ikke mulig, bruk menyen <a href="%s"> %s </a> for å gjøre bindingen manuelt
 
+## Import
+ImportAccountingEntries=Regnskapsposter
+
 WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
+ExpenseReportJournal=Utgiftsrapport-journal
+InventoryJournal=Inventar-journal

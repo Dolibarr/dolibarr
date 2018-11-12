@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("boxes");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'boxes'));
 
 if (! $user->admin) accessforbidden();
 
@@ -488,7 +488,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -2,10 +2,11 @@
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
  *		\brief      Page to create/view a bank account
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
@@ -39,6 +40,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks","bills","categories","companies","compta"));
 
 $action = GETPOST('action','aZ09');
@@ -58,7 +60,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankcard','globalcard'));
 
 /*
  * Actions
@@ -283,7 +286,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
 $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -413,7 +416,7 @@ if ($action == 'create')
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit',$parameters);
 	}
@@ -430,7 +433,7 @@ if ($action == 'create')
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td>';
-	$form->select_date('', 're', 0, 0, 0, 'formsoc');
+	print $form->selectDate('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -573,7 +576,6 @@ else
 		if ($action == 'delete')
 		{
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-
 		}
 
 		// Print form confirm
@@ -763,7 +765,6 @@ else
 		}
 
 		print '</div>';
-
 	}
 
 	/* ************************************************************************** */
@@ -803,15 +804,15 @@ else
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
 
-		dol_fiche_head('');
+		dol_fiche_head(array(), 0, '', 0);
 
-		print '<div class="underbanner clearboth"></div>';
+		//print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border" width="100%">';
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(isset($_POST["ref"])?GETPOST("ref"):$object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(isset($_POST["ref"])?GETPOST("ref"):$object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
@@ -914,7 +915,7 @@ else
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1030,8 +1031,8 @@ else
 
 		print '</form>';
 	}
-
 }
 
+// End of page
 llxFooter();
 $db->close();

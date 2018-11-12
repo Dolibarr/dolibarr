@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,10 @@ class mailing_fraise extends MailingTargets
     var $require_module=array('adherent');
     var $picto='user';
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     /**
      *    Constructor
@@ -50,7 +54,7 @@ class mailing_fraise extends MailingTargets
      */
     function __construct($db)
     {
-        $this->db=$db;
+        $this->db = $db;
     }
 
 
@@ -106,9 +110,9 @@ class mailing_fraise extends MailingTargets
     function formFilter()
     {
         global $conf, $langs;
-        $langs->load("members");
-		$langs->load("categories");
-		$langs->load("companies");
+
+        // Load translation files required by the page
+        $langs->loadLangs(array("members","companies","categories"));
 
         $form=new Form($this->db);
 
@@ -196,9 +200,9 @@ class mailing_fraise extends MailingTargets
 
         $s.='<br>';
         $s.=$langs->trans("DateEndSubscription").': &nbsp;';
-        $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("After").' > '.$form->selectDate(-1,'subscriptionafter',0,0,1,'fraise',1,0,0);
         $s.=' &nbsp; ';
-        $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("Before").' < '.$form->selectDate(-1,'subscriptionbefore',0,0,1,'fraise',1,0,0);
 
         return $s;
     }
@@ -216,6 +220,7 @@ class mailing_fraise extends MailingTargets
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Ajoute destinataires dans table des cibles
      *
@@ -225,14 +230,16 @@ class mailing_fraise extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+        // phpcs:enable
 	    // Deprecation warning
 	    if ($filtersarray) {
 		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
 	    }
 
     	global $langs,$_POST;
-		$langs->load("members");
-        $langs->load("companies");
+
+    	// Load translation files required by the page
+        $langs->loadLangs(array("members","companies"));
 
         $cibles = array();
         $now=dol_now();
@@ -265,8 +272,8 @@ class mailing_fraise extends MailingTargets
         // Filter on type
         if ($_POST['filter_type']) $sql.= " AND ta.rowid='".$_POST['filter_type']."'";
         // Filter on category
-		if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
-		$sql.= " ORDER BY a.email";
+        if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
+        $sql.= " ORDER BY a.email";
         //print $sql;
 
         // Add targets into table
@@ -316,5 +323,4 @@ class mailing_fraise extends MailingTargets
 
         return parent::add_to_target($mailing_id, $cibles);
     }
-
 }

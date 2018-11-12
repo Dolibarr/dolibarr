@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
@@ -239,6 +239,10 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 
 -- Regions India (id country=117)
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  117, 11701, '', 0, 'India', 1);
+
+-- Regions Indonesia (id country=118)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  118, 11801, '', 0, 'Indonesia', 1);
+
 
 -- Regions Maroc - Moroco (id country=12)
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 12, 1201, '', 0, 'Tanger-Tétouan', 1);

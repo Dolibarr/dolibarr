@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -107,8 +106,6 @@ dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 
 
 // Other Options
-$var=true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
@@ -116,7 +113,6 @@ print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Enable Captcha code
-
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="right">';
@@ -146,7 +142,6 @@ else
 print '</td></tr>';
 
 // Enable advanced perms
-
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
@@ -174,8 +169,6 @@ print '<br>';
 
 
 // Timeout
-$var=true;
-
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
@@ -213,6 +206,6 @@ print '<div class="center"><input type="submit" class="button" name="button" val
 
 print '</form>';
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,11 @@ class box_graph_product_distribution extends ModeleBoxes
 	var $boxlabel="BoxProductDistribution";
 	var $depends = array("product|service","facture|propal|commande");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -135,10 +140,10 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (! empty($conf->facture->enabled) && ! empty($user->rights->facture->lire))
 		{
-
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb)
 			{
+                $langs->load("bills");
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
@@ -198,6 +203,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb)
 			{
+                $langs->load("propal");
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
@@ -254,11 +260,10 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (! empty($conf->commande->enabled) && ! empty($user->rights->commande->lire))
 		{
-			$langs->load("orders");
-
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb)
 			{
+			    $langs->load("orders");
 				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
 				$showpointvalue = 1; $nocolor = 0;
@@ -338,6 +343,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 			$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
+			$stringtoshow.='<input type="hidden" name="page_y" value="">';
 			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
 			if (! empty($conf->facture->enabled) || ! empty($user->rights->facture->lire))
 			{
@@ -355,7 +361,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
-			$stringtoshow.='<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto('','refresh.png','','',1).'">';
+			$stringtoshow.='<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('','refresh.png','','',1).'">';
 			$stringtoshow.='</form>';
 			$stringtoshow.='</div>';
 
@@ -386,7 +392,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow.=$px3->show();
 				$stringtoshow.='</div></div>';
 			}
-			$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+			$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 		}
 		else
 		{
@@ -396,7 +402,6 @@ class box_graph_product_distribution extends ModeleBoxes
 				'text' => $mesg
 			);
 		}
-
 	}
 
 	/**
@@ -411,6 +416,5 @@ class box_graph_product_distribution extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

@@ -94,10 +94,12 @@ class DolibarrApi
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         // Remove $db object property for object
         unset($object->db);
+        unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 
@@ -142,7 +144,6 @@ class DolibarrApi
         unset($object->class_element_line);
         unset($object->picto);
 
-        unset($object->facturee);		// Replace with billed
         unset($object->fieldsforcombobox);
 		unset($object->comments);
 
@@ -218,9 +219,11 @@ class DolibarrApi
 	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
 	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
 	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+     * @return bool
 	 * @throws RestException
 	 */
-	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
+    static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
+    {
 
 		// Features/modules to check
 		$featuresarray = array($resource);
@@ -251,7 +254,7 @@ class DolibarrApi
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
 	    $tmp=$sqlfilters;
 	    $ok=0;
-	    $i=0; $nb=count($tmp);
+	    $i=0; $nb=strlen($tmp);
 	    $counter=0;
 	    while ($i < $nb)
 	    {
@@ -268,6 +271,7 @@ class DolibarrApi
 	    return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Function to forge a SQL criteria
 	 *
@@ -276,6 +280,7 @@ class DolibarrApi
 	 */
 	static function _forge_criteria_callback($matches)
 	{
+        // phpcs:enable
 	    global $db;
 
 	    //dol_syslog("Convert matches ".$matches[1]);

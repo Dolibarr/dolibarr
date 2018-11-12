@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
-$langs->load("categories");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadlangs(array('categories', 'bills'));
 
 
 $id=GETPOST('id','int');
@@ -273,6 +273,6 @@ else
     print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
 $db->close();

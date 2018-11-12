@@ -27,6 +27,11 @@
 // $trackid='ord'.$object->id;
 
 
+if ($massaction == 'predeletedraft')
+{
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
+}
+
 if ($massaction == 'predelete')
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
@@ -36,11 +41,12 @@ if ($massaction == 'presend')
 {
 	$langs->load("mails");
 
+	$listofselectedid = array();
+	$listofselectedthirdparties = array();
+	$listofselectedref = array();
+	
 	if (! GETPOST('cancel', 'alpha'))
 	{
-		$listofselectedid = array();
-		$listofselectedthirdparties = array();
-		$listofselectedref = array();
 		foreach ($arrayofselected as $toselectid)
 		{
 			$result = $objecttmp->fetch($toselectid);
@@ -105,8 +111,8 @@ if ($massaction == 'presend')
 	} else {
 		$formmail->withtoreadonly = 1;
 	}
-
-	$formmail->withoptiononeemailperrecipient = empty($liste)?0:((GETPOST('oneemailperrecipient')=='on')?1:-1);
+	
+	$formmail->withoptiononeemailperrecipient = (count($listofselectedref) == 1 || empty($liste))? 0 : ((GETPOST('oneemailperrecipient')=='on')?1:-1);
 	$formmail->withto = empty($liste)?(GETPOST('sendto','alpha')?GETPOST('sendto','alpha'):array()):$liste;
 	$formmail->withtofree = empty($liste)?1:0;
 	$formmail->withtocc = 1;

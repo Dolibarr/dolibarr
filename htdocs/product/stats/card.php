@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (c) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -36,11 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("bills");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
 $id		= GETPOST('id','int');         // For this page, id can also be 'all'
 $ref	= GETPOST('ref');
@@ -78,9 +75,9 @@ if (empty($search_year)) $search_year=$currentyear;
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-
 $object = new Product($db);
-if (! $id)
+
+if (! $id && empty($ref))
 {
     llxHeader("",$langs->trans("ProductStatistics"));
 
@@ -436,6 +433,6 @@ if (! $id)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

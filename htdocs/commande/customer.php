@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin       		<regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
@@ -42,8 +42,8 @@ if ($user->societe_id > 0)
 if (! $user->rights->facture->creer)
 accessforbidden();
 
-$langs->load("companies");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "orders"));
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -102,6 +102,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
@@ -149,13 +155,9 @@ if ($resql)
 
 	print "</tr>\n";
 
-	$var=true;
-
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-
-
 
 		print '<tr class="oddeven">';
 		print '<td>';
@@ -188,7 +190,7 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();
 

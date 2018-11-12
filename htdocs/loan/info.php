@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("loan");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","loan"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -97,7 +96,7 @@ if (! empty($conf->projet->enabled)) {
 }
 $morehtmlref.='</div>';
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
 
 $object->totalpaid = $totalpaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -114,5 +113,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

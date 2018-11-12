@@ -26,10 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+$langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -193,10 +190,8 @@ if ($id > 0 || ! empty($ref))
                 $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
                 if ($num > 0) {
-                    $var=True;
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
                         $objp = $db->fetch_object($result);
-
 
 						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
 						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
@@ -275,5 +270,6 @@ print '
     </script>
 ';
 
+// End of page
 llxFooter();
 $db->close();

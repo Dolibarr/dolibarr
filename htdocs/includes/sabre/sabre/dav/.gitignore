@@ -1,0 +1,43 @@
+# Unit tests
+tests/temp
+tests/.sabredav
+tests/cov
+
+# Custom settings for tests
+tests/config.user.php
+
+# ViM
+*.swp
+
+# Composer
+composer.lock
+vendor
+
+# Composer binaries
+bin/phing
+bin/phpunit
+bin/vobject
+bin/generate_vcards
+bin/phpdocmd
+bin/phpunit
+bin/php-cs-fixer
+bin/sabre-cs-fixer
+
+# Assuming every .php file in the root is for testing
+/*.php
+
+# Other testing stuff
+/tmpdata
+/data
+/public
+
+# Build
+build
+build.properties
+
+# Docs
+docs/api
+docs/wikidocs
+
+# Mac
+.DS_Store

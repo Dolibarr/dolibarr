@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - companies
 CountryIsInEEC=Venezuela
-ReportByCustomers=Report by customer
 OverAllSupplierProposals=Solicitudes de precios
 LocalTax1IsUsed=Sujeto
 LocalTax2IsUsed=Sujeto
@@ -20,16 +19,10 @@ ProfId1HN=-
 ProfId2MX=Registro Patronal IVSS
 ProfId3MX=-
 CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> anticipos disponibles
-CustomerAbsoluteDiscountAllUsers=Absolute customer discounts (granted by all users)
-CustomerAbsoluteDiscountMy=Absolute customer discounts (granted by yourself)
 VATIntraCheckDesc=El link <b>%s</b> permite consultar al SENIAT el RIF. Se requiere acceso a internet para que el servicio funcione
 VATIntraCheckURL=http://contribuyente.seniat.gob.ve/BuscaRif/BuscaRif.jsp
 VATIntraCheckableOnEUSite=Verificar en la web del SENIAT
 VATIntraManualCheck=Puede también realizar una verificación manual en la página del SENIAT <a href="%s" target="_blank">%s</a>
 ContactOthers=Otra
 ExportDataset_company_2=Contactos de terceros y atributos
-ImportDataset_company_2=Contacts/Addresses (of third parties or not) and attributes
-ImportDataset_company_3=Bank accounts of third parties
 InActivity=Abierta
-ThirdpartiesMergeSuccess=Third parties have been merged
-ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.

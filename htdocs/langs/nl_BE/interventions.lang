@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - interventions
 InterventionsArea=Interventieruimte
 DraftFichinter=Concept interventie
+LastModifiedInterventions=Laatste %s gemodificeerde interventies
 InterventionStatistics=Statistieken van de interventies
 NbOfinterventions=Nr van de interventiekaarten
 NumberOfInterventionsByMonth=Nr van de interventiekaarten per maand (datum van goedkeuring)

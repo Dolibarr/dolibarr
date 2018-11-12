@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("bills");
-$langs->load("loan");
+$langs->loadLangs(array("bills","loan"));
 
 $chid=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -94,12 +93,12 @@ if ($action == 'add_payment')
     		// Create a line of payments
     		$payment = new PaymentLoan($db);
     		$payment->chid				= $chid;
-    		$payment->datepaid			= $datepaid;
+    		$payment->datep = $datepaid;
             $payment->label             = $loan->label;
 			$payment->amount_capital	= GETPOST('amount_capital');
 			$payment->amount_insurance	= GETPOST('amount_insurance');
 			$payment->amount_interest	= GETPOST('amount_interest');
-			$payment->paymenttype		= GETPOST('paymenttype');
+			$payment->paymenttype = GETPOST('paymenttype', 'int');
     		$payment->num_payment		= GETPOST('num_payment');
     		$payment->note_private      = GETPOST('note_private','none');
     		$payment->note_public       = GETPOST('note_public','none');
@@ -201,7 +200,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
-	$form->select_date($datepayment, '', '', '', '', "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -244,9 +243,6 @@ if ($action == 'create')
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
-
-	$var=True;
-
 
 	print '<tr class="oddeven">';
 

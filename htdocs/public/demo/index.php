@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2010       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,9 +30,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
 
-$langs->load("main");
-$langs->load("install");
-$langs->load("other");
+$langs->loadLangs(array("main", "install", "other"));
 
 $conf->dol_hide_topmenu=GETPOST('dol_hide_topmenu','int');
 $conf->dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int');
@@ -178,8 +176,6 @@ foreach ($modulesdir as $dir)
                             $filename[$i]= $modName;
                             $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
                             //print "x".$modName." ".$orders[$i]."\n<br>";
-       						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
-       			            else $categ[$objMod->special]=1;
                             $dirmod[$i] = $dirroot;
                             $j++;
                             $i++;
@@ -329,7 +325,7 @@ foreach ($demoprofiles as $profilearray)
 		    print '<div class="clearboth"></div>';
 		}
 
-		print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
+		print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" id="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
 		print '<input type="hidden" name="action" value="gotodemo">'."\n";
         print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -340,7 +336,7 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
 
-        print '<div summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 346px;">'."\n";
+        print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 346px;">'."\n";
 
 
         print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';

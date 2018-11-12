@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2016 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("members");
-$langs->load("users");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("companies","bills","members","users","other"));
 
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
@@ -238,21 +236,6 @@ if (empty($reshook))
 		}
 	}
 
-	/*
-	if ($action == 'confirm_sendinfo' && $confirm == 'yes')
-	{
-		if ($object->email)
-		{
-			$from=$conf->email_from;
-			if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
-
-			$result=$object->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
-
-			$langs->load("mails");
-			setEventMessages($langs->trans("MailSuccessfulySent", $from, $object->email), null, 'mesgs');
-		}
-	}*/
-
 	if ($action == 'update' && ! $cancel && $user->rights->adherent->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -316,15 +299,17 @@ if (empty($reshook))
 			$object->phone       = trim(GETPOST("phone",'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso",'alpha'));
 			$object->phone_mobile= trim(GETPOST("phone_mobile",'alpha'));
-			$object->email       = trim(GETPOST("member_email",'alpha'));
+			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email",'alpha'));
 			$object->skype       = trim(GETPOST("skype",'alpha'));
+			$object->twitter     = trim(GETPOST("twitter",'alpha'));
+			$object->facebook    = trim(GETPOST("facebook",'alpha'));
 			$object->birth       = $birthdate;
 
 			$object->typeid      = GETPOST("typeid",'int');
-			//$object->note        = trim(GETPOST("comment"]);
+			//$object->note        = trim(GETPOST("comment","alpha"));
 			$object->morphy      = GETPOST("morphy",'alpha');
 
-			if (GETPOST('deletephoto')) $object->photo='';
+			if (GETPOST('deletephoto','alpha')) $object->photo='';
 			elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 
 			// Get status and public property
@@ -460,7 +445,9 @@ if (empty($reshook))
 		$phone_perso=GETPOST("phone_perso",'alpha');
 		$phone_mobile=GETPOST("phone_mobile",'alpha');
 		$skype=GETPOST("member_skype",'alpha');
-		$email=GETPOST("member_email",'alpha');
+		$twitter=GETPOST("member_twitter",'alpha');
+		$facebook=GETPOST("member_facebook",'alpha');
+		$email=preg_replace('/\s+/', '', GETPOST("member_email",'alpha'));
 		$login=GETPOST("member_login",'alpha');
 		$pass=GETPOST("password",'alpha');
 		$photo=GETPOST("photo",'alpha');
@@ -484,7 +471,11 @@ if (empty($reshook))
 		$object->phone       = $phone;
 		$object->phone_perso = $phone_perso;
 		$object->phone_mobile= $phone_mobile;
+
 		$object->skype       = $skype;
+		$object->twitter     = $twitter;
+		$object->facebook    = $facebook;
+
 		$object->email       = $email;
 		$object->login       = $login;
 		$object->pass        = $pass;
@@ -630,11 +621,48 @@ if (empty($reshook))
 			// Send confirmation email (according to parameters of member type. Otherwise generic)
 			if ($object->email && GETPOST("send_mail"))
 			{
-				$result=$object->send_an_email($adht->getMailOnValid(),$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
-				if ($result < 0)
+				$subject = '';
+				$msg= '';
+
+				// Send subscription email
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail=new FormMail($db);
+				// Set output language
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				// Load traductions files requiredby by page
+				$outputlangs->loadLangs(array("main", "members"));
+				// Get email content from template
+				$arraydefaultmessage=null;
+				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION;
+
+				if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+				if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
 				{
+					$subject = $arraydefaultmessage->topic;
+					$msg     = $arraydefaultmessage->content;
+				}
+
+				if (empty($labeltouse) || (int) $labeltouse === -1) {
+					//fallback on the old configuration.
+					setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
 					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
+				}
+				else {
+					$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+
+					$moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
+
+					$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 			}
 		}
@@ -674,12 +702,49 @@ if (empty($reshook))
 			{
 				if ($object->email && GETPOST("send_mail"))
 				{
-					$result=$object->send_an_email($adht->getMailOnResiliate(),$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
-				}
-				if ($result < 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
+					$subject = '';
+					$msg= '';
+
+					// Send subscription email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail=new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					// Load traductions files requiredby by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage=null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_CANCELATION;
+
+					if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+					if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+					{
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					if (empty($labeltouse) || (int) $labeltouse === -1) {
+						//fallback on the old configuration.
+						setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+						$error++;
+					}
+					else {
+						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+						complete_substitutions_array($substitutionarray, $outputlangs, $object);
+						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+						$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
+
+						$moreinheader='X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
+
+						$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						if ($result < 0)
+						{
+							$error++;
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					}
 				}
 			}
 			else
@@ -738,7 +803,6 @@ if (empty($reshook))
 	$mode='emailfrommember';
 	$trackid='mem'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 }
 
 
@@ -843,7 +907,7 @@ else
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(isset($_POST["member_login"])?GETPOST("member_login", 'alpha', 2):$object->login).'"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(isset($_POST["member_login"])?GETPOST("member_login", 'alpha', 2):$object->login).'" autofocus="autofocus"></td></tr>';
 		}
 
 		// Password
@@ -937,14 +1001,26 @@ else
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile','alpha')?GETPOST('phone_mobile','alpha'):$object->phone_mobile).'"></td></tr>';
 
 	    // Skype
-	    if (! empty($conf->skype->enabled))
+	    if (! empty($conf->socialnetworks->enabled))
 	    {
 			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype','alpha')?GETPOST('member_skype','alpha'):$object->skype).'"></td></tr>';
 	    }
 
-		// Birthday
+	    // Twitter
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Twitter").'</td><td><input type="text" name="member_twitter" size="40" value="'.(GETPOST('member_twitter','alpha')?GETPOST('member_twitter','alpha'):$object->twitter).'"></td></tr>';
+	    }
+
+	    // Facebook
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="member_facebook" size="40" value="'.(GETPOST('member_facebook','alpha')?GETPOST('member_facebook','alpha'):$object->facebook).'"></td></tr>';
+	    }
+
+	    // Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
+		print $form->selectDate(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
@@ -962,13 +1038,7 @@ else
 		}
 
 		// Other attributes
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			print $object->showOptionals($extrafields,'edit');
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
         print '<tbody>';
 		print "</table>\n";
@@ -1003,7 +1073,7 @@ else
 		if ($res < 0) {
 			dol_print_error($db,$object->error); exit;
 		}
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 		if ($res < 0) {
 			dol_print_error($db); exit;
 		}
@@ -1181,14 +1251,26 @@ else
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td></tr>';
 
 	    // Skype
-	    if (! empty($conf->skype->enabled))
+	    if (! empty($conf->socialnetworks->enabled))
 	    {
-			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
 	    }
 
-		// Birthday
+	    // Twitter
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Twitter").'</td><td><input type="text" name="twitter" class="minwidth100" value="'.(isset($_POST["twitter"])?GETPOST("twitter"):$object->twitter).'"></td></tr>';
+	    }
+
+	    // Facebook
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="facebook" class="minwidth100" value="'.(isset($_POST["facebook"])?GETPOST("facebook"):$object->facebook).'"></td></tr>';
+	    }
+
+	    // Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
+		print $form->selectDate(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
@@ -1238,13 +1320,7 @@ else
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			print $object->showOptionals($extrafields,'edit',$parameters);
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		print '</table>';
 
@@ -1257,7 +1333,6 @@ else
 		print '</div>';
 
 		print '</form>';
-
 	}
 
 	if ($id > 0 && $action != 'edit')
@@ -1272,7 +1347,7 @@ else
 		if ($res < 0) {
 			dol_print_error($db,$object->error); exit;
 		}
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 		if ($res < 0) {
 			dol_print_error($db); exit;
 		}
@@ -1339,7 +1414,7 @@ else
 				array('label' => $langs->trans("AliasNames"), 'type' => 'text', 'name' => 'companyalias', 'value' => $companyalias, 'morecss' => 'minwidth300', 'moreattr' => 'maxlength="128"')
 			);
 
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrThirdParty"), $langs->trans("ConfirmCreateThirdParty"), "confirm_create_thirdparty", $formquestion, 'yes');
 		}
 
 		// Confirm validate member
@@ -1350,10 +1425,35 @@ else
 			$adht = new AdherentType($db);
 			$adht->fetch($object->typeid);
 
-			$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_VALID_SUBJECT);
-			$texttosend=$object->makeSubstitution($adht->getMailOnValid());
+			$subject = '';
+			$msg= '';
 
-			$tmp=$langs->trans("SendAnEMailToMember");
+			// Send subscription email
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail=new FormMail($db);
+			// Set output language
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			// Load traductions files requiredby by page
+			$outputlangs->loadLangs(array("main", "members"));
+			// Get email content from template
+			$arraydefaultmessage=null;
+			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION;
+
+			if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+			if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+			{
+				$subject = $arraydefaultmessage->topic;
+				$msg     = $arraydefaultmessage->content;
+			}
+
+			$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+
+			$tmp=$langs->trans("SendingAnEMailToMember");
 			$tmp.='<br>'.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.='<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent='';
@@ -1375,14 +1475,8 @@ else
 			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
-			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 220);
 		}
-
-		// Confirm send card by mail
-		/*if ($action == 'sendinfo')
-		{
-			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
-		}*/
 
 		// Confirm terminate
 		if ($action == 'resign')
@@ -1392,10 +1486,35 @@ else
 			$adht = new AdherentType($db);
 			$adht->fetch($object->typeid);
 
-			$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_RESIL_SUBJECT);
-			$texttosend=$object->makeSubstitution($adht->getMailOnResiliate());
+			$subject = '';
+			$msg= '';
 
-			$tmp=$langs->trans("SendAnEMailToMember");
+			// Send subscription email
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail=new FormMail($db);
+			// Set output language
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			// Load traductions files requiredby by page
+			$outputlangs->loadLangs(array("main", "members"));
+			// Get email content from template
+			$arraydefaultmessage=null;
+			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_CANCELATION;
+
+			if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+			if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+			{
+				$subject = $arraydefaultmessage->topic;
+				$msg     = $arraydefaultmessage->content;
+			}
+
+			$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
+
+			$tmp=$langs->trans("SendingAnEMailToMember");
 			$tmp.='<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent='';
@@ -1412,7 +1531,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ResiliateMember"), $langs->trans("ConfirmResiliateMember"), "confirm_resign", $formquestion, 'no', 1, 220);
 		}
 
 		// Confirm remove member
@@ -1420,7 +1539,7 @@ else
 		{
 			$formquestion=array();
 			if ($backtopage) $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$id,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("DeleteMember"), $langs->trans("ConfirmDeleteMember"), "confirm_delete", $formquestion, 'no', 1);
 		}
 
 		// Confirm add in spip
@@ -1623,11 +1742,11 @@ else
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		if (empty($reshook)) {
-			if ($action != 'valid' && $action != 'editlogin' && $action != 'editthirdparty')
+			if ($action != 'editlogin' && $action != 'editthirdparty')
 			{
 				// Send
 				if ($object->statut == 1) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Send card by email
@@ -1751,7 +1870,6 @@ else
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 					}
 				}
-
 			}
 		}
 		print '</div>';
@@ -1830,6 +1948,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

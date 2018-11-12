@@ -11,7 +11,9 @@ MailFrom=مرسل
 MailErrorsTo=الأخطاء
 MailReply=وردا على
 MailTo=جهاز الاستقبال (ق)
+MailToUsers=To user(s)
 MailCC=نسخة إلى
+MailToCCUsers=Copy to users(s)
 MailCCC=نسخة إلى نسخة
 MailTopic=البريد الإلكتروني الموضوع
 MailText=رسالة
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=معلومات
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client
