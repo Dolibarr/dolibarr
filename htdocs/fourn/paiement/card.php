@@ -356,7 +356,7 @@ if ($result > 0)
 			}
 			else
 			{
-				print '<a class="butActionRefused" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
 	}

@@ -235,12 +235,12 @@ if ($id)
 			}
 			else
 			{
-				print "<a class=\"butActionRefused\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
+				print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
 			}
 		}
 		else
 		{
-			print "<a class=\"butActionRefused\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
+			print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
 		}
 	}
 

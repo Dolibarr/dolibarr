@@ -845,7 +845,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<a class="butActionRefused" href="#">'.$langs->trans("CreateShipment").'</a>';
+					print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
 				}
 			}
 			print "</div>";
@@ -910,7 +910,7 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				print '<div class="tabsAction">';
-				print '<a class="butActionRefused" href="#">'.$langs->trans("CreateShipment").'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
 			}
 		}

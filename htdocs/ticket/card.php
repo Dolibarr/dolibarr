@@ -727,7 +727,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		        // Link to create an intervention
 		        // socid is needed otherwise fichinter ask it and forgot origin after form submit :\
 		        if (!$object->fk_soc && $user->rights->ficheinter->creer) {
-		            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans('UnableToCreateInterIfNoSocid') . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
+		            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans('UnableToCreateInterIfNoSocid') . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
 		        }
 		        if ($object->fk_soc > 0 && $object->fk_statut < 8 && $user->rights->ficheinter->creer) {
 		            print '<div class="inline-block divButAction"><a class="butAction" href="' . dol_buildpath('/fichinter/card.php', 1) . '?action=create&socid=' . $object->fk_soc . '&origin=ticket_ticket&originid=' . $object->id . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
