@@ -121,6 +121,12 @@ if ($id > 0 || ! empty($ref))
     $search_account = $object->id;     // Force the search field on id of account
 }
 
+if (! ($object->id > 0) )
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
