@@ -6152,7 +6152,8 @@ abstract class CommonObject
 			$e = 0;
 			foreach($extrafields->attributes[$this->table_element]['label'] as $key=>$label)
 			{
-			    if(empty($extrafields->attribute_list[$key]) && $mode == 'view'){
+			    if (isset($extrafields->attributes[$this->table_element]['list'][$key])
+			        && empty($extrafields->attributes[$this->table_element]['list'][$key]) && $mode == 'view'){
 			        continue;
 			    }
 			    
