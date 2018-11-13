@@ -7061,6 +7061,7 @@ function printCommonFooter($zone='private')
 		if (! empty($conf->use_javascript_ajax))
 		{
 			print '<script type="text/javascript" language="javascript">'."\n";
+			print 'jQuery(document).ready(function() {'."\n";
 
 			if ($zone == 'private' && empty($conf->dol_use_jmobile))
 			{
@@ -7142,6 +7143,8 @@ function printCommonFooter($zone='private')
 					}
 				}
 			}
+
+			print '});'."\n";
 
 			// Google Analytics
 			// TODO Add a hook here
