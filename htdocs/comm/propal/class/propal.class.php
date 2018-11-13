@@ -874,6 +874,7 @@ class Propal extends CommonObject
 		$now=dol_now();
 
 		// Clean parameters
+		if (empty($this->entity)) $this->entity = $conf->entity;
 		if (empty($this->date)) $this->date=$this->datep;
 		$this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 		if (empty($this->availability_id)) $this->availability_id=0;
@@ -983,7 +984,7 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->entity;
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;

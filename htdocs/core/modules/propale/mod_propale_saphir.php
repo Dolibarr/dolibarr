@@ -149,8 +149,8 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		// Use object entity ID
-		$entity = ((isset($propal->entity) && is_numeric($propal->entity)) ? $propal->entity : $conf->entity);
+		// Get entities
+		$entity = getEntity('proposalnumber', 1, $propal);
 
 		$date = $propal->date;
 
