@@ -303,12 +303,11 @@ if ($result || empty($id)) {
 
             if (is_array($graph_datas)) {
                 $px->element($key)
-                ->setType('bar')
-                ->setLabels($graph_datas['labelgroup'])
-                ->setDatasets($graph_datas['dataset'])
-                ->setSize(array('width' => $width, 'height' => $height))
-                ->setOptions(
-                    array(
+                    ->setType('bar')
+                    ->setLabels($graph_datas['labelgroup'])
+                    ->setDatasets($graph_datas['dataset'])
+                    ->setSize(array('width' => $width, 'height' => $height))
+                    ->setOptions(array(
                         'responsive' => true,
                         'maintainAspectRatio' => false,
                         'legend' => array(
