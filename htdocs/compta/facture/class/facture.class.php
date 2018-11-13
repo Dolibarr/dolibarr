@@ -996,7 +996,6 @@ class Facture extends CommonInvoice
 		$this->close_code         = '';
 		$this->close_note         = '';
 		$this->products = $this->lines;	// Tant que products encore utilise
-		$this->entity = $conf->entity;
 
 		// Loop on each line of new invoice
 		foreach($this->lines as $i => $line)

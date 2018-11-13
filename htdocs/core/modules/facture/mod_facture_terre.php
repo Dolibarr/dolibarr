@@ -174,18 +174,12 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($invoice->type == 2) $prefix=$this->prefixcreditnote;
 		else if ($invoice->type == 3) $prefix=$this->prefixdeposit;
 		else $prefix=$this->prefixinvoice;
-
-		// D'abord on recupere la valeur max
-		$entity = ((isset($invoice->entity) && is_numeric($invoice->entity)) ? $invoice->entity : $conf->entity);
-
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
-		if(!empty($conf->global->MULTICOMPANY_INVOICENUMBER_SHARING_ENABLED))  $sql.= " AND entity IN (".getEntity('invoicenumber').")";
-		else $sql.= " AND entity = $entity";
-
+		$sql.= " AND entity IN (".getEntity('invoicenumber').")";
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 		if ($resql)
@@ -208,9 +202,7 @@ class mod_facture_terre extends ModeleNumRefFactures
             $sql = "SELECT facnumber as ref";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
-           if(!empty($conf->global->MULTICOMPANY_INVOICENUMBER_SHARING_ENABLED))  $sql.= " AND entity IN (".getEntity('invoicenumber').")";
-			else $sql.= " AND entity = $entity";
-
+            $sql.= " AND entity IN (".getEntity('invoicenumber').")";
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)
