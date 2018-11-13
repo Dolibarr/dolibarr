@@ -527,7 +527,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
         $sql.= ' f.datef as df, f.fk_soc as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
+		$sql.= ' WHERE f.entity IN ('.getEntity('invoice', $conf->entity).')';
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
 		// Can pay invoices of all child of parent company
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
@@ -826,7 +826,7 @@ if (! GETPOST('action','aZ09'))
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
     $sql.= ' WHERE p.fk_facture = f.rowid';
-    $sql.= ' AND f.entity IN (' . getEntity('facture').')';
+    $sql.= ' AND f.entity IN (' . getEntity('invoice').')';
     if ($socid)
     {
         $sql.= ' AND f.fk_soc = '.$socid;

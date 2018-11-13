@@ -410,7 +410,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE entity IN (".getEntity('facture').")";
+    $sql.= " WHERE entity IN (".getEntity('invoice').")";
 
     $resql=$db->query($sql);
     if ($resql)

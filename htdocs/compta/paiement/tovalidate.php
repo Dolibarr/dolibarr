@@ -71,7 +71,7 @@ if ($socid)
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
-$sql.= " WHERE p.entity IN (" . getEntity('facture') . ')';
+$sql.= " WHERE p.entity IN (" . getEntity('invoice') . ')';
 if ($socid)
 {
     $sql.= " AND f.fk_soc = ".$socid;

@@ -139,7 +139,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	$sql.= " WHERE f.entity IN  (".getEntity('facture').")";
+	$sql.= " WHERE f.entity IN  (".getEntity('invoice').")";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
     $sql.= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
     $sql.= " ORDER BY dlr ASC";
