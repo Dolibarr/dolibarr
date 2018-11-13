@@ -2622,7 +2622,7 @@ class Product extends CommonObject
         }
         $sql.= " WHERE f.rowid = fd.fk_facture";
         $sql.= " AND f.fk_soc = s.rowid";
-        $sql.= " AND f.entity IN (".getEntity('facture').")";
+		$sql.= " AND f.entity IN (".getEntity('invoice').")";
         $sql.= " AND fd.fk_product = ".$this->id;
         if (!$user->rights->societe->client->voir && !$socid) { $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         }
@@ -2788,7 +2788,7 @@ class Product extends CommonObject
         if ($filteronproducttype >= 0) { $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
         }
         $sql.= " AND f.fk_soc = s.rowid";
-        $sql.= " AND f.entity IN (".getEntity('facture').")";
+        $sql.= " AND f.entity IN (".getEntity('invoice').")";
         if (!$user->rights->societe->client->voir && !$socid) { $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         }
         if ($socid > 0) {    $sql.= " AND f.fk_soc = $socid";

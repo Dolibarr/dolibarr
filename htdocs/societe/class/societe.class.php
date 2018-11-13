@@ -3804,7 +3804,7 @@ class Societe extends CommonObject
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
 		} else {
-			$sql .= " AND entity IN (".getEntity('facture').")";
+			$sql .= " AND entity IN (".getEntity('invoice').")";
 		}
 
 		dol_syslog("getOutstandingBills", LOG_DEBUG);
