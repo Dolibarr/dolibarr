@@ -55,7 +55,7 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_f
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
 ALTER TABLE llx_stock_mouvement ADD COLUMN fk_project integer;
-
+Alter tABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(32)
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 
 
@@ -153,6 +153,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
         datelastresult datetime, 
+        codelastresult varchar(16), 
         lastresult varchar(255),
         note_public text, 
         note_private text, 

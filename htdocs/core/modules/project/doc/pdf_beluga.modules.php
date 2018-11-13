@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2015		Charlie Benke  <charlie@patas-monkey.com>
  * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
  *

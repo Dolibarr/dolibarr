@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2016  Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *

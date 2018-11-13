@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2014-2016  Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>

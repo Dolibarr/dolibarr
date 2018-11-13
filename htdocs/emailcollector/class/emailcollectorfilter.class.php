@@ -159,10 +159,10 @@ class EmailCollectorFilter extends CommonObject
 			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			return -1;
 		}
-		if (empty($this->rulevalue))
+		if (! in_array($this->type, array('seen','unseen')) && empty($this->rulevalue))
 		{
 			$langs->load("errors");
-			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("RuleValue"));
+			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("StringToFilter"));
 			return -1;
 		}
 

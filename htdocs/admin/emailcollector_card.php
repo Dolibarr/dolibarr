@@ -103,25 +103,6 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
-
-if ($action == 'confirm_collect')
-{
-	dol_include_once('/emailcollector/class/emailcollector.class.php');
-
-	$res = $object->doCollect();
-
-	if ($res == 0)
-	{
-		setEventMessages($object->output, null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($object->error, null, 'errors');
-	}
-
-	$action = '';
-}
-
 if (GETPOST('addfilter','alpha'))
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
@@ -189,6 +170,25 @@ if ($action == 'deleteoperation')
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
+
+if ($action == 'confirm_collect')
+{
+	dol_include_once('/emailcollector/class/emailcollector.class.php');
+
+	$res = $object->doCollectOneCollector();
+
+	if ($res > 0)
+	{
+		setEventMessages($object->output, null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($object->error, null, 'errors');
+	}
+
+	$action = '';
+}
+
 
 
 
@@ -373,7 +373,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	*/
 	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	$morehtml = $langs->trans("NbOfEmailsInInbox").' : ';
+
+	$sourcedir = $object->source_directory;
+	$targetdir = ($object->target_directory ? $object->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
+
+	$connectstringserver = $object->getConnectStringIMAP();
+	$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+	$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+
+	$connection = imap_open($connectstringsource, $object->user, $object->password);
+	if (! $connection)
+	{
+		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+	}
+	else
+	{
+		//$morehtmlstatus .= imap_num_msg($connection).'</div><div class="statusref">';
+		$morehtml .= imap_num_msg($connection);
+	}
+
+	imap_close($connection);
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -444,7 +466,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>';
 	$arrayoftypes=array('recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 0, 0, 0, '', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	print '</td>';
@@ -474,7 +496,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</form>';
 
 	print '</div>';
-	print '</div>';
+	print '</div>';	// End <div class="fichecenter">
 
 
 	print '<div class="clearboth"></div><br>';
