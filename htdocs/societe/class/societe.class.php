@@ -948,6 +948,24 @@ class Societe extends CommonObject
 			// We don't check when update called during a create because verify was already done.
 			// For a merge, we suppose source data is clean and a customer code of a deleted thirdparty must be accepted into a target thirdparty with empty code without duplicate error
 			$result = $this->verify();
+
+			// If there is only one error and error is ErrorBadCustomerCodeSyntax and we don't change customer code, we allow the update
+			// So we can update record that were using and old numbering rule.
+			if (is_array($this->errors))
+			{
+				if (in_array('ErrorBadCustomerCodeSyntax', $this->errors) && is_object($this->oldcopy) && $this->oldcopy->code_client == $this->code_client)
+				{
+					if (($key = array_search('ErrorBadCustomerCodeSyntax', $this->errors)) !== false) unset($this->errors[$key]);	// Remove error message
+				}
+				if (in_array('ErrorBadSupplierCodeSyntax', $this->errors) && is_object($this->oldcopy) && $this->oldcopy->code_fournisseur == $this->code_fournisseur)
+				{
+					if (($key = array_search('ErrorBadSupplierCodeSyntax', $this->errors)) !== false) unset($this->errors[$key]);	// Remove error message
+				}
+				if (empty($this->errors))	// If there is no more error, we can make like if there is no error at all
+				{
+					$result = 0;
+				}
+			}
 		}
 
 		if ($result >= 0)
@@ -1509,7 +1527,7 @@ class Societe extends CommonObject
 					dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
 				}
 			}
-			
+
 			// Remove links to subsidiaries companies
 			if (! $error)
 			{

@@ -1385,7 +1385,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                     }
                     else
                     {
-                        if (! preg_match('/^\//',$jsfile)) $jsfile='/'.$jsfile;	// For backward compatibility
                         print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
                     }
                 }

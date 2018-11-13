@@ -18,7 +18,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/salaries/index.php
+ *	    \file       htdocs/compta/salaries/list.php
  *      \ingroup    salaries
  *		\brief     	List of salaries payments
  */
@@ -231,6 +231,7 @@ if ($result)
 
         $salstatic->id=$obj->rowid;
 		$salstatic->ref=$obj->rowid;
+
         // Ref
 		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
 		// Employee

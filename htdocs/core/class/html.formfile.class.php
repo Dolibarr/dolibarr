@@ -1018,7 +1018,7 @@ class FormFile
 		global $form;
 
 		$disablecrop=1;
-		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticket','user'))) $disablecrop=0;
+		if (in_array($modulepart, array('expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1219,9 +1219,13 @@ class FormFile
 							if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 							//print $file['path'].'/'.$minifile.'<br>';
 
-							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 0, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
-							if (empty($urlforhref)) $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
-							print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+							if (empty($urlforhref)) {
+								$urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+							} else {
+								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+							}
 							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}

@@ -53,7 +53,7 @@ $endyear = $year;
 $object_status = GETPOST('object_status');
 
 // Load translation files required by the page
-$langs->loadLangs(array("interventions","suppliers","companies","other"));
+$langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
 
 
 /*
@@ -140,12 +140,12 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/fichinter/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/fichinter/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') $type = 'fichinter_stats';
+$type = 'fichinter_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
@@ -165,9 +165,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	//if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+    $filter = 's.client in (1,2,3)';
+	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';

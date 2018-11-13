@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,7 +316,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php' . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
     $shownav = 1;
     if ($user->societe_id && ! in_array('batch', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;

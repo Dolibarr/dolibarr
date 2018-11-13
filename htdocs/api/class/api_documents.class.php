@@ -103,7 +103,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'encoding'=>'base64' );
 	}
 
 
@@ -224,9 +224,8 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'base64' );
 	}
-
 
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
