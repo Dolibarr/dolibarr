@@ -3429,13 +3429,7 @@ class Propal extends CommonObject
 		global $conf,$langs;
 		$langs->load("propal");
 
-		$constant = 'PROPALE_ADDON_'.$this->entity;
-
-		if (! empty($conf->global->$constant)) {
-			$classname = $conf->global->$constant; // for multicompany proposal sharing
-		} else {
-			$classname = $conf->global->PROPALE_ADDON;
-		}
+		$classname = $conf->global->PROPALE_ADDON;
 
 		if (! empty($classname))
 		{
