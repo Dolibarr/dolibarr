@@ -877,6 +877,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->entity				= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
 
 				// Proprietes particulieres a facture de remplacement
 				$object->fk_facture_source = $_POST['fac_replacement'];
@@ -929,6 +930,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->entity				= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
 
 				// Proprietes particulieres a facture avoir
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
@@ -1110,6 +1112,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->entity				= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
 
 				// Source facture
 				$object->fac_rec = GETPOST('fac_rec', 'int');
@@ -1160,6 +1163,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+				$object->entity				= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
 
 				if (GETPOST('type') == Facture::TYPE_SITUATION)
 				{
