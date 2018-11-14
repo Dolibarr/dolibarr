@@ -134,14 +134,8 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		$constant = 'PROPALE_SAPHIR_MASK_'.$propal->entity;
-
 		// On defini critere recherche compteur
-		if (! empty($conf->global->$constant)) {
-			$mask = $conf->global->$constant; // for multicompany proposal sharing
-		} else {
-			$mask = $conf->global->PROPALE_SAPHIR_MASK;
-		}
+		$mask = $conf->global->PROPALE_SAPHIR_MASK;
 
 		if (! $mask)
 		{
