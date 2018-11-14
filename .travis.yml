@@ -289,7 +289,7 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --blame .
+  parallel-lint --exclude htdocs/includes/sabre/sabre/event/tests --exclude htdocs/includes/sabre/sabre/event/examples --exclude htdocs/includes/sabre/sabre/dav/tests --exclude htdocs/includes/sabre/sabre/vobject/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --blame .
   set +e
   echo
 
