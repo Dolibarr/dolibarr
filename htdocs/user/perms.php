@@ -313,14 +313,17 @@ if ($result)
     		print '<tr class="oddeven trforbreak">';
     		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
     		print '<a name="'.$objMod->getName().'"></a></td>';
-    		print '<td align="center" class="nowrap">';
     		if ($caneditperms && empty($objMod->rights_admin_allowed) || empty($object->admin))
     		{
-    			print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
-    			print '/';
-    			print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+    			if ($caneditperms)
+    			{
+    				print '<td align="center" class="nowrap">';
+    				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
+    				print '/';
+    				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+    				print '</td>';
+    			}
     		}
-    		print '</td>';
     		print '<td colspan="2">&nbsp;</td>';
     		print '</tr>'."\n";
         }
