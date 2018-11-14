@@ -131,43 +131,77 @@ class mod_facture_mercure extends ModeleNumRefFactures
      * Return next value
      *
      * @param	Societe		$objsoc     Object third party
-     * @param   Facture		$facture	Object invoice
+     * @param   Facture		$invoice	Object invoice
      * @param   string		$mode       'next' for next value or 'last' for last value
      * @return  string      			Value if OK, 0 if KO
      */
-    function getNextValue($objsoc,$facture,$mode='next')
+    function getNextValue($objsoc, $invoice, $mode='next')
     {
-        global $db,$conf;
+    	global $db,$conf;
 
-        require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+    	require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-        // Get Mask value
-        $mask = '';
-        if (is_object($facture) && $facture->type == 1)
-        {
-        	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
-        	if (! $mask)
-        	{
-        		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-        	}
-        }
-        else if (is_object($facture) && $facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
-		else if (is_object($facture) && $facture->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
-        else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-        if (! $mask)
-        {
-            $this->error='NotConfigured';
-            return 0;
-        }
+    	// Get Mask value
+    	$mask = '';
+    	if (is_object($invoice) && $invoice->type == 1)
+    	{
+    		$constant = 'FACTURE_MERCURE_MASK_REPLACEMENT_'.$invoice->entity;
+    		if (! empty($conf->global->$constant)) {
+    			$mask = $conf->global->$constant; // for multicompany proposal sharing
+    		} else {
+    			$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+    		}
+    		if (! $mask)
+    		{
+    			$constant = 'FACTURE_MERCURE_MASK_INVOICE_'.$invoice->entity;
+    			if (! empty($conf->global->$constant)) {
+    				$mask = $conf->global->$constant; // for multicompany proposal sharing
+    			} else {
+    				$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+    			}
+    		}
+    	}
+    	else if (is_object($invoice) && $invoice->type == 2){
+    		$constant = 'FACTURE_MERCURE_MASK_CREDIT_'.$invoice->entity;
+    		if (! empty($conf->global->$constant)) {
+    			$mask = $conf->global->$constant; // for multicompany proposal sharing
+    		} else {
+    			$mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
+    		}
+    	}
+    	else if (is_object($invoice) && $invoice->type == 3){
+    		$constant = 'FACTURE_MERCURE_MASK_DEPOSIT_'.$invoice->entity;
+    		if (! empty($conf->global->$constant)) {
+    			$mask = $conf->global->$constant; // for multicompany proposal sharing
+    		} else {
+    			$mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+    		}
+    	}
+    	else {
+    		$constant = 'FACTURE_MERCURE_MASK_INVOICE_'.$invoice->entity;
+    		if (! empty($conf->global->$constant)) {
+    			$mask = $conf->global->$constant; // for multicompany proposal sharing
+    		} else {
+    			$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+    		}
+    	}
+    	if (! $mask)
+    	{
+    		$this->error='NotConfigured';
+    		return 0;
+    	}
 
-        $where='';
-        //if ($facture->type == 2) $where.= " AND type = 2";
-        //else $where.=" AND type != 2";
+    	$where='';
+    	//if ($facture->type == 2) $where.= " AND type = 2";
+    	//else $where.=" AND type != 2";
 
-        $numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc,$facture->date,$mode);
-        if (! preg_match('/([0-9])+/',$numFinal)) $this->error = $numFinal;
+    	// Get entities
+    	$entity = getEntity('invoicenumber', 1, $invoice);
 
-        return  $numFinal;
+    	$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc,$facture->date,$mode,false,null,$entity);
+    	if (! preg_match('/([0-9])+/',$numFinal)) $this->error = $numFinal;
+
+    	return  $numFinal;
     }
 
 
