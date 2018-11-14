@@ -141,55 +141,24 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
     	require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-    	// Get Mask value
-    	$mask = '';
-    	if (is_object($invoice) && $invoice->type == 1)
-    	{
-    		$constant = 'FACTURE_MERCURE_MASK_REPLACEMENT_'.$invoice->entity;
-    		if (! empty($conf->global->$constant)) {
-    			$mask = $conf->global->$constant; // for multicompany proposal sharing
-    		} else {
-    			$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
-    		}
-    		if (! $mask)
-    		{
-    			$constant = 'FACTURE_MERCURE_MASK_INVOICE_'.$invoice->entity;
-    			if (! empty($conf->global->$constant)) {
-    				$mask = $conf->global->$constant; // for multicompany proposal sharing
-    			} else {
-    				$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-    			}
-    		}
-    	}
-    	else if (is_object($invoice) && $invoice->type == 2){
-    		$constant = 'FACTURE_MERCURE_MASK_CREDIT_'.$invoice->entity;
-    		if (! empty($conf->global->$constant)) {
-    			$mask = $conf->global->$constant; // for multicompany proposal sharing
-    		} else {
-    			$mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
-    		}
-    	}
-    	else if (is_object($invoice) && $invoice->type == 3){
-    		$constant = 'FACTURE_MERCURE_MASK_DEPOSIT_'.$invoice->entity;
-    		if (! empty($conf->global->$constant)) {
-    			$mask = $conf->global->$constant; // for multicompany proposal sharing
-    		} else {
-    			$mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
-    		}
-    	}
-    	else {
-    		$constant = 'FACTURE_MERCURE_MASK_INVOICE_'.$invoice->entity;
-    		if (! empty($conf->global->$constant)) {
-    			$mask = $conf->global->$constant; // for multicompany proposal sharing
-    		} else {
-    			$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-    		}
-    	}
-    	if (! $mask)
-    	{
-    		$this->error='NotConfigured';
-    		return 0;
-    	}
+        // Get Mask value
+        $mask = '';
+        if (is_object($invoice) && $invoice->type == 1)
+        {
+        	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+        	if (! $mask)
+        	{
+        		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+        	}
+        }
+        else if (is_object($invoice) && $invoice->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
+        else if (is_object($invoice) && $invoice->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+        else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+        if (! $mask)
+        {
+            $this->error='NotConfigured';
+            return 0;
+        }
 
     	$where='';
     	//if ($facture->type == 2) $where.= " AND type = 2";
