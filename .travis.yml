@@ -2,7 +2,7 @@
 # from Dolibarr GitHub repository.
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
-# We use dist: trusty to have php 5.4+ available 
+# We use dist: trusty to have php 5.4+ available
 dist: trusty
 sudo: required
 
@@ -20,7 +20,7 @@ addons:
     # To use the last version of pgloader, we add repo of postgresql
     - postgresql
     - sourceline: 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
-    - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'  
+    - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
@@ -105,7 +105,7 @@ before_install:
     pgloader --version
     echo
   fi
- 
+
 install:
 - |
   echo "Updating Composer"
@@ -199,7 +199,7 @@ before_script:
     mysql --version | head -
     mysql -e "SELECT VERSION();"  | head -
     echo
-  
+
   - |
     echo "Setting up database"
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
@@ -207,7 +207,7 @@ before_script:
       mysql -e 'DROP DATABASE IF EXISTS travis;'
       mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
       mysql -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
-      mysql -e 'FLUSH PRIVILEGES;'    
+      mysql -e 'FLUSH PRIVILEGES;'
       mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
@@ -288,7 +288,8 @@ script:
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
   set -e
-  parallel-lint --exclude htdocs/includes --blame .
+  #parallel-lint --exclude htdocs/includes --blame .
+  parallel-lint --blame .
   set +e
   echo
 
@@ -347,7 +348,7 @@ script:
   #cat $TRAVIS_BUILD_DIR/upgrade500600-3.log
   #cat $TRAVIS_BUILD_DIR/upgrade600700-2.log
   cat /tmp/dolibarr_install.log
-  
+
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
