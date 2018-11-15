@@ -1050,7 +1050,6 @@ class EmailCollector extends CommonObject
 							}
 						}
 					}
-
 				}
 
 				if (empty($thirdpartyid))		// Try to find thirdparty using email
@@ -1236,7 +1235,6 @@ class EmailCollector extends CommonObject
 					else
 					{
 						dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
-
 					}
 				}
 				else
