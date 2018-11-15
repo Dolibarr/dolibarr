@@ -10,7 +10,7 @@ if (empty($conf) || ! is_object($conf))
 if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey=$object->table_element;
 
 // Loop to complete the sql search criterias from extrafields
-if (! empty($extrafieldsobjectkey) && ! empty($search_array_options))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
+if (! empty($extrafieldsobjectkey) && ! empty($search_array_options) && is_array($search_array_options))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 {
 	foreach ($search_array_options as $key => $val)
 	{
