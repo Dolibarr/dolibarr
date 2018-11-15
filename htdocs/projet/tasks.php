@@ -246,7 +246,9 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else
 			{
-			    setEventMessages($task->error,$task->errors,'errors');
+				setEventMessages($task->error,$task->errors,'errors');
+				$action = 'create';
+				$error++;
 			}
 		}
 
