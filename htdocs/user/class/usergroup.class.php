@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@capnetworks.com>
+ * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>

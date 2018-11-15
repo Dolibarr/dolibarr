@@ -174,11 +174,8 @@ class modEmailCollector extends DolibarrModules
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
-			0=>array('label'=>'Email collector', 'jobtype'=>'method', 'class'=>'/emailcollector/class/emailcollector.class.php', 'objectname'=>'EmailCollector', 'method'=>'doCollect', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>5, 'unitfrequency'=>60, 'status'=>1, 'test'=>'$conf->emailcollector->enabled')
+			0=>array('label'=>'Email collector', 'priority'=>50, 'jobtype'=>'method', 'class'=>'/emailcollector/class/emailcollector.class.php', 'objectname'=>'EmailCollector', 'method'=>'doCollect', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>5, 'unitfrequency'=>60, 'status'=>1, 'test'=>'$conf->emailcollector->enabled')
 		);
-		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
-		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
-		// );
 
 
 		// Permissions

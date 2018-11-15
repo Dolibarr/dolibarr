@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

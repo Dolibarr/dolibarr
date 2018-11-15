@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify

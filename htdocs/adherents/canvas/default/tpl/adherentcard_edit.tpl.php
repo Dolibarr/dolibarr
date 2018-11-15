@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify

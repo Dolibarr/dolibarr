@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
- * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
@@ -2837,35 +2837,50 @@ function isValidPhone($phone)
  * @param   string		$stringencoding		Encoding of string
  * @return  int								Length of string
  */
-function dol_strlen($string,$stringencoding='UTF-8')
+function dol_strlen($string, $stringencoding='UTF-8')
 {
 	if (function_exists('mb_strlen')) return mb_strlen($string,$stringencoding);
 	else return strlen($string);
 }
 
 /**
- * Make a substring. Works even in mbstring module is not enabled.
+ * Make a substring. Works even if mbstring module is not enabled for better compatibility.
  *
  * @param	string	$string				String to scan
  * @param	string	$start				Start position
- * @param	int		$length				Length
+ * @param	int		$length				Length (in nb of characters or nb of bytes depending on trunconbytes param)
  * @param   string	$stringencoding		Page code used for input string encoding
+ * @param	int		$trunconbytes		1=Length is max of bytes instead of max of characters
  * @return  string						substring
  */
-function dol_substr($string,$start,$length,$stringencoding='')
+function dol_substr($string, $start, $length, $stringencoding='', $trunconbytes=0)
 {
 	global $langs;
 
 	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
 
 	$ret='';
-	if (function_exists('mb_substr'))
+	if (empty($trunconbytes))
 	{
-		$ret=mb_substr($string,$start,$length,$stringencoding);
+		if (function_exists('mb_substr'))
+		{
+			$ret=mb_substr($string, $start, $length, $stringencoding);
+		}
+		else
+		{
+			$ret=substr($string, $start, $length);
+		}
 	}
 	else
 	{
-		$ret=substr($string,$start,$length);
+		if (function_exists('mb_strcut'))
+		{
+			$ret=mb_strcut($string, $start, $length, $stringencoding);
+		}
+		else
+		{
+			$ret=substr($string, $start, $length);
+		}
 	}
 	return $ret;
 }
@@ -3063,7 +3078,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
- *  @param  int     $display            Trunc is use to display and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
+ *  @param  int     $display            Trunc is used to display data and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
 function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodot=0, $display=0)
@@ -6782,10 +6797,12 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id
 	if ($key == '') return '';
 
 	// Check in cache
-	if (isset($cache_codes[$tablename][$key]))	// Can be defined to 0 or ''
+	if (isset($cache_codes[$tablename][$key][$fieldid]))	// Can be defined to 0 or ''
 	{
-		return $cache_codes[$tablename][$key];   // Found in cache
+		return $cache_codes[$tablename][$key][$fieldid];   // Found in cache
 	}
+
+	dol_syslog('dol_getIdFromCode (value not found into cache)', LOG_DEBUG);
 
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
@@ -6793,15 +6810,14 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id
 	if (! empty($entityfilter))
 		$sql.= " AND entity IN (" . getEntity($tablename) . ")";
 
-	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($obj) $cache_codes[$tablename][$key]=$obj->valuetoget;
-		else $cache_codes[$tablename][$key]='';
+		if ($obj) $cache_codes[$tablename][$key][$fieldid]=$obj->valuetoget;
+		else $cache_codes[$tablename][$key][$fieldid]='';
 		$db->free($resql);
-		return $cache_codes[$tablename][$key];
+		return $cache_codes[$tablename][$key][$fieldid];
 	}
 	else
 	{
@@ -6886,8 +6902,6 @@ function dol_validElement($element)
 function picto_from_langcode($codelang, $moreatt = '')
 {
 	global $langs;
-
-	if (empty($codelang)) return '';
 
 	if (empty($codelang)) return '';
 
@@ -7061,6 +7075,7 @@ function printCommonFooter($zone='private')
 		if (! empty($conf->use_javascript_ajax))
 		{
 			print '<script type="text/javascript" language="javascript">'."\n";
+			print 'jQuery(document).ready(function() {'."\n";
 
 			if ($zone == 'private' && empty($conf->dol_use_jmobile))
 			{
@@ -7142,6 +7157,8 @@ function printCommonFooter($zone='private')
 					}
 				}
 			}
+
+			print '});'."\n";
 
 			// Google Analytics
 			// TODO Add a hook here

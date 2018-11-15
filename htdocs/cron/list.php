@@ -192,7 +192,7 @@ if (empty($reshook))
 				$result = 0;
 				if ($massaction == 'disable') $result = $tmpcron->setStatut(Cronjob::STATUS_DISABLED);
 				elseif ($massaction == 'enable') $result = $tmpcron->setStatut(Cronjob::STATUS_ENABLED);
-				else dol_print_error($db, 'Bad value for massaction');
+				//else dol_print_error($db, 'Bad value for massaction');
 				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
 			}
 			else

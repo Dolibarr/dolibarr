@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *

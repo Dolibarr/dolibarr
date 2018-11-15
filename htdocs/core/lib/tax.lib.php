@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier		<ywarnier@beeznest.org>
- * Copyright (C) 2011	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011	   Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>

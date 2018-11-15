@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>

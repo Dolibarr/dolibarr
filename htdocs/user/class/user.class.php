@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
@@ -764,7 +764,7 @@ class User extends CommonObject
 		// Recuperation des droits utilisateurs + recuperation des droits groupes
 
 		// D'abord les droits utilisateurs
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
@@ -818,7 +818,7 @@ class User extends CommonObject
 		}
 
 		// Maintenant les droits groupes
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
