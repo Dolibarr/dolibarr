@@ -765,6 +765,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     	print '<td></td>';
                     	print '<td></td>';
                     	print '<td></td>';
+                    	print '<td></td>';
                     	print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
                     }
 					print '<td align="right"><b>'.price($sign * $total_ttc).'</b></td>';
