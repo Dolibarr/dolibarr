@@ -14,6 +14,7 @@
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2137,7 +2138,16 @@ else
 		   	// Employee
 		   	print '<tr>';
 		   	print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-		   	print $form->selectyesno("employee",$object->employee,1);
+			if ($caneditfield)
+			{
+		   		print $form->selectyesno("employee",$object->employee,1);
+			}else{
+				if ($object->employee){
+					print $langs->trans("Yes");
+				}else{
+					print $langs->trans("No");
+				}
+			}
 		   	print '</td></tr>';
 
 		   	// Hierarchy
@@ -2341,7 +2351,12 @@ else
 			{
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+				if ($caneditfield)
+				{
+					print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+				}else{
+					print $formother->showColor($object->color, '');
+				}
 				print '</td></tr>';
 			}
 
@@ -2364,7 +2379,12 @@ else
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				if ($caneditfield)
+				{
+					print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				}else{
+					print $form->showCategories( $object->id, 'user', 1 );
+				}
 				print "</td></tr>";
 			}
 
@@ -2447,7 +2467,12 @@ else
 			print $hookmanager->resPrint;
 			if (empty($reshook))
 			{
-				print $object->showOptionals($extrafields,'edit');
+				if ($caneditfield)
+				{
+					print $object->showOptionals($extrafields,'edit');
+				}else{
+					print $object->showOptionals($extrafields,'view');
+				}
 			}
 
 			// Signature
@@ -2496,7 +2521,11 @@ else
 				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				if($caneditfield){
+					print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				}else{
+					print ($object->thm!=''?price($object->thm,'',$langs,1,-1,-1,$conf->currency):'');
+				}
 				print '</td>';
 				print "</tr>\n";
 
@@ -2506,7 +2535,12 @@ else
 				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
 				print '</td>';
 				print '<td>';
-				print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				if($caneditfield)
+				{
+					print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				}else{
+					print ($object->tjm!=''?price($object->tjm,'',$langs,1,-1,-1,$conf->currency):'');
+				}
 				print '</td>';
 				print "</tr>\n";
 
@@ -2521,21 +2555,36 @@ else
 			// Weeklyhours
 			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 			print '<td>';
-			print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			if($caneditfield)
+			{
+				print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			}else{
+				print price2num($object->weeklyhours);
+			}
 			print '</td>';
 			print "</tr>\n";
 
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+			if($caneditfield)
+			{
+				print $form->selectDate(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+			}else{
+				print dol_print_date($object->dateemployment, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
 			// Date employmentEnd
 			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+			if($caneditfield)
+			{
+				print $form->selectDate(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+			}else{
+				print dol_print_date($object->dateemploymentend, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -2543,7 +2592,12 @@ else
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
-			print $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+			if($caneditfield)
+			{
+				echo $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+			}else{
+				print dol_print_date($object->birth, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
