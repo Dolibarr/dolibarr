@@ -555,7 +555,7 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticator implements Swift_Transport_Es
      *
      * @return string
      */
-    protected function getRandomBytes($length) : string
+    protected function getRandomBytes($length)
     {
         $bytes = openssl_random_pseudo_bytes($length, $strong);
         if (false !== $bytes && true === $strong) {
