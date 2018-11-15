@@ -2594,7 +2594,7 @@ else
 			print '<td>';
 			if($caneditfield)
 			{
-				echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
+				echo $form->selectDate(GETPOST('birth')?GETPOST('birth'):$object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
 			}else{
 				print dol_print_date($object->birth, 'day');
 			}
