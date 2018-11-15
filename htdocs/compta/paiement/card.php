@@ -2,9 +2,10 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018     Thibault FOUCART   <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
@@ -197,6 +199,7 @@ dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'p
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+
 }
 
 /*
@@ -206,6 +209,7 @@ if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+
 }
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -225,7 +229,7 @@ print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
 $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
-print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype.'</td></tr>';
+print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype.' '.$object->num_paiement.'</td></tr>';
 
 $disable_delete = 0;
 // Bank account
@@ -307,6 +311,22 @@ print '</td></tr>';
 
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
+
+// External link
+if (!empty($object->ext_payment_id) && !empty($object->ext_payment_site) ) { 
+
+$stripe=new Stripe($db);
+$stripeacc = $stripe->getStripeAccount($object->ext_payment_site);
+
+if (!empty($stripeacc)) $connect=$stripeacc.'/';	
+  	$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$object->ext_payment_id;
+			if ($object->payment_site == StripeLive)
+			{
+				$url='https://dashboard.stripe.com/'.$connect.'payments/'.$object->ext_payment_id;
+			}
+      
+print '<tr><td>'.$langs->trans('Source').' '.$object->ext_payment_site.'</td><td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$object->ext_payment_id.'</a></td></tr>';
+}
 
 print '</table>';
 
