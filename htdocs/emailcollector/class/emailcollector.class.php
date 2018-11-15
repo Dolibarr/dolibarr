@@ -702,6 +702,16 @@ class EmailCollector extends CommonObject
 	 *
 	 * @return	int		0=OK, Nb of error if error
 	 */
+
+	/**
+	 * overwitePropertiesOfObject
+	 *
+	 * @param	object	$object			Current object
+	 * @param	string	$actionparam	Action parameters
+	 * @param	string	$messagetext	Body
+	 * @param	string	$subject		Subject
+	 * @return	int						0=OK, Nb of error if error
+	 */
 	private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject)
 	{
 		$errorforthisaction = 0;
