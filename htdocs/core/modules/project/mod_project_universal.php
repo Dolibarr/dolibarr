@@ -123,7 +123,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	*  @param   Project		$project	Object project
 	*  @return  string					Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$project)
+    function getNextValue($objsoc, $project)
     {
 		global $db,$conf;
 
@@ -139,7 +139,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		}
 
 		$date=empty($project->date_c)?dol_now():$project->date_c;
-		$numFinal=get_next_value($db,$mask,'projet','ref','',$objsoc->code_client,$date);
+		$numFinal=get_next_value($db, $mask, 'projet', 'ref', '', (is_object($objsoc) ? $objsoc->code_client : ''), $date);
 
 		return  $numFinal;
 	}
@@ -153,9 +153,9 @@ class mod_project_universal extends ModeleNumRefProjects
      *  @param  Project		$project	Object project
      *  @return string      			Next not used reference
      */
-    function project_get_num($objsoc=0,$project='')
+    function project_get_num($objsoc=0, $project='')
     {
         // phpcs:enable
-        return $this->getNextValue($objsoc,$project);
+        return $this->getNextValue($objsoc, $project);
     }
 }
