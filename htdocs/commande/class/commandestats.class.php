@@ -66,8 +66,7 @@ class CommandeStats extends Stats
         $this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 
-		if ($mode == 'customer')
-		{
+		if ($mode == 'customer') {
 			$object=new Commande($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
@@ -75,8 +74,7 @@ class CommandeStats extends Stats
 			$this->field_line='total_ht';
 			$this->where.= " c.fk_statut > 0";    // Not draft and not cancelled
 		}
-		if ($mode == 'supplier')
-		{
+		if ($mode == 'supplier') {
 			$object=new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
@@ -98,7 +96,7 @@ class CommandeStats extends Stats
 	/**
 	 * Return orders number by month for a year
 	 *
-	 * @param	int		$year		Year to scan
+     * @param	int		$year		Year to scan
      * @param   int     $format     0=Label of abscissa is a translated text
      *                              1=Label of abscissa is month number
      *                              2=Label of abscissa is first letter of month
@@ -106,17 +104,22 @@ class CommandeStats extends Stats
 	 */
 	function getNbByMonth($year, $format=0)
 	{
-		global $user;
+		global $user, $conf;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
+        $sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
 		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
+        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START;
+            $sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year, $startmonth))."' AND '".$this->db->idate(dol_get_last_day($year+1, $startmonth-1))."'";
+        } else {
+            $sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        }
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql, $format);
+        $res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -151,12 +154,17 @@ class CommandeStats extends Stats
 	 */
 	function getAmountByMonth($year, $format=0)
 	{
-		global $user;
+		global $user, $conf;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START;
+            $sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year, $startmonth))."' AND '".$this->db->idate(dol_get_last_day($year+1, $startmonth-1))."'";
+        } else {
+            $sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        }
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -173,12 +181,17 @@ class CommandeStats extends Stats
 	 */
 	function getAverageByMonth($year)
 	{
-		global $user;
+		global $user, $conf;
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START;
+            $sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year, $startmonth))."' AND '".$this->db->idate(dol_get_last_day($year+1, $startmonth-1))."'";
+        } else {
+            $sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        }
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');

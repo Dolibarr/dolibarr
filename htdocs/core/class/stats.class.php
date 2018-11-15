@@ -124,7 +124,11 @@ abstract class Stats
                     $data['dataset'][$j]['borderColor'] = $px->datacolor[$j];
                     $data['dataset'][$j]['borderWidth'] = 1;
                     $data['dataset'][$j]['fill'] = false;
-                    $data['dataset'][$j]['label'] = $year;
+                    if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+                        $data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                    } else {
+                        $data['dataset'][$j]['label'] = $year;
+                    }
                     $j++;
                 }
             }
@@ -241,7 +245,11 @@ abstract class Stats
                     $data['dataset'][$j]['borderColor'] = $px->datacolor[$j];
                     $data['dataset'][$j]['borderWidth'] = 1;
                     $data['dataset'][$j]['fill'] = false;
-                    $data['dataset'][$j]['label'] = $year;
+                    if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+                        $data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                    } else {
+                        $data['dataset'][$j]['label'] = $year;
+                    }
                     $j++;
                 }
             }
@@ -318,7 +326,11 @@ abstract class Stats
                 $data['dataset'][$j]['borderColor'] = $px->datacolor[$j];
                 $data['dataset'][$j]['borderWidth'] = 1;
                 $data['dataset'][$j]['fill'] = false;
-                $data['dataset'][$j]['label'] = $year;
+                if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+                    $data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                } else {
+                    $data['dataset'][$j]['label'] = $year;
+                }
                 $j++;
             }
         }
@@ -520,19 +532,17 @@ abstract class Stats
 	 */
 	function _getNbByMonth($year, $sql, $format=0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+        dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0; $j = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$j = $row[0] * 1;
 				$result[$j] = $row[1];
@@ -545,25 +555,33 @@ abstract class Stats
 			dol_print_error($this->db);
 		}
 
-		for ($i = 1 ; $i < 13 ; $i++)
-		{
+		for ($i = 1 ; $i < 13 ; $i++) {
 			$res[$i] = (isset($result[$i])?$result[$i]:0);
 		}
 
-		$data = array();
+        $data = array();
 
-		for ($i = 1 ; $i < 13 ; $i++) {
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $countmonth = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
+        } else {
+            $countmonth = 1;
+        }
+        for ($i = 1 ; $i < 13 ; $i++) {
 			$month = 'unknown';
-			if ($format == 0) $month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
-			elseif ($format == 1) $month = $i;
-			elseif ($format == 2) $month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+            if ($format == 0) $month = $langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $countmonth));
+			elseif ($format == 1) $month = $countmonth;
+			elseif ($format == 2) $month = $langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $countmonth));
 			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
-			//$month=dol_substr($month,0,3);
-			$data[$i-1] = array($month, $res[$i]);
-		}
+            //$month=dol_substr($month,0,3);
+            $data[$i-1] = array($month, $res[$countmonth]);
+            $countmonth++;
+            if ($countmonth>12) {
+                $countmonth = 1;
+            }
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
 
 	/**
@@ -576,7 +594,7 @@ abstract class Stats
 	 */
 	function _getAmountByMonth($year, $sql, $format=0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$result=array();
 		$res=array();
@@ -606,15 +624,24 @@ abstract class Stats
 
 		$data = array();
 
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $countmonth = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
+        } else {
+            $countmonth = 1;
+        }
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
 			$month='unknown';
-			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
-			elseif ($format == 1) $month=$i;
-			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $countmonth));
+			elseif ($format == 1) $month=$countmonth;
+			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $countmonth));
 			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			//$month=dol_substr($month,0,3);
-			$data[$i-1] = array($month, $res[$i]);
+			$data[$i-1] = array($month, $res[$countmonth]);
+            $countmonth++;
+            if ($countmonth>12) {
+                $countmonth = 1;
+            }
 		}
 
 		return $data;
@@ -630,7 +657,7 @@ abstract class Stats
 	 */
 	function _getAverageByMonth($year, $sql, $format=0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$result=array();
 		$res=array();
@@ -659,15 +686,24 @@ abstract class Stats
 
 		$data = array();
 
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $countmonth = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
+        } else {
+            $countmonth = 1;
+        }
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
 			$month='unknown';
-			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
-			elseif ($format == 1) $month=$i;
-			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $countmonth));
+			elseif ($format == 1) $month=$countmonth;
+			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $countmonth));
 			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			//$month=dol_substr($month,0,3);
-			$data[$i-1] = array($month, $res[$i]);
+			$data[$i-1] = array($month, $res[$countmonth]);
+            $countmonth++;
+            if ($countmonth>12) {
+                $countmonth = 1;
+            }
 		}
 
 		return $data;
