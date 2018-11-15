@@ -193,7 +193,7 @@ if (empty($reshook)) {
 			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
 			$object->birth = $birth;
 			$object->admin = GETPOST("admin", 'alpha');
-			$object->address = GETPOST('address', 'alpha');
+			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alpha');
 			$object->town = GETPOST('town', 'alpha');
 			$object->country_id = GETPOST('country_id', 'int');
@@ -342,7 +342,7 @@ if (empty($reshook)) {
 				$object->pass = GETPOST("password",'none');
 				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
 				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
-				$object->address = GETPOST('address', 'alpha');
+				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alpha');
 				$object->town = GETPOST('town', 'alpha');
 				$object->country_id = GETPOST('country_id', 'int');
