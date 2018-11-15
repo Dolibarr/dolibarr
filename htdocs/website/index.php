@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 $langs->loadLangs(array("admin","other","website"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->rights->website->read) accessforbidden();
 
 if (! ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
 {
