@@ -122,7 +122,7 @@ class mod_project_simple extends ModeleNumRefProjects
 	*  @param   Project	$project	Object project
 	*  @return	string				Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc,$project)
+    function getNextValue($objsoc, $project)
     {
 		global $db,$conf;
 
@@ -167,9 +167,9 @@ class mod_project_simple extends ModeleNumRefProjects
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */
-    function project_get_num($objsoc=0,$project='')
+    function project_get_num($objsoc=0, $project='')
     {
         // phpcs:enable
-        return $this->getNextValue($objsoc,$project);
+        return $this->getNextValue($objsoc, $project);
     }
 }

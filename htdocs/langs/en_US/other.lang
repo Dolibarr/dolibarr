@@ -244,6 +244,9 @@ YourPasswordHasBeenReset=Your password has been reset successfully
 ApplicantIpAddress=IP address of applicant
 SMSSentTo=SMS sent to %s
 MissingIds=Missing ids
+ThirdPartyCreatedByEmailCollector=Third party created by email collector from email ID %s
+ContactCreatedByEmailCollector=Contact/address created by email collector from email ID %s
+ProjectCreatedByEmailCollector=Project created by email collector from email ID %s
 
 ##### Export #####
 ExportsArea=Exports area

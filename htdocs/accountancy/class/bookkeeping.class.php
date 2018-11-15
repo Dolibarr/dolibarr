@@ -69,7 +69,15 @@ class BookKeeping extends CommonObject
 
 	public $doc_date;
 	public $date_lim_reglement;
-	public $doc_type;
+
+    /**
+     * @var string doc_type
+     */
+    public $doc_type;
+
+    /**
+     * @var string doc_ref
+     */
 	public $doc_ref;
 
 	/**
@@ -82,12 +90,35 @@ class BookKeeping extends CommonObject
      */
 	public $fk_docdet;
 
-	public $thirdparty_code;
+    /**
+     * @var string thirdparty code
+     */
+    public $thirdparty_code;
+
+    /**
+     * @var string subledger account
+     */
 	public $subledger_account;
+
+    /**
+     * @var string subledger label
+     */
 	public $subledger_label;
+
+    /**
+     * @var string  doc_type
+     */
 	public $numero_compte;
-	public $label_compte;
-	public $label_operation;
+
+    /**
+     * @var string label compte
+     */
+    public $label_compte;
+
+    /**
+     * @var string label operation
+     */
+    public $label_operation;
 	public $debit;
 	public $credit;
 	public $montant;

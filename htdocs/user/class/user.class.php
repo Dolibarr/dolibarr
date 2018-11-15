@@ -764,7 +764,7 @@ class User extends CommonObject
 		// Recuperation des droits utilisateurs + recuperation des droits groupes
 
 		// D'abord les droits utilisateurs
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
@@ -818,7 +818,7 @@ class User extends CommonObject
 		}
 
 		// Maintenant les droits groupes
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";

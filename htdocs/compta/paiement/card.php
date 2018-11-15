@@ -231,9 +231,10 @@ $disable_delete = 0;
 // Bank account
 if (! empty($conf->banque->enabled))
 {
+	$bankline=new AccountLine($db);
+
 	if ($object->fk_account > 0)
 	{
-		$bankline=new AccountLine($db);
 		$bankline->fetch($object->bank_line);
 		if ($bankline->rappro)
 		{
