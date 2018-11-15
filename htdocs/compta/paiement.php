@@ -528,7 +528,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
         $sql.= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
+		$sql.= ' WHERE f.entity IN ('.getEntity('invoice', $conf->entity).')';
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
 		// Can pay invoices of all child of parent company
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
@@ -630,25 +630,25 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     // Date
                     print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
-                    
+
                     // Date Max Payment
                     if ($objp->dlr > 0 )
                     {
                         print '<td align="center">';
                         print dol_print_date($db->jdate($objp->dlr), 'day');
-                        
+
                         if ($invoice->hasDelay())
                         {
                             print img_warning($langs->trans('Late'));
                         }
-                        
+
                         print '</td>';
                     }
                     else
                     {
                         print '<td align="center"><b>--</b></td>';
                     }
-                    
+
                     // Currency
                     if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
 
@@ -846,7 +846,7 @@ if (! GETPOST('action','aZ09'))
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
     $sql.= ' WHERE p.fk_facture = f.rowid';
-    $sql.= ' AND f.entity IN (' . getEntity('facture').')';
+    $sql.= ' AND f.entity IN (' . getEntity('invoice').')';
     if ($socid)
     {
         $sql.= ' AND f.fk_soc = '.$socid;

@@ -288,7 +288,7 @@ class BonPrelevement extends CommonObject
 		$sql.= ", p.fk_user_credit";
 		$sql.= ", p.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-		$sql.= " WHERE p.entity IN (".getEntity('facture').")";
+		$sql.= " WHERE p.entity IN (".getEntity('invoice').")";
 		if ($rowid > 0) $sql.= " AND p.rowid = ".$rowid;
 		else $sql.= " AND p.ref = '".$this->db->escape($ref)."'";
 
@@ -820,7 +820,7 @@ class BonPrelevement extends CommonObject
 			$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 			$sql.= " WHERE f.rowid = pfd.fk_facture";
-			$sql.= " AND f.entity IN (".getEntity('facture').')';
+			$sql.= " AND f.entity IN (".getEntity('invoice').')';
 			$sql.= " AND s.rowid = f.fk_soc";
 			//if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
 			$sql.= " AND f.fk_statut = 1";

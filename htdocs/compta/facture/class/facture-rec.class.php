@@ -340,7 +340,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
-		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
+		$sql.= ' WHERE f.entity IN ('.getEntity('invoice').')';
 		if ($rowid) $sql.= ' AND f.rowid='.$rowid;
 		elseif ($ref) $sql.= " AND f.titre='".$this->db->escape($ref)."'";
 		/* This field are not used for template invoice

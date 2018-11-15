@@ -303,7 +303,7 @@ print load_fiche_titre($langs->trans("LastWithdrawalReceipts",$limit),'','');
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
 $sql.= ", p.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " WHERE p.entity IN (".getEntity('facture').")";
+$sql.= " WHERE p.entity IN (".getEntity('invoice').")";
 $sql.= " ORDER BY datec DESC";
 $sql.=$db->plimit($limit);
 
