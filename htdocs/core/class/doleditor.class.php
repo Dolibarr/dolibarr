@@ -135,9 +135,9 @@ class DolEditor
             $this->height				= $height;
             $this->width				= $width;
     	}
-
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Output edit area inside the HTML stream.
      *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
@@ -151,9 +151,10 @@ class DolEditor
      */
     function Create($noprint=0, $morejs='', $disallowAnyContent=true, $titlecontent='', $option='')
     {
+        // phpcs:enable
     	global $conf,$langs;
 
-    	$fullpage=False;
+    	$fullpage=false;
     	if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
     	{
     	   $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed or all
@@ -345,6 +346,4 @@ class DolEditor
         if ($noprint) return $out;
         else print $out;
     }
-
 }
-

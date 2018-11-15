@@ -33,6 +33,7 @@ PropalStatusSigned=已签署(待付款)
 PropalStatusNotSigned=未签署(已关闭)
 PropalStatusBilled=已到账
 PropalStatusDraftShort=草稿
+PropalStatusValidatedShort=已确认
 PropalStatusClosedShort=已禁用
 PropalStatusSignedShort=已签署
 PropalStatusNotSignedShort=未签署
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 个月
 TypeContact_propal_internal_SALESREPFOLL=跟进报价的销售代表
 TypeContact_propal_external_BILLING=客户账单联系人
 TypeContact_propal_external_CUSTOMER=跟进报价的客户联系人
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=完整的订单模版 (LOGO标志...)
 DefaultModelPropalCreate=设置默认模板

@@ -18,10 +18,20 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
+/*ini_set('unserialize_callback_func', 'mycallback');
+
+function mycallback($classname)
+{
+	//var_dump($classname);
+	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+}*/
+
+
+
 /**
  *	Class to manage Blocked Log
  */
-
 class BlockedLog
 {
 	/**
@@ -29,13 +39,21 @@ class BlockedLog
 	 * @var int
 	 */
 	public $id;
+
 	/**
 	 * Entity
 	 * @var int
 	 */
 	public $entity;
 
+	/**
+	 * @var string Error message
+	 */
 	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
 	public $errors = array();
 
 	/**
@@ -90,6 +108,7 @@ class BlockedLog
 	public $ref_object = '';
 
 	public $object_data = null;
+	public $user_fullname='';
 
 	/**
 	 * Array of tracked event codes
@@ -157,6 +176,7 @@ class BlockedLog
 
 	/**
 	 *  Try to retrieve source object (it it still exists)
+     * @return string
 	 */
 	public function getObjectLink()
 	{
@@ -267,11 +287,11 @@ class BlockedLog
 		}
 
 		return '<i class="opacitymedium">'.$langs->trans('ImpossibleToReloadObject', $this->element, $this->fk_object).'</i>';
-
 	}
 
 	/**
 	 *      try to retrieve user author
+     * @return string
 	 */
 	public function getUser()
 	{
@@ -299,11 +319,14 @@ class BlockedLog
 	 *      @param		Object		$object     object to store
 	 *      @param		string		$action     action
 	 *      @param		string		$amounts    amounts
+	 *      @param		User		$fuser		User object (forced)
 	 *      @return		int						>0 if OK, <0 if KO
 	 */
-	public function setObjectData(&$object, $action, $amounts)
+	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
 		global $langs, $user, $mysoc;
+
+		if (is_object($fuser)) $user = $fuser;
 
 		// Generic fields
 
@@ -592,7 +615,8 @@ class BlockedLog
 	 *	@param      int		$id       	Id of object to load
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($id) {
+    public function fetch($id)
+    {
 
 		global $langs;
 
@@ -636,7 +660,7 @@ class BlockedLog
 				$this->fk_user 			= $obj->fk_user;
 				$this->user_fullname	= $obj->user_fullname;
 
-				$this->object_data		= unserialize($obj->object_data);
+				$this->object_data		= $this->dolDecodeBlockedData($obj->object_data);
 
 				$this->signature		= $obj->signature;
 				$this->signature_line	= $obj->signature_line;
@@ -655,22 +679,45 @@ class BlockedLog
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
+
+
+	/**
+	 * Decode data
+	 *
+	 * @param	string	$data	Data to unserialize
+	 * @param	string	$mode	0=unserialize, 1=json_decode
+	 * @return 	string			Value unserialized
+	 */
+	public function dolDecodeBlockedData($data, $mode=0)
+	{
+		try
+		{
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$aaa = unserialize($data);
+			//$aaa = unserialize($data);
+		}
+		catch(Exception $e)
+		{
+			//print $e->getErrs);
+		}
+		return $aaa;
+	}
+
 
 	/**
 	 *	Set block certified by authority
 	 *
 	 *	@return	boolean
 	 */
-	public function setCertified() {
+    public function setCertified()
+    {
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".$this->id);
 		if($res===false) return false;
 
 		return true;
-
-
 	}
 
 	/**
@@ -680,7 +727,8 @@ class BlockedLog
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	public function create($user, $forcesignature='') {
+    public function create($user, $forcesignature='')
+    {
 
 		global $conf,$langs,$hookmanager;
 
@@ -899,17 +947,14 @@ class BlockedLog
 
 	 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
-
 		}
 		else if ($element=='not_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 0";
-
 		}
 		else if ($element=='just_certified') {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 1";
-
 		}
 		else{
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
@@ -987,6 +1032,7 @@ class BlockedLog
 	 * Check if module was already used or not for at least one recording.
 	 *
 	 * @param	int		$ignoresystem		Ignore system events for the test
+     * @return bool
 	 */
 	function alreadyUsed($ignoresystem=0)
 	{
@@ -1011,6 +1057,4 @@ class BlockedLog
 
 		return $result;
 	}
-
 }
-

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
+// Load translation files required by the page
 $langs->load("propal");
 
 
@@ -88,8 +89,6 @@ if ($resql)
 	$i = 0;
 	if ($num > 0 )
 	{
-		$var=true;
-
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
@@ -126,8 +125,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$var=true;
-
 		$total=0;
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -197,8 +194,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
 
@@ -223,7 +218,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$i++;
 				$total += $obj->price;
 			}
-			if ($total>0) {
+			if ($total>0)
+			{
 				print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
@@ -255,8 +251,6 @@ if ($resql)
 	$i = 0;
 	if ($num > 0 )
 	{
-		$var=true;
-
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td>'.$langs->trans("ProspectToContact").'</td></tr>';
 
@@ -281,6 +275,6 @@ if ($resql)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

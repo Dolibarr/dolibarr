@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke <charlie@patas-monkey.com>
  * Copyright (C) 2016      Laurent Destailleur <eldy@users.sourceforge.net>
@@ -40,12 +40,11 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("bills");
 
 $total=0; $ilink=0;
-$var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass=($var?'pair':'impair');
+    $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
     <tr class="<?php echo $trclass; ?>">
@@ -68,7 +67,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     			}
     		} ?></td>
     	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+    	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
 <?php
 }

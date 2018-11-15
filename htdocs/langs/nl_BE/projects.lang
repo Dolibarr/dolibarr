@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - projects
 ProjectsArea=Project Omgeving
-ConfirmDeleteAProject=Weet u zeker dat u dit project wilt verwijderen?
-ConfirmDeleteATask=Weet u zeker dat u deze taak wilt verwijderen?
 OpenedProjects=Open projecten
 OpenedTasks=Open taken
 ListOrdersAssociatedProject=Lijst van klantbestellingen die aan dit project gekoppeld zijn

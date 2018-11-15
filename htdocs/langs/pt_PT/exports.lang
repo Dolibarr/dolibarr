@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - exports
-ExportsArea=Área de Exportação
+ExportsArea=Área de exportação
 ImportArea=Área de Importação
-NewExport=Nova Exportação
+NewExport=Nova exportação
 NewImport=Nova Importação
 ExportableDatas=Conjunto de dados exportáveis
 ImportableDatas=Conjunto de dados importáveis
@@ -44,7 +44,7 @@ LineDescription=Descrição da linha
 LineUnitPrice=Preço por unidade de linha
 LineVATRate=Taxa de IVA de linha
 LineQty=Quantidade de linha
-LineTotalHT=Montante líquido de impostos para a linha
+LineTotalHT=Montante sem IVA para a linha
 LineTotalTTC=Montante do imposto para a linha
 LineTotalVAT=Montante do IVA para a linha
 TypeOfLineServiceOrProduct=Tipo de linha (0= produto, serviço de 1=)

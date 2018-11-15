@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 if (!$user->admin) accessforbidden();
 
-$langs->load("agenda");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('agenda', 'admin', 'other'));
 
 $def = array();
 $actiontest=GETPOST('test','alpha');
@@ -148,7 +147,6 @@ print "<br>\n";
 $selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 
 print "<tr class=\"liste_titre\">";
@@ -202,7 +200,6 @@ print '<td align="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
 $i=1;
-$var=true;
 while ($i <= $MAXAGENDA)
 {
 	$key=$i;
@@ -241,7 +238,6 @@ print '</div>';
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

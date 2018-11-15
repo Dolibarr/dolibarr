@@ -1,9 +1,8 @@
 <?php
 /* Copyright (C) 2002		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2018		ptibogxiv				<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +32,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class AdherentType extends CommonObject
 {
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = 'adherent_type';
+
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element = 'adherent_type';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'group';
-	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string
@@ -44,29 +59,27 @@ class AdherentType extends CommonObject
 	 * @see label
 	 */
 	public $libelle;
-	/** @var string Label */
-	public $label;
+
 	/**
-	 * @var bool
-	 * @deprecated Use subscription
-	 * @see subscription
-	 */
-	public $cotisation;
+     * @var string Adherent type label
+     */
+    public $label;
+
 	/**
 	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
 	 */
 	public $subscription;
-  public $welcome;
-	public $price;
-	public $automatic;
-	public $family;
+
 	/** @var string 	Public note */
 	public $note;
+
 	/** @var integer	Can vote */
 	public $vote;
+
 	/** @var string Email sent during validation */
 	public $mail_valid;
+
 	/** @var array Array of members */
 	public $members=array();
 
@@ -153,7 +166,7 @@ class AdherentType extends CommonObject
 	/**
 	 *  Met a jour en base donnees du type
 	 *
-	 *  	@param	User		$user			Object user making change
+	 *  @param	User	$user			Object user making change
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
@@ -172,12 +185,6 @@ class AdherentType extends CommonObject
 		$sql.= "statut = ".$this->statut.",";
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
-    $sql.= "welcome = '".$this->welcome."',";
-    $sql.= "price = '".$this->price."',";
-    $sql.= "note = '".$this->db->escape($this->note)."',";
-    $sql.= "vote = '".$this->vote."',";
-    $sql.= "automatic = '".$this->automatic."',";
-    $sql.= "family = '".$this->family."',";    
 		$sql.= "note = '".$this->db->escape($this->note)."',";
 		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
@@ -188,22 +195,15 @@ class AdherentType extends CommonObject
 		{
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('membertypedao'));
-			$parameters=array('membertype'=>$this->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{
@@ -274,9 +274,9 @@ class AdherentType extends CommonObject
 	 */
 	function fetch($rowid)
 	{
-    $sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.welcome, d.price, d.automatic, d.family, d.mail_valid, d.note, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-		$sql .= " WHERE d.rowid = ".$rowid;
+		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
 		dol_syslog("Adherent_type::fetch", LOG_DEBUG);
 
@@ -287,18 +287,14 @@ class AdherentType extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-                $this->id             = $obj->rowid;
-                $this->ref            = $obj->rowid;
-                $this->welcome        = $obj->welcome;
-                $this->price         = $obj->price;
-                $this->label          = $obj->label;
-                $this->statut         = $obj->statut;
-                $this->subscription   = $obj->subscription;
-                $this->automatic      = $obj->automatic;
-                $this->family         = $obj->family;
-                $this->mail_valid     = $obj->mail_valid;
-                $this->note           = $obj->note;
-                $this->vote           = $obj->vote;
+				$this->id             = $obj->rowid;
+				$this->ref            = $obj->rowid;
+				$this->label          = $obj->label;
+				$this->statut         = $obj->statut;
+				$this->subscription   = $obj->subscription;
+				$this->mail_valid     = $obj->mail_valid;
+				$this->note           = $obj->note;
+				$this->vote           = $obj->vote;
 			}
 
 			return 1;
@@ -310,6 +306,7 @@ class AdherentType extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of members' type
 	 *
@@ -317,6 +314,7 @@ class AdherentType extends CommonObject
 	 */
 	function liste_array()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$adherenttypes = array();
@@ -353,7 +351,9 @@ class AdherentType extends CommonObject
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
-	 *  @param	int		$mode				0=Return array of member instance, 1=Return array of members id only
+	 *  @param	int		$mode				0=Return array of member instance
+	 *  									1=Return array of member instance without extra data
+	 *  									2=Return array of members id only
 	 * 	@return	mixed						Array of members or -1 on error
 	 */
 	function listMembersForMemberType($excludefilter='', $mode=0)
@@ -376,10 +376,14 @@ class AdherentType extends CommonObject
 			{
 				if (! array_key_exists($obj->rowid, $ret))
 				{
-					if ($mode != 1)
+					if ($mode < 2)
 					{
 						$memberstatic=new Adherent($this->db);
-						$memberstatic->fetch($obj->rowid);
+						if ($mode == 1) {
+							$memberstatic->fetch($obj->rowid,'','','',false, false);
+						} else {
+							$memberstatic->fetch($obj->rowid);
+						}
 						$ret[$obj->rowid]=$memberstatic;
 					}
 					else $ret[$obj->rowid]=$obj->rowid;
@@ -435,6 +439,7 @@ class AdherentType extends CommonObject
 		return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -446,6 +451,7 @@ class AdherentType extends CommonObject
 	 */
 	function _load_ldap_dn($info,$mode=0)
 	{
+        // phpcs:enable
 		global $conf;
 		$dn='';
 		if ($mode==0) $dn=$conf->global->LDAP_KEY_MEMBERS_TYPES."=".$info[$conf->global->LDAP_KEY_MEMBERS_TYPES].",".$conf->global->LDAP_MEMBER_TYPE_DN;
@@ -455,6 +461,7 @@ class AdherentType extends CommonObject
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
@@ -462,6 +469,7 @@ class AdherentType extends CommonObject
 	 */
 	function _load_ldap_info()
 	{
+        // phpcs:enable
 		global $conf,$langs;
 
 		$info=array();
@@ -471,14 +479,14 @@ class AdherentType extends CommonObject
 
 		// Champs
 		if ($this->label && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME] = $this->label;
-		if ($this->note && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = $this->note;
+		if ($this->note && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 0, 'UTF-8', 1);
 		if (! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS))
 		{
 			$valueofldapfield=array();
 			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
 			{
 				$member=new Adherent($this->db);
-				$member->fetch($val->id);
+				$member->fetch($val->id,'','','',false,false);
 				$info2 = $member->_load_ldap_info();
 				$valueofldapfield[] = $member->_load_ldap_dn($info2);
 			}
@@ -520,7 +528,7 @@ class AdherentType extends CommonObject
 	/**
 	 *     getMailOnValid
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail content of type or empty
 	 */
 	function getMailOnValid()
 	{
@@ -530,16 +538,14 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_valid;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_VALID;
-		}
+
+		return '';
 	}
 
 	/**
 	 *     getMailOnSubscription
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail content of type or empty
 	 */
 	function getMailOnSubscription()
 	{
@@ -550,16 +556,14 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_subscription;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_COTIS;
-		}
+
+		return '';
 	}
 
 	/**
 	 *     getMailOnResiliate
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail model content of type or empty
 	 */
 	function getMailOnResiliate()
 	{
@@ -570,11 +574,7 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_resiliate;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_RESIL;
-		}
+
+		return '';
 	}
-
 }
-

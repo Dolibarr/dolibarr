@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Medlem %s validert
 MemberModifiedInDolibarr=Medlem %s endret
 MemberResiliatedInDolibarr=Medlem %s terminert
 MemberDeletedInDolibarr=Medlem %s slettet
-MemberSubscriptionAddedInDolibarr=Abonnement for medlem %s lagt til
+MemberSubscriptionAddedInDolibarr=Abonnement %s for medlem %s lagt til
+MemberSubscriptionModifiedInDolibarr=Abonnement %s for medlem %s endret
+MemberSubscriptionDeletedInDolibarr=Abonnement %s for medlem %s slettet
 ShipmentValidatedInDolibarr=Leveranse %s validert
 ShipmentClassifyClosedInDolibarr=Forsendelse %s klassifisert fakturert
 ShipmentUnClassifyCloseddInDolibarr=Forsendelse %s klassifisert gjenåpnet
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Du kan også bruke følgende parametere til å filtrere listen
 AgendaUrlOptions3=<b>logina=%s</b> for å begrense resultat til hendelser eiet av en bruker <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger som ikke eies av brukeren <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> for å begrense resultat til handlinger som er knyttet til prosjektet <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__ PROJECT_ID__</b> for å begrense resultat til handlinger knyttet til prosjektet <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatisk hendelse.
 AgendaShowBirthdayEvents=Vis kontakters fødselsdager
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager
 Busy=Opptatt
@@ -109,7 +112,7 @@ ExportCal=Eksporter kalender
 ExtSites=Importer eksterne kalendere
 ExtSitesEnableThisTool=Vis eksterne kalendere (definert i global setup) i agenda. Påvirker ikke eksterne kalendere definert av brukere.
 ExtSitesNbOfAgenda=Antall kalendere
-AgendaExtNb=Kalender nummer %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL til. ical-fil
 ExtSiteNoLabel=Ingen beskrivelse
 VisibleTimeRange=Synlig tidsområde

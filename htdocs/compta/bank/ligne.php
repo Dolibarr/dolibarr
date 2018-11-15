@@ -3,10 +3,11 @@
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +29,12 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
 if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->don->enabled)) $langs->load("donations");
 if (! empty($conf->loan->enabled)) $langs->load("loan");
@@ -100,8 +99,10 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     	{
         	dol_print_error($db);
     	}
-	} else {
-		setEventMessage('Missing ids','errors');
+	}
+	else
+	{
+		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}
 }
 
@@ -437,6 +438,7 @@ if ($result)
 
         // Type of payment / Number
         print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero");
+        print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
         print "</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
@@ -449,7 +451,6 @@ if ($result)
                 $receipt=new RemiseCheque($db);
                 $receipt->fetch($objp->receiptid);
                 print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);
-
             }
             print '</td>';
         }
@@ -459,22 +460,10 @@ if ($result)
         }
         print "</tr>";
 
-        // Bank of cheque
-        print "<tr><td>".$langs->trans("Bank")."</td>";
-        if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
-        {
-            print '<td>';
-            print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
-            print '</td>';
-        }
-        else
-        {
-            print '<td>'.$objp->banque.'</td>';
-        }
-        print "</tr>";
-
         // Transmitter
-        print "<tr><td>".$langs->trans("CheckTransmitter")."</td>";
+        print "<tr><td>".$langs->trans("CheckTransmitter");
+        print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+        print "</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
@@ -487,12 +476,28 @@ if ($result)
         }
         print "</tr>";
 
+        // Bank of cheque
+        print "<tr><td>".$langs->trans("Bank");
+        print ' <em>('.$langs->trans("ChequeBank").')</em>';
+        print "</td>";
+        if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+        {
+        	print '<td>';
+        	print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
+        	print '</td>';
+        }
+        else
+        {
+        	print '<td>'.$objp->banque.'</td>';
+        }
+        print "</tr>";
+
         // Date ope
         print '<tr><td>'.$langs->trans("DateOperation").'</td>';
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print $form->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
+            print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';
@@ -516,7 +521,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print $form->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
+            print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';
@@ -676,13 +681,12 @@ if ($result)
 
 			print '</form>';
         }
-
     }
 
     $db->free($result);
 }
 else dol_print_error($db);
 
+// End of page
 llxFooter();
-
 $db->close();

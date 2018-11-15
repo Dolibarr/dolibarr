@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2016 Juanjo Menent 		<jmenent@2byte.es>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,21 +24,17 @@
  *	\brief      Card of a direct debit
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories','bills','withdrawals'));
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
-
-$langs->load("bills");
-$langs->load("withdrawals");
-
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
@@ -244,7 +241,7 @@ if ($id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
-		print $form->select_date('','','','','',"userfile",1,1);
+		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
 		print '</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode",$object->methodes_trans);
@@ -268,7 +265,7 @@ if ($id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->select_date('','','','','',"infocredit",1,1);
+		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
@@ -322,6 +319,11 @@ if ($id > 0 || $ref)
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
+		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		{
+			$page = 0;
+			$offset = 0;
+		}
 	}
 
 	$sql.= $db->plimit($limit+1, $offset);
@@ -414,6 +416,6 @@ if ($id > 0 || $ref)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

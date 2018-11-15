@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,6 +93,9 @@ class FileUpload
 		}
 		elseif ($element == 'product') {
 			$dir_output = $conf->product->multidir_output[$conf->entity];
+		}
+		elseif ($element == 'productbatch') {
+			$dir_output = $conf->productbatch->multidir_output[$conf->entity];
 		}
 		elseif ($element == 'action') {
 			$pathname = 'comm/action'; $filename='actioncomm';
@@ -222,7 +225,7 @@ class FileUpload
 	 * getFileObject
 	 *
 	 * @param	string		$file_name		Filename
-	 * @return 	stdClass|NULL
+	 * @return 	stdClass|null
 	 */
 	protected function getFileObject($file_name)
 	{

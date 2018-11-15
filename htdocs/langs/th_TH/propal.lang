@@ -33,6 +33,7 @@ PropalStatusSigned=ลงนาม (ความต้องการของ�
 PropalStatusNotSigned=ไม่ได้ลงชื่อ (ปิด)
 PropalStatusBilled=การเรียกเก็บเงิน
 PropalStatusDraftShort=ร่าง
+PropalStatusValidatedShort=ผ่านการตรวจสอบ
 PropalStatusClosedShort=ปิด
 PropalStatusSignedShort=ลงนาม
 PropalStatusNotSignedShort=ไม่ได้ลงนาม
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 เดือน
 TypeContact_propal_internal_SALESREPFOLL=แทนข้อเสนอดังต่อไปนี้ขึ้น
 TypeContact_propal_external_BILLING=ติดต่อใบแจ้งหนี้ของลูกค้า
 TypeContact_propal_external_CUSTOMER=การติดต่อกับลูกค้าข้อเสนอดังต่อไปนี้ขึ้น
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=รูปแบบข้อเสนอฉบับสมบูรณ์ (โลโก้ ... )
 DefaultModelPropalCreate=เริ่มต้นการสร้างแบบจำลอง

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
  *
@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->load("companies");
-$langs->load("mails");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'mails', 'admin', 'other'));
 
 $id = GETPOST("id",'int');
 $action = GETPOST('action','aZ09');
@@ -69,7 +67,7 @@ if ($action == 'add')
 
     if ($actionid <= 0)
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), null, 'errors');
         $error++;
     }
 
@@ -139,7 +137,7 @@ if ($result > 0)
 
     dol_fiche_head($head, 'notify', $langs->trans("User"), -1, 'user');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', '', '', 0, '', '', 0, '');
 
@@ -190,7 +188,7 @@ if ($result > 0)
 
 
     // Add notification form
-    print_fiche_titre($langs->trans("AddNewNotification"),'','');
+    print load_fiche_titre($langs->trans("AddNewNotification"),'','');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -207,7 +205,7 @@ if ($result > 0)
     print_liste_field_titre('');
 	print "</tr>\n";
 
-    $var=false;
+
 //    $listofemails=$object->thirdparty_and_contact_email_array();
     if ($object->email)
     {
@@ -278,8 +276,7 @@ if ($result > 0)
     }
 
     // List of active notifications
-    print_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
-    $var=true;
+    print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
 
     // Line with titles
     print '<table width="100%" class="noborder">';
@@ -301,7 +298,6 @@ if ($result > 0)
 
         while ($i < $num)
         {
-            $var = !$var;
 
             $obj = $db->fetch_object($resql);
 
@@ -411,6 +407,11 @@ if ($result > 0)
     {
         $result = $db->query($sql);
         $nbtotalofrecords = $db->num_rows($result);
+        if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+        {
+        	$page = 0;
+        	$offset = 0;
+        }
     }
 
     $sql.= $db->plimit($limit+1, $offset);
@@ -506,7 +507,6 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-
+// End of page
 llxFooter();
-
 $db->close();

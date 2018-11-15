@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,11 @@
  */
 class MenuManager
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $type_user;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                            // To store default target to use onto links
 	var $name="auguria";
@@ -237,9 +241,16 @@ class MenuManager
        					{
        						$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
        						$substitarray['__USERID__'] = $user->id;	// For backward compatibility
-       						$val2['url'] = make_substitutions($val2['url'], $substitarray);
+       						$val2['url'] = make_substitutions($val2['url'], $substitarray);		// Make also substitution of __(XXX)__ and __[XXX]__
 
-	        				$relurl2=dol_buildpath($val2['url'],1);
+       						if (! preg_match("/^(http:\/\/|https:\/\/)/i", $val2['url']))
+       						{
+       							$relurl2=dol_buildpath($val2['url'],1);
+       						}
+       						else
+       						{
+       							$relurl2=$val2['url'];
+       						}
 	        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
 	        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
 	        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';

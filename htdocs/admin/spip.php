@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("admin");
-$langs->load("members");
-$langs->load("mailmanspip");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "members", "mailmanspip"));
 
 if (! $user->admin) accessforbidden();
 
@@ -118,8 +117,6 @@ print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup'
 $head = mailmanspip_admin_prepare_head();
 
 
-$var=true;
-
 /*
  * Spip
  */
@@ -166,6 +163,6 @@ else
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,9 +1,0 @@
-
-For languages:
-http://demo.icu-project.org/icu-bin/locexp?d_=fr
-
-For format number:
-http://en.wikipedia.org/wiki/Decimal_mark
-
-For date format:
-http://en.wikipedia.org/wiki/Date_format_by_country

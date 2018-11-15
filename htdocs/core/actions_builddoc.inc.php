@@ -124,5 +124,13 @@ if ($action == 'remove_file' && $permissioncreate)
     $ret=dol_delete_file($file,0,0,0,$object);
     if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
     else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');
+
+    // Make a redirect to avoid to keep the remove_file into the url that create side effects
+    $urltoredirect = $_SERVER['REQUEST_URI'];
+    $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+    $urltoredirect = preg_replace('/action=remove_file&?/', '', $urltoredirect);
+
+    header('Location: '.$urltoredirect);
+    exit;
 }
 

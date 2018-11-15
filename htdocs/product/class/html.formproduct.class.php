@@ -29,8 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
  */
 class FormProduct
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	// Cache arrays
 	var $cache_warehouses=array();
@@ -45,8 +52,6 @@ class FormProduct
 	function __construct($db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 
@@ -160,6 +165,7 @@ class FormProduct
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
 	 *
@@ -167,8 +173,9 @@ class FormProduct
 	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	String					full label with all parents, separated by ' >> '
 	 */
-	private function get_parent_path($tab, $final_label='') {
-
+    private function get_parent_path($tab, $final_label='')
+    {
+        //phpcs:enable
 		if(empty($final_label)) $final_label = $tab['label'];
 
 		if(empty($tab['parent_id'])) return $final_label;
@@ -180,7 +187,6 @@ class FormProduct
 		}
 
 		return $final_label;
-
 	}
 
 	/**
@@ -274,6 +280,7 @@ class FormProduct
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Output a combo box with list of units
 	 *  pour l'instant on ne definit pas les unites dans la base
@@ -286,9 +293,11 @@ class FormProduct
 	 */
 	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
+        //phpcs:enable
 		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return a combo box with list of units
 	 *  For the moment, units labels are defined in measuring_units_string
@@ -301,6 +310,7 @@ class FormProduct
 	 */
 	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
+        //phpcs:enable
 		global $langs,$conf,$mysoc;
 		$langs->load("other");
 

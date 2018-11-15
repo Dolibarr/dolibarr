@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
- * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,26 +33,34 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassPerso extends ModeleGenPassword
 {
-	var $id;
-	var $length;
-	var $length2; // didn't overright display
-	var $NbMaj;
-	var $NbNum;
-	var $NbSpe;
-	var $NbRepeat;
-	var $WithoutAmbi;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $db;
-	var $conf;
-	var $lang;
-	var $user;
+	public $length;
+	public $length2; // didn't overright display
+	public $NbMaj;
+	public $NbNum;
+	public $NbSpe;
+	public $NbRepeat;
+	public $WithoutAmbi;
 
-	var $Maj;
-	var $Min;
-	var $Nb;
-	var $Spe;
-	var $Ambi;
-	var $All;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	public $conf;
+	public $lang;
+	public $user;
+
+	public $Maj;
+	public $Min;
+	public $Nb;
+	public $Spe;
+	public $Ambi;
+	public $All;
 
 	/**
 	 *	Constructor
@@ -72,7 +80,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->langs=$langs;
 		$this->user=$user;
 
-		if(empty($conf->global->USER_PASSWORD_PATTERN)){
+		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
 			// default value (8carac, 1maj, 1digit, 1spe,  3 repeat, no ambi at auto generation.
 			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;3;1','chaine',0,'',$conf->entity);
 		}
@@ -105,7 +113,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
 		//$this->All = $this->Maj. $this->Min. $this->Nb. $this->Spe;
 		//$this->All =  $this->Spe;
-
 	}
 
 	/**
@@ -201,7 +208,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *		@param		string	$password	Password to check
 	 *      @return     int					0 if KO, >0 if OK
 	 */
-	function consecutiveInterationSameCharacter($password){
+    function consecutiveInterationSameCharacter($password)
+    {
 		$last = "";
 		$count = 0;
 		$char = str_split($password);
@@ -220,4 +228,3 @@ class modGeneratePassPerso extends ModeleGenPassword
 		return 1;
 	}
 }
-

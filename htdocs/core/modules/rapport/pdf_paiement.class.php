@@ -40,9 +40,9 @@ class pdf_paiement
 	function __construct($db)
 	{
 		global $langs,$conf;
-		$langs->load("bills");
-		$langs->load("compta");
-		$langs->load("main");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","compta","main"));
 
 		$this->db = $db;
 		$this->description = $langs->transnoentities("ListOfCustomerPayments");
@@ -80,10 +80,10 @@ class pdf_paiement
 		}
 		// which type of document will be generated: clients (client) or providers (fourn) invoices
 		$this->doc_type = "client";
-
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Fonction generant la rapport sur le disque
 	 *
@@ -95,6 +95,7 @@ class pdf_paiement
 	 */
 	function write_file($_dir, $month, $year, $outputlangs)
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		global $conf, $hookmanager, $langs, $user;
@@ -187,7 +188,7 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= ", ba.ref as bankaccount";
 				$sql.= ", p.rowid as prowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (" . getEntity('c_paiement').")";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql.= ", ".MAIN_DB_PREFIX."facture as f,";
 				$sql.= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
 				if (! empty($conf->banque->enabled))
@@ -218,7 +219,7 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= ", ba.ref as bankaccount";
 				$sql.= ", p.rowid as prowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f,";
 				$sql.= " ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
 				if (! empty($conf->banque->enabled))
@@ -248,12 +249,10 @@ class pdf_paiement
 		{
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			$var=True;
 
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-
 
 				$lines[$i][0] = $objp->facnumber;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);
@@ -408,6 +407,7 @@ class pdf_paiement
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Output body
 	 *
@@ -419,6 +419,7 @@ class pdf_paiement
 	 */
 	function Body(&$pdf, $page, $lines, $outputlangs)
 	{
+        // phpcs:enable
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -497,4 +498,3 @@ class pdf_paiement
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('Total')." : ".price($total), 0, 'R', 0);
 	}
 }
-

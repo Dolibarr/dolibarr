@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2016	Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011		Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 if (!$user->admin)
     accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'agenda'));
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
@@ -52,10 +51,10 @@ $type = 'action';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
+	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -67,7 +66,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	}
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -357,7 +356,7 @@ print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
-$tmplist=array('show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+$tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
 print '</td></tr>'."\n";
 
@@ -400,6 +399,6 @@ print '</form>';
 
 print "<br>";
 
+// End of page
 llxFooter();
-
 $db->close();

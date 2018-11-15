@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,11 +31,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/project/modules_project.php';
  */
 class mod_project_simple extends ModeleNumRefProjects
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='PJ';
-    var $error='';
-	var $nom = "Simple";
-	var $name = "Simple";
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='PJ';
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Simple';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Simple';
 
 
     /**
@@ -140,8 +159,9 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     * 	Return next reference not yet used as a reference
+     *  Return next reference not yet used as a reference
      *
      *  @param	Societe	$objsoc     Object third party
      *  @param  Project	$project	Object project
@@ -149,7 +169,7 @@ class mod_project_simple extends ModeleNumRefProjects
      */
     function project_get_num($objsoc=0,$project='')
     {
+        // phpcs:enable
         return $this->getNextValue($objsoc,$project);
     }
 }
-

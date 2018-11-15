@@ -21,6 +21,7 @@
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure journals
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -30,13 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
-$langs->load("admin");
-$langs->load("compta");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","compta","accountancy"));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';
 $confirm=GETPOST('confirm','alpha');
-$id=GETPOST('id','int');
+$id=35;
 $rowid=GETPOST('rowid','alpha');
 $code=GETPOST('code','alpha');
 
@@ -51,8 +51,8 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
-$listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
+$listoffset=GETPOST('listoffset', 'alpha');
+$listlimit=GETPOST('listlimit', 'int')>0?GETPOST('listlimit', 'int'):1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -128,27 +128,28 @@ complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
-	// Must match ids defined into eldy.lib.php
-	$sourceList = array(
-			'1' => $langs->trans('AccountingJournalType1'),
-			'2' => $langs->trans('AccountingJournalType2'),
-			'3' => $langs->trans('AccountingJournalType3'),
-			'4' => $langs->trans('AccountingJournalType4'),
-			'5' => $langs->trans('AccountingJournalType5'),
-			'9' => $langs->trans('AccountingJournalType9')
-	);
+// Must match ids defined into eldy.lib.php
+$sourceList = array(
+	'1' => $langs->trans('AccountingJournalType1'),
+	'2' => $langs->trans('AccountingJournalType2'),
+	'3' => $langs->trans('AccountingJournalType3'),
+	'4' => $langs->trans('AccountingJournalType4'),
+	'5' => $langs->trans('AccountingJournalType5'),
+	'8' => $langs->trans('AccountingJournalType8'),
+	'9' => $langs->trans('AccountingJournalType9'),
+);
 
 /*
  * Actions
  */
 
-if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
+if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha'))
 {
 	$search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
-if (GETPOST('actionadd') || GETPOST('actionmodify'))
+if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 {
 	$listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
 	$listfieldinsert=explode(',',$tabfieldinsert[$id]);
@@ -189,7 +190,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
 
 	// Si verif ok et action add, on ajoute la ligne
-	if ($ok && GETPOST('actionadd'))
+	if ($ok && GETPOST('actionadd', 'alpha'))
 	{
 		if ($tabrowid[$id])
 		{
@@ -201,7 +202,6 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			{
 				$obj = $db->fetch_object($result);
 				$newid=($obj->newid + 1);
-
 			} else {
 				dol_print_error($db);
 			}
@@ -251,7 +251,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	}
 
 	// Si verif ok et action modify, on modifie la ligne
-	if ($ok && GETPOST('actionmodify'))
+	if ($ok && GETPOST('actionmodify', 'alpha'))
 	{
 		if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
 		else { $rowidcol="rowid"; }
@@ -293,10 +293,10 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
-if (GETPOST('actioncancel'))
-{
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
+//if (GETPOST('actioncancel', 'alpha'))
+//{
+//	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
+//}
 
 if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
@@ -400,24 +400,9 @@ if ($id)
 	$sql=$tabsql[$id];
 	$sql.= " WHERE a.entity = ".$conf->entity;
 
-	if ($sortfield)
-	{
-		// If sort order is "country", we use country_code instead
-		if ($sortfield == 'country') $sortfield='country_code';
-		$sql.= " ORDER BY ".$sortfield;
-		if ($sortorder)
-		{
-			$sql.=" ".strtoupper($sortorder);
-		}
-		$sql.=", ";
-		// Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-		$tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-		$tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-	}
-	else {
-		$sql.=" ORDER BY ";
-	}
-	$sql.=$tabsqlsort[$id];
+	// If sort order is "country", we use country_code instead
+	if ($sortfield == 'country') $sortfield='country_code';
+	$sql.=$db->order($sortfield,$sortorder);
 	$sql.=$db->plimit($listlimit+1,$offset);
 
 	$fieldlist=explode(',',$tabfield[$id]);
@@ -433,7 +418,6 @@ if ($id)
 	if ($tabname[$id])
 	{
 		$alabelisused=0;
-		$var=false;
 
 		$fieldlist=explode(',',$tabfield[$id]);
 
@@ -477,7 +461,7 @@ if ($id)
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
-		if (GETPOST('actionadd'))
+		if (GETPOST('actionadd', 'alpha'))
 		{
 			foreach ($fieldlist as $key=>$val)
 			{
@@ -513,14 +497,13 @@ if ($id)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var=true;
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
 		$paramwithsearch = $param;
 		if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
 		if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-		if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+		if (GETPOST('from', 'alpha')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
 
 		// There is several pages
 		if ($num > $listlimit)
@@ -618,6 +601,7 @@ if ($id)
 
 					if (empty($reshook))
 					{
+                        $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
 
@@ -628,10 +612,12 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
-								$langs->load("accountancy");
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
-								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($obj->nature)?$key:$obj->{$fieldlist[$field]});
+								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature))?$key:$obj->{$fieldlist[$field]});
 							}
+							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+								$valuetoshow=$langs->trans($obj->label);
+                            }
 
 							$class='tddict';
 							// Show value for field
@@ -657,13 +643,7 @@ if ($id)
 					// Active
 					print '<td align="center" class="nowrap">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-					else
-				 	{
-				 		if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
-				 		else if (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
-				  		else if (isset($obj->type) && in_array($obj->type, array('system')) && ! empty($obj->active) && $obj->code != 'AC_OTH') print $langs->trans("UsedOnlyWithTypeOption");
-						else print $langs->trans("AlwaysActive");
-					}
+					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
@@ -702,7 +682,7 @@ if ($id)
 
 print '<br>';
 
-
+// End of page
 llxFooter();
 $db->close();
 

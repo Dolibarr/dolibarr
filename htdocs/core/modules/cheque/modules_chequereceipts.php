@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModeleNumRefChequeReceipts
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not
@@ -115,12 +118,16 @@ abstract class ModeleNumRefChequeReceipts
 
 /**
  *	\class      ModeleChequeReceipts
- *	\brief      Classe mere des modeles de 
+ *	\brief      Classe mere des modeles de
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -130,6 +137,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='chequereceipt';
@@ -201,7 +209,6 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-
 	}
 	else
 	{
@@ -209,4 +216,3 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		return -1;
 	}
 }
-

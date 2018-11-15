@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  *
@@ -161,7 +161,8 @@ function bank_admin_prepare_head($object)
  * @param   Object	$object		Object related to tabs
  * @return  array				Array of tabs to shoc
  */
-function various_payment_prepare_head($object) {
+function various_payment_prepare_head($object)
+{
 
 	global $db, $langs, $conf;
 
@@ -214,7 +215,6 @@ function checkSwiftForAccount($account)
     } else {
         return false;
     }
-
 }
 
 /**
@@ -356,7 +356,7 @@ function checkES($IentOfi, $InumCta)
     $sum = 0;
 
     for ($i = 0; $i < 11; $i++) {
-        $sum += $values[$i] * substr($InumCta, $i, 1);
+        $sum += $values[$i] * (int) substr($InumCta, $i, 1);//int to cast result of substr to a number
     }
 
     $key = 11 - $sum % 11;
@@ -369,4 +369,3 @@ function checkES($IentOfi, $InumCta)
     $keycontrol .= $key;
     return $keycontrol;
 }
-

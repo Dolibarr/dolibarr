@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012       Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2018  Philippe Grand      <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,20 @@
 /**
  *	\file       htdocs/adherents/canvas/default/actions_adherentcard_default.class.php
  *	\ingroup    member
- *	\brief      Fichier de la classe Thirdparty adherent card controller (default canvas)
+ *	\brief      File of class Thirdparty member card controller (default canvas)
  */
 include_once DOL_DOCUMENT_ROOT.'/adherents/canvas/actions_adherentcard_common.class.php';
 
 /**
  *	\class      ActionsAdherentCardDefault
- *	\brief      Classe permettant la gestion des adherents par defaut
+ *	\brief      Class allowing the management of the members by default
  */
 class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 {
 	/**
      *	Constructor
      *
-     *	@param	DoliDB	$db				Handler acces base de donnees
+     *	@param	DoliDB	$db				Handler acces data base
      *	@param	string	$dirmodule		Name of directory of module
      *	@param	string	$targetmodule	Name of directory of module where canvas is stored
      *	@param	string	$canvas			Name of canvas
@@ -51,7 +51,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	/**
 	 * 	Return the title of card
 	 *
-	 * 	@param	string	$action		Code action
+	 * 	@param	string	$action		Action code
 	 * 	@return	string				Title
 	 */
 	private function getTitle($action)
@@ -67,6 +67,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Assign custom values for canvas
 	 *
@@ -76,6 +77,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	function assign_values(&$action, $id)
 	{
+        // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
@@ -117,10 +119,10 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		{
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
-
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -132,6 +134,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
         //$this->getFieldList();
@@ -139,4 +142,3 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
         $this->list_datas = array();
 	}
 }
-

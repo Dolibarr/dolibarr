@@ -1,8 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018     	ptibogxiv		<support@ptibogxiv.net> 
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -33,18 +32,37 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Subscription extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='subscription';
-	public $table_element='subscription';
-    public $picto='payment';
 
-	var $datec;				// Date creation
-	var $datem;				// Date modification
-	var $dateh;				// Subscription start date (date subscription)
-	var $datef;				// Subscription end date
-	var $fk_adherent;
-  var $fk_type;     // Type of member for archive the changes
-	var $amount;
-	var $fk_bank;
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='subscription';
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='payment';
+
+	public $datec;				// Date creation
+	public $datem;				// Date modification
+	public $dateh;				// Subscription start date (date subscription)
+	public $datef;				// Subscription end date
+
+	/**
+     * @var int ID
+     */
+	public $fk_adherent;
+
+	public $amount;
+
+	/**
+     * @var int ID
+     */
+	public $fk_bank;
 
 
 	/**
@@ -84,16 +102,8 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
-            if ($this->fk_type == NULL) {
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$member=new Adherent($this->db);
-		$result=$member->fetch($this->fk_adherent);
-    $type=$member->typeid;
-    }else {
-    $type=$this->fk_type;
-    }
-    $sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($this->datec)."',";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, datec, dateadh, datef, subscription, note)";
+        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($this->datec)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",";
@@ -141,7 +151,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$sql.=" tms,";
 		$sql.=" dateadh as dateh,";
 		$sql.=" datef,";
-		$sql.=" subscription, note, fk_bank, fk_type";
+		$sql.=" subscription, note, fk_bank";
 		$sql.=" FROM ".MAIN_DB_PREFIX."subscription";
 		$sql.="	WHERE rowid=".$rowid;
 
@@ -155,7 +165,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
-				$this->fk_type        = $obj->fk_type;
+
 				$this->fk_adherent    = $obj->fk_adherent;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
@@ -365,6 +375,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	    return '';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -373,6 +384,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	 */
 	function LibStatut($statut)
 	{
+        // phpcs:enable
 	    global $langs;
 	    $langs->load("members");
 	    return '';
@@ -404,7 +416,6 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

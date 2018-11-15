@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin		<patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-
+// Load translation files required by the page
 $langs->load("categories");
 
 $id   = GETPOST('id','int');
@@ -168,7 +168,6 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 			setEventMessages($object->error,$object->errors,'errors');
 		}
 	}
-
 }
 
 
@@ -368,13 +367,12 @@ if ($type == Categorie::TYPE_PRODUCT)
 				print '<td class="tdtop">'.$prod->label."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
-				$typeid=$object->type;
 				$permission=0;
-				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($type == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$prod->id."'>";
@@ -416,13 +414,12 @@ if ($type == Categorie::TYPE_SUPPLIER)
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
-				$typeid=$object->type;
 				$permission=0;
-				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($type == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
@@ -470,13 +467,12 @@ if($type == Categorie::TYPE_CUSTOMER)
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
-				$typeid=$object->type;
 				$permission=0;
-				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($type == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
@@ -524,13 +520,12 @@ if ($type == Categorie::TYPE_MEMBER)
 				print '<td class="tdtop">'.$member->firstname."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
-				$typeid=$object->type;
 				$permission=0;
-				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($type == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$member->id."'>";
@@ -575,14 +570,12 @@ if ($type == Categorie::TYPE_CONTACT)
 				print "</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
-				$typeid=$object->type;
 				$permission=0;
-				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-				if ($typeid == Categorie::TYPE_CONTACT)     $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($type == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$contact->id."'>";
@@ -629,14 +622,12 @@ if ($type == Categorie::TYPE_ACCOUNT)
                 print '<td class="tdtop">'.$account->number."</td>\n";
                 // Link to delete from category
                 print '<td align="right">';
-                $typeid=$object->type;
                 $permission=0;
-                if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-                if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-                if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-                if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-                if ($typeid == Categorie::TYPE_ACCOUNT)      $permission=$user->rights->banque->configurer;
-                if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+                if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+                if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+                if ($type == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+                if ($type == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+                if ($type == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
                 if ($permission)
                 {
                     print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$account->id."'>";
@@ -676,20 +667,18 @@ if ($type == Categorie::TYPE_PROJECT)
 			{
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
-				print $project->getNomUrl(1,0);
+				print $project->getNomUrl(1);
 				print "</td>\n";
 				print '<td class="tdtop">'.$project->ref."</td>\n";
 				print '<td class="tdtop">'.$project->title."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
-				$typeid=$object->type;
 				$permission=0;
-				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-				if ($typeid == Categorie::TYPE_ACCOUNT)      $permission=$user->rights->banque->configurer;
-				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($type == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($type == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($type == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($type == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$project->id."'>";
@@ -707,6 +696,6 @@ if ($type == Categorie::TYPE_PROJECT)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

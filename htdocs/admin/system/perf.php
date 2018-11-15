@@ -26,9 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("install","other","admin"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -50,7 +49,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("PerfDolibarr"),'','title_setup');
 
-print $langs->trans("YouMayFindPerfAdviceHere",'http://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print $langs->trans("YouMayFindPerfAdviceHere",'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').' (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 
 // Recupere la version de PHP
 $phpversion=version_php();
@@ -491,7 +490,6 @@ print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
 print '<br>';
 */
 
-
+// End of page
 llxFooter();
-
 $db->close();

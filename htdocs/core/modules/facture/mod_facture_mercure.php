@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
@@ -33,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_mercure extends ModeleNumRefFactures
 {
-    var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-    var $error = '';
+    /**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+    /**
+	 * @var string Error message
+	 */
+	public $error = '';
 
 
     /**
@@ -44,7 +52,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
      */
     function info()
     {
-        global $conf,$langs;
+        global $conf, $langs;
 
         $langs->load("bills");
 
@@ -78,7 +86,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">',$tooltip,1,1).'</td>';
         $texte.= '</tr>';
-        
+
         // Parametrage du prefix des avoirs
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
         $texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$tooltip,1,1).'</td>';
@@ -135,7 +143,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         // Get Mask value
         $mask = '';
-        if (is_object($facture) && $facture->type == 1) 
+        if (is_object($facture) && $facture->type == 1)
         {
         	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
         	if (! $mask)
@@ -175,5 +183,4 @@ class mod_facture_mercure extends ModeleNumRefFactures
     {
         return $this->getNextValue($objsoc,$objforref,$mode);
     }
-
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
 
-$langs->load("propal");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('propal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid','int');
@@ -530,7 +530,6 @@ if (! empty($conf->propal->enabled))
 //print '</td></tr></table>';
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

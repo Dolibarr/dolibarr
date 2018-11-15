@@ -31,9 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","companies","resource","holiday","accountancy","hrm"));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=32;
 $rowid=GETPOST('rowid','alpha');
@@ -50,12 +51,12 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"),'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"),'switch_on');
 
-$listoffset=GETPOST('listoffset');
-$listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
+$listoffset=GETPOST('listoffset','alpha');
+$listlimit=GETPOST('listlimit','int')>0?GETPOST('listlimit','int'):1000;
 $active = 1;
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortfield = GETPOST("sortfield",'aZ09comma');
+$sortorder = GETPOST("sortorder",'aZ09comma');
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page ;
@@ -133,13 +134,13 @@ $sourceList=array();
  * Actions
  */
 
-if (GETPOST('button_removefilter') || GETPOST('button_removefilter.x') || GETPOST('button_removefilter_x'))
+if (GETPOST('button_removefilter','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter_x','alpha'))
 {
     $search_country_id = '';
 }
 
 // Actions add or modify an entry into a dictionary
-if (GETPOST('actionadd') || GETPOST('actionmodify'))
+if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 {
     $listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
     $listfieldinsert=explode(',',$tabfieldinsert[$id]);
@@ -152,7 +153,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     {
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
 		if ($value == 'range_account' && empty($_POST['range_account'])) continue;
-		if ($value == 'country') continue;								// country_id required but not country
+		if ($value == 'country' || $value == 'country_id') continue;
 		if (! isset($_POST[$value]) || $_POST[$value]=='')
         {
             $ok=0;
@@ -175,16 +176,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         	$ok=0;
     		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
         }
-        /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
-    	{
-	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
-	    }*/
     }
-    if (isset($_POST["country"]) && ($_POST["country"] <= 0))
+    if (! is_numeric(GETPOST('position','alpha')))
     {
-       	$ok=0;
-       	setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
+    	$langs->loadLangs(array("errors"));
+   		$ok=0;
+   		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
     }
 
 	// Clean some parameters
@@ -193,7 +190,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
 
     // Si verif ok et action add, on ajoute la ligne
-    if ($ok && GETPOST('actionadd'))
+    if ($ok && GETPOST('actionadd','alpha'))
     {
         if ($tabrowid[$id])
         {
@@ -205,7 +202,6 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             {
                 $obj = $db->fetch_object($result);
                 $newid=($obj->newid + 1);
-
             } else {
                 dol_print_error($db);
             }
@@ -214,15 +210,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$id]." (";
         // List of fields
-        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
-        	$sql.= $tabrowid[$id].",";
+        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert)) $sql.= $tabrowid[$id].",";
         $sql.= $tabfieldinsert[$id];
         $sql.=",active)";
         $sql.= " VALUES(";
 
         // List of values
-        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
-        	$sql.= $newid.",";
+        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert)) $sql.= $newid.",";
         $i=0;
         foreach ($listfieldinsert as $f => $value)
         {
@@ -255,7 +249,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
 
     // Si verif ok et action modify, on modifie la ligne
-    if ($ok && GETPOST('actionmodify'))
+    if ($ok && GETPOST('actionmodify','alpha'))
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
@@ -296,7 +290,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
-if (GETPOST('actioncancel'))
+if (GETPOST('actioncancel','alpha'))
 {
     //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
@@ -306,7 +300,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+    $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
 
     dol_syslog("delete", LOG_DEBUG);
     $result = $db->query($sql);
@@ -330,10 +324,10 @@ if ($action == $acts[0])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code = '".$db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -350,10 +344,10 @@ if ($action == $acts[1])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code = '".$db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -370,10 +364,10 @@ if ($action == 'activate_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code = '".$db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -390,10 +384,10 @@ if ($action == 'disable_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code = '".$db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -440,27 +434,12 @@ if ($id)
     {
         if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
         else $sql.=" WHERE ";
-        $sql.= " c.rowid = ".$search_country_id;
+        $sql.= " (a.fk_country = ".$search_country_id." OR a.fk_country = 0)";
     }
 
-    if ($sortfield)
-    {
-        // If sort order is "country", we use country_code instead
-    	if ($sortfield == 'country') $sortfield='country_code';
-        $sql.= " ORDER BY ".$sortfield;
-        if ($sortorder)
-        {
-            $sql.=" ".strtoupper($sortorder);
-        }
-        $sql.=", ";
-        // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-    }
-    else {
-        $sql.=" ORDER BY ";
-    }
-    $sql.=$tabsqlsort[$id];
+    // If sort order is "country", we use country_code instead
+    if ($sortfield == 'country') $sortfield='country_code';
+    $sql.=$db->order($sortfield,$sortorder);
     $sql.=$db->plimit($listlimit+1,$offset);
     //print $sql;
 
@@ -477,7 +456,6 @@ if ($id)
     if ($tabname[$id])
     {
         $alabelisused=0;
-        $var=false;
 
         $fieldlist=explode(',',$tabfield[$id]);
 
@@ -534,7 +512,7 @@ if ($id)
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
-        if (GETPOST('actionadd'))
+        if (GETPOST('actionadd','alpha'))
         {
             foreach ($fieldlist as $key=>$val)
             {
@@ -571,7 +549,6 @@ if ($id)
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
         $param = '&id='.$id;
         if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
@@ -741,7 +718,7 @@ if ($id)
                                 $valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
                             else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
-                                $langs->load("propal");
+                                $langs->loadLangs(array("propal"));
                                 $key=$langs->trans("AvailabilityType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
@@ -799,7 +776,7 @@ if ($id)
                     print '<td class="center">';
                     if (empty($obj->formula))
                     {
-                        print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&account_category='.$obj->rowid.'">';
+                        print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&save_lastsearch_values=1&account_category='.$obj->rowid.'">';
                         print $langs->trans("ListOfAccounts");
                         print '</a>';
                     }
@@ -822,7 +799,7 @@ if ($id)
 
 print '<br>';
 
-
+// End of page
 llxFooter();
 $db->close();
 

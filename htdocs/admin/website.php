@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("website");
+// Load translation files required by the page
+$langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -64,7 +62,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('admin'));
+$hookmanager->initHooks(array('website'));
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -169,7 +167,6 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
             {
                 $obj = $db->fetch_object($result);
                 $newid=($obj->newid + 1);
-
             } else {
                 dol_print_error($db);
             }
@@ -324,10 +321,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     if ($website->id > 0)
     {
-	    $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
-	    $result = $db->query($sql);
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
 
-	    $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
 	    $result = $db->query($sql);
 	    if (! $result)
 	    {
@@ -436,24 +439,7 @@ if ($id)
 {
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];
-
-    if ($sortfield)
-    {
-        // If sort order is "country", we use country_code instead
-        $sql.= " ORDER BY ".$sortfield;
-        if ($sortorder)
-        {
-            $sql.=" ".strtoupper($sortorder);
-        }
-        $sql.=", ";
-        // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-    }
-    else {
-        $sql.=" ORDER BY ";
-    }
-    $sql.=$tabsqlsort[$id];
+    $sql.=$db->order($sortfield,$sortorder);
     $sql.=$db->plimit($limit+1, $offset);
     //print $sql;
 
@@ -514,15 +500,7 @@ if ($id)
             }
         }
 
-        $tmpaction = 'create';
-        $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-        $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
-        $error=$hookmanager->error; $errors=$hookmanager->errors;
-
-        if (empty($reshook))
-        {
-       		fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
-        }
+        fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
 
         print '<td colspan="3" align="right">';
         if ($action != 'edit')
@@ -602,7 +580,7 @@ if ($id)
                 {
                     $tmpaction='edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('editWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     if (empty($reshook)) fieldListWebsites($fieldlist,$obj,$tabname[$id],'edit');
@@ -614,7 +592,7 @@ if ($id)
                 {
 	              	$tmpaction = 'view';
                     $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('viewWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -667,9 +645,7 @@ if ($id)
 
 dol_fiche_end();
 
-//print '<br>';
-
-
+// End of page
 llxFooter();
 $db->close();
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -66,7 +66,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycard','globalcard'));
+$hookmanager->initHooks(array('thirdpartycontact','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
 {
@@ -102,7 +102,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($cancel)
+	if ($cancel)
     {
         $action='';
         if (! empty($backtopage))
@@ -139,50 +139,37 @@ llxHeader('',$title,$help_url);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
+
+if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
+//if ($res < 0) { dol_print_error($db); exit; }
+
+
+$head = societe_prepare_head($object);
+
+dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+
+dol_fiche_end();
+
+print '<br>';
+
+if ($action != 'presend')
 {
-    // -----------------------------------------
-    // When used with CANVAS
-    // -----------------------------------------
-   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-    $objcanvas->display_canvas($action);							// Show template
-}
-else
-{
-
-    if (!empty($object->id)) $res=$object->fetch_optionals();
-    //if ($res < 0) { dol_print_error($db); exit; }
-
-
-    $head = societe_prepare_head($object);
-
-    dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
-
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
-
-    dol_fiche_end();
-
-	print '<br>';
-
-	if ($action != 'presend')
+	// Contacts list
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 	{
-		// Contacts list
-		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-		{
-			$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-		}
-
-		// Addresses list
-		if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-		{
-			$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-		}
+		$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
+	// Addresses list
+	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+	{
+		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	}
 }
-
 
 // End of page
 llxFooter();

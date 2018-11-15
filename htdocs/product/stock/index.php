@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("stocks");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array('stocks', 'productbatch'));
 
 // Security check
 $result=restrictedArea($user,'stock');
@@ -86,7 +86,6 @@ if ($result)
     {
         $entrepot=new Entrepot($db);
 
-        $var=True;
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
@@ -98,7 +97,6 @@ if ($result)
             $i++;
         }
         $db->free($result);
-
     }
     print "</table>";
 }
@@ -144,7 +142,7 @@ if ($resql)
 		print '<th>'.$langs->trans("EatByDate").'</th>';
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
-	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></th>';
+	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
 
 	$i=0;
@@ -186,6 +184,6 @@ if ($resql)
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

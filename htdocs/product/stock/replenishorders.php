@@ -1,7 +1,8 @@
 <?php
 /*
- * Copyright (C) 2013	Cédric Salvador	<csalvador@gpcsolutions.fr>
- * Copyright (C) 2014	Regis Houssin	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/lib/replenishment.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -52,7 +52,7 @@ $search_datemonth = GETPOST('search_datemonth', 'int');
 $search_dateday = GETPOST('search_dateday', 'int');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (!$sortorder) $sortorder = 'DESC';
@@ -196,76 +196,76 @@ if ($resql)
          '<input type="text" class="flat" name="search_ttc" value="' . dol_escape_htmltag($sttc) . '">'.
          '</td>'.
          '<td class="liste_titre">'.
-         $form->select_date($search_date, 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
+         $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
-         $searchpicto=$form->showFilterAndCheckAddButtons(0);
-         print $searchpicto;
-         '</td>'.
-         '</tr>';
+    $searchpicto = $form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
+    print '</td>';
+    print '</tr>';
 
-         print '<tr class="liste_titre">';
-         print_liste_field_titre(
-             'Ref',
-             $_SERVER['PHP_SELF'],
-             'cf.ref',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'Company',
-             $_SERVER['PHP_SELF'],
-             's.nom',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'Author',
-             $_SERVER['PHP_SELF'],
-             'u.login',
-             '',
-             '',
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'AmountTTC',
-             $_SERVER['PHP_SELF'],
-             'cf.total_ttc',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'OrderCreation',
-             $_SERVER['PHP_SELF'],
-             'cf.date_creation',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'Status',
-             $_SERVER['PHP_SELF'],
-             'cf.fk_statut',
-             '',
-             $param,
-             'align="right"',
-             $sortfield,
-             $sortorder
-             );
-         print '</tr>';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre(
+        'Ref',
+        $_SERVER['PHP_SELF'],
+        'cf.ref',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'Company',
+        $_SERVER['PHP_SELF'],
+        's.nom',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'Author',
+        $_SERVER['PHP_SELF'],
+        'u.login',
+        '',
+        '',
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'AmountTTC',
+        $_SERVER['PHP_SELF'],
+        'cf.total_ttc',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'OrderCreation',
+        $_SERVER['PHP_SELF'],
+        'cf.date_creation',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'Status',
+        $_SERVER['PHP_SELF'],
+        'cf.fk_statut',
+        '',
+        $param,
+        'align="right"',
+        $sortfield,
+        $sortorder
+    );
+    print '</tr>';
 
     $userstatic = new User($db);
 
@@ -325,8 +325,8 @@ if ($resql)
         }
         $i++;
     }
-    print '</table>'.
-         '</form>';
+    print '</table>';
+    print '</form>';
 
     $db->free($resql);
 
@@ -337,6 +337,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

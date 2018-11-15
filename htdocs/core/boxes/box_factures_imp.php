@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,11 @@ class box_factures_imp extends ModeleBoxes
 	var $boxlabel="BoxOldestUnpaidCustomerBills";
 	var $depends = array("facture");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();
@@ -82,7 +86,7 @@ class box_factures_imp extends ModeleBoxes
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
+			$sql = "SELECT s.nom as name, s.rowid as socid, s.email,";
             $sql.= " s.code_client,";
             $sql.= " s.logo,";
 			$sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
@@ -130,9 +134,11 @@ class box_factures_imp extends ModeleBoxes
                     $facturestatic->total_ttc = $objp->total_ttc;
 					$facturestatic->statut = $objp->fk_statut;
 					$facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
+
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
                     $societestatic->client = 1;
+                    $societestatic->email = $objp->email;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
 
@@ -205,5 +211,4 @@ class box_factures_imp extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }

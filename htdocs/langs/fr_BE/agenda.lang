@@ -19,5 +19,4 @@ ProposalSentByEMail=Propale %s envoyée par e-mail
 OrderSentByEMail=Commande client %s envoyée par e-mail
 ShippingSentByEMail=Livraison %s envoyée par e-mail
 ExportCal=Exporter calendrier
-AgendaExtNb=Calendrier num %s
 ExtSiteUrlAgenda=URL pour accéder au fichier .ical

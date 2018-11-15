@@ -28,11 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("users");
-$langs->load("salaries");
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","users","salaries","hrm"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -57,7 +54,7 @@ $head = salaries_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'payment');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref='<div class="refidno">';
 
@@ -82,6 +79,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

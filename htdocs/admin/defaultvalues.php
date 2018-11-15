@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2017-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,13 @@
  */
 
 /**
- *       \file       htdocs/admin/defaultvalues.php
- *       \brief      Page to set default values used used in a create form
+ *       \file      htdocs/admin/defaultvalues.php
+ *       \brief     Page to set default values used used in a create form
+ *       			Default values are stored into $user->default_values[url]['createform']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default filters are stored into $user->default_values[url]['filters']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default sort order are stored into $user->default_values[url]['sortorder']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default focus are stored into $user->default_values[url]['focus']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Mandatory fields are stored into $user->default_values[url]['mandatory']['querystring'|'_noquery_'][paramkey]=paramvalue
  */
 
 require '../main.inc.php';
@@ -26,19 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("sms");
-$langs->load("other");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
 
 if (!$user->admin) accessforbidden();
 
 $id=GETPOST('rowid','int');
 $action=GETPOST('action','alpha');
 
-$mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
+$mode = GETPOST('mode','aZ09')?GETPOST('mode','aZ09'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -212,9 +213,9 @@ print "<br>\n";
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($optioncss != '')  $param.='&optioncss='.$optioncss;
-if (defaulturl)        $param.='&defaulturl='.urlencode(defaulturl);
-if (defaultkey)        $param.='&defaultkey='.urlencode(defaultkey);
-if (defaultvalue)      $param.='&defaultvalue='.urlencode(defaultvalue);
+if ($defaulturl)        $param.='&defaulturl='.urlencode($defaulturl);
+if ($defaultkey)        $param.='&defaultkey='.urlencode($defaultkey);
+if ($defaultvalue)      $param.='&defaultvalue='.urlencode($defaultvalue);
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
@@ -234,9 +235,9 @@ if ($mode == 'sortorder')
 {
     print info_admin($langs->trans("WarningSettingSortOrder")).'<br>';
 }
-if ($mode == 'focus')
+if ($mode == 'mandatory')
 {
-    print info_admin($langs->trans("FeatureNotYetAvailable")).'<br>';
+	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
 }
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -265,7 +266,7 @@ else
 }
 print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'param','',$param,'',$sortfield,$sortorder);
 // Value
-if ($mode != 'focus')
+if ($mode != 'focus' && $mode != 'mandatory')
 {
     if ($mode != 'sortorder')
     {
@@ -298,14 +299,14 @@ print "\n";
 print '<tr class="oddeven">';
 // Page
 print '<td>';
-print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="">';
+print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="'.dol_escape_htmltag(GETPOST('defaulturl','alphanohtml')).'">';
 print '</td>'."\n";
 // Field
 print '<td>';
-print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="">';
+print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag(GETPOST('defaultkey','alphanohtml')).'">';
 print '</td>';
 // Value
-if ($mode != 'focus')
+if ($mode != 'focus' && $mode != 'mandatory')
 {
     print '<td>';
     print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="">';
@@ -315,15 +316,16 @@ if ($mode != 'focus')
 if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
 	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
+	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">';	// We see environment, but to change it we must switch on other entity
 	print '</td>';
-	print '<td align="center">';
 }
 else
 {
 	print '<td align="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+	print '</td>';
 }
+print '<td align="center">';
 $disabled='';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) $disabled=' disabled="disabled"';
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
@@ -367,7 +369,7 @@ if ($result)
 		print '</td>'."\n";
 
 		// Value
-		if ($mode != 'focus')
+		if ($mode != 'focus' && $mode != 'mandatory')
 		{
     		print '<td>';
     		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
@@ -379,6 +381,9 @@ if ($result)
     		else print '<input type="text" name="value" value="'.dol_escape_htmltag($obj->value).'">';
     		print '</td>';
 		}
+
+		// Multicompany
+		print '<td></td>';
 
 		// Actions
 		print '<td align="center">';
@@ -416,7 +421,6 @@ dol_fiche_end();
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

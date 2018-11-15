@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
- * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2018	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  *
@@ -33,15 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->societe_id) {
     $socid = $user->societe_id;
 }
 $result=restrictedArea($user,'produit|service');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
@@ -65,7 +67,7 @@ $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (!$sortfield) {
@@ -87,6 +89,9 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 $usevirtualstock=0;
 if ($mode == 'virtual') $usevirtualstock=1;
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
@@ -107,12 +112,15 @@ if ($action == 'order' && isset($_POST['valid']))
 {
     $linecount = GETPOST('linecount', 'int');
     $box = 0;
+	$errorQty = 0;
     unset($_POST['linecount']);
     if ($linecount > 0)
     {
     	$db->begin();
 
         $suppliers = array();
+		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
+		$productsupplier = new ProductFournisseur($db);
         for ($i = 0; $i < $linecount; $i++)
         {
             if (GETPOST('choose' . $i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
@@ -122,13 +130,9 @@ if ($action == 'order' && isset($_POST['valid']))
                 $supplierpriceid = GETPOST('fourn'.$i, 'int');
                 //get all the parameters needed to create a line
                 $qty = GETPOST('tobuy'.$i, 'int');
-                //$desc = GETPOST('desc'.$i, 'alpha');
-                $sql = 'SELECT fk_product, fk_soc, ref_fourn';
-                $sql .= ', tva_tx, unitprice, remise_percent FROM ';
-                $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
-                $sql .= ' WHERE rowid = ' . $supplierpriceid;
-                $resql = $db->query($sql);
-                if ($resql && $db->num_rows($resql) > 0)
+				$idprod=$productsupplier->get_buyprice($supplierpriceid, $qty);
+				$res=$productsupplier->fetch($idprod);
+                if ($res && $idprod > 0)
                 {
                 	if ($qty)
                 	{
@@ -136,31 +140,37 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
-	                    $line->fk_product = $obj->fk_product;
+	                    $line->fk_product = $idprod;
 
-	                    $product = new Product($db);
-	                    $product->fetch($obj->fk_product);
+	                    //$product = new Product($db);
+	                    //$product->fetch($obj->fk_product);
 	                    if (! empty($conf->global->MAIN_MULTILANGS))
 	                    {
-	                        $product->getMultiLangs();
+	                        $productsupplier->getMultiLangs();
 	                    }
-	                    $line->desc = $product->description;
+	                    $line->desc = $productsupplier->description;
                         if (! empty($conf->global->MAIN_MULTILANGS))
                         {
                             // TODO Get desc in language of thirdparty
                         }
 
-	                    $line->tva_tx = $obj->tva_tx;
-	                    $line->subprice = $obj->unitprice;
-	                    $line->total_ht = $obj->unitprice * $qty;
+	                    $line->tva_tx = $productsupplier->vatrate_supplier;
+	                    $line->subprice = $productsupplier->fourn_pu;
+	                    $line->total_ht = $productsupplier->fourn_pu * $qty;
 	                    $tva = $line->tva_tx / 100;
 	                    $line->total_tva = $line->total_ht * $tva;
 	                    $line->total_ttc = $line->total_ht + $line->total_tva;
-						$line->remise_percent = $obj->remise_percent;
-	                    $line->ref_fourn = $obj->ref_fourn;
-	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
+						$line->remise_percent = $productsupplier->remise_percent;
+	                    $line->ref_fourn = $productsupplier->ref_supplier;
+						$line->type = $productsupplier->type;
+						$line->fk_unit = $productsupplier->fk_unit;
+	                    $suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
                 	}
                 }
+				elseif ($idprod == -1)
+				{
+					$errorQty++;
+				}
                 else
 				{
                     $error=$db->lasterror();
@@ -183,6 +193,7 @@ if ($action == 'order' && isset($_POST['valid']))
             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
             $sql.= " WHERE fk_soc = ".$suppliersid[$i];
             $sql.= " AND source = 42 AND fk_statut = 0";
+            $sql.= " AND entity IN (".getEntity('commande_fournisseur').")";
             $sql.= " ORDER BY date_creation DESC";
             $resql = $db->query($sql);
             if($resql && $db->num_rows($resql) > 0) {
@@ -202,7 +213,13 @@ if ($action == 'order' && isset($_POST['valid']))
                         $line->remise_percent,
                         'HT',
                         0,
-                        $line->info_bits
+                        $line->type,
+                        0,
+						false,
+						null,
+						null,
+						0,
+						$line->fk_unit
                     );
                 }
                 if ($result < 0) {
@@ -233,6 +250,8 @@ if ($action == 'order' && isset($_POST['valid']))
                 $i++;
             }
         }
+
+		if($errorQty) setEventMessages($langs->trans('ErrorOrdersNotCreatedQtyTooLow'), null, 'warnings');
 
         if (! $fail && $id)
         {
@@ -286,7 +305,7 @@ $sql.= ' ,'.$sqldesiredtock.' as desiredstock, '.$sqlalertstock.' as alertstock,
 $sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
-$sql.= ' ON p.rowid = s.fk_product';
+$sql.= ' ON (p.rowid = s.fk_product AND s.fk_entrepot IN (SELECT ent.rowid FROM '.MAIN_DB_PREFIX.'entrepot AS ent WHERE ent.entity IN('.getEntity('stock').')))';
 if($fk_supplier > 0) {
 	$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid AND pfp.fk_soc = '.$fk_supplier.')';
 }
@@ -662,6 +681,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	}
 	$i++;
 }
+
+$parameters=array('sql'=>$sql);
+$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print '</table>';
 print '</div>';
 

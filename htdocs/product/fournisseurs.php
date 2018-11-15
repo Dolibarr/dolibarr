@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
@@ -37,16 +37,16 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$langs->load("products");
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'suppliers', 'bills', 'margins'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'pricesuppliercard';
+
 $socid=GETPOST('socid', 'int');
 $cost_price=GETPOST('cost_price', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
@@ -78,8 +78,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
-
-$contextpage='pricesuppliercard';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('pricesuppliercard','globalcard'));
@@ -158,6 +156,7 @@ if (empty($reshook))
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
+		$supplier_description = GETPOST('supplier_description', 'alpha');
 
 		if ($tva_tx == '')
 		{
@@ -250,14 +249,20 @@ if (empty($reshook))
 				if (isset($_POST['ref_fourn_price_id']))
 					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-                if ($conf->multicurrency->enabled) {
-                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $_POST["multicurrency_price"], $_POST["multicurrency_price_base_type"], $_POST["multicurrency_tx"], $_POST["multicurrency_code"]);
+				$newprice = price2num(GETPOST("price","alpha"));
+
+                if ($conf->multicurrency->enabled)
+                {
+                	$multicurrency_tx = price2num(GETPOST("multicurrency_tx",'alpha'));
+                	$multicurrency_price = price2num(GETPOST("multicurrency_price",'alpha'));
+                	$multicurrency_code = GETPOST("multicurrency_code",'alpha');
+
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description);
                 } else {
-                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description);
                 }
 				if ($ret < 0)
 				{
-
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -552,19 +557,22 @@ if ($id > 0 || $ref)
                     // Currency
                     print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
                     print '<td>';
-                    print $form->selectMultiCurrency(GETPOST('multicurrency_code')?GETPOST('multicurrency_code'):(isset($object->fourn_multicurrency_code)?$object->fourn_multicurrency_code:''), "multicurrency_code", 1);
+                    $currencycodetouse = GETPOST('multicurrency_code')?GETPOST('multicurrency_code'):(isset($object->fourn_multicurrency_code)?$object->fourn_multicurrency_code:'');
+                    if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse=$conf->currency;
+                    print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
                     print '</td>';
                     print '</tr>';
 
                     // Currency tx
                     print '<tr><td class="fieldrequired">'.$langs->trans("CurrencyRate").'</td>';
-                    print '<td><input class="flat" name="multicurrency_tx" size="4" value="'.(GETPOST('multicurrency_tx')?GETPOST('multicurrency_tx'):(isset($object->fourn_multicurrency_tx)?$object->fourn_multicurrency_tx:'')).'">';
+                    print '<td><input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx')?GETPOST('multicurrency_tx'):(isset($object->fourn_multicurrency_tx)?$object->fourn_multicurrency_tx:'')).'">';
                     print '</td>';
                     print '</tr>';
 
                     // Currency price qty min
                     print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
-                    print '<td><input class="flat" name="multicurrency_price" size="8" value="'.(GETPOST('multicurrency_price')?GETPOST('multicurrency_price'):(isset($object->fourn_multicurrency_price)?$object->fourn_multicurrency_price:'')).'">';
+                    $pricesupplierincurrencytouse=(GETPOST('multicurrency_price')?GETPOST('multicurrency_price'):(isset($object->fourn_multicurrency_price)?$object->fourn_multicurrency_price:''));
+                    print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
                     print '&nbsp;';
                     print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type')?GETPOST('multicurrency_price_base_type'):'HT'), "multicurrency_price_base_type");  // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
                     print '</td></tr>';
@@ -602,7 +610,7 @@ if ($id > 0 || $ref)
             $('input[name="disabled_price"]').prop('disabled', true);
             $('select[name="disabled_price_base_type"]').prop('disabled', true);
             update_price_from_multicurrency();
-            
+
             $('input[name="multicurrency_price"]').keyup(function () {
                 update_price_from_multicurrency();
             }).change(function () {
@@ -610,7 +618,7 @@ if ($id > 0 || $ref)
             }).on('paste', function () {
                 update_price_from_multicurrency();
             });
-            
+
             $('input[name="multicurrency_tx"]').keyup(function () {
                 update_price_from_multicurrency();
             }).change(function () {
@@ -618,12 +626,12 @@ if ($id > 0 || $ref)
             }).on('paste', function () {
                 update_price_from_multicurrency();
             });
-            
+
             $('select[name="multicurrency_price_base_type"]').change(function () {
                 $('input[name="price_base_type"]').val($(this).val());
                 $('select[name="disabled_price_base_type"]').val($(this).val());
             });
-            
+
             var currencies_array = $currencies;
             $('select[name="multicurrency_code"]').change(function () {
                 $('input[name="multicurrency_tx"]').val(currencies_array[$(this).val()]);
@@ -669,6 +677,23 @@ SCRIPT;
 		        		print '</td>';
 						print '</tr>';
 					}
+				}
+
+				// Product description of the supplier
+				if (! empty($conf->global->PRODUIT_FOURN_TEXTS))
+				{
+				    //WYSIWYG Editor
+				    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
+    				print '<tr>';
+    				print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
+    				print '<td>';
+
+    				$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+    				$doleditor->Create();
+
+    				print '</td>';
+    				print '</tr>';
 				}
 
 				if (is_object($hookmanager))
@@ -726,16 +751,17 @@ SCRIPT;
 				$num = count($product_fourn_list);
 				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
 
-			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
-			    print '<div class="div-table-responsive">';
-			    print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder" width="100%">';
 				if ($object->isProduct()) $nblignefour=4;
 				else $nblignefour=4;
 
 				$param="&id=".$object->id;
 				print '<tr class="liste_titre">';
+				print_liste_field_titre("AppliedPricesFrom",$_SERVER["PHP_SELF"],"pfp.datec","",$param,"",$sortfield,$sortorder);
 				print_liste_field_titre("Suppliers",$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 				print_liste_field_titre("SupplierRef",$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
 				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre("Availability",$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
@@ -758,18 +784,18 @@ SCRIPT;
 
 				if (is_array($product_fourn_list))
 				{
-					$var=true;
 
 					foreach($product_fourn_list as $productfourn)
 					{
-
-
 						print '<tr class="oddeven">';
+
+						// Date from
+						print '<td>'.dol_print_date($productfourn->date_creation, 'dayhour').'</td>';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
 
-						// Supplier
+						// Supplier ref
 						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
 
 						// Availability
@@ -844,12 +870,12 @@ SCRIPT;
 						}
 
 						// Modify-Remove
-						print '<td align="center">';
+						print '<td class="center nowraponall">';
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'delete').'</a>';
 						}
 
 						print '</td>';
@@ -872,7 +898,6 @@ else
 {
 	print $langs->trans("ErrorUnknown");
 }
-
 
 // End of page
 llxFooter();

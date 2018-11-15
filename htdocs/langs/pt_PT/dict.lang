@@ -1,11 +1,12 @@
 # Dolibarr language file - Source file is en_US - dict
 CountryFR=França
 CountryBE=Belgica
-CountryIT=Italia
+CountryIT=Itália
 CountryES=Espanha
 CountryDE=Alemanha
 CountryCH=Suiça
-CountryGB=Grã-Bretanha
+# Warning, country code GB is for United Kingdom. UK Does not exists as country code in ISO standard.
+CountryGB=Reino Unido
 CountryUK=Reino Unido
 CountryIE=Irlanda
 CountryCN=China
@@ -250,9 +251,9 @@ CountryMF=Saint Martin
 ##### Civilities #####
 CivilityMME=Sra.
 CivilityMR=Sr.
-CivilityMLE=Dr.
-CivilityMTRE=Eng.
-CivilityDR=Doutor
+CivilityMLE=Doutor
+CivilityMTRE=Mestre
+CivilityDR=Dr.
 ##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dólar UA

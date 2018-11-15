@@ -65,13 +65,14 @@ class modStripe extends DolibarrModules
         // Data directories to create when module is enabled.
         $this->dirs = array();
 
-        // Config pages. Put here list of php page names stored in admmin directory used to setup module.
+        // Config pages. Put here list of php page names stored in admin directory used to setup module.
         $this->config_page_url = array("stripe.php@stripe");
 
         // Dependencies
+        $this->hidden = false;			// A condition to hide module
         $this->depends = array();		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
-        $this->phpmin = array(5,3);					// Minimum version of PHP required by module
+        $this->phpmin = array(5,4);					// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(5,0);	// Minimum version of Dolibarr required by module
         $this->langfiles = array("stripe");
 
@@ -91,7 +92,7 @@ class modStripe extends DolibarrModules
 
         // Main menu entries
         $r=0;
-        $this->menu[$r]=array(
+       /* $this->menu[$r]=array(
         	'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
         	'leftmenu'=>'customers_bills_payment_stripe',
@@ -101,11 +102,54 @@ class modStripe extends DolibarrModules
 	        'langs'=>'stripe',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 	        'position'=>500,
 	        'enabled'=>'$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-	        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+	        'perms'=>'$user->rights->banque->modifier',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 	        'target'=>'',
 	        'user'=>2
         );				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;*/
+
+        $this->menu[$r] = array(
+        	'fk_menu'=>'fk_mainmenu=bank',
+			'type'=>'left',
+			'titre'=>'StripeAccount',
+			'mainmenu'=>'bank',
+			'leftmenu'=>'stripe',
+			'url' => '',
+			'langs' => 'stripe',
+			'position' => 100,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'perms' => '$user->rights->banque->lire',
+			'target' => '',
+			'user' => 0
+		);
+
         $r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
+			'type' => 'left',
+			'titre' => 'StripeChargeList',
+			'url' => '/stripe/charge.php',
+			'langs' => 'stripe',
+			'position' => 102,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'perms' => '$user->rights->banque->lire',
+			'target' => '',
+			'user' => 0
+		);
+
+        $r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
+			'type' => 'left',
+			'titre' => 'StripeTransactionList',
+			'url' => '/stripe/transaction.php',
+			'langs' => 'stripe',
+			'position' => 102,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',
+			'perms' => '$user->rights->banque->lire',
+			'target' => '',
+			'user' => 0
+		);
 
         // Exports
         $r=1;

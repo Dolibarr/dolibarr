@@ -36,13 +36,17 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no 
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 
 require '../../main.inc.php';
@@ -82,7 +86,6 @@ if (! empty($tag))
 	dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
-
 }
 
 $db->close();

@@ -28,10 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -161,11 +159,11 @@ print '</tr>';
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-$form->select_date($startdate,'startdate','','',1,"sel",1,1);
+print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-$form->select_date($enddate,'enddate','','',1,"sel",1,1);
+print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -283,8 +281,6 @@ if ($result)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num /*&& $i < $conf->liste_limit*/)
 		{
 			$objp = $db->fetch_object($result);
@@ -303,8 +299,6 @@ if ($result)
 				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
-
-
 
 			print '<tr class="oddeven">';
 			if ($client) {
@@ -389,5 +383,6 @@ $(document).ready(function() {
 </script>
 ';
 
+// End of page
 llxFooter();
 $db->close();

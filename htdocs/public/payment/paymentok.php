@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,10 +87,8 @@ if (empty($paymentmethod))
     dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
     exit;
 }
-else
-{
-    dol_syslog("paymentmethod=".$paymentmethod);
-}
+
+dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
 
 $validpaymentmethod=array();
@@ -159,12 +157,12 @@ else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->
 $urllogo='';
 if (! empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('thumbs/'.$logosmall);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$width=150;
 }
 elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode($logo);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
 	$width=150;
 }
 // Output html code for logo
@@ -194,7 +192,7 @@ if (! empty($conf->paypal->enabled))
 		    // From env
 		    $ipaddress          = $_SESSION['ipaddress'];
 
-			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_paypal');
+			dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
 
 			// Validate record
 		    if (! empty($paymentType))
@@ -203,34 +201,50 @@ if (! empty($conf->paypal->enabled))
 		        $resArray=getDetails($onlinetoken);
 		        //var_dump($resarray);
 
-		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
-		        $resArray=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
-
 		        $ack = strtoupper($resArray["ACK"]);
 		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 		        {
+		        	// Nothing to do
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+		        }
+		        else
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING);
+		        }
+
+		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
+		        $resArray2=confirmPayment($onlinetoken, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $fulltag);
+		        //var_dump($resarray);
+
+		        $ack = strtoupper($resArray2["ACK"]);
+		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
+		        {
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+
 		        	$object->source		= $source;
 		        	$object->ref		= $ref;
 		        	$object->payerID	= $payerID;
 		        	$object->fulltag	= $fulltag;
-		        	$object->resArray	= $resArray;
+		        	$object->resArray	= $resArray2;
 
 		            // resArray was built from a string like that
 		            // TOKEN=EC%2d1NJ057703V9359028&TIMESTAMP=2010%2d11%2d01T11%3a40%3a13Z&CORRELATIONID=1efa8c6a36bd8&ACK=Success&VERSION=56&BUILD=1553277&TRANSACTIONID=9B994597K9921420R&TRANSACTIONTYPE=expresscheckout&PAYMENTTYPE=instant&ORDERTIME=2010%2d11%2d01T11%3a40%3a12Z&AMT=155%2e57&FEEAMT=5%2e54&TAXAMT=0%2e00&CURRENCYCODE=EUR&PAYMENTSTATUS=Completed&PENDINGREASON=None&REASONCODE=None
-		            $PAYMENTSTATUS=urldecode($resArray["PAYMENTSTATUS"]);   // Should contains 'Completed'
-		            $TRANSACTIONID=urldecode($resArray["TRANSACTIONID"]);
-		            $TAXAMT=urldecode($resArray["TAXAMT"]);
-		            $NOTE=urldecode($resArray["NOTE"]);
+		            $PAYMENTSTATUS=urldecode($resArray2["PAYMENTSTATUS"]);   // Should contains 'Completed'
+		            $TRANSACTIONID=urldecode($resArray2["TRANSACTIONID"]);
+		            $TAXAMT=urldecode($resArray2["TAXAMT"]);
+		            $NOTE=urldecode($resArray2["NOTE"]);
 
-		            $ispaymentok=True;
+		            $ispaymentok=true;
 		        }
 		        else
 		        {
+		        	dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING);
+
 		            //Display a user friendly Error on the page using any of the following error information returned by PayPal
-		            $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
-		            $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
-		            $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
-		            $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
+		            $ErrorCode = urldecode($resArray2["L_ERRORCODE0"]);
+		            $ErrorShortMsg = urldecode($resArray2["L_SHORTMESSAGE0"]);
+		            $ErrorLongMsg = urldecode($resArray2["L_LONGMESSAGE0"]);
+		            $ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 		        }
 		    }
 		    else
@@ -266,6 +280,9 @@ $fulltag            = $FULLTAG;
 $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
 
+dol_syslog("ispaymentok=".$ispaymentok, LOG_DEBUG, 0, '_payment');
+
+
 // Make complementary actions
 $ispostactionok = 0;
 $postactionmessages = array();
@@ -281,6 +298,11 @@ if ($ispaymentok)
 
 	if (in_array('MEM', array_keys($tmptag)))
 	{
+		// Validate member
+		// Create subscription
+		// Create complementary actions (this include creation of thirdparty)
+		// Send confirmation email
+
 		$defaultdelay=1;
 		$defaultdelayunit='y';
 
@@ -291,7 +313,7 @@ if ($ispaymentok)
 		$adht = new AdherentType($db);
 		$object = new Adherent($db);
 
-		$result1 = $object->fetch(0, $tmptag['MEM']);
+		$result1 = $object->fetch($tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
 
 		if ($result1 > 0 && $result2 > 0)
@@ -312,13 +334,26 @@ if ($ispaymentok)
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (! empty($FinalPaymentAmt) && $paymentTypeId > 0)
 			{
+				$result = $object->validate($user);
+				if ($result < 0 || empty($object->datevalid))
+				{
+					$error++;
+					$errmsg=$object->error;
+					$postactionmessages[] = $errmsg;
+					$postactionmessages = array_merge($postactionmessages, $object->errors);
+					$ispostactionok = -1;
+				}
+
 				// Subscription informations
 				$datesubscription=$object->datevalid;
 				if ($object->datefin > 0)
 				{
 					$datesubscription=dol_time_plus_duree($object->datefin,1,'d');
 				}
-				$datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription,$defaultdelay,$defaultdelayunit),-1,'d');
+
+				$datesubend = null;
+				if ($datesubscription && $defaultdelay && $defaultdelayunit) $datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit),-1,'d');
+
 				$paymentdate=$now;
 				$amount = $FinalPaymentAmt;
 				$label='Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
@@ -328,6 +363,14 @@ if ($ispaymentok)
 				if ($paymentmethod == 'paybox') $accountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'paypal') $accountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'stripe') $accountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+				if ($accountid < 0)
+				{
+					$error++;
+					$errmsg='Setup of bank accout to use for payment is not correctly done for payment method '.$paymentmethod;
+					$postactionmessages[] = $errmsg;
+					$ispostactionok = -1;
+				}
+
 				$operation=$paymentType; // Payment mode code
 				$num_chq='';
 				$emetteur_nom='';
@@ -344,25 +387,36 @@ if ($ispaymentok)
 				$db->begin();
 
 				// Create subscription
-				$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
-				if ($crowid <= 0)
+				if (! $error)
 				{
-					$error++;
-					$errmsg=$object->error;
-					$postactionmessages[] = $errmsg;
-					$ispostactionok = -1;
-				}
-				else
-				{
-					$postactionmessages[]='Subscription created';
-					$ispostactionok=1;
+					dol_syslog("Call ->subscription to create subscription", LOG_DEBUG, 0, '_payment');
+
+					$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+					if ($crowid <= 0)
+					{
+						$error++;
+						$errmsg=$object->error;
+						$postactionmessages[] = $errmsg;
+						$ispostactionok = -1;
+					}
+					else
+					{
+						$postactionmessages[]='Subscription created';
+						$ispostactionok=1;
+					}
 				}
 
 				if (! $error)
 				{
-					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, 1);
+					dol_syslog("Call ->subscriptionComplementaryActions option=".$option, LOG_DEBUG, 0, '_payment');
+
+					$autocreatethirdparty = 1;	// will create thirdparty if member not yet linked to a thirdparty
+
+					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty);
 					if ($result < 0)
 					{
+						dol_syslog("Error ".$object->error." ".join(',', $object->errors), LOG_DEBUG, 0, '_payment');
+
 						$error++;
 						$postactionmessages[] = $object->error;
 						$postactionmessages = array_merge($postactionmessages, $object->errors);
@@ -370,10 +424,69 @@ if ($ispaymentok)
 					}
 					else
 					{
-						if ($option == 'bankviainvoice') $postactionmessages[] = 'Invoice, payment and bank record created';
-						if ($option == 'bankdirect')     $postactionmessages[] = 'Bank record created';
-						if ($option == 'invoiceonly')    $postactionmessages[] = 'Invoice recorded';
+						if ($option == 'bankviainvoice')
+						{
+							$postactionmessages[] = 'Invoice, payment and bank record created';
+							dol_syslog("Invoice, payment and bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'bankdirect')
+						{
+							$postactionmessages[] = 'Bank record created';
+							dol_syslog("Bank record created", LOG_DEBUG, 0, '_payment');
+						}
+						if ($option == 'invoiceonly')
+						{
+							$postactionmessages[] = 'Invoice recorded';
+							dol_syslog("Invoice recorded", LOG_DEBUG, 0, '_payment');
+						}
 						$ispostactionok = 1;
+
+						// If an invoice was created, it is into $object->invoice
+					}
+				}
+
+				if (! $error)
+				{
+					if ($paymentmethod == 'stripe' && $autocreatethirdparty && $option == 'bankviainvoice')
+					{
+						$thirdparty_id = $object->fk_soc;
+
+						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
+
+						$service = 'StripeTest';
+						$servicestatus = 0;
+						if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+						{
+							$service = 'StripeLive';
+							$servicestatus = 1;
+						}
+						$stripeacc = null;	// No Oauth/connect use for public pages
+
+						$thirdparty = new Societe($db);
+						$thirdparty->fetch($thirdparty_id);
+
+						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+						$stripe = new Stripe($db);
+						$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
+
+						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
+						{
+							dol_syslog("No stripe profile found, so we add it", LOG_DEBUG, 0, '_payment');
+
+							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
+							$stripecu = $ch->customer;							// value 'cus_....'
+
+							$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
+							$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', " . $servicestatus . ", " . $conf->entity . ", '".$db->idate(dol_now())."', 0)";
+							$resql = $db->query($sql);
+							if (! $resql)
+							{
+								$error++;
+								$errmsg='Failed to save customer stripe id in database ; '.$db->lasterror();
+								$postactionmessages[] = $errmsg;
+								$ispostactionok = -1;
+							}
+						}
 					}
 				}
 
@@ -386,28 +499,81 @@ if ($ispaymentok)
 					$db->rollback();
 				}
 
-				// Send email
+				// Send email to member
 				if (! $error)
 				{
+					dol_syslog("Send email to customer to ".$object->email." if we have to (sendalsoemail = ".$sendalsoemail.")", LOG_DEBUG, 0, '_payment');
+
 					// Send confirmation Email
 					if ($object->email && $sendalsoemail)
 					{
-						$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-						$texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+						$subject = '';
+						$msg= '';
 
-						$result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+						// Send subscription email
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+						$formmail=new FormMail($db);
+						// Set output language
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+						// Load traductions files requiredby by page
+						$outputlangs->loadLangs(array("main", "members"));
+						// Get email content from template
+						$arraydefaultmessage=null;
+						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+						if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+						if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+						{
+							$subject = $arraydefaultmessage->topic;
+							$msg     = $arraydefaultmessage->content;
+						}
+
+						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+						complete_substitutions_array($substitutionarray, $outputlangs, $object);
+						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+						$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
+
+						// Attach a file ?
+						$file='';
+						$listofpaths=array();
+						$listofnames=array();
+						$listofmimes=array();
+						if (is_object($object->invoice))
+						{
+							$invoicediroutput = $conf->facture->dir_output;
+							$fileparams = dol_most_recent_file($invoicediroutput . '/' . $object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
+							$file = $fileparams['fullname'];
+
+							$listofpaths=array($file);
+							$listofnames=array(basename($file));
+							$listofmimes=array(dol_mimetype($file));
+						}
+
+						$moreinheader='X-Dolibarr-Info: send_an_email by public/payment/paymentok.php'."\r\n";
+
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofmimes, $listofnames, "", "", 0, -1, "", $moreinheader);
+
 						if ($result < 0)
 						{
 							$errmsg=$object->error;
 							$postactionmessages[] = $errmsg;
 							$ispostactionok = -1;
 						}
+						else
+						{
+							if ($file) $postactionmessages[] = 'Email sent to member (with invoice document attached)';
+							else $postactionmessages[] = 'Email sent to member (without any attached document)';
+
+							// TODO Add actioncomm event
+						}
 					}
 				}
 			}
 			else
 			{
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" or "payment type" to record the payment of subscription for member '.$tmptag['MEM'];
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" or "payment type" to record the payment of subscription for member '.$tmptag['MEM'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		}
@@ -422,7 +588,7 @@ if ($ispaymentok)
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($db);
-		$result = $invoice->fetch(0, $tmptag['INV']);
+		$result = $invoice->fetch($tmptag['INV']);
 		if ($result)
 		{
 			$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
@@ -463,7 +629,9 @@ if ($ispaymentok)
 				}
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_paiement = '';
-				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
+				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
+				$paiement->ext_payment_id = $TRANSACTIONID;
+				$paiement->ext_payment_site = $service;
 
 				if (! $error)
 				{
@@ -485,8 +653,8 @@ if ($ispaymentok)
 				{
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
-					if ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+					elseif ($paymentmethod == 'stripe') $bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
 
 					if ($bankaccountid > 0)
 					{
@@ -501,13 +669,13 @@ if ($ispaymentok)
 						}
 						else
 						{
-							$postactionmessages[] = 'Bank entry of payment created';
+							$postactionmessages[] = 'Bank transaction of payment created';
 							$ispostactionok=1;
 						}
 					}
 					else
 					{
-						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. Not way to record the payment.';
+						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
 						$ispostactionok = -1;
 						$error++;
 					}
@@ -524,7 +692,7 @@ if ($ispaymentok)
 			}
 			else
 			{
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['INV'];
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['INV'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		}
@@ -569,7 +737,9 @@ if ($ispaymentok)
 
     $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
-	// Send an email
+    dol_syslog("Send email to admins if we have to (sendemail = ".$sendemail.")", LOG_DEBUG, 0, '_payment');
+
+	// Send an email to admins
     if ($sendemail)
 	{
 		$companylangs = new Translate('', $conf);
@@ -601,16 +771,16 @@ if ($ispaymentok)
 		$content="";
 		if (in_array('MEM', array_keys($tmptag)))
 		{
-			$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+			$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 			$content.='<strong>'.$companylangs->trans("PaymentSubscription")."</strong><br><br>\n";
 			$content.=$companylangs->trans("MemberId").': <strong>'.$tmptag['MEM']."</strong><br>\n";
 			$content.=$companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		}
 		elseif (in_array('INV', array_keys($tmptag)))
 		{
-			$url=$urlwithroot."/compta/facture/card.php?ref=".$tmptag['INV'];
+			$url=$urlwithroot."/compta/facture/card.php?id=".$tmptag['INV'];
 			$content.='<strong>'.$companylangs->trans("Payment")."</strong><br><br>\n";
-			$content.=$companylangs->trans("Invoice").': <strong>'.$tmptag['INV']."</strong><br>\n";
+			$content.=$companylangs->trans("InvoiceId").': <strong>'.$tmptag['INV']."</strong><br>\n";
 			//$content.=$companylangs->trans("ThirdPartyId").': '.$tmptag['CUS']."<br>\n";
 			$content.=$companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		}
@@ -651,6 +821,11 @@ if ($ispaymentok)
 		$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 		$content.="<br>\n";
 		$content.="tag=".$fulltag."<br>\ntoken=".$onlinetoken."<br>\npaymentType=".$paymentType."<br>\ncurrencycodeType=".$currencyCodeType."<br>\npayerId=".$payerID."<br>\nipaddress=".$ipaddress."<br>\nFinalPaymentAmt=".$FinalPaymentAmt."<br>\n";
+
+		if (! empty($ErrorCode))         $content.="ErrorCode = ".$ErrorCode."<br>\n";
+		if (! empty($ErrorShortMsg))     $content.="ErrorShortMsg = ".$ErrorShortMsg."<br>\n";
+		if (! empty($ErrorLongMsg))      $content.="ErrorLongMsg = ".$ErrorLongMsg."<br>\n";
+		if (! empty($ErrorSeverityCode)) $content.="ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
 
 		$ishtml=dol_textishtml($content);	// May contain urls
 
@@ -698,8 +873,8 @@ else
     if (! empty($conf->global->PAYMENTONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYMENTONLINE_SENDEMAIL;
     // TODO Remove local option to keep only the generic one ?
     if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
-    if ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
+    elseif ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
 
     // Send an email
     if ($sendemail)

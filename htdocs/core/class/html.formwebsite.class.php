@@ -28,7 +28,11 @@
 class FormWebsite
 {
     private $db;
-    public $error;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
 
     /**
@@ -39,8 +43,6 @@ class FormWebsite
     function __construct($db)
     {
         $this->db = $db;
-
-        return 1;
     }
 
 
@@ -174,7 +176,7 @@ class FormWebsite
 
     	$langs->load("admin");
 
-    	$arrayofsamples=array('corporatehome'=>'CorporateHomePage', 'empty'=>'EmptyPage');
+    	$arrayofsamples=array('empty'=>'EmptyPage', 'corporatehome'=>'CorporateHomePage');
 
     	$out = '';
     	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
@@ -201,5 +203,4 @@ class FormWebsite
 
     	return $out;
     }
-
 }

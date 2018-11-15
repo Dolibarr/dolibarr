@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - opensurvey
-Survey=Inquérito
-Surveys=Inquéritos
+Survey=Sondagem
+Surveys=Sondagens
 OrganizeYourMeetingEasily=Organize suas reuniões e inquéritos facilmente. Primeiro selecione o tipo inquérito...
 NewSurvey=Novo inquérito
 OpenSurveyArea=Área de inquéritos
@@ -57,4 +57,5 @@ ErrorInsertingComment=Ocorreu um erro ao inserir o seu comentário
 MoreChoices=Insira mais escolhas para os inquiridos
 SurveyExpiredInfo=O inquérito foi encerrado ou o prazo de votação expirou.
 EmailSomeoneVoted=%s preencheu uma linha.\nVocê pode encontrar o seu inquérito através da hiperligação:\n%s
-ShowSurvey=Show survey
+ShowSurvey=Mostrar estudo
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

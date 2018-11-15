@@ -28,8 +28,6 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
@@ -192,5 +190,6 @@ else {
     print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 
+// End of page
 llxFooter();
 $db->close();

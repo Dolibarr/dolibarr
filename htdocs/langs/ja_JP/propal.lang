@@ -33,6 +33,7 @@ PropalStatusSigned=（要請求）署名
 PropalStatusNotSigned=（クローズ）署名されていません
 PropalStatusBilled=請求
 PropalStatusDraftShort=ドラフト
+PropalStatusValidatedShort=検証
 PropalStatusClosedShort=閉じた
 PropalStatusSignedShort=署名された
 PropalStatusNotSignedShort=署名されていない
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1ヶ月
 TypeContact_propal_internal_SALESREPFOLL=代表的なフォローアップの提案
 TypeContact_propal_external_BILLING=顧客の請求書の連絡先
 TypeContact_propal_external_CUSTOMER=顧客の連絡先フォローアップ提案
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=完全な提案モデル（logo. ..）
 DefaultModelPropalCreate=Default model creation

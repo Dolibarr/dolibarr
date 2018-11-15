@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
@@ -167,11 +165,11 @@ print '<table class="border" width="100%">';
 
 print '<tr><td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';
-$form->select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td>' . $langs->trans('DateEnd') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';
-$form->select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
@@ -205,10 +203,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
-	if ($result) {
-		$nbtotalofrecords = $db->num_rows($result);
-	} else {
-		setEventMessages($db->lasterror, null, 'errors');
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
 	}
 }
 
@@ -322,5 +321,6 @@ print '</form>';
 
 $db->free($result);
 
+// End of page
 llxFooter();
 $db->close();

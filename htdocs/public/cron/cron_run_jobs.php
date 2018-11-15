@@ -2,7 +2,7 @@
 /* Copyright (C) 2012		Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,7 @@ if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOLOGIN'))   define('NOLOGIN','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOLOGIN'))        define('NOLOGIN','1');
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -38,11 +36,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 // librarie core
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
-if (! $res) {
-	$res = @include("../../../main.inc.php"); // From "custom" directory
-}
-if (! $res) die("Include of master.inc.php fails");
+require '../../main.inc.php';
 
 // librarie jobs
 dol_include_once("/cron/class/cronjob.class.php");
@@ -50,12 +44,7 @@ dol_include_once("/cron/class/cronjob.class.php");
 global $langs, $conf;
 
 // Language Management
-$langs->load("admin");
-$langs->load("cron");
-
-
-
-
+$langs->loadLangs(array("admin", "cron"));
 
 /*
  * View
@@ -113,15 +102,14 @@ if (! empty($id))
 		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
 		exit;
 	}
-	$filter=array();
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetch_all('ASC,ASC,ASC','t.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
-	echo "Error: ".$cronjob->error;
-	dol_syslog("cron_run_jobs.php fetch Error".$cronjob->error, LOG_WARNING);
+	echo "Error: ".$object->error;
+	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_WARNING);
 	exit;
 }
 
@@ -181,7 +169,6 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
-
 		}
 	}
 	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok+$nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";

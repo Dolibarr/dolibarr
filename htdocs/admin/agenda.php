@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2015	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry <jfefe@aternatik.fr>
  *
@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (!$user->admin)
     accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'agenda'));
 
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
@@ -75,6 +74,12 @@ else
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_event = '';
+	$action = '';
+}
+
+if (GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') ||GETPOST('button_search','alpha'))	// To avoid the save when we click on search
+{
+	$action = '';
 }
 
 if ($action == "save" && empty($cancel))
@@ -106,34 +111,6 @@ if ($action == "save" && empty($cancel))
     }
 }
 
-if (preg_match('/set_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
-if (preg_match('/del_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
 
 
 /**
@@ -225,6 +202,6 @@ print "</form>\n";
 
 print "<br>";
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
  *
@@ -35,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if ($module == 'propal')		{ $permission=$user->rights->propale->creer; }
-elseif ($module == 'fichinter')		{ $permission=$user->rights->ficheinter->creer; }
-elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
+if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
+elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
+elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
 elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
 elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
@@ -78,7 +78,6 @@ if ($permission) {
 
 	<?php
 
-	$var=true;
 	if (empty($hideaddcontactforuser))
 	{
 
@@ -129,7 +128,7 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', '', 0, 'minwidth100imp'); ?>
+			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 0, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
@@ -157,8 +156,6 @@ if ($permission) {
 		<div class="tagtd liste_titre">&nbsp;</div>
 	</form>
 
-	<?php $var=true; ?>
-
 	<?php
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
@@ -171,10 +168,9 @@ if ($permission) {
 
 		$i = 0;
 		while ($i < $num) {
-			$var = !$var;
 	?>
 
-	<form class="tagtr <?php echo $var?"pair":"impair"; ?>">
+	<form class="tagtr oddeven">
 		<div class="tagtd" align="left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
 			<?php if ($tab[$i]['source']=='external') echo $langs->trans("ThirdPartyContact"); ?>
@@ -203,12 +199,12 @@ if ($permission) {
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->fetch($tab[$i]['id']);
-				echo $userstatic->getNomUrl(-1);
+				echo $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1);
+				echo $contactstatic->getNomUrl(1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			?>
 		</div>
@@ -229,7 +225,7 @@ if ($permission) {
 		</div>
 		<div class="tagtd nowrap right">
 			<?php if ($permission) { ?>
-				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
+				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_picto($langs->trans('Unlink'), 'unlink'); ?></a>
 			<?php } ?>
 		</div>
 	</form>

@@ -25,7 +25,6 @@ CronDtLastLaunch=Date de début de la dernière exécution
 CronDtLastResult=Date de fin de la dernière exécution
 CronNoJobs=Aucun emploi enregistré
 CronNbRun=Nb. lancement
-CronMaxRun=Max nb. lancement
 CronEach=Chaque
 CronAdd=Ajouter des emplois
 CronEvery=Exécuter le travail chaque

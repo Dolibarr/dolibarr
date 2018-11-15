@@ -4,11 +4,10 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2018      ptibogxiv	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +32,9 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$langs->load("admin");
-$langs->load("members");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members"));
 
 if (! $user->admin) accessforbidden();
 
@@ -55,28 +52,22 @@ $action = GETPOST('action','alpha');
 if ($action == 'updateall')
 {
     $db->begin();
-    $res1=$res2=$res3=$res4=$res5=$res6=$res7=$res8=$res9=$res10=$res11=$res12=$res13=0;
+    $res1=$res2=$res3=$res4=$res5=$res6=0;
     $res1=dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha')?0:1, 'chaine', 0, '', $conf->entity);
     $res2=dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res3=dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res4=dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res5=dolibarr_set_const($db, 'ADHERENT_MULTI_ONETHIRDPARTY', GETPOST('ADHERENT_MULTI_ONETHIRDPARTY', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res6=dolibarr_set_const($db, 'ADHERENT_SUBSCRIPTION_PRORATA', GETPOST('ADHERENT_SUBSCRIPTION_PRORATA', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res7=dolibarr_set_const($db, 'SOCIETE_SUBSCRIBE_MONTH_START', GETPOST('SOCIETE_SUBSCRIBE_MONTH_START', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res8=dolibarr_set_const($db, 'SOCIETE_SUBSCRIBE_MONTH_PRESTART', GETPOST('SOCIETE_SUBSCRIBE_MONTH_PRESTART', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res9=dolibarr_set_const($db, 'ADHERENT_WELCOME_MONTH', GETPOST('ADHERENT_WELCOME_MONTH', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res10=dolibarr_set_const($db, 'ADHERENT_MEMBER_CATEGORY', implode(",", GETPOST('ADHERENT_MEMBER_CATEGORY', 'array')), 'chaine', 0, '', $conf->entity);
     // Use vat for invoice creation
     if ($conf->facture->enabled)
     {
-        $res11=dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        $res12=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+        $res4=dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+        $res5=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
         if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
         {
-            $res13=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
+            $res6=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
         }
     }
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0 || $res9 < 0 || $res10 < 0 || $res11 < 0 || $res12 < 0 || $res13 < 0)
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0)
     {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
@@ -144,7 +135,6 @@ if ($action == 'unset')
  */
 
 $form = new Form($db);
-$formother=new FormOther($db);
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 
@@ -223,57 +213,7 @@ if ($conf->facture->enabled)
 	}
 	print "</tr>\n";
 }
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {   //enhance membership fopr more automatic and support all foundation memebership settings
-// type of adhesion flow  date to date or fix date(with or withou prorata) Value is use for the prorata calcul on month base
-print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_SUBSCRIPTION_PRORATA").'</td>';
-print '<td>';
-print $form->selectarray('ADHERENT_SUBSCRIPTION_PRORATA', array('0'=>$langs->trans("ADHERENT_SUBSCRIBE_NO_MONTH_START"),'1'=>$langs->trans("ADHERENT_SUBSCRIPTION_ANNUAL"),'2'=>$langs->trans("ADHERENT_SUBSCRIPTION_SEM"),'3'=>$langs->trans("ADHERENT_SUBSCRIPTION_QUA"),'4'=>$langs->trans("ADHERENT_SUBSCRIPTION_TRI"),'12'=>$langs->trans("ADHERENT_SUBSCRIPTION_MEN")), (empty($conf->global->ADHERENT_SUBSCRIPTION_PRORATA)?'0':$conf->global->ADHERENT_SUBSCRIPTION_PRORATA), 0);
-print '</td>';
-print "</tr>\n";
 
-if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA > '0')
-	{ 
-// month of begin membership
-print '<tr class="oddeven"><td>'.$langs->trans("FiscalMonthStart").'</td>';
-print '<td>';
-print $formother->select_month($conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'SOCIETE_SUBSCRIBE_MONTH_START',0,1);
-print '</td>';
-print "</tr>\n";
-}
-
-// date of unlock memebship for renew
-print '<tr class="oddeven"><td>'.$langs->trans("SOCIETE_SUBSCRIBE_MONTH_PRESTART").'</td>';
-print '<td>';
-print $form->selectarray('SOCIETE_SUBSCRIBE_MONTH_PRESTART', array('0'=>'0','1'=>'1','2'=>'2','3'=>'3','4'=>'4'), (empty($conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART)?'0':$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART), 0);
-print $langs->trans("monthbefore").'</td>';
-print "</tr>\n";
-
-// time before renewing welcome fee
-print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_WELCOME_MONTH").'</td>';
-print '<td>';
-print $form->selectarray('ADHERENT_WELCOME_MONTH', array('0'=>'Uniquement la première fois','1'=>'Exigés 1 mois après la fin d\'adhésion','2'=>'Exigés 2 mois après la fin d\'adhésion','3'=>'Exigés 3 mois après la fin d\'adhésion','4'=>'Exigés 4 mois après la fin d\'adhésion','5'=>'Exigés 5 mois après la fin d\'adhésion','6'=>'Exigés 6 mois après la fin d\'adhésion','12'=>'Exigés 12 mois après la fin d\'adhésion'), (empty($conf->global->ADHERENT_WELCOME_MONTH)?'0':$conf->global->ADHERENT_WELCOME_MONTH), 0);
-print '</td>';
-print "</tr>\n";
-
-// additonnal product to add with membership (product only for member)
-				if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
-					print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_MEMBER_CATEGORY").'</td>';
-					print '<td>';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, null, null, null, 1);
-					$c = new Categorie($db);
-					$cats = $c->containing($conf->global->ADHERENT_MEMBER_CATEGORY, Categorie::TYPE_PRODUCT);
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-            print $cat->id;
-					}
-					print $form->multiselectarray('ADHERENT_MEMBER_CATEGORY', $cate_arbo, array($conf->global->ADHERENT_MEMBER_CATEGORY), '', 0, '', 0, '90%');
-					print "</td></tr>";
-				}
-// multimembers with one thirdparty (lot of demande on dolibarr's forum)
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentMultiOneThirdparty").'</td><td>';
-print $form->selectyesno('ADHERENT_MULTI_ONETHIRDPARTY',(! empty($conf->global->ADHERENT_MULTI_ONETHIRDPARTY)?$conf->global->ADHERENT_MULTI_ONETHIRDPARTY:0),1);
-print "</td></tr>\n";        
-}
 print '</table>';
 
 print '<center>';
@@ -325,7 +265,6 @@ form_constantes($constantes, 0, $helptext);
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

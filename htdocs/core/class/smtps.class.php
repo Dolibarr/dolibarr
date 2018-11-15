@@ -344,6 +344,7 @@ class SMTPs
 		$_aryToList = $this->getTO();
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attempt a connection to mail server
 	 *
@@ -351,6 +352,7 @@ class SMTPs
 	 */
 	function _server_connect()
 	{
+        // phpcs:enable
 		// Default return value
 		$_retVal = true;
 
@@ -406,6 +408,7 @@ class SMTPs
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
@@ -413,6 +416,7 @@ class SMTPs
 	 */
 	function _server_authenticate()
 	{
+        // phpcs:enable
 		global $conf;
 
 		// Send the RFC2554 specified EHLO.
@@ -647,7 +651,7 @@ class SMTPs
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
@@ -655,8 +659,8 @@ class SMTPs
 		if ( ! empty ($_strConfigPath) )
 		{
 			// If the path is not valid, this will NOT generate an error,
-			// it will simply return FALSE.
-			if ( ! @include ( $_strConfigPath ) )
+			// it will simply return false.
+			if ( ! @include $_strConfigPath)
 			{
 				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
 				$_retVal = false;
@@ -1036,6 +1040,7 @@ class SMTPs
 		$this->_msgRecipients = $aryHost;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of the various parts of an email address
 	 * This assumes a well formed address:
@@ -1054,6 +1059,7 @@ class SMTPs
 	 */
 	function _strip_email($_strAddr)
 	{
+        // phpcs:enable
 		// Keep the orginal
 		$_aryEmail['org'] = $_strAddr;
 
@@ -1087,6 +1093,7 @@ class SMTPs
 		return $_aryEmail;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of bares addresses for use with 'RCPT TO:'
 	 * This is a "build as you go" method. Each time this method is called
@@ -1096,6 +1103,7 @@ class SMTPs
 	 */
 	function get_RCPT_list()
 	{
+        // phpcs:enable
 		/**
 		 * An array of bares addresses for use with 'RCPT TO:'
 		 */
@@ -1117,6 +1125,7 @@ class SMTPs
 		return $_RCPT_list;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Returns an array of addresses for a specific type; TO, CC or BCC
 	 *
@@ -1125,6 +1134,7 @@ class SMTPs
 	 */
 	function get_email_list($_which = null)
 	{
+        // phpcs:enable
 		// We need to know which address segment to pull
 		if ( $_which )
 		{
@@ -1165,7 +1175,6 @@ class SMTPs
 			$this->_setErr(102, 'eMail type not defined.');
 			return false;
 		}
-
 	}
 
 	/**
@@ -1360,7 +1369,9 @@ class SMTPs
 		$strContentAltText = '';
 		if ($strType == 'html')
 		{
-			$strContentAltText = html_entity_decode(strip_tags($strContent));
+			// Similar code to forge a text from html is also in CMailFile.class.php
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/"," ", $strContent);
+			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
 		}
 
@@ -1410,7 +1421,7 @@ class SMTPs
 			$content = 'Content-Type: ' . $_msgData['mimeType'] . '; charset="' . $this->getCharSet() . '"' . "\r\n"
 			. 'Content-Transfer-Encoding: ' . $this->getTransEncodeType() . "\r\n"
 			. 'Content-Disposition: inline'  . "\r\n"
-			. 'Content-Description: message' . "\r\n";
+			. 'Content-Description: Message' . "\r\n";
 
 			if ( $this->getMD5flag() )
 			$content .= 'Content-MD5: ' . $_msgData['md5'] . "\r\n";
@@ -1459,7 +1470,7 @@ class SMTPs
 						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Transfer-Encoding: base64' . "\r\n"
-						.  'Content-Description: File Attachment' . "\r\n";
+						.  'Content-Description: ' . $_data['fileName'] ."\r\n";
 
 						if ( $this->getMD5flag() )
 						$content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
@@ -1648,7 +1659,7 @@ class SMTPs
 	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
-	function setPriority ( $_value = 3 )
+	function setPriority( $_value = 3 )
 	{
 		if ( ( is_numeric($_value) ) &&
 		( ( $_value >= 0 ) && ( $_value <= 5 ) ) )
@@ -1744,6 +1755,7 @@ class SMTPs
 		else if ($type == 'alternative') return $this->_smtpsAlternativeBoundary;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions
@@ -1754,9 +1766,10 @@ class SMTPs
 	 */
 	function server_parse($socket, $response)
 	{
+        // phpcs:enable
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
@@ -1785,6 +1798,7 @@ class SMTPs
 		return $_retVal;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Send str
 	 *
@@ -1795,6 +1809,7 @@ class SMTPs
 	 */
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{
+        // phpcs:enable
 		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
 		fputs($this->socket, $_strSend . $CRLF);
 		if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
@@ -1812,12 +1827,14 @@ class SMTPs
 	 * @param  int    $_errNum  Error Code Number
 	 * @param  string $_errMsg  Error Message
 	 * @return void
-	 */
-	function _setErr ( $_errNum, $_errMsg )
-	{
-		$this->_smtpsErrors[] = array( 'num' => $_errNum,
-                                       'msg' => $_errMsg );
-	}
+     */
+    function _setErr( $_errNum, $_errMsg )
+    {
+        $this->_smtpsErrors[] = array(
+            'num' => $_errNum,
+            'msg' => $_errMsg,
+        );
+    }
 
 	/**
 	 * Returns errors codes and messages for Class
@@ -1828,15 +1845,16 @@ class SMTPs
 	{
 		$_errMsg = array();
 
-		foreach ( $this->_smtpsErrors as $_err => $_info )
+		if (is_array($this->_smtpsErrors))
 		{
-			$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			foreach ( $this->_smtpsErrors as $_err => $_info )
+			{
+				$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			}
 		}
 
 		return implode("\n", $_errMsg);
 	}
-
-
 }
 
 
@@ -2044,4 +2062,3 @@ class SMTPs
  *  - basic shell with some commets
  *
  */
-

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - dict
 CountryBE=Bélgica
-CountryIT=Itália
 CountryCH=Suíça
 CountryDZ=Argélia
 CountryCA=Canadá
@@ -50,7 +49,6 @@ CountryBL=São Bartolomeu
 CountryMF=São Martinho
 CivilityMLE=Srta.
 CivilityMTRE=Me.
-CivilityDR=Dr.
 CurrencyAUD=Dólares australianos
 CurrencySingAUD=Dólar australiano
 CurrencyCAD=Dólares canadenses

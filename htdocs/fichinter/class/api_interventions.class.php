@@ -35,7 +35,7 @@ class Interventions extends DolibarrApi
     static $FIELDS = array(
       'socid',
       'fk_project',
-      'description'
+      'description',
     );
 
     /**
@@ -44,7 +44,7 @@ class Interventions extends DolibarrApi
     static $FIELDSLINE = array(
       'description',
       'date',
-      'duree'
+      'duree',
     );
 
     /**
@@ -106,7 +106,8 @@ class Interventions extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -124,7 +125,7 @@ class Interventions extends DolibarrApi
 
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE t.entity IN ('.getEntity('fichinter').')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('intervention').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -188,7 +189,7 @@ class Interventions extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of intervention
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -217,7 +218,8 @@ class Interventions extends DolibarrApi
      * @return int
      */
     /* TODO
-    function getLines($id) {
+    function getLines($id)
+    {
     	if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
     		throw new RestException(401);
     	}
@@ -249,7 +251,7 @@ class Interventions extends DolibarrApi
      *
      * @return  int
      */
-    function postLine($id, $request_data = NULL)
+    function postLine($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
                           throw new RestException(401, "Insuffisant rights");
@@ -315,7 +317,6 @@ class Interventions extends DolibarrApi
 		    	'message' => 'Intervention deleted'
 	    	)
     	);
-
     }
 
     /**
@@ -424,7 +425,8 @@ class Interventions extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
     	$object = parent::_cleanObjectDatas($object);
 
@@ -453,6 +455,4 @@ class Interventions extends DolibarrApi
         }
         return $fichinter;
     }
-
-
 }

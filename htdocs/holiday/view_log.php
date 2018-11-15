@@ -23,7 +23,7 @@
  *  \ingroup    holiday
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -41,6 +41,7 @@ if (empty($year))
 	$year=$tmpdate['year'];
 }
 
+// Load translation files required by the page
 $langs->load('users');
 
 
@@ -117,13 +118,12 @@ foreach($cp->logs as $logs_CP)
    	print '<td>'.$user_update->getNomUrl(-1).'</td>';
    	print '<td>'.$logs_CP['type_action'].'</td>';
    	print '<td>';
-	$label=$alltypeleaves[$logs_CP['fk_type']]['label'];
+   	$label = (($alltypeleaves[$logs_CP['fk_type']]['code'] && $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code'])!=$alltypeleaves[$logs_CP['fk_type']]['code']) ? $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code']) : $alltypeleaves[$logs_CP['fk_type']]['label']);
 	print $label?$label:$logs_CP['fk_type'];
    	print '</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],5).' '.$langs->trans('days').'</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'],5).' '.$langs->trans('days').'</td>';
    	print '</tr>'."\n";
-
 }
 
 if ($log_holiday == '2')
@@ -137,6 +137,6 @@ print '</tbody>'."\n";
 print '</table>'."\n";
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

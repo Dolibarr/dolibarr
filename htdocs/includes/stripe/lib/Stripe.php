@@ -22,7 +22,7 @@ class Stripe
     public static $connectBase = 'https://connect.stripe.com';
 
     // @var string The base URL for the Stripe API uploads endpoint.
-    public static $apiUploadBase = 'https://uploads.stripe.com';
+    public static $apiUploadBase = 'https://files.stripe.com';
 
     // @var string|null The version of the Stripe API to use for requests.
     public static $apiVersion = null;
@@ -52,7 +52,7 @@ class Stripe
     // @var float Initial delay between retries, in seconds
     private static $initialNetworkRetryDelay = 0.5;
 
-    const VERSION = '6.4.1';
+    const VERSION = '6.21.1';
 
     /**
      * @return string The API key used for requests.
@@ -199,12 +199,13 @@ class Stripe
      * @param string $appVersion The application's version
      * @param string $appUrl The application's URL
      */
-    public static function setAppInfo($appName, $appVersion = null, $appUrl = null)
+    public static function setAppInfo($appName, $appVersion = null, $appUrl = null, $appPartnerId = null)
     {
         self::$appInfo = self::$appInfo ?: [];
         self::$appInfo['name'] = $appName;
-        self::$appInfo['version'] = $appVersion;
+        self::$appInfo['partner_id'] = $appPartnerId;
         self::$appInfo['url'] = $appUrl;
+        self::$appInfo['version'] = $appVersion;
     }
 
     /**

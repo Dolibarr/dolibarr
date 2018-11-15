@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2014-2015 	Charlie Benke           <charlies@patas-monkey.com>
+ * Copyright (C) 2014-2018  Charlene Benke          <charlies@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
+ * Copyright (C) 2018 		Philippe Grand       	<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +52,8 @@ if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'interventions'));
 
 $id			= GETPOST('id','int');
 $ref		= GETPOST('ref','alpha');
@@ -259,7 +259,7 @@ if (empty($reshook))
 				// Extrafields
 				$extrafields = new ExtraFields($db);
 				$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-				$array_options = $extrafields->getOptionalsFromPost($extralabels);
+				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 		        $object->array_options = $array_options;
 
@@ -379,10 +379,8 @@ if (empty($reshook))
 									$error++;
 									break;
 								}
-
 							}
 						}
-
 		            }
 		            else
 		            {
@@ -409,7 +407,7 @@ if (empty($reshook))
 		    	{
 		    		// Extrafields
 		    		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		    		$array_options = $extrafields->getOptionalsFromPost($extralabels);
+		    		$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 		    		$object->array_options = $array_options;
 
@@ -750,20 +748,12 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('interventiondao'));
-			$parameters=array('id'=>$object->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			$result=$object->insertExtraFields('INTERVENTION_MODIFY');
+			if ($result < 0)
 			{
-				$result=$object->insertExtraFields('INTERVENTION_MODIFY');
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
-			else if ($reshook < 0) $error++;
 		}
 
 		if ($error) $action = 'edit_extras';
@@ -1010,7 +1000,7 @@ if ($action == 'create')
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1108,7 +1098,6 @@ if ($action == 'create')
 
 		print '</form>';
 	}
-
 }
 else if ($id > 0 || ! empty($ref))
 {
@@ -1412,7 +1401,6 @@ else if ($id > 0 || ! empty($ref))
 				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
@@ -1481,8 +1469,6 @@ else if ($id > 0 || ! empty($ref))
 					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
-
-
 				}
 
 				// Line in update mode
@@ -1500,8 +1486,11 @@ else if ($id > 0 || ! empty($ref))
 
 					// Date d'intervention
 					print '<td align="center" class="nowrap">';
-                                        if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($db->jdate($objp->date_intervention),'di',0,0,0,"date_intervention");
-                                        else $form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+                    if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+                        print $form->selectDate($db->jdate($objp->date_intervention),'di',0,0,0,"date_intervention");
+                    } else {
+                        print $form->selectDate($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+                    }
 					print '</td>';
 
                     // Duration
@@ -1526,8 +1515,6 @@ else if ($id > 0 || ! empty($ref))
 					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
-
-
 				}
 
 				$i++;
@@ -1566,18 +1553,25 @@ else if ($id > 0 || ! empty($ref))
                 print '<td align="center" class="nowrap">';
 				$now=dol_now();
 				$timearray=dol_getdate($now);
-				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
-				else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
-                                if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) $form->select_date($timewithnohour,'di',0,0,0,"addinter");
-                                else $form->select_date($timewithnohour,'di',1,1,0,"addinter");
+				if (! GETPOST('diday','int')) {
+                    $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+                } else {
+                    $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
+                }
+                if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+                    print $form->selectDate($timewithnohour,'di',0,0,0,"addinter");
+                } else {
+                    print $form->selectDate($timewithnohour,'di',1,1,0,"addinter");
+                }
 				print '</td>';
 
                 // Duration
                 print '<td align="right">';
                 if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
                     $selectmode = 'select';
-                    if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
+                    if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
                         $selectmode = 'text';
+                    }
                     $form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
                 }
                 print '</td>';
@@ -1648,9 +1642,18 @@ else if ($id > 0 || ! empty($ref))
 				{
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 					}
-					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendMail').'</a></div>';
+				}
+
+		    	// create intervention model
+				if ($object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
+					print '<div class="inline-block divButAction">';
+					// This feature is not yet implemented
+					//print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
+					print '<a class="butAction" title="'.$langs->trans("ChangeIntoRepeatableIntervention").'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("not yet implemented").'</a>';
+					print '</div>';
 				}
 
 				// Proposal
@@ -1704,7 +1707,6 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
 					print '>'.$langs->trans('Delete').'</a></div>';
 				}
-
 			}
 		}
 	}

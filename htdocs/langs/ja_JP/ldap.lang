@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=ドメインのパスワード
 YouMustChangePassNextLogon=ドメイン<b>%s</b>のユーザー<b>%s</b>のパスワードを変更する必要があります。
 UserMustChangePassNextLogon=ユーザーは、ドメイン%sにパスワードを変更する必要があります。
 LDAPInformationsForThisContact=この連絡先のLDAPデータベース内の情報
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=連絡先を同期しました
 ForceSynchronize=強制的に同期 Dolibarr -> LDAP
 ErrorFailedToReadLDAP=LDAPデータベースの読み込みに失敗しました。 LDAPモジュールの設定とデータベースのアクセシビリティをチェックします。
+PasswordOfUserInLDAP=Password of user in LDAP

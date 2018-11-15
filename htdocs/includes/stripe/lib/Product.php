@@ -13,15 +13,15 @@ namespace Stripe;
  * @property int $created
  * @property string[] $deactivate_on
  * @property string $description
- * @property array $images
+ * @property string[] $images
  * @property bool $livemode
  * @property StripeObject $metadata
  * @property string $name
  * @property mixed $package_dimensions
  * @property bool $shippable
- * @property Collection $skus
  * @property string $statement_descriptor
  * @property string $type
+ * @property string $unit_label
  * @property int $updated
  * @property string $url
  *
@@ -29,6 +29,9 @@ namespace Stripe;
  */
 class Product extends ApiResource
 {
+
+    const OBJECT_NAME = "product";
+
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete;

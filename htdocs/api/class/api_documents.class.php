@@ -103,7 +103,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'encoding'=>'base64' );
 	}
 
 
@@ -224,9 +224,8 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'base64' );
 	}
-
 
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
@@ -356,6 +355,22 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->facture->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'invoice');
 		}
+		else if ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->agenda->myactions->read && !DolibarrApiAccess::$user->rights->agenda->allactions->read) {
+				throw new RestException(401);
+			}
+
+			$object = new ActionComm($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Event not found');
+			}
+
+			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		}
 		else
 		{
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -436,15 +451,32 @@ class Documents extends DolibarrApi
 		if ($ref)
 		{
 			$tmpreldir='';
-
-			if ($modulepart == 'facture' || $modulepart == 'invoice')
+      $tmprelsubdir='';
+      
+			if ($modulepart == 'societe' || $modulepart == 'thirdparty')
+			{
+				$modulepart='societe';
+        if ($subdir == 'logos') $tmprelsubdir='/'.$subdir;
+        
+				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+				$object = new Societe($this->db);
+			}
+			elseif ($modulepart == 'adherent' || $modulepart == 'member')
+			{
+				$modulepart='adherent';
+        if ($subdir == 'photos') $tmprelsubdir='/'.$subdir;
+        
+				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$object = new Adherent($this->db);
+			}
+			elseif ($modulepart == 'facture' || $modulepart == 'invoice')
 			{
 				$modulepart='facture';
 
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$object = new Facture($this->db);
 			}
-			elseif ($modulepart == 'project')
+      elseif ($modulepart == 'project')
 			{
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
@@ -498,7 +530,7 @@ class Documents extends DolibarrApi
    				throw new RestException(404, 'The object '.$modulepart." with ref '".$ref."' was not found.");
 			}
 
-			$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
+			$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref).$tmprelsubdir;
 
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
 			$upload_dir = $tmp['original_file'];	// No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
@@ -531,7 +563,9 @@ class Documents extends DolibarrApi
 		dol_delete_file($destfiletmp);
 		//var_dump($original_file);exit;
 
-		if (!dol_is_dir(dirname($destfile))) {
+		if (!dol_is_dir(dirname($destfile)) && ($object->id > 0)) {
+			dol_mkdir($upload_dir);
+		} elseif (!dol_is_dir(dirname($destfile))) {
 			throw new RestException(401, 'Directory not exists : '.dirname($destfile));
 		}
 
@@ -552,7 +586,15 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
 		}
 
+    //$result = dol_add_file_process($destfile, $overwriteifexists, 1, '', GETPOST('savingdocmask', 'alpha'), null, '', 1);
 		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1);
+    
+    if (file_exists(dol_osencode($destfile)))
+    {
+       // Create thumbs
+      $this->addThumbs($destfile);
+    }
+    
 		if (! $result)
 		{
 			throw new RestException(500, "Failed to move file into '".$destfile."'");

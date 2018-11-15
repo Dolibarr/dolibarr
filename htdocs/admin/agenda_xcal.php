@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2015 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (!$user->admin)
     accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other","agenda"));
 
 $def = array();
 $actionsave=GETPOST('save','alpha');
@@ -199,6 +198,6 @@ if (! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

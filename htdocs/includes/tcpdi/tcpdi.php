@@ -135,7 +135,7 @@ class TCPDI extends FPDF_TPL {
      *
      * @return string
      */
-	function setPDFVersion($version = '1.3') {
+	function setPDFVersion($version = '1.7') {
 		$this->PDFVersion = $version;
 	}
 

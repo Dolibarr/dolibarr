@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2018     	ptibogxiv		<support@ptibogxiv.net> 
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -331,7 +331,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
         if (! $error)
         {
-//            $db->commit();
+            $db->commit();
         }
         else
         {
@@ -350,8 +350,33 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             // Send confirmation Email
             if ($object->email && $sendalsoemail)
             {
-                $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-                $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            	$subject = '';
+            	$msg= '';
+
+            	// Send subscription email
+            	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            	$formmail=new FormMail($db);
+            	// Set output language
+            	$outputlangs = new Translate('', $conf);
+            	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	// Load traductions files requiredby by page
+            	$outputlangs->loadLangs(array("main", "members"));
+            	// Get email content from template
+            	$arraydefaultmessage=null;
+            	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            	if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            	if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            	{
+            		$subject = $arraydefaultmessage->topic;
+            		$msg     = $arraydefaultmessage->content;
+            	}
+
+            	$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            	complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            	$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            	$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
                 // Attach a file ?
                 $file='';
@@ -369,7 +394,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 	$listofmimes=array(dol_mimetype($file));
                 }
 
-                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+                $moreinheader='X-Dolibarr-Info: send_an_email by adherents/subscription.php'."\r\n";
+
+                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1, '', $moreinheader);
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
@@ -643,7 +670,7 @@ if ($rowid > 0)
         $sql.= " c.datec,";
         $sql.= " c.dateadh as dateh,";
         $sql.= " c.datef,";
-        $sql.= " c.fk_bank,c.fk_type, ";
+        $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
         $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
@@ -665,7 +692,6 @@ if ($rowid > 0)
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref',$_SERVER["PHP_SELF"],'c.rowid','',$param,'',$sortfield,$sortorder);
             print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-            print '<td align="center">'.$langs->trans("MemberType").'</td>';
             print '<td align="center">'.$langs->trans("DateStart").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
             print '<td align="right">'.$langs->trans("Amount").'</td>';
@@ -683,12 +709,10 @@ if ($rowid > 0)
 
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
-                $subscriptionstatic->label=$objp->label;
 
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
-                print '<td align="center"><a href="'.DOL_DOCUMENT_ROOT.'/adherents/type.php?rowid='.$objp->fk_type.'">'.img_object($langs->trans("ShowType"),'group').' '.dol_escape_htmltag($subscriptionstatic->label)."</a></td>";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->subscription).'</td>';
@@ -847,75 +871,12 @@ if ($rowid > 0)
 		dol_fiche_head('');
 
 		print "<table class=\"border\" width=\"100%\">\n";
-             print '<tbody>';
+        print '<tbody>';
 
-			$today=dol_now();
-    $datefrom=0;
-    $dateto=0;
-    $paymentdate=-1;
-
-$year = strftime("%Y",$today);
-$month = strftime("%m",$today);
-$day = strftime("%d",$today);
-
-if ($object->datefin== NULL){
-$datefin=dol_now()-86400;
-}else {
-$datefin=$object->datefin+86400;
-}
-
-$cotis1 = dol_mktime(00,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year);
-$cotis0 = dol_time_plus_duree($cotis1,-1,'y');
-$cotis2 = dol_time_plus_duree($cotis1,+1,'y');
-
-$startcotis0 = dol_time_plus_duree($cotis0,-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
-$startcotis1 = dol_time_plus_duree($cotis1,-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
-$startcotis2 = dol_time_plus_duree($cotis2,-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
-
-if ($startcotis1>$today){
-if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA == '0') { 
-$next = dol_time_plus_duree($today,+$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
-$date = $dateb = $today;
-}else{
-$next = $startcotis1;
-if ($cotis0>$today && $datefin<$today){$date=dol_now();}else{
-$date = $cotis0;}
-$dateb = $cotis0;}
-$dateto = strtotime(date("Y-m-d", $dateb) . " + 1 year - 1 day");  
-}else{
-if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA == '0') {
-$next = $startcotis2;
-$date = $dateb =$today;
-}else{ 
-$next = $startcotis2; 
-if ($cotis1>$today && $datefin<$today){$date=dol_now();}else{
-$date = $cotis1;}
-$dateb = $cotis1;} 
-$dateto = strtotime(date("Y-m-d", dol_time_plus_duree($cotis2,-1,'d')));
-} 
-
-if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA=='1' or $conf->global->ADHERENT_SUBSCRIPTION_PRORATA=='0'){$tx="1";}
-else {$tx=(ceil((($dateto-$today)/31558464)*$conf->global->ADHERENT_SUBSCRIPTION_PRORATA)/$conf->global->ADHERENT_SUBSCRIPTION_PRORATA);}
-$monthnb=12-(12*$tx);
-if ($object->datefin>$dateb) {$newdate=$datefin;}else{$newdate=$date;}
-$newy = strftime("%Y",$newdate);
-$newm = strftime("%m",$newdate);
-$newd = strftime("%d",$newdate);
-$renewadherent = strtotime("+ ".$conf->global->ADHERENT_WELCOME_MONTH." month",$newdate);
-$datefrom = strtotime(date("Y-m-d", dol_time_plus_duree($date,+$monthnb,'m'))); 
-
-$d = strftime("%Y",$datefrom);
-$f = strftime("%Y",$dateto);
-if ($d==$f) {
-$season=$d;
-}else{
-$season=$d."/".$f;
-}
-
-$debut = strftime("%d/%m/%Y",$datefrom);
-$fin = strftime("%d/%m/%Y",$dateto);
-$renew = strftime("%d/%m/%Y",$renewadherent);
-$nextdebut = strftime("%d/%m/%Y",$next);
+		$today=dol_now();
+        $datefrom=0;
+        $dateto=0;
+        $paymentdate=-1;
 
         // Date payment
         if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday'))
@@ -923,29 +884,41 @@ $nextdebut = strftime("%d/%m/%Y",$next);
             $paymentdate=dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
         }
 
+        print '<tr>';
         // Date start subscription
-        print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
-        print $form->select_date($datefrom,'','','','',"subscription",1,0,1);
+        print '<td class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
+        if (GETPOST('reday'))
+        {
+            $datefrom=dol_mktime(0,0,0,GETPOST('remonth'),GETPOST('reday'),GETPOST('reyear'));
+        }
+        if (! $datefrom)
+        {
+        	$datefrom=$object->datevalid;
+        	if ($object->datefin > 0)
+            {
+                $datefrom=dol_time_plus_duree($object->datefin,1,'d');
+            }
+        }
+        print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
         print "</td></tr>";
 
-           //$dateto1=dol_mktime(0,0,0,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,1,$year+1);
-            //$dateto=dol_time_plus_duree($datefin,+1,'y'); //premiere fin adhesion
-
+        // Date end subscription
+        if (GETPOST('endday'))
+        {
+            $dateto=dol_mktime(0,0,0,GETPOST('endmonth'),GETPOST('endday'),GETPOST('endyear'));
+        }
+        if (! $dateto)
+        {
+            $dateto=-1;		// By default, no date is suggested
+        }
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-        print $form->select_date($dateto,'end','','','',"subscription",1,0,1);
+        print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);
         print "</td></tr>";
 
         if ($adht->subscription)
         {
-        if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA < '2') { 
-        $montant=$adht->price;
-        }
-        else {     
-        $montant=$tx*$adht->price;
-        }
-        if ($object->datefin > 0) {$amount=$montant;} else  {$amount=$montant+$adht->welcome;}
             // Amount
-            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="10" value="' . $amount . '"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.GETPOST('subscription').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
             print '<tr><td>'.$langs->trans("Label").'</td>';
@@ -1040,7 +1013,7 @@ $nextdebut = strftime("%d/%m/%Y",$next);
 
                 // Date of payment
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                print $form->select_date(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'subscription',1,1,1);
+                print $form->selectDate(isset($paymentdate)?$paymentdate:-1, 'payment', 0, 0, 1, 'subscription', 1, 1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
@@ -1073,8 +1046,34 @@ $nextdebut = strftime("%d/%m/%Y",$next);
             $adht = new AdherentType($db);
             $adht->fetch($object->typeid);
 
-            $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-            $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            // Send subscription email
+            $subject = '';
+            $msg= '';
+
+            // Send subscription email
+            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            $formmail=new FormMail($db);
+            // Set output language
+            $outputlangs = new Translate('', $conf);
+            $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            // Load traductions files requiredby by page
+            $outputlangs->loadLangs(array("main", "members"));
+            // Get email content from template
+            $arraydefaultmessage=null;
+            $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            {
+            	$subject = $arraydefaultmessage->topic;
+            	$msg     = $arraydefaultmessage->content;
+            }
+
+            $substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
             $tmp='<input name="sendmail" type="checkbox"'.(GETPOST('sendmail','alpha')?' checked':(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?' checked':'')).'>';
             $helpcontent='';
@@ -1114,7 +1113,6 @@ else
     print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,27 +29,97 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 /**
  * Class to manage categories of an accounting account
  */
-class AccountancyCategory 	// extends CommonObject
+class AccountancyCategory // extends CommonObject
 {
-	public $db;							//!< To store db handler
-	public $error;							//!< To return error code (or message)
-	public $errors=array();				//!< To return several error codes (or messages)
-	public $element='c_accounting_category';			//!< Id that identify managed objects
-	public $table_element='c_accounting_category';	//!< Name of table without prefix where object is stored
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	public $id;
+	/**
+	 * @var string 		Error string
+	 * @see             errors
+	 */
+	public $error;
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='c_accounting_category';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='c_accounting_category';
+
+	/**
+     * @var int ID
+     */
+    public $id;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $code;
-	public $label;
+
+	/**
+     * @var string Accountancy Category label
+     */
+    public $label;
+
+    /**
+	 * @var mixed Sample property 1
+	 */
 	public $range_account;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $sens;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $category_type;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $formula;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $position;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $fk_country;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $active;
 
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $lines_cptbk;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $lines_display;
+
+	/**
+	 * @var mixed Sample property 1
+	 */
 	public $sdc;
 
 
@@ -125,18 +196,18 @@ class AccountancyCategory 	// extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_accounting_category");
 
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
 
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -264,18 +335,17 @@ class AccountancyCategory 	// extends CommonObject
 
 		if (! $error)
 		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -320,18 +390,17 @@ class AccountancyCategory 	// extends CommonObject
 
 		if (! $error)
 		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action call a trigger.
+			//if (! $notrigger)
+			//{
+			//	// Call triggers
+			//	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			//	$interface=new Interfaces($this->db);
+			//	$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			//	// End call triggers
+			//}
 		}
 
 		// Commit or rollback
@@ -357,15 +426,17 @@ class AccountancyCategory 	// extends CommonObject
 	 * Function to select all accounting accounts from an accounting category
 	 *
 	 * @param int $id Id
-	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function display($id) {
+    public function display($id)
+    {
+		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = " . $id;
+		$sql .= " AND t.entity = " . $conf->entity;
 
-		$this->lines_display = array ();
+		$this->lines_display = array();
 
 		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -393,7 +464,8 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function getCptBK($id) {
+    public function getCptBK($id)
+    {
 		global $conf;
 
 		$sql = "SELECT t.numero_compte, t.label_operation, t.doc_ref";
@@ -401,13 +473,14 @@ class AccountancyCategory 	// extends CommonObject
 		$sql .= " WHERE t.numero_compte NOT IN (";
 		$sql .= " SELECT t.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
-		$sql .= " WHERE t.fk_accounting_category = " . $id . ")";
+		$sql .= " WHERE t.fk_accounting_category = " . $id . " AND t.entity = " . $conf->entity.")";
 		$sql .= " AND t.numero_compte IN (";
 		$sql .= " SELECT DISTINCT aa.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
-		$sql .= " AND aa.active = 1)";
+		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.entity = = " . $conf->entity . ")";
 		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " ORDER BY t.numero_compte";
 
@@ -440,8 +513,9 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function getAccountsWithNoCategory($id) {
-	    global $conf;
+    public function getAccountsWithNoCategory($id)
+    {
+        global $conf;
 
 	    $sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
 	    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
@@ -449,6 +523,7 @@ class AccountancyCategory 	// extends CommonObject
 	    $sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
 	    $sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 	    $sql .= " AND aa.active = 1";
+	    $sql .= " AND aa.entity = " . $conf->entity;
 	    $sql .= " GROUP BY aa.account_number, aa.label";
 	    $sql .= " ORDER BY aa.account_number, aa.label";
 
@@ -482,7 +557,8 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function updateAccAcc($id_cat, $cpts = array()) {
+    public function updateAccAcc($id_cat, $cpts = array())
+    {
 		global $conf;
 		$error = 0;
 
@@ -493,6 +569,7 @@ class AccountancyCategory 	// extends CommonObject
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.entity = " . $conf->entity;
 
 		$this->db->begin();
 
@@ -544,7 +621,8 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function deleteCptCat($cpt_id) {
+    public function deleteCptCat($cpt_id)
+    {
 		$error = 0;
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account as aa";
@@ -580,31 +658,27 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return array       Result in table
 	 */
-	public function getCatsCpts() {
-		global $mysoc;
+	public function getCatsCpts()
+	{
+		global $mysoc,$conf;
+
 		$sql = "";
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
-			$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id . ")";
-			$sql .= " AND cat.rowid = t.fk_accounting_category";
-			$sql .= " ORDER BY cat.position ASC";
-		} else {
-			$sql = "SELECT c.rowid, c.code, c.label, c.category_type ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
+		$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1";
+		$sql .= " AND c.entity = " . $conf->entity;
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND cat.rowid = t.fk_accounting_category";
+		$sql .= " AND t.entity = " . $conf->entity;
+		$sql .= " ORDER BY cat.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -685,35 +759,27 @@ class AccountancyCategory 	// extends CommonObject
 	}
 
 	/**
-	 * Return list of personalized groups
+	 * Return list of personalized groups that are active
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
-	 * @return	array							Array of groups
+	 * @return	array|int						Array of groups or -1 if error
 	 */
 	public function getCats($categorytype=-1)
 	{
-		global $db, $langs, $user, $mysoc;
+		global $db, $langs, $user, $mysoc, $conf;
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1 ";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id;
-			$sql .= " ORDER BY c.position ASC";
-		} else {	// Note: this should not happen
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1 ";
+		$sql .= " AND c.entity = " . $conf->entity;
+		if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " ORDER BY c.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -751,9 +817,9 @@ class AccountancyCategory 	// extends CommonObject
 	 * Get all accounting account of a group.
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
-	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
-	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
-	 * @return 	array       					Array of accounting accounts
+	 * @param 	int 		$cat_id 				Id if personalized accounting group/category
+	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
+	 * @return 	array|int							Array of accounting accounts or -1 if error
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere='')
 	{
@@ -770,14 +836,14 @@ class AccountancyCategory 	// extends CommonObject
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		else
 		{
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		//echo $sql;
 
@@ -807,5 +873,4 @@ class AccountancyCategory 	// extends CommonObject
 			return -1;
 		}
 	}
-
 }

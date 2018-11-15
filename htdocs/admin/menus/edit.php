@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
-
-$langs->load("admin");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("other","admin"));
 
 if (! $user->admin) accessforbidden();
 
@@ -89,7 +88,7 @@ if ($action == 'update')
         if ($result > 0)
         {
             $menu->titre=GETPOST('titre', 'alpha');
-            $menu->leftmenu=GETPOST('leftmenu', 'alpha');
+            $menu->leftmenu=GETPOST('leftmenu', 'aZ09');
             $menu->url=GETPOST('url','alpha');
             $menu->langs=GETPOST('langs','alpha');
             $menu->position=GETPOST('position','int');
@@ -514,5 +513,6 @@ elseif ($action == 'edit')
     print '<br>';
 }
 
+// End of page
 llxFooter();
 $db->close();

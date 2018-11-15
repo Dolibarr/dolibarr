@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 /**
  *       \file      htdocs/install/step5.php
  *       \ingroup   install
- *       \brief     Last page of upgrade or install process
+ *       \brief     Last page of upgrade / install process
  */
 
 include_once 'inc.php';
@@ -33,11 +33,11 @@ require_once $dolibarr_main_document_root . '/core/lib/security.lib.php'; // for
 
 global $langs;
 
-$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
-$langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
-$action=GETPOST('action','alpha');
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[3])?'auto':$argv[3]);
+$langs->setDefaultLang($setuplang);
+$action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'':$argv[4]);
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
@@ -52,12 +52,11 @@ if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upg
     }
 }
 
-$langs->load("admin");
-$langs->load("install");
+$langs->loadLangs(array("admin", "install"));
 
-$login = GETPOST('login', 'alpha');
-$pass = GETPOST('pass', 'alpha');
-$pass_verif = GETPOST('pass_verif', 'alpha');
+$login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
+$pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);
+$pass_verif = GETPOST('pass_verif', 'alpha')?GETPOST('pass_verif', 'alpha'):(empty($argv[7])?'':$argv[7]);
 
 $success=0;
 
@@ -67,7 +66,7 @@ if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.fo
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
-	// If forced install is enabled, let's replace post values. These are empty because form fields are disabled.
+	// If forced install is enabled, replace post values. These are empty because form fields are disabled.
 	if ($force_install_noedit == 2) {
 		if (!empty($force_install_dolibarrlogin)) {
 			$login = $force_install_dolibarrlogin;
@@ -75,14 +74,15 @@ if (@file_exists($forcedfile)) {
 	}
 }
 
-dolibarr_install_syslog("--- step5: entering step5.php page");
+dolibarr_install_syslog("- step5: entering step5.php page");
 
+$error=0;
 
 /*
  *	Actions
  */
 
-// If install, check pass and pass_verif used to create admin account
+// If install, check password and password_verification used to create admin account
 if ($action == "set") {
 	if ($pass <> $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang" . (isset($login) ? '&login=' . $login : ''));
@@ -189,6 +189,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                     else
                         dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                           // All entities
     			}
+
+    			dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
 		    }
 
 		    // Create user used to create the admin user
@@ -390,8 +392,8 @@ if ($action == "set" && $success)
     else
     {
         // If here MAIN_VERSION_LAST_UPGRADE is not empty
-        print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
-        print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b><br>';
+        print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
+        print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b><br>';
         print $langs->trans("MigrationNotFinished").'<br>';
         print "<br>";
 
@@ -438,8 +440,8 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
     else
     {
         // If here MAIN_VERSION_LAST_UPGRADE is not empty
-        print $langs->trans("VersionLastUpgrade").': <b><font class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</font></b><br>';
-        print $langs->trans("VersionProgram").': <b><font class="ok">'.DOL_VERSION.'</font></b>';
+        print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
+        print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 
         print "<br>";
 
@@ -453,12 +455,17 @@ else
     dol_print_error('','step5.php: unknown choice of action');
 }
 
-
-
 // Clear cache files
 clearstatcache();
 
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- step5: Dolibarr setup finished");
+dolibarr_install_syslog("- step5: Dolibarr setup finished");
 
 pFooter(1,$setuplang);
+
+// Return code if ran from command line
+if ($ret) exit($ret);
+

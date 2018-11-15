@@ -1,13 +1,15 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,16 +41,34 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class CommandeFournisseur extends CommonOrder
 {
-    public $element='order_supplier';
-    public $table_element='commande_fournisseur';
-    public $table_element_line = 'commande_fournisseurdet';
-    public $fk_element = 'fk_commande';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='order_supplier';
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='commande_fournisseur';
+
+    /**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line = 'commande_fournisseurdet';
+
+    /**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_commande';
+
     public $picto='order';
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -60,13 +80,17 @@ class CommandeFournisseur extends CommonOrder
      */
     protected $table_ref_field = 'ref';
 
-    public $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
 	/**
 	 * Supplier order reference
 	 * @var string
 	 */
     public $ref;
+
     public $ref_supplier;
     public $brouillon;
     public $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
@@ -88,24 +112,37 @@ class CommandeFournisseur extends CommonOrder
      * Delivery date
      */
     public $date_livraison;
+
     public $total_ht;
     public $total_tva;
     public $total_localtax1;   // Total Local tax 1
     public $total_localtax2;   // Total Local tax 2
     public $total_ttc;
     public $source;
+
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
 	 */
     public $note;
+
 	public $note_private;
     public $note_public;
     public $model_pdf;
+
+    /**
+     * @var int ID
+     */
     public $fk_project;
+
     public $cond_reglement_id;
     public $cond_reglement_code;
+
+    /**
+     * @var int ID
+     */
     public $fk_account;
+
     public $mode_reglement_id;
     public $mode_reglement_code;
     public $user_author_id;
@@ -124,13 +161,18 @@ class CommandeFournisseur extends CommonOrder
 	 * @var CommandeFournisseurLigne[]
 	 */
 	public $lines = array();
+
 	//Add for supplier_proposal
     public $origin;
     public $origin_id;
     public $linked_objects=array();
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
     public $fk_multicurrency;
+
     public $multicurrency_code;
     public $multicurrency_tx;
     public $multicurrency_total_ht;
@@ -141,34 +183,42 @@ class CommandeFournisseur extends CommonOrder
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
+
 	/**
 	 * Validated status
 	 */
 	const STATUS_VALIDATED = 1;
+
 	/**
 	 * Accepted
 	 */
 	const STATUS_ACCEPTED = 2;
+
 	/**
 	 * Order sent, shipment on process
 	 */
 	const STATUS_ORDERSENT = 3;
+
 	/**
 	 * Received partially
 	 */
 	const STATUS_RECEIVED_PARTIALLY = 4;
+
 	/**
 	 * Received completely
 	 */
 	const STATUS_RECEIVED_COMPLETELY = 5;
+
 	/**
 	 * Order canceled
 	 */
 	const STATUS_CANCELED = 6;
+
 	/**
 	 * Order canceled/never received
 	 */
 	const STATUS_CANCELED_AFTER_ORDER = 7;
+
 	/**
 	 * Refused
 	 */
@@ -184,23 +234,9 @@ class CommandeFournisseur extends CommonOrder
      */
     public function __construct($db)
     {
-    	global $conf;
-
         $this->db = $db;
-        $this->products = array();
 
-        // List of language codes for status
-        $this->statuts[0] = 'StatusOrderDraft';
-        $this->statuts[1] = 'StatusOrderValidated';
-        $this->statuts[2] = 'StatusOrderApproved';
-        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
-        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
-        $this->statuts[4] = 'StatusOrderReceivedPartially';
-        $this->statuts[5] = 'StatusOrderReceivedAll';
-        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
-        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
-        $this->statuts[9] = 'StatusOrderRefused';
+        $this->products = array();
     }
 
 
@@ -211,7 +247,7 @@ class CommandeFournisseur extends CommonOrder
      * 	@param	string	$ref		Ref of object
      *	@return int 		        >0 if OK, <0 if KO, 0 if not found
      */
-    public function fetch($id,$ref='')
+    public function fetch($id, $ref='')
     {
         global $conf;
 
@@ -232,8 +268,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ', c.fk_incoterms, c.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid AND cr.entity IN (".getEntity('c_payment_term').")";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id AND p.entity IN (".getEntity('c_paiement').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
@@ -318,99 +354,17 @@ class CommandeFournisseur extends CommonOrder
 
             if ($this->statut == 0) $this->brouillon = 1;
 
-			$this->fetchObjectLinked();
-
-			//$result=$this->fetch_lines();
-            $this->lines=array();
-
-            $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
-            $sql.= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
-            $sql.= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
-            $sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
-            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
-	        $sql.= " l.fk_unit,";
-            $sql.= " l.date_start, l.date_end,";
-			$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
-            $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
-            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-            $sql.= " WHERE l.fk_commande = ".$this->id;
-            $sql.= " ORDER BY l.rang, l.rowid";
-            //print $sql;
-
-            dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
-            $result = $this->db->query($sql);
-            if ($result)
+            /*
+             * Lines
+             */
+            $result=$this->fetch_lines();
+            if ($result < 0)
             {
-                $num = $this->db->num_rows($result);
-                $i = 0;
-
-                while ($i < $num)
-                {
-                    $objp                  = $this->db->fetch_object($result);
-
-                    $line                 = new CommandeFournisseurLigne($this->db);
-
-                    $line->id                  = $objp->rowid;
-                    $line->desc                = $objp->description;
-                    $line->description         = $objp->description;
-                    $line->qty                 = $objp->qty;
-                    $line->tva_tx              = $objp->tva_tx;
-                    $line->localtax1_tx		   = $objp->localtax1_tx;
-                    $line->localtax2_tx		   = $objp->localtax2_tx;
-                    $line->localtax1_type	   = $objp->localtax1_type;
-                    $line->localtax2_type	   = $objp->localtax2_type;
-                    $line->subprice            = $objp->subprice;
-                    $line->pu_ht	           = $objp->subprice;
-                    $line->remise_percent      = $objp->remise_percent;
-
-                    $line->vat_src_code        = $objp->vat_src_code;
-                    $line->total_ht            = $objp->total_ht;
-                    $line->total_tva           = $objp->total_tva;
-                    $line->total_localtax1	   = $objp->total_localtax1;
-                    $line->total_localtax2	   = $objp->total_localtax2;
-                    $line->total_ttc           = $objp->total_ttc;
-                    $line->product_type        = $objp->product_type;
-
-                    $line->fk_product          = $objp->fk_product;
-
-                    $line->libelle             = $objp->product_label;
-                    $line->product_label       = $objp->product_label;
-                    $line->product_desc        = $objp->product_desc;
-
-                    $line->ref                 = $objp->product_ref;    // Ref of product
-                    $line->product_ref         = $objp->product_ref;    // Ref of product
-                    $line->ref_fourn           = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
-                    $line->ref_supplier        = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
-
-                    $line->date_start          = $this->db->jdate($objp->date_start);
-                    $line->date_end            = $this->db->jdate($objp->date_end);
-	                $line->fk_unit             = $objp->fk_unit;
-
-					// Multicurrency
-					$line->fk_multicurrency 		= $objp->fk_multicurrency;
-					$line->multicurrency_code 		= $objp->multicurrency_code;
-					$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
-					$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-					$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-					$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
-
-	                $line->special_code        = $objp->special_code;
-	                $line->fk_parent_line      = $objp->fk_parent_line;
-
-                    $line->rang                = $objp->rang;
-
-                    $this->lines[$i]      = $line;
-
-                    $i++;
-                }
-                $this->db->free($result);
-
-                return 1;
+            	return -1;
             }
             else
             {
-                $this->error=$this->db->error()." sql=".$sql;
-                return -1;
+            	return 1;
             }
         }
         else
@@ -418,6 +372,115 @@ class CommandeFournisseur extends CommonOrder
             $this->error=$this->db->error()." sql=".$sql;
             return -1;
         }
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
+     * Load array lines
+     *
+     * @param		int		$only_product	Return only physical products
+     * @return		int						<0 if KO, >0 if OK
+     */
+    function fetch_lines($only_product=0)
+    {
+        // phpcs:enable
+    	//$result=$this->fetch_lines();
+    	$this->lines=array();
+
+    	$sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
+    	$sql.= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
+    	$sql.= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
+    	$sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
+    	$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
+    	$sql.= " l.fk_unit,";
+    	$sql.= " l.date_start, l.date_end,";
+    	$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
+    	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
+    	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
+    	$sql.= " WHERE l.fk_commande = ".$this->id;
+    	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
+    	$sql.= " ORDER BY l.rang, l.rowid";
+    	//print $sql;
+
+    	dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
+    	$result = $this->db->query($sql);
+    	if ($result)
+    	{
+    		$num = $this->db->num_rows($result);
+    		$i = 0;
+
+    		while ($i < $num)
+    		{
+    			$objp                  = $this->db->fetch_object($result);
+
+    			$line                 = new CommandeFournisseurLigne($this->db);
+
+    			$line->id                  = $objp->rowid;
+    			$line->desc                = $objp->description;
+    			$line->description         = $objp->description;
+    			$line->qty                 = $objp->qty;
+    			$line->tva_tx              = $objp->tva_tx;
+    			$line->localtax1_tx		   = $objp->localtax1_tx;
+    			$line->localtax2_tx		   = $objp->localtax2_tx;
+    			$line->localtax1_type	   = $objp->localtax1_type;
+    			$line->localtax2_type	   = $objp->localtax2_type;
+    			$line->subprice            = $objp->subprice;
+    			$line->pu_ht	           = $objp->subprice;
+    			$line->remise_percent      = $objp->remise_percent;
+
+    			$line->vat_src_code        = $objp->vat_src_code;
+    			$line->total_ht            = $objp->total_ht;
+    			$line->total_tva           = $objp->total_tva;
+    			$line->total_localtax1	   = $objp->total_localtax1;
+    			$line->total_localtax2	   = $objp->total_localtax2;
+    			$line->total_ttc           = $objp->total_ttc;
+    			$line->product_type        = $objp->product_type;
+
+    			$line->fk_product          = $objp->fk_product;
+
+    			$line->libelle             = $objp->product_label;
+    			$line->product_label       = $objp->product_label;
+    			$line->product_desc        = $objp->product_desc;
+
+    			$line->ref                 = $objp->product_ref;    // Ref of product
+    			$line->product_ref         = $objp->product_ref;    // Ref of product
+    			$line->ref_fourn           = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
+    			$line->ref_supplier        = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
+
+    			$line->date_start          = $this->db->jdate($objp->date_start);
+    			$line->date_end            = $this->db->jdate($objp->date_end);
+    			$line->fk_unit             = $objp->fk_unit;
+
+    			// Multicurrency
+    			$line->fk_multicurrency 		= $objp->fk_multicurrency;
+    			$line->multicurrency_code 		= $objp->multicurrency_code;
+    			$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+    			$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+    			$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+    			$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+
+    			$line->special_code        = $objp->special_code;
+    			$line->fk_parent_line      = $objp->fk_parent_line;
+
+    			$line->rang                = $objp->rang;
+
+    			// Retreive all extrafield
+    			// fetch optionals attributes and labels
+    			$line->fetch_optionals();
+
+    			$this->lines[$i]      = $line;
+
+    			$i++;
+    		}
+    		$this->db->free($result);
+
+    		return $num;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error()." sql=".$sql;
+    		return -1;
+    	}
     }
 
     /**
@@ -552,6 +615,7 @@ class CommandeFournisseur extends CommonOrder
         return $this->LibStatut($this->statut,$mode,$this->billed);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return label of a status
      *
@@ -562,68 +626,85 @@ class CommandeFournisseur extends CommonOrder
      */
     function LibStatut($statut,$mode=0,$billed=0)
     {
-        global $langs;
-        $langs->load('orders');
+        // phpcs:enable
+    	global $conf, $langs;
+
+    	if (empty($this->statuts) || empty($this->statutshort))
+    	{
+	        $langs->load('orders');
+
+	        $this->statuts[0] = 'StatusOrderDraft';
+	        $this->statuts[1] = 'StatusOrderValidated';
+	        $this->statuts[2] = 'StatusOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
+	        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusOrderReceivedAll';
+	        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
+	        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
+	        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
+	        $this->statuts[9] = 'StatusOrderRefused';
+
+	        // List of language codes for status
+	        $this->statutshort[0] = 'StatusOrderDraftShort';
+	        $this->statutshort[1] = 'StatusOrderValidatedShort';
+	        $this->statutshort[2] = 'StatusOrderApprovedShort';
+	        $this->statutshort[3] = 'StatusOrderOnProcessShort';
+	        $this->statutshort[4] = 'StatusOrderReceivedPartiallyShort';
+	        $this->statutshort[5] = 'StatusOrderReceivedAllShort';
+	        $this->statutshort[6] = 'StatusOrderCanceledShort';
+	        $this->statutshort[7] = 'StatusOrderCanceledShort';
+	        $this->statutshort[9] = 'StatusOrderRefusedShort';
+    	}
 
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
         if ($billed == 1) $billedtext=$langs->trans("Billed");
 
-        // List of language codes for status
-        $statutshort[0] = 'StatusOrderDraftShort';
-        $statutshort[1] = 'StatusOrderValidatedShort';
-        $statutshort[2] = 'StatusOrderApprovedShort';
-        $statutshort[3] = 'StatusOrderOnProcessShort';
-        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-        $statutshort[5] = 'StatusOrderReceivedAllShort';
-        $statutshort[6] = 'StatusOrderCanceledShort';
-        $statutshort[7] = 'StatusOrderCanceledShort';
-        $statutshort[9] = 'StatusOrderRefusedShort';
-
         if ($mode == 0)
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
-            return $langs->trans($statutshort[$statut]);
+        	return $langs->trans($this->statutshort[$statut]);
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             return $langs->trans($this->statuts[$statut]);
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
-            if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
-            if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
+            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            if ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
+            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
         }
-        if ($mode == 5)
+        elseif ($mode == 5)
         {
-            if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-            if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
-            if ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
-            if ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+        	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+        	elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+        	elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	elseif ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+        	elseif ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+        	elseif ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
         }
     }
 
@@ -720,8 +801,7 @@ class CommandeFournisseur extends CommonOrder
                 $mybool|=@include_once $dir.$file;
             }
 
-            if (! $mybool)
-            {
+            if ($mybool === false) {
                 dol_print_error('',"Failed to include file ".$file);
                 return '';
             }
@@ -998,6 +1078,7 @@ class CommandeFournisseur extends CommonOrder
         return $result ;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Cancel an approved order.
      *	The cancellation is done after approval
@@ -1008,6 +1089,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function Cancel($user, $idwarehouse=-1)
     {
+        // phpcs:enable
         global $langs,$conf;
 
 		$error=0;
@@ -1057,7 +1139,6 @@ class CommandeFournisseur extends CommonOrder
             return -1;
         }
     }
-
 
     /**
      * 	Submit a supplier order to supplier
@@ -1208,6 +1289,9 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
+	                
+	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
+	                
 	                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
@@ -1417,7 +1501,7 @@ class CommandeFournisseur extends CommonOrder
 
         $error = 0;
 
-        dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $fk_unit");
+        dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -1431,6 +1515,7 @@ class CommandeFournisseur extends CommonOrder
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
+        $pu_ht_devise=price2num($pu_ht_devise);
         $pu_ttc=price2num($pu_ttc);
         $txtva = price2num($txtva);
         $txlocaltax1 = price2num($txlocaltax1);
@@ -1453,13 +1538,13 @@ class CommandeFournisseur extends CommonOrder
         }
         if ($type < 0) return -1;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
 
             if ($fk_product > 0)
             {
-                if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+            	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
                 {
                     // Check quantity is enough
                     dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
@@ -1472,15 +1557,14 @@ class CommandeFournisseur extends CommonOrder
                         // We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
                         // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
                         $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
-                        if ($result > 0)
+                        // If supplier order created from customer order, we take best supplier price
+                        // If $pu (defined previously from pu_ht or pu_ttc) is not defined at all, we also take the best supplier price
+                        if ($result > 0 && ($origin == 'commande' || $pu === ''))
                         {
-			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
-                            $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
-			    // is remise percent not keyed but present for the product we add it
-                            if ($remise_percent == 0 && $prod->remise_percent !=0)
-                            	$remise_percent =$prod->remise_percent;
-
-
+                        	$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+                        	$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+                        	// is remise percent not keyed but present for the product we add it
+                        	if ($remise_percent == 0 && $prod->remise_percent !=0) $remise_percent =$prod->remise_percent;
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -1511,6 +1595,7 @@ class CommandeFournisseur extends CommonOrder
                     else
     				{
                         $this->error=$prod->error;
+                        $this->db->rollback();
                         return -1;
                     }
                 }
@@ -1540,6 +1625,7 @@ class CommandeFournisseur extends CommonOrder
             }
 
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
+
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -1581,7 +1667,7 @@ class CommandeFournisseur extends CommonOrder
             $this->line->product_type=$product_type;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;
-            $this->line->rang=$this->rang;
+            $this->line->rang=$rang;
             $this->line->info_bits=$info_bits;
 
             $this->line->vat_src_code=$vat_src_code;
@@ -1676,7 +1762,7 @@ class CommandeFournisseur extends CommonOrder
             $this->error='ErrorBadValueForParameterWarehouse';
             return -1;
         }
-        if ($qty <= 0)
+        if ($qty == 0)
         {
             $this->error='ErrorBadValueForParameterQty';
             return -1;
@@ -1915,6 +2001,7 @@ class CommandeFournisseur extends CommonOrder
 		}
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Get list of order methods
      *
@@ -1922,6 +2009,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function get_methodes_commande()
     {
+        // phpcs:enable
         $sql = "SELECT rowid, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
         $sql.= " WHERE active = 1";
@@ -1950,6 +2038,8 @@ class CommandeFournisseur extends CommonOrder
 
     /**
 	 * Return array of dispathed lines waiting to be approved for this order
+     *
+     * @since 8.0 Return dispatched quantity (qty).
 	 *
 	 * @param	int		$status		Filter on stats (-1 = no filter, 0 = lines draft to be approved, 1 = approved lines)
 	 * @return	array				Array of lines
@@ -1961,7 +2051,7 @@ class CommandeFournisseur extends CommonOrder
     	// List of already dispatched lines
 		$sql = "SELECT p.ref, p.label,";
 		$sql.= " e.rowid as warehouse_id, e.ref as entrepot,";
-		$sql.= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
+		$sql.= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
@@ -1979,7 +2069,15 @@ class CommandeFournisseur extends CommonOrder
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($resql);
-				if ($objp) $ret[]=array('id'=>$objp->dispatchedlineid, 'productid'=>$objp->fk_product, 'warehouseid'=>$objp->warehouse_id);
+				if ($objp)
+				{
+					$ret[] = array(
+						'id' => $objp->dispatchedlineid,
+						'productid' => $objp->fk_product,
+						'warehouseid' => $objp->warehouse_id,
+						'qty' => $objp->qty,
+					);
+				}
 
 				$i++;
 			}
@@ -1990,6 +2088,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Set a delivery in database for this supplier order
      *
@@ -2001,6 +2100,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function Livraison($user, $date, $type, $comment)
     {
+        // phpcs:enable
     	global $conf, $langs;
 
         $result = 0;
@@ -2035,7 +2135,6 @@ class CommandeFournisseur extends CommonOrder
 		    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
 		    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
 		    		}
-
 		    	}
 	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to reception done, only if status of all line are ok (refuse denied)
 	    		{
@@ -2106,7 +2205,8 @@ class CommandeFournisseur extends CommonOrder
         return $result ;
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *	Set the planned delivery date
      *
      *	@param      User			$user        		Objet user making change
@@ -2116,6 +2216,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function set_date_livraison($user, $date_livraison, $notrigger=0)
     {
+        // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
         {
         	$error=0;
@@ -2170,6 +2271,7 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
      *	Set the id projet
      *
@@ -2180,6 +2282,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function set_id_projet($user, $id_projet, $notrigger=0)
     {
+        // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
         {
         	$error=0;
@@ -2382,6 +2485,7 @@ class CommandeFournisseur extends CommonOrder
             $qty=price2num($qty);
             if (! $qty) $qty=1;
             $pu = price2num($pu);
+        	$pu_ht_devise=price2num($pu_ht_devise);
             $txtva=price2num($txtva);
             $txlocaltax1=price2num($txlocaltax1);
             $txlocaltax2=price2num($txlocaltax2);
@@ -2628,6 +2732,7 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Charge indicateurs this->nb de tableau de bord
      *
@@ -2635,6 +2740,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function load_state_board()
     {
+        // phpcs:enable
         global $conf, $user;
 
         $this->nb=array();
@@ -2669,6 +2775,7 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -2677,6 +2784,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function load_board($user)
     {
+        // phpcs:enable
         global $conf, $langs;
 
         $clause = " WHERE";
@@ -2771,9 +2879,10 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+     *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int          				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf, $langs;
 
@@ -2792,7 +2901,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$modelpath = "core/modules/supplier_order/pdf/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
@@ -2981,7 +3090,6 @@ class CommandeFournisseur extends CommonOrder
 							{
 								$close++;
 							}
-
 						}
 					}
 
@@ -3005,8 +3113,6 @@ class CommandeFournisseur extends CommonOrder
 							}
 							return 4;
 						}
-
-
 					}
 					else
 					{//all the products are not received
@@ -3016,7 +3122,6 @@ class CommandeFournisseur extends CommonOrder
 						}
 						return 4;
 					}
-
 				}
     				else
     				{
@@ -3042,7 +3147,14 @@ class CommandeFournisseur extends CommonOrder
  */
 class CommandeFournisseurLigne extends CommonOrderLine
 {
-    public $element='commande_fournisseurdet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commande_fournisseurdet';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='commande_fournisseurdet';
 
     public $oldline;
@@ -3054,10 +3166,23 @@ class CommandeFournisseurLigne extends CommonOrderLine
     public $fk_commande;
 
     // From llx_commande_fournisseurdet
+    /**
+     * @var int ID
+     */
     public $fk_parent_line;
+
+    /**
+     * @var int ID
+     */
     public $fk_facture;
+
+    /**
+     * @var string supplier order line label
+     */
     public $label;
+
     public $rang = 0;
+    public $special_code = 0;
 
 	/**
 	 * Unit price without taxes
@@ -3097,7 +3222,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
      */
     public function fetch($rowid)
     {
-        $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx,';
+        $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx, cd.special_code,';
         $sql.= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref,';
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
@@ -3136,6 +3261,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->total_localtax2	= $objp->total_localtax2;
             $this->total_ttc        = $objp->total_ttc;
             $this->product_type     = $objp->product_type;
+            $this->special_code     = $objp->special_code;
 
             $this->ref	            = $objp->product_ref;
             $this->product_ref      = $objp->product_ref;
@@ -3150,6 +3276,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+
+			$this->fetch_optionals();
 
             $this->db->free($result);
             return 1;
@@ -3208,7 +3336,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         // Insertion dans base de la ligne
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= " (fk_commande, label, description, date_start, date_end,";
-        $sql.= " fk_product, product_type,";
+        $sql.= " fk_product, product_type, special_code, rang,";
         $sql.= " qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
         $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";
         $sql.= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
@@ -3219,8 +3347,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
         if ($this->fk_product) { $sql.= $this->fk_product.","; }
         else { $sql.= "null,"; }
         $sql.= "'".$this->db->escape($this->product_type)."',";
+        $sql.= "'".$this->db->escape($this->special_code)."',";
+        $sql.= "'".$this->db->escape($this->rang)."',";
         $sql.= "'".$this->db->escape($this->qty)."', ";
-
         $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->db->escape($this->vat_src_code)."'").",";
         $sql.= " ".$this->tva_tx.", ";
         $sql.= " ".$this->localtax1_tx.",";
@@ -3236,10 +3365,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'":"null");
         $sql.= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
         $sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
-        $sql.= ", ".price2num($this->multicurrency_subprice);
-        $sql.= ", ".price2num($this->multicurrency_total_ht);
-        $sql.= ", ".price2num($this->multicurrency_total_tva);
-        $sql.= ", ".price2num($this->multicurrency_total_ttc);
+        $sql.= ", ".($this->multicurrency_subprice ? price2num($this->multicurrency_subprice) : '0');
+        $sql.= ", ".($this->multicurrency_total_ht ? price2num($this->multicurrency_total_ht) : '0');
+        $sql.= ", ".($this->multicurrency_total_tva ? price2num($this->multicurrency_total_tva) : '0');
+        $sql.= ", ".($this->multicurrency_total_ttc ? price2num($this->multicurrency_total_ttc) : '0');
         $sql.= ")";
 
         dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -3251,7 +3380,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-
                 $result=$this->insertExtraFields();
                 if ($result < 0)
                 {
@@ -3323,6 +3451,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
         $sql.= ", total_ttc='".price2num($this->total_ttc)."'";
         $sql.= ", product_type=".$this->product_type;
+        $sql.= ", special_code=".(!empty($this->special_code) ? $this->special_code : 0);
         $sql.= ($this->fk_unit ? ", fk_unit='".$this->db->escape($this->fk_unit)."'":", fk_unit=null");
 
         // Multicurrency
@@ -3339,7 +3468,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         {
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-
                 $result=$this->insertExtraFields();
                 if ($result < 0)
                 {
@@ -3429,4 +3557,3 @@ class CommandeFournisseurLigne extends CommonOrderLine
         }
     }
 }
-

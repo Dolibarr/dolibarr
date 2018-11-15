@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,8 @@ if (! class_exists('Holiday')) {
 	require_once DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 }
 
-$langs->load("user");
-$langs->load("other");
-$langs->load("holiday");
+// Load translation files required by the page
+$langs->loadLangs(array('user', 'other', 'holiday'));
 
 if (empty($conf->holiday->enabled))
 {

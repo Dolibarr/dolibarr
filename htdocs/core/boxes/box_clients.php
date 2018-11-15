@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,11 @@ class box_clients extends ModeleBoxes
 	var $boxlabel="BoxLastCustomers";
 	var $depends = array("societe");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $enabled = 1;
 
 	var $info_box_head = array();
@@ -87,7 +91,10 @@ class box_clients extends ModeleBoxes
             $sql.= ", s.client";
             $sql.= ", s.code_fournisseur";
             $sql.= ", s.fournisseur";
+            $sql.= ", s.code_compta";
+            $sql.= ", s.code_compta_fournisseur";
             $sql.= ", s.logo";
+            $sql.= ", s.email";
             $sql.= ", s.datec, s.tms, s.status";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -114,9 +121,12 @@ class box_clients extends ModeleBoxes
                     $thirdpartystatic->name = $objp->name;
                     $thirdpartystatic->code_client = $objp->code_client;
                     $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+                    $thirdpartystatic->code_compta = $objp->code_compta;
+                    $thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
                     $thirdpartystatic->client = $objp->client;
                     $thirdpartystatic->fournisseur = $objp->fournisseur;
                     $thirdpartystatic->logo = $objp->logo;
+                    $thirdpartystatic->email = $objp->email;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
@@ -153,7 +163,6 @@ class box_clients extends ModeleBoxes
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
-
 	}
 
 	/**
@@ -168,6 +177,5 @@ class box_clients extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

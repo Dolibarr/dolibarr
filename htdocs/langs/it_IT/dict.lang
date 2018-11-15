@@ -5,7 +5,8 @@ CountryIT=Italia
 CountryES=Spagna
 CountryDE=Germania
 CountryCH=Svizzera
-CountryGB=Gran Bretagna
+# Warning, country code GB is for United Kingdom. UK Does not exists as country code in ISO standard.
+CountryGB=Regno Unito
 CountryUK=Regno Unito
 CountryIE=Irlanda
 CountryCN=Cina

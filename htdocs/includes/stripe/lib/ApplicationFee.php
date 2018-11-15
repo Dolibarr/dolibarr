@@ -24,22 +24,14 @@ namespace Stripe;
  */
 class ApplicationFee extends ApiResource
 {
+
+    const OBJECT_NAME = "application_fee";
+
     use ApiOperations\All;
     use ApiOperations\NestedResource;
     use ApiOperations\Retrieve;
 
     const PATH_REFUNDS = '/refunds';
-
-    /**
-     * This is a special case because the application fee endpoint has an
-     *    underscore in it. The parent `className` function strips underscores.
-     *
-     * @return string The name of the class.
-     */
-    public static function className()
-    {
-        return 'application_fee';
-    }
 
     /**
      * @param array|null $params

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  */
 class Client extends Societe
 {
-    var $next_prev_filter="te.client in (1,2,3)";	// Used to add a filter in Form::showrefnav method
+    public $next_prev_filter="te.client in (1,2,3)";	// Used to add a filter in Form::showrefnav method
 
-    var $cacheprospectstatus=array();
+    public $cacheprospectstatus=array();
 
 
 	/**
@@ -42,8 +42,12 @@ class Client extends Societe
     function __construct($db)
     {
         $this->db = $db;
+
+        $this->client = 3;
+        $this->fournisseur = 0;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Load indicators into this->nb for board
      *
@@ -51,6 +55,7 @@ class Client extends Societe
      */
     function load_state_board()
     {
+        // phpcs:enable
         global $user;
 
         $this->nb=array("customers" => 0,"prospects" => 0);
@@ -85,7 +90,6 @@ class Client extends Societe
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -111,5 +115,4 @@ class Client extends Societe
 		}
 		return 1;
     }
-
 }

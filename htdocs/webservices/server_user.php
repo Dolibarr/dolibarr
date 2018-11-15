@@ -681,7 +681,8 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
  * @param	array		$shortuser			Array of login/password info
  * @return	mixed
  */
-function setUserPassword($authentication,$shortuser) {
+function setUserPassword($authentication,$shortuser)
+{
 
 	global $db,$conf,$langs;
 
@@ -732,7 +733,6 @@ function setUserPassword($authentication,$shortuser) {
 				$error++;
 				$errorcode='NOT_FOUND'; $errorlabel='User not found';
 			}
-
 		}
 		else
 		{

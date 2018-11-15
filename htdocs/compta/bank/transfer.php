@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,11 @@
  *		\brief      Page de saisie d'un virement
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "multicurrency"));
 
 if (! $user->rights->banque->transfer)
@@ -49,8 +51,8 @@ if ($action == 'add')
 
 	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 	$label = GETPOST('label','alpha');
-	$amount= GETPOST('amount');
-	$amountto= GETPOST('amountto');
+	$amount= GETPOST('amount','alpha');
+	$amountto= GETPOST('amountto','alpha');
 
 	if (! $label)
 	{
@@ -125,7 +127,7 @@ if ($action == 'add')
 
 			if (! $error)
 			{
-				$mesgs = $langs->trans("TransferFromToDone",'<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label."</a>",'<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
+				$mesgs = $langs->trans("TransferFromToDone", '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label."</a>", '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label."</a>", $amount, $langs->transnoentities("Currency".$conf->currency));
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
 			}
@@ -153,6 +155,12 @@ llxHeader();
 print '		<script type="text/javascript">
         	$(document).ready(function () {
     	  		$(".selectbankaccount").change(function() {
+						console.log("We change bank account");
+						init_page();
+				});
+
+				function init_page() {
+					console.log("Set fields according to currency");
         			var account1 = $("#selectaccount_from").val();
         			var account2 = $("#selectaccount_to").val();
         			var currencycode1="";
@@ -199,7 +207,9 @@ print '		<script type="text/javascript">
     	        	}).fail(function( data ) {
 						console.error("Error: has returned an empty page. Should be an empty json array.");
 					});
-        		});
+        		}
+
+				init_page();
         	});
     		</script>';
 
@@ -210,12 +220,12 @@ $account_to='';
 $label='';
 $amount='';
 
-if($error)
+if ($error)
 {
 	$account_from =	GETPOST('account_from','int');
 	$account_to	= GETPOST('account_to','int');
 	$label = GETPOST('label','alpha');
-	$amount = GETPOST('amount','int');
+	$amount = GETPOST('amount','alpha');
 }
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_bank.png');
@@ -244,11 +254,11 @@ $form->select_comptes($account_to, 'account_to', 0, '', 1, '', empty($conf->mult
 print "</td>\n";
 
 print "<td>";
-$form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
+print $form->selectDate((! empty($dateo)?$dateo:''), '', '', '', '', 'add');
 print "</td>\n";
-print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.$label.'"></td>';
-print '<td><input name="amount" class="flat" type="text" size="6" value="'.$amount.'"></td>';
-print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.$amountto.'"></td>';
+print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
+print '<td><input name="amount" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
+print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
 
 print "</table>";
 
@@ -256,5 +266,6 @@ print '<br><div class="center"><input type="submit" class="button" value="'.$lan
 
 print "</form>";
 
+// End of page
 llxFooter();
 $db->close();

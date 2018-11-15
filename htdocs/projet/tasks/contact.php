@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
  *	\brief      Actors of a task
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -173,9 +173,11 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id, $ref) > 0)
 	{
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 	    $id = $object->id;     // So when doing a search from ref, id is also set correctly.
 
 		$result=$projectstatic->fetch($object->fk_project);
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = clone $projectstatic;
@@ -303,6 +305,7 @@ if ($id > 0 || ! empty($ref))
 		// Project
 		if (empty($withproject))
 		{
+		    $result=$projectstatic->fetch($object->fk_project);
 		    $morehtmlref.='<div class="refidno">';
 		    $morehtmlref.=$langs->trans("Project").': ';
 		    $morehtmlref.=$projectstatic->getNomUrl(1);
@@ -310,7 +313,11 @@ if ($id > 0 || ! empty($ref))
 
 		    // Third party
 		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    if($projectstatic->socid>0) {
+		        $projectstatic->fetch_thirdparty();
+		        $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    }
+
 		    $morehtmlref.='</div>';
 		}
 
@@ -346,8 +353,6 @@ if ($id > 0 || ! empty($ref))
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
-
-			$var = false;
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -431,7 +436,6 @@ if ($id > 0 || ! empty($ref))
 		print "</tr>\n";
 
 		$companystatic = new Societe($db);
-		$var = true;
 
 		foreach(array('internal','external') as $source)
 		{
@@ -441,9 +445,7 @@ if ($id > 0 || ! empty($ref))
 			$i = 0;
 			while ($i < $num)
 			{
-				$var = !$var;
-
-				print '<tr '.$bc[$var].' valign="top">';
+				print '<tr class="oddeven" valign="top">';
 
 				// Source
 				print '<td align="left">';
@@ -516,7 +518,6 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 		print "</table>";
-
 	}
 	else
 	{
@@ -531,7 +532,6 @@ if (is_object($hookmanager))
 	$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();
