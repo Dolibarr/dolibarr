@@ -602,7 +602,10 @@ class EmailCollector extends CommonObject
 	{
 		$this->filters = array();
 
-		$sql='SELECT rowid, type, rulevalue, status FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter WHERE fk_emailcollector = '.$this->id;
+		$sql = 'SELECT rowid, type, rulevalue, status';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectorfilter';
+		$sql.= ' WHERE fk_emailcollector = '.$this->id;
+		//$sql.= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -631,7 +634,10 @@ class EmailCollector extends CommonObject
 	{
 		$this->actions = array();
 
-		$sql='SELECT rowid, type, actionparam, status FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction WHERE fk_emailcollector = '.$this->id;
+		$sql = 'SELECT rowid, type, actionparam, status';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
+		$sql.= ' WHERE fk_emailcollector = '.$this->id;
+		$sql.= ' ORDER BY position';
 
 		$resql = $this->db->query($sql);
 		if ($resql)
