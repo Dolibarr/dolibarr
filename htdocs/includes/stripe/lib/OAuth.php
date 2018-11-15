@@ -22,7 +22,7 @@ abstract class OAuth
         if (!array_key_exists('response_type', $params)) {
             $params['response_type'] = 'code';
         }
-        $query = Util\Util::urlEncode($params);
+        $query = Util\Util::encodeParameters($params);
 
         return $base . '/oauth/authorize?' . $query;
     }

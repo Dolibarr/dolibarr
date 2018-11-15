@@ -62,7 +62,7 @@ Please see https://stripe.com/docs/api for up-to-date documentation.
 
 ### PHP 5.3
 
-If you are using PHP 5.3, you can download v5.8.0 ([zip](https://github.com/stripe/stripe-php/archive/v5.8.0.zip), [tar.gz](https://github.com/stripe/stripe-php/archive/v5.8.0.tar.gz)) from our [releases page](https://github.com/stripe/stripe-php/releases). This version will continue to work with new versions of the Stripe API for all common uses.
+If you are using PHP 5.3, you can download v5.9.2 ([zip](https://github.com/stripe/stripe-php/archive/v5.9.2.zip), [tar.gz](https://github.com/stripe/stripe-php/archive/v5.9.2.tar.gz)) from our [releases page](https://github.com/stripe/stripe-php/releases). This version will continue to work with new versions of the Stripe API for all common uses.
 
 ### PHP 5.2
 
@@ -181,9 +181,15 @@ retries are safe.
 
 ## Development
 
+Get [Composer][composer]. For example, on Mac OS:
+
+```bash
+brew install composer
+```
+
 Install dependencies:
 
-``` bash
+```bash
 composer install
 ```
 
@@ -191,8 +197,10 @@ The test suite depends on [stripe-mock], so make sure to fetch and run it from a
 background terminal ([stripe-mock's README][stripe-mock] also contains
 instructions for installing via Homebrew and other methods):
 
-    go get -u github.com/stripe/stripe-mock
-    stripe-mock
+```bash
+go get -u github.com/stripe/stripe-mock
+stripe-mock
+```
 
 Install dependencies as mentioned above (which will resolve [PHPUnit](http://packagist.org/packages/phpunit/phpunit)), then you can run the test suite:
 
@@ -226,6 +234,7 @@ The method should be called once, before any request is sent to the API. The sec
 
 See the "SSL / TLS compatibility issues" paragraph above for full context. If you want to ensure that your plugin can be used on all systems, you should add a configuration option to let your users choose between different values for `CURLOPT_SSLVERSION`: none (default), `CURL_SSLVERSION_TLSv1` and `CURL_SSLVERSION_TLSv1_2`.
 
+[composer]: https://getcomposer.org/
 [connect]: https://stripe.com/connect
 [curl]: http://curl.haxx.se/docs/caextract.html
 [psr3]: http://www.php-fig.org/psr/psr-3/

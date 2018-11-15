@@ -9,14 +9,15 @@ namespace Stripe;
  * @property string $object
  * @property float $application_fee_percent
  * @property string $billing
+ * @property int $billing_cycle_anchor
  * @property bool $cancel_at_period_end
  * @property int $canceled_at
  * @property int $created
- * @property int current_period_end
- * @property int current_period_start
+ * @property int $current_period_end
+ * @property int $current_period_start
  * @property string $customer
  * @property int $days_until_due
- * @property mixed $discount
+ * @property Discount $discount
  * @property int $ended_at
  * @property Collection $items
  * @property boolean $livemode
@@ -33,6 +34,9 @@ namespace Stripe;
  */
 class Subscription extends ApiResource
 {
+
+    const OBJECT_NAME = "subscription";
+
     use ApiOperations\All;
     use ApiOperations\Create;
     use ApiOperations\Delete {
@@ -46,11 +50,11 @@ class Subscription extends ApiResource
      *
      * @link https://stripe.com/docs/api#subscription_object-status
      */
-    const STATUS_ACTIVE = 'active';
+    const STATUS_ACTIVE   = 'active';
     const STATUS_CANCELED = 'canceled';
     const STATUS_PAST_DUE = 'past_due';
     const STATUS_TRIALING = 'trialing';
-    const STATUS_UNPAID = 'unpaid';
+    const STATUS_UNPAID   = 'unpaid';
 
     public static function getSavedNestedResources()
     {
@@ -81,14 +85,5 @@ class Subscription extends ApiResource
         $url = $this->instanceUrl() . '/discount';
         list($response, $opts) = $this->_request('delete', $url);
         $this->refreshFrom(['discount' => null], $opts, true);
-    }
-
-    public function serializeParameters($force = false)
-    {
-        $update = parent::serializeParameters($force);
-        if ($this->_unsavedValues->includes('items')) {
-            $update['items'] = $this->serializeParamsValue($this->items, null, true, $force, 'items');
-        }
-        return $update;
     }
 }
