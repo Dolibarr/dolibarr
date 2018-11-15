@@ -55,7 +55,7 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_f
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
 ALTER TABLE llx_stock_mouvement ADD COLUMN fk_project integer;
-Alter tABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(32)
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(32);
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 
 
@@ -71,6 +71,16 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',204);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8002', 'Anparts Selvskab ApS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8003', 'Personlig ejet selvskab');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8004', 'Iværksætterselvskab IVS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8005', 'Interessentskab I/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8006', 'Holdingselskab');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8007', 'Selskab Med Begrænset Hæftelse SMBA');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8008', 'Kommanditselskab K/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8009', 'SPE-selskab');
 
 ALTER TABLE llx_payment_salary ADD COLUMN ref varchar(30) NULL after rowid;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
@@ -142,26 +152,26 @@ UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 
 CREATE TABLE llx_emailcollector_emailcollector(
         -- BEGIN MODULEBUILDER FIELDS
-        rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-        entity integer DEFAULT 1 NOT NULL, 
+        rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+        entity integer DEFAULT 1 NOT NULL,
         ref varchar(128) NOT NULL,
-        label varchar(255), 
+        label varchar(255),
         description text,
-        host varchar(255), 
-        user varchar(128), 
+        host varchar(255),
+        user varchar(128),
         password varchar(128),
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
-        datelastresult datetime, 
-        codelastresult varchar(16), 
+        datelastresult datetime,
+        codelastresult varchar(16),
         lastresult varchar(255),
-        note_public text, 
-        note_private text, 
-        date_creation datetime NOT NULL, 
-        tms timestamp NOT NULL, 
-        fk_user_creat integer NOT NULL, 
-        fk_user_modif integer, 
-        import_key varchar(14), 
+        note_public text,
+        note_private text,
+        date_creation datetime NOT NULL,
+        tms timestamp NOT NULL,
+        fk_user_creat integer NOT NULL,
+        fk_user_modif integer,
+        import_key varchar(14),
         status integer NOT NULL
         -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
@@ -174,28 +184,28 @@ CREATE TABLE llx_emailcollector_emailcollectoraction(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	fk_emailcollector INTEGER NOT NULL,
-	type varchar(128) NOT NULL, 
-	actionparam varchar(255) NULL, 
-	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
+	type varchar(128) NOT NULL,
+	actionparam varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	fk_emailcollector INTEGER NOT NULL,
-	type varchar(128) NOT NULL, 
-	rulevalue varchar(255) NULL, 
-	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
+	type varchar(128) NOT NULL,
+	rulevalue varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
