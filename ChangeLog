@@ -19,6 +19,7 @@ NEW: Compatibility with PHP 7.3
 For developers:
 * Code changes to be more compatible with PSR2
 * Removed trigger USER_LOGOUT, USER_LOGIN, USER_LOGIN_FAILED (Some hooks are already dedicated for that)
+* Change getEntity('invoice') instead getEntity('facture')
 
 WARNING:
 
