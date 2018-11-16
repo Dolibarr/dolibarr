@@ -6030,6 +6030,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
 			$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
 
+			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
+
 			if (is_object($object) && $object->element == 'shipping')
 			{
 				$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
@@ -6043,7 +6047,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 
-			// TODO Use this ?
+			// TODO Remove this
 			$msgishtml = 0;
 
 			$birthday = dol_print_date($object->birth,'day');
@@ -6154,6 +6158,22 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)):'');
 			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
+
+			if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'propal')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = '';
+			if (! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'commande')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = '';
+			if (! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'facture')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
 		}
 	}
 	if (empty($exclude) || ! in_array('objectamount', $exclude))
@@ -6214,15 +6234,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		));
 	}
 
-	if (empty($exclude) || ! in_array('system', $exclude))
-	{
-		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
-		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
-	}
 	if (! empty($conf->multicompany->enabled))
 	{
 		$substitutionarray=array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
+	}
+	if (empty($exclude) || ! in_array('system', $exclude))
+	{
+		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
+		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstantKey');
 	}
 
 	return $substitutionarray;

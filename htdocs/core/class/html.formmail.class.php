@@ -1420,8 +1420,6 @@ class FormMail extends Form
 			}
 		}
 
-		$tmparray['__(AnyTranslationKey)__']="Translation";
-
 		foreach($tmparray as $key => $val)
 		{
 			if (empty($val)) $tmparray[$key]=$key;
