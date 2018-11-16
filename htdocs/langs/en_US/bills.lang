@@ -100,6 +100,7 @@ ClassifyClosed=Classify 'Closed'
 ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Create Invoice
 CreateCreditNote=Create credit note
+CreateCreditNoteFast=Correct invoice with a credit note
 AddBill=Create invoice or credit note
 AddToDraftInvoices=Add to draft invoice
 DeleteBill=Delete invoice

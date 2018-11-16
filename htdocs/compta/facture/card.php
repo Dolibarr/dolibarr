@@ -813,7 +813,339 @@ if (empty($reshook))
 			}
 		}
 	}
+	
+	else if ($action == 'confirm_createCreditNoteFast' && $user->rights->facture->creer)
+	{
+		
+		/*******************************************************/
+		/*********************Credit note creation**************/
+		/*******************************************************/
+		if(empty($object->id)) $object->fetch($id);
+		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+		
+		$credit_note = new Facture($db);
+		$credit_note->fk_facture_source = $id;
+		$credit_note->type = Facture::TYPE_CREDIT_NOTE;
+				
+		if (! $error)
+		{
+			
+			$credit_note->socid				= $object->socid;
+			$credit_note->number				= $_POST['facnumber'];
+			$credit_note->date				= dol_now();
+			$credit_note->date_pointoftax	= $date_pointoftax;
+			$credit_note->note_public		= trim(GETPOST('note_public','none'));
+			// We do not copy the private note
+			$credit_note->ref_client			= $_POST['ref_client'];
+			$credit_note->ref_int			= $_POST['ref_int'];
+			$credit_note->modelpdf			= $_POST['model'];
+			$credit_note->fk_project			= $_POST['projectid'];
+			$credit_note->cond_reglement_id	= 0;
+			$credit_note->mode_reglement_id	= $_POST['mode_reglement_id'];
+			$credit_note->fk_account         = GETPOST('fk_account', 'int');
+			$credit_note->remise_absolue		= $_POST['remise_absolue'];
+			$credit_note->remise_percent		= $_POST['remise_percent'];
+			$credit_note->fk_incoterms 		= GETPOST('incoterm_id', 'int');
+			$credit_note->location_incoterms = GETPOST('location_incoterms', 'alpha');
+			$credit_note->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			$credit_note->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
+			
+			$credit_note->create($user);
+			
+			if (!empty($object->lines))
+			{
+				$fk_parent_line = 0;
+				
+				foreach($object->lines as $line)
+				{
+					// Extrafields
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($line, 'fetch_optionals')) {
+						// load extrafields
+						$line->fetch_optionals();
+					}
+					
+					// Reset fk_parent_line for no child products and special product
+					if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+						$fk_parent_line = 0;
+					}
+					
+					$line->fk_facture = $credit_note->id;
+					$line->fk_parent_line = $fk_parent_line;
+					
+					$line->subprice = -$line->subprice; // invert price for object
+					$line->pa_ht = $line->pa_ht;       // we choosed to have buy/cost price always positive, so no revert of sign here
+					$line->total_ht = -$line->total_ht;
+					$line->total_tva = -$line->total_tva;
+					$line->total_ttc = -$line->total_ttc;
+					$line->total_localtax1 = -$line->total_localtax1;
+					$line->total_localtax2 = -$line->total_localtax2;
+					
+					$line->multicurrency_subprice = -$line->multicurrency_subprice;
+					$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+					$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+					$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
+					
+					$result = $line->insert(0, 1);     // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
+					
+					$credit_note->lines[] = $line; // insert new line in current object
+					
+					// Defined the new fk_parent_line
+					if ($result > 0 && $line->product_type == 9) {
+						$fk_parent_line = $result;
+					}
+				}
+				
+				$credit_note->update_price(1);
+				
+			}
 
+			// Add link between credit note and origin
+			if(! empty($credit_note->fk_facture_source)) {
+				$object->fetchObjectLinked();
+				
+				if(! empty($object->linkedObjectsIds)) {
+					foreach($object->linkedObjectsIds as $sourcetype => $TIds) {
+						$credit_note->add_object_linked($sourcetype, current($TIds));
+					}
+				}
+			}
+		}
+		
+		/*******************************************************/
+		/*********************Credit note validation************/
+		/*******************************************************/
+		$idwarehouse = GETPOST('idwarehouse','int');
+		$credit_note->fetch_thirdparty();
+		
+		// Check parameters
+		
+		// Check for mandatory fields defined into setup
+		$array_to_check=array('IDPROF1','IDPROF2','IDPROF3','IDPROF4','IDPROF5','IDPROF6','EMAIL');
+		foreach($array_to_check as $key)
+		{
+			$keymin=strtolower($key);
+			$i=(int) preg_replace('/[^0-9]/','',$key);
+			$vallabel=$credit_note->thirdparty->$keymin;
+			
+			if ($i > 0)
+			{
+				if ($credit_note->thirdparty->isACompany())
+				{
+					// Check for mandatory prof id (but only if country is other than ours)
+					if ($mysoc->country_id > 0 && $credit_note->thirdparty->country_id == $mysoc->country_id)
+					{
+						$idprof_mandatory ='SOCIETE_'.$key.'_INVOICE_MANDATORY';
+						if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+						{
+							$langs->load("errors");
+							$error++;
+							setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $credit_note->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+						}
+					}
+				}
+			}
+			else
+			{
+				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
+				if ($key == 'EMAIL')
+				{
+					// Check for mandatory
+					if (! empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && ! isValidEMail($credit_note->thirdparty->email))
+					{
+						$langs->load("errors");
+						$error++;
+						setEventMessages($langs->trans("ErrorBadEMail", $credit_note->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").')', null, 'errors');
+					}
+				}
+			}
+		}
+		
+		$qualified_for_stock_change = 0;
+		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			$qualified_for_stock_change = $credit_note->hasProductsOrServices(2);
+		} else {
+			$qualified_for_stock_change = $credit_note->hasProductsOrServices(1);
+		}
+		
+		// Check for warehouse
+		if ($credit_note->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		{
+			if (! $idwarehouse || $idwarehouse == - 1) {
+				$error++;
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+				$action = '';
+			}
+		}
+		
+		if (! $error)
+		{
+			$result = $credit_note->validate($user, '', $idwarehouse);
+			if ($result >= 0)
+			{
+				// Define output language
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
+					}
+					$model=$credit_note->modelpdf;
+					$ret = $credit_note->fetch($credit_note->id); // Reload to get new records
+					
+					$result = $credit_note->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					if ($result < 0) setEventMessages($credit_note->error, $credit_note->errors, 'errors');
+				}
+			}
+			else
+			{
+				if (count($credit_note->errors)) setEventMessages(null, $credit_note->errors, 'errors');
+				else setEventMessages($credit_note->error, $credit_note->errors, 'errors');
+			}
+		}
+		
+		/*******************************************************/
+		/*********************Convert to reduc *****************/
+		/*******************************************************/
+
+		// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
+		$discountcheck=new DiscountAbsolute($db);
+		$result=$discountcheck->fetch(0,$credit_note->id);
+		
+		if ($credit_note->paye == 0 && empty($discountcheck->id))	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		{
+			$db->begin();
+			
+			$amount_ht = $amount_tva = $amount_ttc = array();
+			
+			// Loop on each vat rate
+			$i = 0;
+			foreach ($credit_note->lines as $line)
+			{
+				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
+				{ 	// no need to create discount if amount is null
+					$amount_ht[$line->tva_tx] += $line->total_ht;
+					$amount_tva[$line->tva_tx] += $line->total_tva;
+					$amount_ttc[$line->tva_tx] += $line->total_ttc;
+					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+					$i ++;
+				}
+			}
+			
+			// Insert one discount by VAT rate category
+			$discount = new DiscountAbsolute($db);
+			$discount->description = '(CREDIT_NOTE)';
+			$discount->fk_soc = $credit_note->socid;
+			$discount->fk_facture_source = $credit_note->id;
+			
+			$error = 0;
+			
+
+			foreach ($amount_ht as $tva_tx => $xxx)
+			{
+				$discount->amount_ht = abs($amount_ht[$tva_tx]);
+				$discount->amount_tva = abs($amount_tva[$tva_tx]);
+				$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+				$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+				$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+				$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+				$discount->tva_tx = abs($tva_tx);
+				
+				$result = $discount->create($user);
+				if ($result < 0)
+				{
+					$error++;
+					break;
+				} else {
+					$TDiscount[] = $discount->id;
+				}
+			}
+			
+			if (empty($error))
+			{
+				// Classe facture
+				$result = $credit_note->set_paid($user);
+				if ($result >= 0)
+				{
+					$db->commit();
+				}
+				else
+				{
+					setEventMessages($credit_note->error, $credit_note->errors, 'errors');
+					$db->rollback();
+				}
+			}
+			else
+			{
+				setEventMessages($discount->error, $discount->errors, 'errors');
+				$db->rollback();
+			}
+		}
+		
+		/*******************************************************/
+		/*********************Apply on origin invoice***********/
+		/*******************************************************/
+	
+		// We use the credit to reduce amount of invoice
+		if (! empty($_POST["remise_id"])) {
+			if ($ret > 0) {
+				$result = $object->insert_discount($_POST["remise_id"]);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				dol_print_error($db, $object->error);
+			}
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+		// We use the credit to reduce remain to pay
+		foreach ($TDiscount as $id_discount)
+		{
+			$discount = new DiscountAbsolute($db);
+			$discount->fetch($id_discount);
+			
+			if (price2num($discount->amount_ttc) > price2num($object->getRemainToPay(0)))
+			{
+				// TODO Split the discount in 2 automatically
+				$error++;
+				setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
+			}
+			
+			if (! $error)
+			{
+				$result = $discount->link_to_invoice(0, $object->id);
+				if ($result < 0) {
+					setEventMessages($discount->error, $discount->errors, 'errors');
+				}
+			}
+		}
+		
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			
+			$ret = $object->fetch($object->id); // Reload to get new records
+			
+			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		}
+		
+	}	
+	
 	/*
 	 * Insert new invoice in database
 	 */
@@ -884,6 +1216,7 @@ if (empty($reshook))
 		// Credit note invoice
 		if ($_POST['type'] == Facture::TYPE_CREDIT_NOTE)
 		{
+			//var_dump($_REQUEST);exit;
 			$sourceinvoice = GETPOST('fac_avoir');
 			if (! ($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
 			{
@@ -3362,7 +3695,7 @@ else if ($id > 0 || ! empty($ref))
 	/*
 	 * Show object in view mode
 	 */
-
+	
 	$result = $object->fetch($id, $ref);
 	if ($result <= 0) {
 		dol_print_error($db, $object->error);
@@ -3585,6 +3918,45 @@ else if ($id > 0 || ! empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
 	}
 
+	if($action == 'createCreditNoteFast') {
+
+		$text = '';
+		$formquestion = array();
+		
+		$qualified_for_stock_change = 0;
+		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			$qualified_for_stock_change = $object->hasProductsOrServices(2);
+		} else {
+			$qualified_for_stock_change = $object->hasProductsOrServices(1);
+		}
+		
+		if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+		{
+			$langs->load("stocks");
+			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+			$formproduct = new FormProduct($db);
+			$warehouse = new Entrepot($db);
+			$warehouse_array = $warehouse->list_array();
+			if (count($warehouse_array) == 1) {
+				$label = $langs->trans("SelectWarehouseForStockIncrease");
+				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+			} else {
+				$label = $langs->trans("SelectWarehouseForStockIncrease");
+				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '');
+			}
+			$formquestion = array(
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+					// 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+					// => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CreateCreditNote'), $text, 'confirm_createCreditNoteFast', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), 2);
+		
+	}
+	
 	// Confirmation du classement paye
 	if ($action == 'paid' && $resteapayer <= 0) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
@@ -4801,6 +5173,30 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
 				}
 			}
+			
+			// Fast create of credit note
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT) && $object->statut > 0 && $user->rights->facture->creer)
+			{
+				if (! $objectidnext)
+				{
+					$qualified_for_stock_change = 0;
+					if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+						$qualified_for_stock_change = $object->hasProductsOrServices(2);
+					} else {
+						$qualified_for_stock_change = $object->hasProductsOrServices(1);
+					}
+					
+					if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=createCreditNoteFast&amp;type=2">' . $langs->trans("CreateCreditNoteFast") . '</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=confirm_createCreditNoteFast&amp;type=2">' . $langs->trans("CreateCreditNoteFast") . '</a></div>';
+					}
+				}
+			}
+			
+			
+			////////////////////////////////////////////////////////////////////////////////
 
 			// For situation invoice with excess received
 			if ($object->statut > Facture::STATUS_DRAFT
