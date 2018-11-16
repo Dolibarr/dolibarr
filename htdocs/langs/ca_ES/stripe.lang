@@ -61,3 +61,4 @@ ConfirmDeleteCard=Estàs segur que vols eliminar aquesta targeta de crèdit o de
 CreateCustomerOnStripe=Crea un client a Stripe
 CreateCardOnStripe=Crea una targeta a Stripe
 ShowInStripe=Mostra a Stripe
+StripeUserAccountForActions=Compte d'usuari per utilitzar en alguns e-mails de notificació d'esdeveniments Stripe (pagaments Stripe)
