@@ -1517,7 +1517,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $contactstatic = new Contact($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        if ($objcon && get_class($objcon) == 'Contact' && $filterobj && get_class($filterobj) == 'Societe')
+        if ($objcon && get_class($objcon) == 'Contact' &&
+            (is_null($filterobj) || get_class($filterobj) == 'Societe'))
         {
             $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
         }
