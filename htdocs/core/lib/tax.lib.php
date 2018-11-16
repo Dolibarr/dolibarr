@@ -110,7 +110,6 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$paymenttable='paiement';
     	$paymentfacturetable='paiement_facture';
     	$invoicefieldref='facnumber';
-		
     }
     if ($direction == 'buy')
     {

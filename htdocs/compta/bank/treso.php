@@ -291,8 +291,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					if($obj->family == 'invoice'){
 						$mc->getInfo($obj->entity);
 						print "<td>".$mc->label."</td>";
-					}else print "<td></td>";
-						
+					}else print "<td></td>";				
 				}
     			print "<td>".$refcomp."</td>";
     			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
