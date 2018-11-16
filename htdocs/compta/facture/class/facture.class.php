@@ -3348,15 +3348,8 @@ class Facture extends CommonInvoice
 			$mybool=false;
 
 			
-			
-			$constant = 'FACTURE_ADDON_'.$this->entity;
-			
-			if (! empty($conf->global->$constant)) {
-				$classname = $conf->global->$constant; // for multicompany proposal sharing
-			} else {
-				$classname = $conf->global->FACTURE_ADDON;
-			}
-			$file = $classname.".php";
+			$file = $conf->global->FACTURE_ADDON.".php";
+			$classname = $conf->global->FACTURE_ADDON;
 			
 
 			// Include file with class
