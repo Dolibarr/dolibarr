@@ -12,7 +12,5 @@ PermissionInheritedFromAGroup=Permission granted through inherited rights from o
 UserWillBeInternalUser=Created user will be an internal user (because they are not linked to a particular third party)
 UserWillBeExternalUser=Created user will be an external user (because they are linked to a particular third party)
 NewUserPassword=Password changed for %s
-NbOfUsers=No. of users
-NbOfPermissions=No. of permissions
 ExpectedWorkedHours=Expected hours worked per week
 ColorUser=Colour for the user

@@ -31,14 +31,15 @@ ViewWeek=Weekweergave
 ViewPerUser=Per gebruiker weergave
 ViewPerType=Weergave per type
 AutoActions= Automatisch invullen van de agenda
-AgendaAutoActionDesc= Definieer hier een gebeurtenis waar Dolibarr deze automatisch in de agenda plaatst. Als niets is aangevinkt worden alleen handmatige acties zichtbaar in de agenda. Automatisch volgen van acties gedaan op objecten (zoals valideren, status wijzigingen) worden niet opgeslagen.
-AgendaSetupOtherDesc= Op deze pagina kunt u andere instellingen van de agendamodule instellen.
+AgendaAutoActionDesc= Hier kunt u gebeurtenissen definiëren die Dolibarr automatisch in Agenda moet maken. Als niets wordt gecontroleerd, worden alleen handmatige acties opgenomen in logboeken en weergegeven in Agenda. Automatisch bijgehouden zakelijke acties die worden uitgevoerd op objecten (validatie, statuswijziging), worden niet opgeslagen.
+AgendaSetupOtherDesc= Deze pagina biedt opties om export van uw Dolibarr-evenementen naar een externe agenda (thunderbird, google calendar, ...) mogelijk te maken
 AgendaExtSitesDesc=Op deze pagina kunt configureren externe agenda.
 ActionsEvents=Gebeurtenissen waarvoor Dolibarr automatisch een item zal maken in de agenda
-EventRemindersByEmailNotEnabled=Herinneringen via e-mail van agenda afspraken is niet aangezet in de module set-up van het Agenda onderdeel.
+EventRemindersByEmailNotEnabled=Gebeurtenisherinneringen per e-mail zijn niet ingeschakeld in %s-module setup.
 ##### Agenda event labels #####
-NewCompanyToDolibarr=Derde partij %s aangemaakt
+NewCompanyToDolibarr=Relatie %s aangemaakt
 ContractValidatedInDolibarr=Contract %s gevalideerd
+CONTRACT_DELETEInDolibarr=Contract %s verwijderd
 PropalClosedSignedInDolibarr=Voorstel %s getekend
 PropalClosedRefusedInDolibarr=Voorstel %s afgewezen
 PropalValidatedInDolibarr=Voorstel %s gevalideerd
@@ -53,9 +54,9 @@ MemberValidatedInDolibarr=Lid %s gevalideerd
 MemberModifiedInDolibarr=Lid %s gewijzigd
 MemberResiliatedInDolibarr=Lidmaatschap %s beëindigd
 MemberDeletedInDolibarr=Lid %s verwijderd
-MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
-MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
-MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
+MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
+MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s gewijzigd
+MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
 ShipmentValidatedInDolibarr=Verzending %s gevalideerd
 ShipmentClassifyClosedInDolibarr=Verzending %s geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s geclassificeerd als heropend
@@ -97,10 +98,10 @@ DateActionStart=Startdatum
 DateActionEnd=Einddatum
 AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
 AgendaUrlOptions3=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAdmin=<b>login=%s</b> om uitvoer van acties die niet zijn toegewezen aan gebruiker <b>%s</b> te beperken.
+AgendaUrlOptions4=<b> logint = %s </b>om de uitvoer te beperken tot acties die zijn toegewezen aan gebruiker <b> %s </b>(eigenaar en anderen).
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties gekoppeld aan project<b>PROJECT_ID</b> te beperken.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenissen uit te sluiten.
 AgendaShowBirthdayEvents=Verjaardagen van contacten weergeven
 AgendaHideBirthdayEvents=Verjaardagen van contacten verbergen
 Busy=Bezig
@@ -110,9 +111,9 @@ DefaultWorkingHours=Default werkuren in dag (Voorbeeld: 9-18)
 # External Sites ical
 ExportCal=Export kalender
 ExtSites=Externe agenda
-ExtSitesEnableThisTool=Toon externe kalenders (gedefinieerd in de globale setup) in de agenda. Heeft geen invloed op de externe agenda's gedefinieerd door gebruikers.
+ExtSitesEnableThisTool=Toon externe agenda's (gedefinieerd in algemene setup) in Agenda. Heeft geen invloed op externe agenda's die door gebruikers zijn gedefinieerd.
 ExtSitesNbOfAgenda=Aantal kalenders
-AgendaExtNb=Calendar no. %s
+AgendaExtNb=Kalender nr. %s
 ExtSiteUrlAgenda=URL aan. Ical bestand te openen
 ExtSiteNoLabel=Geen omschrijving
 VisibleTimeRange=Zichtbare werktijd

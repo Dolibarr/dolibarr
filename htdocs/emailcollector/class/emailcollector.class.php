@@ -844,6 +844,8 @@ class EmailCollector extends CommonObject
 
 		//$search='ALL';
 		$search='UNDELETED';
+		$searchfilterdoltrackid=0;
+		$searchfilternodoltrackid=0;
 		foreach($this->filters as $rule)
 		{
 			if (empty($rule['status'])) continue;
@@ -856,6 +858,8 @@ class EmailCollector extends CommonObject
 			if ($rule['type'] == 'body')    $search.=($search?' ':'').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
 			if ($rule['type'] == 'seen')    $search.=($search?' ':'').'SEEN';
 			if ($rule['type'] == 'unseen')  $search.=($search?' ':'').'UNSEEN';
+			if ($rule['type'] == 'withtrackingid')    $searchfilterdoltrackid++;
+			if ($rule['type'] == 'withouttrackingid') $searchfilternodoltrackid++;
 		}
 
 		if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
@@ -882,6 +886,22 @@ class EmailCollector extends CommonObject
 			{
 				if ($nbemailprocessed > 100) break;			// Do not process more than 100 email per launch
 
+				$header = imap_fetchheader($connection, $imapemail, 0);
+				$matches=array();
+				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
+				$headers = array_combine($matches[1], $matches[2]);
+				//var_dump($headers);
+
+				// If there is a filter on trackid
+				if ($searchfilterdoltrackid > 0)
+				{
+					if (empty($headers['X-Dolibarr-TRACKID'])) continue;
+				}
+				if ($searchfilternodoltrackid > 0)
+				{
+					if (! empty($headers['X-Dolibarr-TRACKID'])) continue;
+				}
+
 				$thirdpartystatic=new Societe($this->db);
 				$contactstatic=new Contact($this->db);
 				$projectstatic=new Project($this->db);
@@ -895,9 +915,8 @@ class EmailCollector extends CommonObject
 
 				$this->db->begin();
 
-				$overview = imap_fetch_overview($connection, $imapemail, 0);
-				$header = imap_fetchheader($connection, $imapemail, 0);
 				//$message = imap_body($connection, $imapemail, 0);
+				$overview = imap_fetch_overview($connection, $imapemail, 0);
 				$structure = imap_fetchstructure($connection, $imapemail, 0);
 				$partplain = $parthtml = -1;
 				// Loop to get part html and plain
@@ -906,11 +925,6 @@ class EmailCollector extends CommonObject
 					if ($part->subtype == 'HTML') $parthtml=$key;
 					if ($part->subtype == 'PLAIN') $partplain=$key;
 				}
-
-				$matches=array();
-				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
-				$headers = array_combine($matches[1], $matches[2]);
-				//var_dump($headers);
 
 				$messagetext = imap_fetchbody($connection, $imapemail, ($parthtml >= 0 ? $parthtml : ($partplain >= 0 ? $partplain : 0)));
 
@@ -946,7 +960,7 @@ class EmailCollector extends CommonObject
 				// Analyze TrackId
 				$trackid = '';
 				$reg=array();
-				if (! empty($headers['X-Dolibarr-TrackId']) && preg_match('/:\s*([a-z]+)([0-9]+)$/', $headers['X-Dolibarr-TrackId'], $reg))
+				if (! empty($headers['X-Dolibarr-TRACKID']) && preg_match('/:\s*([a-z]+)([0-9]+)$/', $headers['X-Dolibarr-TRACKID'], $reg))
 				{
 					$trackid = $reg[0].$reg[1];
 
