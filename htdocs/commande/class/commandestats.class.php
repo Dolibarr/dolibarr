@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ class CommandeStats extends Stats
      * @param   int     $format     0=Label of abscissa is a translated text
      *                              1=Label of abscissa is month number
      *                              2=Label of abscissa is first letter of month
-	 * @return	array				Array with number by month
+	 * @return  array				Array with number by month
 	 */
 	function getNbByMonth($year, $format=0)
 	{
@@ -241,4 +241,3 @@ class CommandeStats extends Stats
 		return $this->_getAllByProduct($sql);
 	}
 }
-

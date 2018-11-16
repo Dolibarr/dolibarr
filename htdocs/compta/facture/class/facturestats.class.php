@@ -63,16 +63,14 @@ class FactureStats extends Stats
         $this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 
-		if ($mode == 'customer')
-		{
+		if ($mode == 'customer') {
 			$object=new Facture($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field='total';
 			$this->field_line='total_ht';
 		}
-		elseif ($mode == 'supplier')
-		{
+		elseif ($mode == 'supplier') {
 			$object=new FactureFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
@@ -84,8 +82,7 @@ class FactureStats extends Stats
 		$this->where.= " AND f.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($mode == 'customer') $this->where.=" AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
-		if ($this->socid)
-		{
+		if ($this->socid) {
 			$this->where.=" AND f.fk_soc = ".$this->socid;
 		}
         if ($this->userid > 0) $this->where.=' AND f.fk_user_author = '.$this->userid;
@@ -105,15 +102,20 @@ class FactureStats extends Stats
 	 */
 	function getNbByMonth($year, $format=0)
 	{
-		global $user;
+		global $user, $conf;
 
 		$sql = "SELECT date_format(f.datef,'%m') as dm, COUNT(*) as nb";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START;
+            $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, $startmonth))."' AND '".$this->db->idate(dol_get_last_day($year+1, $startmonth-1))."'";
+        } else {
+            $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        }
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
         $res=$this->_getNbByMonth($year, $sql, $format);
 
@@ -152,12 +154,17 @@ class FactureStats extends Stats
 	 */
 	function getAmountByMonth($year, $format=0)
 	{
-		global $user;
+		global $user, $conf;
 
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START;
+            $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, $startmonth))."' AND '".$this->db->idate(dol_get_last_day($year+1, $startmonth-1))."'";
+        } else {
+            $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        }
 		$sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -175,12 +182,17 @@ class FactureStats extends Stats
 	 */
 	function getAverageByMonth($year)
 	{
-		global $user;
+		global $user, $conf;
 
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START;
+            $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, $startmonth))."' AND '".$this->db->idate(dol_get_last_day($year+1, $startmonth-1))."'";
+        } else {
+            $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+        }
 		$sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -215,19 +227,23 @@ class FactureStats extends Stats
 	 */
 	function getAllByProduct($year)
 	{
-		global $user;
+		global $user, $conf;
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql.= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " AND f.rowid = tl.fk_facture AND tl.fk_product = product.rowid";
-    	$sql.= " AND f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
+        if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+            $startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START;
+            $sql.= " AND f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, $startmonth))."' AND '".$this->db->idate(dol_get_last_day($year+1, $startmonth-1))."'";
+        } else {
+            $sql.= " AND f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
+        }
 		$sql.= " GROUP BY product.ref";
         $sql.= $this->db->order('nb','DESC');
         //$sql.= $this->db->plimit(20);
 
-		return $this->_getAllByProduct($sql);
-	}
+        return $this->_getAllByProduct($sql);
+    }
 }
-

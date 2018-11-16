@@ -151,8 +151,7 @@ $wikihelp='EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 // Add logic to show/hide buttons
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
@@ -189,7 +188,9 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Comment").'</td>';
-if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
+if (! empty($conf->multicompany->enabled) && !$user->entity) {
+    print '<td>'.$langs->trans("Entity").'</td>';
+}
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
@@ -217,7 +218,7 @@ else
 	print '<td align="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
+print '<input type="submit" class="butAction" value="'.$langs->trans("Add").'" name="add">';
 print "</td>\n";
 print '</tr>';
 
@@ -305,10 +306,10 @@ if ($conf->use_javascript_ajax)
 {
 	print '<br>';
 	print '<div id="updateconst" align="right">';
-	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" name="update" class="butAction" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 	print '<div id="delconst" align="right">';
-	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
+	print '<input type="submit" name="delete" class="butAction" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }
 

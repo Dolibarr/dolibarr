@@ -125,7 +125,8 @@ abstract class Stats
                     $data['dataset'][$j]['borderWidth'] = 1;
                     $data['dataset'][$j]['fill'] = false;
                     if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
-                        $data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                        //$data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                        $data['dataset'][$j]['label'] = substr($year, -2) . '/' . substr(($year+1), -2);
                     } else {
                         $data['dataset'][$j]['label'] = $year;
                     }
@@ -246,7 +247,8 @@ abstract class Stats
                     $data['dataset'][$j]['borderWidth'] = 1;
                     $data['dataset'][$j]['fill'] = false;
                     if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
-                        $data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                        //$data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                        $data['dataset'][$j]['label'] = substr($year, -2) . '/' . substr(($year+1), -2);
                     } else {
                         $data['dataset'][$j]['label'] = $year;
                     }
@@ -327,7 +329,8 @@ abstract class Stats
                 $data['dataset'][$j]['borderWidth'] = 1;
                 $data['dataset'][$j]['fill'] = false;
                 if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
-                    $data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                    //$data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                    $data['dataset'][$j]['label'] = substr($year, -2) . '/' . substr(($year+1), -2);
                 } else {
                     $data['dataset'][$j]['label'] = $year;
                 }
@@ -743,4 +746,3 @@ abstract class Stats
 		return $result;
 	}
 }
-

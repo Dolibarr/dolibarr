@@ -82,12 +82,10 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 $sql.= " GROUP BY tf.code, tf.label";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $objp = $db->fetch_object($result);
 
         $somme[$objp->code] = $objp->km;
@@ -114,32 +112,59 @@ print '<tr class="liste_titre">';
 print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
-$listoftype=$tripandexpense_static->listOfTypes();
-foreach ($listoftype as $code => $label)
-{
-    $dataseries[]=array($label, (isset($somme[$code])?(int) $somme[$code]:0));
+$listoftype = $tripandexpense_static->listOfTypes();
+$dataseries = array();
+$labels = array();
+foreach ($listoftype as $code => $label) {
+    if (isset($somme[$code])) {
+        $labels[] = html_entity_decode($label);
+        $dataseries[] = (int) $somme[$code];
+    }
 }
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print '<tr><td align="center" colspan="4">';
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+    $dolchartjs = new DolChartJs();
+    $dolchartjs->element('idgraphstatus')
+        ->setType('pie')
+        ->setLabels($labels)
+        ->setDatasets(
+            array(
+                array(
+                    'backgroundColor' => $dolchartjs->bgdatacolor,
+                    'borderColor' => $dolchartjs->datacolor,
+                    'data' => $dataseries,
+                ),
+            )
+        )
+        ->setSize(array('width' => 70, 'height' => 25))
+        ->setOptions(array(
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'legend' => array(
+                'position' => 'right',
+            ),
+        )
+    );
+    print $dolchartjs->renderChart($totalnb?0:1);
 
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-    $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
-    $dolgraph->setShowPercent(1);
-    $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
-    $dolgraph->draw('idgraphstatus');
-    print $dolgraph->show($totalnb?0:1);
+    // include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    // $dolgraph = new DolGraph();
+    // $dolgraph->SetData($dataseries);
+    // $dolgraph->setShowLegend(1);
+    // $dolgraph->setShowPercent(1);
+    // $dolgraph->SetType(array('pie'));
+    // $dolgraph->setWidth('100%');
+    // $dolgraph->draw('idgraphstatus');
+    // print $dolgraph->show($totalnb?0:1);
 
     print '</td></tr>';
 }
 
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
-print '<td align="right" colspan="3">'.price($totalsum,1,$langs,0,0,0,$conf->currency).'</td>';
+print '<td align="right" colspan="3">'.price($totalsum, 1, $langs, 0, 0, 0, $conf->currency).'</td>';
 print '</tr>';
 
 print '</table>';
@@ -173,9 +198,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($max, 0);
 
 $result = $db->query($sql);
-if ($result)
-{
-    $var=false;
+if ($result) {
     $num = $db->num_rows($result);
 
     $i = 0;
@@ -188,14 +211,12 @@ if ($result)
     print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
     print '<th>&nbsp;</th>';
     print '</tr>';
-    if ($num)
-    {
+    if ($num) {
         $total_ttc = $totalam = $total = 0;
 
         $expensereportstatic=new ExpenseReport($db);
         $userstatic=new User($db);
-        while ($i < $num && $i < $max)
-        {
+        while ($i < $num && $i < $max) {
             $obj = $db->fetch_object($result);
             $expensereportstatic->id=$obj->rowid;
             $expensereportstatic->ref=$obj->ref;
@@ -213,7 +234,7 @@ if ($result)
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
             print '<td align="right">';
             //print $obj->libelle;
-			print $expensereportstatic->LibStatut($obj->fk_status,3);
+            print $expensereportstatic->LibStatut($obj->fk_status, 3);
             print '</td>';
             print '</tr>';
 

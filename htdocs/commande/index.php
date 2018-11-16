@@ -65,7 +65,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     // Search customer orders
-    $var=false;
     print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -207,10 +206,7 @@ if (! empty($conf->commande->enabled)) {
 		if ($num)
 		{
 			$i = 0;
-			$var = true;
-			while ($i < $num)
-			{
-
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
                 $commandestatic->id=$obj->rowid;
@@ -278,10 +274,7 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = true;
-		while ($i < $num)
-		{
-
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -356,13 +349,9 @@ if (! empty($conf->commande->enabled))
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			$var = true;
-			while ($i < $num)
-			{
-
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
@@ -438,12 +427,9 @@ if (! empty($conf->commande->enabled))
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></th></tr>';
 
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			$var = true;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';

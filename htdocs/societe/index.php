@@ -36,7 +36,7 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 // Security check
-$result=restrictedArea($user,'societe',0,'','','','');
+$result=restrictedArea($user, 'societe', 0, '', '', '', '');
 
 $thirdparty_static = new Societe($db);
 
@@ -48,9 +48,9 @@ $thirdparty_static = new Societe($db);
 $transAreaType = $langs->trans("ThirdPartiesArea");
 $helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Terceros';
 
-llxHeader("",$langs->trans("ThirdParties"),$helpurl);
+llxHeader("",$langs->trans("ThirdParties"), $helpurl);
 $linkback='';
-print load_fiche_titre($transAreaType,$linkback,'title_companies.png');
+print load_fiche_titre($transAreaType, $linkback, 'title_companies.png');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
