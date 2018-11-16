@@ -4423,9 +4423,9 @@ function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
  * @param	Conf		$conf		Object conf
  * @return	void
  */
-function migrate_delete_old_files($db,$langs,$conf)
+function migrate_delete_old_files($db, $langs, $conf)
 {
-	$result=true;
+	$result = true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
