@@ -1108,12 +1108,13 @@ class EmailCollector extends CommonObject
 					dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
 
 					// Search and create thirdparty
-					if ($operation['type'] == 'loadthirdparty' && $operation['type'] == 'loadandcreatethirdparty')
+					if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')
 					{
 						if (empty($operation['actionparam']))
 						{
 							$errorforactions++;
-							$this->errors = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'VALUE:xxx' or 'REGEX:(body|subject):regex' to extract";
+							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'VALUE:xxx' or 'REGEX:(body|subject):regex' to define how to extract data";
+							$this->errors[] = $this->error;
 						}
 						else
 						{
@@ -1124,19 +1125,6 @@ class EmailCollector extends CommonObject
 							$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
 							foreach($arrayvaluetouse as $propertytooverwrite => $valueforproperty)
 							{
-								$tmpclass=''; $tmpproperty='';
-								$tmparray=explode('.', $propertytooverwrite);
-								if (count($tmparray) == 2)
-								{
-									$tmpclass=$tmparray[0];
-									$tmpproperty=$tmparray[1];
-								}
-								else
-								{
-									$tmpproperty=$tmparray[0];
-								}
-								//if ($tmpclass && ($tmpclass != $object->element)) continue;	// Property is for another type of object
-
 								$sourcestring='';
 								$sourcefield='';
 								$regexstring='';
