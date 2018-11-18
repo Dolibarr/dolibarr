@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2018  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,9 @@
  */
 
 /**
- *       \file       htdocs/adherents/card.php
- *       \ingroup    member
- *       \brief      Page of member
+ *  \file       htdocs/adherents/card.php
+ *  \ingroup    member
+ *  \brief      Page of member
  */
 
 require '../main.inc.php';
@@ -249,6 +249,7 @@ if (empty($reshook))
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
+		$gender = $_POST["gender"];
 		$societe=$_POST["societe"];
 		$morphy=$_POST["morphy"];
 		$login=$_POST["login"];
@@ -284,6 +285,7 @@ if (empty($reshook))
 			$object->civility_id = trim(GETPOST("civility_id",'alpha'));
 			$object->firstname   = trim(GETPOST("firstname",'alpha'));
 			$object->lastname    = trim(GETPOST("lastname",'alpha'));
+			$object->gender      = trim(GETPOST("gender",'alpha'));
 			$object->login       = trim(GETPOST("login",'alpha'));
 			$object->pass        = trim(GETPOST("pass",'alpha'));
 
@@ -434,6 +436,7 @@ if (empty($reshook))
 		$civility_id=GETPOST("civility_id",'int');
 		$lastname=GETPOST("lastname",'alpha');
 		$firstname=GETPOST("firstname",'alpha');
+		$gender=GETPOST("gender",'alpha');
 		$societe=GETPOST("societe",'alpha');
 		$address=GETPOST("address",'alpha');
 		$zip=GETPOST("zipcode",'alpha');
@@ -462,6 +465,7 @@ if (empty($reshook))
 		$object->civility_id = $civility_id;
 		$object->firstname   = $firstname;
 		$object->lastname    = $lastname;
+		$object->gender      = $gender;
 		$object->societe     = $societe;
 		$object->address     = $address;
 		$object->zip         = $zip;
@@ -954,6 +958,13 @@ else
 		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="minwidth300" maxlength="50" value="'.(GETPOST('firstname','alpha')?GETPOST('firstname','alpha'):$object->firstname).'"></td>';
 		print '</tr>';
 
+		// Gender
+		print '<tr><td>'.$langs->trans("Gender").'</td>';
+		print '<td>';
+		$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+		print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
+		print '</td></tr>';
+
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOST('member_email','alpha')?GETPOST('member_email','alpha'):$object->email).'"></td></tr>';
 
@@ -1195,6 +1206,13 @@ else
 		// Firstname
 		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="minwidth300" maxlength="50" value="'.(isset($_POST["firstname"])?GETPOST("firstname",'',3):$object->firstname).'"></td>';
 		print '</tr>';
+
+		// Gender
+		print '<tr><td>'.$langs->trans("Gender").'</td>';
+		print '<td>';
+		$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+		print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
+		print '</td></tr>';
 
 		// Photo
 		print '<tr><td>'.$langs->trans("Photo").'</td>';
@@ -1579,6 +1597,12 @@ else
 		// Morphy
 		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 		print '</tr>';
+
+		// Gender
+		print '<tr><td>'.$langs->trans("Gender").'</td>';
+		print '<td>';
+		if ($object->gender) print $langs->trans("Gender".$object->gender);
+		print '</td></tr>';
 
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';

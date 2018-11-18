@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
@@ -127,6 +127,7 @@ class Adherent extends CommonObject
 	public $datem;
 	public $datevalid;
 
+	public $gender;
 	public $birth;
 
 	public $note_public;
@@ -457,17 +458,18 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
 		// Clean parameters
-		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
-		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->firstname);
-		$this->address=($this->address?$this->address:$this->address);
-		$this->zip=($this->zip?$this->zip:$this->zip);
-		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
+		$this->lastname     = trim($this->lastname)?trim($this->lastname):trim($this->lastname);
+		$this->firstname    = trim($this->firstname)?trim($this->firstname):trim($this->firstname);
+		$this->gender       = trim($this->gender);
+		$this->address      = ($this->address?$this->address:$this->address);
+		$this->zip          = ($this->zip?$this->zip:$this->zip);
+		$this->town         = ($this->town?$this->town:$this->town);
+		$this->country_id   = ($this->country_id > 0?$this->country_id:$this->country_id);
+		$this->state_id     = ($this->state_id > 0?$this->state_id:$this->state_id);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
-		$this->note_public=($this->note_public?$this->note_public:$this->note_public);
-		$this->note_private=($this->note_private?$this->note_private:$this->note_private);
+		$this->note_public  = ($this->note_public?$this->note_public:$this->note_public);
+		$this->note_private = ($this->note_private?$this->note_private:$this->note_private);
 
 		// Check parameters
 		if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -483,6 +485,7 @@ class Adherent extends CommonObject
 		$sql.= " civility = ".($this->civility_id?"'".$this->db->escape($this->civility_id)."'":"null");
 		$sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
 		$sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
+		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
 		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
 		$sql.= ", fk_soc = ".($this->fk_soc > 0?$this->db->escape($this->fk_soc):"null");
@@ -589,15 +592,16 @@ class Adherent extends CommonObject
 						$luser->civility_id=$this->civility_id;
 						$luser->firstname=$this->firstname;
 						$luser->lastname=$this->lastname;
+						$luser->gender=$this->gender;
 						$luser->pass=$this->pass;
 						$luser->societe_id=$this->societe;
 
 						$luser->birth=$this->birth;
-                                                $luser->address=$this->address;
-                                                $luser->zip=$this->zip;
-                                                $luser->town=$this->town;
-                                                $luser->country_id=$this->country_id;
-                                                $luser->state_id=$this->state_id;
+						$luser->address=$this->address;
+						$luser->zip=$this->zip;
+						$luser->town=$this->town;
+						$luser->country_id=$this->country_id;
+						$luser->state_id=$this->state_id;
 
 						$luser->email=$this->email;
 						$luser->skype=$this->skype;
@@ -1129,7 +1133,7 @@ class Adherent extends CommonObject
 	{
 		global $langs;
 
-		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
+		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
 		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
@@ -1176,6 +1180,7 @@ class Adherent extends CommonObject
 				$this->civility_id		= $obj->civility_id;
 				$this->firstname		= $obj->firstname;
 				$this->lastname			= $obj->lastname;
+				$this->gender			= $obj->gender;
 				$this->login			= $obj->login;
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
@@ -2288,6 +2293,7 @@ class Adherent extends CommonObject
 		$this->civility_id = 0;
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
+		$this->gender='man';
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
 		$this->societe = 'Societe ABC';
