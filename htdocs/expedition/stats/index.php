@@ -138,7 +138,7 @@ $mesg = $px2->isGraphKo();
 if (! $mesg)
 {
     $px2->SetData($data);
-    $i=$startyear;$legend=array();
+    $i=$startyear;$legend=[];
     while ($i <= $endyear)
     {
         $legend[]=$i;
@@ -179,7 +179,7 @@ $mesg = $px3->isGraphKo();
 if (! $mesg)
 {
     $px3->SetData($data);
-    $i=$startyear;$legend=array();
+    $i=$startyear;$legend=[];
     while ($i <= $endyear)
     {
         $legend[]=$i;
@@ -204,7 +204,7 @@ if (! $mesg)
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
+$arrayyears = [];
 foreach($data as $val) {
     if (! empty($val['year'])) {
         $arrayyears[$val['year']]=$val['year'];
@@ -215,7 +215,7 @@ if (! count($arrayyears)) {
 }
 
 $h=0;
-$head = array();
+$head = [];
 $head[$h][0] = DOL_URL_ROOT . '/expedition/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
@@ -241,7 +241,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	print $form->select_company($socid, 'socid', 's.client in (1,2,3)', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+	print $form->select_company($socid, 'socid', 's.client in (1,2,3)', 1, 0, 0, [], 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';

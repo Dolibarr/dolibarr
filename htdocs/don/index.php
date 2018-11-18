@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ $langs->load("donations");
 // Security check
 $result = restrictedArea($user, 'don');
 
-$donation_static=new Don($db);
+$donation_static = new Don($db);
 
 
 /*
@@ -60,12 +61,10 @@ $sql.= " GROUP BY d.fk_statut";
 $sql.= " ORDER BY d.fk_statut";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$i = 0;
     $num = $db->num_rows($result);
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $objp = $db->fetch_object($result);
 
         $somme[$objp->fk_statut] = $objp->somme;
@@ -84,10 +83,9 @@ print load_fiche_titre($langs->trans("DonationsArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
-    if (! empty($conf->don->enabled) && $user->rights->don->lire)
-    {
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
+    if (! empty($conf->don->enabled) && $user->rights->don->lire) {
     	$listofsearchfields['search_donation']=array('text'=>'Donation');
     }
 
@@ -102,41 +100,57 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     		print '<tr '.$bc[false].'>';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="butAction"></td>';
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
+        print '</table>';
+        print '</form>';
+        print '<br>';
     }
 }
 
 
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
-$listofstatus=array(0,1,-1,2);
-foreach ($listofstatus as $status)
-{
-    $dataseries[]=array($donstatic->LibStatut($status,1), (isset($nb[$status])?(int) $nb[$status]:0));
+$listofstatus = [0, 1, -1, 2];
+$dataseries = [];
+$labels = [];
+foreach ($listofstatus as $status) {
+    $dataseries[] = (isset($nb[$status])?(int) $nb[$status]:0);
+    $labels[] = html_entity_decode($donstatic->LibStatut($status,1));
 }
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print '<tr><td align="center" colspan="4">';
 
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-    $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
-    $dolgraph->setShowPercent(1);
-    $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
-    $dolgraph->draw('idgraphstatus');
-    print $dolgraph->show($total?0:1);
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+    $dolchartjs = new DolChartJs();
+    $dolchartjs->element('idgraphstatus')
+        ->setType('pie')
+        ->setLabels($labels)
+        ->setDatasets(
+            [
+                [
+                    'backgroundColor' => $dolchartjs->bgdatacolor,
+                    'borderColor' => $dolchartjs->datacolor,
+                    'data' => $dataseries,
+                ],
+            ]
+        )
+        ->setSize(['width' => 70, 'height' => 24])
+        ->setOptions([
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'legend' => [
+                'position' => 'right',
+            ],
+        ]
+    );
+    print $dolchartjs->renderChart($total?0:1);
 
     print '</td></tr>';
 }
@@ -150,9 +164,7 @@ print '</tr>';
 
 $total=0;
 $totalnb=0;
-foreach ($listofstatus as $status)
-{
-
+foreach ($listofstatus as $status) {
     print '<tr class="oddeven">';
     print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';

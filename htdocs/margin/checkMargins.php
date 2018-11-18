@@ -172,7 +172,7 @@ print '<td>';
 print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
-print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
+print '<input type="submit" class="butAction" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
 print '</td>';
 print '</tr>';
 print "</table>";
@@ -314,7 +314,7 @@ if ($result) {
 
 
 print '<div class="center">' . "\n";
-print '<input type="submit" class="button" name="button_updatemagins" id="button_updatemagins" value="' . $langs->trans("Update") . '">';
+print '<input type="submit" class="butAction" name="button_updatemagins" id="button_updatemagins" value="' . $langs->trans("Update") . '">';
 print '</div>';
 
 print '</form>';
