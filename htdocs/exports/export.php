@@ -554,7 +554,7 @@ if ($step == 2 && $datatoexport)
     if(empty($conf->global->EXPORTS_SHARE_MODELS))$htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1,$user->id);
 	else $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
     print ' ';
-    print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+    print '<input type="submit" class="butAction" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
     print '</form>';
 
@@ -1070,7 +1070,7 @@ if ($step == 4 && $datatoexport)
 
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
 
         // List of existing export profils

@@ -17,8 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || ! is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }

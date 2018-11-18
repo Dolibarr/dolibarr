@@ -38,7 +38,7 @@ $width = 70;
 $height = 25;
 
 $mode = GETPOST("mode", 'alpha');
-if (! in_array($mode, array('customer', 'supplier'))) {
+if (! in_array($mode, ['customer', 'supplier'])) {
     $mode = 'customer';
 }
 if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
@@ -62,7 +62,7 @@ $startyear = $year - $nbyear + 1;
 $endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'companies', 'other', 'suppliers'));
+$langs->loadLangs(['orders', 'companies', 'other', 'suppliers']);
 
 
 /*
@@ -91,45 +91,45 @@ $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $
 
 $px1->element('ordersnbinyear')
     ->setType('bar')
-    ->setSwitchers(array('line', 'bar'))
+    ->setSwitchers(['line', 'bar'])
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
-    ->setSize(array('width' => $width, 'height' => $height))
-    ->setOptions(array(
+    ->setSize(['width' => $width, 'height' => $height])
+    ->setOptions([
         'responsive' => true,
         'maintainAspectRatio' => false,
-        'legend' => array(
+        'legend' => [
             'display' => true,
             'position' => 'bottom',
-        ),
-        'title' => array(
+        ],
+        'title' => [
             'display' => true,
             'text' => $langs->transnoentitiesnoconv("NumberOfOrdersByMonth"),
-        ),
-        'scales' => array(
-            'xAxes' => array(
-                array(
+        ],
+        'scales' => [
+            'xAxes' => [
+                [
                     //'stacked' => true,
-                )
-            ),
-            'yAxes' => array(
-                array(
-                    'ticks' => array(
+                ]
+            ],
+            'yAxes' => [
+                [
+                    'ticks' => [
                         'min' => 0,
-                    ),
-                    'gridLines' => array(
+                    ],
+                    'gridLines' => [
                         'color' => 'black',
-                        'borderDash' => array(2, 3),
-                    ),
-                    'scaleLabel' => array(
+                        'borderDash' => [2, 3],
+                    ],
+                    'scaleLabel' => [
                         'display' => true,
                         'labelString' => $langs->transnoentitiesnoconv("NbOfOrders"),
                         'fontColor' => 'black',
-                    ),
-                )
-            ),
-        ),
-    )
+                    ],
+                ]
+            ],
+        ],
+    ]
 );
 
 // Build graphic amount of object
@@ -177,42 +177,42 @@ $graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $p
 
 $px3->element('ordersaverage')
     ->setType('bar')
-    ->setSwitchers(array('line', 'bar'))
+    ->setSwitchers(['line', 'bar'])
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
-    ->setSize(array('width' => $width, 'height' => $height))
-    ->setOptions(array(
+    ->setSize(['width' => $width, 'height' => $height])
+    ->setOptions([
         'responsive' => true,
         'maintainAspectRatio' => false,
-        'legend' => array(
+        'legend' => [
             'display' => true,
             'position' => 'bottom',
-        ),
-        'title' => array(
+        ],
+        'title' => [
             'display' => true,
             'text' => $langs->transnoentities("AmountAverageOfOrdersByMonthHT"),
-        ),
-        'scales' => array(
-            'yAxes' => array(
-                array(
-                    'gridLines' => array(
+        ],
+        'scales' => [
+            'yAxes' => [
+                [
+                    'gridLines' => [
                         'color' => 'black',
-                        'borderDash' => array(2, 3),
-                    ),
-                    'scaleLabel' => array(
+                        'borderDash' => [2, 3],
+                    ],
+                    'scaleLabel' => [
                         'display' => true,
                         'labelString' => $langs->transnoentitiesnoconv("AmountAverageOfOrders"),
                         'fontColor' => 'black',
-                    ),
-                )
-            ),
-        ),
-    )
+                    ],
+                ]
+            ],
+        ],
+    ]
 );
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears = array();
+$arrayyears = [];
 foreach($data as $val) {
     if (! empty($val['year'])) {
         $arrayyears[$val['year']]=$val['year'];
@@ -221,14 +221,17 @@ foreach($data as $val) {
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
-$head = array();
+$head = [];
 $head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') $type = 'order_stats';
-elseif ($mode == 'supplier') $type = 'supplier_order_stats';
+if ($mode == 'customer') {
+    $type = 'order_stats';
+} elseif ($mode == 'supplier') {
+    $type = 'supplier_order_stats';
+}
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 

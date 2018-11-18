@@ -38,17 +38,22 @@
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function report_header($reportname,$notused,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
+function report_header($reportname, $notused, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
 	global $langs;
 
-	if (empty($hselected)) $hselected='report';
+	if (empty($hselected)) {
+        $hselected='report';
+    }
 
 	print "\n\n<!-- start banner of report -->\n";
 
-	if(! empty($varlink)) $varlink = '?'.$varlink;
+	if(! empty($varlink)) {
+        $varlink = '?'.$varlink;
+    }
 
-	$h=0;
+    $h=0;
+    $head = [];
 	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
@@ -57,8 +62,7 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 
 	dol_fiche_head($head, 'report');
 
-	foreach($moreparam as $key => $value)
-	{
+	foreach($moreparam as $key => $value) {
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
 	print '<table width="100%" class="border">';
@@ -75,8 +79,7 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 	print '</tr>';
 
 	// Calculation mode
-	if ($calcmode)
-	{
+	if ($calcmode) {
 		print '<tr>';
 		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
 		print '<td>';
@@ -115,7 +118,7 @@ function report_header($reportname,$notused,$period,$periodlink,$description,$bu
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+	print '<div class="center"><input type="submit" class="butAction" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
 	print '</form>';
 	print '<br>';

@@ -336,7 +336,7 @@ print '</table>';
 
 dol_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print '<div class="center"><input type="submit" class="butAction" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

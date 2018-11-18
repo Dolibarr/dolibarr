@@ -57,7 +57,7 @@ else
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$countryCode=substr($vatNumber,0,2);
 	$vatNumber=substr($vatNumber,2);
-	
+
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
 	print '<br>';
@@ -165,7 +165,7 @@ else
 print '<br>';
 print $langs->trans("VATIntraManualCheck",$langs->trans("VATIntraCheckURL"),$langs->trans("VATIntraCheckURL")).'<br>';
 print '<br>';
-print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
+print '<div class="center"><input type="button" class="butAction" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 
 if ($messagetoshow)
 {

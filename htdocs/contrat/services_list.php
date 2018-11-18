@@ -399,8 +399,7 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="c
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($arrayfields['c.ref']['checked']))
-{
+if (! empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="filter" value="'.$filter.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -408,49 +407,41 @@ if (! empty($arrayfields['c.ref']['checked']))
 	print '</td>';
 }
 // Service label
-if (! empty($arrayfields['p.description']['checked']))
-{
+if (! empty($arrayfields['p.description']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat maxwidth100" name="search_service" value="'.dol_escape_htmltag($search_service).'">';
 	print '</td>';
 }
 // detail lines
-if (! empty($arrayfields['cd.qty']['checked']))
-{
+if (! empty($arrayfields['cd.qty']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (! empty($arrayfields['cd.total_ht']['checked']))
-{
+if (! empty($arrayfields['cd.total_ht']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (! empty($arrayfields['cd.total_tva']['checked']))
-{
+if (! empty($arrayfields['cd.total_tva']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (! empty($arrayfields['cd.tva_tx']['checked']))
-{
+if (! empty($arrayfields['cd.tva_tx']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (! empty($arrayfields['cd.subprice']['checked']))
-{
+if (! empty($arrayfields['cd.subprice']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Third party
-if (! empty($arrayfields['s.nom']['checked']))
-{
+if (! empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat maxwidth100" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
 
 
-if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
-{
+if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_opouvertureprevue',$arrayofoperators,$filter_opouvertureprevue,1);
@@ -459,8 +450,7 @@ if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 	print $form->selectDate($filter_dateouvertureprevue, 'opouvertureprevue', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
-if (! empty($arrayfields['cd.date_ouverture']['checked']))
-{
+if (! empty($arrayfields['cd.date_ouverture']['checked'])) {
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
@@ -469,8 +459,7 @@ if (! empty($arrayfields['cd.date_ouverture']['checked']))
 	print $form->selectDate($filter_date1, 'op1', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
-if (! empty($arrayfields['cd.date_fin_validite']['checked']))
-{
+if (! empty($arrayfields['cd.date_fin_validite']['checked'])) {
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
@@ -479,13 +468,12 @@ if (! empty($arrayfields['cd.date_fin_validite']['checked']))
 	print $form->selectDate($filter_date2, 'op2', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
-if (! empty($arrayfields['cd.date_cloture']['checked']))
-{
+if (! empty($arrayfields['cd.date_cloture']['checked'])) {
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
-	print $form->selectarray('filter_opcloture',$arrayofoperators,$filter_opcloture,1);
+	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1);
 	print ' ';
-	$filter_date_cloture=dol_mktime(0,0,0,$opcloturemonth,$opclotureday,$opclotureyear);
+	$filter_date_cloture=dol_mktime(0, 0, 0, $opcloturemonth, $opclotureday, $opclotureyear);
 	print $form->selectDate($filter_date_cloture, 'opcloture', 0, 0, 1, '', 1, 0);
 	print '</td>';
 }
@@ -494,30 +482,27 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters=array('arrayfields'=>$arrayfields);
-$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['cd.datec']['checked']))
-{
+if (! empty($arrayfields['cd.datec']['checked'])) {
 	// Date creation
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (! empty($arrayfields['cd.tms']['checked']))
-{
+if (! empty($arrayfields['cd.tms']['checked'])) {
 	// Date modification
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (! empty($arrayfields['status']['checked']))
-{
+if (! empty($arrayfields['status']['checked'])) {
 	// Status
 	print '<td class="liste_titre" align="right">';
-	$arrayofstatus=array(
-		'0'=>$langs->trans("ServiceStatusInitial"),
-		'4'=>$langs->trans("ServiceStatusRunning"),
-		'4&filter=notexpired'=>$langs->trans("ServiceStatusNotLate"),
-		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
-		'5'=>$langs->trans("ServiceStatusClosed")
+	$arrayofstatus = array(
+		'0' => $langs->trans("ServiceStatusInitial"),
+		'4' => $langs->trans("ServiceStatusRunning"),
+		'4&filter=notexpired' => $langs->trans("ServiceStatusNotLate"),
+		'4&filter=expired' => $langs->trans("ServiceStatusLate"),
+		'5' => $langs->trans("ServiceStatusClosed")
 	);
 	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',')?-1:$search_status), 1, 0, '', 0, 0, 0, '', 'maxwidth100onsmartphone');
 	print '</td>';
@@ -534,8 +519,7 @@ $productstatic=new Product($db);
 
 $i=0;
 $totalarray=array();
-while ($i < min($num,$limit))
-{
+while ($i < min($num,$limit)) {
 	$obj = $db->fetch_object($resql);
 
 	$contractstatic->id=$obj->cid;
@@ -550,45 +534,43 @@ while ($i < min($num,$limit))
 	print '<tr class="oddeven">';
 
 	// Ref
-	if (! empty($arrayfields['c.ref']['checked']))
-	{
+	if (! empty($arrayfields['c.ref']['checked'])) {
 		print '<td>';
 		print $contractstatic->getNomUrl(1,16);
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 	// Service
-	if (! empty($arrayfields['p.description']['checked']))
-	{
+	if (! empty($arrayfields['p.description']['checked'])) {
 		print '<td>';
-		if ($obj->pid > 0)
-		{
+		if ($obj->pid > 0) {
 			$productstatic->id=$obj->pid;
 			$productstatic->type=$obj->ptype;
 			$productstatic->ref=$obj->pref;
 			$productstatic->entity=$obj->pentity;
 			print $productstatic->getNomUrl(1,'',24);
 			print $obj->label?' - '.dol_trunc($obj->label,16):'';
-			if (! empty($obj->description) && ! empty($conf->global->PRODUCT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
-		}
-		else
-		{
-			if ($obj->type == 0) print img_object($obj->description,'product').' '.dol_trunc($obj->description,24);
-			if ($obj->type == 1) print img_object($obj->description,'service').' '.dol_trunc($obj->description,24);
+			if (! empty($obj->description) && ! empty($conf->global->PRODUCT_DESC_IN_LIST)) {
+                print '<br>'.dol_nl2br($obj->description);
+            }
+		} else {
+			if ($obj->type == 0) {
+                print img_object($obj->description, 'product').' '.dol_trunc($obj->description, 24);
+            } elseif ($obj->type == 1) {
+                print img_object($obj->description, 'service').' '.dol_trunc($obj->description, 24);
+            }
 		}
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 
-	if (! empty($arrayfields['cd.qty']['checked']))
-	{
+	if (! empty($arrayfields['cd.qty']['checked'])) {
 		print '<td>';
 		print $obj->qty;
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
-	if (! empty($arrayfields['cd.total_ht']['checked']))
-	{
+	if (! empty($arrayfields['cd.total_ht']['checked'])) {
 		print '<td align="right">';
 		print price($obj->total_ht);
 		print '</td>';
@@ -599,8 +581,7 @@ while ($i < min($num,$limit))
             $totalarray['totalhtfield']=$totalarray['nbfield'];
         }
     }
-	if (! empty($arrayfields['cd.total_tva']['checked']))
-	{
+	if (! empty($arrayfields['cd.total_tva']['checked'])) {
 		print '<td align="right">';
 		print price($obj->total_tva);
 		print '</td>';
@@ -611,15 +592,13 @@ while ($i < min($num,$limit))
             $totalarray['displaytotalline']++;
         }
     }
-	if (! empty($arrayfields['cd.tva_tx']['checked']))
-	{
+	if (! empty($arrayfields['cd.tva_tx']['checked'])) {
 		print '<td align="right">';
 		print price2num($obj->tva_tx).'%';
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
-	if (! empty($arrayfields['cd.subprice']['checked']))
-	{
+	if (! empty($arrayfields['cd.subprice']['checked'])) {
 		print '<td align="right">';
 		print price($obj->subprice);
 		print '</td>';
@@ -628,8 +607,7 @@ while ($i < min($num,$limit))
 
 
 	// Third party
-	if (! empty($arrayfields['s.nom']['checked']))
-	{
+	if (! empty($arrayfields['s.nom']['checked'])) {
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';
@@ -637,8 +615,7 @@ while ($i < min($num,$limit))
 	}
 
 	// Start date
-	if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
-	{
+	if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 		print '<td align="center">';
 		print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue), 'dayhour'):'&nbsp;');
 		if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)) && $obj->statut == 0)
@@ -647,28 +624,27 @@ while ($i < min($num,$limit))
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
-	if (! empty($arrayfields['cd.date_ouverture']['checked']))
-	{
+	if (! empty($arrayfields['cd.date_ouverture']['checked'])) {
 		print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture), 'dayhour'):'&nbsp;').'</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 	// End date
-	if (! empty($arrayfields['cd.date_fin_validite']['checked']))
-	{
+	if (! empty($arrayfields['cd.date_fin_validite']['checked'])) {
 		print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour'):'&nbsp;');
-		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5)
-		{
+		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) {
 			$warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
 			$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
 			print img_warning($textlate);
-		}
-		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
+		} else {
+            print '&nbsp;&nbsp;&nbsp;&nbsp;';
+        }
 		print '</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (! $i) {
+            $totalarray['nbfield']++;
+        }
 	}
 	// Close date (real end date)
-	if (! empty($arrayfields['cd.date_cloture']['checked']))
-	{
+	if (! empty($arrayfields['cd.date_cloture']['checked'])) {
 		print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture), 'dayhour').'</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
@@ -680,46 +656,47 @@ while ($i < min($num,$limit))
 	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
-	if (! empty($arrayfields['cd.datec']['checked']))
-	{
+	if (! empty($arrayfields['cd.datec']['checked'])) {
 		print '<td align="center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date modification
-	if (! empty($arrayfields['cd.tms']['checked']))
-	{
+	if (! empty($arrayfields['cd.tms']['checked'])) {
 		print '<td align="center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Status
-	if (! empty($arrayfields['status']['checked']))
-	{
+	if (! empty($arrayfields['status']['checked'])) {
 	   print '<td align="right">';
-	   if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
-	   {
-		   print $contractstatic->LibStatut(0,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));
-	   }
-	   else
-	   {
-		   print $staticcontratligne->LibStatut($obj->statut,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
+	   if ($obj->cstatut == 0) {
+           // If contract is draft, we say line is also draft
+		   print $contractstatic->LibStatut(0, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));
+	   } else {
+		   print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
 	   }
 	   print '</td>';
-       if (! $i) $totalarray['nbfield']++;
+       if (! $i) {
+           $totalarray['nbfield']++;
+       }
 	}
 	// Action column
 	print '<td class="nowrap" align="center">';
-	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-	{
-		$selected=0;
-		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+	if ($massactionbutton || $massaction) {
+        // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		$selected = 0;
+		if (in_array($obj->rowid, $arrayofselected)) {
+            $selected=1;
+        }
 		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
 	}
 	print '</td>';
-	if (! $i) $totalarray['nbfield']++;
+	if (! $i) {
+        $totalarray['nbfield']++;
+    }
 
 	print "</tr>\n";
 	$i++;
@@ -732,21 +709,28 @@ if (isset($totalarray['displaytotalline'])) {
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if ($i == 1) {
-			if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-			else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
-		}
-		elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-		elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-		elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
-		else print '<td></td>';
+			if ($num < $limit && empty($offset)) {
+                print '<td align="left">'.$langs->trans("Total").'</td>';
+            } else {
+                print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            }
+		} elseif ($totalarray['totalhtfield'] == $i) {
+            print '<td align="right">'.price($totalarray['totalht']).'</td>';
+        } elseif ($totalarray['totalvatfield'] == $i) {
+            print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+        } elseif ($totalarray['totalttcfield'] == $i) {
+            print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+        } else {
+            print '<td></td>';
+        }
 	}
 	print '</tr>';
 }
 
 $db->free($resql);
 
-$parameters=array('sql' => $sql);
-$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+$parameters = array('sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print '</table>';

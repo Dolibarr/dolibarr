@@ -555,7 +555,7 @@ else
     print $doleditor->Create();
 }
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -568,7 +568,7 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftInterventionCards"), $
 print '</td><td>';
 print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.$conf->global->FICHINTER_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 // print products on fichinter
@@ -582,7 +582,7 @@ if ($conf->global->FICHINTER_PRINT_PRODUCTS)
 	print 'checked ';
 print '/>';
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 // Use services duration
@@ -597,7 +597,7 @@ print '<td align="center">';
 print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"' . ($conf->global->FICHINTER_USE_SERVICE_DURATION?' checked':'') . '>';
 print '</td>';
 print '<td align="right">';
-print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '<input type="submit" class="butAction" value="' . $langs->trans("Modify") . '">';
 print '</td>';
 print '</tr>';
 print '</form>';
@@ -613,7 +613,7 @@ print '<td align="center">';
 print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"' . ($conf->global->FICHINTER_WITHOUT_DURATION?' checked':'') . '>';
 print '</td>';
 print '<td align="right">';
-print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '<input type="submit" class="butAction" value="' . $langs->trans("Modify") . '">';
 print '</td>';
 print '</tr>';
 print '</form>';
@@ -629,7 +629,7 @@ print '<td align="center">';
 print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"' . ($conf->global->FICHINTER_DATE_WITHOUT_HOUR?' checked':'') . '>';
 print '</td>';
 print '<td align="right">';
-print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '<input type="submit" class="butAction" value="' . $langs->trans("Modify") . '">';
 print '</td>';
 print '</tr>';
 print '</form>';

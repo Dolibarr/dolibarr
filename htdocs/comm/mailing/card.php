@@ -780,7 +780,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
+	print '<div class="center"><input type="submit" class="butAction" value="'.$langs->trans("CreateMailing").'"></div>';
 
 	print '</form>';
 }
@@ -1307,7 +1307,7 @@ else
 			// Add link to add file
 			$out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 			$out.= ' ';
-			$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+			$out.= '<input type="submit" class="butAction" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 			print $out;
 			print '</td></tr>';
 
@@ -1344,7 +1344,7 @@ else
 			print '<div class="center">';
 			print '<input type="submit" class="button buttonforacesave" value="'.$langs->trans("Save").'" name="save">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
+			print '<input type="submit" class="butAction" value="'.$langs->trans("Cancel").'" name="cancel">';
 			print '</div>';
 
 			print '</form>';

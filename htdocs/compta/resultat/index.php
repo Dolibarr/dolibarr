@@ -45,8 +45,7 @@ $nbofyear=4;
 
 // Date range
 $year=GETPOST('year','int');
-if (empty($year))
-{
+if (empty($year)) {
 	$year_current = strftime("%Y",dol_now());
 	$month_current = strftime("%m",dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
@@ -59,18 +58,15 @@ $date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyea
 $date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 // We define date_start and date_end
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
+if (empty($date_start) || empty($date_end)) {
+    // We define date_start and date_end
 	$q=GETPOST("q")?GETPOST("q"):0;
-	if ($q==0)
-	{
+	if ($q==0) {
 		// We define date_start and date_end
 		$year_end=$year_start + ($nbofyear - 1);
 		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		if (! GETPOST('month'))
-		{
-			if (! GETPOST("year") &&  $month_start > $month_current)
-			{
+		if (! GETPOST('month')) {
+			if (! GETPOST("year") &&  $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
 			}
@@ -82,9 +78,9 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
 	}
 	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	elseif ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+	elseif ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+	elseif ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
 
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
@@ -119,8 +115,7 @@ $form=new Form($db);
 $exportlink='';
 
 // Affiche en-tete du rapport
-if ($modecompta == 'CREANCES-DETTES')
-{
+if ($modecompta == 'CREANCES-DETTES') {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
@@ -133,8 +128,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	else  $description.="<br>".$langs->trans("DepositsAreIncluded");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-else if ($modecompta=="RECETTES-DEPENSES") {
+} elseif ($modecompta=="RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
@@ -145,9 +139,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$description.='<br>'.$langs->trans("RulesResultInOut");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-else if ($modecompta=="BOOKKEEPING")
-{
+} elseif ($modecompta=="BOOKKEEPING") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
@@ -162,10 +154,9 @@ else if ($modecompta=="BOOKKEEPING")
 
 $hselected='report';
 
-report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta), $calcmode);
 
-if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
-{
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -177,10 +168,8 @@ if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta=="RECETTES-DEPENSES"))
-{
-	if ($modecompta == 'CREANCES-DETTES')
-	{
+if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta=="RECETTES-DEPENSES")) {
+	if ($modecompta == 'CREANCES-DETTES') {
 		$sql  = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -190,9 +179,7 @@ if (! empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mo
 		else $sql.= " AND f.type IN (0,1,2,3,5)";
 	    if (! empty($date_start) && ! empty($date_end))
 	    	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-	}
-	else if ($modecompta=="RECETTES-DEPENSES")
-	{
+	} elseif ($modecompta=="RECETTES-DEPENSES") {
 		/*
 		 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 		 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)

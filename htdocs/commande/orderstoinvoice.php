@@ -524,7 +524,7 @@ if ($action == 'create' && !$error)
 	dol_fiche_end();
 
 	// Button "Create Draft"
-	print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></div>';
+	print '<div class="center"><input type="submit" class="butAction" name="bouton" value="'.$langs->trans('CreateDraft').'" /></div>';
 	print "</form>\n";
 
 	print '</td></tr>';

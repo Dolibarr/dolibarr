@@ -371,7 +371,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
 			print $form->selectDate($object->date_livraison>0?$object->date_livraison:-1, 'liv_', '', '', '', "setdatedelivery");
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="butAction" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
 		else

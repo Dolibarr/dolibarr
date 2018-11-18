@@ -185,7 +185,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 
 // Must be after the remove filter action, before the export.
 $param = '';
-$filter = array ();
+$filter = array();
 if (! empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
 	$tmp=dol_getdate($search_date_start);

@@ -49,7 +49,7 @@ print $doleditor->Create(1);
 print '</td>';
 
 print '<td align="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="butAction" value="'.$langs->trans("Add").'">';
 print '</td></tr>';
 print '</table></form>';
 

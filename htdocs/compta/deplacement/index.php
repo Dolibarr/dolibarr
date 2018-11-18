@@ -102,14 +102,12 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
-$listoftype=$tripandexpense_static->listOfTypes();
-foreach ($listoftype as $code => $label)
-{
+$listoftype = $tripandexpense_static->listOfTypes();
+foreach ($listoftype as $code => $label) {
     $dataseries[]=array($label, (isset($nb[$code])?(int) $nb[$code]:0));
 }
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print '<tr><td align="center" colspan="4">';
 
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -153,9 +151,7 @@ $sql.= $db->order("d.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
 $result = $db->query($sql);
-if ($result)
-{
-    $var=false;
+if ($result) {
     $num = $db->num_rows($result);
 
     $i = 0;
@@ -167,14 +163,12 @@ if ($result)
     print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
     print '<td width="16">&nbsp;</td>';
     print '</tr>';
-    if ($num)
-    {
+    if ($num) {
         $total_ttc = $totalam = $total = 0;
 
         $deplacementstatic=new Deplacement($db);
         $userstatic=new User($db);
-        while ($i < $num && $i < $max)
-        {
+        while ($i < $num && $i < $max) {
             $obj = $db->fetch_object($result);
             $deplacementstatic->ref=$obj->rowid;
             $deplacementstatic->id=$obj->rowid;
@@ -188,17 +182,15 @@ if ($result)
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
             print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
             print '</tr>';
-
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
+} else {
+    dol_print_error($db);
 }
-else dol_print_error($db);
 
 
 print '</div></div></div>';

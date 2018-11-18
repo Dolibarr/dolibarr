@@ -50,9 +50,13 @@ if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward 
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
-elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
-elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
+if ($type == Categorie::TYPE_PRODUCT) {
+    $title=$langs->trans("ProductsCategoriesArea");
+    $typetext='product';
+} elseif ($type == Categorie::TYPE_SUPPLIER) {
+    $title=$langs->trans("SuppliersCategoriesArea");
+    $typetext='supplier';
+} elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
 elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
 elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
 elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
@@ -89,7 +93,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr class="oddeven"><td>';
-print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="butAction" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
 print '<tr '.$bc[0].'><td>';
@@ -97,7 +101,7 @@ print $langs->trans("SubCatOf").':</td><td>';
 
 print $form->select_all_categories('','subcatof');
 print '</td>';
-print '<td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
+print '<td><input type="submit" class="butAction" value="'.$langs->trans ("Search").'"></td></tr>';
 */
 
 print '</table></form>';

@@ -383,7 +383,7 @@ if ($object->fetch($id) >= 0)
 					print '<div class="tagtd" align="right">';
 					if ($allowaddtarget)
 					{
-						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="butAction" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					}
 					else
 					{

@@ -50,8 +50,7 @@ $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
-if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
-{
+if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 	$filtert=$user->id;
 }
 
@@ -73,8 +72,8 @@ if ($socid < 0) $socid='';
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();
 if (! $user->rights->agenda->allactions->read) $canedit=0;
-if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no permission to see all, we show only affected to me
-{
+if (! $user->rights->agenda->allactions->read || $filter =='mine') {
+    // If no permission to see all, we show only affected to me
     $filtert=$user->id;
 }
 
@@ -89,8 +88,7 @@ $status=GETPOST("status",'aZ09');		// status may be 0, 50, 100, 'todo'
 $type=GETPOST("type",'az09');
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('actioncode','array'))
-{
+if (GETPOST('actioncode','array')) {
     $actioncode=GETPOST('actioncode','array',3);
     if (! count($actioncode)) $actioncode='0';
 }

@@ -2805,7 +2805,7 @@ class User extends CommonObject
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
-			$users = array ();
+			$users = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
 				$user = new User($this->db);

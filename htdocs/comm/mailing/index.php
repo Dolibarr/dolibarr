@@ -54,15 +54,21 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
     // Recherche emails
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
+    print '<tr><td class="noborderbottom">';
+    print '<table class="noborder nohover">';
     print '<tr class="oddeven"><td class="nowrap">';
     print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
-    print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print '</tr>';
     print '<tr class="oddeven"><td class="nowrap">';
     print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
-
-    print "</table></form><br>\n";
+    print '</tr>';
+    print '</table>';
+    print '</td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="butAction"></td></tr>';
+    print '</table>';
+    print '</form>';
+    print "<br>\n";
 //}
 
 
@@ -70,19 +76,17 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistics").'</td></tr>';
 
-$dir=DOL_DOCUMENT_ROOT."/core/modules/mailings";
-$handle=opendir($dir);
+$dir = DOL_DOCUMENT_ROOT."/core/modules/mailings";
+$handle = opendir($dir);
 
-if (is_resource($handle))
-{
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-        {
-            if (preg_match("/(.*)\.(.*)\.(.*)/i",$file,$reg))
-            {
+if (is_resource($handle)) {
+    while (($file = readdir($handle))!==false) {
+        if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+            if (preg_match("/(.*)\.(.*)\.(.*)/i",$file,$reg)) {
                 $modulename=$reg[1];
-       			if ($modulename == 'example') continue;
+                if ($modulename == 'example') {
+                    continue;
+                }
 
                 // Loading Class
                 $file = $dir."/".$modulename.".modules.php";
@@ -91,41 +95,33 @@ if (is_resource($handle))
                 $mailmodule = new $classname($db);
 
                 $qualified=1;
-                foreach ($mailmodule->require_module as $key)
-                {
-                    if (! $conf->$key->enabled || (! $user->admin && $mailmodule->require_admin))
-                    {
+                foreach ($mailmodule->require_module as $key) {
+                    if (! $conf->$key->enabled || (! $user->admin && $mailmodule->require_admin)) {
                         $qualified=0;
-                        //print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
+                        //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
                         break;
                     }
                 }
 
-                // Si le module mailing est qualifi�
-                if ($qualified)
-                {
-                    foreach ($mailmodule->getSqlArrayForStats() as $sql)
-                    {
+                // Si le module mailing est qualifié
+                if ($qualified) {
+                    foreach ($mailmodule->getSqlArrayForStats() as $sql) {
                         print '<tr class="oddeven">';
 
                         $result=$db->query($sql);
-                        if ($result)
-                        {
-                          $num = $db->num_rows($result);
+                        if ($result) {
+                            $num = $db->num_rows($result);
 
-                          $i = 0;
+                            $i = 0;
 
-                          while ($i < $num )
-                            {
-                              $obj = $db->fetch_object($result);
-                              print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td align="right">'.$obj->nb.'<td>';
-                              $i++;
+                            while ($i < $num ) {
+                                $obj = $db->fetch_object($result);
+                                print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td align="right">'.$obj->nb.'<td>';
+                                $i++;
                             }
 
-                          $db->free($result);
-                        }
-                        else
-                        {
+                            $db->free($result);
+                        } else {
                           dol_print_error($db);
                         }
                         print '</tr>';
@@ -148,51 +144,44 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * List of last emailings
  */
-$limit=10;
+$limit = 10;
 $sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql.= " ORDER BY m.date_creat DESC";
 $sql.= " LIMIT ".$limit;
 $result=$db->query($sql);
-if ($result)
-{
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td colspan="2">'.$langs->trans("LastMailings",$limit).'</td>';
-  print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-  print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
+if ($result) {
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("LastMailings",$limit).'</td>';
+    print '<td align="center">'.$langs->trans("DateCreation").'</td>';
+    print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
+    print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
-  $num = $db->num_rows($result);
-  if ($num > 0)
-  {
-      $i = 0;
+    $num = $db->num_rows($result);
+    if ($num > 0) {
+        $i = 0;
 
-    while ($i < $num )
-	{
-	  $obj = $db->fetch_object($result);
+        while ($i < $num ) {
+            $obj = $db->fetch_object($result);
 
-	  print '<tr class="oddeven">';
-	  print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
-	  print '<td>'.dol_trunc($obj->titre,38).'</td>';
-	  print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat),'day').'</td>';
-	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
-	  $mailstatic=new Mailing($db);
-	  print '<td align="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
-      print '</tr>';
-	  $i++;
-	}
+            print '<tr class="oddeven">';
+            print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
+            print '<td>'.dol_trunc($obj->titre,38).'</td>';
+            print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat),'day').'</td>';
+            print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
+            $mailstatic=new Mailing($db);
+            print '<td align="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    } else {
+        print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
-  else
-    {
-     print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    }
-  print "</table><br>";
-  $db->free($result);
-}
-else
-{
-  dol_print_error($db);
+    print "</table><br>";
+    $db->free($result);
+} else {
+    dol_print_error($db);
 }
 
 
@@ -203,11 +192,11 @@ print '</div></div></div>';
 if ($langs->file_exists("html/spam.html",0)) {
     print "<br><br><br><br>".$langs->trans("Note")."<br>";
     print '<div style="padding: 4px; background: #FAFAFA; border: 1px solid #BBBBBB;" >';
-    dol_print_file($langs,"html/spam.html",0);
+    dol_print_file($langs, "html/spam.html",0);
     print '</div>';
 
     print '<br>';
- }
+}
 
 // End of page
 llxFooter();

@@ -1589,9 +1589,9 @@ if ($action == 'create')
             print '<br>';
 
             print '<div class="center">';
-            print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+            print '<input type="submit" class="butAction" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
             print '&nbsp; ';
-            print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
+            print '<input type="'.($backtopage?"submit":"button").'" class="butAction" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
             print '</div>';
 
             print '</form>';
@@ -1722,7 +1722,7 @@ else if ($id || $ref)
                     $morehtmlref .= '<input type="hidden" name="action" value="classin">';
                     $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
                     $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                    $morehtmlref .= '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+                    $morehtmlref .= '<input type="submit" class="butAction" value="' . $langs->trans("Modify") . '">';
                     $morehtmlref .= '</form>';
                 } else {
                     $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -1794,7 +1794,7 @@ else if ($id || $ref)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="butAction" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
 		else
@@ -1817,8 +1817,8 @@ else if ($id || $ref)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
 			print $formproduct->select_measuring_units("weight_units","weight",$object->weight_units);
-			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print ' <input class="butAction" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="butAction" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
 		}
 		else
@@ -1854,8 +1854,8 @@ else if ($id || $ref)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
 			print $formproduct->select_measuring_units("size_units","size",$object->size_units);
-			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
-			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print ' <input class="butAction" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="butAction" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
 		}
 		else
@@ -1935,7 +1935,7 @@ else if ($id || $ref)
 			$object->fetch_delivery_methods();
 			print $form->selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="butAction" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
 		else
@@ -2386,10 +2386,10 @@ else if ($id || $ref)
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td align="center" colspan="2" valign="middle">';
-				print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
-				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
+				print '<input type="submit" class="butAction" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
+				print '<input type="submit" class="butAction" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 			}
-			else if ($object->statut == 0)
+			elseif ($object->statut == 0)
 			{
 				// edit-delete buttons
 				print '<td class="linecoledit" align="center">';

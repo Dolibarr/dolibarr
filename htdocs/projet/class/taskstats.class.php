@@ -54,7 +54,7 @@ class TaskStats extends Stats
 	{
 		global $conf, $user, $langs;
 
-		$datay = array();
+		$datay = [];
 
 		$sql = "SELECT";
 		$sql .= " COUNT(t.rowid), t.priority";
@@ -65,8 +65,8 @@ class TaskStats extends Stats
 		//$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all task not draft
 		$sql .= " GROUP BY t.priority";
 
-		$result = array ();
-		$res = array ();
+		$result = [];
+		$res = [];
 
 		dol_syslog(get_class($this) . '::' . __METHOD__ . "", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -76,8 +76,7 @@ class TaskStats extends Stats
 			$other = 0;
 			while ( $i < $num ) {
 				$row = $this->db->fetch_row($resql);
-				if ($i < $limit || $num == $limit)
-				{
+				if ($i < $limit || $num == $limit) {
 					$result[$i] = array(
 						$row[1],
 						$row[0]
@@ -111,7 +110,7 @@ class TaskStats extends Stats
 	{
 		global $conf, $user, $langs;
 
-		$datay = array ();
+		$datay = [];
 
 		$wonlostfilter=0; // No filter on status WON/LOST
 
@@ -135,7 +134,7 @@ class TaskStats extends Stats
 	public function buildWhere()
 	{
 		$sqlwhere_str = '';
-		$sqlwhere = array();
+		$sqlwhere = [];
 
 		$sqlwhere[] = ' t.entity IN (' . getEntity('project') . ')';
 

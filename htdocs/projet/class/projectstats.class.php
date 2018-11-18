@@ -58,7 +58,7 @@ class ProjectStats extends Stats
 	{
 		global $conf, $user, $langs;
 
-		$datay = array ();
+		$datay = array();
 
 		$sql = "SELECT";
 		$sql .= " SUM(t.opp_amount), t.fk_opp_status, cls.code, cls.label";
@@ -76,8 +76,8 @@ class ProjectStats extends Stats
 		$sql .= " AND t.fk_statut <> 0";     // We want historic also, so all projects not draft
 		$sql .= " GROUP BY t.fk_opp_status, cls.code, cls.label";
 
-		$result = array ();
-		$res = array ();
+		$result = array();
+		$res = array();
 
 		dol_syslog(get_class($this) . '::' . __METHOD__ . "", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -87,22 +87,21 @@ class ProjectStats extends Stats
 			$other = 0;
 			while ( $i < $num ) {
 				$row = $this->db->fetch_row($resql);
-				if ($i < $limit || $num == $limit)
-				{
+				if ($i < $limit || $num == $limit) {
 					$label = (($langs->trans("OppStatus".$row[2]) != "OppStatus".$row[2]) ? $langs->trans("OppStatus".$row[2]) : $row[2]);
 					$result[$i] = array(
 					$label. ' (' . price(price2num($row[0], 'MT'), 1, $langs, 1, -1, -1, $conf->currency) . ')',
 					$row[0]
 					);
-				}
-				else
-					$other += $row[1];
-					$i++;
+				} else {
+                    $other += $row[1];
+                }
+				$i++;
 			}
 			if ($num > $limit)
 				$result[$i] = array (
-				$langs->transnoentitiesnoconv("Other"),
-				$other
+				    $langs->transnoentitiesnoconv("Other"),
+				    $other
 				);
 				$this->db->free($resql);
 		} else {
@@ -252,23 +251,26 @@ class ProjectStats extends Stats
 	/**
 	 * Return amount of elements by month for several years
 	 *
-	 * @param	int		$endyear		Start year
-	 * @param	int		$startyear		End year
-	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array					Array of values
+	 * @param	int         $endyear        Start year
+	 * @param	int         $startyear      End year
+	 * @param	int         $cachedelay     Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @param   int         $wonlostfilter  Add a filter on status won/lost
+     * @param   int         $datamode       0 for data array old mode, 1 for new array
+     * @param   DolChartJs  $px             object dolchartjs
+	 * @return 	array                       Array of values
 	 */
-	function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $wonlostfilter=1)
+	function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $wonlostfilter=1, $datamode = 0, $px=null)
 	{
 		global $conf,$user,$langs;
 
-		if ($startyear > $endyear) return -1;
+        if ($startyear > $endyear) {
+            return -1;
+        }
 
 		$datay=array();
 
 		// Search into cache
-		if (! empty($cachedelay))
-		{
+		if (! empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
@@ -279,58 +281,75 @@ class ProjectStats extends Stats
 		$nowgmt = dol_now();
 
 		$foundintocache=0;
-		if ($cachedelay > 0)
-		{
-			$filedate=dol_filemtime($newpathofdestfile);
-			if ($filedate >= ($nowgmt - $cachedelay))
-			{
+		if ($cachedelay > 0) {
+			$filedate = dol_filemtime($newpathofdestfile);
+			if ($filedate >= ($nowgmt - $cachedelay)) {
 				$foundintocache=1;
-
 				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
 
-		// Load file into $data
-		if ($foundintocache)    // Cache file found and is not too old
-		{
-			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
-			$data = json_decode(file_get_contents($newpathofdestfile), true);
-		}
-		else
-		{
-			$year=$startyear;
-			while($year <= $endyear)
-			{
+        // Load file into $data
+        if ($foundintocache) {
+            // Cache file found and is not too old
+            dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+            $data = json_decode(file_get_contents($newpathofdestfile), true);
+        } else {
+			$year = $startyear;
+			while($year <= $endyear) {
 				$datay[$year] = $this->getWeightedAmountByMonth($year,$wonlostfilter);
-				$year++;
+                if (! empty($conf->global->GRAPH_DATA_GENERATE_RANDOM)) {
+                    // generate random to test
+                    for ($j=0; $j<12;$j++){
+                        $datay[$year][$j][1] = 12 + rand(1000, 300000);
+                    }
+                }
+                $year++;
 			}
 
-			$data = array();
-			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
-			for ($i = 0 ; $i < 12 ; $i++)
-			{
-				$data[$i][]=$datay[$endyear][$i][0];	// set label
-				$year=$startyear;
-				while($year <= $endyear)
-				{
-					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
-					$year++;
-				}
-			}
-		}
+			$data = [];
+            if ($datamode == 0) {
+                // $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
+                for ($i = 0 ; $i < 12 ; $i++) {
+                    $data[$i][]=$datay[$endyear][$i][0];	// set label
+                    $year=$startyear;
+                    while($year <= $endyear) {
+                        $data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+                        $year++;
+                    }
+                }
+            } elseif ($datamode == 1) {
+                $data['dataset'] = [];
+                $data['labelgroup'] = [];
+                $j = 0;
+                for ($year = $startyear; $year <= $endyear; $year++) {
+                    for ($i = 0 ; $i < 12 ; $i++) {
+                        $data['labelgroup'][$i] = $datay[$year][$i][0];
+                        $data['dataset'][$j]['data'][$i] = $datay[$year][$i][1];
+                    }
+                    $data['dataset'][$j]['backgroundColor'] = $px->bgdatacolor[$j];
+                    $data['dataset'][$j]['borderColor'] = $px->datacolor[$j];
+                    $data['dataset'][$j]['borderWidth'] = 1;
+                    $data['dataset'][$j]['fill'] = false;
+                    if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
+                        //$data['dataset'][$j]['label'] = str_pad($conf->global->SOCIETE_FISCAL_MONTH_START, 2, '0', STR_PAD_LEFT) . '/' . $year;
+                        $data['dataset'][$j]['label'] = substr($year, -2) . '/' . substr(($year+1), -2);
+                    } else {
+                        $data['dataset'][$j]['label'] = $year;
+                    }
+                    $j++;
+                }
+            }
+        }
 
 		// Save cache file
-		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
-		{
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1)) {
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			if ($fp)
-			{
+			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
 				if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;

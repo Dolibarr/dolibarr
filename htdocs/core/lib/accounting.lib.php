@@ -34,7 +34,7 @@ function accounting_prepare_head(AccountingAccount $object)
 	global $langs, $conf;
 
 	$h = 0;
-	$head = array ();
+	$head = [];
 
 	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
@@ -140,7 +140,7 @@ function length_accounta($accounta)
 /**
  *	Show header of a VAT report
  *
- *	@param	string				$nom            Name of report
+ *	@param  string				$nom            Name of report
  *	@param 	string				$variante       Link for alternate report
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
@@ -152,7 +152,7 @@ function length_accounta($accounta)
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
+function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink='', $moreparam=array(), $calcmode='', $varlink='')
 {
     global $langs;
 
@@ -163,6 +163,7 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
     if(! empty($varlink)) $varlink = '?'.$varlink;
 
     $h=0;
+	$head = [];
     $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
     $head[$h][1] = $langs->trans("Journalization");
     $head[$h][2] = 'journal';
@@ -171,8 +172,7 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     dol_fiche_head($head, 'journal');
 
-    foreach($moreparam as $key => $value)
-    {
+    foreach($moreparam as $key => $value) {
         print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
     }
     print '<table width="100%" class="border">';
@@ -188,8 +188,7 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
     print '</tr>';
 
     // Calculation mode
-    if ($calcmode)
-    {
+    if ($calcmode) {
         print '<tr>';
         print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
         if (! $variante) print '<td colspan="3">';
@@ -203,10 +202,17 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
     // Ligne de la periode d'analyse du rapport
     print '<tr>';
     print '<td>'.$langs->trans("ReportPeriod").'</td>';
-    if (! $periodlink) print '<td colspan="3">';
-    else print '<td>';
-    if ($period) print $period;
-    if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+    if (! $periodlink) {
+        print '<td colspan="3">';
+    } else {
+        print '<td>';
+    }
+    if ($period) {
+        print $period;
+    }
+    if ($periodlink) {
+        print '</td><td colspan="2">'.$periodlink;
+    }
     print '</td>';
     print '</tr>';
 
@@ -220,7 +226,7 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     dol_fiche_end();
 
-    print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+    print '<div class="center"><input type="submit" class="butAction" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
     print '</form>';
 

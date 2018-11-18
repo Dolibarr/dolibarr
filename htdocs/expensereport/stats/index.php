@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (c) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,14 +38,14 @@ $height = 25;
 
 $object_status = GETPOST('object_status');
 
-$userid=GETPOST('userid', 'int');
-$socid=GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
 $id = GETPOST('id', 'int');
 
 // Security check
 if ($user->societe_id > 0) {
-	$action = '';
-	$socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 if ($user->societe_id) {
     $socid=$user->societe_id;
@@ -271,25 +271,25 @@ print '</tr>';
 
 $oldyear=0;
 foreach ($datas as $val) {
-	$year = $val['year'];
-	while ($year && $oldyear > $year+1) {
+    $year = $val['year'];
+    while ($year && $oldyear > $year+1) {
         // If we have empty year
-		$oldyear--;
-		print '<tr class="oddeven">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
-		print '<td align="right">0</td>';
-		print '</tr>';
-	}
+        $oldyear--;
+        print '<tr class="oddeven">';
+        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
+        print '<td align="right">0</td>';
+        print '<td align="right">0</td>';
+        print '<td align="right">0</td>';
+        print '</tr>';
+    }
 
-	print '<tr class="oddeven">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
-	print '</tr>';
-	$oldyear = $year;
+    print '<tr class="oddeven">';
+    print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
+    print '<td align="right">'.$val['nb'].'</td>';
+    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+    print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+    print '</tr>';
+    $oldyear = $year;
 }
 
 print '</table>';

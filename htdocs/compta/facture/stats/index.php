@@ -301,7 +301,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="butAction" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
 	print '<br><br>';
@@ -325,7 +325,6 @@ foreach ($data as $val) {
 	while ($year && $oldyear > $year+1) {
         // If we have empty year
 		$oldyear--;
-
 		print '<tr class="oddeven">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';

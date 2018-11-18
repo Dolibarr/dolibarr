@@ -1500,16 +1500,16 @@ else
         dol_fiche_end();
 
         print '<div class="center">';
-        print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
+        print '<input type="submit" class="butAction" name="create" value="'.$langs->trans('AddThirdParty').'">';
         if (! empty($backtopage))
         {
             print ' &nbsp; &nbsp; ';
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+            print '<input type="submit" class="butAction" name="cancel" value="'.$langs->trans('Cancel').'">';
         }
         else
         {
             print ' &nbsp; &nbsp; ';
-            print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+            print '<input type="button" class="butAction" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
         }
         print '</div>'."\n";
 
@@ -2158,9 +2158,9 @@ else
 	        dol_fiche_end();
 
             print '<div align="center">';
-            print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+            print '<input type="submit" class="butAction" name="save" value="'.$langs->trans("Save").'">';
             print ' &nbsp; &nbsp; ';
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+            print '<input type="submit" class="butAction" name="cancel" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
             print '</form>';
@@ -2333,7 +2333,7 @@ else
 			        {
 			            print '<td align="left">';
 			            $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
-			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			            print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'"></td>';
 			        }
 			        else
 			        {
@@ -2350,7 +2350,7 @@ else
 			        if($action == 'editIRPF'){
 			            print '<td align="left">';
 			            $formcompany->select_localtax(2,$object->localtax2_value, "lt2");
-			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			            print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'"></td>';
 			        }else{
 			            print '<td>'.$object->localtax2_value.'</td>';
 			        }
@@ -2371,7 +2371,7 @@ else
 			        if($action == 'editRE'){
 			            print '<td align="left">';
 			            $formcompany->select_localtax(1,$object->localtax1_value, "lt1");
-			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			            print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'"></td>';
 			        }else{
 			            print '<td>'.$object->localtax1_value.'</td>';
 			        }
@@ -2393,7 +2393,7 @@ else
 			        if($action == 'editIRPF'){
 			            print '<td align="left">';
 			            $formcompany->select_localtax(2,$object->localtax2_value, "lt2");
-			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			            print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'"></td>';
 			        }else{
 			            print '<td>'.$object->localtax2_value.'</td>';
 			        }

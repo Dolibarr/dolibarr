@@ -33,7 +33,7 @@ class DolChartJs
     /**
      * @var array
      */
-    private $types = array(
+    private $types = [
         'bar',
         'bubble',
         'doughnut',
@@ -43,21 +43,21 @@ class DolChartJs
         'polarArea',
         'radar',
         'scatter',
-    );
+    ];
 
     /**
      * @var array
      */
-    private $defaults = array(
-        'datasets' => array(),
-        'labels'   => array(),
+    private $defaults = [
+        'datasets' => [],
+        'labels'   => [],
         'type'     => 'line',
-        'options'  => array(),
-        'size'     => array(
+        'options'  => [],
+        'size'     => [
             'width' => null,
             'height' => null,
-        )
-    );
+        ]
+    ];
 
     /**
      * @var string
@@ -114,27 +114,27 @@ class DolChartJs
 
         $this->bordercolor = '#e0e0e0';
         $this->bgcolor = '#0b0b0b';
-        $this->datacolor = array('#788296', '#a0a0b4', '#bebedc');
-        $this->bgdatacolor = array('#788296', '#a0a0b4', '#bebedc');
+        $this->datacolor = ['#788296', '#a0a0b4', '#bebedc'];
+        $this->bgdatacolor = ['#788296', '#a0a0b4', '#bebedc'];
 
         $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
-        // $theme_bordercolor = array(235,235,224);
-        // $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
-        // $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
-        // $theme_datacolor = array(
-        //     array(136,102,136),
-        //     array(0,130,110),
-        //     array(140,140,220),
-        //     array(190,120,120),
-        //     array(190,190,100),
-        //     array(115,125,150),
-        //     array(100,170,20),
-        //     array(250,190,30),
-        //     array(150,135,125),
-        //     array(85,135,150),
-        //     array(150,135,80),
-        //     array(150,80,150),
-        // );
+        // $theme_bordercolor = [235,235,224];
+        // $theme_bgcolor = [hexdec('F4'),hexdec('F4'),hexdec('F4')];
+        // $theme_bgcoloronglet = [hexdec('DE'),hexdec('E7'),hexdec('EC')];
+        // $theme_datacolor = [
+        //     [136,102,136],
+        //     [0,130,110],
+        //     [140,140,220],
+        //     [190,120,120],
+        //     [190,190,100],
+        //     [115,125,150],
+        //     [100,170,20],
+        //     [250,190,30],
+        //     [150,135,125],
+        //     [85,135,150],
+        //     [150,135,80],
+        //     [150,80,150],
+        // ];
 
         if (is_readable($color_file)) {
             include_once $color_file;
@@ -156,7 +156,7 @@ class DolChartJs
      */
     private function setfromArray($arraycolor, $alpha=1)
     {
-        $arrayhex = array();
+        $arrayhex = [];
         foreach ($arraycolor as $value) {
             $color = ariColor::newColor('rgb('.$value[0].', '.$value[1].', '.$value[2].')');
             $new = $color->getNew('alpha', $alpha);
@@ -174,7 +174,7 @@ class DolChartJs
     {
         $this->element = $element;
         $this->charts[$element] = $this->defaults;
-        $this->set('switchers', array());
+        $this->set('switchers', []);
         return $this;
     }
 
@@ -336,7 +336,7 @@ class DolChartJs
         while (count($keys) > 1) {
             $key = array_shift($keys);
             if ( ! isset($array[$key]) || ! is_array($array[$key])) {
-                $array[$key] = array();
+                $array[$key] = [];
             }
             $array =& $array[$key];
         }

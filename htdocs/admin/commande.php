@@ -557,7 +557,7 @@ else
     print $doleditor->Create();
 }
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -571,7 +571,7 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftOrders"), $htmltext, 1
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.$conf->global->COMMANDE_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 

@@ -259,7 +259,7 @@ print "</table>\n";
 if (empty($conf->use_javascript_ajax))
 {
     // TODO Implement code behind action updateengine
-    //print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"></div>';
+    //print '<div class="center"><input type="submit" class="butAction" name="save" value="'.$langs->trans("Save").'"></div>';
 }
 //print '</form>';
 
@@ -322,7 +322,7 @@ if (! empty($conf->societe->enabled))
 
 print "</table>\n";
 print '<div class="tabsAction">';
-print '<input type="submit" class="button" name="submit_GENBARCODE_BARCODETYPE_THIRDPARTY" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="butAction" name="submit_GENBARCODE_BARCODETYPE_THIRDPARTY" value="'.$langs->trans("Modify").'">';
 print "</div>";
 print '</form>';
 

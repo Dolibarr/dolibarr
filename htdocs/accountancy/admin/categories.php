@@ -60,7 +60,7 @@ $accountingcategory = new AccountancyCategory($db);
 
 // si ajout de comptes
 if (! empty($selectcpt)) {
-	$cpts = array ();
+	$cpts = array();
 	foreach ( $selectcpt as $selectedoption ) {
 		if (! array_key_exists($selectedoption, $cpts))
 			$cpts[$selectedoption] = "'" . $selectedoption . "'";

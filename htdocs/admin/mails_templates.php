@@ -576,7 +576,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 	if ($tmpfieldlist == 'topic') {
 		print '<td align="center" rowspan="' . (count($fieldsforcontent)) . '">';
 		if ($action != 'edit') {
-			print '<input type="submit" class="button" name="actionadd" value="' . $langs->trans("Add") . '">';
+			print '<input type="submit" class="butAction" name="actionadd" value="' . $langs->trans("Add") . '">';
 		}
 		print '</td>';
 	}
@@ -731,9 +731,9 @@ if ($resql)
                 print '<td align="center">';
                 print '<input type="hidden" name="page" value="'.$page.'">';
                 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-                print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                print '<input type="submit" class="butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
                 print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
-                print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+                print '<input type="submit" class="butAction" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
 
                 $fieldsforcontent = array('topic', 'joinfiles', 'content');

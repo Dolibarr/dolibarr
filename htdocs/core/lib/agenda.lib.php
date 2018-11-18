@@ -188,7 +188,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	print '<table class="centpercent"><tr><td align="center">';
 	print '<div class="formleftzone">';
-	print '<input type="submit" class="button" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '">';
+	print '<input type="submit" class="butAction" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '">';
 	print '</div>';
 	print '</td></tr>';
 	print '</table>';

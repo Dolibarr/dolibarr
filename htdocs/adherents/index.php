@@ -124,26 +124,23 @@ if ($result)
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     // Search contact/address
-    if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
-    {
-    	$listofsearchfields['search_member']=array('text'=>'Member');
+    if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
+        $listofsearchfields['search_member'] = ['text' => 'Member'];
     }
 
-    if (count($listofsearchfields))
-    {
+    if (count($listofsearchfields)) {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
+    	foreach($listofsearchfields as $key => $value) {
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     		print '<tr class="oddeven">';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="butAction"></td>';
     		print '</tr>';
     		$i++;
     	}
@@ -158,8 +155,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  * Statistics
  */
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
@@ -245,8 +241,7 @@ $sql = "SELECT c.subscription, c.dateadh as dateh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 $sql.= " AND d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != '')
-{
+if(isset($date_select) && $date_select != '') {
     $sql .= " AND c.dateadh LIKE '".$date_select."%'";
 }
 $result = $db->query($sql);

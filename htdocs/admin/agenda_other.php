@@ -393,7 +393,7 @@ print '</table>';
 
 dol_fiche_end();
 
-print '<div class="center"><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+print '<div class="center"><input class="butAction" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>';
 

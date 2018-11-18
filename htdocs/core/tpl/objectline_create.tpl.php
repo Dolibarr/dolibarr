@@ -415,7 +415,7 @@ else {
 	}
 	?>
 	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
-		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
+		<input type="submit" class="butAction" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 </tr>
 

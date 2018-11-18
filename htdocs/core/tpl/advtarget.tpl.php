@@ -523,7 +523,7 @@ print '<script type="text/javascript" language="javascript">
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" align="right"><input type="submit" class="button" value="' . $langs->trans("TargetsReset") . '"></td>';
+		print '<td class="liste_titre" align="right"><input type="submit" class="butAction" value="' . $langs->trans("TargetsReset") . '"></td>';
 		print '</tr>';
 		print '</table>';
 		print '</form>';

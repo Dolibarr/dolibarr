@@ -382,7 +382,7 @@ if (! empty($user->rights->produit->lire) || ! empty($user->rights->service->lir
     print '<br>';
     print '<div class="showforproductselector">';
     $form->select_produits(GETPOST('productid'), 'productid', '');
-    print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+    print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="butAction" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
     print '</div>';
 }
 
@@ -436,7 +436,7 @@ print '<br>';
 
 print '</div>';
 
-print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
+print '<br><input class="butAction" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';

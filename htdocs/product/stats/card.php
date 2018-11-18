@@ -163,6 +163,7 @@ if (empty($id) & empty($ref)) {
 
 if ($result || empty($id)) {
     print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="id" value="'.$id.'">';
 
 	print '<table class="noborder" width="100%">';
@@ -176,11 +177,10 @@ if ($result || empty($id)) {
 		print '</td></tr>';
 
 		// Tag
-		if ($conf->categorie->enabled)
-		{
+		if ($conf->categorie->enabled) {
     		print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
     		//$moreforfilter.='<div class="divsearchfield">';
-    		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
+    		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
     		//$moreforfilter.='</div>';
     		print $moreforfilter;
     		print '</td></tr>';
@@ -190,17 +190,20 @@ if ($result || empty($id)) {
 	// Year
 	print '<tr><td class="titlefield">'.$langs->trans("Year").'</td><td>';
 	$arrayyears = array();
-	for ($year = $currentyear - 10; $year < $currentyear + 10 ; $year++)
-	{
+	for ($year = $currentyear - 10; $year < $currentyear + 10 ; $year++) {
 	    $arrayyears[$year]=$year;
 	}
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+    if (! in_array($year, $arrayyears)) {
+        $arrayyears[$year]=$year;
+    }
+    if (! in_array($nowyear, $arrayyears)) {
+        $arrayyears[$nowyear]=$nowyear;
+    }
 	arsort($arrayyears);
 	print $form->selectarray('search_year', $arrayyears, $search_year, 0);
 	print '</td></tr>';
 	print '</table>';
-	print '<div class="center"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></div>';
+	print '<div class="center"><input type="submit" name="submit" class="butAction" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form>';
 
 	print '<br>';
@@ -350,11 +353,11 @@ if ($result || empty($id)) {
 	if (count($graphfiles)>0) {
 		foreach($graphfiles as $key => $val) {
 			if ($graphfiles == 'propal' && ! $user->rights->propale->lire) continue;
-			if ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
-			if ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
-			if ($graphfiles == 'proposals_suppliers' && ! $user->rights->supplier_proposal->lire) continue;
-			if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
-			if ($graphfiles == 'orders_suppliers' && ! $user->rights->fournisseur->commande->lire) continue;
+			elseif ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
+			elseif ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
+			elseif ($graphfiles == 'proposals_suppliers' && ! $user->rights->supplier_proposal->lire) continue;
+			elseif ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
+			elseif ($graphfiles == 'orders_suppliers' && ! $user->rights->fournisseur->commande->lire) continue;
 
 
 			if ($i % 2 == 0) {

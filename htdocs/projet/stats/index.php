@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Laurent Destailleur <ldestailleur@users.sourceforge.net>
+/* Copyright (C) 2014-2015  Florian HENRY           <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Laurent Destailleur     <ldestailleur@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,31 +24,33 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
 
 // Security check
 if (! $user->rights->projet->lire)
-	accessforbidden();
+    accessforbidden();
 
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+//$width=DolChartJs::getDefaultGraphSizeForStats('width');
+//$height=DolChartJs::getDefaultGraphSizeForStats('height');
+$width = 70;
+$height = 25;
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
+if ($user->societe_id > 0) {
+    $action = '';
+    $socid = $user->societe_id;
 }
-$nowyear=strftime("%Y", dol_now());
+$nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$nbyear = 3;
+$startyear = $year - $nbyear + 1;
+$endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'projects'));
@@ -57,219 +60,238 @@ $langs->loadLangs(array('companies', 'projects'));
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
-$includeuserlist=array();
+$includeuserlist = [];
 
 
 llxHeader('', $langs->trans('Projects'));
 
-$title=$langs->trans("ProjectsStatistics");
-$dir=$conf->projet->dir_output.'/temp';
+$title = $langs->trans("ProjectsStatistics");
 
-print load_fiche_titre($title,'','title_project.png');
-
-dol_mkdir($dir);
+print load_fiche_titre($title, '', 'title_project.png');
 
 
 $stats_project= new ProjectStats($db);
-if (!empty($userid) && $userid!=-1) $stats_project->userid=$userid;
-if (!empty($socid)  && $socid!=-1) $stats_project->socid=$socid;
-if (!empty($year)) $stats_project->year=$year;
+if (!empty($userid) && $userid!=-1) {
+    $stats_project->userid = $userid;
+}
+if (!empty($socid)  && $socid!=-1) {
+    $stats_project->socid = $socid;
+}
+if (!empty($year)) {
+    $stats_project->year = $year;
+}
 
 
 
-if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
-	$data1 = $stats_project->getAllProjectByStatus();
-	if (!is_array($data1) && $data1<0) {
-		setEventMessages($stats_project->error, null, 'errors');
-	}
-	if (empty($data1))
-	{
-		$showpointvalue=0;
-		$nocolor=1;
-		$data1=array(array(0=>$langs->trans("None"),1=>1));
-	}
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+    $data1 = $stats_project->getAllProjectByStatus();
+    if (!is_array($data1) && $data1<0) {
+        setEventMessages($stats_project->error, null, 'errors');
+    }
+    if (empty($data1)) {
+        $data1 = array(
+            array(
+                0 => $langs->trans("None"),
+                1 => 1,
+            ),
+        );
+    }
 
-	$filenamenb = $conf->project->dir_output . "/stats/projectbystatus.png";
-	$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=projectstats&amp;file=projectbystatus.png';
-	$px = new DolGraph();
-	$mesg = $px->isGraphKo();
-	if (empty($mesg)) {
-		$i=0;$tot=count($data1);$legend=array();
-		while ($i <= $tot)
-		{
-			$data1[$i][0]=$data1[$i][0];	// Required to avoid error "Could not draw pie with labels contained inside canvas"
-			$legend[]=$data1[$i][0];
-			$i++;
-		}
-		$px->SetData($data1);
-		unset($data1);
-
-		if ($nocolor)
-			$px->SetDataColor(array (
-					array (
-							220,
-							220,
-							220
-					)
-			));
-			$px->SetPrecisionY(0);
-			$px->SetLegend($legend);
-			$px->setShowLegend(0);
-			$px->setShowPointValue($showpointvalue);
-			$px->setShowPercent(1);
-			$px->SetMaxValue($px->GetCeilMaxValue());
-			$px->SetWidth($WIDTH);
-			$px->SetHeight($HEIGHT);
-			$px->SetShading(3);
-			$px->SetHorizTickIncrement(1);
-			$px->SetCssPrefix("cssboxes");
-			$px->SetType(array (
-					'pie'
-			));
-			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
-			$result=$px->draw($filenamenb, $fileurlnb);
-			if ($result<0) {
-				setEventMessages($px->error, null, 'errors');
-			}
-	} else {
-		setEventMessages(null, $mesgs, 'errors');
-	}
+    $px = new DolChartJs();
+    $i = 0;
+    $labels = [];
+    $dataseries = [];
+    while ($i < count($data1)) {
+        $dataseries[] = $data1[$i][1];
+        $labels[] = $data1[$i][0];
+        $i++;
+    }
+    $px->element('projectbystatus')
+        ->setType('pie')
+        ->setLabels($labels)
+        ->setDatasets(
+            [
+                [
+                    'backgroundColor' => $px->bgdatacolor,
+                    'borderColor' => $px->datacolor,
+                    'data' => $dataseries,
+                ],
+            ]
+        )
+        ->setSize(['width' => 70, 'height' => 25])
+        ->setOptions([
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'title' => [
+                'display' => true,
+                'text' => $langs->transnoentitiesnoconv("OpportunitiesStatusForProjects"),
+            ],
+                'legend' => [
+                'position' => 'right',
+            ],
+        ]
+    );
 }
 
 
 // Build graphic number of object
-// $data = array(array('Lib',val1,val2,val3),...)
-$data = $stats_project->getNbByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
+$px1 = new DolChartJs();
+$graph_datas = $stats_project->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1);
 
-$filenamenb = $conf->project->dir_output . "/stats/projectnbprevyear-".$year.".png";
-$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=projectstats&amp;file=projectnbprevyear-'.$year.'.png';
+$px1->element('projectnbprevyear')
+    ->setType('bar')
+    ->setSwitchers(['line', 'bar'])
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(['width' => $width, 'height' => $height])
+    ->setOptions([
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => [
+            'display' => true,
+            'position' => 'bottom',
+        ],
+        'title' => [
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("ProjectNbProjectByMonth"),
+        ],
+        'scales' => [
+            'xAxes' => [
+                [
+                    //'stacked' => true,
+                ]
+            ],
+            'yAxes' => [
+                [
+                    'ticks' => [
+                        'min' => 0,
+                    ],
+                    'gridLines' => [
+                        'color' => 'black',
+                        'borderDash' => [2, 3],
+                    ],
+                    'scaleLabel' => [
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("ProjectNbProject"),
+                        'fontColor' => 'black',
+                    ],
+                ]
+            ],
+        ],
+    ]
+);
 
-$px1 = new DolGraph();
-$mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px1->SetLegend($legend);
-	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetWidth($WIDTH);
-	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("ProjectNbProject"));
-	$px1->SetShading(3);
-	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
-	$px1->mode='depth';
-	$px1->SetTitle($langs->trans("ProjectNbProjectByMonth"));
 
-	$px1->draw($filenamenb,$fileurlnb);
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+    // Build graphic amount of object
+    $px2 = new DolChartJs();
+    $graph_datas = $stats_project->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px2);
+
+    //projectamountprevyear
+    $px2->element('ordersamountinyear')
+        ->setType('bar')
+        ->setSwitchers(['line', 'bar'])
+        ->setLabels($graph_datas['labelgroup'])
+        ->setDatasets($graph_datas['dataset'])
+        ->setSize(['width' => $width, 'height' => $height])
+        ->setOptions([
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'legend' => [
+                'display' => true,
+                'position' => 'bottom',
+            ],
+            'title' => [
+                'display' => true,
+                'text' => $langs->transnoentities("ProjectOppAmountOfProjectsByMonth"),
+            ],
+            'scales' => [
+                'yAxes' => [
+                    [
+                        'gridLines' => [
+                            'color' => 'black',
+                            'borderDash' => [2, 3],
+                        ],
+                        'scaleLabel' => [
+                            'display' => true,
+                            'labelString' => $langs->transnoentitiesnoconv("ProjectOppAmountOfProjects"),
+                            'fontColor' => 'black',
+                        ],
+                    ]
+                ],
+            ],
+        ]
+    );
 }
 
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+    // Build graphic with transformation rate
+    $px3 = new DolChartJs();
+    $graph_datas = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px3);
 
-if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
-	// Build graphic amount of object
-	$data = $stats_project->getAmountByMonthWithPrevYear($endyear,$startyear);
-	//var_dump($data);
-	// $data = array(array('Lib',val1,val2,val3),...)
-
-	$filenamenb = $conf->project->dir_output . "/stats/projectamountprevyear-".$year.".png";
-	$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=projectstats&amp;file=projectamountprevyear-'.$year.'.png';
-
-	$px2 = new DolGraph();
-	$mesg = $px2->isGraphKo();
-	if (! $mesg)
-	{
-		$px2->SetData($data);
-		$i=$startyear;$legend=array();
-		while ($i <= $endyear)
-		{
-			$legend[]=$i;
-			$i++;
-		}
-		$px2->SetLegend($legend);
-		$px2->SetMaxValue($px2->GetCeilMaxValue());
-		$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
-		$px2->SetWidth($WIDTH);
-		$px2->SetHeight($HEIGHT);
-		$px2->SetYLabel($langs->trans("ProjectOppAmountOfProjectsByMonth"));
-		$px2->SetShading(3);
-		$px2->SetHorizTickIncrement(1);
-		$px2->SetPrecisionY(0);
-		$px2->mode='depth';
-		$px2->SetTitle($langs->trans("ProjectOppAmountOfProjectsByMonth"));
-
-		$px2->draw($filenamenb,$fileurlnb);
-	}
-}
-
-if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
-	// Build graphic with transformation rate
-	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear,$startyear, 0, 0);
-	//var_dump($data);
-	// $data = array(array('Lib',val1,val2,val3),...)
-
-	$filenamenb = $conf->project->dir_output . "/stats/projecttransrateprevyear-".$year.".png";
-	$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=projectstats&amp;file=projecttransrateprevyear-'.$year.'.png';
-
-	$px3 = new DolGraph();
-	$mesg = $px3->isGraphKo();
-	if (! $mesg)
-	{
-		$px3->SetData($data);
-		$i=$startyear;$legend=array();
-		while ($i <= $endyear)
-		{
-			$legend[]=$i;
-			$i++;
-		}
-		$px3->SetLegend($legend);
-		$px3->SetMaxValue($px3->GetCeilMaxValue());
-		$px3->SetMinValue(min(0,$px3->GetFloorMinValue()));
-		$px3->SetWidth($WIDTH);
-		$px3->SetHeight($HEIGHT);
-		$px3->SetYLabel($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
-		$px3->SetShading(3);
-		$px3->SetHorizTickIncrement(1);
-		$px3->SetPrecisionY(0);
-		$px3->mode='depth';
-		$px3->SetTitle($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
-
-		$px3->draw($filenamenb,$fileurlnb);
-	}
+    $px3->element('projecttransrateprevyear')
+        ->setType('bar')
+        ->setSwitchers(['line', 'bar'])
+        ->setLabels($graph_datas['labelgroup'])
+        ->setDatasets($graph_datas['dataset'])
+        ->setSize(['width' => $width, 'height' => $height])
+        ->setOptions([
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'legend' => [
+                'display' => true,
+                'position' => 'bottom',
+            ],
+            'title' => [
+                'display' => true,
+                'text' => $langs->transnoentities("ProjectWeightedOppAmountOfProjectsByMonth"),
+            ],
+            'scales' => [
+                'yAxes' => [
+                    [
+                        'gridLines' => [
+                            'color' => 'black',
+                            'borderDash' => [2, 3],
+                        ],
+                        'scaleLabel' => [
+                            'display' => true,
+                            'labelString' => $langs->transnoentitiesnoconv("ProjectWeightedOppAmountOfProjects"),
+                            'fontColor' => 'black',
+                        ],
+                    ]
+                ],
+            ],
+        ]
+    );
 }
 
 
 // Show array
-$stats_project->year=0;
+$stats_project->year = 0;
 $data_all_year = $stats_project->getAllByYear();
 
-if (!empty($year)) $stats_project->year=$year;
-$arrayyears=array();
-foreach($data_all_year as $val) {
-	$arrayyears[$val['year']]=$val['year'];
+if (!empty($year)) {
+    $stats_project->year=$year;
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+$arrayyears = [];
+foreach($data_all_year as $val) {
+    $arrayyears[$val['year']]=$val['year'];
+}
+if (! count($arrayyears)) {
+    $arrayyears[$nowyear]=$nowyear;
+}
 
 
-$h=0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT . '/projet/stats/index.php?mode='.$mode;
+$h = 0;
+$head = [];
+$head[$h][0] = DOL_URL_ROOT . '/projet/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf,$langs,null,$head,$h,$type);
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"), -1, '');
 
@@ -277,75 +299,74 @@ dol_fiche_head($head,'byyear',$langs->trans("Statistics"), -1, '');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
-if ($mode == 'supplier') $filter='s.fournisseur = 1';
-print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid, 'socid', 's.client in (1,2,3)', 1, 0, 0, [], 0, '', 'style="width: 95%"');
 print '</td></tr>';
 // User
 /*print '<tr><td>'.$langs->trans("ProjectCommercial").'</td><td>';
-print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
+print $form->select_dolusers($userid, 'userid', 1, [],0,$includeuserlist);
 print '</td></tr>';*/
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! in_array($year,$arrayyears)) {
+    $arrayyears[$year] = $year;
+}
+if (! in_array($nowyear,$arrayyears)) {
+    $arrayyears[$nowyear] = $nowyear;
+}
 arsort($arrayyears);
 print $form->selectarray('year',$arrayyears,$year,0);
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="butAction" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre" height="24">';
+print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
-if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
-	print '<td align="right">'.$langs->trans("OpportunityAmountShort").'</td>';
-	print '<td align="right">'.$langs->trans("OpportunityAmountAverageShort").'</td>';
-	print '<td align="right">'.$langs->trans("OpportunityAmountWeigthedShort").'</td>';
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+    print '<td align="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+    print '<td align="right">'.$langs->trans("OpportunityAmountAverageShort").'</td>';
+    print '<td align="right">'.$langs->trans("OpportunityAmountWeigthedShort").'</td>';
 }
 print '</tr>';
 
 $oldyear=0;
-foreach ($data_all_year as $val)
-{
-	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
-	{	// If we have empty year
-		$oldyear--;
+foreach ($data_all_year as $val) {
+    $year = $val['year'];
+    while ($year && $oldyear > $year+1) {
+        // If we have empty year
+        $oldyear--;
 
-		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
-		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
-			print '<td align="right">0</td>';
-			print '<td align="right">0</td>';
-			print '<td align="right">0</td>';
-		}
-		print '<td align="right">0</td>';
-		print '</tr>';
-	}
+        print '<tr class="oddeven">';
+        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+        if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+            print '<td align="right">0</td>';
+            print '<td align="right">0</td>';
+            print '<td align="right">0</td>';
+        }
+        print '<td align="right">0</td>';
+        print '</tr>';
+    }
 
-	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-	{
-		print '<td align="right">'.($val['total']?price(price2num($val['total'],'MT'),1):'0').'</td>';
-		print '<td align="right">'.($val['avg']?price(price2num($val['avg'],'MT'),1):'0').'</td>';
-		print '<td align="right">'.($val['weighted']?price(price2num($val['weighted'],'MT'),1):'0').'</td>';
-	}
-	print '</tr>';
-	$oldyear=$year;
+    print '<tr class="oddeven">';
+    print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+    print '<td align="right">'.$val['nb'].'</td>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+        print '<td align="right">'.($val['total']?price(price2num($val['total'],'MT'),1):'0').'</td>';
+        print '<td align="right">'.($val['avg']?price(price2num($val['avg'],'MT'),1):'0').'</td>';
+        print '<td align="right">'.($val['weighted']?price(price2num($val['weighted'],'MT'),1):'0').'</td>';
+    }
+    print '</tr>';
+    $oldyear = $year;
 }
 
 print '</table>';
@@ -353,24 +374,17 @@ print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow.= '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-	$stringtoshow.= $px1->show();
-	$stringtoshow.= "<br>\n";
-	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-	{
-		$stringtoshow.= $px->show();
-		$stringtoshow.= "<br>\n";
-		$stringtoshow.= $px2->show();
-		$stringtoshow.= "<br>\n";
-		$stringtoshow.= $px3->show();
-	}
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+print $px1->renderChart();
+print "<br>\n";
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+    print $px->renderChart();
+    print "<br>\n";
+    print $px2->renderChart();
+    print "<br>\n";
+    print $px3->renderChart();
 }
-$stringtoshow.= '</td></tr></table>';
-
-print $stringtoshow;
-
+print '</td></tr></table>';
 
 print '</div></div></div>';
 print '<div style="clear:both"></div>';

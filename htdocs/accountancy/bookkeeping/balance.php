@@ -109,7 +109,7 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 
-$filter = array ();
+$filter = array();
 if (! empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
 	$param .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');

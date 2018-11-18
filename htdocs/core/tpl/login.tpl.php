@@ -199,7 +199,7 @@ if ($captcha) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button Connection -->
-<br><input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
+<br><input type="submit" class="butAction" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 
 <?php
 if ($forgetpasslink || $helpcenterlink)

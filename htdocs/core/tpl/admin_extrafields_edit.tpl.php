@@ -266,8 +266,8 @@ else
 
 <?php dol_fiche_end(); ?>
 
-<div align="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
+<div align="center"><input type="submit" name="button" class="butAction" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="button" class="butAction" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

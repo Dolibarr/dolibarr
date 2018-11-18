@@ -22,8 +22,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
-{
+if (empty($object) || ! is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -98,7 +97,7 @@ if ($permission) {
 		echo $formcompany->selectTypeContact($tmpobject, '', 'type','internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
-		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
+		<div class="tagtd center"><input type="submit" class="butAction" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
 	<?php
@@ -138,7 +137,7 @@ if ($permission) {
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
-			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled'; ?>>
+			<input type="submit" id="add-customer-contact" class="butAction" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled'; ?>>
 		</div>
 	</form>
 

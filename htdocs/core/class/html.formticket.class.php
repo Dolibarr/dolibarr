@@ -387,7 +387,7 @@ class FormTicket
             if ($this->withfile == 2) { // Can add other files
                 $out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="' . $langs->trans("Upload") . '" />';
                 $out .= ' ';
-                $out .= '<input type="submit" class="button" id="addfile" name="addfile" value="' . $langs->trans("MailingAddFile") . '" />';
+                $out .= '<input type="submit" class="butAction" id="addfile" name="addfile" value="' . $langs->trans("MailingAddFile") . '" />';
             }
             $out .= "</td></tr>\n";
 
@@ -406,7 +406,7 @@ class FormTicket
         if ($withdolfichehead) dol_fiche_end();
 
         print '<center>';
-        print '<input class="button" type="submit" name="add_ticket" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
+        print '<input class="butAction" type="submit" name="add_ticket" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
 
         if ($this->withcancel) {
             print " &nbsp; &nbsp; ";
@@ -566,17 +566,11 @@ class FormTicket
 
                 if ($format == 0) {
                     print '<option value="' . $id . '"';
-                }
-
-                if ($format == 1) {
+                } elseif ($format == 1) {
                     print '<option value="' . $arraycategories['code'] . '"';
-                }
-
-                if ($format == 2) {
+                } elseif ($format == 2) {
                     print '<option value="' . $arraycategories['code'] . '"';
-                }
-
-                if ($format == 3) {
+                } elseif ($format == 3) {
                     print '<option value="' . $id . '"';
                 }
 
@@ -593,17 +587,11 @@ class FormTicket
 
                 if ($format == 0) {
                     $value = ($maxlength ? dol_trunc($arraycategories['label'], $maxlength) : $arraycategories['label']);
-                }
-
-                if ($format == 1) {
+                } elseif ($format == 1) {
                     $value = $arraycategories['code'];
-                }
-
-                if ($format == 2) {
+                } elseif ($format == 2) {
                     $value = ($maxlength ? dol_trunc($arraycategories['label'], $maxlength) : $arraycategories['label']);
-                }
-
-                if ($format == 3) {
+                } elseif ($format == 3) {
                     $value = $arraycategories['code'];
                 }
 
@@ -667,17 +655,11 @@ class FormTicket
 
                 if ($format == 0) {
                     print '<option value="' . $id . '"';
-                }
-
-                if ($format == 1) {
+                } elseif ($format == 1) {
                     print '<option value="' . $arrayseverities['code'] . '"';
-                }
-
-                if ($format == 2) {
+                } elseif ($format == 2) {
                     print '<option value="' . $arrayseverities['code'] . '"';
-                }
-
-                if ($format == 3) {
+                } elseif ($format == 3) {
                     print '<option value="' . $id . '"';
                 }
 
@@ -693,17 +675,11 @@ class FormTicket
                 print '>';
                 if ($format == 0) {
                     $value = ($maxlength ? dol_trunc($arrayseverities['label'], $maxlength) : $arrayseverities['label']);
-                }
-
-                if ($format == 1) {
+                } elseif ($format == 1) {
                     $value = $arrayseverities['code'];
-                }
-
-                if ($format == 2) {
+                } elseif ($format == 2) {
                     $value = ($maxlength ? dol_trunc($arrayseverities['label'], $maxlength) : $arrayseverities['label']);
-                }
-
-                if ($format == 3) {
+                } elseif ($format == 3) {
                     $value = $arrayseverities['code'];
                 }
 
@@ -833,7 +809,7 @@ class FormTicket
                     print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
                 }
                 print ' &nbsp; ';
-                print '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
+                print '<input class="butAction" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
                 print ' &nbsp; ';
                 print '</div></td>';
             }
@@ -1005,7 +981,7 @@ class FormTicket
             if ($this->withfile == 2) { // Can add other files
                 $out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="' . $langs->trans("Upload") . '" />';
                 $out .= ' ';
-                $out .= '<input type="submit" class="button" id="' . $addfileaction . '" name="' . $addfileaction . '" value="' . $langs->trans("MailingAddFile") . '" />';
+                $out .= '<input type="submit" class="butAction" id="' . $addfileaction . '" name="' . $addfileaction . '" value="' . $langs->trans("MailingAddFile") . '" />';
             }
             $out .= "</td></tr>\n";
 
@@ -1014,11 +990,11 @@ class FormTicket
 
         print '<tr><td colspan="3">';
         print '<center>';
-        print '<input class="button" type="submit" name="btn_add_message" value="' . $langs->trans("AddMessage") . '" />';
+        print '<input class="butAction" type="submit" name="btn_add_message" value="' . $langs->trans("AddMessage") . '" />';
 
         if ($this->withcancel) {
             print " &nbsp; &nbsp; ";
-            print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"" . $langs->trans("Cancel") . "\">";
+            print '<input class="butAction" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
         }
         print "</center>\n";
         print '</td></tr>';

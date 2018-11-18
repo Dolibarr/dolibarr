@@ -58,37 +58,35 @@ print load_fiche_titre($transAreaType, $linkback, 'title_companies.png');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     // Search thirdparty
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
-    {
-    	$listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire) {
+        $listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
     }
     // Search contact/address
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
-    {
-    	$listofsearchfields['search_contact']=array('text'=>'Contact');
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire) {
+        $listofsearchfields['search_contact']=array('text'=>'Contact');
     }
 
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Search").'</th></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
+    if (count($listofsearchfields)) {
+        print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="noborder nohover centpercent">';
+        print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+        print '<tr><td class="noborderbottom">';
+        print '<table class="noborder nohover">';
+        foreach($listofsearchfields as $key => $value) {
+            print '<tr class="oddeven">';
+            print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td>';
+            print '<td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+            print '</tr>';
+        }
+        print '</table>';
+        print '</td><td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="butAction "></td></tr>';
+        print '</table>';
+        print '</form>';
+        print '<br>';
     }
 }
 
@@ -97,13 +95,13 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  * Statistics area
  */
 
-$third = array(
+$third = [
     'customer' => 0,
     'prospect' => 0,
     'supplier' => 0,
     'other' => 0,
-);
-$total=0;
+];
+$total = 0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -136,8 +134,8 @@ print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2)) {
     print '<tr><td align="center" colspan="2">';
-    $dataseries = array();
-    $labels = array();
+    $dataseries = [];
+    $labels = [];
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
         $labels[] = $langs->trans("Prospects");
         $dataseries[] = round($third['prospect']);
@@ -160,22 +158,22 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
         ->setType('pie')
         ->setLabels($labels)
         ->setDatasets(
-            array(
-                array(
+            [
+                [
                     'backgroundColor' => $dolchartjs->bgdatacolor,
                     'borderColor' => $dolchartjs->datacolor,
                     'data' => $dataseries,
-                ),
-            )
+                ],
+            ]
         )
-        ->setSize(array('width' => 70, 'height' => 25))
-        ->setOptions(array(
+        ->setSize(['width' => 70, 'height' => 25])
+        ->setOptions([
             'responsive' => true,
             'maintainAspectRatio' => false,
-            'legend' => array(
+            'legend' => [
                 'position' => 'right',
-            ),
-        )
+            ],
+        ]
     );
     print $dolchartjs->renderChart($total?0:1);
     print '</td></tr>'."\n";

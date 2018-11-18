@@ -27,62 +27,73 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("resource","companies","other"));
+$langs->loadLangs(["resource", "companies", "other"]);
 
 // Get parameters
-$id             = GETPOST('id','int');
-$action         = GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
 
-$lineid         = GETPOST('lineid','int');
-$element        = GETPOST('element','alpha');
-$element_id     = GETPOST('element_id','int');
-$resource_id    = GETPOST('resource_id','int');
+$lineid = GETPOST('lineid', 'int');
+$element = GETPOST('element', 'alpha');
+$element_id = GETPOST('element_id', 'int');
+$resource_id = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder','alpha');
-$sortfield      = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'alpha');
 
 // Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'resourcelist';
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'resourcelist';
 
 // Initialize technical objects
 $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
-$search_ref=GETPOST("search_ref");
-$search_type=GETPOST("search_type");
-
-$filter=array();
-
-if ($search_ref != ''){
-	$param.='&search_ref='.$search_ref;
-	$filter['t.ref']=$search_ref;
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+if (! is_array($search_array_options)) {
+    $search_array_options = [];
 }
-if ($search_type != ''){
-	$param.='&search_type='.$search_type;
-	$filter['ty.label']=$search_type;
+$search_ref = GETPOST("search_ref");
+$search_type = GETPOST("search_type");
+
+$filter = [];
+
+if ($search_ref != '') {
+	$param .= '&search_ref='.$search_ref;
+	$filter['t.ref'] = $search_ref;
 }
-if ($search_label != '') 		$param.='&search_label='.$search_label;
+if ($search_type != '') {
+	$param .= '&search_type='.$search_type;
+	$filter['ty.label'] = $search_type;
+}
+if ($search_label != '') {
+    $param .= '&search_label='.$search_label;
+}
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
+foreach ($search_array_options as $key => $val) {
+    $crit = $val;
+	$tmpkey = preg_replace('/search_options_/','',$key);
+	$typ = $extrafields->attribute_type[$tmpkey];
 	if ($val != '') {
-		$param.='&search_options_'.$tmpkey.'='.urlencode($val);
+		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	$mode_search=0;
-	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
-	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
-	{
+	if (in_array($typ, array('int','double','real'))) {
+        // Search on a numeric
+        $mode_search=1;
+    }
+    if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') {
+        // Search on a foreign key int
+        $mode_search=2;
+    }
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1')) {
 		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
 	}
 }
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+    $param.='&contextpage='.$contextpage;
+}
 
 
 $hookmanager->initHooks(array('resourcelist'));
@@ -100,17 +111,17 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if( ! $user->rights->resource->read) {
-        accessforbidden();
+    accessforbidden();
 }
 $arrayfields = array(
-		't.ref' => array(
-				'label' => $langs->trans("Ref"),
-				'checked' => 1
-		),
-		'ty.label' => array(
-				'label' => $langs->trans("ResourceType"),
-				'checked' => 1
-		),
+	't.ref' => array(
+		'label' => $langs->trans("Ref"),
+		'checked' => 1
+	),
+	'ty.label' => array(
+		'label' => $langs->trans("ResourceType"),
+		'checked' => 1
+	),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
@@ -118,10 +129,10 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 		$typeofextrafield=$extrafields->attribute_type[$key];
 		if ($typeofextrafield!='separate') {
 			$arrayfields["ef." . $key] = array(
-					'label' => $extrafields->attribute_label[$key],
-					'checked' => $extrafields->attribute_list[$key],
-					'position' => $extrafields->attribute_pos[$key],
-					'enabled' => $extrafields->attribute_perms[$key]
+				'label' => $extrafields->attribute_label[$key],
+				'checked' => $extrafields->attribute_list[$key],
+				'position' => $extrafields->attribute_pos[$key],
+				'enabled' => $extrafields->attribute_perms[$key]
 			);
 		}
 	}
@@ -130,13 +141,13 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
-{
-	$search_ref="";
-	$search_label="";
-	$search_type="";
-	$search_array_options=array();
-	$filter=array();
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) {
+    // Both test are required to be compatible with all browsers
+    $search_ref = "";
+    $search_label = "";
+    $search_type = "";
+    $search_array_options = array();
+    $filter = array();
 }
 
 /*

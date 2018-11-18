@@ -91,42 +91,39 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"),'','title_accoun
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     // Search customer invoices
-    if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
-    {
+    if (! empty($conf->facture->enabled) && $user->rights->facture->lire) {
     	$listofsearchfields['search_invoice']=array('text'=>'CustomerInvoice');
     }
     // Search supplier invoices
-    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
-    {
-    	$listofsearchfields['search_supplier_invoice']=array('text'=>'SupplierInvoice');
+    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) {
+    	$listofsearchfields['search_supplier_invoice'] = ['text' => 'SupplierInvoice'];
     }
-    if (! empty($conf->don->enabled) && $user->rights->don->lire)
-    {
+    if (! empty($conf->don->enabled) && $user->rights->don->lire) {
     	$langs->load("donations");
-    	$listofsearchfields['search_donation']=array('text'=>'Donation');
+    	$listofsearchfields['search_donation'] = ['text' => 'Donation'];
     }
 
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
+    if (count($listofsearchfields)) {
+        print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="noborder nohover centpercent">';
+        print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+        print '<tr><td class="noborderbottom">';
+        print '<table class="noborder nohover">';
+        foreach($listofsearchfields as $key => $value) {
+            print '<tr class="oddeven">';
+            print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td>';
+            print '<td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+            print '</tr>';
+        }
+        print '</table>';
+        print '</td><td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="butAction "></td></tr>';
+        print '</table>';
+        print '</form>';
+        print '<br>';
     }
 }
 

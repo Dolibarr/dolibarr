@@ -3,6 +3,7 @@
  * Copyright (c) 2008-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@
 abstract class Stats
 {
 	protected $db;
-	var $_lastfetchdate=array();	// Dates of cache file read by methods
+	var $_lastfetchdate=[];	// Dates of cache file read by methods
 	var $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
@@ -52,7 +53,7 @@ abstract class Stats
 
 	    if ($startyear > $endyear) return -1;
 
-		$datay = array();
+		$datay = [];
 
 		// Search into cache
 		if (! empty($cachedelay)) {
@@ -100,7 +101,7 @@ abstract class Stats
 				$year++;
 			}
 
-			$data = array();
+			$data = [];
 
             if ($datamode == 0) {
                 for ($i = 0 ; $i < 12 ; $i++) {
@@ -112,8 +113,8 @@ abstract class Stats
                     }
                 }
             } elseif ($datamode == 1) {
-                $data['dataset'] = array();
-                $data['labelgroup'] = array();
+                $data['dataset'] = [];
+                $data['labelgroup'] = [];
                 $j = 0;
                 for ($year = $startyear; $year <= $endyear; $year++) {
                     for ($i = 0 ; $i < 12 ; $i++) {
@@ -174,7 +175,7 @@ abstract class Stats
 
         if ($startyear > $endyear) return -1;
 
-        $datay=array();
+        $datay=[];
 
         // Search into cache
         if (! empty($cachedelay)) {
@@ -222,7 +223,7 @@ abstract class Stats
 				$year++;
 			}
 
-			$data = array();
+			$data = [];
             if ($datamode == 0) {
                 // $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
 			    for ($i = 0 ; $i < 12 ; $i++) {
@@ -234,8 +235,8 @@ abstract class Stats
 				    }
                 }
             } elseif ($datamode == 1) {
-                $data['dataset'] = array();
-                $data['labelgroup'] = array();
+                $data['dataset'] = [];
+                $data['labelgroup'] = [];
                 $j = 0;
                 for ($year = $startyear; $year <= $endyear; $year++) {
                     for ($i = 0 ; $i < 12 ; $i++) {
@@ -291,7 +292,7 @@ abstract class Stats
         global $conf;
         if ($startyear > $endyear) return -1;
 
-        $datay = array();
+        $datay = [];
 
         $year = $startyear;
         while($year <= $endyear) {
@@ -305,7 +306,7 @@ abstract class Stats
             $year++;
 		}
 
-		$data = array();
+		$data = [];
         if ($datamode == 0) {
 		    for ($i = 0 ; $i < 12 ; $i++) {
 			    $data[$i][]=$datay[$endyear][$i][0];
@@ -316,8 +317,8 @@ abstract class Stats
 			    }
             }
         } elseif ($datamode == 1) {
-            $data['dataset'] = array();
-            $data['labelgroup'] = array();
+            $data['dataset'] = [];
+            $data['labelgroup'] = [];
             $j = 0;
             for ($year = $startyear; $year <= $endyear; $year++) {
                 for ($i = 0 ; $i < 12 ; $i++) {
@@ -353,7 +354,7 @@ abstract class Stats
 	{
 		global $conf, $user, $langs;
 
-        $datay = array();
+        $datay = [];
 
         // Search into cache
         if (! empty($cachedelay)) {
@@ -417,9 +418,9 @@ abstract class Stats
             }
             if ($datamode ==1) {
                 $tmpdatas = $data;
-                $data = array();
-                $data['dataset'] = array();
-                $data['labelgroup'] = array();
+                $data = [];
+                $data['dataset'] = [];
+                $data['labelgroup'] = [];
                 $i = 0;
                 foreach ($tmpdatas as $key => $tmpdata) {
                     $data['labelgroup'][$i] = $tmpdata[0];
@@ -461,7 +462,7 @@ abstract class Stats
 	 */
 	function _getNbByYear($sql)
 	{
-		$result = array();
+		$result = [];
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -491,7 +492,7 @@ abstract class Stats
 	 */
 	function _getAllByYear($sql)
 	{
-		$result = array();
+		$result = [];
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -537,8 +538,8 @@ abstract class Stats
 	{
 		global $langs, $conf;
 
-		$result=array();
-		$res=array();
+		$result=[];
+		$res=[];
 
         dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -562,7 +563,7 @@ abstract class Stats
 			$res[$i] = (isset($result[$i])?$result[$i]:0);
 		}
 
-        $data = array();
+        $data = [];
 
         if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
             $countmonth = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
@@ -599,8 +600,8 @@ abstract class Stats
 	{
 		global $langs, $conf;
 
-		$result=array();
-		$res=array();
+		$result=[];
+		$res=[];
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 
@@ -625,7 +626,7 @@ abstract class Stats
 			$res[$i] = (int) round((isset($result[$i])?$result[$i]:0));
 		}
 
-		$data = array();
+		$data = [];
 
         if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
             $countmonth = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
@@ -662,8 +663,8 @@ abstract class Stats
 	{
 		global $langs, $conf;
 
-		$result=array();
-		$res=array();
+		$result=[];
+		$res=[];
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -687,7 +688,7 @@ abstract class Stats
 			$res[$i] = (isset($result[$i])?$result[$i]:0);
 		}
 
-		$data = array();
+		$data = [];
 
         if (!empty($conf->global->GRAPH_USE_FISCAL_YEAR) && $conf->global->SOCIETE_FISCAL_MONTH_START>1) {
             $countmonth = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
@@ -724,8 +725,8 @@ abstract class Stats
 	{
 		global $langs;
 
-		$result = array();
-		$res = array();
+		$result = [];
+		$res = [];
 
 		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);

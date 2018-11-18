@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$type=GETPOST("type",'int');
+$type=GETPOST("type", 'int');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
 if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on product page only
 
@@ -55,18 +55,15 @@ $product_static = new Product($db);
 $transAreaType = $langs->trans("ProductsAndServicesArea");
 
 $helpurl='';
-if (! isset($_GET["type"]))
-{
+if (! isset($_GET["type"])) {
 	$transAreaType = $langs->trans("ProductsAndServicesArea");
 	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled))
-{
+if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled)) {
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled))
-{
+if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled)) {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -83,29 +80,28 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     // Search contract
-    if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire))
-    {
-    	$listofsearchfields['search_product']=array('text'=>'ProductOrService');
+    if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+        $listofsearchfields['search_product'] = ['text' => 'ProductOrService'];
     }
 
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i=0;
-    	foreach($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
-    	print '</form>';
-    	print '<br>';
+    if (count($listofsearchfields)) {
+        print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="noborder nohover centpercent">';
+        print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+        print '<tr><td class="noborderbottom">';
+        print '<table class="noborder nohover">';
+        foreach($listofsearchfields as $key => $value) {
+            print '<tr class="oddeven">';
+            print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td>';
+            print '<td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+            print '</tr>';
+        }
+        print '</table>';
+        print '</td><td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="butAction "></td></tr>';
+        print '</table>';
+        print '</form>';
+        print '<br>';
     }
 }
 

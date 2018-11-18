@@ -469,7 +469,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
     {
         // override parent with specific cups attributes
 
-        $operation_tags = array ();
+        $operation_tags = array();
         $this->operation_tags = array_merge ($this->operation_tags, $operation_tags);
 
         $job_tags = array ( "job-billing" => array("tag" => "textWithoutLanguage"),

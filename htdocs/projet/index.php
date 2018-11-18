@@ -78,11 +78,11 @@ if (! empty($user->rights->projet->all->lire) && ! $socid) {
 
 
 $morehtml ='<form name="projectform">';
-$morehtml.='<SELECT name="search_project_user">';
+$morehtml.='<select name="search_project_user">';
 $morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
 $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
-$morehtml.='</SELECT>';
-$morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml.='</select>';
+$morehtml.='<input type="submit" class="butAction" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
 
@@ -101,13 +101,11 @@ $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 $sql.= " WHERE active=1";
 $resql = $db->query($sql);
-if ( $resql )
-{
+if ( $resql ) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 		$listofoppstatus[$objp->rowid]=$objp->percent;
 		$listofopplabel[$objp->rowid]=$objp->label;
@@ -141,7 +139,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     		print '<tr '.$bc[false].'>';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="butAction"></td>';
     		print '</tr>';
     		$i++;
     	}

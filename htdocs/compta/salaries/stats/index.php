@@ -27,15 +27,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salariesstats.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("salaries", "companies"));
+$langs->loadLangs(["salaries", "companies"]);
 
 //$width = DolChartJs::getDefaultGraphSizeForStats('width');
 //$height = DolChartJs::getDefaultGraphSizeForStats('height');
 $width = 70;
 $height = 25;
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid=0;
-$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid=0;
+$userid = GETPOST('userid', 'int');
+if ($userid < 0) {
+    $userid=0;
+}
+$socid = GETPOST('socid', 'int');
+if ($socid < 0) {
+    $socid=0;
+}
 $id = GETPOST('id', 'int');
 
 // Security check
@@ -45,7 +51,7 @@ if ($user->societe_id) {
 }
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$nowyear=strftime("%Y", dol_now());
+$nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
 $nbyear = 3;
@@ -62,7 +68,7 @@ $form = new Form($db);
 
 llxHeader();
 
-$title=$langs->trans("SalariesStatistics");
+$title = $langs->trans("SalariesStatistics");
 
 print load_fiche_titre($title);
 
@@ -79,37 +85,37 @@ $graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $
 
 $px1->element('salariesnbinyear')
     ->setType('bar')
-    ->setSwitchers(array('line', 'bar'))
+    ->setSwitchers(['line', 'bar'])
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
-    ->setSize(array('width' => $width, 'height' => $height))
-    ->setOptions(array(
+    ->setSize(['width' => $width, 'height' => $height])
+    ->setOptions([
         'responsive' => true,
         'maintainAspectRatio' => false,
-        'legend' => array(
+        'legend' => [
             'display' => true,
             'position' => 'bottom',
-        ),
-        'title' => array(
+        ],
+        'title' => [
             'display' => true,
             'text' => $langs->transnoentitiesnoconv("NumberOfSalariesByMonth"),
-        ),
-        'scales' => array(
-            'yAxes' => array(
-                array(
-                    'gridLines' => array(
+        ],
+        'scales' => [
+            'yAxes' => [
+                [
+                    'gridLines' => [
                         'color' => 'black',
-                        'borderDash' => array(2, 3),
-                    ),
-                    'scaleLabel' => array(
+                        'borderDash' => [2, 3],
+                    ],
+                    'scaleLabel' => [
                         'display' => true,
                         'labelString' => $langs->transnoentitiesnoconv("NbOfSalaries"),
                         'fontColor' => 'black',
-                    ),
-                )
-            ),
-        ),
-    )
+                    ],
+                ]
+            ],
+        ],
+    ]
 );
 
 // Build graphic amount of object
@@ -118,37 +124,37 @@ $graph_datas = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0, 0, 
 
 $px2->element('salariesamountinyear')
     ->setType('bar')
-    ->setSwitchers(array('line', 'bar'))
+    ->setSwitchers(['line', 'bar'])
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
-    ->setSize(array('width' => $width, 'height' => $height))
-    ->setOptions(array(
+    ->setSize(['width' => $width, 'height' => $height])
+    ->setOptions([
         'responsive' => true,
         'maintainAspectRatio' => false,
-        'legend' => array(
+        'legend' => [
             'display' => true,
             'position' => 'bottom',
-        ),
-        'title' => array(
+        ],
+        'title' => [
             'display' => true,
             'text' => $langs->transnoentities("AmountOfSalariesByMonth"),
-        ),
-        'scales' => array(
-            'yAxes' => array(
-                array(
-                    'gridLines' => array(
+        ],
+        'scales' => [
+            'yAxes' => [
+                [
+                    'gridLines' => [
                         'color' => 'black',
-                        'borderDash' => array(2, 3),
-                    ),
-                    'scaleLabel' => array(
+                        'borderDash' => [2, 3],
+                    ],
+                    'scaleLabel' => [
                         'display' => true,
                         'labelString' => $langs->transnoentitiesnoconv("AmountOfSalaries"),
                         'fontColor' => 'black',
-                    ),
-                )
-            ),
-        ),
-    )
+                    ],
+                ]
+            ],
+        ],
+    ]
 );
 
 $px3 = new DolChartJs();
@@ -156,42 +162,42 @@ $graph_datas = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, 1, $p
 
 $px3->element('salariesaverageinyear')
     ->setType('bar')
-    ->setSwitchers(array('line', 'bar'))
+    ->setSwitchers(['line', 'bar'])
     ->setLabels($graph_datas['labelgroup'])
     ->setDatasets($graph_datas['dataset'])
-    ->setSize(array('width' => $width, 'height' => $height))
-    ->setOptions(array(
+    ->setSize(['width' => $width, 'height' => $height])
+    ->setOptions([
         'responsive' => true,
         'maintainAspectRatio' => false,
-        'legend' => array(
+        'legend' => [
             'display' => true,
             'position' => 'bottom',
-        ),
-        'title' => array(
+        ],
+        'title' => [
             'display' => true,
             'text' => $langs->transnoentities("AmountAverageOfSalariesByMonthHT"),
-        ),
-        'scales' => array(
-            'yAxes' => array(
-                array(
-                    'gridLines' => array(
+        ],
+        'scales' => [
+            'yAxes' => [
+                [
+                    'gridLines' => [
                         'color' => 'black',
-                        'borderDash' => array(2, 3),
-                    ),
-                    'scaleLabel' => array(
+                        'borderDash' => [2, 3],
+                    ],
+                    'scaleLabel' => [
                         'display' => true,
                         'labelString' => $langs->transnoentitiesnoconv("AmountAverageOfSalaries"),
                         'fontColor' => 'black',
-                    ),
-                )
-            ),
-        ),
-    )
+                    ],
+                ]
+            ],
+        ],
+    ]
 );
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
+$arrayyears = [];
 foreach($data as $val) {
     $arrayyears[$val['year']] = $val['year'];
 }
@@ -201,13 +207,13 @@ if (! count($arrayyears)) {
 
 
 $h = 0;
-$head = array();
+$head = [];
 $head[$h][0] = DOL_URL_ROOT . '/compta/salaries/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
+complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_stats');
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -218,7 +224,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="border" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
@@ -238,7 +244,7 @@ print '</form>';
 print '<br><br>';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="border" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';

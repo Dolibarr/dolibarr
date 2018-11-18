@@ -3345,9 +3345,9 @@ if ($action == 'create')
 
 	// Button "Create Draft"
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
+	print '<input type="submit" class="butAction" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="butAction" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print "</form>\n";
@@ -4069,7 +4069,7 @@ else if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
 			print ' &rarr; <span id="revenuestamp_span"></span>';
-			print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+			print ' <input type="submit" class="butAction" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 			print " <script>
                 $(document).ready(function(){
@@ -4553,7 +4553,7 @@ else if ($id > 0 || ! empty($ref))
 			print '<td width="50">&nbsp;</td>';
 			print '<td width="50">&nbsp;</td>';
 			print '<td align="right" class="nowrap"><input type="text" size="1" value="" name="all_progress">%</td>';
-			print '<td colspan="4" align="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+			print '<td colspan="4" align="right"><input class="butAction" type="submit" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
 
 			print '</table>';
