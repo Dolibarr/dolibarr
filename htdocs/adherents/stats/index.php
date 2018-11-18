@@ -63,7 +63,7 @@ $form = new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
+print load_fiche_titre($langs->trans("SubscriptionsStatistics"));
 
 dol_mkdir($dir);
 
@@ -222,13 +222,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) {
-    print $mesg;
-} else {
-    print $px1->renderChart();
-    print "<br>\n";
-    print $px2->renderChart();
-}
+print $px1->renderChart();
+print "<br>\n";
+print $px2->renderChart();
 print '</td></tr></table>';
 
 

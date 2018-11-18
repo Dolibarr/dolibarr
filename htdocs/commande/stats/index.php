@@ -214,9 +214,9 @@ $px3->element('ordersaverage')
 $data = $stats->getAllByYear();
 $arrayyears = array();
 foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
-	}
+    if (! empty($val['year'])) {
+        $arrayyears[$val['year']]=$val['year'];
+    }
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
@@ -239,12 +239,16 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
-elseif ($mode == 'supplier') $filter='s.fournisseur = 1';
+if ($mode == 'customer') {
+    $filter='s.client in (1,2,3)';
+} elseif ($mode == 'supplier') {
+    $filter='s.fournisseur = 1';
+}
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 print '</td></tr>';
 // User
@@ -272,7 +276,7 @@ if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="butAction" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -280,7 +284,7 @@ print '<br><br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre" height="24">';
+print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("NbOfOrders").'</td>';
 print '<td align="right">%</td>';
@@ -297,7 +301,7 @@ foreach ($data as $val) {
         // If we have empty year
 		$oldyear--;
 
-		print '<tr class="oddeven" height="24">';
+		print '<tr class="oddeven">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '<td align="right"></td>';
@@ -309,7 +313,7 @@ foreach ($data as $val) {
 	}
 
 
-	print '<tr class="oddeven" height="24">';
+	print '<tr class="oddeven">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

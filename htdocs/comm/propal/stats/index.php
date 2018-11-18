@@ -236,12 +236,12 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	$filter='s.client in (1,2,3)';
-	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+	print $form->select_company($socid, 'socid', 's.client in (1,2,3)', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
@@ -249,16 +249,20 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Status
 	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
-    $formpropal->selectProposalStatus(($object_status!=''?$object_status:-1),0,0,1,$mode,'object_status');
+    $formpropal->selectProposalStatus(($object_status!=''?$object_status:-1), 0, 0, 1, $mode, 'object_status');
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	if (! in_array($year,$arrayyears)) {
+        $arrayyears[$year]=$year;
+    }
+	if (! in_array($nowyear,$arrayyears)) {
+        $arrayyears[$nowyear]=$nowyear;
+    }
 	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
+	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="butAction" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
 	print '<br><br>';
@@ -266,7 +270,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre" height="24">';
+print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("NbOfProposals").'</td>';
 print '<td align="right">%</td>';
@@ -283,7 +287,7 @@ foreach ($data as $val) {
         // If we have empty year
         $oldyear--;
 
-        print '<tr class="oddeven" height="24">';
+        print '<tr class="oddeven">';
         print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
         print '<td align="right">0</td>';
         print '<td align="right"></td>';
@@ -293,7 +297,7 @@ foreach ($data as $val) {
         print '<td align="right"></td>';
         print '</tr>';
     }
-    print '<tr class="oddeven" height="24">';
+    print '<tr class="oddeven">';
     print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
     print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

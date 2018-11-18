@@ -41,46 +41,55 @@ $date_endyear=GETPOST('date_endyear');
 $nbofyear=4;
 
 // Date range
-$year=GETPOST('year','int');
-if (empty($year))
-{
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
-	$year_start = $year_current - ($nbofyear - 1);
+$year=GETPOST('year', 'int');
+if (empty($year)) {
+    $year_current = strftime("%Y", dol_now());
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year_current - ($nbofyear - 1);
 } else {
-	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
-	$year_start = $year - ($nbofyear - 1);
+    $year_current = $year;
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year - ($nbofyear - 1);
 }
-$date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
+$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 // We define date_start and date_end
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
-	$q=GETPOST("q")?GETPOST("q"):0;
-	if ($q==0)
-	{
+if (empty($date_start) || empty($date_end)) {
+    // We define date_start and date_end
+
+    $q=GETPOST("q")?GETPOST("q"):0;
+    if ($q==0) {
 		// We define date_start and date_end
 		$year_end=$year_start + ($nbofyear - 1);
 		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		if (! GETPOST('month'))
-		{
-			if (! GETPOST("year") &&  $month_start > $month_current)
-			{
+		if (! GETPOST('month')) {
+			if (! GETPOST("year") &&  $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
 			}
 			$month_end=$month_start-1;
-			if ($month_end < 1) $month_end=12;
-		}
-		else $month_end=$month_start;
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
-	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+			if ($month_end < 1) {
+                $month_end=12;
+            }
+        } else {
+            $month_end=$month_start;
+        }
+        $date_start=dol_get_first_day($year_start,$month_start,false);
+        $date_end=dol_get_last_day($year_end,$month_end,false);
+    } elseif ($q==1) {
+        $date_start=dol_get_first_day($year_start,1,false);
+        $date_end=dol_get_last_day($year_start,3,false);
+    } elseif ($q==2) {
+        $date_start=dol_get_first_day($year_start,4,false);
+        $date_end=dol_get_last_day($year_start,6,false);
+    } elseif ($q==3) {
+        $date_start=dol_get_first_day($year_start,7,false);
+        $date_end=dol_get_last_day($year_start,9,false);
+    } elseif ($q==4) {
+        $date_start=dol_get_first_day($year_start,10,false);
+        $date_end=dol_get_last_day($year_start,12,false);
+    }
 }
 
 $userid=GETPOST('userid','int');
@@ -128,7 +137,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("TurnoverCollected");
 	$calcmode=$langs->trans("CalcModeEngagement");
@@ -141,7 +150,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	$name=$langs->trans("Turnover");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
@@ -174,7 +183,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
@@ -189,7 +198,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 	$sql  = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";

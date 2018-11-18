@@ -39,13 +39,17 @@ $mode = GETPOST("mode", 'alpha');
 if (! in_array($mode, array('customer', 'supplier'))) {
     $mode = 'customer';
 }
-if ($mode == 'customer' && ! $user->rights->facture->lire) accessforbidden();
-if ($mode == 'supplier' && ! $user->rights->fournisseur->facture->lire) accessforbidden();
+if ($mode == 'customer' && ! $user->rights->facture->lire) {
+    accessforbidden();
+}
+if ($mode == 'supplier' && ! $user->rights->fournisseur->facture->lire) {
+    accessforbidden();
+}
 
 $object_status = GETPOST('object_status', 'int');
 
-$userid = GETPOST('userid','int');
-$socid = GETPOST('socid','int');
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int');
 // Security check
 if ($user->societe_id > 0) {
     $action = '';
@@ -79,7 +83,7 @@ if ($mode == 'customer') {
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, $mesg, 'title_accountancy.png');
+print load_fiche_titre($title, '', 'title_accountancy.png');
 
 // Build graphic number of object
 // $graph_datas = array(array('Lib',val1,val2,val3),...)
@@ -225,20 +229,28 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') $type='invoice_stats';
-elseif ($mode == 'supplier') $type='supplier_invoice_stats';
+if ($mode == 'customer') {
+    $type='invoice_stats';
+} elseif ($mode == 'supplier') {
+    $type='supplier_invoice_stats';
+}
 
-complete_head_from_modules($conf,$langs,null,$head,$h,$type);
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
+if ($mode == 'customer') {
+    $filter='s.client in (1,2,3)';
+} elseif ($mode == 'supplier') {
+    $filter='s.fournisseur = 1';
+}
 // We use select_thirdparty_list instead of select_company so we can use $filter and share same code for customer and supplier.
 $tmp_companies = $form->select_thirdparty_list($socid, 'socid', $filter, 1, 0, 0, array(), '', 1);
 //Array passed as an argument to Form::selectarray to build a proper select input
 $companies = array();
 
 foreach ($tmp_companies as $value) {
-	$companies[$value['key']] = $value['label'];
+    $companies[$value['key']] = $value['label'];
 }
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -253,8 +265,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	elseif ($mode == 'supplier') $filter='s.fournisseur = 1';
 	print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 	print '</td></tr>';
 	// User
@@ -263,21 +273,31 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Status
 	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
-	if ($mode == 'customer')
-	{
-	    $liststatus=array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
-	    print $form->selectarray('object_status', $liststatus, $object_status, 1);
-	}
-	elseif ($mode == 'supplier')
-	{
-	    $liststatus=array('0'=>$langs->trans("BillStatusDraft"),'1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
-	    print $form->selectarray('object_status', $liststatus, $object_status, 1);
-	}
+	if ($mode == 'customer') {
+	    $liststatus = array(
+            '0'=>$langs->trans("BillStatusDraft"),
+            '1'=>$langs->trans("BillStatusNotPaid"),
+            '2'=>$langs->trans("BillStatusPaid"),
+            '3'=>$langs->trans("BillStatusCanceled")
+        );
+        print $form->selectarray('object_status', $liststatus, $object_status, 1);
+    } elseif ($mode == 'supplier') {
+        $liststatus = array(
+            '0'=>$langs->trans("BillStatusDraft"),
+            '1'=>$langs->trans("BillStatusNotPaid"),
+            '2'=>$langs->trans("BillStatusPaid")
+        );
+        print $form->selectarray('object_status', $liststatus, $object_status, 1);
+    }
 	print '</td></tr>';
 	// Year
 	print '<tr><td>'.$langs->trans("Year").'</td><td>';
-	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	if (! in_array($year, $arrayyears)) {
+        $arrayyears[$year]=$year;
+    }
+	if (! in_array($nowyear, $arrayyears)) {
+        $arrayyears[$nowyear]=$nowyear;
+    }
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
@@ -289,7 +309,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre" height="24">';
+print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfBills").'</td>';
 print '<td align="right">%</td>';
@@ -300,14 +320,13 @@ print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
-	{	// If we have empty year
+	while ($year && $oldyear > $year+1) {
+        // If we have empty year
 		$oldyear--;
 
-		print '<tr class="oddeven" height="24">';
+		print '<tr class="oddeven">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '<td align="right"></td>';
@@ -318,7 +337,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	print '<tr class="oddeven" height="24">';
+	print '<tr class="oddeven">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
@@ -338,15 +357,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) {
-    print $mesg;
-} else {
-	print $px1->renderChart();
-	print "<br>\n";
-	print $px2->renderChart();
-    print "<br>\n";
-    print $px3->renderChart();
-}
+print $px1->renderChart();
+print "<br>\n";
+print $px2->renderChart();
+print "<br>\n";
+print $px3->renderChart();
 print '</td></tr></table>';
 
 

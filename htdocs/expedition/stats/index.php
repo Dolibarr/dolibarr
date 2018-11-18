@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,25 +27,27 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+//$width=DolChartJs::getDefaultGraphSizeForStats('width');
+//$height=DolChartJs::getDefaultGraphSizeForStats('height');
+$width = 70;
+$height = 25;
 
-$userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
+$userid=GETPOST('userid', 'int');
+$socid=GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->societe_id > 0) {
     $action = '';
     $socid = $user->societe_id;
 }
 
-$nowyear=strftime("%Y", dol_now());
+$nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$nbyear = 3;
+$startyear = $year - $nbyear + 1;
+$endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('sendings', 'other', 'companies'));
@@ -54,62 +57,64 @@ $langs->loadLangs(array('sendings', 'other', 'companies'));
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfSendings"));
 
 
 dol_mkdir($dir);
 
-$stats = new ExpeditionStats($db, $socid, $mode, ($userid>0?$userid:0));
+$stats = new ExpeditionStats($db, $socid, '', ($userid>0?$userid:0));
 
 // Build graphic number of object
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);exit;
-// $data = array(array('Lib',val1,val2,val3),...)
+$px1 = new DolChartJs();
+$graph_datas = $stats->getNbByMonthWithPrevYear($endyear, $startyear, 0, 0, 1, $px1);
 
+$px1->element('shipmentsnbinyear')
+    ->setType('bar')
+    ->setSwitchers(array('line', 'bar'))
+    ->setLabels($graph_datas['labelgroup'])
+    ->setDatasets($graph_datas['dataset'])
+    ->setSize(array('width' => $width, 'height' => $height))
+    ->setOptions(array(
+        'responsive' => true,
+        'maintainAspectRatio' => false,
+        'legend' => array(
+            'display' => true,
+            'position' => 'bottom',
+        ),
+        'title' => array(
+            'display' => true,
+            'text' => $langs->transnoentitiesnoconv("NumberOfShipmentsByMonth"),
+        ),
+        'scales' => array(
+            'xAxes' => array(
+                array(
+                    //'stacked' => true,
+                )
+            ),
+            'yAxes' => array(
+                array(
+                    'ticks' => array(
+                        'min' => 0,
+                    ),
+                    'gridLines' => array(
+                        'color' => 'black',
+                        'borderDash' => array(2, 3),
+                    ),
+                    'scaleLabel' => array(
+                        'display' => true,
+                        'labelString' => $langs->transnoentitiesnoconv("NbOfSendings"),
+                        'fontColor' => 'black',
+                    ),
+                )
+            ),
+        ),
+    )
+);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
-{
-    $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsnbinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsnbinyear-'.$year.'.png';
-}
-
-$px1 = new DolGraph();
-$mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-    $px1->SetData($data);
-    $px1->SetPrecisionY(0);
-    $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
-        $legend[]=$i;
-        $i++;
-    }
-    $px1->SetLegend($legend);
-    $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0,$px1->GetFloorMinValue()));
-    $px1->SetWidth($WIDTH);
-    $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfSendings"));
-    $px1->SetShading(3);
-    $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
-    $px1->mode='depth';
-    $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
-
-    $px1->draw($filenamenb,$fileurlnb);
-}
 
 // Build graphic amount of object
 /*
@@ -120,14 +125,12 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
+    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filenameamount = $dir.'/shipmentsamountinyear-'.$year.'.png';
-    if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsamountinyear-'.$year.'.png';
-    if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsamountinyear-'.$year.'.png';
+    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
@@ -144,8 +147,8 @@ if (! $mesg)
     $px2->SetLegend($legend);
     $px2->SetMaxValue($px2->GetCeilMaxValue());
     $px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
-    $px2->SetWidth($WIDTH);
-    $px2->SetHeight($HEIGHT);
+    $px2->SetWidth($width);
+    $px2->SetHeight($height);
     $px2->SetYLabel($langs->trans("AmountOfShipments"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
@@ -163,14 +166,12 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsaverage-'.$user->id.'-'.$year.'.png';
+    $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
     $filename_avg = $dir.'/shipmentsaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstatssupplier&file=shipmentsaverage-'.$year.'.png';
+    $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=shipmentstats&file=shipmentsaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
@@ -188,8 +189,8 @@ if (! $mesg)
     $px3->SetYLabel($langs->trans("AmountAverage"));
     $px3->SetMaxValue($px3->GetCeilMaxValue());
     $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
+    $px3->SetWidth($width);
+    $px3->SetHeight($height);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
     $px3->SetPrecisionY(0);
@@ -205,22 +206,24 @@ if (! $mesg)
 $data = $stats->getAllByYear();
 $arrayyears=array();
 foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
-	}
+    if (! empty($val['year'])) {
+        $arrayyears[$val['year']]=$val['year'];
+    }
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! count($arrayyears)) {
+    $arrayyears[$nowyear] = $nowyear;
+}
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/expedition/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-$type='shipment_stats';
+$type = 'shipment_stats';
 
-complete_head_from_modules($conf,$langs,null,$head,$h,$type);
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
 dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
@@ -232,15 +235,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //{
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="mode" value="'.$mode.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
-	if ($mode == 'customer') $filter='s.client in (1,2,3)';
-	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+	print $form->select_company($socid, 'socid', 's.client in (1,2,3)', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
@@ -248,12 +249,16 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
-	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
+    if (! in_array($year, $arrayyears)) {
+        $arrayyears[$year]=$year;
+    }
+    if (! in_array($nowyear, $arrayyears)) {
+        $arrayyears[$nowyear]=$nowyear;
+    }
 	arsort($arrayyears);
-	print $form->selectarray('year',$arrayyears,$year,0);
+	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="butAction" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
 	print '<br><br>';
@@ -262,7 +267,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre" height="24">';
+print '<tr class="liste_titre">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("NbOfSendings").'</td>';
 /*print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
@@ -270,16 +275,14 @@ print '<td align="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
 	$year = $val['year'];
-	while (! empty($year) && $oldyear > $year+1)
-	{ // If we have empty year
+	while (! empty($year) && $oldyear > $year+1) {
+        // If we have empty year
 		$oldyear--;
 
-
-		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<tr class="oddeven">';
+		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 
 		print '<td align="right">0</td>';
 		/*print '<td align="right">0</td>';
@@ -287,16 +290,16 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	print '<tr class="oddeven" height="24">';
+	print '<tr class="oddeven">';
 	print '<td align="center">';
-	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a>';
+	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a>';
 	else print $langs->trans("ValidationDateNotDefinedEvenIfShipmentValidated");
 	print '</td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	/*print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';
@@ -308,14 +311,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-    print $px1->show();
-    print "<br>\n";
-    /*print $px2->show();
-    print "<br>\n";
-    print $px3->show();*/
-}
+print $px1->renderChart();
+print "<br>\n";
+/*print $px2->renderChart();
+print "<br>\n";
+print $px3->renderChart();*/
 print '</td></tr></table>';
 
 
