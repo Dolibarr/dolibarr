@@ -34,11 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'companies'));
+$langs->loadLangs(['banks', 'categories', 'bills', 'companies']);
 
 // Security check
-if (isset($_GET["account"]) || isset($_GET["ref"]))
-{
+if (isset($_GET["account"]) || isset($_GET["ref"])) {
 	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';

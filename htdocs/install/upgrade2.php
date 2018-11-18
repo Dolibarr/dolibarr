@@ -4431,6 +4431,7 @@ function migrate_delete_old_files($db,$langs,$conf)
 
 	// List of files to delete
 	$filetodeletearray=array(
+		DOL_DOCUMENT_ROOT.'/expeditions/stats/month.php',
 		DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
 		DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
 		DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',

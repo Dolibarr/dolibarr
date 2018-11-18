@@ -1236,9 +1236,9 @@ else
 		dol_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+		print '<input type="submit" class="butAction" value="' . $langs->trans("Create") . '">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="butAction" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1577,9 +1577,9 @@ else
 			dol_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="butAction" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';
@@ -1665,7 +1665,7 @@ else
 					print '<input type="hidden" name="action" value="setbarcode">';
 					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
 					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
-					print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
 					print '</form>';
                 }
                 else
@@ -2154,7 +2154,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
         print '</table>';
 
         print '<div class="center">';
-        print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+        print '<input type="submit" class="butAction" value="'.$langs->trans("Add").'">';
         print '</div>';
 
         dol_fiche_end();

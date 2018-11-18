@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'companies', 'contracts'));
+$langs->loadLangs(['products', 'companies', 'contracts']);
 
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
@@ -77,15 +77,15 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
     // This is useless due to the global search combo
     // Search contract
     if (! empty($conf->contrat->enabled)) {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
-    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover" width="100%">';
-    	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    	print '<tr class="oddeven">';
-    	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-    	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="butAction"></td></tr>';
-    	print "</table></form>\n";
-    	print "<br>";
+        print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="noborder nohover" width="100%">';
+        print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+        print '<tr class="oddeven">';
+        print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+        print '<td><input type="submit" value="'.$langs->trans("Search").'" class="butAction"></td></tr>';
+        print "</table></form>\n";
+        print "<br>";
     }
 }
 
@@ -94,10 +94,11 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
  * Statistics
  */
 
-$nb=array();
-$total=0;
-$totalinprocess=0;
-$dataseries=array();
+$nb = array();
+$total = 0;
+$totalinprocess = 0;
+$dataseries = array();
+$labels = array();
 $vals=array();
 
 // Search by status (except expired)
@@ -144,7 +145,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " GROUP BY cd.statut";
 $resql = $db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
     // 0 inactive, 4 active, 5 closed
     $i = 0;
@@ -162,15 +163,17 @@ if ($resql) {
     }
     $db->free($resql);
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
-$listofstatus=array(0,4,4,5); $bool=false;
+$listofstatus = [0, 4, 4, 5];
+$bool = false;
 foreach($listofstatus as $status) {
-    $dataseries[]=array($staticcontratligne->LibStatut($status, 1, ($bool?1:0)), (isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
+    $dataseries[] = (isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0);
+    $labels[] = $staticcontratligne->LibStatut($status, 1, ($bool?1:0));
     if (empty($conf->use_javascript_ajax)) {
         print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
@@ -185,27 +188,44 @@ foreach($listofstatus as $status) {
 }
 if (! empty($conf->use_javascript_ajax)) {
     print '<tr class="impair"><td align="center" colspan="2">';
-
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-    $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
-    $dolgraph->setShowPercent(1);
-    $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
-    $dolgraph->draw('idgraphstatus');
-    print $dolgraph->show($total?0:1);
-
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+    $dolchartjs = new DolChartJs();
+    $dolchartjs->element('idgraphstatus')
+        ->setType('pie')
+        ->setLabels($labels)
+        ->setDatasets(
+            [
+                [
+                    'backgroundColor' => $dolchartjs->bgdatacolor,
+                    'borderColor' => $dolchartjs->datacolor,
+                    'data' => $dataseries,
+                ],
+            ]
+        )
+        ->setSize(['width' => 70, 'height' => 25])
+        ->setOptions([
+            'responsive' => true,
+            'maintainAspectRatio' => false,
+            'legend' => [
+                'position' => 'right',
+            ],
+        ]
+    );
+    print $dolchartjs->renderChart($total?0:1);
     print '</td></tr>';
 }
-$listofstatus=array(0,4,4,5); $bool=false;
+$listofstatus = array(0,4,4,5);
+$bool=false;
 foreach($listofstatus as $status) {
     if (empty($conf->use_javascript_ajax)) {
-    	print '<tr class="oddeven">';
-    	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
-    	print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
-    	if ($status==4 && ! $bool) $bool=true;
-    	else $bool=false;
+        print '<tr class="oddeven">';
+        print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
+        print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+        if ($status==4 && ! $bool) {
+            $bool=true;
+        } else {
+            $bool=false;
+        }
         print "</tr>\n";
     }
 }

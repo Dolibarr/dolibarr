@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type=GETPOST("type", 'int');
-if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only
-if ($type =='' && !$user->rights->service->lire) $type='0';	// Force global page on product page only
+if ($type =='' && !$user->rights->produit->lire) {
+    // Force global page on service page only
+    $type='1';
+}
+if ($type =='' && !$user->rights->service->lire) {
+    // Force global page on product page only
+    $type='0';
+}
 
 // Security check
 if ($type=='0') $result=restrictedArea($user,'produit');
-else if ($type=='1') $result=restrictedArea($user,'service');
+elseif ($type=='1') $result=restrictedArea($user,'service');
 else $result=restrictedArea($user,'produit|service');
 
 // Load translation files required by the page
@@ -121,8 +128,7 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // No
 $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
-while ($objp = $db->fetch_object($result))
-{
+while ($objp = $db->fetch_object($result)) {
 	$status=3;
 	if (! $objp->tosell && ! $objp->tobuy) $status=0;	// Not on sale, not on purchase
 	if ($objp->tosell && ! $objp->tobuy) $status=1;     // On sale only
@@ -134,8 +140,7 @@ while ($objp = $db->fetch_object($result))
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-if (! empty($conf->product->enabled))
-{
+if (! empty($conf->product->enabled)) {
 	$statProducts = '<tr class="oddeven">';
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
@@ -149,8 +154,7 @@ if (! empty($conf->product->enabled))
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][3]).'</td>';
 	$statProducts.= "</tr>";
 }
-if (! empty($conf->service->enabled))
-{
+if (! empty($conf->service->enabled)) {
 	$statServices = '<tr class="oddeven">';
 	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
@@ -165,18 +169,13 @@ if (! empty($conf->service->enabled))
 	$statServices.= "</tr>";
 }
 $total=0;
-if ($type == '0')
-{
+if ($type == '0') {
 	print $statProducts;
 	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2]);
-}
-else if ($type == '1')
-{
+} elseif ($type == '1') {
 	print $statServices;
 	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2]);
-}
-else
-{
+} else {
 	print $statProducts.$statServices;
 	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2]);
 }
@@ -186,8 +185,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS))
-{
+if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';
@@ -202,48 +200,55 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	$sql.= " GROUP BY c.label";
 	$total=0;
 	$result = $db->query($sql);
-	if ($result)
-	{
+	if ($result) {
 		$num = $db->num_rows($result);
 		$i=0;
-		if (! empty($conf->use_javascript_ajax))
-		{
-			$dataseries=array();
-			$rest=0;
-			$nbmax=10;
-			while ($i < $num)
-			{
+		if (! empty($conf->use_javascript_ajax)) {
+            $dataseries = [];
+            $labels = [];
+            $rest = 0;
+            $nbmax = 12;
+			while ($i < $num) {
 				$obj = $db->fetch_object($result);
-				if ($i < $nbmax)
-				{
-					$dataseries[]=array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				if ($i < $nbmax) {
+                    $dataseries[] = round($obj->nb);
+                    $labels[] = $obj->label;
+				} else {
 					$rest+=$obj->nb;
 				}
-				$total+=$obj->nb;
-				$i++;
-			}
-			if ($i > $nbmax)
-			{
-				$dataseries[]=array($langs->trans("Other"), round($rest));
-			}
-
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
-			$dolgraph->draw('idstatscategproduct');
-			print $dolgraph->show($total?0:1);
-		}
-		else
-		{
-			while ($i < $num)
-			{
+                $total+=$obj->nb;
+                $i++;
+            }
+            if ($i > $nbmax) {
+                $dataseries[] = round($rest);
+                $labels[] = $langs->transnoentities("Other");
+            }
+            include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+            $dolchartjs = new DolChartJs();
+            $dolchartjs->element('idstatscategproduct')
+                ->setType('pie')
+                ->setLabels($labels)
+                ->setDatasets(
+                    [
+                        [
+                            'backgroundColor' => $dolchartjs->bgdatacolor,
+                            'borderColor' => $dolchartjs->datacolor,
+                            'data' => $dataseries,
+                        ],
+                    ]
+                )
+                ->setSize(['width' => 70, 'height' => 24])
+                ->setOptions([
+                    'responsive' => true,
+                    'maintainAspectRatio' => false,
+                    'legend' => [
+                        'position' => 'right',
+                    ],
+                ]
+            );
+            print $dolchartjs->renderChart($total?0:1);
+		} else {
+			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
 				print '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';

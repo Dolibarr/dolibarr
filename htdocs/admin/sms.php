@@ -32,11 +32,11 @@ if (!$user->admin)
 accessforbidden();
 
 $substitutionarrayfortest=array(
-'__ID__' => 'TESTIdRecord',
-'__PHONEFROM__' => 'TESTPhoneFrom',
-'__PHONETO__' => 'TESTPhoneTo',
-'__LASTNAME__' => 'TESTLastname',
-'__FIRSTNAME__' => 'TESTFirstname'
+    '__ID__' => 'TESTIdRecord',
+    '__PHONEFROM__' => 'TESTPhoneFrom',
+    '__PHONETO__' => 'TESTPhoneTo',
+    '__LASTNAME__' => 'TESTLastname',
+    '__FIRSTNAME__' => 'TESTFirstname'
 );
 
 $action=GETPOST('action','aZ09');
@@ -46,8 +46,7 @@ $action=GETPOST('action','aZ09');
  * Actions
  */
 
-if ($action == 'update' && empty($_POST["cancel"]))
-{
+if ($action == 'update' && empty($_POST["cancel"])) {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", $_POST["MAIN_DISABLE_ALL_SMS"], 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", $_POST["MAIN_SMS_SENDMODE"], 'chaine', 0, '', $conf->entity);
@@ -63,8 +62,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 /*
  * Send sms
  */
-if ($action == 'send' && ! $_POST['cancel'])
-{
+if ($action == 'send' && ! $_POST['cancel']) {
 	$error=0;
 
 	$smsfrom='';
@@ -197,9 +195,9 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods)?' disabled':'').'>';
+	print '<input class="butAction" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods)?' disabled':'').'>';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="butAction" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';

@@ -41,19 +41,18 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/acco
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks","bills","categories","companies","compta"));
+$langs->loadLangs(["banks","bills","categories","companies","compta"]);
 
 $action = GETPOST('action','aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
+if (isset($_GET["id"]) || isset($_GET["ref"])) {
 	$id = isset($_GET["id"])?GETPOST("id"):(isset($_GET["ref"])?GETPOST("ref"):'');
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
+$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
@@ -61,7 +60,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('bankcard','globalcard'));
+$hookmanager->initHooks(['bankcard', 'globalcard']);
 
 /*
  * Actions
@@ -69,8 +68,7 @@ $hookmanager->initHooks(array('bankcard','globalcard'));
 
 if ($cancel) $action='';
 
-if ($action == 'add')
-{
+if ($action == 'add') {
 	$error=0;
 
 	$db->begin();
@@ -97,9 +95,9 @@ if ($action == 'add')
 	$object->proprio 	     = trim($_POST["proprio"]);
 	$object->owner_address   = trim($_POST["owner_address"]);
 
-	$account_number 		 = GETPOST('account_number','alpha');
+	$account_number 		 = GETPOST('account_number', 'alpha');
 	if (empty($account_number) || $account_number == '-1') { $object->account_number = ''; } else { $object->account_number = $account_number; }
-	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal','int');
+	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
 	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
 	$object->solde           = $_POST["solde"];
@@ -116,20 +114,17 @@ if ($action == 'add')
 
 	$object->fk_user_author  = $user->id;
 
-	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
-	{
+	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
 		$action='create';       // Force chargement page en mode creation
 		$error++;
 	}
-	if (empty($object->ref))
-	{
+	if (empty($object->ref)) {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		$action='create';       // Force chargement page en mode creation
 		$error++;
 	}
-	if (empty($object->label))
-	{
+	if (empty($object->label)) {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), null, 'errors');
 		$action='create';       // Force chargement page en mode creation
 		$error++;
@@ -150,8 +145,7 @@ if ($action == 'add')
 			$_GET["id"]=$id;            // Force chargement page en mode visu
 
 			$action='';
-		}
-		else {
+		} else {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 
@@ -539,9 +533,9 @@ if ($action == 'create')
 	dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="' . $langs->trans("CreateAccount") . '">';
+	print '<input type="submit" class="butAction" value="' . $langs->trans("CreateAccount") . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="butAction" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -1024,9 +1018,9 @@ else
 		dol_fiche_end();
 
 		print '<div class="center">';
-		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
+		print '<input value="'.$langs->trans("Modify").'" type="submit" class="butAction">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
+		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="butAction">';
 		print '</div>';
 
 		print '</form>';

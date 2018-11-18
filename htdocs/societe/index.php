@@ -166,7 +166,7 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
                 ],
             ]
         )
-        ->setSize(['width' => 70, 'height' => 25])
+        ->setSize(['width' => 70, 'height' => 24])
         ->setOptions([
             'responsive' => true,
             'maintainAspectRatio' => false,
@@ -180,20 +180,17 @@ if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(rou
 }
 else
 {
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
-    {
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
         $statstring = "<tr>";
         $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
         $statstring.= "</tr>";
     }
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
-    {
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
         $statstring.= "<tr>";
         $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
         $statstring.= "</tr>";
     }
-    if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
-    {
+    if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire) {
         $statstring2 = "<tr>";
         $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
         $statstring2.= "</tr>";
@@ -207,8 +204,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES))
-{
+if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 
@@ -222,53 +218,63 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql.= " WHERE c.type = 2";
-	if (! is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) $sql.= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
+	if (! is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+        $sql.= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
+    }
 	$sql.= " AND c.entity IN (".getEntity('category').")";
 	$sql.= " GROUP BY c.label";
-	$total=0;
+	$total = 0;
 	$result = $db->query($sql);
-	if ($result)
-	{
+	if ($result) {
 		$num = $db->num_rows($result);
 		$i=0;
-		if (! empty($conf->use_javascript_ajax) )
-		{
-			$dataseries=array();
-			$rest=0;
-			$nbmax=10;
+		if (! empty($conf->use_javascript_ajax)) {
+            $dataseries = [];
+            $labels = [];
+			$rest = 0;
+			$nbmax = 12;
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($result);
-				if ($i < $nbmax)
-				{
-					$dataseries[]=array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				if ($i < $nbmax) {
+                    $dataseries[] = round($obj->nb);
+                    $labels[] = $obj->label;
+				} else {
 					$rest+=$obj->nb;
 				}
 				$total+=$obj->nb;
 				$i++;
 			}
-			if ($i > $nbmax)
-			{
-				$dataseries[]=array($langs->trans("Other"), round($rest));
-			}
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			$dolgraph = new DolGraph();
-			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
-			$dolgraph->setShowPercent(1);
-			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
-			$dolgraph->draw('idgraphcateg');
-			print $dolgraph->show();
-		}
-		else
-		{
-			while ($i < $num)
-			{
+			if ($i > $nbmax) {
+                $dataseries[] = round($rest);
+                $labels[] = $langs->transnoentities("Other");
+            }
+            include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+            $dolchartjs = new DolChartJs();
+            $dolchartjs->element('idgraphcateg')
+                ->setType('pie')
+                ->setLabels($labels)
+                ->setDatasets(
+                    [
+                        [
+                            'backgroundColor' => $dolchartjs->bgdatacolor,
+                            'borderColor' => $dolchartjs->datacolor,
+                            'data' => $dataseries,
+                        ],
+                    ]
+                )
+                ->setSize(['width' => 70, 'height' => 24])
+                ->setOptions([
+                    'responsive' => true,
+                    'maintainAspectRatio' => false,
+                    'legend' => [
+                        'position' => 'right',
+                    ],
+                ]
+            );
+            print $dolchartjs->renderChart($total?0:1);
+        } else {
+			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
 				print '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';

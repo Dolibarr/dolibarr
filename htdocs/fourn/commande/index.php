@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2012		Vinicius Nogueira		<viniciusvgn@gmail.com>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Vinicius Nogueira		<viniciusvgn@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +36,14 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 // Load translation files required by the page
-$langs->loadLangs(array("suppliers", "orders"));
+$langs->loadLangs(["suppliers", "orders"]);
 
 
 /*
  * 	View
  */
 
-llxHeader('',$langs->trans("SuppliersOrdersArea"));
+llxHeader('', $langs->trans("SuppliersOrdersArea"));
 
 $commandestatic = new CommandeFournisseur($db);
 $userstatic=new User($db);
@@ -53,14 +54,15 @@ print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     print '<form method="post" action="list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
-    print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td>';
+    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="butAction"></td></tr>';
     print "</table></form><br>\n";
 }
 
@@ -80,25 +82,21 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
 	$total=0;
 	$totalinprocess=0;
-	$dataseries=array();
-	$vals=array();
+	$dataseries = [];
+	$vals = [];
 	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//	-> 7=Canceled/Never received -> (reopen) 3=Process runing
 	//	-> 6=Canceled -> (reopen) 2=Approved
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
-		if ($row)
-		{
-			if ($row[1]!=7 && $row[1]!=6 && $row[1]!=5)
-			{
+		if ($row) {
+			if ($row[1]!=7 && $row[1]!=6 && $row[1]!=5) {
 				$vals[$row[1]]=$row[0];
 				$totalinprocess+=$row[0];
 			}
@@ -108,46 +106,54 @@ if ($resql)
 	}
 	$db->free($resql);
 
-	print '<table class="noborder nohover" width="100%">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
-	foreach (array(0,1,2,3,4,5,6) as $statut)
-	{
-		$dataseries[]=array($commandestatic->LibStatut($statut,1), (isset($vals[$statut])?(int) $vals[$statut]:0));
-		if (! $conf->use_javascript_ajax)
-		{
-
+	foreach ([0, 1, 2, 3, 4, 5, 6] as $statut) {
+        $dataseries[] = (isset($vals[$statut])?(int) $vals[$statut]:0);
+        $labels[] = html_entity_decode($commandestatic->LibStatut($statut,1));
+		if (! $conf->use_javascript_ajax) {
 			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
 			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
 			print "</tr>\n";
 		}
 	}
-	if ($conf->use_javascript_ajax)
-	{
+	if ($conf->use_javascript_ajax) {
 		print '<tr class="impair"><td align="center" colspan="2">';
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+        $dolchartjs = new DolChartJs();
+        $dolchartjs->element('idgraphstatus')
+            ->setType('pie')
+            ->setLabels($labels)
+            ->setDatasets(
+                [
+                    [
+                        'backgroundColor' => $dolchartjs->bgdatacolor,
+                        'borderColor' => $dolchartjs->datacolor,
+                        'data' => $dataseries,
+                    ],
+                ]
+            )
+            ->setSize(['width' => 70, 'height' => 24])
+            ->setOptions([
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => [
+                    'position' => 'right',
+                ],
+            ]
+        );
+        print $dolchartjs->renderChart($total?0:1);
+        print '</td></tr>';
+    }
+    //if ($totalinprocess != $total)
+    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
 
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->setShowLegend(1);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setWidth('100%');
-		$dolgraph->draw('idgraphstatus');
-		print $dolgraph->show($total?0:1);
-
-		print '</td></tr>';
-	}
-	//if ($totalinprocess != $total)
-	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
-
-	print "</table><br>";
-}
-else
-{
-	dol_print_error($db);
+    print "</table><br>";
+} else {
+    dol_print_error($db);
 }
 
 /*
@@ -168,8 +174,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.
 $sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -179,8 +184,7 @@ if ($resql)
 	print '<th align="right">'.$langs->trans("Nb").'</th>';
 	print "</tr>\n";
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven">';
