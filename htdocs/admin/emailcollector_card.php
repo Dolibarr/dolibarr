@@ -141,7 +141,7 @@ if (GETPOST('addoperation','alpha'))
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype','az09');
-	$emailcollectoroperation->actionparam = GETPOST('actionparam', 'alpha');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
 	$result = $emailcollectoroperation->create($user);
