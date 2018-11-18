@@ -24,7 +24,6 @@ TransferStock=Tranferencia de Estoque
 MassStockTransferShort=Transferência de estoque em massa
 StockMovement=Movimento de estoque
 StockMovements=Movimentações de estoque
-LabelMovement=Rótulo para a movimentação
 UnitPurchaseValue=Preço unitário de compra
 StockTooLow=Estoque muito baixo
 EnhancedValueOfWarehouses=Valor de estoques

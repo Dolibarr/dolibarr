@@ -2379,7 +2379,7 @@ abstract class CommonObject
 	function updateRangOfLine($rowid,$rang)
 	{
 		$fieldposition = 'rang';
-		if ($this->table_element_line == 'ecm_files') $fieldposition = 'position';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -2417,14 +2417,17 @@ abstract class CommonObject
 	 */
 	function updateLineUp($rowid,$rang)
 	{
-		if ($rang > 1 )
+		if ($rang > 1)
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang ;
+			$fieldposition = 'rang';
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang ;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql) )
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.($rang - 1);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang - 1);
 				$sql.= ' WHERE rowid = '.$rowid;
 				if (! $this->db->query($sql) )
 				{
@@ -2450,12 +2453,15 @@ abstract class CommonObject
 	{
 		if ($rang < $max)
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang;
+			$fieldposition = 'rang';
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND rang = '.($rang+1);
 			if ($this->db->query($sql) )
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.($rang+1);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang+1);
 				$sql.= ' WHERE rowid = '.$rowid;
 				if (! $this->db->query($sql) )
 				{

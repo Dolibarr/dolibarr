@@ -381,7 +381,7 @@ class CMailFile
             //$this->message = new Swift_SignedMessage();
             // Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
-			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid);
+			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid . '@' . $host);
 			$headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
@@ -1011,9 +1011,9 @@ class CMailFile
 		if ($trackid)
 		{
 			// References is kept in response and Message-ID is returned into In-Reply-To:
-			$out.= 'Message-ID: <' . time() . '.phpmail-dolibarr-'.$trackid.'@' . $host . ">" . $this->eol2;	// Uppercase seems replaced by phpmail
-			$out.= 'References: <' . time() . '.phpmail-dolibarr-'.$trackid.'@' . $host . ">" . $this->eol2;
-			$out.= 'X-Dolibarr-TRACKID: '.$trackid. $this->eol2;
+			$out.= 'Message-ID: <' . time() . '.phpmail-dolibarr-'. $trackid . '@' . $host . ">" . $this->eol2;	// Uppercase seems replaced by phpmail
+			$out.= 'References: <' . time() . '.phpmail-dolibarr-'. $trackid . '@' . $host . ">" . $this->eol2;
+			$out.= 'X-Dolibarr-TRACKID: ' . $trackid . '@' . $host. $this->eol2;
 		}
 		else
 		{

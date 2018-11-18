@@ -610,9 +610,9 @@ if (! function_exists('dol_getprefix'))
 {
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
-     *  This prefix is valid in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with one root dir or two instances
-     *  in virtual servers.
+     *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
+     *  between multi-instances, even when having two instances with one root dir or two instances in virtual servers.
+     *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
      *  @return	string                          A calculated prefix
@@ -621,11 +621,15 @@ if (! function_exists('dol_getprefix'))
     {
 		global $conf;
 
-		// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
-		if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+		// If prefix is for email
+		if ($mode == 'email')
 		{
-			if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
-			else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+			if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+			{
+				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
+				else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+			}
+			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
 
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
@@ -634,7 +638,7 @@ if (! function_exists('dol_getprefix'))
 			// Use this for a "readable" cookie name
 			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
-		else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 	}
 }
 
@@ -6026,6 +6030,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = 'Security key for payment on an invoice';
 			$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'Security key for payment on a a service';
 
+			$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = 'Direct download url of a proposal';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = 'Direct download url of an order';
+			$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = 'Direct download url of an invoice';
+
 			if (is_object($object) && $object->element == 'shipping')
 			{
 				$substitutionarray['__SHIPPINGTRACKNUM__']='Shipping tacking number';
@@ -6039,7 +6047,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 
-			// TODO Use this ?
+			// TODO Remove this
 			$msgishtml = 0;
 
 			$birthday = dol_print_date($object->birth,'day');
@@ -6150,6 +6158,22 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)):'');
 			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
+
+			if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'propal')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = '';
+			if (! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'commande')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_ORDER__'] = '';
+			if (! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'facture')
+			{
+				$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
+			}
+			else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
 		}
 	}
 	if (empty($exclude) || ! in_array('objectamount', $exclude))
@@ -6210,15 +6234,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		));
 	}
 
-	if (empty($exclude) || ! in_array('system', $exclude))
-	{
-		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
-		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
-	}
 	if (! empty($conf->multicompany->enabled))
 	{
 		$substitutionarray=array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
+	}
+	if (empty($exclude) || ! in_array('system', $exclude))
+	{
+		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
+		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstantKey');
 	}
 
 	return $substitutionarray;

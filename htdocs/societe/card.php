@@ -2402,7 +2402,7 @@ else
 			}
         }
 
-        // VAT Code
+        // Sale tax code (VAT code)
         print '<tr>';
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
         if ($object->tva_intra)
@@ -2411,7 +2411,7 @@ else
             $s.=$object->tva_intra;
             $s.='<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
-            if (empty($conf->global->MAIN_DISABLEVATCHECK))
+            if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
             {
                 $s.=' &nbsp; ';
 

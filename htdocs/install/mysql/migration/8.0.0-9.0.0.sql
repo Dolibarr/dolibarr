@@ -180,21 +180,6 @@ ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entit
 ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
 
 
-CREATE TABLE llx_emailcollector_emailcollectoraction(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	fk_emailcollector INTEGER NOT NULL,
-	type varchar(128) NOT NULL,
-	actionparam varchar(255) NULL,
-	date_creation datetime NOT NULL,
-	tms timestamp NOT NULL,
-	fk_user_creat integer NOT NULL,
-	fk_user_modif integer,
-	import_key varchar(14),
-	status integer NOT NULL
-	-- END MODULEBUILDER FIELDS
-) ENGINE=innodb;
-
 CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -205,6 +190,22 @@ CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	tms timestamp NOT NULL,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
+	import_key varchar(14),
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+CREATE TABLE llx_emailcollector_emailcollectoraction(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL,
+	actionparam varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	position integer DEFAULT 0,
 	import_key varchar(14),
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
