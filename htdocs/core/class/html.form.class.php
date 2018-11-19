@@ -1389,7 +1389,7 @@ class Form
 	 *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 *  This also set the number of contacts found into $this->num
 	 *
-	 * @since 8.0 Add afterSelectOptions hook & selectcontacts context.
+	 * @since 9.0 Add afterSelectOptions hook & selectcontacts context.
 	 *
 	 *	@param	int			$socid      	Id ot third party or 0 for all or -1 for empty list
 	 *	@param  array|int	$selected   	Array of ID of pre-selected contact id
