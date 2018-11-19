@@ -1234,7 +1234,7 @@ class CMailFile
 		{
 			foreach ($images_list as $img)
 			{
-				dol_syslog("CMailFile::write_images: i=$i");
+				dol_syslog("CMailFile::write_images: ".$img["name"]);
 
 				$out.= "--" . $this->related_boundary . $this->eol; // always related for an inline image
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
