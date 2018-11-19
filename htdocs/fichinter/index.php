@@ -60,10 +60,9 @@ print load_fiche_titre($langs->trans("InterventionsArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     // Search ficheinter
-    $var=false;
     print '<table class="noborder nohover" width="100%">';
     print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -88,25 +87,23 @@ if ($user->societe_id) $sql.=' AND f.fk_soc = '.$user->societe_id;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $total=0;
-    $totalinprocess=0;
-    $dataseries=array();
-    $vals=array();
-    $bool=false;
+    $total = 0;
+    $totalinprocess = 0;
+    $dataseries = [];
+    $labels = [];
+    $vals = [];
+    $bool = false;
     // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $row = $db->fetch_row($resql);
-        if ($row)
-        {
+        if ($row) {
             //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
             {
-                $bool=(! empty($row[2])?true:false);
+                $bool = (! empty($row[2])?true:false);
                 if (! isset($vals[$row[1].$bool])) $vals[$row[1].$bool]=0;
                 $vals[$row[1].$bool]+=$row[0];
                 $totalinprocess+=$row[0];
@@ -118,36 +115,50 @@ if ($resql)
     $db->free($resql);
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-    $listofstatus=array(0,1,2);
+    $listofstatus = [0, 1, 2];
     $bool=false;
-    foreach ($listofstatus as $status)
-    {
-        $dataseries[]=array($fichinterstatic->LibStatut($status,$bool,1), (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
-        if ($status==3 && ! $bool) $bool=true;
-        else $bool=false;
+    foreach ($listofstatus as $status) {
+        $dataseries[] = (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0);
+        $labels[] = html_entity_decode($fichinterstatic->LibStatut($status,$bool,1));
+        if ($status==3 && ! $bool) {
+            $bool = true;
+        } else {
+            $bool = false;
+        }
     }
-    if ($conf->use_javascript_ajax)
-    {
+    if ($conf->use_javascript_ajax) {
         print '<tr class="impair"><td align="center" colspan="2">';
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-        $dolgraph = new DolGraph();
-        $dolgraph->SetData($dataseries);
-        $dolgraph->setShowLegend(1);
-        $dolgraph->setShowPercent(1);
-        $dolgraph->SetType(array('pie'));
-        $dolgraph->setWidth('100%');
-        $dolgraph->draw('idgraphstatus');
-        print $dolgraph->show($total?0:1);
-        $data=array('series'=>$dataseries);
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolchartjs.class.php';
+        $dolchartjs = new DolChartJs();
+        $dolchartjs->element('idgraphstatus')
+            ->setType('pie')
+            ->setLabels($labels)
+            ->setDatasets(
+                [
+                    [
+                        'backgroundColor' => $dolchartjs->bgdatacolor,
+                        'borderColor' => $dolchartjs->datacolor,
+                        'data' => $dataseries,
+                    ],
+                ]
+            )
+            ->setSize(['width' => 70, 'height' => 24])
+            ->setOptions([
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'legend' => [
+                    'position' => 'right',
+                ],
+            ]
+        );
+        print $dolchartjs->renderChart($total?0:1);
 
         print '</td></tr>';
     }
     $bool=false;
-    foreach ($listofstatus as $status)
-    {
-        if (! $conf->use_javascript_ajax)
-        {
+    foreach ($listofstatus as $status) {
+        if (! $conf->use_javascript_ajax) {
             print '<tr class="oddeven">';
             print '<td>'.$fichinterstatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';

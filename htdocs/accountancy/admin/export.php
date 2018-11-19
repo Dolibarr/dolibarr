@@ -277,7 +277,7 @@ if ($num2) {
 	print "</table>\n";
 }
 
-print '<div class="center"><input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
+print '<div class="center"><input type="submit" class="butAction" value="' . dol_escape_htmltag($langs->trans('Modify')) . '" name="button"></div>';
 
 print '</form>';
 

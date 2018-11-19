@@ -217,7 +217,7 @@ if ($conf->facture->enabled)
 print '</table>';
 
 print '<center>';
-print '<input type="submit" class="butAction" value="'.$langs->trans("Update").'" name="Button">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print '</center>';
 
 print '</form>';
