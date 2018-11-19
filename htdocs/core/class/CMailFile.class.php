@@ -68,8 +68,10 @@ class CMailFile
 	var $smtps;			// Contains SMTPs object (if this method is used)
 	var $phpmailer;		// Contains PHPMailer object (if this method is used)
 
-	//CSS
-	var $css;
+	/**
+	 * @var string CSS
+	 */
+	public $css;
 	//! Defined css style for body background
 	var $styleCSS;
 	//! Defined background directly in body tag
@@ -944,7 +946,7 @@ class CMailFile
 	/**
 	 * Build a css style (mode = all) into this->styleCSS and this->bodyCSS
 	 *
-	 * @return css
+	 * @return string
 	 */
 	function buildCSS()
 	{
