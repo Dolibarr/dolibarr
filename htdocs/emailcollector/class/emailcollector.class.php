@@ -979,14 +979,16 @@ class EmailCollector extends CommonObject
 					}
 					return $part_array;
 				}
+
 				/**
 				 * Sub function for createPartArray(). Only called by createPartArray() and itself.
 				 *
-				 * @param Object	$obj			Structure
-				 * @param string	$partno			Part no
-				 * @param array		$part_array		array
+				 * @param 	Object		$obj			Structure
+				 * @param 	string		$partno			Part no
+				 * @param 	array		$part_array		array
+				 * @return	void
 				 */
-				function addPartToArray($obj, $partno, & $part_array)
+				function addPartToArray($obj, $partno, &$part_array)
 				{
 					$part_array[] = array('part_number' => $partno, 'part_object' => $obj);
 					if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
