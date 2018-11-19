@@ -967,7 +967,8 @@ class EmailCollector extends CommonObject
 				 * @param 	string $prefix		prefix
 				 * @return 	array				Array with number and object
 				 */
-				function createPartArray($structure, $prefix="") {
+				function createPartArray($structure, $prefix="")
+				{
 					//print_r($structure);
 					if (count($structure->parts) > 0) {    // There some sub parts
 						foreach ($structure->parts as $count => $part) {
@@ -985,7 +986,8 @@ class EmailCollector extends CommonObject
 				 * @param string	$partno			Part no
 				 * @param array		$part_array		array
 				 */
-				function addPartToArray($obj, $partno, & $part_array) {
+				function addPartToArray($obj, $partno, & $part_array)
+				{
 					$part_array[] = array('part_number' => $partno, 'part_object' => $obj);
 					if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
 						//print_r($obj);
