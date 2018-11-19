@@ -69,7 +69,7 @@ if ($id > 0)
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id) {
-        
+
         $file = $_FILES['userfile'];
         if (is_array($file['name']) && count($file['name']) > 0)
         {
@@ -82,11 +82,10 @@ if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sen
                 }
             }
         }
-        
-        if(!empty($file['tmp_name'])){
+
+        if(!empty($file['tmp_name'])) {
             $object->add_photo($upload_dir, $file);
         }
-        
     }
 }
 
