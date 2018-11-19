@@ -1333,10 +1333,10 @@ class ActionComm extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-                if ($option == 'nolink') {
-                    $linkstart = '';
-                    $linkend = '';
-                }
+		if ($option == 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
 		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)

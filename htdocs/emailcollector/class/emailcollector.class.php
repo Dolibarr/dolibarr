@@ -697,7 +697,7 @@ class EmailCollector extends CommonObject
 
 			$this->error.='EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
 			if (! empty($emailcollector->errors)) $this->error.=join('<br>', $emailcollector->errors);
-			$this->output.='EmailCollector ID '.$emailcollector->id.': '.$emailcollector->output.'<br>';
+			$this->output.='EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
 		}
 
 		return $nberror;
@@ -1286,6 +1286,8 @@ class EmailCollector extends CommonObject
 
 										// Create thirdparty
 										$thirdpartystatic->name = $nametouseforthirdparty;
+										if ($fromtext != $nametouseforthirdparty) $thirdpartystatic->name_alias = $fromtext;
+										$thirdpartystatic->email = $from;
 
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject);
@@ -1389,6 +1391,7 @@ class EmailCollector extends CommonObject
 
 						$projecttocreate->title = $subject;
 						$projecttocreate->date_start = $now;
+						$projecttocreate->date_end = '';
 						$projecttocreate->opp_status = $id_opp_status;
 						$projecttocreate->opp_percent = $percent_opp_status;
 						$projecttocreate->description = ($note_private?$note_private."\n":'').$messagetext;
@@ -1516,6 +1519,7 @@ class EmailCollector extends CommonObject
 
 		$this->datelastresult = $now;
 		$this->lastresult = $output;
+
 		if (! empty($this->errors)) $this->lastresult.= " - ".join(" - ", $this->errors);
 		$this->codelastresult = ($error ? 'KO' : 'OK');
 		$this->update($user);
