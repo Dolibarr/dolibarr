@@ -963,9 +963,9 @@ class EmailCollector extends CommonObject
 				/**
 				 * create_part_array
 				 *
-				 * @param Object $structure		Structure
-				 * @param string $prefix		prefix
-				 * @return string[]|unknown[]	array
+				 * @param 	Object $structure	Structure
+				 * @param 	string $prefix		prefix
+				 * @return 	array				Array with number and object
 				 */
 				function create_part_array($structure, $prefix="") {
 					//print_r($structure);
@@ -981,9 +981,9 @@ class EmailCollector extends CommonObject
 				/**
 				 * Sub function for create_part_array(). Only called by create_part_array() and itself.
 				 *
-				 * @param Object	$obj		Structure
-				 * @param string	$partno		Part no
-				 * @param array		$part_array	array
+				 * @param Object	$obj			Structure
+				 * @param string	$partno			Part no
+				 * @param array		$part_array		array
 				 */
 				function add_part_to_array($obj, $partno, & $part_array) {
 					$part_array[] = array('part_number' => $partno, 'part_object' => $obj);
@@ -1014,9 +1014,9 @@ class EmailCollector extends CommonObject
 
 				$result = create_part_array($structure, '');
 				//var_dump($result);exit;
-				foreach($result as $key => $part)
+				foreach($result as $part)
 				{
-					if ($part['part_object']->subtype == 'HTML') $parthtml=$part['part_number'];
+					if ($part['part_object']->subtype == 'HTML')  $parthtml=$part['part_number'];
 					if ($part['part_object']->subtype == 'PLAIN') $partplain=$part['part_number'];
 				}
 
@@ -1394,7 +1394,7 @@ class EmailCollector extends CommonObject
 						$projecttocreate->date_end = '';
 						$projecttocreate->opp_status = $id_opp_status;
 						$projecttocreate->opp_percent = $percent_opp_status;
-						$projecttocreate->description = ($note_private?$note_private."\n":'').$messagetext;
+						$projecttocreate->description = ($note_private?$note_private."\n":'').dol_string_nohtmltag($messagetext, 2);
 						$projecttocreate->note_private = $note_private;
 						$projecttocreate->entity = $conf->entity;
 
