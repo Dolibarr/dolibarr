@@ -5145,7 +5145,7 @@ abstract class CommonObject
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
 	 *  @see setValueFrom, insertExtraFields
 	 */
-	function updateExtraField($key, $trigger, $userused)
+	function updateExtraField($key, $trigger=null, $userused=null)
 	{
 		global $conf,$langs,$user;
 
