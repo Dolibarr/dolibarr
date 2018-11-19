@@ -2098,7 +2098,7 @@ if ($action == 'create')
 	print '</tr></table>';
 	print '</td><td>';
 	if (! empty($object->brouillon) && $action == 'editmode' && $usercancreate) {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
 	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none');
 	}
