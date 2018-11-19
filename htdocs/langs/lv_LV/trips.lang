@@ -19,7 +19,7 @@ ConfirmDeleteTrip=Vai tiešām vēlaties dzēst šo izdevumu atskaiti ?
 ListTripsAndExpenses=Izdevumu pārskatu saraksts
 ListToApprove=Gaida apstiprinājumu
 ExpensesArea=Izdevumu pārskatu sadaļa
-ClassifyRefunded=Classify 'Refunded'
+ClassifyRefunded=Klasificēt "atmaksāts"
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=Ir iesniegts jauns izdevumu pārskats un tas gaida apstiprināšanu. <br> - Lietotājs: %s <br> - Periods: %s <br> Uzklikšķināt šeit, lai apstiprinātu: %s
 ExpenseReportWaitingForReApproval=Izdevumu pārskats ir iesniegts atkārtotai apstiprināšanai
@@ -129,7 +129,7 @@ expenseReportCatDisabled=Kategorija ir atspējota - skatiet c_exp_tax_cat vārdn
 expenseReportRangeDisabled=Diapazons ir atspējots - skatiet c_exp_tax_range dictionay
 expenseReportPrintExample=kompensēt + (d x coef) = %s
 ExpenseReportApplyTo=Pielietot
-ExpenseReportDomain=Domēns jāpiemēro
+ExpenseReportDomain=Domēns kam jāpiemēro
 ExpenseReportLimitOn=Ierobežot
 ExpenseReportDateStart=Sākuma datums
 ExpenseReportDateEnd=Beigu datums

@@ -431,4 +431,4 @@ SaleRepresentativeLogin=Inicio de sesión del comercial
 SaleRepresentativeFirstname=Nombre del comercial
 SaleRepresentativeLastname=Apellidos del comercial
 ErrorThirdpartiesMerge=Se produjo un error al eliminar los terceros. Por favor, compruebe el log. Los cambios han sido anulados.
-NewCustomerSupplierCodeProposed=Customer or vendor code already used, a new code is suggested
+NewCustomerSupplierCodeProposed=Código de cliente o proveedor ya utilizado, se sugiere un nuevo código

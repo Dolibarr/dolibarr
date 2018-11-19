@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Dokumentu skaits sadaļā
+ECMNbOfDocs=Dokumentu skaits katalogā
 ECMSection=Katalogs
 ECMSectionManual=Manuālā sadaļa
 ECMSectionAuto=Automātiskā sadaļa
@@ -44,7 +44,7 @@ CannotRemoveDirectoryContainsFiles=Dzēšana nav iespējama, jo tajā ir daži f
 ECMFileManager=Failu pārvaldnieks
 ECMSelectASection=Izvēlieties direktoriju kokā ...
 DirNotSynchronizedSyncFirst=Šķiet, ka šis direktorijs ir izveidots vai modificēts ārpus ECM moduļa. Vispirms noklikšķiniet uz pogas "Resync", lai sinhronizētu disku un datu bāzi, lai iegūtu saturu šajā direktorijā.
-ReSyncListOfDir=Resync katalogu saraksts
+ReSyncListOfDir=Pārsinhronizēt sadaļu sarakstu
 HashOfFileContent=Faila satura pārslēgs
 NoDirectoriesFound=Nav atrastas direktorijas
 FileNotYetIndexedInDatabase=Fails vēl nav indeksēts datu bāzē (mēģiniet to atkārtoti augšupielādēt).
