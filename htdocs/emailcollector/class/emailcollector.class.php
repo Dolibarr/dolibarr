@@ -967,9 +967,9 @@ class EmailCollector extends CommonObject
 				 * @param 	string $prefix		prefix
 				 * @return 	array				Array with number and object
 				 */
-				function create_part_array($structure, $prefix="") {
+				function createPartArray($structure, $prefix="") {
 					//print_r($structure);
-					if (sizeof($structure->parts) > 0) {    // There some sub parts
+					if (count($structure->parts) > 0) {    // There some sub parts
 						foreach ($structure->parts as $count => $part) {
 							add_part_to_array($part, $prefix.($count+1), $part_array);
 						}
@@ -979,22 +979,22 @@ class EmailCollector extends CommonObject
 					return $part_array;
 				}
 				/**
-				 * Sub function for create_part_array(). Only called by create_part_array() and itself.
+				 * Sub function for createPartArray(). Only called by createPartArray() and itself.
 				 *
 				 * @param Object	$obj			Structure
 				 * @param string	$partno			Part no
 				 * @param array		$part_array		array
 				 */
-				function add_part_to_array($obj, $partno, & $part_array) {
+				function addPartToArray($obj, $partno, & $part_array) {
 					$part_array[] = array('part_number' => $partno, 'part_object' => $obj);
 					if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
 						//print_r($obj);
-						if(array_key_exists('parts',$obj)) {    // Check to see if the email has parts
+						if (array_key_exists('parts',$obj)) {    // Check to see if the email has parts
 							foreach ($obj->parts as $count => $part) {
 								// Iterate here again to compensate for the broken way that imap_fetchbody() handles attachments
-								if (sizeof($part->parts) > 0) {
+								if (count($part->parts) > 0) {
 									foreach ($part->parts as $count2 => $part2) {
-										add_part_to_array($part2, $partno.".".($count2+1), $part_array);
+										addPartToArray($part2, $partno.".".($count2+1), $part_array);
 									}
 								}else{    // Attached email does not have a seperate mime attachment for text
 									$part_array[] = array('part_number' => $partno.'.'.($count+1), 'part_object' => $obj);
@@ -1004,15 +1004,15 @@ class EmailCollector extends CommonObject
 							$part_array[] = array('part_number' => $partno.'.1', 'part_object' => $obj);
 						}
 					}else{    // If there are more sub-parts, expand them out.
-						if(array_key_exists('parts',$obj)) {
+						if (array_key_exists('parts',$obj)) {
 							foreach ($obj->parts as $count => $p) {
-								add_part_to_array($p, $partno.".".($count+1), $part_array);
+								addPartToArray($p, $partno.".".($count+1), $part_array);
 							}
 						}
 					}
 				}
 
-				$result = create_part_array($structure, '');
+				$result = createPartArray($structure, '');
 				//var_dump($result);exit;
 				foreach($result as $part)
 				{
@@ -1021,14 +1021,14 @@ class EmailCollector extends CommonObject
 				}
 
 				/* OLD CODE to get parthtml and partplain
-				if (sizeof($structure->parts) > 0) {    // There some sub parts
+				if (count($structure->parts) > 0) {    // There some sub parts
 					foreach($structure->parts as $key => $part)
 					{
 						if ($part->subtype == 'HTML') $parthtml=($key+1);									// For example: $parthtml = 1 or 2
 						if ($part->subtype == 'PLAIN') $partplain=($key+1);
 						if ($part->subtype == 'ALTERNATIVE')
 						{
-							if (sizeof($part->parts) > 0)
+							if (count($part->parts) > 0)
 							{
 								foreach($part->parts as $key2 => $part2)
 								{
