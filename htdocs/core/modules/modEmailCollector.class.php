@@ -46,7 +46,7 @@ class modEmailCollector extends DolibarrModules
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 50320;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'dav';
+		$this->rights_class = 'emailcollector';
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
@@ -64,7 +64,7 @@ class modEmailCollector extends DolibarrModules
 		$this->descriptionlong = "EmailCollectorDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where DAV is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
