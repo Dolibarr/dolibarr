@@ -336,6 +336,7 @@ class MyObject extends CommonObject
 	public function delete(User $user, $notrigger = false)
 	{
 		return $this->deleteCommon($user, $notrigger);
+		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
