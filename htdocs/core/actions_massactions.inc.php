@@ -175,12 +175,12 @@ if (! $error && $massaction == 'confirm_presend')
             {
                 //var_dump($thirdpartyid.' - '.$objectid.' - '.$object->statut);
 
-                if ($objectclass == 'Facture' && $object->statut != Facture::STATUS_VALIDATED)
+                if ($objectclass == 'Facture' && $object->statut == Facture::STATUS_DRAFT)
                 {
                 	$langs->load("errors");
                     $nbignored++;
                     $resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$object->ref).'</div><br>';
-                    continue; // Payment done or started or canceled
+                    continue;
                 }
                 if ($objectclass == 'Commande' && $object->statut == Commande::STATUS_DRAFT)
                 {
