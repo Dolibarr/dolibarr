@@ -752,39 +752,8 @@ class FormMail extends Form
 			}
 
 			// CCC
-			if (! empty($this->withtoccc) || is_array($this->withtoccc))
-			{
-				$out.= '<tr><td>';
-				$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-				$out.= '</td><td>';
-				if (! empty($this->withtocccreadonly))
-				{
-					$out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
-				}
-				else
-				{
-					$out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
-					if (! empty($this->withtoccc) && is_array($this->withtoccc))
-					{
-						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-						$tmparray = $this->withtoccc;
-						foreach($tmparray as $key => $val)
-						{
-							$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-						}
-						$withtocccselected=GETPOST("receiverccc");     // Array of selected value
-						$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null,null, "90%");
-					}
-				}
-
-				$showinfobcc='';
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
-				if ($showinfobcc) $out.=' + '.$showinfobcc;
-				$out.= "</td></tr>\n";
+			if (! empty($this->withtoccc) || is_array($this->withtoccc)) {
+				$out .= $this->getHtmlForWithCcc();
 			}
 
 			// Replyto
@@ -800,77 +769,18 @@ class FormMail extends Form
 			}
 
 			// Errorsto
-			if (! empty($this->witherrorsto))
-			{
-				//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
-				$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
-				if ($this->witherrorstoreadonly)
-				{
-					$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
-					$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-					$out.= $errorstomail;
-					$out.= "</td></tr>\n";
-				}
-				else
-				{
-					$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-					$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
-					$out.= "</td></tr>\n";
-				}
+			if (! empty($this->witherrorsto)) {
+				$out .= $this->getHtmlForWithErrorsTo();
 			}
 
 			// Ask delivery receipt
-			if (! empty($this->withdeliveryreceipt))
-			{
-				$out.= '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
-
-				if (! empty($this->withdeliveryreceiptreadonly))
-				{
-					$out.= yn($this->withdeliveryreceipt);
-				}
-				else
-				{
-					$defaultvaluefordeliveryreceipt=0;
-					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
-					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $defaultvaluefordeliveryreceipt=1;
-					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
-					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
-					$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
-				}
-
-				$out.= "</td></tr>\n";
+			if (! empty($this->withdeliveryreceipt)) {
+				$out .= $this->getHtmlForDeliveryReceipt();
 			}
 
 			// Topic
-			if (! empty($this->withtopic))
-			{
-				$defaulttopic=GETPOST('subject','none');
-				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
-				{
-					if ($arraydefaultmessage && $arraydefaultmessage->topic) {
-						$defaulttopic = $arraydefaultmessage->topic;
-					} elseif (! is_numeric($this->withtopic)) {
-						$defaulttopic = $this->withtopic;
-					}
-				}
-
-				$defaulttopic=make_substitutions($defaulttopic,$this->substit);
-
-				$out.= '<tr>';
-				$out.= '<td class="fieldrequired">';
-				$out.=$form->textwithpicto($langs->trans('MailTopic'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfromtopic');
-				$out.='</td>';
-				$out.= '<td>';
-				if ($this->withtopicreadonly)
-				{
-					$out.= $defaulttopic;
-					$out.= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
-				}
-				else
-				{
-					$out.= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
-				}
-				$out.= "</td></tr>\n";
+			if (! empty($this->withtopic)) {
+				$out .= $this->getHtmlForTopic();
 			}
 
 			// Attached files
@@ -1100,7 +1010,123 @@ class FormMail extends Form
 		}
 	}
 
+	/**
+	 * get html For WithCCC
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForWithCcc()
+	{
+		global $conf, $langs, $form;
+		$out = '<tr><td>';
+		$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+		$out.= '</td><td>';
+		if (! empty($this->withtocccreadonly)) {
+			$out.= (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
+		} else {
+			$out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
+			if (! empty($this->withtoccc) && is_array($this->withtoccc)) {
+				$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtoccc;
+				foreach ($tmparray as $key => $val) {
+					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtocccselected=GETPOST("receiverccc");     // Array of selected value
+				$out.= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null,null, "90%");
+			}
+		}
 
+		$showinfobcc='';
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+		if ($showinfobcc) $out.=' + '.$showinfobcc;
+		$out.= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get Html For WithErrorsTo
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForWithErrorsTo()
+	{
+		global $conf, $langs;
+		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
+		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
+		if ($this->witherrorstoreadonly) {
+			$out = '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out.= $errorstomail;
+			$out.= "</td></tr>\n";
+		} else {
+			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out.= "</td></tr>\n";
+		}
+		return $out;
+	}
+
+	/**
+	 * get Html For Asking for Deliveriy Receipt
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForDeliveryreceipt()
+	{
+		global $conf, $langs, $form;
+		$out = '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
+
+		if (! empty($this->withdeliveryreceiptreadonly)) {
+			$out.= yn($this->withdeliveryreceipt);
+		} else {
+			$defaultvaluefordeliveryreceipt=0;
+			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
+			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $defaultvaluefordeliveryreceipt=1;
+			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
+			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
+			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
+		}
+		$out.= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get Html For Topic of message
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForTopic()
+	{
+		global $conf, $langs, $form;
+		$defaulttopic = GETPOST('subject','none');
+		if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1') {
+			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
+				$defaulttopic = $arraydefaultmessage->topic;
+			} elseif (! is_numeric($this->withtopic)) {
+				$defaulttopic = $this->withtopic;
+			}
+		}
+
+		$defaulttopic=make_substitutions($defaulttopic,$this->substit);
+
+		$out = '<tr>';
+		$out.= '<td class="fieldrequired">';
+		$out.= $form->textwithpicto($langs->trans('MailTopic'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfromtopic');
+		$out.= '</td>';
+		$out.= '<td>';
+		if ($this->withtopicreadonly) {
+			$out.= $defaulttopic;
+			$out.= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
+		} else {
+			$out.= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'. ((isset($_POST["subject"]) && ! $_POST['modelselected'])?$_POST["subject"]:($defaulttopic?$defaulttopic:'')) .'" />';
+		}
+		$out.= "</td></tr>\n";
+		return $out;
+	}
 
 	/**
 	 *      Return templates of email with type = $type_template or type = 'all'.
