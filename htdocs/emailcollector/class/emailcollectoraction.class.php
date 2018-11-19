@@ -105,6 +105,7 @@ class EmailCollectorAction extends CommonObject
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
+	public $position;
 	public $import_key;
 	public $status;
 	// END MODULEBUILDER PROPERTIES

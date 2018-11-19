@@ -244,9 +244,9 @@ YourPasswordHasBeenReset=Su contraseña ha sido restablecida con éxito
 ApplicantIpAddress=Dirección IP del solicitante
 SMSSentTo=SMS enviado a %s
 MissingIds=IDs no encontrados
-ThirdPartyCreatedByEmailCollector=Third party created by email collector from email ID %s
-ContactCreatedByEmailCollector=Contact/address created by email collector from email ID %s
-ProjectCreatedByEmailCollector=Project created by email collector from email ID %s
+ThirdPartyCreatedByEmailCollector=Tercero creado por el recolector de e-mails del ID de e-mail %s
+ContactCreatedByEmailCollector=Contacto/dirección creada por el recolector de e-mails del ID de e-mail %s
+ProjectCreatedByEmailCollector=Proyecto creado por el recolector de e-mails del ID de e-mail %s
 
 ##### Export #####
 ExportsArea=Área de exportaciones
