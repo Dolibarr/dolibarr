@@ -148,7 +148,4 @@ class UtilsTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         return $result;
     }
-
-
-
 }

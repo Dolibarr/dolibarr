@@ -23,7 +23,7 @@
  *  \ingroup    holiday
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -124,7 +124,6 @@ foreach($cp->logs as $logs_CP)
    	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],5).' '.$langs->trans('days').'</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'],5).' '.$langs->trans('days').'</td>';
    	print '</tr>'."\n";
-
 }
 
 if ($log_holiday == '2')
@@ -138,6 +137,6 @@ print '</tbody>'."\n";
 print '</table>'."\n";
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

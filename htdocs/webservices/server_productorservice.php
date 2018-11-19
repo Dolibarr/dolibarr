@@ -25,14 +25,14 @@
 
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
@@ -570,7 +570,7 @@ function createProductOrService($authentication,$product)
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
 				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel, surely 0 because we have just created product
@@ -617,7 +617,6 @@ function createProductOrService($authentication,$product)
             $errorcode='KO';
             $errorlabel=$newobject->error;
         }
-
     }
 
     if ($error)
@@ -739,7 +738,7 @@ function updateProductOrService($authentication,$product)
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
 				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel
@@ -806,7 +805,6 @@ function updateProductOrService($authentication,$product)
             $errorcode='KO';
             $errorlabel=$newobject->error;
         }
-
     }
 
     if ($error)
@@ -1105,7 +1103,6 @@ function getProductsForCategory($authentication,$id,$lang='')
 
 							$iProduct++;
 						}
-
 					}
 
 					// Retour
@@ -1113,14 +1110,12 @@ function getProductsForCategory($authentication,$id,$lang='')
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'products'=> $products
 					);
-
 				}
 				else
 				{
 					$errorcode='NORECORDS_FOR_ASSOCIATION'; $errorlabel='No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$c->error, LOG_DEBUG);
-
 				}
 			}
 			else

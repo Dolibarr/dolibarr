@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +41,8 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","admin","users","other"));
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -237,7 +236,7 @@ if ($result)
 	// Lignes des champs de filtres
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre" width="15%">'.$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).$form->select_date($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
+	print '<td class="liste_titre" width="15%">'.$form->selectDate($date_start,'date_start',0,0,0,'',1,0).$form->selectDate($date_end,'date_end',0,0,0,'',1,0).'</td>';
 
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';
@@ -339,6 +338,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

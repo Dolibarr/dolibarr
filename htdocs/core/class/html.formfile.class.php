@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
@@ -36,7 +36,11 @@ class FormFile
 {
 	private $db;
 
+	/**
+	 * @var string Error code (or message)
+	 */
 	public $error;
+
 	public $numoffiles;
 	public $infofiles;			// Used to return informations by function getDocumentsLink
 
@@ -50,10 +54,10 @@ class FormFile
 	{
 		$this->db = $db;
 		$this->numoffiles=0;
-		return 1;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show form to upload a new file.
 	 *
@@ -75,6 +79,7 @@ class FormFile
 	 */
 	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile', $accept='', $sectiondir='')
 	{
+        // phpcs:enable
 		global $conf,$langs, $hookmanager;
 		$hookmanager->initHooks(array('formfile'));
 
@@ -227,6 +232,7 @@ class FormFile
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *      Show the box with list of available documents for object
 	 *
@@ -251,6 +257,7 @@ class FormFile
 	 */
 	function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$notused=0,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
 	{
+        // phpcs:enable
 		$this->numoffiles=0;
 		print $this->showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$notused,$noform,$param,$title,$buttonlabel,$codelang);
 		return $this->numoffiles;
@@ -304,7 +311,7 @@ class FormFile
 		$param.= 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
 
 		$printer=0;
-		if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport')))	// The direct print feature is implemented only for such elements
+		if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport','livraison')))	// The direct print feature is implemented only for such elements
 		{
 			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
 		}
@@ -673,7 +680,7 @@ class FormFile
 				$formadmin=new FormAdmin($this->db);
 				$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
 				$morecss='maxwidth150';
-				if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+				if ($conf->browser->layout == 'phone') $morecss='maxwidth100';
 				$out.= $formadmin->select_language($defaultlang, 'lang_id', 0, 0, 0, 0, 0, $morecss);
 			}
 			else
@@ -712,7 +719,6 @@ class FormFile
 				$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
 				$out.= $hookmanager->resPrint;
 			}
-
 		}
 
 		// Get list of files
@@ -842,7 +848,6 @@ class FormFile
 			{
 				$out.='<tr><td colspan="'.(3+($addcolumforpicto?1:0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
 			}
-
 		}
 
 		if ($headershown)
@@ -880,15 +885,13 @@ class FormFile
 		$out='';
 		$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
+		$entity = 1; // Without multicompany
+
 		// Get object entity
-		if (empty($conf->multicompany->enabled))
-		{
-			$entity = $conf->entity;
-		}
-		else
+		if (! empty($conf->multicompany->enabled))
 		{
 			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir,'/').'$/', $filedir, $regs);
-			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
+			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : 1); // If entity id not found in $filedir this is entity 1 by default
 		}
 
 		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)
@@ -909,7 +912,7 @@ class FormFile
 		if (! empty($file_list))
 		{
 			$out='<dl class="dropdown inline-block">
-    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignbottom').'</a></dt>
+    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignmiddle').'</a></dt>
     			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
 			$tmpout='';
 
@@ -976,6 +979,7 @@ class FormFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show list of documents in $filearray (may be they are all in same directory but may not)
 	 *  This also sync database if $upload_dir is defined.
@@ -1007,13 +1011,14 @@ class FormFile
 	 */
 	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1, $addfilterfields=0)
 	{
+        // phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
 		global $sortfield, $sortorder, $maxheightmini;
 		global $dolibarr_main_url_root;
 		global $form;
 
 		$disablecrop=1;
-		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticket','user'))) $disablecrop=0;
+		if (in_array($modulepart, array('expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1131,7 +1136,6 @@ class FormFile
 				//var_dump($sortfield.' - '.$sortorder);
 				if ($sortfield && $sortorder)	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
 				{
-					//var_dump($sortfield);
 					$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
 				}
 			}
@@ -1154,7 +1158,7 @@ class FormFile
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
 					print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'">';
+					print '<tr class="oddeven" id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'AFTER'.$lastrowid.'POS'.($i+1)).'">';
 
 					// File name
 					print '<td class="minwith200">';
@@ -1215,9 +1219,13 @@ class FormFile
 							if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 							//print $file['path'].'/'.$minifile.'<br>';
 
-							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 0, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
-							if (empty($urlforhref)) $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
-							print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+							if (empty($urlforhref)) {
+								$urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+							} else {
+								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+							}
 							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
@@ -1250,12 +1258,9 @@ class FormFile
 								if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
 
 								$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
-								//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
-								//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
 								print img_picto($langs->trans("FileSharedViaALink"),'object_globe.png').' ';
 								print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
-								//print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';	// No target here
 							}
 							else
 							{
@@ -1291,17 +1296,12 @@ class FormFile
 
 							if ($permtoeditline)
 							{
-								print '<a href="'.(($useinecm == 1)?'#':($url.'?action=editfile&urlfile='.urlencode($filepath).$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default',0,'class="paddingrightonly"').'</a>';
+								$paramsectiondir=(in_array($modulepart, array('medias','ecm'))?'&section_dir='.urlencode($relativepath):'');
+								print '<a href="'.(($useinecm == 1)?'#':($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default',0,'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject)
 						{
-							/*
-    						if ($file['level1name'] <> $object->id)
-    							$filepath=$file['level1name'].'/'.$file['name'];
-    						else
-    							$filepath=$file['name'];
-    						*/
 							$useajax=1;
 							if (! empty($conf->dol_use_jmobile)) $useajax=0;
 							if (empty($conf->use_javascript_ajax)) $useajax=0;
@@ -1312,7 +1312,7 @@ class FormFile
 
 						if (empty($disablemove))
 						{
-							if ($nboffiles > 1 && empty($conf->browser->phone)) {
+							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td align="center" class="linecolmove tdlineupdown">';
 								if ($i > 0) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">'.img_up('default',0,'imgupforline').'</a>';
@@ -1323,7 +1323,7 @@ class FormFile
 								print '</td>';
 							}
 							else {
-							   	print '<td align="center"'.((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
+							   	print '<td align="center"'.(($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"').'>';
 							   	print '</td>';
 							}
 					   }
@@ -1373,6 +1373,7 @@ class FormFile
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Show list of documents in a directory
 	 *
@@ -1393,6 +1394,7 @@ class FormFile
 	 */
 	function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload=0, $relativepath='', $permtodelete=1, $useinecm=0, $textifempty='', $maxlength=0, $url='', $addfilterfields=0)
 	{
+        // phpcs:enable
 		global $user, $conf, $langs, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
@@ -1635,7 +1637,7 @@ class FormFile
 	 */
 	private function _formAjaxFileUpload($object)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		// PHP post_max_size
 		$post_max_size				= ini_get('post_max_size');
@@ -1655,7 +1657,6 @@ class FormFile
 
 		// Include template
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
-
 	}
 
 	/**
@@ -1827,6 +1828,4 @@ class FormFile
 		}
 		return $out;
 	}
-
 }
-

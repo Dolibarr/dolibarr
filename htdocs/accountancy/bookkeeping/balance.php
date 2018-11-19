@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2016       Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ $langs->loadLangs(array("accountancy"));
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
 
 // Load variable for pagination
@@ -150,6 +151,7 @@ if ($action == 'export_csv')
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'balance';
+	$type_export = 'balance';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
@@ -166,13 +168,18 @@ if ($action == 'export_csv')
 		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
+
+	exit;
 }
 
-else {
-	$title_page = $langs->trans("AccountBalance");
 
-	llxHeader('', $title_page);
+$title_page = $langs->trans("AccountBalance");
 
+llxHeader('', $title_page);
+
+
+if ($action != 'export_csv')
+{
 	// List
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -205,9 +212,9 @@ else {
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateStart') . ': ';
-	$moreforfilter .= $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->selectDate($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= $langs->trans('DateEnd') . ': ';
-	$moreforfilter .= $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->selectDate($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= '</div>';
 
 	if (! empty($moreforfilter)) {
@@ -268,7 +275,7 @@ else {
 		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
-				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
+				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
 				print "<td>&nbsp;</td>\n";
 				print '</tr>';
 			}
@@ -299,18 +306,18 @@ else {
 		$sous_total_credit += $line->credit;
 	}
 
-	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
+	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
-	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price($total_credit - $total_debit) . '</td>';
+	print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">' . price($total_debit) . '</td><td class="nowrap" align="right">' . price($total_credit) . '</td><td class="nowrap" align="right">' . price(price2num($total_credit - $total_debit)) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
 	print "</table>";
 	print '</form>';
-
-	llxFooter();
 }
 
+// End of page
+llxFooter();
 $db->close();

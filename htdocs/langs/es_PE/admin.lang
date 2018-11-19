@@ -1,15 +1,9 @@
 # Dolibarr language file - Source file is en_US - admin
-AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
-AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
 DictionaryVAT=Tasa de IGV (Impuesto sobre ventas en EEUU)
-VATManagement=Gestión IGV
-VATIsNotUsedDesc=El tipo de IGV propuesto por defecto es 0. Este es el caso de asociaciones, particulares o algunas pequeñas sociedades.
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
-ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
 OptionVatMode=Opción de carga de IGV
 OptionVatDefaultDesc=La carga del IGV es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
 OptionVatDebitOptionDesc=La carga del IGV es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios

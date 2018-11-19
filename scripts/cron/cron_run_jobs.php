@@ -41,9 +41,9 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once ($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
-require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (! isset($argv[1]) || ! $argv[1]) {
@@ -194,7 +194,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 			$result=$cronjob->fetch($line->id);
 			if ($result < 0)
 			{
-				echo "Error cronjob->fetch: ".$cronjob->error."\n";
+				echo "Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
 				echo "Failed to fetch job ".$line->id."\n";
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
@@ -203,7 +203,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 			$result=$cronjob->run_jobs($userlogin);
 			if ($result < 0)
 			{
-				echo "Error cronjob->run_job: ".$cronjob->error."\n";
+				echo "Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
 				echo "At least one job failed. Go on menu Home-Setup-Admin tools to see result for each job.\n";
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
@@ -218,12 +218,11 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 			$result=$cronjob->reprogram_jobs($userlogin, $now);
 			if ($result<0)
 			{
-				echo "Error cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
 			}
-
 		}
 		else
 		{
@@ -245,6 +244,13 @@ exit(0);
 
 
 
+/**
+ * script cron usage
+ *
+ * @param string $path          path
+ * @param string $script_file   filename
+ * @return void
+ */
 function usage($path,$script_file)
 {
 	global $conf;
@@ -258,4 +264,3 @@ function usage($path,$script_file)
 	print "For example, to run pending tasks every 5mn, you can add this line:\n";
 	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 }
-

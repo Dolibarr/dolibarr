@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2016 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2009-2016 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Herve Prot     <herve.prot@symeos.com>
  * Copyright (C) 2014      Philippe Grand <philippe.grand@atoo-net.com>
  *
@@ -36,8 +36,10 @@ $langs->load("stripe@stripe");
  */
 class ActionsStripeconnect
 {
-	/** @var DoliDB */
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	private $config=array();
 
@@ -63,6 +65,7 @@ class ActionsStripeconnect
 	 * @param	array	$parameters		Parameters
 	 * @param	Object	$object			Object
 	 * @param	string	$action			Action
+     * @return bool
 	 */
 	function formObjectOptions($parameters, &$object, &$action)
 	{
@@ -106,7 +109,6 @@ class ActionsStripeconnect
 				$this->resprints.= $langs->trans("NoStripe");
 			}
 			$this->resprints.= '</td></tr>';
-
 		}
 		elseif (is_object($object) && $object->element == 'member'){
 			$this->resprints.= '<tr><td>';
@@ -233,5 +235,4 @@ class ActionsStripeconnect
 		}
 		return 0;
 	}
-
 }

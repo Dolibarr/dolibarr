@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -358,8 +359,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             	// Set output language
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	// Load traductions files requiredby by page
             	$outputlangs->loadLangs(array("main", "members"));
-            	// Get email content fro mtemplae
+            	// Get email content from template
             	$arraydefaultmessage=null;
             	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
@@ -897,7 +899,7 @@ if ($rowid > 0)
                 $datefrom=dol_time_plus_duree($object->datefin,1,'d');
             }
         }
-        print $form->select_date($datefrom,'','','','',"subscription",1,1,1);
+        print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
         print "</td></tr>";
 
         // Date end subscription
@@ -910,7 +912,7 @@ if ($rowid > 0)
             $dateto=-1;		// By default, no date is suggested
         }
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-        print $form->select_date($dateto,'end','','','',"subscription",1,0,1);
+        print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);
         print "</td></tr>";
 
         if ($adht->subscription)
@@ -1011,7 +1013,7 @@ if ($rowid > 0)
 
                 // Date of payment
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                print $form->select_date(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'subscription',1,1,1);
+                print $form->selectDate(isset($paymentdate)?$paymentdate:-1, 'payment', 0, 0, 1, 'subscription', 1, 1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
@@ -1054,8 +1056,9 @@ if ($rowid > 0)
             // Set output language
             $outputlangs = new Translate('', $conf);
             $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            // Load traductions files requiredby by page
             $outputlangs->loadLangs(array("main", "members"));
-            // Get email content fro mtemplae
+            // Get email content from template
             $arraydefaultmessage=null;
             $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
@@ -1110,7 +1113,6 @@ else
     print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,10 +28,10 @@
 abstract class ActionsAdherentCardCommon
 {
     /**
-     * Database handler
-     * @var DoliDB
+     * @var DoliDB Database handler.
      */
-    var $db;
+    public $db;
+
     var $dirmodule;
     var $targetmodule;
     var $canvas;
@@ -41,10 +41,16 @@ abstract class ActionsAdherentCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	//! Error string
-	var $error;
-	//! Error array
-	var $errors=array();
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -69,7 +75,8 @@ abstract class ActionsAdherentCardCommon
     	//}
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    /**
      *  Set content of ->tpl array, to use into template
      *
      *  @param	string		$action    Type of action
@@ -78,6 +85,7 @@ abstract class ActionsAdherentCardCommon
      */
     function assign_values(&$action, $id)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
@@ -226,6 +234,7 @@ abstract class ActionsAdherentCardCommon
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Assign POST values into object
      *
@@ -233,6 +242,7 @@ abstract class ActionsAdherentCardCommon
      */
     private function assign_post()
     {
+        // phpcs:enable
         global $langs, $mysoc;
 
         $this->object->old_name 			= 	$_POST["old_name"];
@@ -271,5 +281,4 @@ abstract class ActionsAdherentCardCommon
             }
         }
     }
-
 }

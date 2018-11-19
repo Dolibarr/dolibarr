@@ -40,14 +40,14 @@ class modReceiptPrinter extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function  __construct($db)
+    function __construct($db)
     {
         $this->db = $db ;
         $this->numero = 67000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
         $this->family = "interface";
-        $this->module_position = 530;
+        $this->module_position = '53';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -67,9 +67,11 @@ class modReceiptPrinter extends DolibarrModules
         $this->config_page_url = array("receiptprinter.php");
 
         // Dependencies
-        $this->depends = array();
-        $this->requiredby = array();
-        $this->phpmin = array(5,1);                     // Minimum version of PHP required by module
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(3,9,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("receiptprinter");
@@ -117,8 +119,6 @@ class modReceiptPrinter extends DolibarrModules
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
         $r++;
-
-
     }
 
 
@@ -141,5 +141,4 @@ class modReceiptPrinter extends DolibarrModules
             );
         return $this->_init($sql,$options);
     }
-
 }

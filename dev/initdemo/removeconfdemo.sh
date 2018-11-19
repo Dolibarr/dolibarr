@@ -3,7 +3,7 @@
 # Script to remove setup of a Dolibarr installation.
 # Note: "dialog" tool need to be available.
 #
-# Regis Houssin       - regis.houssin@capnetworks.com
+# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # WARNING: This script erase setup of instance, 

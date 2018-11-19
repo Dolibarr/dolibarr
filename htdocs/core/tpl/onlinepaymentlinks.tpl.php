@@ -118,6 +118,28 @@ if (! empty($conf->adherent->enabled))
 	}
 	print '<br>';
 }
+if (! empty($conf->don->enabled))
+{
+	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation",$servicename).':<br>';
+	print '<strong>'.getOnlinePaymentUrl(1,'donation')."</strong><br>\n";
+	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	{
+	    $langs->load("members");
+	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Don")).': ';
+        print '<input type="text class="flat" id="generate_donation_ref" name="generate_donation_ref" value="'.GETPOST('generate_donation_ref','alpha').'" size="10">';
+        print '<input type="submit" class="none reposition button" value="'.$langs->trans("GetSecuredUrl").'">';
+        if (GETPOST('generate_donation_ref'))
+        {
+            print '<br> -> <strong>';
+            $url=getOnlinePaymentUrl(0,'donation',GETPOST('generate_donation_ref','alpha'));
+            print $url;
+            print "</strong><br>\n";
+        }
+        print '</form>';
+	}
+	print '<br>';
+}
 
 if (! empty($conf->use_javascript_ajax))
 {
@@ -139,4 +161,5 @@ if (! empty($conf->use_javascript_ajax))
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
 print '<!-- END PHP TEMPLATE ONLINEPAYMENTLINKS -->';
+
 

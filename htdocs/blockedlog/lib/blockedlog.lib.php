@@ -38,6 +38,7 @@ function blockedlogadmin_prepare_head()
 	$head[$h][2] = 'blockedlog';
 	$h++;
 
+	$langs->load("blockedlog");
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=1";
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 

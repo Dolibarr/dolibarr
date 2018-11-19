@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -152,13 +152,12 @@ if ($object->id > 0)
 	$permission = ($userWrite > 0);
 	$permtoedit = ($userWrite > 0);
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
 }
 else
 {
 	dol_print_error('','NoRecordFound');
 }
 
+// End of page
 llxFooter();
-
 $db->close();

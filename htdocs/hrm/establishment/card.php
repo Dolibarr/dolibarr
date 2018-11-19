@@ -19,7 +19,7 @@
  *  \file       	htdocs/hrm/establishment/card.php
  *  \brief      	Page to show an establishment
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -334,7 +334,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     if ($action == 'delete')
     {
         print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
-
     }
 
 
@@ -408,5 +407,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '</div>';
 }
 
+// End of page
 llxFooter();
 $db->close();

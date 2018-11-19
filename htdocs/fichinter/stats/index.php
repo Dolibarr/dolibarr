@@ -49,6 +49,7 @@ $endyear=$year;
 
 $object_status=GETPOST('object_status');
 
+// Load translation files required by the page
 $langs->loadLangs(array('interventions', 'companies', 'other', 'suppliers'));
 
 
@@ -259,6 +260,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -305,6 +307,7 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';

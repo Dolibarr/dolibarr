@@ -73,6 +73,6 @@ dol_print_object_info($object);
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -162,15 +162,15 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *
  *    	@param      int		$iSecond		Number of seconds
  *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30",
- *                                                         'allwithouthour': total delay days without hour part like "2 days",
- *                                                         'allhourmin': total delay with format hours:min like "60:30",
- *                                                         'allhour': total delay hours without min/sec like "60:30",
- *                                                         'fullhour': total delay hour decimal like "60.5" for 60:30,
- *                                                         'hour': only hours part "12",
- *                                                         'min': only minutes part "30",
- *                                                         'sec': only seconds part,
- *                                                         'month': only month part,
- *                                                         'year': only year part);
+ *                                          - 'allwithouthour': total delay days without hour part like "2 days",
+ *                                          - 'allhourmin': total delay with format hours:min like "60:30",
+ *                                          - 'allhour': total delay hours without min/sec like "60:30",
+ *                                          - 'fullhour': total delay hour decimal like "60.5" for 60:30,
+ *                                          - 'hour': only hours part "12",
+ *                                          - 'min': only minutes part "30",
+ *                                          - 'sec': only seconds part,
+ *                                          - 'month': only month part,
+ *                                          - 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration
@@ -439,7 +439,6 @@ function dol_get_next_week($day, $week, $month, $year)
 	$tmparray=dol_getdate($time,true);
 
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
-
 }
 
 /**	Return GMT time for first day of a month or year
@@ -586,6 +585,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 	{
 		$ferie=false;
 		$countryfound=0;
+		$includesaturdayandsunday=1;
 
 		$jour  = date("d", $timestampStart);
 		$mois  = date("m", $timestampStart);
@@ -672,12 +672,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$mois_pentecote = date("m", $date_pentecote);
 			if($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie=true;
 			// "Pentecote"
-
-			// Calul des samedis et dimanches
-			$jour_julien = unixtojd($timestampStart);
-			$jour_semaine = jddayofweek($jour_julien, 0);
-			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			// Samedi (6) et dimanche (0)
 		}
 
 		// Pentecoste and Ascensione in Italy go to the sunday after: isn't holiday.
@@ -704,12 +698,18 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$mois_paques = date("m", $date_paques);
 			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
 			// Paques
+		}
 
-			// Calul des samedis et dimanches
-			$jour_julien = unixtojd($timestampStart);
-			$jour_semaine = jddayofweek($jour_julien, 0);
-			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			//Samedi (6) et dimanche (0)
+		if ($countrycode == 'IN')
+		{
+			$countryfound=1;
+
+			if($jour == 1 && $mois == 1) $ferie=true; // New Year's Day
+			if($jour == 26 && $mois == 1) $ferie=true; // Republic Day
+			if($jour == 1 && $mois == 5) $ferie=true; // May Day
+			if($jour == 15 && $mois == 8) $ferie=true; // Independence Day
+			if($jour == 2 && $mois == 10) $ferie=true; // Gandhi Jayanti
+			if($jour == 25 && $mois == 12) $ferie=true; // Christmas
 		}
 
 		if ($countrycode == 'ES')
@@ -747,12 +747,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$mois_viernes = date("m", $date_viernes);
 			if($jour_viernes == $jour && $mois_viernes == $mois) $ferie=true;
 			//Viernes Santo
-
-			// Calul des samedis et dimanches
-			$jour_julien = unixtojd($timestampStart);
-			$jour_semaine = jddayofweek($jour_julien, 0);
-			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			//Samedi (6) et dimanche (0)
 		}
 
 		if ($countrycode == 'AT')
@@ -834,22 +828,15 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 		    $mois_fronleichnam = date("m", $date_fronleichnam);
 		    if($jour_fronleichnam == $jour && $mois_fronleichnam == $mois) $ferie=true;
 		    // Fronleichnam
-
-		    // Calul des samedis et dimanches
-		    $jour_julien = unixtojd($timestampStart);
-		    $jour_semaine = jddayofweek($jour_julien, 0);
-		    if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-		    //Samedi (6) et dimanche (0)
 		}
 
-		// Cas pays non defini
-		if (! $countryfound)
+		// If we have to include saturday and sunday
+		if ($includesaturdayandsunday)
 		{
-			// Calul des samedis et dimanches
 			$jour_julien = unixtojd($timestampStart);
 			$jour_semaine = jddayofweek($jour_julien, 0);
 			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			//Samedi (6) et dimanche (0)
+			//Saturday (6) and Sunday (0)
 		}
 
 		// On incremente compteur
@@ -946,44 +933,43 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
  *  This replace old function monthArrayOrSelected.
  *
  *	@param	Translate	$outputlangs	Object langs
- *  @param	int			$short			1=Return short label
+ *  @param	int			$short			0=Return long label, 1=Return short label
  *	@return array						Month string or array if selected < 0
  */
 function monthArray($outputlangs,$short=0)
 {
 	$montharray = array (
-	    1  => $outputlangs->trans("January"),
-	    2  => $outputlangs->trans("February"),
-	    3  => $outputlangs->trans("March"),
-	    4  => $outputlangs->trans("April"),
-	    5  => $outputlangs->trans("May"),
-	    6  => $outputlangs->trans("June"),
-	    7  => $outputlangs->trans("July"),
-	    8  => $outputlangs->trans("August"),
-	    9  => $outputlangs->trans("September"),
-	    10 => $outputlangs->trans("October"),
-	    11 => $outputlangs->trans("November"),
-	    12 => $outputlangs->trans("December")
+	    1  => $outputlangs->trans("Month01"),
+	    2  => $outputlangs->trans("Month02"),
+	    3  => $outputlangs->trans("Month03"),
+	    4  => $outputlangs->trans("Month04"),
+	    5  => $outputlangs->trans("Month05"),
+	    6  => $outputlangs->trans("Month06"),
+	    7  => $outputlangs->trans("Month07"),
+	    8  => $outputlangs->trans("Month08"),
+	    9  => $outputlangs->trans("Month09"),
+	    10 => $outputlangs->trans("Month10"),
+	    11 => $outputlangs->trans("Month11"),
+	    12 => $outputlangs->trans("Month12")
     );
 
 	if (! empty($short))
 	{
 		$montharray = array (
-		    1  => $outputlangs->trans("JanuaryMin"),
-		    2  => $outputlangs->trans("FebruaryMin"),
-		    3  => $outputlangs->trans("MarchMin"),
-		    4  => $outputlangs->trans("AprilMin"),
-		    5  => $outputlangs->trans("MayMin"),
-		    6  => $outputlangs->trans("JuneMin"),
-		    7  => $outputlangs->trans("JulyMin"),
-		    8  => $outputlangs->trans("AugustMin"),
-		    9  => $outputlangs->trans("SeptemberMin"),
-		    10 => $outputlangs->trans("OctoberMin"),
-		    11 => $outputlangs->trans("NovemberMin"),
-		    12 => $outputlangs->trans("DecemberMin")
+		    1  => $outputlangs->trans("MonthShort01"),
+		    2  => $outputlangs->trans("MonthShort02"),
+		    3  => $outputlangs->trans("MonthShort03"),
+		    4  => $outputlangs->trans("MonthShort04"),
+		    5  => $outputlangs->trans("MonthShort05"),
+		    6  => $outputlangs->trans("MonthShort06"),
+		    7  => $outputlangs->trans("MonthShort07"),
+		    8  => $outputlangs->trans("MonthShort08"),
+		    9  => $outputlangs->trans("MonthShort09"),
+		    10 => $outputlangs->trans("MonthShort10"),
+		    11 => $outputlangs->trans("MonthShort11"),
+		    12 => $outputlangs->trans("MonthShort12")
 			);
 	}
 
 	return $montharray;
 }
-

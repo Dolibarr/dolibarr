@@ -32,10 +32,12 @@ class ActionsMyModule
      * @var DoliDB Database handler.
      */
     public $db;
+
     /**
-     * @var string Error
+     * @var string Error code (or message)
      */
     public $error = '';
+
     /**
      * @var array Errors
      */
@@ -135,7 +137,6 @@ class ActionsMyModule
 	        foreach($parameters['toselect'] as $objectid)
 	        {
 	            // Do action on each object id
-
 	        }
 	    }
 
@@ -240,5 +241,4 @@ class ActionsMyModule
 	}
 
 	/* Add here any other hooked methods... */
-
 }

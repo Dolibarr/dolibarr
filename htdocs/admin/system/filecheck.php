@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
@@ -307,7 +307,7 @@ if (! $error && $xml)
         }
         else
         {
-            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
         $out.='</div>';
@@ -372,11 +372,11 @@ if (! $error && $xml)
         // Show warning
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
-            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+            setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
         }
         else
         {
-            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+            setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
         }
     }
     else
@@ -428,7 +428,7 @@ if (! $error && $xml)
     	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
 
-    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
     print $langs->trans("ExpectedChecksum").' = '. $outexpectedchecksum .'<br>';
     print $langs->trans("CurrentChecksum").' = '. $outcurrentchecksum;
 
@@ -439,12 +439,8 @@ if (! $error && $xml)
     print $out;
 }
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 exit($error);
-

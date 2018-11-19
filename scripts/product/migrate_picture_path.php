@@ -37,9 +37,9 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 define('EVEN_IF_ONLY_LOGIN_ALLOWED',1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Include and load Dolibarr environment variables
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 
@@ -140,7 +140,6 @@ function migrate_product_photospath($product)
     				{
     					dol_move($origin.'/'.$file, $destin.'/'.$file);
     				}
-
     			}
     		}
         }

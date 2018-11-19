@@ -26,7 +26,7 @@ LastWithdrawalReceipt=Latest %s direct debit receipts
 MakeWithdrawRequest=Make a direct debit payment request
 WithdrawRequestsDone=%s direct debit payment requests recorded
 ThirdPartyBankCode=Third party bank code
-NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoices are on companies with a valid default BAN and that BAN has a RUM with mode <strong>%s</strong>.
+NoInvoiceCouldBeWithdrawed=No invoice debited successfully. Check that invoices are on companies with a valid IBAN and that IBAN has a UMR (Unique Mandate Reference) with mode <strong>%s</strong>.
 ClassCredited=Classify credited
 ClassCreditedConfirm=Are you sure you want to classify this withdrawal receipt as credited on your bank account?
 TransData=Transmission date
@@ -61,7 +61,7 @@ CreateAll=Create direct debit file (all)
 CreateGuichet=Only office
 CreateBanque=Only bank
 OrderWaiting=Waiting for treatment
-NotifyTransmision=Withdrawal Transmission 
+NotifyTransmision=Withdrawal Transmission
 NotifyCredit=Withdrawal Credit
 NumeroNationalEmetter=National Transmitter Number
 WithBankUsingRIB=For bank accounts using RIB
@@ -80,7 +80,7 @@ RUM=UMR
 RUMLong=Unique Mandate Reference
 RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
 WithdrawMode=Direct debit mode (FRST or RECUR)
-WithdrawRequestAmount=Amount of Direct debit request: 
+WithdrawRequestAmount=Amount of Direct debit request:
 WithdrawRequestErrorNilAmount=Unable to create direct debit request for empty amount.
 SepaMandate=SEPA Direct Debit Mandate
 SepaMandateShort=SEPA Mandate
@@ -103,7 +103,7 @@ SEPAFRST=SEPA FRST
 ExecutionDate=Execution date
 CreateForSepa=Create direct debit file
 
-### Notifications 
+### Notifications
 InfoCreditSubject=Payment of direct debit payment order %s by the bank
 InfoCreditMessage=The direct debit payment order %s has been paid by the bank<br>Data of payment: %s
 InfoTransSubject=Transmission of direct debit payment order %s to bank

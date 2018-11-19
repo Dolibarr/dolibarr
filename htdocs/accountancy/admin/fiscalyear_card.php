@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ if (empty($user->rights->accounting->fiscalyear))
 
 $error = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 
@@ -165,16 +166,16 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST('label', 'alpha') . '"></td></tr>';
 
 	// Date start
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-	print $form->select_date(($date_start ? $date_start : ''), 'fiscalyear');
+	print $form->selectDate(($date_start ? $date_start : ''), 'fiscalyear');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
+	print $form->selectDate(($date_end ? $date_end : - 1), 'fiscalyearend');
 	print '</td></tr>';
 
 	/*
@@ -182,7 +183,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
-	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
+	print $form->selectarray('statut', $statut2label, GETPOST('statut', 'int'));
 	print '</td></tr>';
 	*/
 
@@ -225,12 +226,12 @@ if ($action == 'create')
 
 			// Date start
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-			print $form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
+			print $form->selectDate($object->date_start ? $object->date_start : - 1, 'fiscalyear');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-			print $form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
+			print $form->selectDate($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
 			print '</td></tr>';
 
 			// Statut
@@ -318,5 +319,6 @@ if ($action == 'create')
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

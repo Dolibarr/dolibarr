@@ -111,12 +111,13 @@ class vCard
      *	mise en forme de la photo
      *  warning NON TESTE !
      *
-     *	@param	string	$type			Type
-     *	@param	string	$photo			Photo
-     *	@return	void
-	 */
+     *  @param  string  $type			Type
+     *  @param  string  $photo			Photo
+     *  @return	void
+     */
     function setPhoto($type, $photo)
-    { // $type = "GIF" | "JPEG"
+    {
+        // $type = "GIF" | "JPEG"
         $this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
     }
 
@@ -155,7 +156,7 @@ class vCard
      *	@return	void
      */
     function setBirthday($date)
-    { 
+    {
         // $date format is YYYY-MM-DD - RFC 2425 and RFC 2426
         $this->properties["BDAY"] = dol_print_date($date, 'dayrfc');
     }
@@ -200,7 +201,8 @@ class vCard
      *	@param	string	$type			Type
      *	@return	void
      */
-    function setLabel($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL") {
+    function setLabel($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL")
+    {
         $label = "";
         if ($postoffice!="") $label.= "$postoffice\r\n";
         if ($extended!="") $label.= "$extended\r\n";
@@ -328,5 +330,4 @@ class vCard
     {
         return $this->filename;
     }
-
 }

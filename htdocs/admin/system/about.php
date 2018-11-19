@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo    <jlb@j1b.org>
  * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("admin");
-$langs->load("help");
-$langs->load("members");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("help","members","other","admin"));
 
 $action=GETPOST('action','alpha');
 
@@ -196,7 +194,7 @@ if ($showpromotemessage)
     {
         print '<br>';
         print '<br>';
-        
+
         if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
         {
             print $langs->trans("TitleExampleForMajorRelease").':<br>';
@@ -214,7 +212,6 @@ if ($showpromotemessage)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1042,7 +1042,6 @@ class PHPExcel_Writer_Excel2007_Chart extends
     }
 
     $objWriter->endElement();
-
   }
 
   /**
@@ -1322,7 +1321,6 @@ class PHPExcel_Writer_Excel2007_Chart extends
       $objWriter->endElement();
     }
     $objWriter->endElement();
-
   }
 
   /**

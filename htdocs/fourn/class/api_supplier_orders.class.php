@@ -46,8 +46,8 @@ class SupplierOrders extends DolibarrApi
      */
     function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->order = new CommandeFournisseur($this->db);
     }
 
@@ -68,11 +68,11 @@ class SupplierOrders extends DolibarrApi
 		}
 
         $result = $this->order->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
+		if ( ! DolibarrApi::_checkAccessToResource('fournisseur',$this->order->id,'','commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -96,7 +96,8 @@ class SupplierOrders extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -336,7 +337,8 @@ class SupplierOrders extends DolibarrApi
      * @param   Object  $object    Object to clean
      * @return  array              Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 

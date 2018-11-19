@@ -50,7 +50,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 $search_ref=GETPOST("search_ref");
 $search_type=GETPOST("search_type");
 
@@ -289,5 +289,6 @@ else
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
 $db->close();

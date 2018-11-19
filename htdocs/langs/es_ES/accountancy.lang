@@ -38,6 +38,10 @@ GroupIsEmptyCheckSetup=El grupo está vacío, compruebe la configuración de gru
 DetailByAccount=Ver detalles por cuenta
 AccountWithNonZeroValues=Cuentas con valores no cero
 ListOfAccounts=Lista de cuentas
+CountriesInEEC=Países en la CEE
+CountriesNotInEEC=Países no incluidos en la CEE
+CountriesInEECExceptMe=Países en la CEE excepto %s
+CountriesExceptMe=Todos los países excepto %s
 
 MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
 MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
@@ -55,7 +59,7 @@ AccountancyAreaDescChartModel=PASO %s: Crear un modelo de plan general contable 
 AccountancyAreaDescChart=PASO %s: Crear o comprobar el contenido de su plan general contable desde el menú %s
 
 AccountancyAreaDescVat=PASO %s: Defina las cuentas contables para cada tasa de IVA. Para ello puede usar el menú %s.
-AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
+AccountancyAreaDescDefault=PASO %s: Defina las cuentas contables predeterminadas. Para ello puede utilizar el menú %s.
 AccountancyAreaDescExpenseReport=PASO %s: Defina las cuentas contables para los informes de gastos. Para ello puede utilizar el menú %s.
 AccountancyAreaDescSal=PASO %s: Defina las cuentas contables para los pagos de salarios. Para ello puede utilizar el menú %s.
 AccountancyAreaDescContrib=PASO %s: Defina las cuentas contables de los gastos especiales (impuestos varios). Para ello puede utilizar el menú %s.
@@ -156,6 +160,7 @@ Docref=Referencia
 LabelAccount=Descripción
 LabelOperation=Etiqueta operación
 Sens=Sentido
+LetteringCode=Cogido de letras
 Codejournal=Diario
 NumPiece=Apunte
 TransactionNumShort=Núm. transacción
@@ -221,6 +226,7 @@ AutomaticBindingDone=Vinculación automática finalizada
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
 MvtNotCorrectlyBalanced=Asiento contabilizado incorrectamente. Debe=%s. Haber=%s
+Balancing=Saldo
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Transacciones escritas en el Libro Mayor
 GeneralLedgerSomeRecordWasNotRecorded=Algunas de las operaciones no pueden contabilizarse. Si no hay otro mensaje de error, es probable que ya estén contabilizadas.
@@ -262,7 +268,8 @@ Modelcsv_quadratus=Exportar hacia Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
 Modelcsv_agiris=Exportar a Agiris
-Modelcsv_configurable=Exportación configurable
+Modelcsv_configurable=Exportación CSV Configurable
+Modelcsv_FEC=Exportación FEC (Art. L47 A) (Prueba)
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service

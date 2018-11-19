@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  *
@@ -31,10 +31,15 @@
  */
 class FormCompany
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Constructor
@@ -44,11 +49,10 @@ class FormCompany
 	function __construct($db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    	Return list of labels (translated) of third parties type
 	 *
@@ -58,6 +62,7 @@ class FormCompany
 	 */
 	function typent_array($mode=0, $filter='')
 	{
+        // phpcs:enable
 		global $langs,$mysoc;
 
 		$effs = array();
@@ -90,6 +95,7 @@ class FormCompany
 		return $effs;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
 	 *
@@ -99,6 +105,7 @@ class FormCompany
 	 */
 	function effectif_array($mode=0, $filter='')
 	{
+        // phpcs:enable
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
@@ -128,6 +135,7 @@ class FormCompany
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Affiche formulaire de selection des modes de reglement
 	 *
@@ -139,6 +147,7 @@ class FormCompany
 	 */
 	function form_prospect_level($page, $selected='', $htmlname='prospect_level_id', $empty=0)
 	{
+        // phpcs:enable
 		global $user, $langs;
 
 		print '<form method="post" action="'.$page.'">';
@@ -177,6 +186,7 @@ class FormCompany
 		print '</form>';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
 	 *   Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
@@ -191,9 +201,11 @@ class FormCompany
 	 */
 	function select_departement($selected='',$country_codeid=0, $htmlname='state_id')
 	{
+        // phpcs:enable
 		print $this->select_state($selected,$country_codeid, $htmlname);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
 	 *    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
@@ -209,6 +221,7 @@ class FormCompany
 	 */
 	function select_state($selected='',$country_codeid=0, $htmlname='state_id')
 	{
+        // phpcs:enable
 		global $conf,$langs,$user;
 
 		dol_syslog(get_class($this)."::select_departement selected=".$selected.", country_codeid=".$country_codeid,LOG_DEBUG);
@@ -308,6 +321,7 @@ class FormCompany
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Retourne la liste deroulante des regions actives dont le pays est actif
 	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
@@ -320,6 +334,7 @@ class FormCompany
 	 */
 	function select_region($selected='',$htmlname='region_id')
 	{
+        // phpcs:enable
 		global $conf,$langs;
 		$langs->load("dict");
 
@@ -374,6 +389,7 @@ class FormCompany
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return combo list with people title
 	 *
@@ -384,6 +400,7 @@ class FormCompany
 	 */
 	function select_civility($selected='',$htmlname='civility_id',$morecss='maxwidth100')
 	{
+        // phpcs:enable
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
@@ -430,6 +447,7 @@ class FormCompany
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays.
@@ -443,9 +461,11 @@ class FormCompany
 	 */
 	function select_forme_juridique($selected='', $country_codeid=0, $filter='')
 	{
+        // phpcs:enable
 		print $this->select_juridicalstatus($selected, $country_codeid, $filter);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
@@ -458,6 +478,7 @@ class FormCompany
 	 */
 	function select_juridicalstatus($selected='', $country_codeid=0, $filter='', $htmlname='forme_juridique_code')
 	{
+        // phpcs:enable
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
@@ -740,6 +761,7 @@ class FormCompany
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    Return a select list with zip codes and their town
 	 *
@@ -754,6 +776,7 @@ class FormCompany
 	 */
 	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0, $moreattrib='',$morecss='')
 	{
+        // phpcs:enable
 		global $conf;
 
 		$out='';
@@ -771,6 +794,7 @@ class FormCompany
 		return $out;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Return HTML string to use as input of professional id into a HTML page (siren, siret, etc...)
      *
@@ -783,6 +807,7 @@ class FormCompany
      */
     function get_input_id_prof($idprof,$htmlname,$preselected,$country_code,$morecss='maxwidth100onsmartphone quatrevingtpercent')
     {
+        // phpcs:enable
         global $conf,$langs;
 
         $formlength=0;
@@ -821,6 +846,7 @@ class FormCompany
         return $out;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * Return a HTML select with localtax values for thirdparties
      *
@@ -831,10 +857,11 @@ class FormCompany
      */
     function select_localtax($local, $selected, $htmlname)
     {
-    	$tax=get_localtax_by_third($local);
+        // phpcs:enable
+        $tax=get_localtax_by_third($local);
 
-    	$num = $this->db->num_rows($tax);
-    	$i = 0;
+        $num = $this->db->num_rows($tax);
+        $i = 0;
     	if ($num)
     	{
     		$valors=explode(":", $tax);
@@ -861,6 +888,4 @@ class FormCompany
     		}
     	}
     }
-
 }
-

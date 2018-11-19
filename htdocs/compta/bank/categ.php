@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -26,7 +26,7 @@
  *      \brief      Page ajout de categories bancaires
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 $langs->loadLangs(array('banks', 'categories'));
 
 $action=GETPOST('action','aZ09');
+$optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
 if (!$user->rights->banque->configurer)
   accessforbidden();
@@ -80,15 +81,35 @@ if ($categid) {
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("RubriquesTransactions"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("RubriquesTransactions"));
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+/*print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+*/
 
+print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";
+
+// Line to add category
+if ($action != 'edit')
+{
+
+	print '<tr class="oddeven">';
+	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
+	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+}
+
 
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
@@ -129,19 +150,11 @@ if ($result)
 	$db->free($result);
 }
 
+print '</table>';
+print '</div>';
 
-/*
- * Line to add category
- */
-if ($action != 'edit')
-{
+print '</form>';
 
-	print '<tr class="oddeven">';
-	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
-	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
-	print '</tr>';
-}
-
-print '</table></form>';
-
+// End of page
 llxFooter();
+$db->close();

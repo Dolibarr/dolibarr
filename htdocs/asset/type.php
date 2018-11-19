@@ -49,10 +49,13 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
-if (! $sortfield) {  $sortfield="d.lastname"; }
+if (! $sortfield) {  $sortfield="a.label"; }
 
 $label=GETPOST("label","alpha");
-$comment=GETPOST("comment");
+$accountancy_code_asset=GETPOST('accountancy_code_asset','string');
+$accountancy_code_depreciation_asset=GETPOST('accountancy_code_depreciation_asset','string');
+$accountancy_code_depreciation_expense=GETPOST('accountancy_code_depreciation_expense','string');
+$comment=GETPOST('comment','string');
 
 // Security check
 $result=restrictedArea($user,'asset',$rowid,'asset_type');
@@ -259,39 +262,39 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 
-			print '<td>';
+			print '<td class="center">';
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('',$object->accountancy_code_asset,1);
+				$accountingaccount->fetch('',$objp->accountancy_code_asset,1);
 
-				print $accountingaccount->getNomUrl(0,1,1,'',1);
+				print $accountingaccount->getNomUrl(0,0,0,'',0);
 			} else {
-				print $object->accountancy_code_asset;
+				print $objp->accountancy_code_asset;
 			}
 			print '</td>';
 
-			print '<td>';
+			print '<td class="center">';
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount2 = new AccountingAccount($db);
-				$accountingaccount2->fetch('',$object->accountancy_code_depreciation_asset,1);
+				$accountingaccount2->fetch('',$objp->accountancy_code_depreciation_asset,1);
 
-				print $accountingaccount2->getNomUrl(0,1,1,'',1);
+				print $accountingaccount2->getNomUrl(0,0,0,'',0);
 			} else {
-				print $object->accountancy_code_depreciation_asset;
+				print $objp->accountancy_code_depreciation_asset;
 			}
 			print '</td>';
 
-			print '<td>';
+			print '<td class="center">';
 			if (! empty($conf->accounting->enabled))
 			{
 				$accountingaccount3 = new AccountingAccount($db);
-				$accountingaccount3->fetch('',$object->accountancy_code_depreciation_expense,1);
+				$accountingaccount3->fetch('',$objp->accountancy_code_depreciation_expense,1);
 
-				print $accountingaccount3->getNomUrl(0,1,1,'',1);
+				print $accountingaccount3->getNomUrl(0,0,0,'',0);
 			} else {
-				print $object->accountancy_code_depreciation_expense;
+				print $objp->accountancy_code_depreciation_expense;
 			}
 			print '</td>';
 
@@ -356,7 +359,6 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 		print '</td></tr>';
-
 	}
 	else // For external software
 	{
@@ -419,7 +421,7 @@ if ($rowid > 0)
 		 */
 		if ($action == 'delete')
 		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id,$langs->trans("DeleteAMemberType"),$langs->trans("ConfirmDeleteMemberType",$object->label),"confirm_delete", '',0,1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id,$langs->trans("DeleteAnAssetType"),$langs->trans("ConfirmDeleteAssetType",$object->label),"confirm_delete", '',0,1);
 		}
 
 		$head = asset_type_prepare_head($object);
@@ -428,14 +430,23 @@ if ($rowid > 0)
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/asset/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		$morehtmlref='<div class="refidno">';
+		// Ref asset type
+		$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->asset->write, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, $user->rights->asset->write, 'string', '', null, null, '', 1);
+		$morehtmlref.='</div>';
+
+		dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border" width="100%">';
 
-		print '</tr>';
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("AccountancyCodeAsset");
+		print '</td><td>';
 		if (! empty($conf->accounting->enabled))
 		{
 			$accountingaccount = new AccountingAccount($db);
@@ -446,8 +457,12 @@ if ($rowid > 0)
 			print $object->accountancy_code_asset;
 		}
 		print '</td>';
+		print '</tr>';
 
-		print '<td>';
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("AccountancyCodeDepreciationAsset");
+		print '</td><td>';
 		if (! empty($conf->accounting->enabled))
 		{
 			$accountingaccount2 = new AccountingAccount($db);
@@ -458,8 +473,12 @@ if ($rowid > 0)
 			print $object->accountancy_code_depreciation_asset;
 		}
 		print '</td>';
+		print '</tr>';
 
-		print '<td>';
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("AccountancyCodeDepreciationExpense");
+		print '</td><td>';
 		if (! empty($conf->accounting->enabled))
 		{
 			$accountingaccount3 = new AccountingAccount($db);
@@ -469,6 +488,7 @@ if ($rowid > 0)
 		} else {
 			print $object->accountancy_code_depreciation_expense;
 		}
+		print '</td>';
 		print '</tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -494,9 +514,6 @@ if ($rowid > 0)
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
-		// Add
-		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
-
 		// Delete
 		if ($user->rights->asset->write)
 		{
@@ -504,235 +521,6 @@ if ($rowid > 0)
 		}
 
 		print "</div>";
-
-
-		// Show list of assets (nearly same code than in page list.php)
-		$assettypestatic=new AssetType($db);
-
-		$now=dol_now();
-
-		$sql = "SELECT a.rowid, d.login, d.firstname, d.lastname, d.societe, ";
-		$sql.= " d.datefin,";
-		$sql.= " a.fk_asset_type as type_id,";
-		$sql.= " t.label as type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."asset as a, ".MAIN_DB_PREFIX."asset_type as t";
-		$sql.= " WHERE a.fk_asset_type = t.rowid";
-		$sql.= " AND a.entity IN (".getEntity('asset').")";
-		$sql.= " AND t.rowid = ".$object->id;
-		if ($sall)
-		{
-			$sql.=natural_search(array("f.firstname","d.lastname","d.societe","d.email","d.login","d.address","d.town","d.note_public","d.note_private"), $sall);
-		}
-		if ($status != '')
-		{
-			$sql.= natural_search('d.statut', $status, 2);
-		}
-		if ($action == 'search')
-		{
-			if (GETPOST('search','alpha'))
-			{
-				$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search','alpha'));
-			}
-		}
-		if (! empty($search_lastname))
-		{
-			$sql.= natural_search(array("d.firstname","d.lastname"), $search_lastname);
-		}
-		if (! empty($search_login))
-		{
-			$sql.= natural_search("d.login", $search_login);
-		}
-		if (! empty($search_email))
-		{
-			$sql.= natural_search("d.email", $search_email);
-		}
-		if ($filter == 'uptodate')
-		{
-			$sql.=" AND datefin >= '".$db->idate($now)."'";
-		}
-		if ($filter == 'outofdate')
-		{
-			$sql.=" AND datefin < '".$db->idate($now)."'";
-		}
-
-		$sql.= " ".$db->order($sortfield,$sortorder);
-
-		// Count total nb of records
-		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-		{
-			$resql = $db->query($sql);
-			if ($resql) $nbtotalofrecords = $db->num_rows($result);
-			else dol_print_error($db);
-			if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-			{
-				$page = 0;
-				$offset = 0;
-			}
-		}
-
-		$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-
-			$titre=$langs->trans("AssetsList");
-			if ($status != '')
-			{
-				if ($status == '-1,1')								{ $titre=$langs->trans("MembersListQualified"); }
-				else if ($status == '-1')							{ $titre=$langs->trans("MembersListToValid"); }
-				else if ($status == '1' && ! $filter)				{ $titre=$langs->trans("MembersListValid"); }
-				else if ($status == '1' && $filter=='uptodate')		{ $titre=$langs->trans("MembersListUpToDate"); }
-				else if ($status == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
-				else if ($status == '0')							{ $titre=$langs->trans("MembersListResiliated"); }
-			}
-			elseif ($action == 'search')
-			{
-				$titre=$langs->trans("MembersListQualified");
-			}
-
-			if ($type > 0)
-			{
-				$assettype=new AssetType($db);
-				$result=$assettype->fetch($type);
-				$titre.=" (".$assettype->label.")";
-			}
-
-			$param="&rowid=".$object->id;
-			if (! empty($status))			$param.="&status=".$status;
-			if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
-			if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
-			if (! empty($search_login))		$param.="&search_login=".$search_login;
-			if (! empty($search_email))		$param.="&search_email=".$search_email;
-			if (! empty($filter))			$param.="&filter=".$filter;
-
-			if ($sall)
-			{
-				print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
-			}
-
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
-
-			print '<br>';
-			print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-
-			$moreforfilter = '';
-
-			print '<div class="div-table-responsive">';
-			print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
-			// Lignes des champs de filtre
-			print '<tr class="liste_titre_filter">';
-
-			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
-
-			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
-
-			print '<td class="liste_titre">&nbsp;</td>';
-
-			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'" size="12"></td>';
-
-			print '<td class="liste_titre">&nbsp;</td>';
-
-			print '<td align="right" colspan="2" class="liste_titre">';
-			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-			print '&nbsp; ';
-			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-			print '</td>';
-
-			print "</tr>\n";
-
-			print '<tr class="liste_titre">';
-			print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
-			print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-			print_liste_field_titre("Nature",$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
-			print_liste_field_titre("EMail",$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
-			print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-			print_liste_field_titre("EndSubscription",$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
-			print "</tr>\n";
-
-			while ($i < $num && $i < $conf->liste_limit)
-			{
-				$objp = $db->fetch_object($resql);
-
-				$datefin=$db->jdate($objp->datefin);
-
-				$adh=new Asset($db);
-				$adh->lastname=$objp->lastname;
-				$adh->firstname=$objp->firstname;
-
-				// Lastname
-				print '<tr class="oddeven">';
-				if ($objp->societe != '')
-				{
-					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,20).' / '.dol_trunc($objp->societe,12).'</a></td>'."\n";
-				}
-				else
-				{
-					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"),"user").' '.$adh->getFullName($langs,0,-1,32).'</a></td>'."\n";
-				}
-
-				// Login
-				print "<td>".$objp->login."</td>\n";
-
-				// Type
-				/*print '<td class="nowrap">';
-				$assettypestatic->id=$objp->type_id;
-				$assettypestatic->label=$objp->type;
-				print $assettypestatic->getNomUrl(1,12);
-				print '</td>';
-				*/
-
-				// Moral/Physique
-				print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
-
-				// EMail
-				print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
-
-				// Statut
-				print '<td class="nowrap">';
-				print $adh->LibStatut($objp->statut,$objp->subscription,$datefin,2);
-				print "</td>";
-
-				// Actions
-				print '<td align="center">';
-				if ($user->rights->asset->creer)
-				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
-				}
-				print '&nbsp;';
-				if ($user->rights->asset->supprimer)
-				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
-				}
-				print "</td>";
-
-				print "</tr>\n";
-				$i++;
-			}
-
-			print "</table>\n";
-			print '</div>';
-			print '</form>';
-
-			if ($num > $conf->liste_limit)
-			{
-				print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'');
-			}
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-
 	}
 
 	/* ************************************************************************** */
@@ -782,7 +570,6 @@ if ($rowid > 0)
 			print '<td>';
 			print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 			print '</td></tr>';
-
 		}
 		else // For external software
 		{
@@ -851,7 +638,6 @@ if ($rowid > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

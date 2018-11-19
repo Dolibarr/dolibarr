@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2015	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand		<philippe.grand@atoo-net.com>
@@ -910,5 +910,6 @@ print '</table>';
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

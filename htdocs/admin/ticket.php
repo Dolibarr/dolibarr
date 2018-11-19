@@ -54,10 +54,13 @@ if ($action == 'updateMask') {
         $error++;
     }
 
-    if (!$error) {
-        setEventMessage($langs->trans("SetupSaved"));
-    } else {
-        setEventMessage($langs->trans("Error"), 'errors');
+    if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 } elseif ($action == 'setmod') {
     // TODO Verifier si module numerotation choisi peut etre active
@@ -638,6 +641,6 @@ print '</tr>';
 print '</table><br>';
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

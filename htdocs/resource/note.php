@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Regis Houssin	  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2012	Regis Houssin	  <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent	  <jmenent@2byte.es>
  * Copyright (C) 2016       Laurent Destailleur <aldy@users.sourceforge.net>
  * Copyright (C) 2013       Florian Henry   <florian.henry@open-concept.pro>
@@ -100,5 +100,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();

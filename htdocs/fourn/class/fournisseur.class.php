@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,6 +102,7 @@ class Fournisseur extends Societe
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load statistics indicators
 	 *
@@ -109,6 +110,7 @@ class Fournisseur extends Societe
 	 */
 	function load_state_board()
 	{
+        // phpcs:enable
 		global $conf, $user;
 
 		$this->nb=array();
@@ -141,9 +143,9 @@ class Fournisseur extends Societe
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Create a supplier category
 	 *
@@ -153,6 +155,7 @@ class Fournisseur extends Societe
 	 */
 	function CreateCategory($user, $name)
 	{
+        // phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
 		$sql.= " VALUES ";
 		$sql.= " ('".$this->db->escape($name)."',1,1)";
@@ -172,6 +175,7 @@ class Fournisseur extends Societe
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * 	Return the suppliers list
 	 *
@@ -179,6 +183,7 @@ class Fournisseur extends Societe
 	 */
 	function ListArray()
 	{
+        // phpcs:enable
 		global $conf;
 		global $user;
 
@@ -207,6 +212,4 @@ class Fournisseur extends Societe
 		}
 		return $arr;
 	}
-
 }
-

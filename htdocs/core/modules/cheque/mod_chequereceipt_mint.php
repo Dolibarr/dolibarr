@@ -29,10 +29,20 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php
  */
 class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='CHK';
-	var $error='';
-	var $name='Mint';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='CHK';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	public $name='Mint';
 
 
     /**
@@ -135,6 +145,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -144,7 +155,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 */
 	function chequereceipt_get_num($objsoc,$objforref)
 	{
+        // phpcs:enable
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

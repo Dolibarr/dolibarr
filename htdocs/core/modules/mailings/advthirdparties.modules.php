@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
 *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -32,7 +32,11 @@ class mailing_advthirdparties extends MailingTargets
 
 	var $require_module=array("none");	// This module should not be displayed as Selector in mailling
 	var $picto='company';
-	var $db;
+
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**
@@ -42,12 +46,11 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	function __construct($db)
 	{
-		global $conf;
-
 		$this->db=$db;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
@@ -59,6 +62,7 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	function add_to_target_spec($mailing_id,$socid,$type_of_target, $contactid)
 	{
+        // phpcs:enable
 		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::add_to_target socid=".var_export($socid,true).' contactid='.var_export($contactid,true));
@@ -273,7 +277,6 @@ class mailing_advthirdparties extends MailingTargets
 
 		$s.='</select>';
 		return $s;
-
 	}
 
 
@@ -296,5 +299,4 @@ class mailing_advthirdparties extends MailingTargets
 			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
 	}
-
 }

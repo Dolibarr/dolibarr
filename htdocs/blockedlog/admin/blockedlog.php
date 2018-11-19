@@ -178,5 +178,6 @@ if (GETPOST('withtab','alpha'))
 
 print '<br><br>';
 
+// End of page
 llxFooter();
 $db->close();

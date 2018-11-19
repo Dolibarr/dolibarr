@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
  *
@@ -197,7 +197,6 @@ dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'p
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
 }
 
 /*
@@ -207,7 +206,6 @@ if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
 }
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -233,9 +231,10 @@ $disable_delete = 0;
 // Bank account
 if (! empty($conf->banque->enabled))
 {
+	$bankline=new AccountLine($db);
+
 	if ($object->fk_account > 0)
 	{
-		$bankline=new AccountLine($db);
 		$bankline->fetch($object->bank_line);
 		if ($bankline->rappro)
 		{
@@ -450,6 +449,6 @@ if ($user->societe_id == 0 && $action == '')
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

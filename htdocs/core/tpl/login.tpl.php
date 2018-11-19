@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 // Need global variable $title to be defined by caller (like dol_loginfunction)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
+
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
 {
@@ -26,6 +27,8 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -55,10 +58,16 @@ if (! preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenof
 
 print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
 
+
+$colorbackhmenu1='60,70,100';      // topmenu
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
+$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -69,7 +78,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="login_center center">
+<div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"':'' ?>>
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -114,26 +123,29 @@ if ($disablenofollow) echo '</a>';
 
 <div id="login_right">
 
-<table class="left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
+<div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
+
 <!-- Login -->
-<tr>
-<td class="nowrap center valignmiddle">
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
-<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
-</td>
-</tr>
+<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+</div>
+</div>
+
 <!-- Password -->
-<tr>
-<td class="nowrap center valignmiddle">
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key">
-<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
 </span>
-</td></tr>
+<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
+</div></div>
+
 <?php
 if (! empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
@@ -159,10 +171,11 @@ if ($captcha) {
 	// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
-	<tr>
-	<td class="nowrap none center">
+	<div class="trinputlogin">
+	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
 
-	<table class="login_table_securitycode centpercent"><tr>
+	<table class="login_table_securitycode centpercent">
+	<tr class="valignmiddle">
 	<td>
 	<span class="span-icon-security">
 	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
@@ -170,15 +183,17 @@ if ($captcha) {
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
 	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
+	</tr>
+	</table>
 
-	</td></tr>
+	</div></div>
 <?php } ?>
-</table>
 
-</div> <!-- end div login-right -->
+</div>
 
-</div> <!-- end div login-line1 -->
+</div> <!-- end div login_right -->
+
+</div> <!-- end div login_line1 -->
 
 
 <div id="login_line2" style="clear: both">
@@ -196,11 +211,12 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div class="center" style="margin-top: 8px;">';
+	echo '<div class="center" style="margin-top: 15px;">';
 	if ($forgetpasslink) {
-		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
+		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
+		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
-		if (! $helpcenterlink) echo ')';
 		echo '</a>';
 	}
 
@@ -210,9 +226,8 @@ if ($forgetpasslink || $helpcenterlink)
 		$url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
 		if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
-		if (! $forgetpasslink) echo '(';
 		echo $langs->trans('NeedHelpCenter');
-		echo ')</a>';
+		echo '</a>';
 	}
 	echo '</div>';
 }

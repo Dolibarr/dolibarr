@@ -52,6 +52,12 @@ if (!$mode) $mode='config';
 
 // used in library escpos maybe useful if php doesn't support gzdecode
 if (!function_exists('gzdecode')) {
+    /**
+     * Gzdecode
+     *
+     * @param string    $data   data to deflate
+     * @return string           data deflated
+     */
     function gzdecode($data)
     {
         return gzinflate(substr($data,10,-8));
@@ -243,14 +249,14 @@ if ($mode == 'config' && $user->admin)
     print "</tr>\n";
     $ret = $printer->listprinters();
     $nbofprinters = count($printer->listprinters);
-    
+
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
-        for ($line=0; $line < $nbofprinters; $line++) 
+        for ($line=0; $line < $nbofprinters; $line++)
         {
             print '<tr class="oddeven">';
-            if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) 
+            if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid)
             {
                 print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
@@ -285,7 +291,7 @@ if ($mode == 'config' && $user->admin)
         }
     }
 
-    if ($action!='editprinter') 
+    if ($action!='editprinter')
     {
         if ($nbofprinters > 0)
         {
@@ -299,7 +305,7 @@ if ($mode == 'config' && $user->admin)
             print '<th></th>';
             print "</tr>\n";
         }
-        
+
         print '<tr>';
         print '<td><input size="50" type="text" name="printername"></td>';
         $ret = $printer->selectTypePrinter();
@@ -315,7 +321,7 @@ if ($mode == 'config' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-    
+
     if ($action!='editprinter') {
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
     } else {
@@ -324,9 +330,9 @@ if ($mode == 'config' && $user->admin)
     print '</form>';
 
     print '<div><p></div>';
-    
+
     dol_fiche_head();
-    
+
     print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
@@ -338,7 +344,7 @@ if ($mode == 'config' && $user->admin)
     dol_fiche_end();
 
     print '<div><p></div>';
-    
+
     dol_fiche_head();
     print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
     print '<table class="noborder" width="100%">'."\n";
@@ -378,7 +384,7 @@ if ($mode == 'template' && $user->admin)
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
         $max = count($printer->listprinterstemplates);
-        for ($line=0; $line < $max; $line++) 
+        for ($line=0; $line < $max; $line++)
         {
             print '<tr class="oddeven">';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
@@ -423,7 +429,7 @@ if ($mode == 'template' && $user->admin)
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
     $max = count($printer->tags);
-    for ($tag=0; $tag < $max; $tag++) 
+    for ($tag=0; $tag < $max; $tag++)
     {
         print '<tr class="oddeven">';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
@@ -432,22 +438,20 @@ if ($mode == 'template' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-
 }
 
 // to remove after test
-$object=new stdClass();
-$object->date_time = '2015-11-02 22:30:25';
-$object->id = 1234;
-$object->customer_firstname  = 'John';
-$object->customer_lastname  = 'Deuf';
-$object->vendor_firstname  = 'Jim';
-$object->vendor_lastname  = 'Big';
-$object->barcode = '3700123862396';
+// $object=new stdClass();
+// $object->date_time = '2015-11-02 22:30:25';
+// $object->id = 1234;
+// $object->customer_firstname  = 'John';
+// $object->customer_lastname  = 'Deuf';
+// $object->vendor_firstname  = 'Jim';
+// $object->vendor_lastname  = 'Big';
+// $object->barcode = '3700123862396';
 //$printer->sendToPrinter($object, 1, 16);
 //setEventMessages($printer->error, $printer->errors, 'errors');
 
+// End of page
 llxFooter();
-
 $db->close();
-

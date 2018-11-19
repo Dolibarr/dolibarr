@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       note.php
+ *  \file       htdocs/asset/note.php
  *  \ingroup    asset
  *  \brief      Card with notes on Asset
  */
@@ -78,7 +78,7 @@ if ($id > 0 || ! empty($ref))
 {
 	$object->fetch_thirdparty();
 
-	$head = AssetsPrepareHead($object);
+	$head = asset_prepare_head($object);
 
 	dol_fiche_head($head, 'note', $langs->trans("Asset"), -1, 'generic');
 
@@ -144,6 +144,6 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
  *
@@ -67,7 +67,7 @@ if ($action == 'add')
 
     if ($actionid <= 0)
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), null, 'errors');
         $error++;
     }
 
@@ -188,7 +188,7 @@ if ($result > 0)
 
 
     // Add notification form
-    print_fiche_titre($langs->trans("AddNewNotification"),'','');
+    print load_fiche_titre($langs->trans("AddNewNotification"),'','');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -276,7 +276,7 @@ if ($result > 0)
     }
 
     // List of active notifications
-    print_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
+    print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
 
     // Line with titles
     print '<table width="100%" class="noborder">';
@@ -507,7 +507,6 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-
+// End of page
 llxFooter();
-
 $db->close();

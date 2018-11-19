@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","install","users","other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -39,10 +40,6 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
-
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -173,7 +170,6 @@ if ($savehandler == 'files')
 		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
 	print "</table>";
-
 }
 else
 {
@@ -208,5 +204,6 @@ print '</div>';
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

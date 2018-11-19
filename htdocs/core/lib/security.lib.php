@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,12 +174,11 @@ function dol_verifyHash($chain, $hash, $type='0')
  *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'level1|level2'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
- *  @param	Canvas	$objcanvas		Object canvas
  *  @param	int		$isdraft		1=The object with id=$objectid is a draft
  * 	@return	int						Always 1, die process if not allowed
  *  @see dol_check_secure_access_document
  */
-function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null, $isdraft=0)
+function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $isdraft=0)
 {
 	global $db, $conf;
 	global $hookmanager;
@@ -659,12 +658,13 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
  */
 function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymessage=0)
 {
-	global $conf, $db, $user, $langs;
-	if (! is_object($langs))
-	{
-		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-		$langs=new Translate('',$conf);
-	}
+    global $conf, $db, $user, $langs;
+    if (! is_object($langs))
+    {
+        include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+        $langs=new Translate('',$conf);
+        $langs->setDefaultLang();
+    }
 
 	$langs->load("errors");
 

@@ -166,12 +166,15 @@ foreach($listofnotifiedevents as $notifiedevent)
 {
 
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+    $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
     elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
     elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
     elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
+    elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
+    elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
 
     if ($i) print ', ';
     print $label;
@@ -209,11 +212,15 @@ foreach($listofnotifiedevents as $notifiedevent)
 
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
+    $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
+	// Special cases
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
     elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
     elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
 	elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
+	elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
+	elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
 
     print '<tr class="oddeven">';
     print '<td>'.$elementLabel.'</td>';
@@ -272,7 +279,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

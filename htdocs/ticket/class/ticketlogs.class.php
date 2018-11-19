@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +24,8 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT . "/core/class/commonobject.class.php";
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+//require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+//require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 
 /**
@@ -32,16 +33,46 @@ require_once DOL_DOCUMENT_ROOT . "/core/class/commonobject.class.php";
  */
 class Ticketlogs// extends CommonObject
 {
-    public $db; //!< To store db handler
-    public $error; //!< To return error code (or message)
-    public $errors = array(); //!< To return several error codes (or messages)
-    public $element = 'ticketlogs'; //!< Id that identify managed objects
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error;
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element = 'ticketlogs';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element = 'ticketlogs'; //!< Name of table without prefix where object is stored
 
-    public $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
+	/**
+     * @var string trackid
+     */
     public $fk_track_id;
+
+    /**
+     * @var int user create ID
+     */
     public $fk_user_create;
+
     public $datec = '';
     public $message;
 
@@ -53,7 +84,6 @@ class Ticketlogs// extends CommonObject
     public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
     /**
@@ -75,7 +105,7 @@ class Ticketlogs// extends CommonObject
         }
 
         if (isset($this->fk_user_create)) {
-            $this->fk_user_create = trim($this->fk_user_create);
+            $this->fk_user_create = (int) $this->fk_user_create;
         }
 
         if (isset($this->message)) {
@@ -114,7 +144,7 @@ class Ticketlogs// extends CommonObject
         if (!$error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "ticket_logs");
 
-            if (!$notrigger) {
+            //if (!$notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -124,7 +154,7 @@ class Ticketlogs// extends CommonObject
                 //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
                 //if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 //// End call triggers
-            }
+            //}
         }
 
         // Commit or rollback
@@ -203,7 +233,7 @@ class Ticketlogs// extends CommonObject
         }
 
         if (isset($this->fk_user_create)) {
-            $this->fk_user_create = trim($this->fk_user_create);
+            $this->fk_user_create = (int) $this->fk_user_create;
         }
 
         if (isset($this->message)) {
@@ -232,8 +262,8 @@ class Ticketlogs// extends CommonObject
             $this->errors[] = "Error " . $this->db->lasterror();
         }
 
-        if (!$error) {
-            if (!$notrigger) {
+        //if (!$error) {
+            //if (!$notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -243,8 +273,8 @@ class Ticketlogs// extends CommonObject
                 //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
                 //if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 //// End call triggers
-            }
-        }
+            //}
+        //}
 
         // Commit or rollback
         if ($error) {
@@ -274,8 +304,8 @@ class Ticketlogs// extends CommonObject
 
         $this->db->begin();
 
-        if (!$error) {
-            if (!$notrigger) {
+        //if (!$error) {
+            //if (!$notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -285,8 +315,8 @@ class Ticketlogs// extends CommonObject
                 //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
                 //if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 //// End call triggers
-            }
-        }
+            //}
+        //}
 
         if (!$error) {
             $sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_logs";
@@ -322,10 +352,12 @@ class Ticketlogs// extends CommonObject
      */
     public function initAsSpecimen()
     {
+	global $user;
+	    
         $this->id = 0;
 
         $this->fk_track_id = '';
-        $this->fk_user_create = '';
+        $this->fk_user_create = $user->id;
         $this->datec = '';
         $this->message = '';
     }

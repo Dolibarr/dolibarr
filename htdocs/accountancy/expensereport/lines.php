@@ -236,8 +236,6 @@ if ($result) {
 	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
 	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
-	if ($search_country)	$param .= "&search_country=" . urlencode($search_country);
-	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -349,6 +347,6 @@ if ($result) {
 	print $db->lasterror();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

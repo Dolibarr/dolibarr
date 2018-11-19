@@ -38,6 +38,10 @@ GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accountin
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
 ListOfAccounts=List of accounts
+CountriesInEEC=Countries in EEC
+CountriesNotInEEC=Countries not in EEC
+CountriesInEECExceptMe=Countries in EEC except %s
+CountriesExceptMe=All countries except %s
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
@@ -90,7 +94,7 @@ MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
-CustomersVentilation=ربط فاتورة الزبون 
+CustomersVentilation=ربط فاتورة الزبون
 SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Expense report binding
 CreateMvts=Create new transaction
@@ -156,6 +160,7 @@ Docref=مرجع
 LabelAccount=حساب التسمية
 LabelOperation=Label operation
 Sens=السيناتور
+LetteringCode=Lettering code
 Codejournal=دفتر اليومية
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
@@ -221,6 +226,7 @@ AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=خطأ، لا يمكنك حذف هذا الحساب المحاسبي لأنه مستخدم
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+Balancing=Balancing
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -263,6 +269,7 @@ Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
 Modelcsv_agiris=Export towards Agiris
 Modelcsv_configurable=Export Configurable
+Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

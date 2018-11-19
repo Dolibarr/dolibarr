@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 
 
 if (empty($user->id))
@@ -93,6 +93,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -133,6 +138,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
+    /**
+     * tearDownAfterClass
+     *
+     * @return void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -420,5 +430,4 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-
 }

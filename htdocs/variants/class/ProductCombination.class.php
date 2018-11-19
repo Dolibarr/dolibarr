@@ -1,6 +1,7 @@
 <?php
 
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2018	Juanjo Menent	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,12 @@ class ProductCombination
 	 */
 	public $entity;
 
-	public function __construct(DoliDB $db)
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct(DoliDB $db)
 	{
 		global $conf;
 
@@ -324,6 +330,8 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight + $this->variation_weight;
 		$child->weight_units = $parent->weight_units;
+		$varlabel = $this->getCombinationLabel($this->fk_product_child);
+		$child->label = $parent->label.$varlabel;
 
 		if ($child->update($child->id, $user) > 0) {
 
@@ -332,14 +340,33 @@ class ProductCombination
 
 			// MultiPrix
 			if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-				$new_type = $parent->multiprices_base_type[1];
-				$new_min_price = $parent->multiprices_min[1];
-				$new_psq = $parent->multiprices_recuperableonly[1];
+				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+				{
+					if ($parent->multiprices[$i] != '') {
+						$new_type = $parent->multiprices_base_type[$i];
+						$new_min_price = $parent->multiprices_min[$i];
+						if ($parent->prices_by_qty_list[$i]) {
+							$new_psq = 1;
+						} else {
+							$new_psq = 0;
+						}
 
-				if ($new_type == 'TTC') {
-					$new_price = $parent->multiprices_ttc[1];
-				} else {
-					$new_price = $parent->multiprices[1];
+						if ($new_type == 'TTC') {
+							$new_price = $parent->multiprices_ttc[$i];
+						} else {
+							$new_price = $parent->multiprices[$i];
+						}
+
+						if ($this->variation_price_percentage) {
+							if ($new_price != 0) {
+								$new_price *= 1 + ($this->variation_price / 100);
+							}
+						} else {
+							$new_price += $this->variation_price;
+						}
+
+						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq);
+					}
 				}
 			} else {
 				$new_type = $parent->price_base_type;
@@ -351,15 +378,17 @@ class ProductCombination
 				} else {
 					$new_price = $parent->price;
 				}
-			}
 
-			if ($this->variation_price_percentage) {
-				$new_price *= 1 + ($this->variation_price/100);
-			} else {
-				$new_price += $this->variation_price;
-			}
+				if ($this->variation_price_percentage) {
+					if ($new_price != 0) {
+						$new_price *= 1 + ($this->variation_price / 100);
+					}
+				} else {
+					$new_price += $this->variation_price;
+				}
 
-			$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+			}
 
 			$this->db->commit();
 
@@ -629,7 +658,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		}
 
 		$db->commit();
-		return 1;
+		return $newproduct->id;
 	}
 
 	/**
@@ -675,5 +704,39 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Return label for combinations
+	 * @param 	int 	$prod_child		id of child
+	 * @return 	string					combination label
+	 */
+	public function getCombinationLabel($prod_child)
+	{
+		$label = '';
+		$sql = 'SELECT pav.value AS label';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
+		$sql.= ' WHERE pac.fk_product_child='.$prod_child;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				if ($obj->label)
+				{
+					$label.=' '.$obj->label;
+				}
+				$i++;
+			}
+		}
+		return $label;
 	}
 }
