@@ -252,6 +252,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         //$localobject->note_public='New note public after update';
         $localobject->lastname='New name';
         $localobject->firstname='New firstname';
+        $localobject->gender='man';
         $localobject->address='New address';
         $localobject->zip='New zip';
         $localobject->town='New town';
@@ -284,6 +285,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($localobject->note_public, $newobject->note_public);
         $this->assertEquals($localobject->lastname, $newobject->lastname);
         $this->assertEquals($localobject->firstname, $newobject->firstname);
+        $this->assertEquals($localobject->gender, $newobject->gender);
         $this->assertEquals($localobject->address, $newobject->address);
         $this->assertEquals($localobject->zip, $newobject->zip);
         $this->assertEquals($localobject->town, $newobject->town);
