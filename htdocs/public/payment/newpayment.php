@@ -450,7 +450,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			// Create Stripe customer
 			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 			$stripe = new Stripe($db);
-			$stripeacc = $stripe->getStripeAccount($service);
+            $stripeacc = $stripe->getStripeAccount($service);
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
 			// Create Stripe card from Token
