@@ -193,7 +193,7 @@ FeatureDisabledInDemo=Feature disabled in demo
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the trashcan to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
-ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button to enable/disable a module/application.
+ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button (at end of module line) to enable/disable a module/application.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
 ModulesDeployDesc=If permissions on your file system allow it, you can use this tool to deploy an external module. The module will then be visible on the tab <strong>%s</strong>.
 ModulesMarketPlaces=Find external app/modules
