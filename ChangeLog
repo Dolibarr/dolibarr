@@ -27,6 +27,8 @@ Following changes may create regressions for some external modules, but were nec
   replace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
   modulepart=mycompany that now works like others).
 * Hidden option MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT has been renamed into SHIPPING_PDF_DISPLAY_AMOUNT_HT
+* Remove the no more used and deprecated dol_print_graph function
+
 
 
 ***** ChangeLog for 8.0.3 compared to 8.0.2 *****
