@@ -288,8 +288,9 @@ if ($mode != 'focus' && $mode != 'mandatory')
 }
 // Entity
 if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity",$_SERVER["PHP_SELF"],'entity,page','',$param,'',$sortfield,$sortorder);
+else print_liste_field_titre("",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
 // Actions
-print '<td align="center"></td>';
+print_liste_field_titre("",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
 print "</tr>\n";
 
 
