@@ -58,9 +58,6 @@ class EmailCollectorAction extends CommonObject
 	public $picto = 'emailcollectoraction@emailcollector';
 
 
-	public $fk_element = 'fk_emailcollector';
-
-
 	/**
 	 *  'type' if the field format.
 	 *  'label' the translation key.

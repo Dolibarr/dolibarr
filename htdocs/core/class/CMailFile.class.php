@@ -475,7 +475,7 @@ class CMailFile
 			if (! empty($addr_cc)) $this->message->setCc($this->getArrayAddress($addr_cc));
 			if (! empty($addr_bcc)) $this->message->setBcc($this->getArrayAddress($addr_bcc));
 			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
-			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
+			if (isset($deliveryreceipt) && $deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
 		}
 		else
 		{

@@ -55,6 +55,16 @@ class EmailCollector extends CommonObject
 	 */
 	public $picto = 'generic';
 
+	/**
+	 * @var int    Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_emailcollector';
+
+	/**
+	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 */
+	protected $childtables=array('emailcollector_emailcollectorfilter', 'emailcollector_emailcollectoraction');
+
 
 	/**
 	 *  'type' if the field format.
@@ -382,7 +392,7 @@ class EmailCollector extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $notrigger);
+		return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
