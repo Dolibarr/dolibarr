@@ -2468,6 +2468,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_PAGENAME','alpha'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
 	if (GETPOST('WEBSITE_ALIASALT','alpha'))    $pagealiasalt=GETPOST('WEBSITE_ALIASALT','alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION','alpha')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
+	if (GETPOST('WEBSITE_IMAGE','alpha'))       $pageimage=GETPOST('WEBSITE_IMAGE','alpha');
 	if (GETPOST('WEBSITE_KEYWORDS','alpha'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
 	if (GETPOST('WEBSITE_LANG','aZ09'))         $pagelang=GETPOST('WEBSITE_LANG','aZ09');
 	if (GETPOST('htmlheader','none'))			$pagehtmlheader=GETPOST('htmlheader','none');
@@ -2506,6 +2507,13 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $langs->trans('WEBSITE_DESCRIPTION');
 	print '</td><td>';
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($pagedescription).'">';
+	print '</td></tr>';
+
+	print '<tr><td>';
+	$htmlhelp=$langs->trans("WEBSITE_IMAGEDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	print '</td><td>';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';
