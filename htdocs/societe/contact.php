@@ -59,6 +59,9 @@ $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
 
+$massaction = GETPOST('massaction');
+$toselect = (array)GETPOST('toselect');
+
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
@@ -116,6 +119,25 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 
+if ($massaction == 'update_addresses')
+{
+	$contact = new Contact($db);
+	foreach ($toselect as $id_contact)
+	{
+		$contact->fetch($id_contact);
+		
+		$contact->address = $object->address;
+		$contact->zip = $object->zip;
+		$contact->town = $object->town;
+		$contact->country_id = $object->country_id;
+		$contact->country_code = $object->country_code;
+		$contact->state_id = $object->state_id;
+		$contact->state_code = $object->state_code;
+		$contact->state = $object->state;
+		
+		$contact->update($id_contact, $user);
+	}
+}
 
 /*
  *  View
@@ -156,6 +178,25 @@ dol_fiche_end();
 
 print '<br>';
 
+$objectclass='Contact';
+$objectlabel='contact';
+$permtoread = $user->rights->contact->lire;
+$permtocreate = $user->rights->contact->creer;
+$permtodelete = $user->rights->contact->creer;
+$uploaddir = $conf->societe->dir_output;
+
+require_once DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+$arrayofmassactions=array(
+		'update_addresses'=>$langs->trans("ReplaceSelectedAdressesWithThirdpartyAddress"),
+);
+
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
+print '<form name="massactionform" method="POST" action="">';
+
+print $massactionbutton;
+
 if ($action != 'presend')
 {
 	// Contacts list
@@ -170,6 +211,9 @@ if ($action != 'presend')
 		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 }
+
+print '</form>';
+
 
 // End of page
 llxFooter();
