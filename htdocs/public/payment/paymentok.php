@@ -876,7 +876,7 @@ else
     elseif ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
     elseif ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
 
-    // Send an email
+    // Send warning of error to administrator
     if ($sendemail)
     {
     	$companylangs = new Translate('', $conf);
@@ -908,7 +908,7 @@ else
         $content="";
         $content.='<font color="orange">'.$companylangs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."</font>\n";
 
-        $content.="<br>\n";
+        $content.="<br><br>\n";
         $content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
         $content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
         $content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
