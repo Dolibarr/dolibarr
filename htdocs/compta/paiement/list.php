@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta'));
+$langs->loadLangs(array('bills', 'compta', 'companies'));
 
 // Security check
 $facid	= GETPOST('facid','int');
@@ -305,7 +305,7 @@ if ($resql)
         print '</td>';
 
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour').'</td>';
 
         // Thirdparty
         print '<td>';
