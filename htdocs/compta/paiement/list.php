@@ -305,7 +305,9 @@ if ($resql)
         print '</td>';
 
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour').'</td>';
+        $dateformatforpayment = 'day';
+        if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment).'</td>';
 
         // Thirdparty
         print '<td>';
