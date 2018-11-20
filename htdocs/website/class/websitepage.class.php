@@ -169,6 +169,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.aliasalt,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
+		$sql .= " t.image,";
 		$sql .= " t.keywords,";
 		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
@@ -215,6 +216,7 @@ class WebsitePage extends CommonObject
 
 				$this->title = $obj->title;
 				$this->description = $obj->description;
+				$this->image = $obj->image;
 				$this->keywords = $obj->keywords;
 				$this->htmlheader = $obj->htmlheader;
 				$this->content = $obj->content;
@@ -243,7 +245,7 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 * Load object in memory from the database
+	 * Load list of objects in memory from the database.
 	 *
 	 * @param  string      $websiteid    Web site
 	 * @param  string      $sortorder    Sort Order
@@ -254,7 +256,7 @@ class WebsitePage extends CommonObject
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($websiteid, $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($websiteid, $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter=array(), $filtermode='AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -268,6 +270,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.aliasalt,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
+		$sql .= " t.image,";
 		$sql .= " t.keywords,";
 		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
@@ -300,7 +303,7 @@ class WebsitePage extends CommonObject
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-            $sql .=  ' ' . $this->db->plimit($limit, $offset);
+			$sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -318,6 +321,7 @@ class WebsitePage extends CommonObject
 				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 				$record->title = $obj->title;
 				$record->description = $obj->description;
+				$record->image = $obj->image;
 				$record->keywords = $obj->keywords;
 				$record->htmlheader = $obj->htmlheader;
 				$record->content = $obj->content;
@@ -570,6 +574,7 @@ class WebsitePage extends CommonObject
 		$this->aliasalt = 'specimenalt';
 		$this->title = 'My Page';
 		$this->description = 'This is my page';
+		$this->image = '';
 		$this->keywords = 'keyword1, keyword2';
 		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';

@@ -626,6 +626,7 @@ if ($action == 'addcontainer')
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT','alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
+		$objectpage->image = GETPOST('WEBSITE_IMAGE','alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
 		$objectpage->htmlheader = GETPOST('htmlheader','none');
@@ -1127,6 +1128,7 @@ if ($action == 'updatemeta')
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
+		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
@@ -2451,6 +2453,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagealiasalt=$objectpage->aliasalt;
 		$pagetitle=$objectpage->title;
 		$pagedescription=$objectpage->description;
+		$pageimage=$objectpage->image;
 		$pagekeywords=$objectpage->keywords;
 		$pagelang=$objectpage->lang;
 		$pagehtmlheader=$objectpage->htmlheader;
