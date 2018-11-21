@@ -5729,20 +5729,29 @@ function dol_textishtml($msg,$option=0)
  *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2
  *  text1 txt  + text2 txt  => text1 + '\n' + text2
  *
- *  @param	string	$text1		Text 1
- *  @param	string	$text2		Text 2
- *  @param  bool	$forxml     false=Use <br>, true=Use <br />
- *  @return	string				Text 1 + new line + Text2
+ *  @param      string  $text1          Text 1
+ *  @param      string  $text2          Text 2
+ *  @param  bool        $forxml     false=Use <br>, true=Use <br />
+ *  @param  bool        $invert         invert order of description lines if CONF CHANGE_ORDER_CONCAT_DESCRIPTION is active
+ *  @return     string                          Text 1 + new line + Text2
  *  @see    dol_textishtml
  */
-function dol_concatdesc($text1,$text2,$forxml=false)
+function dol_concatdesc($text1,$text2,$forxml=false, $invert=false)
 {
-	$ret='';
-	$ret.= (! dol_textishtml($text1) && dol_textishtml($text2))?dol_nl2br($text1, 0, $forxml):$text1;
-	$ret.= (! empty($text1) && ! empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2))?($forxml?"<br \>\n":"<br>\n") : "\n") : "";
-	$ret.= (dol_textishtml($text1) && ! dol_textishtml($text2))?dol_nl2br($text2, 0, $forxml):$text2;
-	return $ret;
+        if (!empty($invert))
+        {
+                $tmp = $text1;
+                $text1 = $text2;
+                $text2 = $tmp;
+        }
+        
+        $ret='';
+        $ret.= (! dol_textishtml($text1) && dol_textishtml($text2))?dol_nl2br($text1, 0, $forxml):$text1;
+        $ret.= (! empty($text1) && ! empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2))?($forxml?"<br \>\n":"<br>\n") : "\n") : "";
+        $ret.= (dol_textishtml($text1) && ! dol_textishtml($text2))?dol_nl2br($text2, 0, $forxml):$text2;
+        return $ret;
 }
+
 
 
 /**

@@ -959,7 +959,7 @@ if (empty($reshook))
 					$desc = $prod->description;
 				}
 
-				$desc = dol_concatdesc($desc, $product_desc);
+				$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				// Add dimensions into product description
 				/*if (empty($conf->global->MAIN_PRODUCT_DISABLE_AUTOADD_DIM))
