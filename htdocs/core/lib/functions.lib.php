@@ -6792,13 +6792,15 @@ function picto_from_langcode($codelang, $moreatt = '')
  */
 function getLanguageCodeFromCountryCode($countrycode)
 {
-	$countrycodetolanguage = array(
-		'SA' => 'ar_AR',
-		'DK' => 'da_DA',
-		'CA' => 'en_CA',
-		'SE' => 'sv_SV'
-	);
-	if (! empty($countrycodetolanguage[$countrycode])) return $countrycodetolanguage[$countrycode];
+	global $mysoc;
+
+	if (strtoupper($countrycode) == 'MQ') return 'fr_CA';
+	if (strtoupper($countrycode) == 'SE') return 'sv_SE';	// se_SE is Sami/Sweden, and we want in priority sv_SE for SE country
+	if (strtoupper($countrycode) == 'CH')
+	{
+		if ($mysoc->country_code == 'FR') return 'fr_CH';
+		if ($mysoc->country_code == 'DE') return 'de_CH';
+	}
 
 	// Locale list taken from:
 	// http://stackoverflow.com/questions/3191664/
@@ -6816,7 +6818,6 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'ar-LB',
 		'ar-LY',
 		'ar-MA',
-		'arn-CL',
 		'ar-OM',
 		'ar-QA',
 		'ar-SA',
@@ -6824,8 +6825,6 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'ar-TN',
 		'ar-YE',
 		'as-IN',
-		'az-Cyrl-AZ',
-		'az-Latn-AZ',
 		'ba-RU',
 		'be-BY',
 		'bg-BG',
@@ -6833,8 +6832,6 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'bn-IN',
 		'bo-CN',
 		'br-FR',
-		'bs-Cyrl-BA',
-		'bs-Latn-BA',
 		'ca-ES',
 		'co-FR',
 		'cs-CZ',
@@ -6845,10 +6842,8 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'de-DE',
 		'de-LI',
 		'de-LU',
-		'dsb-DE',
 		'dv-MV',
 		'el-GR',
-		'en-029',
 		'en-AU',
 		'en-BZ',
 		'en-CA',
@@ -6888,7 +6883,6 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'eu-ES',
 		'fa-IR',
 		'fi-FI',
-		'fil-PH',
 		'fo-FO',
 		'fr-BE',
 		'fr-CA',
@@ -6900,14 +6894,11 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'ga-IE',
 		'gd-GB',
 		'gl-ES',
-		'gsw-FR',
 		'gu-IN',
-		'ha-Latn-NG',
 		'he-IL',
 		'hi-IN',
 		'hr-BA',
 		'hr-HR',
-		'hsb-DE',
 		'hu-HU',
 		'hy-AM',
 		'id-ID',
@@ -6916,15 +6907,12 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'is-IS',
 		'it-CH',
 		'it-IT',
-		'iu-Cans-CA',
-		'iu-Latn-CA',
 		'ja-JP',
 		'ka-GE',
 		'kk-KZ',
 		'kl-GL',
 		'km-KH',
 		'kn-IN',
-		'kok-IN',
 		'ko-KR',
 		'ky-KG',
 		'lb-LU',
@@ -6935,8 +6923,6 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'mk-MK',
 		'ml-IN',
 		'mn-MN',
-		'mn-Mong-CN',
-		'moh-CA',
 		'mr-IN',
 		'ms-BN',
 		'ms-MY',
@@ -6946,24 +6932,17 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'nl-BE',
 		'nl-NL',
 		'nn-NO',
-		'nso-ZA',
 		'oc-FR',
 		'or-IN',
 		'pa-IN',
 		'pl-PL',
-		'prs-AF',
 		'ps-AF',
 		'pt-BR',
 		'pt-PT',
-		'qut-GT',
-		'quz-BO',
-		'quz-EC',
-		'quz-PE',
 		'rm-CH',
 		'ro-RO',
 		'ru-RU',
 		'rw-RW',
-		'sah-RU',
 		'sa-IN',
 		'se-FI',
 		'se-NO',
@@ -6971,39 +6950,21 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'si-LK',
 		'sk-SK',
 		'sl-SI',
-		'sma-NO',
-		'sma-SE',
-		'smj-NO',
-		'smj-SE',
-		'smn-FI',
-		'sms-FI',
 		'sq-AL',
-		'sr-Cyrl-BA',
-		'sr-Cyrl-CS',
-		'sr-Cyrl-ME',
-		'sr-Cyrl-RS',
-		'sr-Latn-BA',
-		'sr-Latn-CS',
-		'sr-Latn-ME',
-		'sr-Latn-RS',
 		'sv-FI',
 		'sv-SE',
 		'sw-KE',
 		'syr-SY',
 		'ta-IN',
 		'te-IN',
-		'tg-Cyrl-TJ',
 		'th-TH',
 		'tk-TM',
 		'tn-ZA',
 		'tr-TR',
 		'tt-RU',
-		'tzm-Latn-DZ',
 		'ug-CN',
 		'uk-UA',
 		'ur-PK',
-		'uz-Cyrl-UZ',
-		'uz-Latn-UZ',
 		'vi-VN',
 		'wo-SN',
 		'xh-ZA',
@@ -7016,14 +6977,17 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'zu-ZA',
 	);
 
+	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
+	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
+
 	foreach ($locales as $locale)
 	{
-		$locale_region = locale_get_region($locale);
 		$locale_language = locale_get_primary_language($locale);
-		$locale_array = array('language' => $locale_language, 'region' => $locale_region);
+		$locale_region = locale_get_region($locale);
 		if (strtoupper($countrycode) == $locale_region)
 		{
-			return locale_compose($locale_array);
+			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+			return strtolower($locale_language).'_'.strtoupper($locale_region);
 		}
 	}
 
