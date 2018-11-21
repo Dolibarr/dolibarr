@@ -626,7 +626,7 @@ class Don extends CommonObject
         }
         else if (! empty($ref))
         {
-        	$sql.= " AND ref='".$this->db->escape($ref)."'";
+        	$sql.= " AND d.ref='".$this->db->escape($ref)."'";
         }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
