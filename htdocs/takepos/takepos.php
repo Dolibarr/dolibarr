@@ -36,7 +36,7 @@ $place = GETPOST('place','int');
 if ($place=="") $place="0";
 $action = GETPOST('action','alpha');
 
-$langs->loadLangs(array("bills","orders","commercial","cashdesk"));
+$langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
 
 /*
@@ -292,6 +292,14 @@ function TakeposPrintingOrder(){
 	});
 }
 
+function OpenDrawer(){
+	$.ajax({
+			type: "POST",
+			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
+			data: "opendrawer"
+		});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -346,6 +354,10 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 		$menus[$r++]=array('title'=>$langs->trans("Order"),
 						'action'=>'TakeposPrintingOrder();');
 	}
+}
+if ($conf->global->TAKEBOX){
+	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
+					'action'=>'OpenDrawer();');
 }
 ?>
 <div style="position:absolute; top:1%; left:65.5%; height:37%; width:32.5%;">
