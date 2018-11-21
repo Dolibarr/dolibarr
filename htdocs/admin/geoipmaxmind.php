@@ -152,7 +152,7 @@ if ($geoip)
 	else print $langs->trans("Error");
 	*/
 	//var_dump($_SERVER);
-	$ip = $_SERVER['REMOTE_ADDR']?$_SERVER['REMOTE_ADDR']:(($_SERVER['HTTP_X_FORWARDED_FOR']?$_SERVER['HTTP_X_FORWARDED_FOR']:$_SERVER['HTTP_CLIENT_IP']));
+	$ip = getUserRemoteIP();
 	//$ip='91.161.249.43';
 	$isip=is_ip($ip);
 	if ($isip == 1)
@@ -162,7 +162,7 @@ if ($geoip)
 		if ($result) print $result;
 		else print $langs->trans("Error");
 	}
-	elseif ($isip == 2)
+	else
 	{
 		print '<br>'.$ip.' -> ';
 		$result=dol_print_ip($ip,1);
