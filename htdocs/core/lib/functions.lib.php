@@ -2666,6 +2666,20 @@ function dol_print_ip($ip,$mode=0)
 }
 
 /**
+ * Return the IP of remote user.
+ * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
+ * Then HTTP_CLIENT_IP if defined (rare)
+ * Then REMOTE_ADDR (not way to be modified by user but may be wrong if using proxy)
+ *
+ * @return	string		Ip of remote user.
+ */
+function getUserRemoteIP()
+{
+	$ip = $_SERVER['HTTP_X_FORWARDED_FOR']?$_SERVER['HTTP_X_FORWARDED_FOR']:(($_SERVER['HTTP_CLIENT_IP']?$_SERVER['HTTP_CLIENT_IP']:$_SERVER['REMOTE_ADDR']));
+	return $ip;
+}
+
+/**
  * 	Return a country code from IP. Empty string if not found.
  *
  * 	@param	string	$ip			IP
@@ -2708,7 +2722,7 @@ function dol_user_country()
 	$ret='';
 	if (! empty($conf->geoipmaxmind->enabled))
 	{
-		$ip=$_SERVER["REMOTE_ADDR"];
+		$ip=getUserRemoteIP();
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
@@ -5783,7 +5797,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		'__USER_FIRSTNAME__' => (string) $user->firstname,
 		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
-		'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
+		'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
 		)
 			);
 	}
@@ -6768,6 +6782,216 @@ function picto_from_langcode($codelang, $moreatt = '')
 	}
 
 	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt);
+}
+
+/**
+ * Return default language from country code
+ *
+ * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', ...
+ * @return	string					Value of locale like 'en_US', 'fr_FR', ...
+ */
+function getLanguageCodeFromCountryCode($countrycode)
+{
+	global $mysoc;
+
+	if (strtoupper($countrycode) == 'MQ') return 'fr_CA';
+	if (strtoupper($countrycode) == 'SE') return 'sv_SE';	// se_SE is Sami/Sweden, and we want in priority sv_SE for SE country
+	if (strtoupper($countrycode) == 'CH')
+	{
+		if ($mysoc->country_code == 'FR') return 'fr_CH';
+		if ($mysoc->country_code == 'DE') return 'de_CH';
+	}
+
+	// Locale list taken from:
+	// http://stackoverflow.com/questions/3191664/
+	// list-of-all-locales-and-their-short-codes
+	$locales = array(
+		'af-ZA',
+		'am-ET',
+		'ar-AE',
+		'ar-BH',
+		'ar-DZ',
+		'ar-EG',
+		'ar-IQ',
+		'ar-JO',
+		'ar-KW',
+		'ar-LB',
+		'ar-LY',
+		'ar-MA',
+		'ar-OM',
+		'ar-QA',
+		'ar-SA',
+		'ar-SY',
+		'ar-TN',
+		'ar-YE',
+		'as-IN',
+		'ba-RU',
+		'be-BY',
+		'bg-BG',
+		'bn-BD',
+		'bn-IN',
+		'bo-CN',
+		'br-FR',
+		'ca-ES',
+		'co-FR',
+		'cs-CZ',
+		'cy-GB',
+		'da-DK',
+		'de-AT',
+		'de-CH',
+		'de-DE',
+		'de-LI',
+		'de-LU',
+		'dv-MV',
+		'el-GR',
+		'en-AU',
+		'en-BZ',
+		'en-CA',
+		'en-GB',
+		'en-IE',
+		'en-IN',
+		'en-JM',
+		'en-MY',
+		'en-NZ',
+		'en-PH',
+		'en-SG',
+		'en-TT',
+		'en-US',
+		'en-ZA',
+		'en-ZW',
+		'es-AR',
+		'es-BO',
+		'es-CL',
+		'es-CO',
+		'es-CR',
+		'es-DO',
+		'es-EC',
+		'es-ES',
+		'es-GT',
+		'es-HN',
+		'es-MX',
+		'es-NI',
+		'es-PA',
+		'es-PE',
+		'es-PR',
+		'es-PY',
+		'es-SV',
+		'es-US',
+		'es-UY',
+		'es-VE',
+		'et-EE',
+		'eu-ES',
+		'fa-IR',
+		'fi-FI',
+		'fo-FO',
+		'fr-BE',
+		'fr-CA',
+		'fr-CH',
+		'fr-FR',
+		'fr-LU',
+		'fr-MC',
+		'fy-NL',
+		'ga-IE',
+		'gd-GB',
+		'gl-ES',
+		'gu-IN',
+		'he-IL',
+		'hi-IN',
+		'hr-BA',
+		'hr-HR',
+		'hu-HU',
+		'hy-AM',
+		'id-ID',
+		'ig-NG',
+		'ii-CN',
+		'is-IS',
+		'it-CH',
+		'it-IT',
+		'ja-JP',
+		'ka-GE',
+		'kk-KZ',
+		'kl-GL',
+		'km-KH',
+		'kn-IN',
+		'ko-KR',
+		'ky-KG',
+		'lb-LU',
+		'lo-LA',
+		'lt-LT',
+		'lv-LV',
+		'mi-NZ',
+		'mk-MK',
+		'ml-IN',
+		'mn-MN',
+		'mr-IN',
+		'ms-BN',
+		'ms-MY',
+		'mt-MT',
+		'nb-NO',
+		'ne-NP',
+		'nl-BE',
+		'nl-NL',
+		'nn-NO',
+		'oc-FR',
+		'or-IN',
+		'pa-IN',
+		'pl-PL',
+		'ps-AF',
+		'pt-BR',
+		'pt-PT',
+		'rm-CH',
+		'ro-RO',
+		'ru-RU',
+		'rw-RW',
+		'sa-IN',
+		'se-FI',
+		'se-NO',
+		'se-SE',
+		'si-LK',
+		'sk-SK',
+		'sl-SI',
+		'sq-AL',
+		'sv-FI',
+		'sv-SE',
+		'sw-KE',
+		'syr-SY',
+		'ta-IN',
+		'te-IN',
+		'th-TH',
+		'tk-TM',
+		'tn-ZA',
+		'tr-TR',
+		'tt-RU',
+		'ug-CN',
+		'uk-UA',
+		'ur-PK',
+		'vi-VN',
+		'wo-SN',
+		'xh-ZA',
+		'yo-NG',
+		'zh-CN',
+		'zh-HK',
+		'zh-MO',
+		'zh-SG',
+		'zh-TW',
+		'zu-ZA',
+	);
+
+	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
+	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
+
+	foreach ($locales as $locale)
+	{
+		$locale_language = locale_get_primary_language($locale);
+		$locale_region = locale_get_region($locale);
+		if (strtoupper($countrycode) == $locale_region)
+		{
+			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+			return strtolower($locale_language).'_'.strtoupper($locale_region);
+		}
+	}
+
+	return null;
 }
 
 /**
