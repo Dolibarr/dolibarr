@@ -724,48 +724,50 @@ class AccountancyCategory // extends CommonObject
 	 * @param string	$thirdparty_code	Thirdparty code
 	 * @param string 	$month 				Specifig month - Can be empty
 	 * @param string 	$year 				Specifig year - Can be empty
-	 * @return integer 						Result in table
+	 * @return integer 						<0 if KO, >= 0 if OK
 	 */
 	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code='nofilter', $month=0, $year=0)
 	{
 		global $conf;
 
+		$this->sdc = 0;
+		$this->sdcpermonth = array();
+
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
-		$sql .= " WHERE t.numero_compte = '" . $this->db->escape($cpt) . "'";
+		$sql .= " WHERE t.entity = ".$conf->entity;
+		$sql .= " AND t.numero_compte = '" . $this->db->escape($cpt) . "'";
 		if (! empty($date_start) && ! empty($date_end) && (empty($month) || empty($year)))	// If month/year provided, it is stronger than filter date_start/date_end
-			$sql .= " AND t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."'";
+			$sql .= " AND (t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."')";
 		if (! empty($month) && ! empty($year)) {
-			$sql .= " AND t.doc_date BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
+			$sql .= " AND (t.doc_date BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."')";
 		}
 		if ($thirdparty_code != 'nofilter')
 		{
 			$sql .= " AND t.thirdparty_code = '".$this->db->escape($thirdparty_code)."'";
 		}
-		$sql .= " AND t.entity = ".$conf->entity;
 		//print $sql;
 
-		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-
-		if ($resql) {
+		if ($resql)
+		{
 			$num = $this->db->num_rows($resql);
-			$this->sdc = 0;
-			if ($num) {
+			if ($num)
+			{
 				$obj = $this->db->fetch_object($resql);
 				if ($sens == 1) {
 					$this->sdc = $obj->debit - $obj->credit;
 				} else {
 					$this->sdc = $obj->credit - $obj->debit;
 				}
+				$this->sdcpermonth[$year.'_'.$month.'_'.$sens] = $this->sdc;
 			}
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
-
-			return - 1;
+			return -1;
 		}
 	}
 

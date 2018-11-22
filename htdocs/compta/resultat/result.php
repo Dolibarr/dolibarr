@@ -437,7 +437,7 @@ elseif ($modecompta=="BOOKKEEPING")
 				// @TODO Optimize mode when $showaccountdetail == 'no'
 
 				// N-1
-				$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start_previous, $date_end_previous, $cpt['dc']);
+				$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start_previous, $date_end_previous, $cpt['dc']?$cpt['dc']:0);
 				if ($return < 0) {
 					setEventMessages(null, $AccCat->errors, 'errors');
 					$resultNP=0;
@@ -458,7 +458,7 @@ elseif ($modecompta=="BOOKKEEPING")
 					if (($k+1) < $start_month) $yeartoprocess++;
 
 					//var_dump($monthtoprocess.'_'.$yeartoprocess);
-					$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+					$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']?$cpt['dc']:0, 'nofilter', $monthtoprocess, $yeartoprocess);
 					if ($return < 0) {
 						setEventMessages(null, $AccCat->errors, 'errors');
 						$resultM=0;
