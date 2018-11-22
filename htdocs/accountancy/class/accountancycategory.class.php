@@ -732,6 +732,7 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
+		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
 		$sql .= " WHERE t.numero_compte = '" . $this->db->escape($cpt) . "'";
 		if (! empty($date_start) && ! empty($date_end) && (empty($month) || empty($year)))	// If month/year provided, it is stronger than filter date_start/date_end
 			$sql .= " AND t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."'";

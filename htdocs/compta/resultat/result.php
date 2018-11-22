@@ -445,23 +445,12 @@ elseif ($modecompta=="BOOKKEEPING")
 					$resultNP=$AccCat->sdc;
 				}
 
-				// N
-				$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
-				if ($return < 0) {
-					setEventMessages(null, $AccCat->errors, 'errors');
-					$resultN=0;
-				} else {
-					$resultN=$AccCat->sdc;
-				}
-
 				$totCat['NP'] += $resultNP;
-				$totCat['N'] += $resultN;
 				$sommes[$code]['NP'] += $resultNP;
-				$sommes[$code]['N'] += $resultN;
 				$totPerAccount[$cpt['account_number']]['NP'] = $resultNP;
-				$totPerAccount[$cpt['account_number']]['N'] = $resultN;
 
 				// Each month
+				$resultN = 0;
 				foreach($months as $k => $v)
 				{
 					$monthtoprocess = $k+1;			// ($k+1) is month 1, 2, ..., 12
@@ -479,7 +468,22 @@ elseif ($modecompta=="BOOKKEEPING")
 					$totCat['M'][$k] += $resultM;
 					$sommes[$code]['M'][$k] += $resultM;
 					$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
+
+					$resultN += $resultM;
 				}
+
+				// N
+				/*$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
+				if ($return < 0) {
+					setEventMessages(null, $AccCat->errors, 'errors');
+					$resultN=0;
+				} else {
+					$resultN=$AccCat->sdc;
+				}*/
+
+				$totCat['N'] += $resultN;
+				$sommes[$code]['N'] += $resultN;
+				$totPerAccount[$cpt['account_number']]['N'] = $resultN;
 			}
 
 			// Now output columns for row $code ('VTE', 'MAR', ...)
@@ -497,7 +501,6 @@ elseif ($modecompta=="BOOKKEEPING")
 			print "</tr>\n";
 
 			// Loop on detail of all accounts
-			// This make 14 calls for each detail of account (N-1, N and 12 monthes m)
 			if ($showaccountdetail != 'no')
 			{
 				foreach($cpts as $i => $cpt)
