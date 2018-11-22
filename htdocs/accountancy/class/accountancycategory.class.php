@@ -717,7 +717,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int 		$cpt 				Id accounting account
+	 * @param int[array	$cpt 				Accounting account or array of accounting account
 	 * @param string 	$date_start			Date start
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit, 1: debit - credit
@@ -734,10 +734,24 @@ class AccountancyCategory // extends CommonObject
 		$this->sdcpermonth = array();
 
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
+		if (is_array($cpt)) $sql.=", t.numero_compte as accountancy_account";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
 		$sql .= " WHERE t.entity = ".$conf->entity;
-		$sql .= " AND t.numero_compte = '" . $this->db->escape($cpt) . "'";
+		if (is_array($cpt))
+		{
+			$listofaccount='';
+			foreach($cpt as $cptcursor)
+			{
+				if ($listofaccount) $listofaccount.=",";
+				$listofaccount.="'".$cptcursor."'";
+			}
+			$sql .= " AND t.numero_compte IN (" .$listofaccount. ")";
+		}
+		else
+		{
+			$sql .= " AND t.numero_compte = '" . $this->db->escape($cpt) . "'";
+		}
 		if (! empty($date_start) && ! empty($date_end) && (empty($month) || empty($year)))	// If month/year provided, it is stronger than filter date_start/date_end
 			$sql .= " AND (t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."')";
 		if (! empty($month) && ! empty($year)) {
@@ -747,6 +761,7 @@ class AccountancyCategory // extends CommonObject
 		{
 			$sql .= " AND t.thirdparty_code = '".$this->db->escape($thirdparty_code)."'";
 		}
+		if (is_array($cpt)) $sql.=" GROUP BY t.numero_compte";
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -761,11 +776,15 @@ class AccountancyCategory // extends CommonObject
 				} else {
 					$this->sdc = $obj->credit - $obj->debit;
 				}
-				$this->sdcpermonth[$year.'_'.$month.'_'.$sens] = $this->sdc;
+				if (is_array($cpt))
+				{
+					$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+				}
 			}
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
+			$this->errors[] = $this->error;
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
 			return -1;
 		}
