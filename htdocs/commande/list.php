@@ -233,7 +233,7 @@ $projectstatic=new Project($db);
 
 $title=$langs->trans("Orders");
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
-llxHeader('',$title,$help_url);
+// llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -401,6 +401,16 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	{
+		$obj = $db->fetch_object($resql);
+		$id = $obj->rowid;
+		header("Location: ".DOL_URL_ROOT.'/commande/card.php?id='.$id);
+		exit;
+	}
+
+	llxHeader('',$title,$help_url);
+	
 	$param='';
 
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
