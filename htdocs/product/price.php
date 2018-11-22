@@ -351,7 +351,10 @@ if (empty($reshook))
 					break;
 				}
 
-				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
+				if($object->multiprices[$key]!=$newprice || $object->multiprices_min[$key]!=$newprice_min || $object->multiprices_base_type[$key]!=$val['price_base_type'])
+       				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
+				else $res=0;
+
 
 				if ($res < 0) {
 					$error ++;
