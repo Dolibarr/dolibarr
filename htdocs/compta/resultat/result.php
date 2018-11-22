@@ -233,13 +233,13 @@ print '<th class="liste_titre" align="right">'.$langs->trans("SelectedPeriod").'
 foreach($months as $k => $v){
 	if (($k+1) >= $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans($v).'</th>';
+		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s",($k+1))).'</th>';
 	}
 }
 foreach($months as $k => $v){
 	if (($k+1) < $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans($v).'</th>';
+		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s",($k+1))).'</th>';
 	}
 }
 print	'</tr>';
