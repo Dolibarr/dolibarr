@@ -78,7 +78,7 @@ class AccountancyCategory // extends CommonObject
 	public $range_account;
 
 	/**
-	 * @var int $sens Sens of the account:  0: credit - debit, 1: debit - credit
+	 * @var int Sens of the account:  0: credit - debit, 1: debit - credit
 	 */
 	public $sens;
 
