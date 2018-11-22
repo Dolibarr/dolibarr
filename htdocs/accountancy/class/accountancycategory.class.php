@@ -717,7 +717,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int[array	$cpt 				Accounting account or array of accounting account
+	 * @param int|array	$cpt 				Accounting account or array of accounting account
 	 * @param string 	$date_start			Date start
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit, 1: debit - credit
