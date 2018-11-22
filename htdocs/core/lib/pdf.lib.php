@@ -757,7 +757,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 					$content = $account->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					// Key
-					$tmplength = 13;
+					$tmplength = 15;
 					$content = $account->cle_rib;
 				}elseif ($val == 'IBAN' || $val == 'BIC') {
 					// Key
