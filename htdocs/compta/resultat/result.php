@@ -406,7 +406,7 @@ elseif ($modecompta=="BOOKKEEPING")
 			if (! empty($arrayofaccountforfilter))
 			{
 				$return = $AccCat->getSumDebitCredit($arrayofaccountforfilter, $date_start_previous, $date_end_previous, $cpt['dc']?$cpt['dc']:0);
-				var_dump($AccCat->sdcperaccount);
+
 				if ($return < 0) {
 					setEventMessages(null, $AccCat->errors, 'errors');
 					$resultNP=0;
@@ -422,8 +422,8 @@ elseif ($modecompta=="BOOKKEEPING")
 				}
 			}
 
-			// Set value into column N-1, N and each month M ($totCat)
-			// This make 14 calls for each detail of account (N-1, N and 12 monthes m)
+			// Set value into column N and month M ($totCat)
+			// This make 12 calls for each accountancy account (12 monthes M)
 			foreach($cpts as $i => $cpt)	// Loop on each account.
 			{
 				// We make 1 loop for each account because we may want detail per account.
