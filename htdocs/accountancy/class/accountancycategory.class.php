@@ -713,27 +713,36 @@ class AccountancyCategory // extends CommonObject
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
 	 * @param int 		$cpt 				Id accounting account
-	 * @param string 	$month 				Specifig month - Can be empty
 	 * @param string 	$date_start			Date start
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit, 1: debit - credit
 	 * @param string	$thirdparty_code	Thirdparty code
+	 * @param string 	$month 				Specifig month - Can be empty
+	 * @param string 	$year 				Specifig year - Can be empty
 	 * @return integer 						Result in table
 	 */
-	public function getResult($cpt, $month, $date_start, $date_end, $sens, $thirdparty_code='nofilter')
+	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code='nofilter', $month=0, $year=0)
 	{
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
-		$sql .= " WHERE t.numero_compte = '" . $cpt."'";
+		$sql .= " WHERE t.numero_compte = '" . $this->db->escape($cpt) . "'";
+		/*
 		if (! empty($date_start) && ! empty($date_end))
 			$sql.= " AND t.doc_date >= '".$this->db->idate($date_start)."' AND t.doc_date <= '".$this->db->idate($date_end)."'";
 		if (! empty($month)) {
 			$sql .= " AND MONTH(t.doc_date) = " . $month;
 		}
+		*/
+		if (! empty($date_start) && ! empty($date_end))
+			$sql .= " AND t.doc_date BETWEEN '".$this->db->idate($date_start)."' AND '".$this->db->idate($date_end)."'";
+		if (! empty($month) && ! empty($year)) {
+			$sql .= " AND t.doc_date BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
+		}
 		if ($thirdparty_code != 'nofilter')
 		{
 			$sql .= " AND thirdparty_code = '".$this->db->escape($thirdparty_code)."'";
 		}
+		//print $sql;
 
 		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -856,13 +865,12 @@ class AccountancyCategory // extends CommonObject
 			if ($num) {
 				while ($obj = $this->db->fetch_object($resql))
 				{
-					$name_cat = $obj->name_cat;
 					$data[] = array (
 							'id' => $obj->rowid,
 							'account_number' => $obj->account_number,
 							'account_label' => $obj->account_label,
 					);
-					$i ++;
+					$i++;
 				}
 			}
 			return $data;
