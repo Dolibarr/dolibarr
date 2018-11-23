@@ -5745,7 +5745,7 @@ function dol_textishtml($msg,$option=0)
  *
  *  @param	string	$text1		Text 1
  *  @param	string	$text2		Text 2
- *  @param  bool	$forxml     false=Use <br>, true=Use <br />
+ *  @param  bool	$forxml     false=Use <br> instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
  *  @return	string				Text 1 + new line + Text2
  *  @see    dol_textishtml
  */
