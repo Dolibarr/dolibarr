@@ -1445,6 +1445,10 @@ if ($action != 'dopayment')
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
+		elseif ($source == 'donation' && $object->paid)
+		{
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
+		}
 		else
 		{
 			// Buttons for all payments registration methods
