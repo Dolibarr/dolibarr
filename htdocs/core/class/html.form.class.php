@@ -2017,6 +2017,14 @@ class Form
 
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
+		
+		//Product category
+		$sql.= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
+					FROM ".MAIN_DB_PREFIX."categorie_product
+					WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid 
+					LIMIT 1
+				) AS categorie_product_id ";
+		
 		//Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
 		{
@@ -2064,8 +2072,6 @@ class Form
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 		}
-		//Product category
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as pcat ON pcat.fk_product=p.rowid";
 
 		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 		if (count($warehouseStatusArray))
@@ -2117,8 +2123,19 @@ class Form
 			$sql.= ' GROUP BY'.$selectFields;
 		}
 		
-		(! empty($conf->global->PRODUIT_SORT_BY_CATEGORY)) ? $sql.= $db->order("pcat.fk_categorie") : $sql.= $db->order("p.ref");
-		$sql.= $db->plimit($limit, 0)
+		//Sort by category
+		if(! empty($conf->global->PRODUCT_SORT_BY_CATEGORY))
+		{
+			$sql .= " ORDER BY categorie_product_id ";
+			//ASC OR DESC order
+			($conf->global->PRODUCT_SORT_BY_CATEGORY == 1) ? $sql .="ASC" : $sql .="DESC";
+		}
+		else
+		{
+			$sql.= $db->order("p.ref");
+		}
+
+		$sql.= $db->plimit($limit, 0);
 		
 		// Build output string
 		dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
