@@ -31,7 +31,7 @@ create table llx_product
 
   datec						datetime,
   tms						timestamp,
-  virtual					tinyint	  DEFAULT 0 NOT NULL,	-- Not used. Used by external modules. Value 0 for physical product, 1 for virtual product
+  `virtual`					tinyint	  DEFAULT 0 NOT NULL,	-- Not used. Used by external modules. Value 0 for physical product, 1 for virtual product
   fk_parent					integer	  DEFAULT 0,			-- Not used. Used by external modules. Virtual product id
 
   label						varchar(255) NOT NULL,
