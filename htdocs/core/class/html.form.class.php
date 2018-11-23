@@ -2013,10 +2013,6 @@ class Form
 
 		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		(count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
-		$selectFields .= ", pcat.fk_categorie as categorie_product_id";
-
-		$sql = "SELECT ";
-		$sql.= $selectFields . $selectFieldsGrouped;
 		
 		//Product category
 		$sql.= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
@@ -2024,6 +2020,9 @@ class Form
 					WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid 
 					LIMIT 1
 				) AS categorie_product_id ";
+		
+		$sql = "SELECT ";
+		$sql.= $selectFields . $selectFieldsGrouped;
 		
 		//Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
