@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
- * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
+/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel','alpha');
-$accountingaccount = GETPOST('accountingaccount','alpha');
 
 // Security check
 
@@ -230,7 +229,7 @@ if ($action == 'create') {
 
 	// Account number
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
-	print '<td><input name="account_number" size="30" value="' . $accountingaccount . '"></td></tr>';
+	print '<td><input name="account_number" size="30" value="' . $object->account_number . '"></td></tr>';
 
 	// Label
 	print '<tr><td><span class="fieldrequired">' . $langs->trans("Label") . '</span></td>';
