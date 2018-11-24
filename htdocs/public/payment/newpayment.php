@@ -1437,9 +1437,21 @@ if ($action != 'dopayment')
 {
 	if ($found && ! $error)	// We are in a management option and no error
 	{
-		if ($source == 'invoice' && $object->paye)
+		if ($source == 'order' && $object->billed)
+		{
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("OrderBilled").'</span>';
+		}
+		elseif ($source == 'invoice' && $object->paye)
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
+		}
+		elseif ($source == 'membersubscription' && $object->datefin > dol_now())
+		{
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
+		}
+		elseif ($source == 'donation' && $object->paid)
+		{
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
 		}
 		else
 		{

@@ -258,7 +258,7 @@ $projectstatic=new Project($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('',$langs->trans('Proposal'),$help_url);
+//llxHeader('',$langs->trans('Proposal'),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -404,6 +404,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
+
 if ($resql)
 {
 	$objectstatic=new Propal($db);
@@ -424,6 +425,18 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
+	
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	{
+		$obj = $db->fetch_object($resql);
+
+		$id = $obj->rowid;
+		
+		header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
+		exit;
+	}
+
+	llxHeader('',$langs->trans('Proposal'),$help_url);
 
 	$param='&viewstatut='.urlencode($viewstatut);
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);

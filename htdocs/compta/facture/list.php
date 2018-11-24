@@ -354,7 +354,7 @@ $facturestatic=new Facture($db);
 $formcompany=new FormCompany($db);
 $thirdpartystatic=new Societe($db);
 
-llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+// llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -532,15 +532,26 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit+1,$offset);
-//print $sql;
 
 $resql = $db->query($sql);
+
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	{
+		$obj = $db->fetch_object($resql);
+		$id = $obj->id;
+		
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
+		exit;
+	}
+	
+	llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+	
 	if ($socid)
 	{
 		$soc = new Societe($db);

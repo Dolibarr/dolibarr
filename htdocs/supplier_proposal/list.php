@@ -73,6 +73,7 @@ $search_btn=GETPOST('button_search','alpha');
 $search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
+
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
@@ -122,10 +123,10 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'p.ref'=>'Ref',
+	'sp.ref'=>'Ref',
 	's.nom'=>'Supplier',
 	'pd.description'=>'Description',
-	'p.note_public'=>'NotePublic',
+	'sp.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
@@ -217,6 +218,7 @@ if (empty($reshook))
  * View
  */
 
+
 $now=dol_now();
 
 $form = new Form($db);
@@ -227,7 +229,7 @@ $companystatic=new Societe($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('',$langs->trans('CommRequest'),$help_url);
+//llxHeader('',$langs->trans('CommRequest'),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -358,7 +360,20 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
+	
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	{
+		$obj = $db->fetch_object($resql);
+		
+		$id = $obj->rowid;
+		
+		header("Location: ".DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$id);
 
+		exit;
+	}
+	
+	llxHeader('',$langs->trans('CommRequest'),$help_url);
+	
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
