@@ -1445,7 +1445,7 @@ if ($action != 'dopayment')
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
-		elseif ($source == 'membersubscription' && $object->datefin>dol_now())
+		elseif ($source == 'membersubscription' && $object->datefin > dol_now())
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
 		}
