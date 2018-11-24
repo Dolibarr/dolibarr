@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +18,17 @@
  */
 
 /**
- *	\file       htdocs/theme/eldy/graph-color.php
- *	\brief      File to declare colors to use to build graphics with theme Eldy
- *  \ingroup    core
+ * \file       htdocs/theme/eldy/graph-color.php
+ * \brief      File to declare colors to use to build graphics with theme Eldy
+ * \ingroup    core
  *
- *  To include file, do this:
+ * To include file, do this:
  *              $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
  *              if (is_readable($color_file)) include_once $color_file;
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
+
 $theme_bordercolor = array(235,235,224);
 $theme_datacolor = array(
     array(136, 102, 136),
@@ -45,6 +47,12 @@ $theme_datacolor = array(
     array(85, 80, 115),
     array(115, 135, 80),
     array(85, 80, 40),
+    array(45, 80, 145),
+    array(75, 135, 80),
+    array(85, 80, 75),
+    array(85, 45, 115),
+    array(175, 135, 80),
+    array(85, 25, 40),
 );
 $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));

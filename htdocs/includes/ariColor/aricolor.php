@@ -233,7 +233,7 @@ if ( ! class_exists( 'ariColor' ) ) {
 		public static function newColor( $color, $mode = 'auto' ) {
 
 			// Get an md5 for this color.
-			$color_md5 = ( is_array( $color ) ) ? md5( wp_json_encode( $color ) . $mode ) : md5( $color . $mode );
+			$color_md5 = ( is_array( $color ) ) ? md5( json_encode( $color ) . $mode ) : md5( $color . $mode );
 			// Set the instance if it does not already exist.
 			if ( ! isset( self::$instances[ $color_md5 ] ) ) {
 				self::$instances[ $color_md5 ] = new self( $color, $mode );
@@ -447,7 +447,36 @@ if ( ! class_exists( 'ariColor' ) ) {
 			return 'hex';
 		}
 
-		/**
+        protected function sanitize_hex_color( $color ) {
+            if ( '' === $color ) {
+                return '';
+            }
+
+            // 3 or 6 hex digits, or the empty string.
+            if ( preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', $color ) ) {
+                return $color;
+            }
+        }
+
+        protected function maybe_hash_hex_color( $color ) {
+            if ( $unhashed = $this->sanitize_hex_color_no_hash( $color ) ) {
+                return '#' . $unhashed;
+            }
+
+            return $color;
+        }
+
+        protected function sanitize_hex_color_no_hash( $color ) {
+            $color = ltrim( $color, '#' );
+
+            if ( '' === $color ) {
+                return '';
+            }
+
+            return $this->sanitize_hex_color( '#' . $color ) ? $color : null;
+        }
+
+        /**
 		 * Starts with a HEX color and calculates all other properties.
 		 *
 		 * @access protected
@@ -456,16 +485,13 @@ if ( ! class_exists( 'ariColor' ) ) {
 		 */
 		protected function from_hex() {
 
-			if ( ! function_exists( 'sanitize_hex_color' ) ) {
-				require_once wp_normalize_path( ABSPATH . WPINC . '/class-wp-customize-manager.php' );
-			}
 			// Is this perhaps a word-color?
-			$word_colors = $this->get_word_colors();
+            $word_colors = $this->get_word_colors();
 			if ( array_key_exists( $this->color, $word_colors ) ) {
 				$this->color = '#' . $word_colors[ $this->color ];
 			}
 			// Sanitize color.
-			$this->hex = sanitize_hex_color( maybe_hash_hex_color( $this->color ) );
+			$this->hex = $this->sanitize_hex_color( $this->maybe_hash_hex_color( $this->color ) );
 			$hex = ltrim( $this->hex, '#' );
 
 			// Fallback if needed.
