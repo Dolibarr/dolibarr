@@ -352,7 +352,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pageposbefore = $pdf->getPage();
                     $curY = $nexY;
                     $pdf->startTransaction();
-                    $this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs);
+                    $this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
                     $pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore) {
                         // There is a pagebreak
@@ -360,7 +360,7 @@ class pdf_standard extends ModeleExpenseReport
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs);
+						$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
@@ -522,15 +522,16 @@ class pdf_standard extends ModeleExpenseReport
 	}
 
     /**
-     * @param   PDF         $pdf                Object PDF
+     * @param   TCPDF       $pdf                Object PDF
      * @param   Object      $object             Object to show
      * @param   int         $linenumber         line number
      * @param   int         $curY               current y position
      * @param   int         $default_font_size  default siez of font
      * @param   Translate   $outputlangs        Object lang for output
+     * @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
      * @return  void
      */
-    private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs)
+	private function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails=0)
 	{
         global $conf;
         $pdf->SetFont('','', $default_font_size - 1);
