@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -9,6 +9,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,10 +129,20 @@ class CommandeFournisseur extends CommonOrder
 	public $note_private;
     public $note_public;
     public $model_pdf;
+
+    /**
+     * @var int ID
+     */
     public $fk_project;
+
     public $cond_reglement_id;
     public $cond_reglement_code;
+
+    /**
+     * @var int ID
+     */
     public $fk_account;
+
     public $mode_reglement_id;
     public $mode_reglement_code;
     public $user_author_id;
@@ -157,7 +168,11 @@ class CommandeFournisseur extends CommonOrder
     public $linked_objects=array();
 
 	// Multicurrency
+	/**
+     * @var int ID
+     */
     public $fk_multicurrency;
+
     public $multicurrency_code;
     public $multicurrency_tx;
     public $multicurrency_total_ht;
@@ -786,8 +801,7 @@ class CommandeFournisseur extends CommonOrder
                 $mybool|=@include_once $dir.$file;
             }
 
-            if (! $mybool)
-            {
+            if ($mybool === false) {
                 dol_print_error('',"Failed to include file ".$file);
                 return '';
             }
@@ -1126,8 +1140,6 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      * 	Submit a supplier order to supplier
      *
@@ -1139,7 +1151,6 @@ class CommandeFournisseur extends CommonOrder
      */
     public function commande($user, $date, $methode, $comment='')
     {
-        // phpcs:enable
         global $langs;
         dol_syslog(get_class($this)."::commande");
         $error = 0;
@@ -1278,6 +1289,9 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
+	                
+	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
+	                
 	                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
@@ -1991,7 +2005,7 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Get list of order methods
      *
-     *	@return 0 if Ok, <0 if Ko
+     *	@return int 0 if OK, <0 if KO
      */
     function get_methodes_commande()
     {
@@ -2023,7 +2037,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-	 * Return array of dispathed lines waiting to be approved for this order
+	 * Return array of dispatched lines waiting to be approved for this order
      *
      * @since 8.0 Return dispatched quantity (qty).
 	 *
@@ -2121,7 +2135,6 @@ class CommandeFournisseur extends CommonOrder
 		    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
 		    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
 		    		}
-
 		    	}
 	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to reception done, only if status of all line are ok (refuse denied)
 	    		{
@@ -2345,6 +2358,8 @@ class CommandeFournisseur extends CommonOrder
         for ($i = 0; $i < $num; $i++)
         {
             $prod = new Product($this->db);
+            $libelle = '';
+            $ref = '';
             if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)
             {
                 $libelle  = $prod->libelle;
@@ -3077,7 +3092,6 @@ class CommandeFournisseur extends CommonOrder
 							{
 								$close++;
 							}
-
 						}
 					}
 
@@ -3101,8 +3115,6 @@ class CommandeFournisseur extends CommonOrder
 							}
 							return 4;
 						}
-
-
 					}
 					else
 					{//all the products are not received
@@ -3112,7 +3124,6 @@ class CommandeFournisseur extends CommonOrder
 						}
 						return 4;
 					}
-
 				}
     				else
     				{
@@ -3157,9 +3168,21 @@ class CommandeFournisseurLigne extends CommonOrderLine
     public $fk_commande;
 
     // From llx_commande_fournisseurdet
+    /**
+     * @var int ID
+     */
     public $fk_parent_line;
+
+    /**
+     * @var int ID
+     */
     public $fk_facture;
+
+    /**
+     * @var string supplier order line label
+     */
     public $label;
+
     public $rang = 0;
     public $special_code = 0;
 

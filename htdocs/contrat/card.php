@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
@@ -566,7 +566,7 @@ if (empty($reshook))
 			$info_bits=0;
 			if ($tva_npr) $info_bits |= 0x01;
 
-			if($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min)))
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& ($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min))))
 			{
 				$object->error = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
 				$result = -1 ;

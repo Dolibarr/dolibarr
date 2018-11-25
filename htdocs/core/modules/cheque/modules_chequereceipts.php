@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -209,7 +209,6 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 			dol_print_error($db,"chequereceipt_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-
 	}
 	else
 	{

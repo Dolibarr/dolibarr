@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2001-2002	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -277,8 +277,9 @@ if ($action == 'add')
             	// Set output language
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	// Load traductions files requiredby by page
             	$outputlangs->loadLangs(array("main", "members"));
-            	// Get email content fro mtemplae
+            	// Get email content from template
             	$arraydefaultmessage=null;
             	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
 
@@ -297,7 +298,9 @@ if ($action == 'add')
 
             	if ($subjecttosend && $texttosend)
             	{
-            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1);
+            		$moreinheader='X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
             	}
             	/*if ($result < 0)
             	{

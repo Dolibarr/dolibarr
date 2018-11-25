@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -127,7 +127,7 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Login -->
 <div class="trinputlogin">
-<div class="tagtd nowrap center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
@@ -138,7 +138,7 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Password -->
 <div class="trinputlogin">
-<div class="tagtd nowrap center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key">
@@ -172,7 +172,7 @@ if ($captcha) {
 ?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd nowrap none center valignmiddle tdinputlogin">
+	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
 
 	<table class="login_table_securitycode centpercent">
 	<tr class="valignmiddle">
@@ -213,7 +213,9 @@ if ($forgetpasslink || $helpcenterlink)
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 15px;">';
 	if ($forgetpasslink) {
-		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">';
+		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
+		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
 		echo '</a>';
 	}

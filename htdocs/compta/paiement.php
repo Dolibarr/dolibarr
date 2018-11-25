@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -526,7 +526,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
          */
 
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
-        $sql.= ' f.datef as df, f.fk_soc as socid';
+        $sql.= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
@@ -578,11 +578,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
                 print '<td align="center">'.$langs->trans('Date').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td>'.$langs->trans('Currency').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$multicurrencyalreadypayedlabel.'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$multicurrencyremaindertopay.'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
+                print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
+                if (!empty($conf->multicurrency->enabled)) {
+                	print '<td>'.$langs->trans('Currency').'</td>';
+                	print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
+                	print '<td align="right">'.$multicurrencyalreadypayedlabel.'</td>';
+                	print '<td align="right">'.$multicurrencyremaindertopay.'</td>';
+                	print '<td align="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
+                }
                 print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
                 print '<td align="right">'.$alreadypayedlabel.'</td>';
                 print '<td align="right">'.$remaindertopay.'</td>';
@@ -611,8 +614,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 
 					// Multicurrency Price
-					if (!empty($conf->multicurrency->enabled))
-					{
+					if (!empty($conf->multicurrency->enabled)) {
 						$multicurrency_payment = $invoice->getSommePaiement(1);
 						$multicurrency_creditnotes=$invoice->getSumCreditNotesUsed(1);
 						$multicurrency_deposits=$invoice->getSumDepositsUsed(1);
@@ -629,6 +631,24 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     // Date
                     print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
+
+                    // Date Max Payment
+                    if ($objp->dlr > 0 )
+                    {
+                        print '<td align="center">';
+                        print dol_print_date($db->jdate($objp->dlr), 'day');
+
+                        if ($invoice->hasDelay())
+                        {
+                            print img_warning($langs->trans('Late'));
+                        }
+
+                        print '</td>';
+                    }
+                    else
+                    {
+                        print '<td align="center"><b>--</b></td>';
+                    }
 
                     // Currency
                     if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
@@ -741,11 +761,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     // Print total
                     print '<tr class="liste_total">';
                     print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
-					if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
+                    if (!empty($conf->multicurrency->enabled)) {
+                    	print '<td></td>';
+                    	print '<td></td>';
+                    	print '<td></td>';
+                    	print '<td></td>';
+                    	print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
+                    }
 					print '<td align="right"><b>'.price($sign * $total_ttc).'</b></td>';
                     print '<td align="right"><b>'.price($sign * $totalrecu);
                     if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);

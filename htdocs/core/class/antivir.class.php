@@ -2,7 +2,7 @@
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,10 @@ class AntiVir
 	 */
 	public $errors = array();
 
-	var $output;
+	/**
+	 * @var string Used to return message
+	 */
+	public $output;
 
 	/**
      * @var DoliDB Database handler.

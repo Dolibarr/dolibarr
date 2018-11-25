@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -133,7 +133,7 @@ if ($object->id)
 
 	$linkback = '';
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

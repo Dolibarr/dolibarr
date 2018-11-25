@@ -444,7 +444,6 @@ if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
-
 }
 else
 {
@@ -538,7 +537,6 @@ if (is_array($blocks))
 			print '<td></td>';
 
 			print '</tr>';
-
 		}
 	}
 }

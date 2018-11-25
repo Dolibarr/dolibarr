@@ -106,7 +106,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 	/**
 	 * Issuer
-	 * @var Objet societe qui emet
+	 * @var Company object that emits
 	 */
 	public $emetteur;
 
@@ -243,7 +243,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
-
 			}
 
 			if (file_exists($dir))

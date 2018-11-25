@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -214,7 +214,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "supplier_proposal"));
 
 		$nblignes = count($object->lines);
@@ -997,7 +997,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-
 							}
 						}
 					}
@@ -1280,9 +1279,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "bills", "supplier_proposal", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

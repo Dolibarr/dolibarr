@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) phpBSM
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL by the main.inc.php
 
 // Load translation files required by the page
-$langs->loadLangs(array("agenda","main"));
+$langs->loadLangs(array("main","agenda"));
 
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');

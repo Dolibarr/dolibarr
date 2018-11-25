@@ -124,7 +124,6 @@ if ($result)
 
             $i++;
         }
-
     }
     else
     {

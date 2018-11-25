@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013-2018  Philippe Grand	            <philippe.grand@atoo-net.com>
@@ -180,7 +180,7 @@ class pdf_strato extends ModelePDFContract
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
 		if ($conf->contrat->dir_output)
@@ -542,7 +542,7 @@ class pdf_strato extends ModelePDFContract
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);

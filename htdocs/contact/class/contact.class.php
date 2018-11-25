@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2004-2013 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
@@ -47,7 +47,11 @@ class Contact extends CommonObject
 	 */
 	public $table_element='socpeople';
 
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -83,17 +87,17 @@ class Contact extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see state_id
+	 * @see $state_id
 	 */
 	public $fk_departement;
 	/**
 	 * @deprecated
-	 * @see state_code
+	 * @see $state_code
 	 */
 	public $departement_code;
 	/**
 	 * @deprecated
-	 * @see state
+	 * @see $state
 	 */
 	public $departement;
 	public $state_id;	        	// Id of department
@@ -354,6 +358,8 @@ class Contact extends CommonObject
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
+		$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
+		$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -439,6 +445,16 @@ class Contact extends CommonObject
 				if ($tmpobj->skype != $this->skype)
 				{
 					$tmpobj->skype = $this->skype;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->twitter != $this->twitter)
+				{
+					$tmpobj->twitter = $this->twitter;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->facebook != $this->facebook)
+				{
+					$tmpobj->facebook = $this->facebook;
 					$usermustbemodified++;
 				}
 				if ($usermustbemodified)
@@ -666,12 +682,13 @@ class Contact extends CommonObject
 	/**
 	 *  Load object contact
 	 *
-	 *  @param      int		$id          id du contact
-	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-     *  @param      string  $ref_ext     External reference, not given by Dolibarr
-	 *  @return     int     		     -1 if KO, 0 if OK but not found, 1 if OK
+	 *  @param      int		$id         id du contact
+	 *  @param      User	$user       Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
+     *  @param      string  $ref_ext    External reference, not given by Dolibarr
+     *  @param		string	$email		Email
+	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=0, $ref_ext='')
+	function fetch($id, $user=null, $ref_ext='', $email='')
 	{
 		global $langs;
 
@@ -690,7 +707,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
@@ -705,9 +722,15 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
-		elseif ($ref_ext) {
+		else
+		{
 			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
-			$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
+			if ($ref_ext) {
+				$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
+			if ($email) {
+				$sql .= " AND c.email = '".$this->db->escape($email)."'";
+			}
 		}
 
 		$resql=$this->db->query($sql);
@@ -756,6 +779,8 @@ class Contact extends CommonObject
 				$this->email				= $obj->email;
 				$this->jabberid			= $obj->jabberid;
 				$this->skype				= $obj->skype;
+				$this->twitter				= $obj->twitter;
+				$this->facebook				= $obj->facebook;
 				$this->photo				= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
@@ -875,6 +900,7 @@ class Contact extends CommonObject
 		$sql.=" FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql.=" WHERE ec.fk_c_type_contact = tc.rowid";
 		$sql.=" AND fk_socpeople = ". $this->id;
+		$sql.=" AND tc.source = 'external'";
 		$sql.=" GROUP BY tc.element";
 
 		dol_syslog(get_class($this)."::load_ref_elements", LOG_DEBUG);
@@ -1227,7 +1253,6 @@ class Contact extends CommonObject
 		{
 			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
 			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
-
 		}
 		elseif ($mode == 3)
 		{

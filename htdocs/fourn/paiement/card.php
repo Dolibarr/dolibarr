@@ -32,10 +32,7 @@ require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
-$langs->load("suppliers");
+$langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers'));
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -127,7 +124,7 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
-	$datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
+	$datepaye = dol_mktime(GETPOST('datephour','int'), GETPOST('datepmin','int'), GETPOST('datepsec','int'), GETPOST('datepmonth','int'), GETPOST('datepday','int'), GETPOST('datepyear','int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -169,7 +166,6 @@ if ($result > 0)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-
 	}
 
 	/*
@@ -178,7 +174,6 @@ if ($result > 0)
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-
 	}
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/paiement.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
@@ -198,7 +193,7 @@ if ($result > 0)
 
 	// Date payment
 	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datehourpicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment mode
@@ -348,7 +343,6 @@ if ($result > 0)
 		   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-
 			}
 		}
 	}

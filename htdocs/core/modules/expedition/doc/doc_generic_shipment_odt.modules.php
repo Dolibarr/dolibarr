@@ -4,8 +4,8 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018       Philippe Grand      <philippe.grand@atoo-net.com>
-
-*
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 3 of the License, or
@@ -227,6 +227,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->expedition->dir_output."/sending")
@@ -346,6 +347,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -361,6 +363,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 				catch(OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Make substitutions into odt of user info
@@ -380,8 +383,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of mysoc
@@ -401,8 +405,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of thirdparty
@@ -420,8 +425,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of object + external modules
@@ -445,6 +451,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -477,9 +484,11 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -487,7 +496,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						$odfHandler->mergeSegment($listlines);
 					}
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
 					$this->error=$e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -501,8 +510,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -514,16 +524,18 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 				else {
 					try {
 					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

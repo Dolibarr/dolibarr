@@ -44,7 +44,7 @@ class modDav extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 50310;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+		$this->numero = 50310;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'dav';
 
@@ -52,7 +52,7 @@ class modDav extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '75';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -104,7 +104,7 @@ class modDav extends DolibarrModules
 		//                             1=>array('DAV_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('DAV_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+			//1=>array('DAV_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
 

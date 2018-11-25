@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Christophe Battarel	<contact@altairis.fr>
  * Copyright (C) 2014      Cedric Gross			<c.gross@kreiz-it.fr>
@@ -50,7 +50,7 @@ class modProduct extends DolibarrModules
 		$this->numero = 50;
 
 		$this->family = "products";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Product management";
@@ -131,6 +131,13 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
+        $r++;
+
+		$this->rights[$r][0] = 39;
+		$this->rights[$r][1] = 'Ignore minimum price';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'ignore_price_min_advance';
         $r++;
 
         // Menus
@@ -232,7 +239,7 @@ class modProduct extends DolibarrModules
 				'pr.date_price'=>"product");
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
 			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product';
+			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
 			$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
 		}
 

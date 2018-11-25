@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003 Steve Dillon
- * Copyright (C) 2003 Laurent Passebecq
+/* Copyright (C) 2003      Steve Dillon
+ * Copyright (C) 2003      Laurent Passebecq
  * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2015      Francis Appels  <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,26 +218,26 @@ abstract class CommonStickerGenerator
 		$pdf->SetDrawColor(0,0,0);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 * protected Convert units (in to mm, mm to in)
+	 * Convert units (in to mm, mm to in)
 	 * $src and $dest must be 'in' or 'mm'
 	 *
 	 * @param int       $value  value
-	 * @param string    $src    from
-	 * @param string    $dest   to
+	 * @param string    $src    from ('in' or 'mm')
+	 * @param string    $dest   to ('in' or 'mm')
 	 * @return float    value   value after conversion
 	 */
-	function _Convert_Metric($value, $src, $dest)
+	private function convertMetric($value, $src, $dest)
 	{
-        // phpcs:enable
 		if ($src != $dest) {
-			$tab['in'] = 39.37008;
-			$tab['mm'] = 1000;
+			$tab = array(
+				'in'=>39.37008,
+				'mm'=>1000
+			);
 			return $value * $tab[$dest] / $tab[$src];
-		} else {
-			return $value;
 		}
+
+		return $value;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -273,14 +273,14 @@ abstract class CommonStickerGenerator
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
 		$this->_Avery_Code = $format['code'];
-		$this->_Margin_Left	= $this->_Convert_Metric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Margin_Top = $this->_Convert_Metric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
-		$this->_X_Space = $this->_Convert_Metric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Y_Space = $this->_Convert_Metric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Margin_Left	= $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
+		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Y_Space = $this->convertMetric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Number = $format['NX'];
 		$this->_Y_Number = $format['NY'];
-		$this->_Width = $this->_Convert_Metric($format['width'], $this->_Metric, $this->_Metric_Doc);
-		$this->_Height = $this->_Convert_Metric($format['height'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Width = $this->convertMetric($format['width'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Height = $this->convertMetric($format['height'], $this->_Metric, $this->_Metric_Doc);
 		$this->Set_Char_Size($pdf, $format['font-size']);
 	}
 }

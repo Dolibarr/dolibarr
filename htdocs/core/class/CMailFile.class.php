@@ -5,7 +5,7 @@
  * Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,10 @@ class CMailFile
 	var $smtps;			// Contains SMTPs object (if this method is used)
 	var $phpmailer;		// Contains PHPMailer object (if this method is used)
 
-	//CSS
-	var $css;
+	/**
+	 * @var string CSS
+	 */
+	public $css;
 	//! Defined css style for body background
 	var $styleCSS;
 	//! Defined background directly in body tag
@@ -117,7 +119,7 @@ class CMailFile
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 */
-	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='',$sendcontext='standard',$replyto='')
+	function __construct($subject, $to, $from, $msg, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=0, $errors_to='', $css='', $trackid='', $moreinheader='', $sendcontext='standard', $replyto='')
 	{
 		global $conf, $dolibarr_main_data_root;
 
@@ -381,7 +383,7 @@ class CMailFile
             //$this->message = new Swift_SignedMessage();
             // Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
-			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid);
+			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid . '@' . $host);
 			$headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
@@ -389,13 +391,17 @@ class CMailFile
 			// TODO if (! empty($moreinheader)) ...
 
 			// Give the message a subject
-			$this->message->setSubject($this->encodetorfc2822($subject));
+			try {
+				$result = $this->message->setSubject($subject);
+			} catch (Exception $e) {
+				$this->errors[] =  $e->getMessage();
+			}
 
 			// Set the From address with an associative array
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
 			if (! empty($from)) {
                 try {
-                    $this->message->setFrom($this->getArrayAddress($from));
+                	$result = $this->message->setFrom($this->getArrayAddress($from));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -404,7 +410,7 @@ class CMailFile
 			// Set the To addresses with an associative array
 			if (! empty($to)) {
                 try {
-                    $this->message->setTo($this->getArrayAddress($to));
+                	$result = $this->message->setTo($this->getArrayAddress($to));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -412,13 +418,17 @@ class CMailFile
 
 			if (! empty($replyto)) {
                 try {
-                    $this->message->SetReplyTo($this->getArrayAddress($replyto));
+                	$result = $this->message->SetReplyTo($this->getArrayAddress($replyto));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
             }
 
-			$this->message->setCharSet($conf->file->character_set_client);
+			try {
+				$result = $this->message->setCharSet($conf->file->character_set_client);
+			} catch (Exception $e) {
+				$this->errors[] =  $e->getMessage();
+			}
 
 			if (! empty($this->html))
 			{
@@ -467,7 +477,7 @@ class CMailFile
 			if (! empty($addr_cc)) $this->message->setCc($this->getArrayAddress($addr_cc));
 			if (! empty($addr_bcc)) $this->message->setBcc($this->getArrayAddress($addr_bcc));
 			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
-			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
+			if (isset($deliveryreceipt) && $deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
 		}
 		else
 		{
@@ -561,7 +571,8 @@ class CMailFile
 				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
 			}
 
-			if(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+			if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
+			{
 				$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
 				$this->addr_cc = '';
 				$this->addr_bcc = '';
@@ -726,7 +737,11 @@ class CMailFile
 					if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
 					$result=$this->smtps->getErrors();
-					if (empty($this->error) && empty($result)) $res=true;
+					if (empty($this->error) && empty($result))
+					{
+						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
+						$res=true;
+					}
 					else
 					{
 						if (empty($this->error)) $this->error=$result;
@@ -788,6 +803,10 @@ class CMailFile
 				if (! empty($this->error) || ! $result) {
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
+				}
+				else
+				{
+					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 				}
 			}
 			else
@@ -927,7 +946,7 @@ class CMailFile
 	/**
 	 * Build a css style (mode = all) into this->styleCSS and this->bodyCSS
 	 *
-	 * @return css
+	 * @return string
 	 */
 	function buildCSS()
 	{
@@ -994,9 +1013,9 @@ class CMailFile
 		if ($trackid)
 		{
 			// References is kept in response and Message-ID is returned into In-Reply-To:
-			$out.= 'Message-ID: <' . time() . '.phpmail-dolibarr-'.$trackid.'@' . $host . ">" . $this->eol2;	// Uppercase seems replaced by phpmail
-			$out.= 'References: <' . time() . '.phpmail-dolibarr-'.$trackid.'@' . $host . ">" . $this->eol2;
-			$out.= 'X-Dolibarr-TRACKID: '.$trackid. $this->eol2;
+			$out.= 'Message-ID: <' . time() . '.phpmail-dolibarr-'. $trackid . '@' . $host . ">" . $this->eol2;	// Uppercase seems replaced by phpmail
+			$out.= 'References: <' . time() . '.phpmail-dolibarr-'. $trackid . '@' . $host . ">" . $this->eol2;
+			$out.= 'X-Dolibarr-TRACKID: ' . $trackid . '@' . $host. $this->eol2;
 		}
 		else
 		{
@@ -1215,7 +1234,7 @@ class CMailFile
 		{
 			foreach ($images_list as $img)
 			{
-				dol_syslog("CMailFile::write_images: i=$i");
+				dol_syslog("CMailFile::write_images: ".$img["name"]);
 
 				$out.= "--" . $this->related_boundary . $this->eol; // always related for an inline image
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;
@@ -1341,10 +1360,10 @@ class CMailFile
 		// Build the list of image extensions
 		$extensions = array_keys($this->image_types);
 
-
+		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches);  // If "xxx.ext" or 'xxx.ext' found
 
-		if ($matches)
+		if (! empty($matches))
 		{
 			$i=0;
 			foreach ($matches[1] as $full)

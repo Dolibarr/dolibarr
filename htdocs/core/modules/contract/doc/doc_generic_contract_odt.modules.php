@@ -2,7 +2,8 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
-*
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 3 of the License, or
@@ -216,6 +217,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->contrat->dir_output)
@@ -315,7 +317,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-				// retrieve contact information for use in contract as contact_xxx tags
+				// retrieve contact information for use in order as contact_xxx tags
 				$array_thirdparty_contact = array();
 				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
@@ -353,6 +355,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -366,8 +369,9 @@ class doc_generic_contract_odt extends ModelePDFContract
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				foreach($tmparray as $key=>$value)
@@ -383,8 +387,9 @@ class doc_generic_contract_odt extends ModelePDFContract
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -418,9 +423,11 @@ class doc_generic_contract_odt extends ModelePDFContract
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -444,6 +451,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -455,7 +463,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
 						return -1;
 					}
@@ -463,7 +471,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				else {
 					try {
 					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
 						return -1;
 					}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,9 +49,9 @@ class doc_generic_user_odt extends ModelePDFUser
 	public $phpmin = array(5, 4);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @public string
-     */
+   * Dolibarr version of the loaded document
+   * @public string
+   */
 	public $version = 'dolibarr';
 
 
@@ -64,7 +65,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+    $langs->loadLangs(array("main","companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -333,16 +334,17 @@ class doc_generic_user_odt extends ModelePDFUser
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->user->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->user->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				}
 				catch(Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_WARNING);
 					return -1;
 				}
 
@@ -351,10 +353,9 @@ class doc_generic_user_odt extends ModelePDFUser
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-		                // retrieve contact information for use in user as contact_xxx tags
-                		$array_thirdparty_contact = array();
-                		if ($usecontact)
-                    			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in object as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
@@ -377,6 +378,7 @@ class doc_generic_user_odt extends ModelePDFUser
 					}
 					catch(OdfException $e)
 					{
+						dol_syslog($e->getMessage(), LOG_WARNING);
 					}
 				}
 
@@ -387,8 +389,9 @@ class doc_generic_user_odt extends ModelePDFUser
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+						dol_syslog($e->getMessage(), LOG_WARNING);
 					}
 				}
 
@@ -400,16 +403,18 @@ class doc_generic_user_odt extends ModelePDFUser
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+						dol_syslog($e->getMessage(), LOG_WARNING);
 						return -1;
 					}
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+						$odfHandler->saveToDisk($file);
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+						dol_syslog($e->getMessage(), LOG_WARNING);
 						return -1;
 					}
 				}

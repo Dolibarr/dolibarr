@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,10 +313,10 @@ class Contrat extends CommonObject
 
 		$this->db->begin();
 
+		$error=0;
+
 		// Load lines
 		$this->fetch_lines();
-
-		$error=0;
 
 		foreach($this->lines as $contratline)
 		{
@@ -1710,7 +1711,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::updateligne Erreur -2");
+				dol_syslog(get_class($this)."::updateline Erreur -2");
 				return -2;
 			}
 		}
@@ -1718,7 +1719,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::updateligne Erreur -1");
+			dol_syslog(get_class($this)."::updateline Erreur -1");
 			return -1;
 		}
 	}
@@ -2005,7 +2006,6 @@ class Contrat extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2475,7 +2475,6 @@ class Contrat extends CommonObject
 				if ($reshook < 0)
 					$error ++;
 			}
-
 		}
 
 		unset($this->context['createfromclone']);
@@ -2519,8 +2518,16 @@ class ContratLigne extends CommonObjectLine
 
 	public $tms;
 
+	/**
+     * @var int ID
+     */
 	public $fk_contrat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
 	public $statut;					// 0 inactive, 4 active, 5 closed
 	public $type;						// 0 for product, 1 for service
 
@@ -2563,6 +2570,10 @@ class ContratLigne extends CommonObjectLine
 	public $qty;
 	public $remise_percent;
 	public $remise;
+
+	/**
+     * @var int ID
+     */
 	public $fk_remise_except;
 
 	public $subprice;					// Unit price HT
@@ -2570,7 +2581,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 * @var float
 	 * @deprecated Use $price_ht instead
-	 * @see price_ht
+	 * @see $price_ht
 	 */
 	public $price;
 
@@ -2582,13 +2593,30 @@ class ContratLigne extends CommonObjectLine
 	public $total_localtax2;
 	public $total_ttc;
 
+	/**
+     * @var int ID
+     */
 	public $fk_fournprice;
+
 	public $pa_ht;
 
 	public $info_bits;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_ouverture;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_cloture;
+
 	public $commentaire;
 
 	const STATUS_INITIAL = 0;
@@ -2830,7 +2858,6 @@ class ContratLigne extends CommonObjectLine
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->fk_fournprice, $obj->pa_ht);
 				$this->pa_ht = $marginInfos[0];
 				$this->fk_unit     = $obj->fk_unit;
-
 			}
 			$this->db->free($resql);
 
@@ -2858,9 +2885,9 @@ class ContratLigne extends CommonObjectLine
 		$error=0;
 
 		// Clean parameters
-		$this->fk_contrat=trim($this->fk_contrat);
-		$this->fk_product=trim($this->fk_product);
-		$this->statut=(int) $this->statut;
+		$this->fk_contrat = (int) $this->fk_contrat;
+		$this->fk_product = (int) $this->fk_product;
+		$this->statut = (int) $this->statut;
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->vat_src_code=trim($this->vat_src_code);
@@ -2870,7 +2897,7 @@ class ContratLigne extends CommonObjectLine
 		$this->qty=trim($this->qty);
 		$this->remise_percent=trim($this->remise_percent);
 		$this->remise=trim($this->remise);
-		$this->fk_remise_except=trim($this->fk_remise_except);
+		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice=price2num($this->subprice);
 		$this->price_ht=price2num($this->price_ht);
 		$this->total_ht=trim($this->total_ht);
@@ -2879,9 +2906,9 @@ class ContratLigne extends CommonObjectLine
 		$this->total_localtax2=trim($this->total_localtax2);
 		$this->total_ttc=trim($this->total_ttc);
 		$this->info_bits=trim($this->info_bits);
-		$this->fk_user_author=trim($this->fk_user_author);
-		$this->fk_user_ouverture=trim($this->fk_user_ouverture);
-		$this->fk_user_cloture=trim($this->fk_user_cloture);
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
+		$this->fk_user_cloture = (int) $this->fk_user_cloture;
 		$this->commentaire=trim($this->commentaire);
 		//if (empty($this->subprice)) $this->subprice = 0;
 		if (empty($this->price_ht)) $this->price_ht = 0;

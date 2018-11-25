@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,7 +333,6 @@ if (empty($reshook))
 			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 		}
-
 	}
 
 	// Build doc
@@ -472,6 +471,17 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
 llxHeader("",$title,$help_url);
 
+$titleboth=$langs->trans("LeadsOrProjects");
+$titlenew = $langs->trans("NewLeadOrProject");	// Leads and opportunities by default
+if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
+{
+	$titleboth=$langs->trans("Projects");
+	$titlenew = $langs->trans("NewProject");
+}
+if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+	$titleboth=$langs->trans("Leads");
+	$titlenew = $langs->trans("NewLead");
+}
 
 if ($action == 'create' && $user->rights->projet->creer)
 {
@@ -482,7 +492,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-	print load_fiche_titre($langs->trans("NewProject"), '', 'title_project');
+	print load_fiche_titre($titlenew, '', 'title_project');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -754,7 +764,7 @@ elseif ($object->id > 0)
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
+		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
 
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';

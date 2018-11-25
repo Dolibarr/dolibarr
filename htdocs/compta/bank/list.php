@@ -1,9 +1,7 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
  *
@@ -76,7 +74,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('bank_account');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -257,7 +255,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall).'</div>';
+    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';
@@ -428,7 +426,7 @@ foreach ($accounts as $key=>$type)
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))
     {
-        print '<td>'.$obj->getNomUrl(1).'</td>';
+        print '<td class="nowrap">'.$obj->getNomUrl(1).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 
@@ -552,7 +550,7 @@ foreach ($accounts as $key=>$type)
     // Balance
     if (! empty($arrayfields['balance']['checked']))
     {
-		print '<td align="right">';
+		print '<td align="right" class="nowraponall">';
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

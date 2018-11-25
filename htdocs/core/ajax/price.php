@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,6 @@ if (! empty($output) && isset($amount) && isset($tva_tx))
 			$price = price2num($amount * (1 + ($tva_tx/100)), 'MU');
 			$return['price_ht'] = $amount;
 			$return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
-
 		}
 		else if ($output == 'price_ht') {
 

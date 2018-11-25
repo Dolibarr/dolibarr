@@ -99,7 +99,11 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $entity;
 
-	public $label;
+	/**
+     * @var string Email Sender Profile label
+     */
+    public $label;
+
 	public $email;
 	public $date_creation;
 	public $tms;
@@ -409,7 +413,6 @@ class EmailSenderProfile extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

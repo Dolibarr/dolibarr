@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
@@ -56,7 +56,8 @@ $search_deliveryyear=GETPOST("search_deliveryyear","int");
 $search_deliverymonth=GETPOST("search_deliverymonth","int");
 $search_deliveryday=GETPOST("search_deliveryday","int");
 
-$sall=GETPOST('search_all', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
+
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
@@ -113,7 +114,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('commande_fournisseur');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -263,7 +264,6 @@ if (empty($reshook))
 				$res = $object->create($user);
 
 				if($res > 0) $nb_bills_created++;
-
 			}
 
 			if ($object->id > 0)
@@ -474,7 +474,7 @@ if ($search_billed > 0) $title.=' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url='';
-llxHeader('',$title,$help_url);
+// llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -518,6 +518,7 @@ if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname','u.login'), $search_request_author) ;
 if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db->escape($search_billed);
+if ($search_product_category > 0) $sql.= " AND cp.fk_categorie = ".$search_product_category;
 
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
@@ -604,9 +605,19 @@ if ($resql)
 	}
 
 	$num = $db->num_rows($resql);
-
+	
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	{
+		$obj = $db->fetch_object($resql);
+		$id = $obj->rowid;
+		header("Location: ".DOL_URL_ROOT.'/fourn/commande/card.php?id='.$id);
+		exit;
+	}
+
+	llxHeader('',$title,$help_url);
+	
 	$param='';
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -1128,7 +1139,7 @@ if ($resql)
 		// Status
 		if (! empty($arrayfields['cf.fk_statut']['checked']))
 		{
-			print '<td align="right" class="nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed, 1).'</td>';
+			print '<td align="right" class="nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Billed

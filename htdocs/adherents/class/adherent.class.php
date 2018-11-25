@@ -4,10 +4,10 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Frederic France			<frederic.france@free.fr>
+ * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -51,7 +51,11 @@ class Adherent extends CommonObject
 	 */
 	public $table_element='adherent';
 
-	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	public $mesgs;
 
@@ -65,8 +69,17 @@ class Adherent extends CommonObject
 	public $pass_indatabase_crypted;
 
 	public $societe;
+
+	/**
+	 * @var Societe $company {@type Societe}
+	 */
 	public $company;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 
@@ -75,10 +88,35 @@ class Adherent extends CommonObject
 	public $state;                 // Label of department
 
 	public $email;
+
 	public $skype;
+	public $twitter;
+	public $facebook;
+
+    /**
+     * @var string Phone number
+     */
 	public $phone;
+
+    /**
+     * @var string Private Phone number
+     */
 	public $phone_perso;
+
+    /**
+     * @var string Mobile phone number
+     */
 	public $phone_mobile;
+
+    /**
+     * @var string Fax number
+     */
+    public $fax;
+
+    /**
+     * @var string Function
+     */
+    public $poste;
 
 	public $morphy;
 	public $public;
@@ -87,8 +125,8 @@ class Adherent extends CommonObject
 
 	public $datec;
 	public $datem;
-	public $datefin;
 	public $datevalid;
+
 	public $birth;
 
 	public $note_public;
@@ -105,6 +143,8 @@ class Adherent extends CommonObject
 	 * @var int Thirdparty ID
 	 */
     public $fk_soc;
+
+	public $datefin;	// From member table
 
 	// Fields loaded by fetch_subscriptions()
 	public $first_subscription_date;
@@ -140,7 +180,7 @@ class Adherent extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *  Function sending an email has the adherent with the text supplied in parameter.
+	 *  Function sending an email to the current member with the text supplied in parameter.
 	 *
 	 *  @param	string	$text				Content of message (not html entities encoded)
 	 *  @param	string	$subject			Subject of message
@@ -152,9 +192,10 @@ class Adherent extends CommonObject
 	 *  @param 	int		$deliveryreceipt	Ask a delivery receipt
 	 *  @param	int		$msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
 	 *  @param	string	$errors_to			erros to
+	 *  @param	string	$moreinheader		Add more html headers
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
+	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='', $moreinheader='')
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -176,9 +217,11 @@ class Adherent extends CommonObject
 		$from=$conf->email_from;
 		if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
 
+		$trackid = 'mem'.$this->id;
+
 		// Send email (substitutionarray must be done just before this)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
+		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, '', '', $trackid, $moreinheader);
 		if ($mailfile->sendfile())
 		{
 			return 1;
@@ -450,6 +493,8 @@ class Adherent extends CommonObject
 		$sql.= ", state_id = ".($this->state_id>0?$this->db->escape($this->state_id):"null");
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
+		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
 		$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
 		$sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -556,6 +601,8 @@ class Adherent extends CommonObject
 
 						$luser->email=$this->email;
 						$luser->skype=$this->skype;
+						$luser->twitter=$this->twitter;
+						$luser->facebook=$this->facebook;
 						$luser->office_phone=$this->phone;
 						$luser->user_mobile=$this->phone_mobile;
 
@@ -595,6 +642,8 @@ class Adherent extends CommonObject
 						$lthirdparty->town=$this->town;
 						$lthirdparty->email=$this->email;
 						$lthirdparty->skype=$this->skype;
+						$lthirdparty->twitter=$this->twitter;
+						$lthirdparty->facebook=$this->facebook;
 						$lthirdparty->phone=$this->phone;
 						$lthirdparty->state_id=$this->state_id;
 						$lthirdparty->country_id=$this->country_id;
@@ -1082,7 +1131,7 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
-		$sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql.= " d.datec as datec,";
 		$sql.= " d.tms as datem,";
@@ -1154,7 +1203,10 @@ class Adherent extends CommonObject
 				$this->phone_perso		= $obj->phone_perso;
 				$this->phone_mobile		= $obj->phone_mobile;
 				$this->email			= $obj->email;
+
 				$this->skype			= $obj->skype;
+				$this->twitter			= $obj->twitter;
+				$this->facebook			= $obj->facebook;
 
 				$this->photo			= $obj->photo;
 				$this->statut			= $obj->statut;
@@ -1207,11 +1259,9 @@ class Adherent extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Fonction qui recupere pour un adherent les parametres
-	 *				first_subscription_date
-	 *				first_subscription_amount
-	 *				last_subscription_date
-	 *				last_subscription_amount
+	 *	Function to get member subscriptions data
+	 *				first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
+	 *				last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
 	 *
 	 *	@return		int			<0 si KO, >0 si OK
 	 */
@@ -1242,10 +1292,14 @@ class Adherent extends CommonObject
 			{
 				if ($i==0)
 				{
-					$this->first_subscription_date=$obj->dateh;
+					$this->first_subscription_date=$this->db->jdate($obj->datec);
+					$this->first_subscription_date_start=$this->db->jdate($obj->dateh);
+					$this->first_subscription_date_end=$this->db->jdate($obj->datef);
 					$this->first_subscription_amount=$obj->subscription;
 				}
-				$this->last_subscription_date=$obj->dateh;
+				$this->last_subscription_date=$this->db->jdate($obj->datec);
+				$this->last_subscription_date_start=$this->db->jdate($obj->datef);
+				$this->last_subscription_date_end=$this->db->jdate($obj->datef);
 				$this->last_subscription_amount=$obj->subscription;
 
 				$subscription=new Subscription($this->db);
@@ -1330,9 +1384,9 @@ class Adherent extends CommonObject
 			{
 				// Change properties of object (used by triggers)
 				$this->last_subscription_date=dol_now();
-				$this->last_subscription_amount=$amount;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
+				$this->last_subscription_amount=$amount;
 			}
 
 			if (! $error)
@@ -2245,7 +2299,9 @@ class Adherent extends CommonObject
 		$this->country = 'France';
 		$this->morphy = 1;
 		$this->email = 'specimen@specimen.com';
-		$this->skype = 'tom.hanson';
+		$this->skype = 'skypepseudo';
+		$this->twitter = 'twitterpseudo';
+		$this->facebook = 'facebookpseudo';
 		$this->phone        = '0999999999';
 		$this->phone_perso  = '0999999998';
 		$this->phone_mobile = '0999999997';
@@ -2263,8 +2319,13 @@ class Adherent extends CommonObject
 		$this->need_subscription=0;
 
 		$this->first_subscription_date=time();
+		$this->first_subscription_date_start=$this->first_subscription_date;
+		$this->first_subscription_date_end=dol_time_plus_duree($this->first_subscription_date_start, 1, 'y');
 		$this->first_subscription_amount=10;
-		$this->last_subscription_date=time();
+
+		$this->last_subscription_date=$this->first_subscription_date;
+		$this->last_subscription_date_start=$this->first_subscription_date;
+		$this->last_subscription_date_end=dol_time_plus_duree($this->last_subscription_date_start, 1, 'y');
 		$this->last_subscription_amount=10;
 	}
 
@@ -2347,6 +2408,8 @@ class Adherent extends CommonObject
 		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
 		if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
 		if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
+		if ($this->twitter && ! empty($conf->global->LDAP_MEMBER_FIELD_TWITTER))				$info[$conf->global->LDAP_MEMBER_FIELD_TWITTER] = $this->twitter;
+		if ($this->facebook && ! empty($conf->global->LDAP_MEMBER_FIELD_FACEBOOK))				$info[$conf->global->LDAP_MEMBER_FIELD_FACEBOOK] = $this->facebook;
 		if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
 		if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE))			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
@@ -2446,7 +2509,6 @@ class Adherent extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2569,10 +2631,10 @@ class Adherent extends CommonObject
 	 * Send reminders by emails before subscription end
 	 * CAN BE A CRON TASK
 	 *
-	 * @param	int			$daysbeforeend		Nb of days before end of subscription (negative number = after subscription)
-	 * @return	int								0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 * @param	string		$daysbeforeendlist		Nb of days before end of subscription (negative number = after subscription). Can be a list of delay, separated by a semicolon, for example '10;5;0;-5'
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendReminderForExpiredSubscription($daysbeforeend=10)
+	public function sendReminderForExpiredSubscription($daysbeforeendlist='10')
 	{
 		global $conf, $langs, $mysoc, $user;
 
@@ -2582,101 +2644,174 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		/*if (empty($conf->global->MEMBER_REMINDER_EMAIL))
+		if (empty($conf->adherent->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}
+		if (empty($conf->global->MEMBER_REMINDER_EMAIL))
 		{
 			$langs->load("agenda");
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
-		}*/
-
+		}
+		
 		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$tmp=dol_getdate($now);
-		$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), -1 * $daysbeforeend, 'd');
-
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
-		$sql.= " WHERE datefin = '".$this->db->idate($datetosearchfor)."'";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
+		$arraydaysbeforeend=explode(';',$daysbeforeendlist);
+		foreach($arraydaysbeforeend as $daysbeforeend)			// Loop on each delay
 		{
-			$num_rows = $this->db->num_rows($resql);
+			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$adherent = new Adherent($this->db);
-			$formmail = new FormMail($this->db);
-
-			$i=0;
-			$nbok = 0;
-			$nbko = 0;
-			while ($i < $num_rows)
+			if (! is_numeric($daysbeforeend))
 			{
-				$obj = $this->db->fetch_object($resql);
+				$blockingerrormsg="Value for delta is not a positive or negative numeric";
+				$nbko++;
+				break;
+			}
 
-				$adherent->fetch($obj->rowid);
+			$tmp=dol_getdate($now);
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), $daysbeforeend, 'd');
 
-				if (empty($adherent->email))
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
+			$sql.= " WHERE datefin = '".$this->db->idate($datetosearchfor)."'";
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num_rows = $this->db->num_rows($resql);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$adherent = new Adherent($this->db);
+				$formmail = new FormMail($this->db);
+
+				$i=0;
+				while ($i < $num_rows)
 				{
-					$nbko++;
-				}
-				else
-				{
-					$adherent->fetch_thirdparty();
+					$obj = $this->db->fetch_object($resql);
 
-					// Send reminder email
-					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
-					$outputlangs->loadLangs(array("main", "members"));
-					dol_syslog("sendReminderForExpiredSubscription Language set to ".$outputlangs->defaultlang);
+					$adherent->fetch($obj->rowid, '', '', '', true, true);
 
-					$arraydefaultmessage=null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
-
-					if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
-
-					if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+					if (empty($adherent->email))
 					{
-						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $adherent);
-						//if (is_array($adherent->thirdparty)) $substitutionarraycomp = ...
-						complete_substitutions_array($substitutionarray, $outputlangs, $adherent);
-
-						$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
-						$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-						$from = $conf->global->ADHERENT_MAIL_FROM;
-						$to = $adherent->email;
-
-						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
-						$result = $cmail->sendfile();
-						if (! $result)
-						{
-							$error++;
-							$this->error = $cmail->error;
-							$this->errors += $cmail->errors;
-							$nbko++;
-						}
-						else
-						{
-							$nbok++;
-						}
+						$nbko++;
 					}
 					else
 					{
-						$blockingerrormsg="Can't find email template, defined into member module setup, to use for reminding";
-						$nbko++;
-						break;
-					}
-				}
+						$adherent->fetch_thirdparty();
 
-				$i++;
+						// Send reminder email
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+						$outputlangs->loadLangs(array("main", "members"));
+						dol_syslog("sendReminderForExpiredSubscription Language set to ".$outputlangs->defaultlang);
+
+						$arraydefaultmessage=null;
+						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
+
+						if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+						if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+						{
+							$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $adherent);
+							//if (is_array($adherent->thirdparty)) $substitutionarraycomp = ...
+							complete_substitutions_array($substitutionarray, $outputlangs, $adherent);
+
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+							$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+							$from = $conf->global->ADHERENT_MAIL_FROM;
+							$to = $adherent->email;
+
+							$trackid = 'mem'.$adherent->id;
+							$moreinheader='X-Dolibarr-Info: sendReminderForExpiredSubscription'."\r\n";
+
+							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+							$result = $cmail->sendfile();
+							if (! $result)
+							{
+								$error++;
+								$this->error = $cmail->error;
+								$this->errors += $cmail->errors;
+								$nbko++;
+							}
+							else
+							{
+								$nbok++;
+
+								$message = $msg;
+								$sendto = $to;
+								$sendtocc = '';
+								$sendtobcc = '';
+								$actioncode='EMAIL';
+								$extraparams='';
+
+								$actionmsg='';
+								$actionmsg2=$langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from,4,0,1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto,4,0,1);
+								if ($message)
+								{
+									$actionmsg=$langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
+									$actionmsg=dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
+									if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . dol_escape_htmltag($sendtocc));
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+									$actionmsg = dol_concatdesc($actionmsg, $message);
+								}
+								
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+								
+	    						// Insert record of emails sent
+	    						$actioncomm = new ActionComm($this->db);
+
+	    						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+	    						$actioncomm->code        = 'AC_'.$actioncode;
+	    						$actioncomm->label       = $actionmsg2;
+	    						$actioncomm->note        = $actionmsg;
+	    						$actioncomm->fk_project  = 0;
+	    						$actioncomm->datep       = $now;
+	    						$actioncomm->datef       = $now;
+	    						$actioncomm->percentage  = -1;   // Not applicable
+	    						$actioncomm->socid       = $adherent->thirdparty->id;
+	    						$actioncomm->contactid   = 0;
+	    						$actioncomm->authorid    = $user->id;   // User saving action
+	    						$actioncomm->userownerid = $user->id;	// Owner of action
+	    						// Fields when action is en email (content should be added into note)
+	    						$actioncomm->email_msgid = $cmail->msgid;
+	    						$actioncomm->email_from  = $from;
+	    						$actioncomm->email_sender= '';
+	    						$actioncomm->email_to    = $to;
+	    						$actioncomm->email_tocc  = $sendtocc;
+	    						$actioncomm->email_tobcc = $sendtobcc;
+	    						$actioncomm->email_subject = $subject;
+	    						$actioncomm->errors_to   = '';
+	    						
+	    						$actioncomm->fk_element  = $adherent->id;
+	    						$actioncomm->elementtype = $adherent->element;
+	    						
+	    						$actioncomm->extraparams = $extraparams;
+
+	    						$actioncomm->create($user);
+							}
+						}
+						else
+						{
+							$blockingerrormsg="Can't find email template, defined into member module setup, to use for reminding";
+							$nbko++;
+							break;
+						}
+					}
+
+					$i++;
+				}
 			}
-		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			return 1;
+			else
+			{
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
 		}
 
 		if ($blockingerrormsg)

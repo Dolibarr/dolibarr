@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
@@ -160,6 +160,7 @@ if ($nolinesbefore) {
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
 <?php
+// Adds a line numbering column
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2016 Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@zendsi.com>
  *
@@ -481,7 +481,7 @@ if ($id > 0)
 		}
 		$morehtmlref.='</div>';
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 

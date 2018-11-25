@@ -51,8 +51,17 @@ class ProductStockEntrepot extends CommonObject
 	public $table_element = 'product_warehouse_properties';
 
 	public $tms = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
+	/**
+     * @var int ID
+     */
 	public $fk_entrepot;
+
 	public $seuil_stock_alerte;
 	public $desiredstock;
 	public $import_key;
@@ -84,8 +93,8 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
-		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->fk_product)) $this->fk_product = (int) $this->fk_product;
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = (int) $this->fk_entrepot;
 		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
 		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
@@ -193,8 +202,6 @@ class ProductStockEntrepot extends CommonObject
 				$this->seuil_stock_alerte = $obj->seuil_stock_alerte;
 				$this->desiredstock = $obj->desiredstock;
 				$this->import_key = $obj->import_key;
-
-
 			}
 
 			// Retreive all extrafield
@@ -308,8 +315,8 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
-		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->fk_product)) $this->fk_product = (int) $this->fk_product;
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = (int) $this->fk_entrepot;
 		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
 		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
@@ -566,8 +573,8 @@ class ProductStockEntrepot extends CommonObject
 		$this->id = 0;
 
 		$this->tms = '';
-		$this->fk_product = '';
-		$this->fk_entrepot = '';
+		$this->fk_product = null;
+		$this->fk_entrepot = null;
 		$this->seuil_stock_alerte = '';
 		$this->desiredstock = '';
 		$this->import_key = '';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
@@ -49,7 +49,11 @@ class Don extends CommonObject
 	 */
 	public $fk_element = 'fk_donation';
 
-	public $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
     /**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -59,13 +63,27 @@ class Don extends CommonObject
     public $date;
     public $amount;
     public $societe;
-    public $address;
+
+    /**
+	 * @var string Address
+	 */
+	public $address;
+
     public $zip;
     public $town;
     public $email;
     public $public;
+
+    /**
+     * @var int ID
+     */
     public $fk_project;
+
+    /**
+     * @var int ID
+     */
     public $fk_typepayment;
+
 	public $num_payment;
 	public $date_valid;
 	public $modepaymentid = 0;
@@ -635,7 +653,7 @@ class Don extends CommonObject
         }
         else if (! empty($ref))
         {
-        	$sql.= " AND ref='".$this->db->escape($ref)."'";
+        	$sql.= " AND d.ref='".$this->db->escape($ref)."'";
         }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

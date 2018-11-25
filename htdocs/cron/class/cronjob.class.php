@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 
 
 /**
- *	Crob Job class
+ *	Cron Job class
  */
 class Cronjob extends CommonObject
 {
@@ -53,7 +53,12 @@ class Cronjob extends CommonObject
     public $jobtype;
 	public $tms='';
 	public $datec='';
-	public $label;
+
+	/**
+     * @var string Cron Job label
+     */
+    public $label;
+
 	public $command;
 	public $classesname;
 	public $objectname;
@@ -71,10 +76,24 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $processing;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_mod;
+
 	public $nbrun;
 	public $libname;
 	public $test;					// A test condition to know if job is visible/qualified
@@ -1351,7 +1370,12 @@ class Cronjobline
 
 	public $tms='';
 	public $datec='';
-	public $label;
+
+	/**
+     * @var string Cron Job Line label
+     */
+    public $label;
+
 	public $jobtype;
 	public $command;
 	public $classesname;
@@ -1369,9 +1393,22 @@ class Cronjobline
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_mod;
+
 	public $note;
 	public $nbrun;
 	public $libname;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -107,9 +107,9 @@ class pdf_baleine extends ModelePDFProjects
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 	/**
 	 *	Constructor

@@ -52,6 +52,7 @@ class Thirdparties extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 		$this->company = new Societe($this->db);
 
@@ -1069,7 +1070,6 @@ class Thirdparties extends DolibarrApi
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;
-
 				}
 			$returnAccounts[] = $object;
 		}
@@ -1175,9 +1175,9 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Generate a Document from a bank account record (like SEPA mandate)
 	 *
-	 * @param int $id thirdparty id
-	 * @param int $companybankid companybankid
-	 * @param string $model model of document to generate
+	 * @param int 		$id 			Thirdparty id
+	 * @param int 		$companybankid 	Companybank id
+	 * @param string 	$model 			Model of document to generate
 	 * @return void
 	 *
 	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
@@ -1186,19 +1186,7 @@ class Thirdparties extends DolibarrApi
 	{
 		global $conf;
 
-		$this->langs->load("database");
-		$this->langs->load("main");
-		$this->langs->load("dict");
-		$this->langs->load("agenda");
-		$this->langs->load("margins");
-		$this->langs->load("resource");
-		$this->langs->load("commercial");
-		$this->langs->load("ecm");
-		$this->langs->load("products");
-		$this->langs->load("companies");
-		$this->langs->load("banks");
-		$this->langs->load("bills");
-		$this->langs->load("withdrawals");
+		$this->langs->loadLangs(array("main","dict","commercial","products","companies","banks","bills","withdrawals"));
 
 		$this->company->fetch($id);
 
@@ -1343,7 +1331,6 @@ class Thirdparties extends DolibarrApi
 			foreach($account as $key => $value)
 				if(in_array($key, $fields)){
 					$object[$key] = $value;
-
 				}
 			$returnAccounts[] = $object;
 		}

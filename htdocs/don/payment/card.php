@@ -133,7 +133,6 @@ dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
 }
 
 /*
@@ -143,7 +142,6 @@ if ($action == 'valide')
 {
 	$facid = GETPOST('facid','int');
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
 }
 
 

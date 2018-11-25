@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -50,9 +51,9 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 	public $phpmin = array(5, 4);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @public string
-     */
+   * Dolibarr version of the loaded document
+   * @public string
+   */
 	public $version = 'dolibarr';
 
 
@@ -367,16 +368,17 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->supplier_proposal->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->supplier_proposal->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				}
-				catch(Exception $e)
+				catch (Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -390,8 +392,9 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Define substitution array
@@ -424,6 +427,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -456,9 +460,11 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 								}
 								catch(OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 								catch(SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -482,6 +488,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -493,16 +500,18 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+						$odfHandler->saveToDisk($file);
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

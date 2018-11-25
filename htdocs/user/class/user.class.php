@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
@@ -50,8 +50,16 @@ class User extends CommonObject
 	 */
 	public $table_element='user';
 
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_user';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
 
 	public $id=0;
 	public $statut;
@@ -61,10 +69,19 @@ class User extends CommonObject
 	public $gender;
 	public $birth;
 	public $email;
+
 	public $skype;
-	public $job;
+	public $twitter;
+	public $facebook;
+
+	public $job;			// job position
 	public $signature;
+
+	/**
+	 * @var string Address
+	 */
 	public $address;
+
 	public $zip;
 	public $town;
 	public $state_id;		// The state/department
@@ -106,6 +123,9 @@ class User extends CommonObject
 	public $socid;
 	public $contactid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_member;
 
 	/**
@@ -207,7 +227,8 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.twitter, u.facebook,";
+		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
@@ -312,6 +333,8 @@ class User extends CommonObject
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email		= $obj->email;
 				$this->skype		= $obj->skype;
+				$this->twitter		= $obj->twitter;
+				$this->facebook		= $obj->facebook;
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -741,7 +764,7 @@ class User extends CommonObject
 		// Recuperation des droits utilisateurs + recuperation des droits groupes
 
 		// D'abord les droits utilisateurs
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
@@ -795,7 +818,7 @@ class User extends CommonObject
 		}
 
 		// Maintenant les droits groupes
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
@@ -847,7 +870,6 @@ class User extends CommonObject
 						// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
 						if (!is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = 1;
 					}
-
 				}
 				$i++;
 			}
@@ -1207,6 +1229,8 @@ class User extends CommonObject
 		$this->gender		= $contact->gender;
 		$this->email		= $contact->email;
 		$this->skype 		= $contact->skype;
+		$this->twitter 		= $contact->twitter;
+		$this->facebook		= $contact->facebook;
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
@@ -1420,7 +1444,11 @@ class User extends CommonObject
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
+
 		$this->skype        = trim($this->skype);
+		$this->twitter      = trim($this->twitter);
+		$this->facebook     = trim($this->facebook);
+
 		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
@@ -1470,6 +1498,8 @@ class User extends CommonObject
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
+		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
@@ -1554,7 +1584,11 @@ class User extends CommonObject
 						$adh->country_id=$this->country_id;
 
 						$adh->email=$this->email;
+
 						$adh->skype=$this->skype;
+						$adh->twitter=$this->twitter;
+						$adh->facebook=$this->facebook;
+
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 
@@ -1602,7 +1636,11 @@ class User extends CommonObject
 						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
 
 						$tmpobj->email=$this->email;
+
 						$tmpobj->skype=$this->skype;
+						$tmpobj->twitter=$this->twitter;
+						$tmpobj->facebook=$this->facebook;
+
 						$tmpobj->phone_pro=$this->office_phone;
 						$tmpobj->phone_mobile=$this->user_mobile;
 						$tmpobj->fax=$this->office_fax;
@@ -2461,13 +2499,15 @@ class User extends CommonObject
 			'LDAP_FIELD_NAME'		=> 'lastname',
 			'LDAP_FIELD_FIRSTNAME'	=> 'firstname',
 			'LDAP_FIELD_LOGIN'		=> 'login',
-			'LDAP_FIELD_LOGIN_SAMBA'	=> 'login',
+			'LDAP_FIELD_LOGIN_SAMBA'=> 'login',
 			'LDAP_FIELD_PHONE'		=> 'office_phone',
 			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
-			'LDAP_FIELD_FAX'			=> 'office_fax',
+			'LDAP_FIELD_FAX'		=> 'office_fax',
 			'LDAP_FIELD_MAIL'		=> 'email',
-			'LDAP_FIELD_SID'			=> 'ldap_sid',
-			'LDAP_FIELD_SKYPE'		=> 'skype'
+			'LDAP_FIELD_SID'		=> 'ldap_sid',
+			'LDAP_FIELD_SKYPE'		=> 'skype',
+			'LDAP_FIELD_TWITTER'	=> 'twitter',
+			'LDAP_FIELD_FACEBOOK'	=> 'facebook'
 		);
 
 		// Champs
@@ -2578,7 +2618,9 @@ class User extends CommonObject
 		$this->gender='man';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
-		$this->skype='tom.hanson';
+		$this->skype='skypepseudo';
+		$this->twitter='twitterpseudo';
+		$this->facebook='facebookpseudo';
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
@@ -2628,7 +2670,6 @@ class User extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2732,6 +2773,8 @@ class User extends CommonObject
 		$this->office_fax=$ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email=$ldapuser->{$conf->global->LDAP_FIELD_MAIL};
 		$this->skype=$ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
+		$this->twitter=$ldapuser->{$conf->global->LDAP_FIELD_TWITTER};
+		$this->facebook=$ldapuser->{$conf->global->LDAP_FIELD_FACEBOOK};
 		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};

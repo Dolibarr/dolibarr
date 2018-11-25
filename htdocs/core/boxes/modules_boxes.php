@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2013  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
  *
@@ -213,7 +213,6 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$var = false;
 
         $cachetime = 900;   // 900 : 15mn
         $cachedir = DOL_DATA_ROOT.'/boxes/temp';

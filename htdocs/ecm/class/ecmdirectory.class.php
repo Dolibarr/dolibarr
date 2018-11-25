@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,9 @@ class EcmDirectory // extends CommonObject
      */
     public $label;
 
+    /**
+     * @var int ID
+     */
 	public $fk_parent;
 
 	/**
@@ -62,7 +65,15 @@ class EcmDirectory // extends CommonObject
 	public $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	public $date_c;
 	public $date_m;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_m;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_c;
 
 	/**
@@ -669,7 +680,6 @@ class EcmDirectory // extends CommonObject
 					}
 				}
 				$i++;
-
 			}
 		}
 		else

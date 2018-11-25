@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -195,7 +195,7 @@ if ($action == 'edit')
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
@@ -316,7 +316,6 @@ if ($action == 'edit')
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
-
 }
 else
 {
@@ -403,7 +402,6 @@ else
     }
 
     print '</div>';
-
 }
 
 if ($action == 'edit')

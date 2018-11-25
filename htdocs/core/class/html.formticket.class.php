@@ -45,6 +45,10 @@ class FormTicket
     public $db;
 
     public $track_id;
+
+    /**
+     * @var int ID
+     */
     public $fk_user_create;
 
     public $message;

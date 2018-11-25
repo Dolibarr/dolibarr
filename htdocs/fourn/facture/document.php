@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
@@ -38,9 +38,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('bills');
-$langs->load('other');
-$langs->load("companies");
+$langs->loadLangs(array('bills', 'other', 'companies'));
 
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
@@ -159,7 +157,6 @@ if ($object->id > 0)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-
 	}
 
 	print '<table class="border" width="100%">';

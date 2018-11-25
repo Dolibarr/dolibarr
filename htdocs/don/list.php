@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("donations","companies"));
+$langs->loadLangs(array("companies","donations"));
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');

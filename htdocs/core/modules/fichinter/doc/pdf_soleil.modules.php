@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
@@ -107,9 +107,9 @@ class pdf_soleil extends ModelePDFFicheinter
 
 	/**
 	 * Issuer
-	 * @var Societe
+	 * @var Company object that emits
 	 */
-	public $emetteur;	// Objet societe qui emet
+	public $emetteur;
 
 	/**
 	 *	Constructor
@@ -172,7 +172,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Translations
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
 
 		if ($conf->ficheinter->dir_output)

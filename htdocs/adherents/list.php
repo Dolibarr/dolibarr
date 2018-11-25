@@ -86,7 +86,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('adherent');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -582,7 +582,7 @@ if (! empty($arrayfields['t.libelle']['checked']))        print_liste_field_titr
 if (! empty($arrayfields['d.address']['checked']))        print_liste_field_titre($arrayfields['d.address']['label'],$_SERVER["PHP_SELF"],'d.address','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['d.zip']['checked']))            print_liste_field_titre($arrayfields['d.zip']['label'],$_SERVER["PHP_SELF"],'d.zip','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['d.town']['checked']))           print_liste_field_titre($arrayfields['d.town']['label'],$_SERVER["PHP_SELF"],'d.town','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.town']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['d.phone']['checked']))          print_liste_field_titre($arrayfields['d.phone']['label'],$_SERVER["PHP_SELF"],'d.phone','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['d.phone_perso']['checked']))    print_liste_field_titre($arrayfields['d.phone_perso']['label'],$_SERVER["PHP_SELF"],'d.phone_perso','',$param,'',$sortfield,$sortorder);

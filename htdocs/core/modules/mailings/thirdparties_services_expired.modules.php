@@ -69,7 +69,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
                 $i++;
                 $this->arrayofproducts[$i]=$obj->ref;
             }
-
         }
         else
         {

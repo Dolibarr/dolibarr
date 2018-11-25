@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ class modStock extends DolibarrModules
 		$this->numero = 52;
 
 		$this->family = "products";
-		$this->module_position = 40;
+		$this->module_position = '40';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des stocks";
@@ -75,9 +75,9 @@ class modStock extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r=0;
-		
+
 		$this->const[$r] = array('STOCK_ALLOW_NEGATIVE_TRANSFER','chaine','1','',1);
-		
+
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -173,7 +173,6 @@ class modStock extends DolibarrModules
 		$this->rights[9][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[9][4] = 'inventory_advance';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[9][5] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
 		}
 
 		// Main menu entries
@@ -273,7 +272,7 @@ class modStock extends DolibarrModules
 			'e.rowid'=>'IdWarehouse','e.ref'=>'LocationSummary','e.description'=>'DescWareHouse','e.lieu'=>'LieuWareHouse','e.address'=>'Address','e.zip'=>'Zip',
 			'e.town'=>'Town','p.rowid'=>"ProductId",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",
 			'p.price'=>"Price",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell",'p.tobuy'=>'OnBuy','p.duration'=>"Duration",'p.datec'=>'DateCreation',
-			'p.tms'=>'DateModification','sm.rowid'=>'MovementId','sm.value'=>'Qty','sm.datem'=>'DateMovement','sm.label'=>'LabelMovement',
+			'p.tms'=>'DateModification','sm.rowid'=>'MovementId','sm.value'=>'Qty','sm.datem'=>'DateMovement','sm.label'=>'MovementLabel',
 			'sm.inventorycode'=>'InventoryCode'
 		);
 		$this->export_TypeFields_array[$r]=array(
@@ -349,8 +348,8 @@ class modStock extends DolibarrModules
 		    'UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 	}
-	
-	
+
+
 	/**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.

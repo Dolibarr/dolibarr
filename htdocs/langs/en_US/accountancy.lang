@@ -38,6 +38,10 @@ GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accountin
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non-zero values
 ListOfAccounts=List of accounts
+CountriesInEEC=Countries in EEC
+CountriesNotInEEC=Countries not in EEC
+CountriesInEECExceptMe=Countries in EEC except %s
+CountriesExceptMe=All countries except %s
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
@@ -54,19 +58,19 @@ AccountancyAreaDescJournalSetup=STEP %s: Create or check content of your journal
 AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
 AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
 
-AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.    
+AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
-AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.    
+AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
 AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
-AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s. 
+AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
-AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>. 
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
 AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and generate reports and exports.
 
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
@@ -156,12 +160,13 @@ Docref=Reference
 LabelAccount=Label account
 LabelOperation=Label operation
 Sens=Sens
+LetteringCode=Lettering code
 Codejournal=Journal
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
 AccountingCategory=Personalized groups
 GroupByAccountAccounting=Group by accounting account
-AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.  
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
@@ -187,7 +192,7 @@ NewAccountingMvt=New transaction
 NumMvts=Numero of transaction
 ListeMvts=List of movements
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time
-AddCompteFromBK=Add accounting accounts to the group 
+AddCompteFromBK=Add accounting accounts to the group
 ReportThirdParty=List third party account
 DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=List of the accounting accounts
@@ -221,6 +226,7 @@ AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+Balancing=Balancing
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -262,7 +268,8 @@ Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
 Modelcsv_agiris=Export towards Agiris
-Modelcsv_configurable=Export Configurable
+Modelcsv_configurable=Export CSV Configurable
+Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

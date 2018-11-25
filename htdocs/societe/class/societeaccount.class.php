@@ -99,6 +99,10 @@ class SocieteAccount extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'visible'=>-2, 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
 	/**
@@ -123,10 +127,24 @@ class SocieteAccount extends CommonObject
 	public $note_private;
 	public $date_creation;
 	public $tms;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
 	public $import_key;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -270,8 +288,6 @@ class SocieteAccount extends CommonObject
 	 */
 	public function getCustomerAccount($id, $site, $status=0)
 	{
-		global $conf;
-
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
@@ -280,7 +296,7 @@ class SocieteAccount extends CommonObject
 		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
 		//$sql.= " ORDER BY sa.key_account DESC";
 
-		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the system customer id of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first system customer id for ".$site." of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -502,7 +518,6 @@ class SocieteAccount extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

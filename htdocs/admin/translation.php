@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -384,7 +384,6 @@ if ($mode == 'overwrite')
 
     print '</table>';
     print '</div>';
-
 }
 
 if ($mode == 'searchkey')

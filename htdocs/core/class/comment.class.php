@@ -47,6 +47,9 @@ class Comment extends CommonObject
 
 	public $datec;
 
+	/**
+     * @var int ID
+     */
 	public $fk_user_author;
 
 	/**
@@ -357,7 +360,6 @@ class Comment extends CommonObject
 				$error++; $this->errors[]="Error ".$this->db->lasterror();
 				return -1;
 			}
-
 		}
 
 		return count($this->comments);

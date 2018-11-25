@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -423,7 +423,6 @@ if (empty($reshook))
 						// modified by hook
 						if ($reshook < 0)
 							$error++;
-
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -931,7 +930,7 @@ if (empty($reshook))
 			if ($tva_npr)
 				$info_bits |= 0x01;
 
-			if (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
@@ -1052,7 +1051,7 @@ if (empty($reshook))
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
-			if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -2192,7 +2191,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
 		} else {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none');
 		}

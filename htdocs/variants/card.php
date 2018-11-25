@@ -88,7 +88,6 @@ if ($_POST) {
 		header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
 		exit();
 	}
-
 }
 
 if ($confirm == 'yes') {
@@ -133,7 +132,6 @@ if ($confirm == 'yes') {
 $langs->load('products');
 
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
-$var = false;
 
 llxHeader('', $title);
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta'));
+$langs->loadLangs(array('bills', 'compta', 'companies'));
 
 // Security check
 $facid	= GETPOST('facid','int');
@@ -305,7 +305,9 @@ if ($resql)
         print '</td>';
 
         // Date
-        print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day').'</td>';
+        $dateformatforpayment = 'day';
+        if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
+        print '<td align="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment).'</td>';
 
         // Thirdparty
         print '<td>';

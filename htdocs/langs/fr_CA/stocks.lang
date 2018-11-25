@@ -16,7 +16,6 @@ ListMouvementStockProject=Liste des mouvements de stock associés au projet
 StocksArea=Zone d'entrepôts
 LocationSummary=Nom abrégé
 MassStockTransferShort=Transfert de stock de masse
-LabelMovement=Étiquette de mouvement
 NumberOfUnit=Nombre d'unités
 UnitPurchaseValue=Prix ​​unitaire d'achat
 StockTooLow=Stock trop bas

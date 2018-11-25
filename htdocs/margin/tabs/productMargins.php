@@ -26,10 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+$langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -138,9 +135,9 @@ if ($id > 0 || ! empty($ref))
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
             $sql.= " sum(d.total_ht) as selling_price,";							// may be negative or positive
-            $sql.= " sum(d.qty) as qty,";
-            $sql.= " sum(d.qty * d.buy_price_ht) as buying_price,";					// always positive
-            $sql.= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// always positive
+            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty) as qty,";						// not always positive in case of Credit note
+            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty * d.buy_price_ht) as buying_price,";			// not always positive in case of Credit note
+            $sql.= " IF(f.type = 2, -1, 1) * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// not always positive in case of Credit note
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";

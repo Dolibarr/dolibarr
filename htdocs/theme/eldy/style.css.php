@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
@@ -264,7 +264,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-.thumbstat, a.tab { font-weight: bold !important; }
+.thumbstat { font-weight: bold !important; }
 th a { font-weight: <?php echo ($useboldtitle?'bold':'normal'); ?> !important; }
 a.tab { font-weight: bold !important; }
 
@@ -331,7 +331,7 @@ input, select {
 }
 
 /* Focus definitions must be after standard definition */
-textarea:focus, button:focus {
+textarea:focus {
     /* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
@@ -553,7 +553,7 @@ form {
     margin:0px;
 }
 form#addproduct {
-    padding-top: 6px;
+    padding-top: 10px;
 }
 div.float
 {
@@ -695,6 +695,9 @@ textarea.centpercent {
 .listofinvoicetype {
 	height: 28px;
 	vertical-align: middle;
+}
+.divsocialnetwork:not(:first-child) {
+    padding-left: 20px;
 }
 div.divsearchfield {
 	float: <?php print $left; ?>;
@@ -904,7 +907,8 @@ div.fiche {
     min-width: 150px;
 }
 .thumbstat150 {
-    min-width: 170px;
+    /* min-width: 170px; */
+    width: 170px;
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>
@@ -1070,6 +1074,9 @@ select.selectarrowonleft option {
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
      }
+     input[type=text], input[type=password] {
+		max-width: 180px;
+	}
 
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
@@ -1169,8 +1176,8 @@ td.showDragHandle {
 	table-layout: fixed;
 }
 #id-right, #id-left {
-	padding-top: 16px;
-	padding-bottom: 16px;
+	padding-top: 20px;
+	padding-bottom: 20px;
 
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
@@ -1275,8 +1282,8 @@ div.fiche {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'30':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'29':'6')); ?>px;
 	<?php if (! empty($dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 	<?php if (! empty($dol_hide_leftmenu)) print 'margin-top: 12px;'."\n"; ?>
 }
@@ -1707,6 +1714,10 @@ div.mainmenu.cashdesk {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png',1) ?>);
 }
 
+div.mainmenu.takepos {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png',1) ?>);
+}
+
 div.mainmenu.companies {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company_over.png',1) ?>);
 }
@@ -1776,7 +1787,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
 $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
@@ -1849,7 +1860,7 @@ foreach($mainmenuusedarray as $val)
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 13px;
+	font-size: 14px;
 	vertical-align: middle;
 }
 .login_table_title {
@@ -2335,6 +2346,7 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 .tableforservicepart1 .tdhrthin {
 	height: unset;
+    padding-top: 0 !important;
 }
 
 div.popuptabset {
@@ -2376,7 +2388,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 9px 13px;
+	padding: 12px 14px 13px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -3263,7 +3275,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats130 {
     width: 158px;
     height: 48px;
-    padding: 3px
+    padding: 3px;
 }
 .boxstats {
     padding: 3px;
@@ -3304,6 +3316,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
+		width: 160px;
 	}
     .dashboardlineindicator {
         float: left;
@@ -3558,7 +3571,7 @@ div.boximport {
 .widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
-.dolgraphtitlecssboxes { margin: 0px; }
+.dolgraphtitlecssboxes { /* margin: 0px; */ }
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
@@ -5055,7 +5068,7 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
-	padding: 4px 8px 4px 8px;
+	padding: 7px 8px 7px 8px;
 	/* color: rgb(<?php print $colortext; ?>); */
 	color: #000;
 }
@@ -5073,7 +5086,7 @@ dl.dropdown {
 	color: #888;
 }
 .dropdown dd ul li a:hover {
-    background-color:#fff;
+    background-color:#eee;
 }
 
 

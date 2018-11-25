@@ -137,7 +137,6 @@ class ActionsMyModule
 	        foreach($parameters['toselect'] as $objectid)
 	        {
 	            // Do action on each object id
-
 	        }
 	    }
 

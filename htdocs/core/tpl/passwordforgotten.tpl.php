@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Login -->
 <div class="trinputlogin">
-<div class="tagtd nowrap center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
 </span>
@@ -135,7 +135,7 @@ if (! empty($morelogincontent)) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tdinputlogin nowrap none center valignmiddle tdinputlogin">
+	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
 
 	<table class="login_table_securitycode centpercent">
 	<tr class="valignmiddle">
@@ -184,7 +184,7 @@ if (! empty($morelogincontent)) {
 </form>
 
 
-<div class="center login_main_home paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
+<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
 	<span class="passwordmessagedesc">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>

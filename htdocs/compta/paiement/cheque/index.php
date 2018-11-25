@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ $max=10;
 
 $sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
 $sql.= " bc.statut, bc.nbcheque,";
-$sql.= " ba.ref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
+$sql.= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
 $sql.= " aj.code";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
@@ -120,7 +120,7 @@ if ($resql)
 	    $checkdepositstatic->statut=$objp->statut;
 
 		$accountstatic->id=$objp->bid;
-		$accountstatic->ref=$objp->ref;
+		$accountstatic->ref=$objp->bref;
 		$accountstatic->label=$objp->label;
 		$accountstatic->number=$objp->number;
 		$accountstatic->currency_code=$objp->currency_code;

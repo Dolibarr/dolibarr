@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2018	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011 		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,15 +43,15 @@ class Canvas
 	 */
 	public $errors = array();
 
-	var $actiontype;
+	public $actiontype;
 
-    var $dirmodule;			// Module directory
-    var $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
-    var $canvas;            // Name of canvas (ex: company, individual, product, service, ...)
-    var $card;              // Tab (sub-canvas)
+    public $dirmodule;			// Module directory
+    public $targetmodule;      // Module concerned by canvas (ex: thirdparty, contact, ...)
+    public $canvas;            // Name of canvas (ex: company, individual, product, service, ...)
+    public $card;              // Tab (sub-canvas)
 
-    var $template_dir;			// Initialized by getCanvas with templates directory
-    var $control;           	// Initialized by getCanvas with controller instance
+    public $template_dir;		// Initialized by getCanvas with templates directory
+    public $control;           	// Initialized by getCanvas with controller instance
 
 
    /**

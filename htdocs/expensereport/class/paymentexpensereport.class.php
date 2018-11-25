@@ -45,19 +45,44 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
 
+	/**
+     * @var int ID
+     */
 	public $fk_expensereport;
+
 	public $datec='';
 	public $tms='';
 	public $datep='';
     public $amount;            // Total amount of payment
     public $amounts=array();   // Array of amounts
+
+    /**
+     * @var int ID
+     */
 	public $fk_typepayment;
+
 	public $num_payment;
+
+	/**
+     * @var int ID
+     */
 	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_modif;
+
     //Unknow field
     public $chid;
     public $total;
@@ -140,7 +165,6 @@ class PaymentExpenseReport extends CommonObject
 			{
 				$error++;
 			}
-
 		}
 
 		if ($totalamount != 0 && ! $error)

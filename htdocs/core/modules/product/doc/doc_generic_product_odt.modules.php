@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@products.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
-*
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 3 of the License, or
@@ -240,6 +241,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->produit->dir_output)
@@ -357,16 +359,17 @@ class doc_generic_product_odt extends ModelePDFProduct
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->produit->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->produit->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				}
-				catch(Exception $e)
+				catch (Exception $e)
 				{
 					$this->error=$e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -381,8 +384,9 @@ class doc_generic_product_odt extends ModelePDFProduct
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
+					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
 				// Define substitution array
@@ -393,7 +397,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-				// retrieve contact information for use in product as contact_xxx tags
+				// retrieve contact information for use in object as contact_xxx tags
 				$array_thirdparty_contact = array();
 				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
@@ -417,8 +421,9 @@ class doc_generic_product_odt extends ModelePDFProduct
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					}
-					catch(OdfException $e)
+					catch (OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -439,11 +444,13 @@ class doc_generic_product_odt extends ModelePDFProduct
 								{
 									$listlines->setVars($key, $val, true, 'UTF-8');
 								}
-								catch(OdfException $e)
+								catch (OdfException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
-								catch(SegmentException $e)
+								catch (SegmentException $e)
 								{
+									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
 							$listlines->merge();
@@ -451,7 +458,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 					}
 					$odfHandler->mergeSegment($listlines);
 				}
-				catch(OdfException $e)
+				catch (OdfException $e)
 				{
 					$this->error=$e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -467,6 +474,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 					}
 					catch(OdfException $e)
 					{
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -478,16 +486,18 @@ class doc_generic_product_odt extends ModelePDFProduct
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+						$odfHandler->saveToDisk($file);
+					} catch (Exception $e) {
 						$this->error=$e->getMessage();
+                        dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

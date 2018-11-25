@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2011 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ class modBanque extends DolibarrModules
 		$this->numero = 85;
 
 		$this->family = "financial";
-		$this->module_position = 510;
+		$this->module_position = '51';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";

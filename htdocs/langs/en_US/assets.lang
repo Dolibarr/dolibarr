@@ -22,7 +22,14 @@ AccountancyCodeAsset = Accounting code (asset)
 AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
 AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
 NewAssetType=New asset type
+AssetsTypeSetup=Assets type setup
+AssetTypeModified=Asset type modified
+AssetType=Asset type
 AssetsLines=Assets
+DeleteType=Delete
+DeleteAnAssetType=Delete an asset type
+ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+ShowTypeCard=Show type '%s'
 
 # Module label 'ModuleAssetsName'
 ModuleAssetsName = Assets

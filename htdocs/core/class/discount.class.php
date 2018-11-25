@@ -34,9 +34,9 @@ class DiscountAbsolute
     public $db;
 
     /**
-	   * @var string Error code (or message)
-	   */
-	  public $error;
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
 	/**
 	 * @var string[]	Array of error strings
@@ -48,9 +48,9 @@ class DiscountAbsolute
 	 */
 	public $id;
 
-   /**
-	  * @var int Thirdparty ID
-	  */
+    /**
+	 * @var int Thirdparty ID
+	 */
     public $fk_soc;
 
     public $discount_type;			// 0 => customer discount, 1 => supplier discount
@@ -60,20 +60,34 @@ class DiscountAbsolute
     public $tva_tx;				// Vat rate
 
     /**
-	   * @var int User ID Id utilisateur qui accorde la remise
-	   */
-	  public $fk_user;
+	 * @var int User ID Id utilisateur qui accorde la remise
+	 */
+	public $fk_user;
 
     /**
-	   * @var string description
-	   */
-	  public $description;
+	 * @var string description
+	 */
+	public $description;
 
     public $datec;					// Date creation
-    public $fk_facture_line;  		// Id invoice line when a discount is used into an invoice line (for absolute discounts)
-    public $fk_facture;			    // Id invoice when a discount line is used into an invoice (for credit note)
-    public $fk_facture_source;		// Id facture avoir a l'origine de la remise
-    public $ref_facture_source;	    // Ref facture avoir a l'origine de la remise
+
+    /**
+     * @var int ID invoice line when a discount is used into an invoice line (for absolute discounts)
+     */
+    public $fk_facture_line;
+
+    /**
+     * @var int ID invoice when a discount line is used into an invoice (for credit note)
+     */
+    public $fk_facture;
+
+    /**
+     * @var int ID credit note having caused the discount
+     */
+    public $fk_facture_source;
+
+    public $ref_facture_source;	    // Ref credit note having caused the discount
+
     public $ref_invoice_supplier_source;
 
     /**
@@ -137,7 +151,7 @@ class DiscountAbsolute
                 $this->amount_tva = $obj->amount_tva;
                 $this->amount_ttc = $obj->amount_ttc;
 
-                $this->multicurrency_amount_ht = $obj->multicurrency_amount_ht;
+                $this->multicurrency_amount_ht = $this->multicurrency_subprice = $obj->multicurrency_amount_ht;
                 $this->multicurrency_amount_tva = $obj->multicurrency_amount_tva;
                 $this->multicurrency_amount_ttc = $obj->multicurrency_amount_ttc;
 
@@ -185,7 +199,16 @@ class DiscountAbsolute
         $this->amount_ht=price2num($this->amount_ht);
         $this->amount_tva=price2num($this->amount_tva);
         $this->amount_ttc=price2num($this->amount_ttc);
+
         $this->tva_tx=price2num($this->tva_tx);
+
+        $this->multicurrency_amount_ht=price2num($this->multicurrency_amount_ht);
+        $this->multicurrency_amount_tva=price2num($this->multicurrency_amount_tva);
+        $this->multicurrency_amount_ttc=price2num($this->multicurrency_amount_ttc);
+
+        if (empty($this->multicurrency_amount_ht)) $this->multicurrency_amount_ht=0;
+        if (empty($this->multicurrency_amount_tva)) $this->multicurrency_amount_tva=0;
+        if (empty($this->multicurrency_amount_ttc)) $this->multicurrency_amount_ttc=0;
 
         // Check parameters
         if (empty($this->description))
@@ -199,10 +222,12 @@ class DiscountAbsolute
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
         $sql.= " (entity, datec, fk_soc, discount_type, fk_user, description,";
         $sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
+        $sql.= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
         $sql.= " fk_facture_source, fk_invoice_supplier_source";
         $sql.= ")";
         $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type)?0:intval($this->discount_type)).", ".$user->id.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
+        $sql.= " ".$this->multicurrency_amount_ht.", ".$this->multicurrency_amount_tva.", ".$this->multicurrency_amount_ttc.", ";
         $sql.= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'":"null").",";
         $sql.= " ".($this->fk_invoice_supplier_source ? "'".$this->db->escape($this->fk_invoice_supplier_source)."'":"null");
         $sql.= ")";

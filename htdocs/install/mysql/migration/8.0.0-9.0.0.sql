@@ -34,6 +34,9 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN fk_pcg_version varchar(32) NOT 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version    FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accounting_system (pcg_version);
 
+ALTER TABLE llx_facture ADD COLUMN module_source varchar(32);
+ALTER TABLE llx_facture ADD COLUMN pos_source varchar(32);
+
 create table llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -51,7 +54,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_f
 
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
-
+ALTER TABLE llx_stock_mouvement ADD COLUMN fk_project integer;
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(32);
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 
 
@@ -65,16 +69,159 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_DELETE','Contract deleted','Executed when a contract is deleted','contrat',18);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention is deleted','Executed when a intervention is deleted','ficheinter',35);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',204);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
 
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8001', 'Aktieselvskab A/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8002', 'Anparts Selvskab ApS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8003', 'Personlig ejet selvskab');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8004', 'Iværksætterselvskab IVS');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8005', 'Interessentskab I/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8006', 'Holdingselskab');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8007', 'Selskab Med Begrænset Hæftelse SMBA');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8008', 'Kommanditselskab K/S');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (80, '8009', 'SPE-selskab');
+
+ALTER TABLE llx_payment_salary ADD COLUMN ref varchar(30) NULL after rowid;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
+
+ALTER TABLE llx_payment_various ADD COLUMN ref varchar(30) NULL after rowid;
 
 ALTER TABLE llx_categorie ADD COLUMN ref_ext varchar(255);
 
+ALTER TABLE llx_paiement ADD COLUMN ext_payment_id varchar(128);
+ALTER TABLE llx_paiement ADD COLUMN ext_payment_site varchar(128);
+
 ALTER TABLE llx_societe ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_societe ADD COLUMN facebook varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN instagram  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN snapchat  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN googleplus  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN youtube  varchar(255) after skype;
+ALTER TABLE llx_societe ADD COLUMN whatsapp  varchar(255) after skype;
+
 ALTER TABLE llx_socpeople ADD COLUMN twitter  varchar(255) after skype;
 ALTER TABLE llx_socpeople ADD COLUMN facebook varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN instagram  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN snapchat  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN googleplus  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN youtube  varchar(255) after skype;
+ALTER TABLE llx_socpeople ADD COLUMN whatsapp  varchar(255) after skype;
+
+ALTER TABLE llx_adherent ADD COLUMN skype  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN twitter  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN facebook varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN instagram  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN snapchat  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN googleplus  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN youtube  varchar(255);
+ALTER TABLE llx_adherent ADD COLUMN whatsapp  varchar(255);
+
+ALTER TABLE llx_user ADD COLUMN skype  varchar(255);
+ALTER TABLE llx_user ADD COLUMN twitter  varchar(255);
+ALTER TABLE llx_user ADD COLUMN facebook varchar(255);
+ALTER TABLE llx_user ADD COLUMN instagram  varchar(255);
+ALTER TABLE llx_user ADD COLUMN snapchat  varchar(255);
+ALTER TABLE llx_user ADD COLUMN googleplus  varchar(255);
+ALTER TABLE llx_user ADD COLUMN youtube  varchar(255);
+ALTER TABLE llx_user ADD COLUMN whatsapp  varchar(255);
 
 
 ALTER TABLE llx_website CHANGE COLUMN fk_user_create fk_user_creat integer;
 ALTER TABLE llx_website_page CHANGE COLUMN fk_user_create fk_user_creat integer;
+
+ALTER TABLE llx_website ADD COLUMN maincolor varchar(16);
+ALTER TABLE llx_website ADD COLUMN maincolorbis varchar(16);
+
+ALTER TABLE llx_website_page ADD COLUMN image varchar(255);
+
+CREATE TABLE llx_takepos_floor_tables(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    entity integer DEFAULT 1 NOT NULL,
+    label varchar(255),
+    leftpos float,
+    toppos float,
+    floor smallint
+) ENGINE=innodb;
+
+
+UPDATE llx_c_payment_term SET decalage = nbjour, nbjour = 0 where decalage IS NULL AND type_cdr = 2;
+
+UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
+
+
+
+CREATE TABLE llx_emailcollector_emailcollector(
+        -- BEGIN MODULEBUILDER FIELDS
+        rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+        entity integer DEFAULT 1 NOT NULL,
+        ref varchar(128) NOT NULL,
+        label varchar(255),
+        description text,
+        host varchar(255),
+        user varchar(128),
+        password varchar(128),
+        source_directory varchar(255) NOT NULL,
+        target_directory varchar(255),
+        datelastresult datetime,
+        codelastresult varchar(16),
+        lastresult varchar(255),
+        note_public text,
+        note_private text,
+        date_creation datetime NOT NULL,
+        tms timestamp NOT NULL,
+        fk_user_creat integer NOT NULL,
+        fk_user_modif integer,
+        import_key varchar(14),
+        status integer NOT NULL
+        -- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_entity (entity);
+ALTER TABLE llx_emailcollector_emailcollector ADD INDEX idx_emailcollector_status (status);
+
+
+CREATE TABLE llx_emailcollector_emailcollectorfilter(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL,
+	rulevalue varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+CREATE TABLE llx_emailcollector_emailcollectoraction(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_emailcollector INTEGER NOT NULL,
+	type varchar(128) NOT NULL,
+	actionparam varchar(255) NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	position integer DEFAULT 0,
+	import_key varchar(14),
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD INDEX idx_emailcollector_fk_emailcollector (fk_emailcollector);
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD CONSTRAINT fk_emailcollectorfilter_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
+
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD INDEX idx_emailcollector_fk_emailcollector (fk_emailcollector);
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD CONSTRAINT fk_emailcollectoraction_fk_emailcollector FOREIGN KEY (fk_emailcollector) REFERENCES llx_emailcollector_emailcollector(rowid);
+
+
+ALTER TABLE llx_emailcollector_emailcollectorfilter ADD UNIQUE INDEX uk_emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue);
+ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcollector_emailcollectoraction (fk_emailcollector, type);
+
+
+
+

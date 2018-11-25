@@ -40,7 +40,7 @@ $search_account=GETPOST('search_account','int');
 $search_amount=GETPOST('search_amount','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
-$date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
+$date_select=GETPOST("date_select",'alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -53,13 +53,15 @@ $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="c.dateadh"; }
 
+$object = new Subscription($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscriptionlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('subscription');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -126,7 +128,8 @@ $sql.= " WHERE d.rowid = c.fk_adherent";
 $sql.= " AND d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '')
 {
-    $sql.= " AND c.dateadh LIKE '".$date_select."%'";
+    $sql.= " AND c.dateadh >= '".$date_select."-01-01 00:00:00'";
+    $sql.= " AND c.dateadh < '".($date_select+1)."-01-01 00:00:00'";
 }
 if ($search_ref)
 {

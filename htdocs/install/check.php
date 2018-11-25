@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -568,9 +568,7 @@ else
             print '</table>'."\n";
             print '</div>';
         }
-
 	}
-
 }
 
 print '<script type="text/javascript">

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,7 +253,6 @@ else
 	    print " x ".$langs->trans("Quantity").": ".$qty;
 	    print " - ".$langs->trans("VAT").": ".$vat.'%';
 	    print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
-
 	}
 
 	// Important: can debug rounding, to simulate the rounded total

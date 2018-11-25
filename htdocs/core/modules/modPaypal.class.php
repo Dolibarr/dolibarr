@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,21 +107,21 @@ class modPaypal extends DolibarrModules
         // Main menu entries
         $this->menus = array();			// List of menus to add
         $r=0;
-        $this->menu[$r]=array(
-        'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-        'mainmenu'=>'billing',
-        'leftmenu'=>'customers_bills_payment_paypal',
-        'type'=>'left',			                // This is a Left menu entry
-        'titre'=>'PaypalImportPayment',
-        'url'=>'/paypal/importpayments.php',
-        'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-        'position'=>501,
-        'enabled'=>'$conf->paypal->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-        'target'=>'',
-        'user'=>2
+        /*$this->menu[$r]=array(
+	        'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+	        'mainmenu'=>'billing',
+	        'leftmenu'=>'customers_bills_payment_paypal',
+	        'type'=>'left',			                // This is a Left menu entry
+	        'titre'=>'PaypalImportPayment',
+	        'url'=>'/paypal/importpayments.php',
+	        'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+	        'position'=>501,
+	        'enabled'=>'$conf->paypal->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+	        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+	        'target'=>'',
+	        'user'=>2
         );				                // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
+        $r++;*/
 
         // Add here entries to declare new menus
         // Example to declare the Top Menu entry:

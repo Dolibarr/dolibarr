@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2015  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2015  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -781,7 +781,6 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 					$result=$tmpresult;
 				}
 				if ($result < 0) break;
-
 			}
 		}
 		closedir($dir_handle);
@@ -2496,7 +2495,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les propales
-	else if ($modulepart == 'propal' && !empty($conf->propal->multidir_output[$entity]))
+	else if (($modulepart == 'propal' || $modulepart == 'propale') && !empty($conf->propal->multidir_output[$entity]))
 	{
 		if ($fuser->rights->propale->{$lire} || preg_match('/^specimen/i',$original_file))
 		{

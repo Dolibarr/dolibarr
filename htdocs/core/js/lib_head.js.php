@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2014  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -918,7 +918,7 @@ function document_preview(file, type, title)
 		{
 			optionsbuttons = {
 			    "<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("Close")); ?>": function() { $( this ).dialog( "close" ); }
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
 
