@@ -868,7 +868,7 @@ if (! $variants) {
 			print '<td align="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price * $obj->reel, 'MT'), 1) . '</td>';
 			else print $langs->trans("Variable");
-			print '</tr>';;
+			print '</tr>';
 			$total += $obj->reel;
 			if (price2num($object->pmp)) $totalwithpmp += $obj->reel;
 			$totalvalue = $totalvalue + ($object->pmp * $obj->reel);
