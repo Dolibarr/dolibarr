@@ -642,7 +642,7 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 	dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
     llxFooter();
-    $db->close();;
+    $db->close();
 	exit;
 }
 
