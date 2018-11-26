@@ -1344,7 +1344,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
-        if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
+        if (is_object($filterobj) && in_array(  get_class($filterobj), array('Societe', 'Client', 'Fournisseur') )   && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
         elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
         {
@@ -1386,6 +1386,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
+	    
+	// TODO Add limit for thirdparty in  contexte very all result     
         $sql.= $db->order($sortfield, $sortorder);
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
