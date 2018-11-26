@@ -1582,7 +1582,7 @@ $moreheadjs.='<script type="text/javascript">'."\n";
 $moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs.='</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 
