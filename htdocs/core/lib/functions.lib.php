@@ -6954,7 +6954,6 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'sv-FI',
 		'sv-SE',
 		'sw-KE',
-		'syr-SY',
 		'ta-IN',
 		'te-IN',
 		'th-TH',
