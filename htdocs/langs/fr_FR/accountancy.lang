@@ -253,7 +253,7 @@ AccountingJournalType5=Note de frais
 AccountingJournalType8=Inventaire
 AccountingJournalType9=A-nouveaux
 ErrorAccountingJournalIsAlreadyUse=Le journal est déjà utilisé
-AccountingAccountForSalesTaxAreDefinedInto=Remarque: Le compte de comptabilité pour la TVA est défini dans le menu <b> %s </b> - <b> %s </b>
+AccountingAccountForSalesTaxAreDefinedInto=Remarque: Le compte comptable pour la TVA est défini dans le menu <b> %s </b> - <b> %s </b>
 
 ## Export
 ExportDraftJournal=Exporter le journal brouillon

@@ -211,8 +211,8 @@ Nouveauté=Nouveauté
 AchatTelechargement=Acheter/télécharger
 GoModuleSetupArea=Pour déployer/installer un nouveau module, rendez vous dans la zone de configuration des modules : <a href="%s">%s</a>
 DoliStoreDesc=DoliStore, la place de marché officielle des modules et extensions complémentaires pour Dolibarr ERP/CRM
-DoliPartnersDesc=Liste de quelques sociétés qui peuvent fournir/développer des modules ou fonctions sur mesure. <br>Remarque: Toute société Open Source connaissant le langage PHP peut fournir du développement spécifique.
-WebSiteDesc=Sites fournisseurs à consulter pour trouver plus de modules...
+DoliPartnersDesc=Liste de quelques sociétés qui peuvent fournir/développer des modules ou fonctions sur mesure. <br>Remarque: <i>Toute société</i> Open Source connaissant le langage PHP peut fournir du développement spécifique.
+WebSiteDesc=Sites fournisseurs à consulter pour trouver plus de modules (extensions)...
 DevelopYourModuleDesc=Quelques pistes pour développer votre propre module/application...
 URL=Lien
 BoxesAvailable=Widgets disponibles
@@ -321,7 +321,7 @@ SetupIsReadyForUse=L"installation du module est terminée. Il est cependant néc
 NotExistsDirect=Le dossier racine alternatif n'est pas défini.<br>
 InfDirAlt=Depuis les versions 3, il est possible de définir un dossier racine alternatif. Cela permet d'installer modules et thèmes additionnels dans un répertoire dédié.<br>Créer un dossier racine alternatif à Dolibarr (ex : custom).<br>
 InfDirExample=<br>Ensuite, déclarez le dans le fichier <strong>conf.php</strong><br>$dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>Si ces lignes sont commentées avec un symbole "#" ou "//", activer les en supprimant le caractère "#" ou "//".
-YouCanSubmitFile=Pour cette étape, vous pouvez soumettre votre fichier package ici :
+YouCanSubmitFile=Pour cette étape, vous pouvez téléverser votre fichier package .zip ici :
 CurrentVersion=Version actuelle de Dolibarr
 CallUpdatePage=Aller à la page de mise à jour de la structure et des données de la base : %s.
 LastStableVersion=Dernière version stable disponible
@@ -331,9 +331,9 @@ LastActivationIP=Dernière adresse IP d'activation
 UpdateServerOffline=Serveur de mise à jour hors ligne
 WithCounter=Gérer un compteur
 GenericMaskCodes=Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent être utilisées:<br><b>{000000}</b> correspond à un numéro qui sera incrémenté à chaque %s. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{000000+000}</b> idem que précédemment mais un décalage correspondant au nombre à droite du + est appliqué dès la première %s.<br><b>{000000@x}</b> idem que précédemment mais le compteur est remis à zéro le xème mois de l'année (x entre 1 et 12, ou 0 pour utiliser le mois de début d'exercice fiscal défini dans votre configuration, ou 99 pour remise à zéro chaque mois). Si cette option est utilisée et x vaut 2 ou plus, alors la séquence {yy}{mm} ou {yyyy}{mm} est obligatoire. <br><b>{dd}</b> jour (01 à 31).<br><b>{mm}</b> mois (01 à 12).<br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{y}</b> année sur 2, 4 ou 1 chiffres.<br>
-GenericMaskCodes2=<b>{cccc}</b> : code client sur n caractères</br><b>{cccc000}</b> : code client sur n caractères suivi d'un compteur propre au client. Ce compteur propre au client est remis à zéro en même temps que le compteur général.</br><b>{tttt}</b> code du type de tiers sur n caractères (Voir menu Accueil > Configuration > Dictionnaires > Types de tiers). Si vous ajoutez cet élément au masque de numérotation, le compteur sera différent pour chaque type de tiers.<br>
+GenericMaskCodes2=<b>{cccc}</b> : code client sur n caractères<br><b>{cccc000}</b> : code client sur n caractères suivi d'un compteur propre au client. Ce compteur propre au client est remis à zéro en même temps que le compteur général.<br><b>{tttt}</b> code du type de tiers sur n caractères (Voir menu Accueil > Configuration > Dictionnaires > Types de tiers). Si vous ajoutez cet élément au masque de numérotation, le compteur sera différent pour chaque type de tiers.<br>
 GenericMaskCodes3=Tout autre caractère dans le masque sera laissé inchangé.<br>Les espaces ne sont pas permis.<br>
-GenericMaskCodes4a=<u>Exemple sur la 99eme %s du tiers LaCompanie faite le 31/03/2007 :</u><br>
+GenericMaskCodes4a=<u>Exemple sur la 99eme %s du tiers LaCompanie faite le 31/01/2007:</u><br>
 GenericMaskCodes4b=<u>Exemple sur un tiers créé le 31/03/2007 :</u><br>
 GenericMaskCodes4c=<u>Exemple sur un produit/service créé le 31/03/2007 :</u><br>
 GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> donnera <b>ABC0703-000099</b><br><b>{0000+100@1}-XXX-{dd}-YYY</b> donnera <b>0199-XXX-31-YYY</b><br><b>IN{yy}{mm}-{0000}-{t}</b> donnera <b>IN0701-0099-A</b> si la société a le type 'Responsable Inscripto' avec le code type qui est 'A_RI'
@@ -374,7 +374,7 @@ ResponseTimeout=Délai expiration de réponse
 SmsTestMessage=Message de test de __PHONEFROM__ vers __PHONETO__
 ModuleMustBeEnabledFirst=Le module <b>%s</b> doit être activé pour utiliser cette fonction.
 SecurityToken=Clé de sécurisation des URLs
-NoSmsEngine=Aucun gestionnaire d'envoi de SMS n'est disponible. Les gestionnaires d'envois SMS ne sont pas installés en standard (car dépendent d'un fournisseur) mais vous pourrez en trouver depuis la plateforme %s
+NoSmsEngine=Aucun gestionnaire d'envoi de SMS n'est disponible. Les gestionnaires d'envois SMS ne sont pas installés en standard, car dépendent d'un fournisseur externe, mais vous pourrez en trouver depuis la plateforme %s
 PDF=PDF
 PDFDesc=Vous pouvez définir ici des options globales sur la génération des PDF
 PDFAddressForging=Règles de fabrication des zones adresses
@@ -419,11 +419,11 @@ ExtrafieldLink=Lien vers un objet
 ComputedFormula=Champ calculé
 ComputedFormulaDesc=Vous pouvez entrer ici une formule utilisant les propriétés objet ou tout code PHP pour obtenir des valeurs dynamiques. Vous pouvez utiliser toute formule compatible PHP, incluant l'opérateur conditionnel "?", et les objets globaux : <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>ATTENTION</strong> : Seulement quelques propriétés de l'objet $object pourraient être disponibles. Si vous avez besoin de propriétés non chargées, créez vous même une instance de l'objet dans votre formule, comme dans le deuxième exemple.<br>Utiliser un champs calculé signifie que vous ne pouvez pas entrer vous même toute valeur à partir de l'interface. Aussi, s'il y a une erreur de syntaxe, la formule pourrait ne rien retourner.<br><br>Exemple de formule:<br> $object->id < 10 ? round($object->id / 2, 2) : ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Exemple pour recharger l'objet: <br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id : ($obj->rowid ? $obj->rowid : $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5 : '-1'<br><br>Un autre exemple de formule pour forcer le rechargement d'un objet et de son objet parent:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : 'Objet parent projet non trouvé'
 ExtrafieldParamHelpPassword=Laissez ce champ vide signifie que la valeur sera stockée sans cryptage (le champ doit juste être caché avec des étoiles sur l'écran).<br> Définissez la valeur 'auto' pour utiliser la règle de cryptage par défaut pour enregistrer le mot de passe dans la base de données (ensuite la valeur utilisée sera le hash uniquement, sans moyen de retrouver la valeur d'origine)
-ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur (où la clé ne peut être '0')<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...<br><br>\nPour afficher une liste dépendant d'une autre liste attribut complémentaire: <br>1, valeur1|options_<i>code_liste_parente</i>:clé_parente<br> 2,valeur2|option_<i>Code_liste_parente</i>:clé_parente<br><br>\nPour que la liste soit dépendante d'une autre liste:<br>1,valeur1|<i>code_liste_parent</i>:clef_parent<br>2,valeur2|<i>code_liste_parent</i>:clef_parent
+ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur (où la clé ne peut être '0')<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...<br><br>\nPour afficher une liste dépendant d'une autre liste attribut complémentaire: <br>1, valeur1|options_<i>code_liste_parente</i>:clé_parente<br> 2,valeur2|option_<i>Code_liste_parente</i>:clé_parente<br><br>\nPour que la liste soit dépendante d'une autre liste:<br>1,valeur1|<i>code_liste_parent</i>:clef_parent<br>2,valeur2|<i>code_liste_parent</i>:clef_parent
 ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur (où la clé ne peut être '0')<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur (où la clé ne peut être '0')<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
-ExtrafieldParamHelpsellist=Les paramètres de la liste viennent d'une table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>-idfilter est nécessairement une clé primaire int<br>- filter peut être un simple test (e.g. active=1) pour seulement montrer les valeurs actives<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>Pour faire un SELECT dans le filtre, utilisez $SEL$<br>Si vous voulez filtrer sur un extrafield, utilisez la syntaxe extra.fieldcode=... (ou fieldcode est le code de l'extrafield)<br><br>Pour avoir une liste qui dépend d'un autre attribut complémentaire:<br>\n<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>Pour avoir une liste qui dépend d'une autre liste:<br>\nc_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
-ExtrafieldParamHelpchkbxlst=Les paramètres de la liste proviennent d'une table<br>:\nSyntaxe : nom_de_la_table:libelle_champ:id_champ::filtre<br>\nExemple : c_typent:libelle:id::filter<br><br>le filtre peut n'est qu'un test (ex : active=1) pour n'afficher que les valeurs actives.<br>Vous pouvez aussi utiliser $ID$ dans les filtres pour indiquer l'ID de l'élément courant.<br>\nPour utiliser un SELECT dans un filtre, utilisez $SEL$<br>\nPour filtrer sur un attribut supplémentaire, utilisez la syntaxe\nextra.fieldcode=... (ou fieldcode est le code de l'attribut supplémentaire)<br><br>Pour afficher une liste dépendant d'un autre attribut supplémentaire : <br>c_typent:libelle:id:options_<i>code_liste_parente</i>|colonne_parente:filtre <br><br>Pour afficher une liste dépendant d'une autre liste : <br>c_typent:libelle:id:<i>code_liste_parente</i>|colonne_parente:filter
+ExtrafieldParamHelpsellist=Les paramètres de la liste viennent d'une table<br>Syntax : table_name:label_field:id_field::filter<br>Exemple : c_typent:libelle:id::filter<br><br>-idfilter est nécessairement une clé primaire int<br>- filter peut être un simple test (e.g. active=1) pour seulement montrer les valeurs actives<br>Vous pouvez aussi utiliser $ID$ dans le filtre qui est le ID actuel de l'objet<br>Pour faire un SELECT dans le filtre, utilisez $SEL$<br>Si vous voulez filtrer sur un extrafield, utilisez la syntaxe extra.fieldcode=... (ou fieldcode est le code de l'extrafield)<br><br>Pour avoir une liste qui dépend d'un autre attribut complémentaire:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>Pour avoir une liste qui dépend d'une autre liste:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=Les paramètres de la liste proviennent d'une table<br>:Syntaxe : nom_de_la_table:libelle_champ:id_champ::filtre<br>Exemple : c_typent:libelle:id::filter<br><br>le filtre peut n'est qu'un test (ex : active=1) pour n'afficher que les valeurs actives.<br>Vous pouvez aussi utiliser $ID$ dans les filtres pour indiquer l'ID de l'élément courant.<br>Pour utiliser un SELECT dans un filtre, utilisez $SEL$<br>Pour filtrer sur un attribut supplémentaire, utilisez la syntaxeextra.fieldcode=... (ou fieldcode est le code de l'attribut supplémentaire)<br><br>Pour afficher une liste dépendant d'un autre attribut supplémentaire : <br>c_typent:libelle:id:options_<i>code_liste_parente</i>|colonne_parente:filtre <br><br>Pour afficher une liste dépendant d'une autre liste : <br>c_typent:libelle:id:<i>code_liste_parente</i>|colonne_parente:filter
 ExtrafieldParamHelplink=Les paramètres doivent être ObjectName:Classpath <br> Syntaxe: ObjectName:Classpath <br> Exemples: <br> Société:societe/class/societe.class.php <br> Contact:contact/class/contact.class.php
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
 LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>2 : taxe locale sur les produits et services avant tva (la taxe locale est calculée sur le montant + tva)<br>3 : taxe locale uniquement sur les produits hors tva (la taxe locale est calculée sur le montant hors taxe)<br>4 : taxe locale uniquement sur les produits avant tva (la taxe locale est calculée sur le montant + tva)<br>5 : taxe locale uniquement sur les services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>6 : taxe locale uniquement sur les service avant tva (la taxe locale est calculée sur le montant + tva)
@@ -458,7 +458,7 @@ ModuleCompanyCodeDigitaria=Renvoie un code comptable composé suivant le code ti
 Use3StepsApproval=Par défaut, les commandes fournisseurs nécessitent d'être créées et approuvées en deux étapes/utilisateurs (une étape/utilisateur pour créer et une étape/utilisateur pour approuver. Si un utilisateur à les deux permissions, ces deux actions sont effectuées en une seule fois). Cette option ajoute la nécessité d'une approbation par une troisième étape/utilisateur, si le montant de la commande est supérieur au montant d'une valeur définie (soit 3 étapes nécessaire: 1 =Validation, 2=Première approbation et 3=seconde approbation si le montant l'exige).<br>Laissez le champ vide si une seule approbation (2 étapes) sont suffisantes, placez une valeur très faibe (0.1) si une deuxième approbation (3 étapes) est toujours exigée.
 UseDoubleApproval=Activer l'approbation en trois étapes si le montant HT est supérieur à...
 WarningPHPMail=Attention : Il est préférable de configurer les emails sortant pour utiliser le serveur email de votre fournisseur plutôt que la configuration par défaut. Certains fournisseurs email (comme Yahoo) ne permettent pas l'envoi d'e-mails depuis un autre serveur que le leur si l'adresse d'envoi utilisée est une adresse autre que la leur. Votre configuration actuelle utilise le serveur de l'application pour l'envoi d'e-mails et non le serveur de votre fournisseur de messagerie, aussi certains destinataires (ceux compatibles avec le protocole restrictif DMARC) demanderont au fournisseur d'email si ils peuvent accepter l'email et certains fournisseurs (comme Yahoo) peuvent répondre "non" car le serveur utilisé pour l'envoi n'est pas un serveur appartenant au fournisseur, aussi certains de vos emails envoyés peuvent ne pas etre accepté (faites attention aussi aux quotas de votre fournisseur d'email). <br>SI votre fournisseur d'email (comme Yahoo) impose cette restriction, vous devrez modifier votre configuration et opter pour l'autre méthode d'envoi "SMTP server" et saisir les identifiants SMTP de votre compte fournis par votre fournisseur d'e-mail (à demander à votre fournisseur d'e-mail)
-WarningPHPMail2=Si votre fournisseur de messagerie SMTP a besoin de restreindre le client de messagerie à certaines adresses IP (très rare), voici l'adresse IP du mail agent (MUA) de votre application CRM ERP : <strong> %s </strong>.
+WarningPHPMail2=Si votre fournisseur de messagerie SMTP a besoin de restreindre le client de messagerie à certaines adresses IP (très rare), voici l'adresse IP du mail user agent (MUA) de votre application CRM ERP : <strong> %s </strong>.
 ClickToShowDescription=Cliquer pour afficher la description
 DependsOn=Ce module a besoin du(des) module(s)
 RequiredBy=Ce module est requis par le ou les module(s)
@@ -555,7 +555,7 @@ Module320Desc=Ajout de flux d'informations RSS dans les écrans Dolibarr
 Module330Name=Marque-pages et raccourci
 Module330Desc=Créez des raccourcis, toujours accessibles, vers les pages internes ou externes auxquelles vous accédez fréquemment
 Module400Name=Projets ou Opportunités
-Module400Desc=Gestion des projets, opportunités/affaires et/ou tâches. Vous pouvez aussi assigner tous les autres éléments (facture, commande, proposition, intervention, ...) à ces projets et avoir une vue transverse depuis la vue projet.
+Module400Desc=Gestion des projets, opportunités/affaires et/ou tâches. Vous pouvez aussi assigner tous les autres éléments (facture, commande, proposition, intervention, ...) à un projet et avoir une vue transverse depuis la vue projet.
 Module410Name=Webcalendar
 Module410Desc=Interface avec le calendrier Webcalendar
 Module500Name=Taxes et dépenses spéciales
@@ -598,7 +598,7 @@ Module2610Desc=Active le server REST Dolibarr fournissant des services API
 Module2660Name=Appelle de Webservices externes (client SOAP)
 Module2660Desc=Activez le client Dolibarr de services Web (Peut être utilisé pour pousser des données/demandes vers des serveurs externes. Seules les commandes Fournisseurs sont prises en charge pour le moment)
 Module2700Name=Gravatar
-Module2700Desc=Utilise le service en ligne Gravatar (www.gravatar.com) pour afficher les photos d'utilisateurs/membres (en fonction leur email). Besoin d'un accès Internet
+Module2700Desc=Utilise le service en ligne Gravatar (www.gravatar.com) pour afficher les photos d'utilisateurs/adhérents (en fonction leur email). Besoin d'un accès Internet
 Module2800Desc=Client FTP
 Module2900Name=GeoIPMaxmind
 Module2900Desc=Capacités de conversion GeoIP Maxmind
@@ -929,7 +929,7 @@ BackToModuleList=Retour liste des modules
 BackToDictionaryList=Retour liste des dictionnaires
 TypeOfRevenueStamp=Type de timbre fiscal
 VATManagement=Gestion TVA
-VATIsUsedDesc=Le taux de TVA proposé par défaut lors de la création de propositions commerciales, factures, commandes, etc... répond à la règle standard suivante :<br>Si vendeur non assujetti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur= pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu= moyen de transport neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payée par acheteur au centre d'impôts de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur sont dans la Communauté européenne et que l'acheteur est une société alors TVA par défaut=0. Fin de règle.<br>Sinon la TVA proposée par défaut=0. Fin de règle.
+VATIsUsedDesc=Le taux de TVA proposé par défaut lors de la création de propositions commerciales, factures, commandes, etc... répond à la règle standard suivante:<br>Si vendeur non assujetti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur= pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu= moyen de transport neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payée par acheteur au centre d'impôts de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur sont dans la Communauté européenne et que l'acheteur est une société alors TVA par défaut=0. Fin de règle.<br>Sinon la TVA proposée par défaut=0. Fin de règle.
 VATIsNotUsedDesc=Le taux de TVA proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.
 VATIsUsedExampleFR=En France, cela signifie que les entreprises ou les organisations sont assuetis à la tva (réel ou normal).
 VATIsNotUsedExampleFR=En France, il s'agit des associations ne déclarant pas de TVA ou sociétés, organismes ou professions libérales ayant choisi le régime fiscal micro entreprise (TVA en franchise) et payant une TVA en franchise sans faire de déclaration de TVA. Ce choix fait de plus apparaître la mention "TVA non applicable - art-293B du CGI" sur les factures.
@@ -1050,7 +1050,7 @@ Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolérance de retard avant alerte (en jours
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolérance de retard avant alerte (en jours) sur les notes de frais à approuver
 SetupDescription1=L'espace configuration permet de réaliser le paramétrage initial afin de pouvoir commencer à utiliser l'application.
 SetupDescription2=Les deux étapes obligatoires sont les deux premières entrées dans le menu de configuration, soit
-SetupDescription3=<a href="%s">%s -> %s</a>. Paramètres pour personnaliser le comportement par défaut du logiciel (comportement lié au pays par exemple).
+SetupDescription3=<a href="%s">%s -> %s</a><br>Paramètres pour personnaliser le comportement par défaut du logiciel (comportement lié au pays par exemple).
 SetupDescription4=<a href="%s"> %s -> %s </a><br>Cette étape est requise car Dolibarr ERP/CRM est un ensemble de plusieurs modules/applications, tous plus ou moins indépendants. Les fonctionnalités sont ajoutées aux menus pour chaque module que vous activez.
 SetupDescription5=Les autres entrées de configuration gèrent des paramètres facultatifs.
 LogEvents=Événements d'audit de sécurité
@@ -1160,7 +1160,7 @@ SendmailOptionMayHurtBuggedMTA=La fonction permettant d’envoyer des e-mails à
 TranslationSetup=Configuration de la traduction
 TranslationKeySearch=Rechercher une traduction
 TranslationOverwriteKey=Ajouter une traduction
-TranslationDesc=Pour sélectionner la langue d'affichage de l'environnement : <br>* langue par défaut : menu <strong>Accueil - Configuration - Affichage</strong><br>* langue par utilisateur: Onglet <strong>Interface utilisateur</strong> de la fiche utilisateur (Accès a la fiche de l'utilisateur depuis l'identifiant dans l'angle supérieur droit de l'écran).
+TranslationDesc=Pour sélectionner la langue d'affichage de l'environnement : <br>* Au niveau global: menu <strong>Accueil - Configuration - Affichage</strong><br>* Configuration au niveau de l'utilisateur: Utilisez l'onglet <strong>Interface utilisateur</strong> de la fiche utilisateur (Accès a la fiche de l'utilisateur depuis l'identifiant dans l'angle supérieur droit de l'écran).
 TranslationOverwriteDesc=Vous pouvez aussi écraser des valeurs en complétant/corrigeant le tableau suivant. Choisissez votre code de langue depuis la liste déroulante "%s", choisissez le code trouvé dans le fichier lang dans le champ "%s", et dans "%s" la nouvelle valeur que vous souhaitez utiliser comme nouvelle traduction.
 TranslationOverwriteDesc2=Vous pouvez utilisez l'autre onglet pour vous aider à trouver la clé de traduction à utiliser
 TranslationString=Traduction
@@ -1529,7 +1529,7 @@ AdvancedEditor=Editeur avancé
 ActivateFCKeditor=Activer l'éditeur avancé pour :
 FCKeditorForCompany=Création/édition WYSIWIG de la description et note des éléments (autre que produits/services)
 FCKeditorForProduct=Création/édition WYSIWIG de la description et note des produits/services
-FCKeditorForProductDetails=WYSIWIG création / édition de lignes de détails de produits pour toutes les entités (propositions, commandes, factures, etc ...). <font class = "warning"> Avertissement: L'utilisation de cette option dans ce cas est fortement déconseillée car elle peut créer des problèmes de caractères spéciaux et de formatage de page lors de la création de fichiers PDF. </ font>
+FCKeditorForProductDetails=Création/édition WYSIWIG des lignes détails produits sur tous les éléments (commandes, propales, factures, etc...). <font class="warning">Attention: L'utilisation pour ce cas est fortement déconseillée car peut poser des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.</font>
 FCKeditorForMailing= Création/édition WYSIWIG des emailings (Outils->Emailings)
 FCKeditorForUserSignature=Création/édition WYSIWIG de la signature des utilisateurs
 FCKeditorForMail=Création/édition WYSIWIG tous les emails (sauf Outils->Emailings)
@@ -1600,7 +1600,7 @@ AGENDA_DEFAULT_FILTER_TYPE=Définir automatiquement ce type d'événement dans l
 AGENDA_DEFAULT_FILTER_STATUS=Définir automatiquement cet état pour les événements dans le filtre de recherche de la vue agenda
 AGENDA_DEFAULT_VIEW=Quel onglet voulez-vous voir ouvrir par défaut quand on choisit le menu Agenda
 AGENDA_REMINDER_EMAIL=Activer le rappel d'événement <b> par e-mail </b> (l'option de rappel / délai peut être défini pour chaque événement). Remarque: Le module <strong> %s </strong> doit être activé et configuré correctement pour que le rappel soit envoyé à la bonne fréquence.
-AGENDA_REMINDER_BROWSER=Activer le rappel d'événement <b> sur le navigateur de l'utilisateur </ b> (lorsque la date de l'événement est atteinte, chaque utilisateur peut le refuser à partir de la question de confirmation du navigateur)
+AGENDA_REMINDER_BROWSER=Activer le rappel d'événement <b> sur le navigateur de l'utilisateur </b> (lorsque la date de l'événement est atteinte, chaque utilisateur peut le refuser à partir de la question de confirmation du navigateur)
 AGENDA_REMINDER_BROWSER_SOUND=Activer les notifications sonores.
 AGENDA_SHOW_LINKED_OBJECT=Afficher l'objet lié dans la vue agenda
 ##### Clicktodial #####
@@ -1623,7 +1623,7 @@ StockDecreaseForPointOfSaleDisabledbyBatch=La décrémentation de stock depuis c
 CashDeskYouDidNotDisableStockDecease=Vous n'avez pas désactivé la réduction de stock lors d'une vente depuis le point de vente. Par conséquent, un entrepôt est nécessaire.
 ##### Bookmark #####
 BookmarkSetup=Configuration du module Marque-pages
-BookmarkDesc=Ce module vous permet de gérer les signets. Vous pouvez également ajouter des raccourcis vers les pages Dolibarr ou les sites Web externes dans le menu de gauche.
+BookmarkDesc=Ce module vous permet de gérer des liens et raccourcis. Il permet aussi d'ajouter n'importe quelle page de Dolibarr ou lien web dans le menu d'accès rapide sur la gauche.
 NbOfBoomarkToShow=Nombre maximum de marques-pages à afficher dans le menu
 ##### WebServices #####
 WebServicesSetup=Configuration du module Webservices
@@ -1809,15 +1809,15 @@ EnterCalculationRuleIfPreviousFieldIsYes=Entrez la règle de calcul si le champ 
 SeveralLangugeVariatFound=Plusieurs variantes de langue trouvées
 COMPANY_AQUARIUM_REMOVE_SPECIAL=Supprimer les caractères spéciaux
 COMPANY_AQUARIUM_CLEAN_REGEX=Filtre Regex pour nettoyer la valeur (COMPANY_AQUARIUM_CLEAN_REGEX)
-GDPRContact=Responsable de la protection des données (DPD, Data Privacy ou contact GDPR)
+GDPRContact=Responsable de la protection des données (DPO ou contact RGPD)
 GDPRContactDesc=Si vous stockez des données sur des entreprises / citoyens européens, vous pouvez enregistrer ici le contact responsable du règlement général sur la protection des données.
 HelpOnTooltip=Texte d'aide à afficher dans l'info-bulle
 HelpOnTooltipDesc=Mettez du texte ou une clé de traduction ici pour que le texte apparaisse dans une info-bulle lorsque ce champ apparaît dans un formulaire
 YouCanDeleteFileOnServerWith=Vous pouvez supprimer ce fichier sur le serveur avec la ligne de commande: <br> %s
 ChartLoaded=Modèle de plan de compte chargé
 SocialNetworkSetup=Configuration du module Réseaux Sociaux
-EnableFeatureFor=Activer les fonctionnalités pour <strong> %s </ strong>
-VATIsUsedIsOff=Remarque: l'option d'utilisation de la taxe de vente ou de la TVA a été définie sur <strong> Désactivée </ strong> dans le menu %s - %s. La taxe de vente ou la TVA utilisée sera toujours égale à 0 pour les ventes.
+EnableFeatureFor=Activer les fonctionnalités pour <strong> %s </strong>
+VATIsUsedIsOff=Remarque: l'option d'utilisation de la taxe de vente ou de la TVA a été définie sur <strong> Désactivée </strong> dans le menu %s - %s, aussi la taxe de vente ou la TVA utilisée sera toujours égale à 0 pour les ventes.
 SwapSenderAndRecipientOnPDF=Échanger adresses expéditeurs et destinataires sur le PDF
 FeatureSupportedOnTextFieldsOnly=Attention, fonctionnalité prise en charge sur les champs de texte uniquement
 EmailCollector=Collecteur de courrier électronique

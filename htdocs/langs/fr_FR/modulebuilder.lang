@@ -21,7 +21,7 @@ ModuleBuilderDesctriggers=Vue des triggers ajoutés par votre module. Pour inclu
 ModuleBuilderDeschooks=Cet onglet est dédié aux points d'accroche.
 ModuleBuilderDescwidgets=Cet onglet est dédié à la gestion/construction de widgets.
 ModuleBuilderDescbuildpackage=Vous pouvez générer ici un fichier de package "prêt à distribuer" (un fichier .zip normalisé) de votre module et un fichier de documentation "prêt à distribuer". Cliquez simplement sur le bouton pour créer le paquet ou le fichier de documentation.
-EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module\nATTENTION:\nTous fichiers relatifs a ce module  ET toutes bases de donnes seront supprimes
+EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION: Tous fichiers relatifs a ce module ET toutes bases de donnes seront supprimés!
 EnterNameOfObjectToDeleteDesc=Vous pouvez supprimer un objet\nATTENTION:\nTous fichiers relatifs a cet objet seront supprimes
 DangerZone=Zone de danger
 BuildPackage=Générer package/documentation
@@ -47,7 +47,7 @@ RegenerateClassAndSql=Effacer et générer à nouveau les fichiers de classe et 
 RegenerateMissingFiles=Générer les fichiers manquant
 SpecificationFile=Fichier de description des règles métiers
 LanguageFile=Fichier langue
-ConfirmDeleteProperty=Voulez-vous vraiment supprimer la propriété <strong> %s </ strong>? Cela modifiera le code de la classe PHP, mais supprimera également la colonne de la définition de la table de l'objet.
+ConfirmDeleteProperty=Voulez-vous vraiment supprimer la propriété <strong> %s </strong> ? Cela modifiera le code de la classe PHP, mais supprimera également la colonne de la définition de la table de l'objet.
 NotNull=Non NULL
 NotNullDesc=1=Définir le champ en base à NOT NULL. -1=Autoriser les valeurs nulles et forcer la valeur à NULL si vide ('' ou 0).
 SearchAll=Utilisé par la "recherche globale"
@@ -88,7 +88,7 @@ TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez ex
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
 ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
-TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'assistant de création de module natif. <br> Activez le module <strong> %s </ strong> et utilisez l'assistant en cliquant sur la <span class = "fa fa-bug">. </ span> dans le menu en haut à droite. <br> Avertissement: Il s'agit d'une fonctionnalité avancée pour les développeurs. Ne <b> pas </ b> d'expérimenter sur votre site de production!
+TryToUseTheModuleBuilder=Si vous connaissez SQL et PHP, vous pouvez utiliser l'assistant de création de module natif. <br> Activez le module <strong> %s </strong> et utilisez l'assistant en cliquant sur la <span class = "fa fa-bug">. </span> dans le menu en haut à droite. <br> Avertissement: Il s'agit d'une fonctionnalité avancée pour les développeurs. Ne <b> pas </b> expérimenter sur votre site de production!
 SeeTopRightMenu=Voir<span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
 YouCanUseTranslationKey=Vous pouvez utiliser ici une clé qui est la clé de traduction trouvée dans le fichier de langue (voir l'onglet "Langues")
