@@ -238,7 +238,11 @@ class Conf
 		{
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-			if ($ret) $mc = new ActionsMulticompany($db);
+			if ($ret)
+			{
+				$mc = new ActionsMulticompany($db);
+				$this->mc = $mc;
+			}
 		}
 
 		// Clean some variables
