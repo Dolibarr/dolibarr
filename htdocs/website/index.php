@@ -1647,7 +1647,7 @@ print '<div class="centpercent websitebar">';
 if (count($object->records) > 0)	// There is at least one web site
 {
 	// ***** Part for web sites
-
+	print '<!-- Bar for website -->';
 	print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
 	print $langs->trans("Website").' : ';
 	print '</div>';
@@ -1807,6 +1807,7 @@ if (count($object->records) > 0)	// There is at least one web site
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
+		print '<!-- Bar for websitepage -->';
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
 		print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
@@ -2732,7 +2733,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$objectpage->fetch($pageid);
 		$jscontent = @file_get_contents($filejs);
 
-		$out = '<!-- Page content '.$filetpl.' : Div with (CSS Of website from file + Style/htmlheader of page from database + Page content from database or by include if WEBSITE_SUBCONTAINERSINLINE is on) -->'."\n";
+		$out = '<!-- Page content '.$filetpl.' : Div with (Htmlheader/Style of page from database + CSS Of website from file + Page content from database or by include if WEBSITE_SUBCONTAINERSINLINE is on) -->'."\n";
 
 		// Include a html so we can benefit of the header of page.
 		// Note: We can't use iframe as it can be used to include another external html file
@@ -2742,7 +2743,8 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 			$out .= "<iframe><body></html>";
 		}*/
 		$out.="\n<html><head>\n";
-		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
+		$out.="<!-- htmlheader/style of page from database -->\n";
+//		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
 		$out.="</head>\n";
 		$out.="\n<body>";
 
@@ -2751,6 +2753,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		// REPLACEMENT OF LINKS When page called by website editor
 
+		$out.='<!-- style of website from file -->'."\n";
 		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". No more supported by browsers, snif !
 		$tmpout='';
 		$tmpout.= '/* Include website CSS file */'."\n";
@@ -2806,8 +2809,8 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		{
 			// TODO Add the contenteditable="true" when mode Edit Inline is on
 		}
-
 		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
+		//$out.=$newcontent;
 
 		$out.='</div>';
 
