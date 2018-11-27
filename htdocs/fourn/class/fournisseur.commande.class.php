@@ -8,6 +8,7 @@
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1434,6 +1435,16 @@ class CommandeFournisseur extends CommonOrder
         if (empty($txlocaltax2)) $txlocaltax2=0;
 		if (empty($remise_percent)) $remise_percent=0;
 
+		$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
+
+		// Clean vat code
+		$vat_src_code='';
+		if (preg_match('/\((.*)\)/', $txtva, $reg))
+		{
+			$vat_src_code = $reg[1];
+			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+		}
+
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
@@ -1526,20 +1537,10 @@ class CommandeFournisseur extends CommonOrder
                 $product_type = $type;
             }
 
-            // Calcul du total TTC et de la TVA pour la ligne a partir de
-            // qty, pu, remise_percent et txtva
-            // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-            // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-
-            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
-
-            // Clean vat code
-            $vat_src_code='';
-            if (preg_match('/\((.*)\)/', $txtva, $reg))
-            {
-                $vat_src_code = $reg[1];
-                $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
-            }
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
             $total_ht  = $tabprice[0];
