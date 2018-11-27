@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
- * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Alexandre Spangaro  <aspangaro@zendsi.com>
- * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
+/* Copyright (C) 2011 		Dimitri Mouillard   	<dmouillard@teclib.com>
+ * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@zendsi.com>
+ * Copyright (C) 2016-2018 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1685,6 +1685,12 @@ class ExpenseReport extends CommonObject
 		if (empty($date)) $date = '';
 		if (empty($fk_project)) $fk_project = 0;
 
+		if (preg_match('/\((.*)\)/', $vatrate, $reg))
+		{
+			$vat_src_code = $reg[1];
+			$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+		}
+
 		$qty = price2num($qty);
 		$vatrate = price2num($vatrate);
 		$up = price2num($up);
@@ -1695,11 +1701,6 @@ class ExpenseReport extends CommonObject
 
 			$this->line = new ExpenseReportLine($this->db);
 
-			if (preg_match('/\((.*)\)/', $vatrate, $reg))
-			{
-				$vat_src_code = $reg[1];
-				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
-			}
 			$vatrate = preg_replace('/\*/','',$vatrate);
 
 			$seller = '';  // seller is unknown
