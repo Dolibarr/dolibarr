@@ -262,6 +262,6 @@ WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=Title
 WEBSITE_DESCRIPTION=Description
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used when container is of type 'blog_post' to show a preview of a news in some pages with dynamic content of Blog Posts.
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
 WEBSITE_KEYWORDS=Keywords
 LinesToImport=Lines to import
