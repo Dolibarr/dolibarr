@@ -1576,6 +1576,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 				else $text.=sprintf($helpbaseurl,$helppage);
 				$text.='">';
+				$title.='<br><br>';
+				$title.='<b>'.$langs->trans("KeyboardShortcutsNavigation").'</b><br>';
+				$title.='<b>Firefox</b> <i>(Windows/Linux)</i>: <b><kbd>ALT</kbd> + <kbd>SHIFT</kbd> + </b><i>Access Key</i><br>';
+				$title.='<b>Chrome</b> <i>(Windows/Linux)</i>: <b><kbd>ALT</kbd> + </b><i>Access Key</i><br>';
+				$title.='<b>MAC</b> <i>(all browsers)</i>: <b><kbd>CTRL</kbd> + </b><i>Access Key</i><br>';
 				//$text.=img_picto('', 'helpdoc_top').' ';
 				$text.='<span class="fa fa-question-circle atoplogin"></span>';
 				//$toprightmenu.=$langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
