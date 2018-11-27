@@ -3179,14 +3179,15 @@ class User extends CommonObject
 	/**
 	 *	Load all objects into $this->users
 	 *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 *  @return int							<0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND')
 	{
 		global $conf;
 
@@ -3194,18 +3195,26 @@ class User extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
 		$sql.= " WHERE 1";
 
-		//Manage filter
+		// Manage filter
+		$sqlwhere = array();
 		if (!empty($filter)){
 			foreach($filter as $key => $value) {
-				if (strpos($key,'date')) {
-					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+				if ($key=='t.rowid') {
+					$sqlwhere[] = $key . '='. $value;
+				}
+				elseif (strpos($key,'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				}
 				elseif ($key=='customsql') {
-					$sql.= ' AND '.$value;
-				} else {
-					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
 			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
