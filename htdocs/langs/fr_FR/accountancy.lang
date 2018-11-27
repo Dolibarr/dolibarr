@@ -36,12 +36,12 @@ AlreadyInGeneralLedger=Enregistrement déjà présent dans le grand livre
 NotYetInGeneralLedger=Pas encore envoyé dans le grand livre
 GroupIsEmptyCheckSetup=Le groupe est vide. Vérifier la configuration du groupe personnalisé
 DetailByAccount=Afficher le détail par compte
-AccountWithNonZeroValues=Accounts with non-zero values
+AccountWithNonZeroValues=Comptes avec des valeurs non nulles
 ListOfAccounts=Liste des comptes
-CountriesInEEC=Countries in EEC
-CountriesNotInEEC=Countries not in EEC
-CountriesInEECExceptMe=Countries in EEC except %s
-CountriesExceptMe=All countries except %s
+CountriesInEEC=Pays de la CEE
+CountriesNotInEEC=Pays hors CEE
+CountriesInEECExceptMe=Pays de la CEE sauf %s
+CountriesExceptMe=Tous les pays sauf %s
 
 MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
@@ -160,7 +160,7 @@ Docref=Référence
 LabelAccount=Libellé du compte
 LabelOperation=Libellé opération
 Sens=Sens
-LetteringCode=Lettering code
+LetteringCode=Code de lettrage
 Codejournal=Journal
 NumPiece=Numéro de pièce
 TransactionNumShort=Num. transaction
@@ -203,7 +203,7 @@ PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
 
 Pcgtype=Groupe de comptes comptables
 Pcgsubtype=Sous-groupe de comptes comptables
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Les groupes et sous-groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «REVENU» ou «CHARGES» sont utilisés en tant que groupes pour la comptabilité des produits afin de générer le rapport dépenses / revenus.
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
@@ -226,7 +226,7 @@ AutomaticBindingDone=Liaison automatique faite
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crébit = %s
-Balancing=Balancing
+Balancing=Équilibrage
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être journalisées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà comptabilisées.
@@ -269,7 +269,7 @@ Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
 Modelcsv_agiris=Export vers Agiris
 Modelcsv_configurable=Export CSV Configurable
-Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Exportation FEC (Art. L47 A) (Test)
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service
@@ -303,7 +303,7 @@ BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre
 NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
-UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
 
 ## Import
 ImportAccountingEntries=Écritures comptables

@@ -425,13 +425,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
-	
-	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
 	{
 		$obj = $db->fetch_object($resql);
 
 		$id = $obj->rowid;
-		
+
 		header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
 		exit;
 	}

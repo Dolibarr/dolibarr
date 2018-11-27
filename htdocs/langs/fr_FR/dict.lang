@@ -223,7 +223,7 @@ CountryTO=Tonga
 CountryTT=Trinité-et-Tobago
 CountryTR=Turquie
 CountryTM=Turkménistan
-CountryTC=Iles Turks-et-Caicos
+CountryTC=Iles Turques-et-Caïques
 CountryTV=Tuvalu
 CountryUG=Ouganda
 CountryUA=Ukraine
@@ -295,7 +295,7 @@ CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=millime
 #### Input reasons #####
-DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_INTE=Internet 
 DemandReasonTypeSRC_CAMP_MAIL=Campagne Publipostage
 DemandReasonTypeSRC_CAMP_EMAIL=Campagne d'emailing
 DemandReasonTypeSRC_CAMP_PHO=Campagne Téléphonique
