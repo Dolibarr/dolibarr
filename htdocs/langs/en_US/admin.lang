@@ -1026,6 +1026,8 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=Tolerance delay (in days) before al
 Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed membership fee
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
+Delays_MAIN_DELAY_SUPPLIER_PROPOSALS_TO_CLOSE=Tolerance delay (in days) before alert on supplier proposals to close
+Delays_MAIN_DELAY_SUPPLIER_PROPOSALS_TO_BILL=Tolerance delay (in days) before alert on supplier proposals not billed
 SetupDescription1=The setup area is for initial setup parameters before starting to use Dolibarr.
 SetupDescription2=The two mandatory setup steps are the first two in the setup menu on the left: %s setup page and %s setup page :
 SetupDescription3=Parameters in menu <a href="%s">%s -> %s</a> are required because defined data are used on Dolibarr screens and to customize the default behavior of the software (for country-related features for example).

@@ -4305,6 +4305,7 @@ class FactureLigne extends CommonInvoiceLine
 			$objp = $this->db->fetch_object($result);
 
 			$this->rowid				= $objp->rowid;
+			$this->id					= $objp->rowid;
 			$this->fk_facture			= $objp->fk_facture;
 			$this->fk_parent_line		= $objp->fk_parent_line;
 			$this->label				= $objp->custom_label;

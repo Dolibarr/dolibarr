@@ -424,6 +424,7 @@ LatestLinkedEvents=Latest %s linked events
 CompanyFoundation=Company/Organization
 ContactsForCompany=Contacts for this third party
 ContactsAddressesForCompany=Contacts/addresses for this third party
+ReplaceSelectedAdressesWithThirdpartyAddress=Replace with thirdparty address
 AddressesForCompany=Addresses for this third party
 ActionsOnCompany=Events about this third party
 ActionsOnMember=Events about this member
