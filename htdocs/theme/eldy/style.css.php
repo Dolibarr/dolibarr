@@ -2464,7 +2464,7 @@ span.butAction, span.butActionDelete {
 }
 
 .butAction {
-	background: rgb(230, 236, 230)
+	background: rgb(225, 231, 225)
 	/* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
@@ -2522,7 +2522,7 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-    background: rgb(239, 232, 230);
+    background: rgb(234, 228, 225);
     /* border: 1px solid #633; */
     color: #633;
 }
