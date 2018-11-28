@@ -3884,7 +3884,7 @@ tr.visible {
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
-	background: #eee;
+	background: #e6e6e6;
 	display: inline-block;
 }
 .websitebar .buttonDelete, .websitebar .button {
