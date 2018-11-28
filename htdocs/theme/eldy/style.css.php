@@ -512,12 +512,12 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
-	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	background-color: #f0f0f0;
+	background-image: -moz-linear-gradient(top, #f0f0f0, #e0e0e0);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f0f0f0), to(#e0e0e0));
+	background-image: -webkit-linear-gradient(top, #f0f0f0, #e0e0e0);
+	background-image: -o-linear-gradient(top, #f0f0f0, #e0e0e0);
+	background-image: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
 	background-repeat: repeat-x;
 	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
@@ -2306,7 +2306,6 @@ div.tabs {
     padding-right: 6px !important;
 	clear:both;
 	height:100%;
-	/* background-image: linear-gradient(to top,#f6f6f6 0,#fff 8px);  */
 }
 div.tabsElem {
 	margin-top: 1px;
