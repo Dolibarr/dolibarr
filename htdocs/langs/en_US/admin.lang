@@ -1843,6 +1843,7 @@ LoadThirdPartyFromName=Load thirdparty from name (load only)
 LoadThirdPartyFromNameOrCreate=Load thirdparty from name (create if not found)
 WithDolTrackingID=Dolibarr Tracking ID found
 WithoutDolTrackingID=Dolibarr Tracking ID not found
+FormatZip=Zip
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
