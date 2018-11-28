@@ -545,7 +545,7 @@ print "\n";
 print $langs->trans("Compression").': &nbsp; ';
 $filecompression = $compression;
 array_shift($filecompression);
-$filecompression['zip']= array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));
+$filecompression['zip']= array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip"));
 
 foreach($filecompression as $key => $val)
 {
