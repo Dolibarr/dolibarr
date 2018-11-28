@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1437,9 +1437,21 @@ if ($action != 'dopayment')
 {
 	if ($found && ! $error)	// We are in a management option and no error
 	{
-		if ($source == 'invoice' && $object->paye)
+		if ($source == 'order' && $object->billed)
+		{
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("OrderBilled").'</span>';
+		}
+		elseif ($source == 'invoice' && $object->paye)
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
+		}
+		elseif ($source == 'membersubscription' && $object->datefin > dol_now())
+		{
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
+		}
+		elseif ($source == 'donation' && $object->paid)
+		{
+			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
 		}
 		else
 		{

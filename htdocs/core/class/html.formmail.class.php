@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin	    <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin	    <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
@@ -1419,8 +1419,6 @@ class FormMail extends Form
 				*/
 			}
 		}
-
-		$tmparray['__(AnyTranslationKey)__']="Translation";
 
 		foreach($tmparray as $key => $val)
 		{

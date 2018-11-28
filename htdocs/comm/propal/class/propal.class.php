@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
@@ -874,6 +874,7 @@ class Propal extends CommonObject
 		$now=dol_now();
 
 		// Clean parameters
+		if (empty($this->entity)) $this->entity = $conf->entity;
 		if (empty($this->date)) $this->date=$this->datep;
 		$this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 		if (empty($this->availability_id)) $this->availability_id=0;
@@ -983,7 +984,7 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->entity;
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;
@@ -3428,13 +3429,7 @@ class Propal extends CommonObject
 		global $conf,$langs;
 		$langs->load("propal");
 
-		$constant = 'PROPALE_ADDON_'.$this->entity;
-
-		if (! empty($conf->global->$constant)) {
-			$classname = $conf->global->$constant; // for multicompany proposal sharing
-		} else {
-			$classname = $conf->global->PROPALE_ADDON;
-		}
+		$classname = $conf->global->PROPALE_ADDON;
 
 		if (! empty($classname))
 		{

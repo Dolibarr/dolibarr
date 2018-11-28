@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,7 +246,18 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else
 			{
-			    setEventMessages($task->error,$task->errors,'errors');
+				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+				{
+					$langs->load("projects");
+					setEventMessages($langs->trans('NewTaskRefSuggested'),'', 'warnings');
+					$duplicate_code_error = true;
+				}
+				else
+				{
+					setEventMessages($task->error,$task->errors,'errors');
+				}
+				$action = 'create';
+				$error++;
 			}
 		}
 
@@ -462,7 +473,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Ref
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
-	print ($_POST["ref"]?$_POST["ref"]:$defaultref);
+	if (empty($duplicate_code_error))
+	{
+		print (GETPOSTISSET("ref")?GETPOST("ref",'alpha'):$defaultref);
+	}
+	else
+	{
+		print $defaultref;
+	}
 	print '<input type="hidden" name="taskref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'">';
 	print '</td></tr>';
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>

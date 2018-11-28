@@ -44,7 +44,7 @@ if (empty($user->rights->accounting->chartofaccount))
 $action = GETPOST('action', 'aZ09');
 
 // Parameters ACCOUNTING_EXPORT_*
-$main_option = array (
+$main_option = array(
     'ACCOUNTING_EXPORT_PREFIX_SPEC',
 );
 

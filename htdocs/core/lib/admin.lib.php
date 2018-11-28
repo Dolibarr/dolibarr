@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -724,15 +724,18 @@ function defaultvalues_prepare_head()
     $head[$h][2] = 'sortorder';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=focus";
-    $head[$h][1] = $langs->trans("DefaultFocus");
-    $head[$h][2] = 'focus';
-    $h++;
+    if (! empty($conf->use_javascript_ajax))
+    {
+    	$head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=focus";
+	    $head[$h][1] = $langs->trans("DefaultFocus");
+	    $head[$h][2] = 'focus';
+	    $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=mandatory";
-    $head[$h][1] = $langs->trans("DefaultMandatory");
-    $head[$h][2] = 'mandatory';
-    $h++;
+	    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=mandatory";
+	    $head[$h][1] = $langs->trans("DefaultMandatory");
+	    $head[$h][2] = 'mandatory';
+	    $h++;
+    }
 
     /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
     $head[$h][1] = $langs->trans("TranslationKeySearch");
@@ -1731,7 +1734,7 @@ function email_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	if ($user->admin && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
+	if (! empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
 		$head[$h][1] = $langs->trans("OutGoingEmailSetup");
@@ -1752,7 +1755,7 @@ function email_admin_prepare_head()
 	$head[$h][2] = 'templates';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && ! empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -2005,7 +2005,7 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Get list of order methods
      *
-     *	@return 0 if Ok, <0 if Ko
+     *	@return int 0 if OK, <0 if KO
      */
     function get_methodes_commande()
     {
@@ -2037,7 +2037,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-	 * Return array of dispathed lines waiting to be approved for this order
+	 * Return array of dispatched lines waiting to be approved for this order
      *
      * @since 8.0 Return dispatched quantity (qty).
 	 *
@@ -2358,6 +2358,8 @@ class CommandeFournisseur extends CommonOrder
         for ($i = 0; $i < $num; $i++)
         {
             $prod = new Product($this->db);
+            $libelle = '';
+            $ref = '';
             if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)
             {
                 $libelle  = $prod->libelle;

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 DateToBirth=Geburtstdatum
-Notify_FICHINTER_VALIDATE=Intervention validiert
 Notify_ORDER_SENTBYMAIL=Kunden bestellen per Post geschickt
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Lieferant Bestellung per Post geschickt
 Notify_ORDER_SUPPLIER_VALIDATE=Lieferanten, um validierte
@@ -9,7 +8,6 @@ Notify_WITHDRAW_TRANSMIT=Transmission Rückzug
 Notify_WITHDRAW_CREDIT=Kreditkarten Rückzug
 Notify_WITHDRAW_EMIT=Isue Rückzug
 Notify_COMPANY_CREATE=Dritter erstellt
-Notify_BILL_PAYED=Kunden Rechnung bezahlt
 Notify_BILL_CANCEL=Kunden Rechnung storniert
 Notify_BILL_SENTBYMAIL=Kunden Rechnung per Post geschickt
 Notify_BILL_SUPPLIER_VALIDATE=Lieferantenrechnung validiert

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
@@ -386,9 +386,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit + 1,$offset);
 
-//print $sql;
 dol_syslog("list allowed project", LOG_DEBUG);
-//print $sql;
+
 $resql = $db->query($sql);
 if (! $resql)
 {

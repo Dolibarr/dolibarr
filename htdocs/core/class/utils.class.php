@@ -213,7 +213,7 @@ class Utils
 		if ($file == 'auto')
 		{
 			$prefix='dump';
-			$ext='.sql';
+			$ext='sql';
 			if (in_array($type, array('mysql', 'mysqli')))  { $prefix='mysqldump'; $ext='sql'; }
 			//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
 			if (in_array($type, array('pgsql'))) { $prefix='pg_dump'; $ext='sql'; }

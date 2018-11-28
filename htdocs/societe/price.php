@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *

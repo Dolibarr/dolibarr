@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2016 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2009-2016 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Herve Prot     <herve.prot@symeos.com>
  * Copyright (C) 2014      Philippe Grand <philippe.grand@atoo-net.com>
  *

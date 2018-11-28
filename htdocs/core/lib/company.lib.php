@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
@@ -1517,7 +1517,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $contactstatic = new Contact($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        if ($objcon && get_class($objcon) == 'Contact' && $filterobj && get_class($filterobj) == 'Societe')
+        if ($objcon && get_class($objcon) == 'Contact' &&
+            (is_null($filterobj) || get_class($filterobj) == 'Societe'))
         {
             $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
         }

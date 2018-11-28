@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2006       Marc Barilley/Ocebo     <marc@ocebo.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
@@ -6739,6 +6739,7 @@ class Form
 		}
 		else if ($object->element == 'member')
 		{
+			$ret.=$object->ref.'<br>';
 			$fullname=$object->getFullName($langs);
 			if ($object->morphy == 'mor' && $object->societe) {
 				$ret.= dol_htmlentities($object->societe) . ((! empty($fullname) && $object->societe != $fullname)?' ('.dol_htmlentities($fullname).')':'');

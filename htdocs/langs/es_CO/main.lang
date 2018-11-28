@@ -21,7 +21,6 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 NoRecordFound=No se encontraron registros
 ErrorFileNotUploaded=El archivo no se transifirió. Compruebe que el tamaño no supere el máximo permitido, el espacio libre disponible en el disco y que no hay un archivo con el mismo nombre en el directorio destino.
-ErrorSomeErrorWereFoundRollbackIsDone=Se encontraron algunos errores. Modificaciones sin aplicar.
 SeeHere=Ver aquí
 FileWasNotUploaded=Un archivo ha sido seleccionado para adjuntarlo, pero aún no se ha subido. Haga clic en "Adjuntar este archivo".
 SeeAbove=Ver arriba

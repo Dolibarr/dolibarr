@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Jean-François FERRY <hello@librethic.io>
  *
  * This program is free software; you can redistribute it and/or modify

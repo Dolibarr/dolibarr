@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
  *
@@ -550,7 +550,7 @@ foreach ($accounts as $key=>$type)
     // Balance
     if (! empty($arrayfields['balance']['checked']))
     {
-		print '<td align="right">';
+		print '<td align="right" class="nowraponall">';
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

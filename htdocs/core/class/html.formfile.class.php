@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
@@ -1637,7 +1637,7 @@ class FormFile
 	 */
 	private function _formAjaxFileUpload($object)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		// PHP post_max_size
 		$post_max_size				= ini_get('post_max_size');

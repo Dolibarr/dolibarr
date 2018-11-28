@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2018      Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
