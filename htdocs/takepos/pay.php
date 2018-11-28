@@ -41,7 +41,7 @@ $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$
 $resql = $db->query($sql);
 $row = $db->fetch_array ($resql);
 $placeid=$row[0];
-if (! $placeid) $placeid=0; // Developing error message with no lines
+if (! $placeid) $placeid=0; // Invoice not exist
 else{
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
