@@ -683,10 +683,21 @@ class Don extends CommonObject
             dol_print_error($this->db);
             return -1;
         }
-
     }
 
-    /**
+	/**
+	 *	Validate a intervention
+     *
+     *	@param		User		$user		User that validate
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
+     *	@return		int						<0 if KO, >0 if OK
+     */
+	function setValid($user, $notrigger=0)
+	{
+		return $this->valid_promesse($this->id, $user->id, $notrigger);
+	}
+
+	/**
      *    Validate a promise of donation
      *
      *    @param	int		$id   		id of donation
@@ -694,8 +705,8 @@ class Don extends CommonObject
      *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function valid_promesse($id, $userid, $notrigger=0)
-    {
+	function valid_promesse($id, $userid, $notrigger=0)
+	{
 		global $langs, $user;
 
 		$error=0;
