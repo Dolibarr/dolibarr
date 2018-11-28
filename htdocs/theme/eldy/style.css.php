@@ -45,9 +45,9 @@ $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='250,250,250';    // line pair
-$colorbacklinepair2='250,250,250';    // line pair
-$colorbacklinepairhover='238,246,252';    // line pair
+$colorbacklinepair1='234,234,234';    // line pair
+$colorbacklinepair2='234,234,234';    // line pair
+$colorbacklinepairhover='230,237,244';	// line hover
 $colorbacklinebreak='214,218,220';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='100,60,20';
@@ -144,12 +144,12 @@ $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Hover color
-$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
+$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
-	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
+	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_HOVER));
+	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 //$colortopbordertitle1=$colorbackhmenu1;
@@ -3261,7 +3261,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    background: #fcfcfc;
+    background: #e7e7e7;
     border: 1px solid #eee;
     /* border-left: 6px solid #ddd; */
     box-shadow: 1px 1px 8px #ddd;
