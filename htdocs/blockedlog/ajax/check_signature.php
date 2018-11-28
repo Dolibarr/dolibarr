@@ -49,7 +49,6 @@ $auth->signature = $block_static->getSignature();
 
 foreach($blocks as &$b) {
 	$auth->blockchain.=$b->signature;
-
 }
 
 $hash = $auth->getBlockchainHash();

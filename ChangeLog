@@ -8,8 +8,9 @@ For Users:
 NEW: Stable module: Website
 NEW: Stable module: WebDAV
 NEW: Stable module: Module Builder
-NEW: Stable module "Skype" has been replaced with module "Social Networks" to support more tools.
+NEW: Stable module "Skype" has been replaced with module "Social Networks" to support more services.
 NEW: Experimental module "TakePos"
+NEW: Experimental module "Ticket"
 NEW: Dolibarr can provide information in page title when multicompany is enabled of not, making
      Android application like DoliDroid able to provide native features for multicompany module.
 NEW: Compatibility with PHP 7.3
@@ -22,11 +23,94 @@ For developers:
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* If you use some links like viewimages.php?modulepart=mycompany&file=... in you external modules, you must
+* If you use some links like viewimages.php?modulepart=mycompany&file=... in your external modules, you must
   replace them with links like viewimages.php?modulepart=mycompany&file=logos/... (note that link change only for
   modulepart=mycompany that now works like others).
+* Hidden option MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT has been renamed into SHIPPING_PDF_DISPLAY_AMOUNT_HT
+* Remove the no more used and deprecated dol_print_graph function
 
 
+
+***** ChangeLog for 8.0.3 compared to 8.0.2 *****
+FIX: #9161
+FIX: #9432
+FIX: #9432 Assign yourself as a commercial when you don't have permission to see all thirds
+FIX: #9510
+FIX: #9567
+FIX: According to french law, if seller is in France and buyer isn't in UE and isn't a company, TVA used = TVA product
+FIX: Amount when using mutlicurrency on PDF
+FIX: Backup of database without mysqladmin available from cron.
+FIX: Bad label on delete button
+FIX: bad link in notification
+FIX: Bad position of hook formattachOptions call
+FIX: Can't create shipping if have shipping line's extrafields
+FIX: check !empty exclude select element
+FIX: content lost when editing a label with "
+FIX: correct migration of old postgresql unique key
+FIX: credit note progression
+FIX: default accounting accounts on loan creation #9643
+FIX: Delete of draft invoice
+FIX: deletion on draft is allowed if we are allwoed to create
+FIX: Do not show check box if not applicable
+FIX: exclude element of the select
+FIX: extrafields of taks not visible in creation
+FIX: filter on employee
+FIX: invoice stats: situation invoices were not counted
+FIX: keep external module element when adding resource
+FIX: langs fr
+FIX: Link template invoice to contract
+FIX: Look and feel v8. Missing button "Create category"
+FIX: Menu to show/edit Users categories was missing
+FIX: missing name alias field in societe import/export #9091
+FIX: missing symbol for indian rupies
+FIX: Missing transaction around action
+FIX: modify parenting before task deletion
+FIX: nb of session in title
+FIX: need to filter on current entity on replenish
+FIX: number mailing for a contact with multicompany
+FIX: Option for prof id mandatory not working with custom type of company
+FIX: Option MAIN_DISABLE_NOTES_TAB #9611
+FIX: Pagination stats
+FIX: pdf typhon: order reference duplicate
+FIX: position 0 for emails templates
+FIX: previous situation invoice selection
+FIX: Product marge tabs on product card
+FIX: Product margin tab and credit note
+FIX: propal pdf: missing parenthesis for customs code
+FIX: properties on proposal must not be modified if error
+FIX: qty not visible for a lot when making shipment on a dedicated stock
+FIX: Quick hack to solve pb of bad definition of public holidays
+FIX: remain to pay for credit note was wrong on invoice list
+FIX: replenish wasn't caring about supplier price min quantity #9561
+FIX: Required extrafield value numeric should accept '0'
+FIX: ressource list with extrafields
+FIX: restore last seach criteria
+FIX: Selection of addmaindocfile is lost on error
+FIX: Sending of reminder for expired subscriptions
+FIX: shared link ko on proposals
+FIX: showOptionals: column mismatches
+FIX: situation invoice total with credit note
+FIX: situation invoice prev percent
+FIX: special code on create supplier invoice from supplier order
+FIX: Symbol of currency in substitution variables
+FIX: The max size for upload file was not corectly shown
+FIX: the member e-mail on resign and validation.
+FIX: thirdparty property of object not loaded when only one record
+FIX: title
+FIX: Title problem on admin RSS module
+FIX: Tooltip on invoice widget
+FIX: Total of timespent
+FIX: trackid into email sent from member module.
+FIX: translation in select unit form
+FIX: use discount with multicurrency
+FIX: Variable name
+FIX: When we delete a product, llx_product_association rows are not deleted
+FIX: when we're just admin and not super admin, if we create new user with transverse mode, we don't see it then we can't add him in usergroup
+FIX: wrong function name
+FIX: wrong occurence number of contract on contact card, we must only count externals
+FIX: wrong value for module part and return access denied
+FIX: Wrong variable name
+FIX: XSS vulnerability reported by Mary Princy E
 
 ***** ChangeLog for 8.0.2 compared to 8.0.1 *****
 FIX: #8452

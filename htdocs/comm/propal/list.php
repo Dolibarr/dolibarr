@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
@@ -129,7 +129,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('propal');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -227,7 +227,6 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$toselect='';
 	$search_array_options=array();
 	$search_categ_cus=0;
-
 }
 if ($object_statut != '') $viewstatut=$object_statut;
 
@@ -259,7 +258,7 @@ $projectstatic=new Project($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('',$langs->trans('Proposal'),$help_url);
+//llxHeader('',$langs->trans('Proposal'),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -405,6 +404,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
+
 if ($resql)
 {
 	$objectstatic=new Propal($db);
@@ -425,6 +425,18 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
+
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+
+		$id = $obj->rowid;
+
+		header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
+		exit;
+	}
+
+	llxHeader('',$langs->trans('Proposal'),$help_url);
 
 	$param='&viewstatut='.urlencode($viewstatut);
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@inodbox.com>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -238,7 +238,11 @@ class Conf
 		{
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-			if ($ret) $mc = new ActionsMulticompany($db);
+			if ($ret)
+			{
+				$mc = new ActionsMulticompany($db);
+				$this->mc = $mc;
+			}
 		}
 
 		// Clean some variables
@@ -348,32 +352,46 @@ class Conf
 		if (! empty($this->fournisseur))
 		{
 			$this->fournisseur->commande=new stdClass();
-			$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
-			$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
+			$this->fournisseur->commande->multidir_output=array($this->entity => $rootfordata."/fournisseur/commande");
+			$this->fournisseur->commande->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/commande/temp");
+			$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";		// For backward compatibility
+			$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";	// For backward compatibility
 			$this->fournisseur->facture=new stdClass();
-			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
-			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			$this->fournisseur->facture->multidir_output=array($this->entity => $rootfordata."/fournisseur/facture");
+			$this->fournisseur->facture->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
+			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";		// For backward compatibility
+			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";	// For backward compatibility
 			$this->supplierproposal=new stdClass();
-			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
-			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
+			$this->supplierproposal->multidir_output=array($this->entity => $rootfordata."/supplier_proposal");
+			$this->supplierproposal->multidir_temp  =array($this->entity => $rootfordata."/supplier_proposal/temp");
+			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";				// For backward compatibility
+			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";			// For backward compatibility
 			$this->fournisseur->payment=new stdClass();
-			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";
-			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";
+			$this->fournisseur->payment->multidir_output=array($this->entity => $rootfordata."/fournisseur/payment");
+			$this->fournisseur->payment->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/payment/temp");
+			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";		// For backward compatibility
+			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";	// For backward compatibility
 
 			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
 			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
 			{
     			$this->supplier_order=new stdClass();
     			$this->supplier_order->enabled=1;
-    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";
-    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";
+    			$this->supplier_order->multidir_output=array($this->entity => $rootfordata."/fournisseur/commande");
+    			$this->supplier_order->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/commande/temp");
+    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";			// For backward compatibility
+    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";		// For backward compatibility
     			$this->supplier_invoice=new stdClass();
     			$this->supplier_invoice->enabled=1;
-    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";
-    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";
+    			$this->supplier_invoice->multidir_output=array($this->entity => $rootfordata."/fournisseur/facture");
+    			$this->supplier_invoice->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
+    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";		// For backward compatibility
+    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";		// For backward compatibility
     			$this->supplierproposal=new stdClass();
-    			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
-    			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
+    			$this->supplierproposal->multidir_output=array($this->entity => $rootfordata."/supplier_proposal");
+    			$this->supplierproposal->multidir_temp  =array($this->entity => $rootfordata."/supplier_proposal/temp");
+    			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";			// For backward compatibility
+    			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";		// For backward compatibility
 			}
 		}
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
@@ -129,7 +129,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('banktransaction');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('banktransaction','','search_');
 
 $arrayfields=array(
     'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),

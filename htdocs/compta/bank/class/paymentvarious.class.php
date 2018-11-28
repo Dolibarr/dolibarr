@@ -452,7 +452,6 @@ class PaymentVarious extends CommonObject
 				$result=$this->call_trigger('PAYMENT_VARIOUS_CREATE',$user);
 				if ($result < 0) $error++;
 				// End call triggers
-
 			}
 			else $error++;
 

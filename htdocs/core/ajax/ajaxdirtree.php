@@ -487,7 +487,6 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 				}
 
 				echo "</ul>\n";
-
 			}
 		}
 		else print "PermissionDenied";

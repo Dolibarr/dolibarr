@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -173,7 +173,6 @@ class modStock extends DolibarrModules
 		$this->rights[9][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[9][4] = 'inventory_advance';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[9][5] = 'changePMP';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
 		}
 
 		// Main menu entries

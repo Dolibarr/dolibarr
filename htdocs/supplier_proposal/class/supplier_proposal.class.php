@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
@@ -1730,7 +1730,6 @@ class SupplierProposal extends CommonObject
                 {
                     $result = $this->updateOrCreatePriceFournisseur($user);
                 }
-
             }
             if ($statut == 4)
             {
@@ -2138,11 +2137,8 @@ class SupplierProposal extends CommonObject
                     $cluser->fetch($obj->fk_user_cloture);
                     $this->user_cloture     = $cluser;
                 }
-
-
             }
             $this->db->free($result);
-
         }
         else
         {

@@ -661,7 +661,6 @@ class Shipments extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $shipment[$field] = $data[$field];
-
         }
         return $shipment;
     }

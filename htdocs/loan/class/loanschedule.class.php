@@ -172,7 +172,6 @@ class LoanSchedule extends CommonObject
                 $this->error=$this->db->lasterror();
 				$error++;
 			}
-
 		}
 
 		if ($totalamount != 0 && ! $error)
@@ -580,7 +579,6 @@ class LoanSchedule extends CommonObject
 			{
 				$result[] = $obj->rowid;
 			}
-
 		}
 
 		return $result;

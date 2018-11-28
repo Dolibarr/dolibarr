@@ -167,8 +167,6 @@ class box_services_expired extends ModeleBoxes
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
     		}
-
-
     	}
     	else
     	{

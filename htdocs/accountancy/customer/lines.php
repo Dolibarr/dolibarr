@@ -135,7 +135,6 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 
 		$account_parent = '';   // Protection to avoid to mass apply it a second time
 	}
-
 }
 
 

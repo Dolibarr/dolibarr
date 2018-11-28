@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
@@ -105,7 +105,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('projet');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -386,9 +386,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit + 1,$offset);
 
-//print $sql;
 dol_syslog("list allowed project", LOG_DEBUG);
-//print $sql;
+
 $resql = $db->query($sql);
 if (! $resql)
 {
@@ -600,7 +599,7 @@ if (! empty($arrayfields['p.public']['checked']))
 if (! empty($arrayfields['p.fk_opp_status']['checked']))
 {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 1, 1, 0, 'maxwidth100');
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100');
 	print '</td>';
 }
 if (! empty($arrayfields['p.opp_amount']['checked']))
@@ -809,7 +808,7 @@ while ($i < min($num,$limit))
 		if (! empty($arrayfields['p.fk_opp_status']['checked']))
 		{
 			print '<td class="center">';
-			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
+			if ($obj->opp_status_code) print $langs->trans("OppStatus".$obj->opp_status_code);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -888,7 +887,6 @@ while ($i < min($num,$limit))
 		if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
-
 	}
 
 	$i++;

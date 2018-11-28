@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -788,7 +788,6 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -806,7 +805,6 @@ if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -826,7 +824,6 @@ if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-
 }
 else
 {
@@ -845,7 +842,6 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 {
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
     print img_picto($langs->trans("Activated"),'switch_on');
-    
 }
 else
 {

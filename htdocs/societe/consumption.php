@@ -554,7 +554,6 @@ if ($sql_select)
 				{
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
-
 			} else {
 
 				if (! empty($objp->label) || ! empty($objp->description))

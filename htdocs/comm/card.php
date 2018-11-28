@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
- * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
@@ -346,7 +346,7 @@ if ($object->id > 0)
 	print '</td><td>';
 	if ($action == 'editmode')
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'mode_reglement_id', 'CRDT');
 	}
 	else
 	{
@@ -1301,7 +1301,6 @@ if ($object->id > 0)
 
     				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
     				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-
     			}
     		}
     	}
@@ -1344,7 +1343,6 @@ if ($object->id > 0)
         // List of done actions
 		show_actions_done($conf,$langs,$db,$object);
 	}
-
 }
 else
 {

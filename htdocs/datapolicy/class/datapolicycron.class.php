@@ -488,14 +488,12 @@ class DataPolicyCron
                                     $ret = $object->delete();
                                 }
                             }
-
                         }
 
                         $i++;
                     }
                 }
             }
-
         }
         return true;
     }

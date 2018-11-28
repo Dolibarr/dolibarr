@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Christophe Battarel	<contact@altairis.fr>
  * Copyright (C) 2014      Cedric Gross			<c.gross@kreiz-it.fr>
@@ -239,7 +239,7 @@ class modProduct extends DolibarrModules
 				'pr.date_price'=>"product");
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
 			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product';
+			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
 			$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
 		}
 

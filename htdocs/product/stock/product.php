@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
  * Copyright (C) 2013-2018 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
@@ -88,7 +88,6 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0 || ! empty($ref))
 {
     $result = $object->fetch($id, $ref);
-
 }
 
 if(empty($id) && !empty($object->id)) $id = $object->id;
@@ -144,7 +143,6 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
 			$pse->desiredstock  	 = $desiredstock;
 			if($pse->update($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseUpdated'), null, 'mesgs');
-
 		} else {
 
 			// Create
@@ -153,14 +151,11 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
 			if($pse->create($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseCreated'), null, 'mesgs');
-
 		}
-
 	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 	exit;
-
 }
 
 if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->creer))
@@ -171,7 +166,6 @@ if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->c
 	if($pse->delete($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseDeleted'), null, 'mesgs');
 
 	$action = '';
-
 }
 
 // Set stock limit
@@ -799,7 +793,6 @@ if (empty($reshook))
 
 		print '</div>';
 	}
-
 }
 
 
@@ -927,7 +920,6 @@ if (! $variants) {
 				}
 			}
 			$i++;
-
 		}
 	} else dol_print_error($db);
 

@@ -704,7 +704,7 @@ class DolGraph
 		// Create graph
 		$classname='';
 		if (! isset($this->type[0]) || $this->type[0] == 'bars')  $classname='BarPlot';    // Only one type (first one) is supported by artichow
-		else if ($this->type[0] == 'lines') $classname='LinePlot';
+		else if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint') $classname='LinePlot';
 		else $classname='TypeUnknown';
 		include_once ARTICHOW_PATH.$classname.'.class.php';
 
@@ -809,7 +809,7 @@ class DolGraph
 				$plot->SetYMin($this->MinValue);
 			}
 
-			if ($this->type[0] == 'lines')
+			if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')
 			{
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorbis=new Color(min($this->datacolor[$i][0]+20,255),min($this->datacolor[$i][1]+20,255),min($this->datacolor[$i][2]+20,255),60);
@@ -840,8 +840,8 @@ class DolGraph
 			// solve a bug in Artichow with UTF8
 			if (count($this->Legend))
 			{
-				if ($this->type[0] == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
-				if ($this->type[0] == 'lines') $group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
+				if ($this->type[0] == 'bars')  										$group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
+				if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')	$group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
 			}
 			$group->add($plot);
 
@@ -880,7 +880,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-	private function draw_jflot($file,$fileurl)
+	private function draw_jflot($file, $fileurl)
 	{
         // phpcs:enable
 		global $artichow_defaultfont;
@@ -1027,19 +1027,22 @@ class DolGraph
 		else
 		{
 			// Add code to support tooltips
+		    // TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
 			$this->stringtoshow.='
 			function showTooltip_'.$tag.'(x, y, contents) {
-				$(\'<div id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
+				$(\'<div class="graph-tooltip-inner" id="tooltip_'.$tag.'">\' + contents + \'</div>\').css({
 					position: \'absolute\',
 					display: \'none\',
-					top: y + 5,
-					left: x + 5,
-					border: \'1px solid #ddd\',
-					padding: \'2px\',
-					\'background-color\': \'#ffe\',
+					top: y + 10,
+					left: x + 15,
+					border: \'1px solid #000\',
+					padding: \'5px\',
+					\'background-color\': \'#000\',
+					\'color\': \'#fff\',
+					\'font-weight\': \'bold\',
 					width: 200,
 					opacity: 0.80
-				}).appendTo("body").fadeIn(20);
+				}).appendTo("body").fadeIn(100);
 			}
 
 			var previousPoint = null;
@@ -1080,12 +1083,13 @@ class DolGraph
 				if ($i > $firstlot) $this->stringtoshow.=', '."\n";
 				$color=sprintf("%02x%02x%02x",$this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 				$this->stringtoshow.='{ ';
-				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
-				if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->stringtoshow.='lines: { show: true, fill: false }, ';
+				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow.='lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
 				$this->stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
 			}
-			$this->stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
+			// shadowSize: 0 -> Drawing is faster without shadows
+			$this->stringtoshow.="\n".' ], { series: { shadowSize: 0, stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
 
 			// Xaxis
 			$this->stringtoshow.=', xaxis: { ticks: ['."\n";
@@ -1104,11 +1108,10 @@ class DolGraph
 			// Background color
 			$color1=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[0],$this->bgcolorgrid[2]);
 			$color2=sprintf("%02x%02x%02x",$this->bgcolorgrid[0],$this->bgcolorgrid[1],$this->bgcolorgrid[2]);
-			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] } }'."\n";
+			$this->stringtoshow.=', grid: { hoverable: true, backgroundColor: { colors: ["#'.$color1.'", "#'.$color2.'"] }, borderWidth: 1, borderColor: \'#eee\', tickColor  : \'#f3f3f3\' }'."\n";
 			//$this->stringtoshow.=', shadowSize: 20'."\n";    TODO Uncommet this
 			$this->stringtoshow.='});'."\n";
 			$this->stringtoshow.='}'."\n";
-
 		}
 
 		$this->stringtoshow.='plotWithOptions_'.$tag.'();'."\n";

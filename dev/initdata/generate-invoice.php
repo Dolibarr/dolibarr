@@ -185,7 +185,4 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 	{
 		dol_print_error($db,$object->error);
 	}
-
 }
-
-

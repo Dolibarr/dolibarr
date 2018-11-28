@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
@@ -108,8 +108,11 @@ class Commande extends CommonOrder
 	 */
 	public $billed;		// billed or not
 
-	public $brouillon;
-	public $cond_reglement_code;
+    /**
+     * @var int Draft Status of the order
+     */
+    public $brouillon;
+    public $cond_reglement_code;
 
 	/**
      * @var int ID
@@ -155,7 +158,7 @@ class Commande extends CommonOrder
 	public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
 	public $demand_reason_code;
 	public $date;				// Date commande
-  
+
 	/**
 	 * @deprecated
 	 * @see date
@@ -274,11 +277,11 @@ class Commande extends CommonOrder
 				$mybool|=@include_once $dir.$file;
 			}
 
-			if (! $mybool)
-			{
-				dol_print_error('',"Failed to include file ".$file);
-				return '';
-			}
+            if ($mybool === false)
+            {
+                dol_print_error('',"Failed to include file ".$file);
+                return '';
+            }
 
 			$obj = new $classname();
 			$numref = $obj->getNextValue($soc,$this);
@@ -448,6 +451,7 @@ class Commande extends CommonOrder
 		{
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
+            $this->brouillon = 0;
 		}
 
 		if (! $error)
@@ -3616,7 +3620,6 @@ class Commande extends CommonOrder
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -3775,7 +3778,7 @@ class Commande extends CommonOrder
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param      null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)

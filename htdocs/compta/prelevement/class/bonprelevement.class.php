@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2016 Ferran Marcet       <fmarcet@2byte.es>
@@ -247,7 +247,6 @@ class BonPrelevement extends CommonObject
 				dol_syslog(get_class($this)."::addline Error -2");
 				$result = -2;
 			}
-
 		}
 
 		return $result;
@@ -515,7 +514,6 @@ class BonPrelevement extends CommonObject
 							dol_syslog(get_class($this)."::set_infocredit Update lines Error");
 							$error++;
 						}
-
 					}
 					else
 					{
@@ -1058,10 +1056,8 @@ class BonPrelevement extends CommonObject
 							$error++;
 							dol_syslog(__METHOD__."::Update Orders::Error=".$this->db->error(), LOG_ERR);
 						}
-
 					}
 				}
-
 			}
 
 			if (!$error)

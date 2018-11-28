@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -631,7 +631,7 @@ if ($ispaymentok)
 				$paiement->num_paiement = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 				$paiement->ext_payment_id = $TRANSACTIONID;
-				$paiement->ext_payment_site = $paymentmethod;
+				$paiement->ext_payment_site = $service;
 
 				if (! $error)
 				{
@@ -876,7 +876,7 @@ else
     elseif ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
     elseif ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
 
-    // Send an email
+    // Send warning of error to administrator
     if ($sendemail)
     {
     	$companylangs = new Translate('', $conf);
@@ -908,7 +908,7 @@ else
         $content="";
         $content.='<font color="orange">'.$companylangs->transnoentitiesnoconv("PaymentSystemConfirmPaymentPageWasCalledButFailed")."</font>\n";
 
-        $content.="<br>\n";
+        $content.="<br><br>\n";
         $content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
         $content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
         $content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";

@@ -60,7 +60,6 @@ if($num < 1) {
    $insert.= ")";
 
    $req = $db->query($insert);
-
 }
 
 
@@ -176,7 +175,6 @@ if (isset($_POST['action']))
 						$ligne.= "--->, {$objet2->rowid}, {$objet2->libelle}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
 					}
 				}
-
 			}
 
 			$ligne = $outputlangs->convToOutputCharset($ligne);
@@ -185,11 +183,9 @@ if (isset($_POST['action']))
 			fclose($open);
 
 			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
-
 		} else {
 
 			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
-
 		}
 	}
 }

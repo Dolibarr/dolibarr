@@ -88,7 +88,6 @@ if ($_POST) {
 		header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
 		exit();
 	}
-
 }
 
 if ($confirm == 'yes') {

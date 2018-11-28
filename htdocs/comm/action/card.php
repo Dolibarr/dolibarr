@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
@@ -252,19 +252,19 @@ if ($action == 'add')
 			}
 		}
 		$object->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
-		
+
 		$taskid = GETPOST('taskid','int');
 		if(!empty($taskid)){
-		    
+
 		    $taskProject = new Task($db);
 		    if($taskProject->fetch($taskid)>0){
 		        $object->fk_project = $taskProject->fk_project;
 		    }
-		    
+
 		    $object->fk_element = $taskid;
 		    $object->elementtype = 'task';
 		}
-		
+
 		$object->datep = $datep;
 		$object->datef = $datef;
 		$object->percentage = $percentage;
@@ -597,7 +597,6 @@ if (GETPOST('actionmove','alpha') == 'mupdate')
     {
         $action='';
     }
-
 }
 
 // Actions to delete doc
@@ -873,7 +872,6 @@ if ($action == 'create')
 			} else {
 				print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
 			}
-
 		}
 		print '</td></tr>';
 
@@ -890,17 +888,17 @@ if ($action == 'create')
 	{
 		// Projet associe
 		$langs->load("projects");
-		
+
 		$projectid = GETPOST('projectid', 'int');
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container" >';
 
 		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
-		
+
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 		$urloption='?action=create';
 		$url = dol_buildpath('comm/action/card.php',2).$urloption;
-		
+
 		// update task list
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
@@ -913,11 +911,11 @@ if ($action == 'create')
                   });
                })';
 		print '</script>'."\n";
-		
+
 		print '</td></tr>';
-		
+
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Task").'</td><td id="project-task-input-container" >';
-		
+
 		$projectsListId=false;
 		if(!empty($projectid)){ $projectsListId=$projectid; }
 		$tid=GETPOST("projecttaskid")?GETPOST("projecttaskid"):'';
@@ -1232,7 +1230,7 @@ if ($id > 0)
 	    		$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 	    	}
 	    }
-	    $listofcontactid=$object->socpeopleassigned;	// Contact assigned (not used yet)
+	    $listofcontactid=$object->socpeopleassigned;	// Contact assigned
 	    $listofotherid=$object->otherassigned;			// Other undefined email (not used yet)
 
 	    print '<tr><td class="tdtop nowrap fieldrequired">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
@@ -1304,21 +1302,20 @@ if ($id > 0)
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
-
 		// Object linked
 		if (! empty($object->fk_element) && ! empty($object->elementtype))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
-			
+
 			if ($object->elementtype == 'task' && ! empty($conf->projet->enabled))
 			{
 			    print '<td id="project-task-input-container" >';
-			    
+
 			    $urloption='?action=create'; // we use create not edit for more flexibility
 			    $url = DOL_URL_ROOT.'/comm/action/card.php'.$urloption;
-			    
+
 			    // update task list
 			    print "\n".'<script type="text/javascript" >';
 			    print '$(document).ready(function () {
@@ -1331,10 +1328,10 @@ if ($id > 0)
                   });
                })';
 			    print '</script>'."\n";
-			    
+
 			    $formproject->selectTasks((! empty($societe->id)?$societe->id:-1), $object->fk_element, 'fk_element', 24, 0, 0, 1, 0, 0, 'maxwidth500',$object->fk_project);
 			    print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
-			    
+
 			    print '</td>';
 			}
 			else
@@ -1345,7 +1342,7 @@ if ($id > 0)
 			    print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 			    print '</td>';
 			}
-			
+
 			print '</tr>';
 		}
 
@@ -1612,8 +1609,9 @@ if ($id > 0)
 		print ($object->priority?$object->priority:'');
 		print '</td></tr>';
 
-		// Object linked
-		if (! empty($object->fk_element) && ! empty($object->elementtype))
+		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
+		// for such objects because there is already a dedicated field into table llx_actioncomm.
+		if (! empty($object->fk_element) && ! empty($object->elementtype) && ! in_array($object->elementtype, array('societe','contact','project')))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
@@ -68,7 +68,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('user');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 $userstatic=new User($db);
 $companystatic = new Societe($db);

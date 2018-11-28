@@ -379,7 +379,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-				// retrieve contact information for use in order as contact_xxx tags
+				// retrieve contact information for use in object as contact_xxx tags
 				$array_thirdparty_contact = array();
 				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
@@ -488,7 +488,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				else {
 					try {
 					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e) {
                         $this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;

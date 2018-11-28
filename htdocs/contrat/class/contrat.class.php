@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
@@ -2006,7 +2006,6 @@ class Contrat extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -2476,7 +2475,6 @@ class Contrat extends CommonObject
 				if ($reshook < 0)
 					$error ++;
 			}
-
 		}
 
 		unset($this->context['createfromclone']);
@@ -2583,7 +2581,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 * @var float
 	 * @deprecated Use $price_ht instead
-	 * @see price_ht
+	 * @see $price_ht
 	 */
 	public $price;
 
@@ -2860,7 +2858,6 @@ class ContratLigne extends CommonObjectLine
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->fk_fournprice, $obj->pa_ht);
 				$this->pa_ht = $marginInfos[0];
 				$this->fk_unit     = $obj->fk_unit;
-
 			}
 			$this->db->free($resql);
 

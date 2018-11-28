@@ -31,8 +31,6 @@ if(!empty($idcontact)){
     $contact = new Contact($db);
     $contact->fetch($idcontact);
     DataPolicy::sendMailDataPolicyContact($contact);
-
-
 }else{
 
     $contacts = new DataPolicy($db);

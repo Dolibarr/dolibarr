@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
@@ -89,7 +89,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('paymentsupplier');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('paymentsupplier','','search_');
 
 $arrayfields=array();
 
@@ -570,25 +570,25 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
-	                        
+
 	                        // Date Max Payment
 	                        if ($objp->dlr > 0 )
 	                        {
 	                            print '<td align="center">';
 	                            print dol_print_date($db->jdate($objp->dlr), 'day');
-	                            
+
 	                            if ($invoice->hasDelay())
 	                            {
 	                                print img_warning($langs->trans('Late'));
 	                            }
-	                            
+
 	                            print '</td>';
 	                        }
 	                        else
 	                        {
 	                            print '<td align="center"><b>--</b></td>';
 	                        }
-	                        
+
 	                        // Multicurrency
 	                        if (!empty($conf->multicurrency->enabled))
 	                        {
@@ -817,8 +817,8 @@ if (empty($action))
         $i = 0;
 
         $param='';
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
         if ($day)                   $param.=($day?"&day=".urlencode($day):"");
         if ($month)                 $param.=($month?"&month=".urlencode($month):"");
         if ($year)                  $param.=($year?"&year=".urlencode($year):"");
@@ -826,7 +826,7 @@ if (empty($action))
         if ($search_company)        $param.=($search_company?"&search_company=".urlencode($search_company):"");
         if ($search_amount != '')   $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
         if ($search_payment_num)    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
-    	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+    	if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
     	// Add $param from extra fields
     	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -915,7 +915,9 @@ if (empty($action))
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 
             // Date
-            print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+            $dateformatforpayment = 'day';
+            if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
+            print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment)."</td>\n";
 
             // Thirdparty
             print '<td>';

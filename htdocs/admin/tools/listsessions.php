@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +170,6 @@ if ($savehandler == 'files')
 		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
 	print "</table>";
-
 }
 else
 {

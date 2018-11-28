@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -626,7 +626,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/user/group/list.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, (($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin) && !(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE));
 				}
 			}
-
 		}
 
 
@@ -807,7 +806,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/fichinter/card-red.php?leftmenu=ficheinter", $langs->trans("ModelList"), 1, $user->rights->ficheinter->lire, '', '', '', 203);
 				$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->rights->fournisseur->commande->lire);
 			}
-
 		}
 
 
@@ -908,9 +906,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				// Social contributions
 				if (! empty($conf->tax->enabled))
 				{
-					$newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
+					$newmenu->add("/compta/sociales/list.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
 					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/card.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/list.php?leftmenu=tax_social",$langs->trans("List"),2,$user->rights->tax->charges->lire);
 					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/payments.php?leftmenu=tax_social&amp;mainmenu=billing&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
 					// VAT
 					if (empty($conf->global->TAX_DISABLE_VAT_MENUS))
@@ -950,9 +948,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (! empty($conf->salaries->enabled))
 				{
 					$langs->load("salaries");
-					$newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary&amp;mainmenu=billing",$langs->trans("Salaries"),1,$user->rights->salaries->read, '', $mainmenu, 'tax_salary');
+					$newmenu->add("/compta/salaries/list.php?leftmenu=tax_salary&amp;mainmenu=billing",$langs->trans("Salaries"),1,$user->rights->salaries->read, '', $mainmenu, 'tax_salary');
 					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/card.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->salaries->write);
-					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->read);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/list.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->read);
 					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"),2,$user->rights->salaries->read);
 				}
 
@@ -960,7 +958,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (! empty($conf->loan->enabled))
 				{
 					$langs->load("loan");
-					$newmenu->add("/loan/index.php?leftmenu=tax_loan&amp;mainmenu=billing",$langs->trans("Loans"),1,$user->rights->loan->read, '', $mainmenu, 'tax_loan');
+					$newmenu->add("/loan/list.php?leftmenu=tax_loan&amp;mainmenu=billing",$langs->trans("Loans"),1,$user->rights->loan->read, '', $mainmenu, 'tax_loan');
 					if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_loan/i',$leftmenu)) $newmenu->add("/loan/card.php?leftmenu=tax_loan&action=create",$langs->trans("NewLoan"),2,$user->rights->loan->write);
 					//if (empty($leftmenu) || preg_match('/^tax_loan/i',$leftmenu)) $newmenu->add("/loan/payment/list.php?leftmenu=tax_loan",$langs->trans("Payments"),2,$user->rights->loan->read);
 				}
@@ -1089,7 +1087,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 								if ($nature)
 								{
 									$langs->load('accountancy');
-									$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $langs->trans($objp->label), 2, $user->rights->accounting->comptarapport->lire);
+									$journallabel=$langs->transnoentities($objp->label);	// Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
+									$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
 								}
 								$i++;
 							}
@@ -1242,7 +1241,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (preg_match('/checks/',$leftmenu)) $newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&amp;action=new&amp;mainmenu=bank",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
 				if (preg_match('/checks/',$leftmenu)) $newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&amp;mainmenu=bank",$langs->trans("List"),1,$user->rights->banque->cheque);
 			}
-
 		}
 
 		/*
@@ -1349,7 +1347,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="sendings") $newmenu->add("/expedition/list.php?leftmenu=sendings&viewstatut=2", $langs->trans("StatusSendingProcessedShort"), 2, $user->rights->expedition->lire);
 				$newmenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->rights->expedition->lire);
 			}
-
 		}
 
 		/*
@@ -1380,7 +1377,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$titlenew = $langs->trans("NewLead");
 				}
 
-				// Project affected to user
+				// Project assigned to user
 				$newmenu->add("/projet/index.php?leftmenu=projects".($search_project_user?'&search_project_user='.$search_project_user:''), $titleboth, 0, $user->rights->projet->lire, '', $mainmenu, 'projects');
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user?'&search_project_user='.$search_project_user:''), $titlenew, 1, $user->rights->projet->creer);
 
@@ -1398,8 +1395,14 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=openedopp&search_status=99', $langs->trans("List"), 2, $showmode);
 				}
 
-				// All project i have permission on
 				$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
+
+				// Categories
+				if (! empty($conf->categorie->enabled))
+				{
+					$langs->load("categories");
+					$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=6", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				}
 
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
@@ -1410,13 +1413,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				    $newmenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
 
 				    $newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user?'&search_project_user='.$search_project_user:''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
-				}
-
-				// Categories
-				if (! empty($conf->categorie->enabled))
-				{
-					$langs->load("categories");
-					$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=6", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
 				}
 			}
 		}
@@ -1571,7 +1567,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members&amp;action=create",$langs->trans("New"),1,$user->rights->adherent->configurer);
 				$newmenu->add("/adherents/type.php?leftmenu=setup&amp;mainmenu=members",$langs->trans("List"),1,$user->rights->adherent->configurer);
 			}
-
 		}
 
 		// Add personalized menus and modules menus
@@ -1631,7 +1626,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$i++;
 			}
 		}
-
 	}
 
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after

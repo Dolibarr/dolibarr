@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -316,7 +316,6 @@ if ($action == 'edit')
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
-
 }
 else
 {
@@ -403,7 +402,6 @@ else
     }
 
     print '</div>';
-
 }
 
 if ($action == 'edit')

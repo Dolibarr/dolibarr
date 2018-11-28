@@ -255,7 +255,6 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
     	        										'maxlength'=>500,
 	            										'text' => $mesg);
 			}
-
 		}
 		else {
 			$this->info_box_contents[0][0] = array(

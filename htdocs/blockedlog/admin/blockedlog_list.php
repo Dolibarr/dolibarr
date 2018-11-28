@@ -304,7 +304,7 @@ if (GETPOST('withtab','alpha'))
 	dol_fiche_head($head, 'fingerprints', '', -1);
 }
 
-print '<span class="opacitymedium">'.$langs->trans("FingerprintsDesc")."</span><br>\n";
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";
 
 print '<br>';
 
@@ -342,7 +342,7 @@ for ($month = 1 ; $month <= 12 ; $month++)
 }
 $retstring.="</select>";
 print $retstring;
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75" value="'.GETPOST('yeartoexport','int').'">';
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport','int').'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
@@ -444,7 +444,6 @@ if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
-
 }
 else
 {
@@ -538,7 +537,6 @@ if (is_array($blocks))
 			print '<td></td>';
 
 			print '</tr>';
-
 		}
 	}
 }

@@ -247,7 +247,7 @@ class pdf_stdmovement extends ModelePDFMovement
 
 		// fetch optionals attributes and labels
 		$extralabels = $extrafields->fetch_name_optionals_label('movement');
-		$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+		$search_array_options=$extrafields->getOptionalsFromPost('movement','','search_');
 
 		$productlot=new ProductLot($db);
 		$productstatic=new Product($db);
@@ -713,7 +713,6 @@ class pdf_stdmovement extends ModelePDFMovement
 					// Total Qty
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $totalunit, 0, 'R', 0);
-
 				}
 				else
 				{

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -133,7 +133,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('contact');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -321,6 +321,7 @@ if (strlen($search_twitter))        $sql.= natural_search('p.twitter', $search_t
 if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_facebook);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip",$search_zip);
+if (strlen($search_town))   		$sql.= natural_search("p.town",$search_town);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
 if ($search_import_key)             $sql.= natural_search("p.import_key",$search_import_key);
 if ($type == "o")        // filtre sur type

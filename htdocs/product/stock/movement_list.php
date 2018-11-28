@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  *
@@ -90,7 +90,7 @@ $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('movement');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 $arrayfields=array(
     'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),

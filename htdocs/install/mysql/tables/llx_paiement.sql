@@ -1,7 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2004	Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004		Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2012		Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2012		Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 create table llx_paiement
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  ref              varchar(30) NOT NULL, -- payment reference number
+  ref              varchar(30) NULL,                    -- payment reference number
   entity           integer   DEFAULT 1 NOT NULL,		-- Multi company id
   datec            datetime,							-- date de creation
   tms              timestamp,

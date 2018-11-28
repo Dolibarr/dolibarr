@@ -469,7 +469,6 @@ class MouvementStock extends CommonObject
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
-
 			}
 
 			// Update detail stock for batch product

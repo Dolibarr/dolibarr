@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
  *
@@ -416,11 +416,9 @@ class Entrepot extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{

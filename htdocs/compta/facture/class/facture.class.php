@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
@@ -251,7 +251,7 @@ class Facture extends CommonInvoice
 	 * If paid partially, $this->close_code can be:
 	 * - CLOSECODE_DISCOUNTVAT
 	 * - CLOSECODE_BADDEBT
-	 * If paid completelly, this->close_code will be null
+	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -2442,7 +2442,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (! $error)
 			{
 				$this->ref = $num;
@@ -2465,7 +2465,6 @@ class Facture extends CommonInvoice
     				else $this->situation_final = 1;
 
 				$this->setFinal($user);
-
                 }
 			}
 		}
@@ -4713,7 +4712,6 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->db->commit();
 			return $this->id;
-
 		}
 		else
 		{
@@ -4952,7 +4950,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {
-		    // If invoice is a not a situation invoice, this->fk_prev_id is used for something else
+		    // If invoice is not a situation invoice, this->fk_prev_id is used for something else
             $tmpinvoice=new Facture($this->db);
             $tmpinvoice->fetch($invoiceid);
             if ($tmpinvoice->type != Facture::TYPE_SITUATION) return 0;

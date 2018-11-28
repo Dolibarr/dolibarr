@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -1867,7 +1867,7 @@ a.tmenuimage {
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 13px;
+	font-size: 14px;
 	vertical-align: middle;
 }
 .login_table_title {
@@ -3249,7 +3249,7 @@ div .tdtop {
 		margin: 3px;
 	    border: 1px solid #ddd;
     	box-shadow: none;
-    	background: #ddd;
+    	background: #eee;
     }
 	.thumbstat {
 		flex: 1 1 110px;
@@ -3486,7 +3486,7 @@ div.boximport {
 .widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
-.dolgraphtitlecssboxes { margin: 0px; }
+.dolgraphtitlecssboxes { /* margin: 0px; */ }
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }

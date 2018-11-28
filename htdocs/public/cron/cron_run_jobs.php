@@ -2,7 +2,7 @@
 /* Copyright (C) 2012		Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,6 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
-
 		}
 	}
 	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok+$nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -643,7 +643,6 @@ if ($object->fetch($id) >= 0)
 	}
 
 	print "\n<!-- Fin liste destinataires selectionnes -->\n";
-
 }
 
 // End of page

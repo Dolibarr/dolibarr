@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
@@ -261,8 +261,6 @@ if ($action == 'setDefaultPDFModulesByType')
             setEventMessages($langs->trans("Error"), null, 'errors');
         }
     }
-    
-   
 }
 
 
@@ -436,7 +434,6 @@ foreach ($dirmodels as $reldir)
                             print '</td>';
 
                             print "</tr>\n";
-
                         }
                     }
                 }

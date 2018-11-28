@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 $langs->loadLangs(array("admin","other","website"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->rights->website->read) accessforbidden();
 
 if (! ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
 {
@@ -216,7 +216,7 @@ if ($action == 'seteditinline')
 {
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
-	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0);	// Force disable of show included containers
+	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0);	// Force disable of 'Include dynamic content'
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
 	exit;
 }
@@ -626,6 +626,7 @@ if ($action == 'addcontainer')
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT','alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
+		$objectpage->image = GETPOST('WEBSITE_IMAGE','alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
 		$objectpage->htmlheader = GETPOST('htmlheader','none');
@@ -1127,6 +1128,7 @@ if ($action == 'updatemeta')
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
+		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
@@ -1543,7 +1545,6 @@ if ($action == 'importsiteconfirm')
 				}
 			}
 		}
-
 	}
 }
 
@@ -1581,7 +1582,7 @@ $moreheadjs.='<script type="text/javascript">'."\n";
 $moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs.='</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 
@@ -1646,7 +1647,7 @@ print '<div class="centpercent websitebar">';
 if (count($object->records) > 0)	// There is at least one web site
 {
 	// ***** Part for web sites
-
+	print '<!-- Bar for website -->';
 	print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
 	print $langs->trans("Website").' : ';
 	print '</div>';
@@ -1806,6 +1807,7 @@ if (count($object->records) > 0)	// There is at least one web site
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
+		print '<!-- Bar for websitepage -->';
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
 		print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
@@ -2367,6 +2369,7 @@ if ($action == 'importsite')
 
 	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
 	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
+	print '<input type="submit" class="button" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 
 	dol_fiche_end();
 
@@ -2406,8 +2409,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print $langs->trans("URL");
 		print '</td><td>';
 		print info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, 'warning');
-		print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
-		print '<input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
+		print '<input class="flat minwidth500" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
+		print '<br><input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
 		print ' ';
 		print $langs->trans("ImagesShouldBeSavedInto").' ';
 		$arraygrabimagesinto=array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
@@ -2451,6 +2454,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagealiasalt=$objectpage->aliasalt;
 		$pagetitle=$objectpage->title;
 		$pagedescription=$objectpage->description;
+		$pageimage=$objectpage->image;
 		$pagekeywords=$objectpage->keywords;
 		$pagelang=$objectpage->lang;
 		$pagehtmlheader=$objectpage->htmlheader;
@@ -2468,6 +2472,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_PAGENAME','alpha'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
 	if (GETPOST('WEBSITE_ALIASALT','alpha'))    $pagealiasalt=GETPOST('WEBSITE_ALIASALT','alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION','alpha')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
+	if (GETPOST('WEBSITE_IMAGE','alpha'))       $pageimage=GETPOST('WEBSITE_IMAGE','alpha');
 	if (GETPOST('WEBSITE_KEYWORDS','alpha'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
 	if (GETPOST('WEBSITE_LANG','aZ09'))         $pagelang=GETPOST('WEBSITE_LANG','aZ09');
 	if (GETPOST('htmlheader','none'))			$pagehtmlheader=GETPOST('htmlheader','none');
@@ -2506,6 +2511,13 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $langs->trans('WEBSITE_DESCRIPTION');
 	print '</td><td>';
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($pagedescription).'">';
+	print '</td></tr>';
+
+	print '<tr><td>';
+	$htmlhelp=$langs->trans("WEBSITE_IMAGEDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_IMAGE'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
+	print '</td><td>';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -2659,7 +2671,6 @@ if ($action == 'editfile' || $action == 'file_manager')
 	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 	print '</div>';
-
 }
 
 if ($action == 'editmenu')
@@ -2722,7 +2733,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$objectpage->fetch($pageid);
 		$jscontent = @file_get_contents($filejs);
 
-		$out = '<!-- Page content '.$filetpl.' : Div with (CSS Of website from file + Style/htmlheader of page from database + Page content from database or by include if WEBSITE_SUBCONTAINERSINLINE is on) -->'."\n";
+		$out = '<!-- Page content '.$filetpl.' : Div with (Htmlheader/Style of page from database + CSS Of website from file + Page content from database or by include if WEBSITE_SUBCONTAINERSINLINE is on) -->'."\n";
 
 		// Include a html so we can benefit of the header of page.
 		// Note: We can't use iframe as it can be used to include another external html file
@@ -2732,15 +2743,17 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 			$out .= "<iframe><body></html>";
 		}*/
 		$out.="\n<html><head>\n";
+		$out.="<!-- htmlheader/style of page from database -->\n";
 		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
 		$out.="</head>\n";
 		$out.="\n<body>";
 
 
-		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
+		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu boostrap-iso">'."\n";
 
 		// REPLACEMENT OF LINKS When page called by website editor
 
+		$out.='<!-- style of website from file -->'."\n";
 		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". No more supported by browsers, snif !
 		$tmpout='';
 		$tmpout.= '/* Include website CSS file */'."\n";
@@ -2796,8 +2809,8 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		{
 			// TODO Add the contenteditable="true" when mode Edit Inline is on
 		}
-
 		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
+		//$out.=$newcontent;
 
 		$out.='</div>';
 

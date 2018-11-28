@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -423,7 +423,6 @@ if (empty($reshook))
 						// modified by hook
 						if ($reshook < 0)
 							$error++;
-
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -2192,7 +2191,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
 		} else {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none');
 		}

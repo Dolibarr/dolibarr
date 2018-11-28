@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -317,7 +317,6 @@ if ($resql)
 	        foreach($warehouses_list as &$wh) {
 	            print_liste_field_titre($wh['label'], '', '','','','align="right"');
 	        }
-
 	    }
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock",$_SERVER["PHP_SELF"], "",$param,"",'align="right"',$sortfield,$sortorder);
@@ -395,7 +394,6 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-
 }
 else
 {

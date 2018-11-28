@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
@@ -120,6 +120,7 @@ function societe_prepare_head(Societe $object)
     	$sql = "SELECT COUNT(n.rowid) as nb";
     	$sql.= " FROM ".MAIN_DB_PREFIX."projet as n";
     	$sql.= " WHERE fk_soc = ".$object->id;
+    	$sql.= " AND entity IN (".getEntity('project').")";
     	$resql=$db->query($sql);
     	if ($resql)
     	{
@@ -634,7 +635,6 @@ function getFormeJuridiqueLabel($code)
         {
             return $langs->trans("NotDefined");
         }
-
     }
 }
 
@@ -740,11 +740,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
         print '<div class="div-table-responsive">';
         print "\n".'<table class="noborder" width=100%>';
 
-        $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
+        $sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
         $sql .= ", cls.code as opp_status_code";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
         $sql .= " WHERE p.fk_soc = ".$object->id;
+        $sql .= " AND p.entity IN (".getEntity('project').")";
         $sql .= " ORDER BY p.dateo DESC";
 
         $result=$db->query($sql);
@@ -800,7 +801,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
                         print '</td>';
                         // Opp status
                         print '<td align="center">';
-            			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
+            			if ($obj->opp_status_code) print $langs->trans("OppStatus".$obj->opp_status_code);
             			print '</td>';
 			            // Opp percent
             			print '<td align="right">';
@@ -909,7 +910,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
     	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
     }
-    $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+    $search_array_options=$extrafields->getOptionalsFromPost($contactstatic->table_element,'','search_');
 
     // Purge search criteria
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
@@ -1516,7 +1517,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $contactstatic = new Contact($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        if ($objcon && get_class($objcon) == 'Contact' && $filterobj && get_class($filterobj) == 'Societe')
+        if ($objcon && get_class($objcon) == 'Contact' &&
+            (is_null($filterobj) || get_class($filterobj) == 'Societe'))
         {
             $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
         }

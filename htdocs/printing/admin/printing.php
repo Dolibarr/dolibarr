@@ -313,7 +313,6 @@ if ($mode == 'test' && $user->admin)
         else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
-
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');
     }
@@ -357,7 +356,6 @@ if ($mode == 'userconf' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-
 }
 
 // End of page

@@ -168,7 +168,6 @@ function create_script_table($list)
         default:
             $sortby = "file";
             ($order == "asc" ? uasort($list, 'compare') : uasort($list, 'revcompare'));
-
     }
 
     foreach($list as $script) {

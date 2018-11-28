@@ -549,12 +549,10 @@ class Notify
 							if ($obj->type_target == 'touserid') {
 	 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-
 							}
 							else {
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
 								$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-
 							}
 							if (! $this->db->query($sql))
 							{
@@ -633,13 +631,13 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$link);
 						break;
 					case 'PROPAL_VALIDATE':
-						$link='<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
+						$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$link);
 						break;
 					case 'PROPAL_CLOSE_SIGNED':
-						$link='<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
+						$link = '<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$link);

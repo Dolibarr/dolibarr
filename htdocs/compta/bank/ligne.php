@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -451,7 +451,6 @@ if ($result)
                 $receipt=new RemiseCheque($db);
                 $receipt->fetch($objp->receiptid);
                 print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);
-
             }
             print '</td>';
         }
@@ -682,7 +681,6 @@ if ($result)
 
 			print '</form>';
         }
-
     }
 
     $db->free($result);

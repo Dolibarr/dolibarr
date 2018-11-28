@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -134,7 +134,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('facture');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -230,7 +230,6 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','a
 	$toselect='';
 	$search_array_options=array();
 	$search_categ_cus=0;
-
 }
 
 if (empty($reshook))
@@ -310,7 +309,6 @@ if ($massaction == 'withdrawrequest')
 				else {
 					$listofbills[] = $objecttmp;    // $listofbills will only contains invoices with good payment method and no request already done
 				}
-
 			}
 		}
 
@@ -340,7 +338,6 @@ if ($massaction == 'withdrawrequest')
 			}
 		}
 	}
-
 }
 
 
@@ -357,7 +354,7 @@ $facturestatic=new Facture($db);
 $formcompany=new FormCompany($db);
 $thirdpartystatic=new Societe($db);
 
-llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+// llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -535,14 +532,25 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit+1,$offset);
-//print $sql;
 
 $resql = $db->query($sql);
+
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
+
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+		$id = $obj->id;
+
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
+		exit;
+	}
+
+	llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 	if ($socid)
 	{
@@ -1229,7 +1237,6 @@ if ($resql)
 			   else print '<td></td>';
 			}
 			print '</tr>';
-
 		}
 	}
 

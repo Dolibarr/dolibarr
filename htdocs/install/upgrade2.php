@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -2295,7 +2295,6 @@ function migrate_detail_livraison($db,$langs,$conf)
                     print ". ";
                     $i++;
                 }
-
             }
 
             if ($error == 0)
@@ -2383,7 +2382,6 @@ function migrate_stocks($db,$langs,$conf)
                 print ". ";
                 $i++;
             }
-
         }
 
         if ($error == 0)
@@ -2638,7 +2636,6 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 //print ". ";
                 $i++;
             }
-
         }
         else print $langs->trans('AlreadyDone')."<br>\n";
 
@@ -2704,7 +2701,6 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 //print ". ";
                 $i++;
             }
-
         }
         else
         {
@@ -4429,50 +4425,50 @@ function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
  */
 function migrate_delete_old_files($db,$langs,$conf)
 {
-    $result=true;
+	$result=true;
 
-    dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
+	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
-    // List of files to delete
-    $filetodeletearray=array(
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modSkype.class.php',
-    DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
+	// List of files to delete
+	$filetodeletearray=array(
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modSkype.class.php',
+		DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
 
-    DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
-    DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
-    DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
-    DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
-    DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
-    DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
-
+		DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
+		DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
+		DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
+		DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
+		DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
+		DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php',
+		DOL_DOCUMENT_ROOT.'/support/online.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)

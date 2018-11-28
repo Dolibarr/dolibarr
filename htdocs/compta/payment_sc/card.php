@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +146,6 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), -1
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
 }
 
 /*

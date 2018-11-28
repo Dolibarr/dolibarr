@@ -295,7 +295,7 @@ CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=thousandth
 #### Input reasons #####
-DemandReasonTypeSRC_INTE=Internetaaa
+DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing campaign
 DemandReasonTypeSRC_CAMP_EMAIL=EMailing campaign
 DemandReasonTypeSRC_CAMP_PHO=Phone campaign
@@ -306,6 +306,7 @@ DemandReasonTypeSRC_WOM=Word of mouth
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Employee
 DemandReasonTypeSRC_SPONSORING=Sponsorship
+DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

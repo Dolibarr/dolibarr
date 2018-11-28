@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
@@ -331,7 +331,7 @@ input, select {
 }
 
 /* Focus definitions must be after standard definition */
-textarea:focus, button:focus {
+textarea:focus {
     /* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
@@ -907,7 +907,8 @@ div.fiche {
     min-width: 150px;
 }
 .thumbstat150 {
-    min-width: 170px;
+    /* min-width: 170px; */
+    width: 170px;
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>
@@ -1073,6 +1074,9 @@ select.selectarrowonleft option {
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
      }
+     input[type=text], input[type=password] {
+		max-width: 180px;
+	}
 
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
@@ -1856,7 +1860,7 @@ foreach($mainmenuusedarray as $val)
 }
 form#login {
 	padding-bottom: 30px;
-	font-size: 13px;
+	font-size: 14px;
 	vertical-align: middle;
 }
 .login_table_title {
@@ -3312,6 +3316,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
+		width: 160px;
 	}
     .dashboardlineindicator {
         float: left;
@@ -3566,7 +3571,7 @@ div.boximport {
 .widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
-.dolgraphtitlecssboxes { margin: 0px; }
+.dolgraphtitlecssboxes { /* margin: 0px; */ }
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }

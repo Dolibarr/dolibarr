@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -232,7 +232,6 @@ class box_actions extends ModeleBoxes
 					}
 				}
 				$out.= '</table>';
-
 			}
 			$out.= '</div>';
 			if ($actioncejour)
