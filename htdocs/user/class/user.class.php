@@ -2283,7 +2283,7 @@ class User extends CommonObject
 			$label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
 			$label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 			$label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
-			if ($conf->browser->layout == 'phone') $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");;
+			if ($conf->browser->layout == 'phone') $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
 		if ($infologin < 0) $label='';
@@ -3179,14 +3179,15 @@ class User extends CommonObject
 	/**
 	 *	Load all objects into $this->users
 	 *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 *  @return int							<0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND')
 	{
 		global $conf;
 
@@ -3194,18 +3195,26 @@ class User extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
 		$sql.= " WHERE 1";
 
-		//Manage filter
+		// Manage filter
+		$sqlwhere = array();
 		if (!empty($filter)){
 			foreach($filter as $key => $value) {
-				if (strpos($key,'date')) {
-					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+				if ($key=='t.rowid') {
+					$sqlwhere[] = $key . '='. $value;
+				}
+				elseif (strpos($key,'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				}
 				elseif ($key=='customsql') {
-					$sql.= ' AND '.$value;
-				} else {
-					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
 			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);

@@ -487,7 +487,7 @@ DAV_ALLOW_ECM_DIRTooltip=The root directory where all files are manually uploade
 Module0Name=Users & Groups
 Module0Desc=Users / Employees and Groups management
 Module1Name=Third Parties
-Module1Desc=Companies and contact management (customers, prospects...)
+Module1Desc=Companies and contacts management (customers, prospects...)
 Module2Name=Commercial
 Module2Desc=Commercial management
 Module10Name=Accounting
@@ -1843,6 +1843,7 @@ LoadThirdPartyFromName=Load thirdparty from name (load only)
 LoadThirdPartyFromNameOrCreate=Load thirdparty from name (create if not found)
 WithDolTrackingID=Dolibarr Tracking ID found
 WithoutDolTrackingID=Dolibarr Tracking ID not found
+FormatZip=Zip
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

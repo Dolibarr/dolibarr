@@ -176,4 +176,4 @@ if ($messagetoshow)
 
 // End of page
 llxFooter();
-$db->close();;
+$db->close();

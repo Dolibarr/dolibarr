@@ -541,17 +541,17 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
-	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
 	{
 		$obj = $db->fetch_object($resql);
 		$id = $obj->id;
-		
+
 		header("Location: ".DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
 		exit;
 	}
-	
+
 	llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
-	
+
 	if ($socid)
 	{
 		$soc = new Societe($db);

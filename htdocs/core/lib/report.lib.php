@@ -94,7 +94,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	print '<td>';
 	if ($period) print $period;
-	if ($variante) print '<td>'.$periodlink.'</td>';
+	if ($variante) print '<td class="nowraponall">'.$periodlink.'</td>';
 	print '</td>';
 	print '</tr>';
 

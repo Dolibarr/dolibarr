@@ -459,7 +459,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,";	// DATES (datetime)
         $sql.= " d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
         $sql.= " d.fk_user_valid, d.fk_user_approve,";
-        $sql.= " d.fk_statut as status, d.fk_c_paiement,";
+        $sql.= " d.fk_statut as status, d.fk_c_paiement, d.paid,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";

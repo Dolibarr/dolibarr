@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014      Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018           Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,6 @@
  *      \ingroup    resource
  *      \brief      Page to manage resource objects
  */
-
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
@@ -207,7 +207,7 @@ if($ret == -1) {
 	$newcardbutton='';
 	if ($user->rights->resource->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/resource/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
