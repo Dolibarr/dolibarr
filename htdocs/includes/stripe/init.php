@@ -49,6 +49,7 @@ require(dirname(__FILE__) . '/lib/ApiOperations/Update.php');
 
 // Plumbing
 require(dirname(__FILE__) . '/lib/ApiResponse.php');
+require(dirname(__FILE__) . '/lib/RequestTelemetry.php');
 require(dirname(__FILE__) . '/lib/StripeObject.php');
 require(dirname(__FILE__) . '/lib/ApiRequestor.php');
 require(dirname(__FILE__) . '/lib/ApiResource.php');
@@ -98,11 +99,14 @@ require(dirname(__FILE__) . '/lib/Payout.php');
 require(dirname(__FILE__) . '/lib/Person.php');
 require(dirname(__FILE__) . '/lib/Plan.php');
 require(dirname(__FILE__) . '/lib/Product.php');
+require(dirname(__FILE__) . '/lib/Radar/ValueList.php');
+require(dirname(__FILE__) . '/lib/Radar/ValueListItem.php');
 require(dirname(__FILE__) . '/lib/Recipient.php');
 require(dirname(__FILE__) . '/lib/RecipientTransfer.php');
 require(dirname(__FILE__) . '/lib/Refund.php');
 require(dirname(__FILE__) . '/lib/Reporting/ReportRun.php');
 require(dirname(__FILE__) . '/lib/Reporting/ReportType.php');
+require(dirname(__FILE__) . '/lib/Review.php');
 require(dirname(__FILE__) . '/lib/SKU.php');
 require(dirname(__FILE__) . '/lib/Sigma/ScheduledQueryRun.php');
 require(dirname(__FILE__) . '/lib/Source.php');

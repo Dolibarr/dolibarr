@@ -127,9 +127,11 @@ class Event extends ApiResource
     const SOURCE_REFUND_ATTRIBUTES_REQUIRED    = 'source.refund_attributes_required';
     const SOURCE_TRANSACTION_CREATED           = 'source.transaction.created';
     const SOURCE_TRANSACTION_UPDATED           = 'source.transaction.updated';
+    const SUBSCRIPTION_SCHEDULE_ABORTED        = 'subscription_schedule.aborted';
     const SUBSCRIPTION_SCHEDULE_CANCELED       = 'subscription_schedule.canceled';
     const SUBSCRIPTION_SCHEDULE_COMPLETED      = 'subscription_schedule.completed';
     const SUBSCRIPTION_SCHEDULE_CREATED        = 'subscription_schedule.created';
+    const SUBSCRIPTION_SCHEDULE_EXPIRING       = 'subscription_schedule.expiring';
     const SUBSCRIPTION_SCHEDULE_RELEASED       = 'subscription_schedule.released';
     const SUBSCRIPTION_SCHEDULE_UPDATED        = 'subscription_schedule.updated';
     const TOPUP_CANCELED                       = 'topup.canceled';
