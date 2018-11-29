@@ -3260,7 +3260,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    background: #e7e7e7;
+    background: #e8e8e8;
     border: 1px solid #eee;
     /* border-left: 6px solid #ddd; */
     box-shadow: 1px 1px 8px #ddd;
