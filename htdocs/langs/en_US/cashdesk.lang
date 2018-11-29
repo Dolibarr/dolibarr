@@ -33,6 +33,7 @@ FilterRefOrLabelOrBC=Search (Ref/Label)
 UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that uses POS needs to have permission to edit stock.
 DolibarrReceiptPrinter=Dolibarr Receipt Printer
 PointOfSale=Point of sales
+PointOfSaleShort=POS
 CloseBill=Close Bill
 Floors=Floors
 Floor=Floor

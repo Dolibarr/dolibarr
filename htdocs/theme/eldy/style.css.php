@@ -45,8 +45,8 @@ $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='245,245,245';    // line pair
-$colorbacklinepair2='245,245,245';    // line pair
+$colorbacklinepair1='250,250,250';    // line pair
+$colorbacklinepair2='250,250,250';    // line pair
 $colorbacklinepairhover='230,237,244';	// line hover
 $colorbacklinebreak='214,218,220';		// line break
 $colorbackbody='255,255,255';
@@ -512,12 +512,12 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
-	background-color: #f0f0f0;
-	background-image: -moz-linear-gradient(top, #f0f0f0, #e0e0e0);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f0f0f0), to(#e0e0e0));
-	background-image: -webkit-linear-gradient(top, #f0f0f0, #e0e0e0);
-	background-image: -o-linear-gradient(top, #f0f0f0, #e0e0e0);
-	background-image: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+	background-color: #f5f5f5;
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
 	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
@@ -3260,7 +3260,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-bottom: 5px;
     text-align: center;
 
-    background: #e8e8e8;
+    background: #fcfcfc;
     border: 1px solid #eee;
     /* border-left: 6px solid #ddd; */
     box-shadow: 1px 1px 8px #ddd;
@@ -3409,7 +3409,7 @@ table.noborder.boxtable tr td {
     border-bottom-width: 0 !important;
 }
 .boxtable .fichehalfright, .boxtable .fichehalfleft {
-    min-width: 300px;
+    min-width: 275px;	/* increasing this, make chart on box not side by side on laptops */
 }
 .tdboxstats {
 	text-align: center;
