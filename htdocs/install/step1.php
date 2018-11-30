@@ -491,7 +491,6 @@ if (! $error && $db->connected && $action == "set")
             		'thirdparties' => 'thirdparty',
             		'usergroups' => 'usergroups',
             		'users' => 'user',
-            		'usergroups' => 'usergroups',
             	);
             	foreach($docs as $cursordir => $cursorfile)
             	{
