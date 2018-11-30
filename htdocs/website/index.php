@@ -348,20 +348,30 @@ if ($action == 'addcontainer')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		// Clean url to grab, so url can be
-		// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
-		$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
-		$urltograbwithoutdomainandparam = preg_replace('/\?.*$/', '', $urltograbwithoutdomainandparam);
-		if (empty($urltograbwithoutdomainandparam) && ! preg_match('/\/$/', $urltograb))
+		if (! preg_match('/^http/', $urltograb))
 		{
-			$urltograb.='/';
+			$error++;
+			setEventMessages('Error URL must start with http:// or https://', null, 'errors');
+			$action = 'createcontainer';
 		}
-		$pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-', preg_replace('/\/+$/', '', $urltograbwithoutdomainandparam)));
 
-		$urltograbdirwithoutslash = dirname($urltograb.'.');
-		$urltograbdirrootwithoutslash = getRootURLFromURL($urltograbdirwithoutslash);
-		// Exemple, now $urltograbdirwithoutslash is https://www.dolimed.com/screenshots
-		// and $urltograbdirrootwithoutslash is https://www.dolimed.com
+		if (! $error)
+		{
+			// Clean url to grab, so url can be
+			// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
+			$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
+			$urltograbwithoutdomainandparam = preg_replace('/\?.*$/', '', $urltograbwithoutdomainandparam);
+			if (empty($urltograbwithoutdomainandparam) && ! preg_match('/\/$/', $urltograb))
+			{
+				$urltograb.='/';
+			}
+			$pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-', preg_replace('/\/+$/', '', $urltograbwithoutdomainandparam)));
+	
+			$urltograbdirwithoutslash = dirname($urltograb.'.');
+			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograbdirwithoutslash);
+			// Exemple, now $urltograbdirwithoutslash is https://www.dolimed.com/screenshots
+			// and $urltograbdirrootwithoutslash is https://www.dolimed.com
+		}
 
 		// Check pageurl is not already used
 		if ($pageurl)
@@ -465,6 +475,7 @@ if ($action == 'addcontainer')
 				$tmp = $objectpage->htmlheader;
 
 				preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
+				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
 					dol_syslog("We will grab the resource found into script tag ".$regs[2][$key]);
@@ -500,13 +511,15 @@ if ($action == 'addcontainer')
 	    			if ($tmpgeturl['curl_error_no'])
 	    			{
 	    				$error++;
-	    				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+	    				setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+	    				$errorforsubresource++;
 	    				$action='createcontainer';
 	    			}
 					elseif ($tmpgeturl['http_code'] != '200')
 					{
 						$error++;
-						setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						$errorforsubresource++;
 						$action='createcontainer';
 					}
 					else
@@ -531,9 +544,10 @@ if ($action == 'addcontainer')
 				$pagecsscontent = "\n".'<style>'."\n";
 
 				preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
+				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
-					dol_syslog("We will grab the resource found into link tag ".$regs[2][$key]);
+					dol_syslog("We will grab the resources found into link tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
 					if (preg_match('/^\//', $regs[2][$key]))
@@ -564,14 +578,16 @@ if ($action == 'addcontainer')
 					$tmpgeturl = getURLContent($urltograbbis);
 					if ($tmpgeturl['curl_error_no'])
 					{
-						$error++;
-						setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+						$errorforsubresource++;
+						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action='createcontainer';
 					}
 					elseif ($tmpgeturl['http_code'] != '200')
 					{
-						$error++;
-						setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						$errorforsubresource++;
+						setEventMessages('Error getting link tag url'.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action='createcontainer';
 					}
 					else
@@ -694,14 +710,11 @@ if ($action == 'addcontainer')
 			if ($result)
 			{
 				setEventMessages($langs->trans("Saved"), null, 'mesgs');
-				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-				//exit;
 			}
 			else
 			{
 				setEventMessages('Failed to write file '.$filetpl, null, 'errors');
-				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-				//exit;
+				$action = 'createcontainer';
 			}
 		}
 	}
