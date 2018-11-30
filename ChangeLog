@@ -69,8 +69,6 @@ NEW: hidden conf to search product by supplier ref
 NEW: hidden constant to be able to use a thirdparty for donation
 NEW: hidden option to define an invoice template for each invoice type
 NEW: Highlight lines on lists when they are checked
-NEW: hook formConfirm always called if hooked
-NEW: hook on dispatch order fourn
 NEW: Notification module support expense report+holiday validation and approval
 NEW: On customer/supplier card, add simple tooltip to amount boxes
 NEW: Page to check if the operations/items created between two dates have attached item(s) and possibility to download all attachements
@@ -81,7 +79,7 @@ NEW: Can build an archive of full documents directory from backup page
 NEW: tag odt line_product_ref_fourn for supplier doc lines
 NEW: The binding step in accountancy has a country filter with autocompletion
 NEW: Top menu is always on screen with MD theme.
-NEW: Withdraw request massaction can include already partiall paid invoices
+NEW: Withdraw request massaction can include already partially paid invoices
 
 
 For developers:
@@ -110,6 +108,8 @@ NEW: #9236 Allow to import shipment lines via API
 NEW: ADD civility list in API
 NEW: support selllist in the  module builder
 NEW: optional param to show a specific extrafield
+NEW: hook formConfirm always called if hooked
+NEW: hook on dispatch order fourn
 
 WARNING:
 
