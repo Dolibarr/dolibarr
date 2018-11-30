@@ -244,7 +244,7 @@ class modUser extends DolibarrModules
 		$this->import_tables_array[$r]=array('u'=>MAIN_DB_PREFIX.'user','extra'=>MAIN_DB_PREFIX.'user_extrafields');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('u.lastname'=>"Name*",'u.firstname'=>"Firstname",'u.employee'=>"Employee*",'u.job'=>"Job",'u.gender'=>"Gender",'u.login'=>"Login*",'u.pass_crypted'=>"Password",'u.admin'=>"Administrator",'u.fk_soc'=>"Company*",'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",'u.fk_state'=>"StateId",'u.fk_country'=>"CountryCode",'u.office_phone'=>"Phone",'u.user_mobile'=>"Mobile",'u.office_fax'=>"Fax",'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature','u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey','u.datec'=>"DateCreation");
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity = ".$conf->entity;
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity IN (0,".$conf->entity.")";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
