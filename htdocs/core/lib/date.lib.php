@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- *
+ * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -273,6 +274,36 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
     return trim($sTime);
 }
 
+
+/**
+ * générate standard filter date
+ *
+ * @param      string	$datefield		fields where apply sql date filter
+ * @param      int		$day_date		day date
+ * @param      int		$month_date		month date
+ * @param      int		$year_date		year date
+ 
+ * @return     string	$sqldate		sql part of date
+ */
+
+function dol_sql_datefilter($datefield, $day_date, $month_date, $year_date) {
+	global $db;
+	$sqldate=""
+	if ($month_date > 0) {
+		if ($year_date > 0 && empty($day_date)) {
+			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, false));
+			$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, false))."'";
+		} else if ($year_date > 0 && ! empty($day_date)) {
+			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
+			$sqldate.= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
+		} else
+			$sqldate.= " AND date_format( ".$datefield.", '%m') = '".$db->escape($month_date)."'";
+	} else if ($year_date > 0){
+		$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
+		$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
+	}
+	return $sqldate;
+}
 
 /**
  *	Convert a string date into a GM Timestamps date
