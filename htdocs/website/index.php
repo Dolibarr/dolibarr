@@ -865,6 +865,18 @@ if ($action == 'updatecss')
 		$res = $object->fetch(0, $websitekey);
 		$website = $object;
 
+		// Save master.inc.php file
+		$filemaster=$pathofwebsite.'/master.inc.php';
+
+		dol_syslog("Save master file ".$filemaster);
+		
+		dol_mkdir($pathofwebsite);
+
+		// Now generate the master.inc.php page
+		$result = dolSaveMasterFile($filemaster);
+		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+
+		
 		// Html header file
 		$htmlheadercontent ='';
 
