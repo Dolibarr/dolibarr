@@ -57,7 +57,7 @@ $pagenext = $page + 1;
 
 
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
@@ -126,7 +126,6 @@ if (! empty($search_accountancy_code_end)) {
 	$param .= '&amp;search_accountancy_code_end=' . $search_accountancy_code_end;
 }
 
-
 /*
  * Action
  */
@@ -152,7 +151,7 @@ if ($action == 'export_csv')
 	$filename = 'balance';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
-	$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
+	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
