@@ -46,7 +46,7 @@ class modEmailCollector extends DolibarrModules
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 50320;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'dav';
+		$this->rights_class = 'emailcollector';
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
@@ -64,7 +64,7 @@ class modEmailCollector extends DolibarrModules
 		$this->descriptionlong = "EmailCollectorDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled (where DAV is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -174,11 +174,8 @@ class modEmailCollector extends DolibarrModules
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
-			0=>array('label'=>'Email collector', 'jobtype'=>'method', 'class'=>'/emailcollector/class/emailcollector.class.php', 'objectname'=>'EmailCollector', 'method'=>'doCollect', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>5, 'unitfrequency'=>60, 'status'=>1, 'test'=>'$conf->emailcollector->enabled')
+			0=>array('label'=>'Email collector', 'priority'=>50, 'jobtype'=>'method', 'class'=>'/emailcollector/class/emailcollector.class.php', 'objectname'=>'EmailCollector', 'method'=>'doCollect', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>5, 'unitfrequency'=>60, 'status'=>1, 'test'=>'$conf->emailcollector->enabled')
 		);
-		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
-		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
-		// );
 
 
 		// Permissions

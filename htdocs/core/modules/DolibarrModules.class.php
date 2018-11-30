@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
@@ -1352,19 +1352,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
                         if (! $err) {
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, dateend, label, jobtype, classesname, objectname, methodename, command, params, note,";
-                            if(is_int($frequency)) { $sql.= ' frequency,';
-                            }
-                            if(is_int($unitfrequency)) { $sql.= ' unitfrequency,';
-                            }
-                            if(is_int($priority)) { $sql.= ' priority,';
-                            }
-                            if(is_int($status)) { $sql.= ' status,';
-                            }
+                            if (is_int($frequency)) { $sql.= ' frequency,'; }
+                            if (is_int($unitfrequency)) { $sql.= ' unitfrequency,'; }
+                            if (is_int($priority)) { $sql.= ' priority,'; }
+                            if (is_int($status)) { $sql.= ' status,'; }
                             $sql.= " entity, test)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape(empty($this->rights_class)?strtolower($this->name):$this->rights_class)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
-                            $sql.= ($datestart ? "'".$this->db->idate($datestart)."'" : "NULL").", ";
+                            $sql.= ($datestart ? "'".$this->db->idate($datestart)."'" : "'".$this->db->idate($now)."'").", ";
                             $sql.= ($dateend   ? "'".$this->db->idate($dateend)."'"   : "NULL").", ";
                             $sql.= "'".$this->db->escape($label)."', ";
                             $sql.= "'".$this->db->escape($jobtype)."', ";

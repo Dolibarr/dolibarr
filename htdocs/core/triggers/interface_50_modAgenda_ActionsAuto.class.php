@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
@@ -769,7 +769,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $object->sendtoid=0;
 		}
 
-		$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+		$object->actionmsg = $langs->transnoentities("Author").': '.$user->login."\n".$object->actionmsg;
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -841,8 +841,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->email_subject = $object->email_subject;
 		$actioncomm->errors_to     = $object->errors_to;
 
-		$actioncomm->fk_element  = $elementid;
-		$actioncomm->elementtype = $elementtype;
+		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
+		// for such objects because there is already a dedicated field into table llx_actioncomm.
+		if (! in_array($elementtype, array('societe','contact','project')))
+		{
+			$actioncomm->fk_element  = $elementid;
+			$actioncomm->elementtype = $elementtype;
+		}
 
 		if (property_exists($object,'attachedfiles') && is_array($object->attachedfiles) && count($object->attachedfiles)>0) {
 			$actioncomm->attachedfiles=$object->attachedfiles;

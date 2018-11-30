@@ -3,7 +3,7 @@
 # Script to extrac a database with demo values.
 # Note: "dialog" tool need to be available if no parameter provided.
 #
-# Regis Houssin       - regis.houssin@capnetworks.com
+# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # Usage: savedemo.sh
@@ -171,6 +171,8 @@ export list="
     --ignore-table=$base.llx_abonne_extrafields 
     --ignore-table=$base.llx_abonne_type
     --ignore-table=$base.llx_abonnement 
+    --ignore-table=$base.llx_accountingaccount 
+    --ignore-table=$base.llx_accountingsystem 
     --ignore-table=$base.llx_advanced_extrafields 
     --ignore-table=$base.llx_advanced_extrafields_options 
     --ignore-table=$base.llx_advanced_extrafields_values

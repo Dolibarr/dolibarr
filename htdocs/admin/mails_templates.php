@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
@@ -421,7 +421,7 @@ if ($action == 'delete')
 //var_dump($elementList);
 
 
-$sql="SELECT rowid as rowid, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, active";
+$sql="SELECT rowid as rowid, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, enabled, active";
 $sql.=" FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql.=" WHERE entity IN (".getEntity('email_template').")";
 if (! $user->admin)
@@ -787,8 +787,12 @@ if ($resql)
             		$i++;
             		continue;		// It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
             	}
-				// TODO Test on 'enabled'
-
+				// Test on 'enabled'
+				if (! dol_eval($obj->enabled, 1))
+				{
+					$i++;
+					continue;		// Email template not qualified
+				}
 
             	print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 

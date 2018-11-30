@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Dourseanud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2106  Ferran Marcet           <fmarcet@2byte.es>
@@ -303,7 +303,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 					foreach($cpts as $i => $cpt)
 					{
-						$return = $AccCat->getResult($cpt['account_number'], 0, $date_start, $date_end, $cpt['dc']);
+						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN=0;

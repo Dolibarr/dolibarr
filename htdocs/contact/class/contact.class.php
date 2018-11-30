@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2004-2013 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
@@ -87,17 +87,17 @@ class Contact extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see state_id
+	 * @see $state_id
 	 */
 	public $fk_departement;
 	/**
 	 * @deprecated
-	 * @see state_code
+	 * @see $state_code
 	 */
 	public $departement_code;
 	/**
 	 * @deprecated
-	 * @see state
+	 * @see $state
 	 */
 	public $departement;
 	public $state_id;	        	// Id of department
@@ -682,12 +682,13 @@ class Contact extends CommonObject
 	/**
 	 *  Load object contact
 	 *
-	 *  @param      int		$id          id du contact
-	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-     *  @param      string  $ref_ext     External reference, not given by Dolibarr
-	 *  @return     int     		     -1 if KO, 0 if OK but not found, 1 if OK
+	 *  @param      int		$id         id du contact
+	 *  @param      User	$user       Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
+     *  @param      string  $ref_ext    External reference, not given by Dolibarr
+     *  @param		string	$email		Email
+	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=0, $ref_ext='')
+	function fetch($id, $user=null, $ref_ext='', $email='')
 	{
 		global $langs;
 
@@ -721,9 +722,15 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
-		elseif ($ref_ext) {
+		else
+		{
 			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
-			$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
+			if ($ref_ext) {
+				$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
+			if ($email) {
+				$sql .= " AND c.email = '".$this->db->escape($email)."'";
+			}
 		}
 
 		$resql=$this->db->query($sql);

@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		Patrick Raguin      	<patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2017	Juanjo Menent       	<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -757,7 +757,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 					$content = $account->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					// Key
-					$tmplength = 13;
+					$tmplength = 15;
 					$content = $account->cle_rib;
 				}elseif ($val == 'IBAN' || $val == 'BIC') {
 					// Key
@@ -1514,7 +1514,7 @@ function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
+function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails=0)
 {
 	global $conf, $hookmanager, $mysoc;
 

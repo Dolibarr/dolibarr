@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
- * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
@@ -904,7 +904,7 @@ if (empty($reshook))
 
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
-								
+
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,
@@ -2717,7 +2717,7 @@ else
 
 					$paymentstatic->id=$objp->rowid;
 					$paymentstatic->datepaye=$db->jdate($objp->dp);
-					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);;
+					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);
 					$paymentstatic->num_paiement=$objp->num_paiement;
 					$paymentstatic->payment_code=$objp->payment_code;
 

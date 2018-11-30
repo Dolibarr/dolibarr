@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@inodbox.com>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -238,7 +238,11 @@ class Conf
 		{
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-			if ($ret) $mc = new ActionsMulticompany($db);
+			if ($ret)
+			{
+				$mc = new ActionsMulticompany($db);
+				$this->mc = $mc;
+			}
 		}
 
 		// Clean some variables

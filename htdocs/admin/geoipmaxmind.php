@@ -24,6 +24,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 
 // Security check
@@ -150,6 +151,25 @@ if ($geoip)
 	if ($result) print $result;
 	else print $langs->trans("Error");
 	*/
+	//var_dump($_SERVER);
+	$ip = getUserRemoteIP();
+	//$ip='91.161.249.43';
+	$isip=is_ip($ip);
+	if ($isip == 1)
+	{
+		print '<br>'.$ip.' -> ';
+		$result=dol_print_ip($ip,1);
+		if ($result) print $result;
+		else print $langs->trans("Error");
+	}
+	else
+	{
+		print '<br>'.$ip.' -> ';
+		$result=dol_print_ip($ip,1);
+		if ($result) print $result;
+		else print $langs->trans("NotAPublicIp");
+	}
+
 	$geoip->close();
 }
 

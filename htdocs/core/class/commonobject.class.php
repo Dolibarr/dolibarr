@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
@@ -2379,7 +2379,7 @@ abstract class CommonObject
 	function updateRangOfLine($rowid,$rang)
 	{
 		$fieldposition = 'rang';
-		if ($this->table_element_line == 'ecm_files') $fieldposition = 'position';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -2417,14 +2417,17 @@ abstract class CommonObject
 	 */
 	function updateLineUp($rowid,$rang)
 	{
-		if ($rang > 1 )
+		if ($rang > 1)
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang ;
+			$fieldposition = 'rang';
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang ;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql) )
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.($rang - 1);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang - 1);
 				$sql.= ' WHERE rowid = '.$rowid;
 				if (! $this->db->query($sql) )
 				{
@@ -2450,12 +2453,15 @@ abstract class CommonObject
 	{
 		if ($rang < $max)
 		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.$rang;
+			$fieldposition = 'rang';
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND rang = '.($rang+1);
 			if ($this->db->query($sql) )
 			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang = '.($rang+1);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang+1);
 				$sql.= ' WHERE rowid = '.$rowid;
 				if (! $this->db->query($sql) )
 				{
@@ -5139,7 +5145,7 @@ abstract class CommonObject
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
 	 *  @see setValueFrom, insertExtraFields
 	 */
-	function updateExtraField($key, $trigger, $userused)
+	function updateExtraField($key, $trigger=null, $userused=null)
 	{
 		global $conf,$langs,$user;
 
@@ -7268,15 +7274,44 @@ abstract class CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param 	User 	$user       			User that deletes
+	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
+	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
+	 * @return 	int             				<=0 if KO, >0 if OK
 	 */
-	public function deleteCommon(User $user, $notrigger = false)
+	public function deleteCommon(User $user, $notrigger=false, $forcechilddeletion=0)
 	{
 		$error=0;
 
 		$this->db->begin();
+
+		if ($forcechilddeletion)
+		{
+			foreach($this->childtables as $table)
+			{
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+				$resql = $this->db->query($sql);
+				if (! $resql)
+				{
+					$this->error=$this->db->lasterror();
+					$this->errors[]=$this->error;
+					$this->db->rollback();
+					return -1;
+				}
+			}
+		}
+		elseif (! empty($this->fk_element) && ! empty($this->childtables))	// If object has childs linked with a foreign key field, we check all child tables.
+		{
+			$objectisused = $this->isObjectUsed($this->id);
+			if (! empty($objectisused))
+			{
+				dol_syslog(get_class($this)."::deleteCommon Can't delete record as it has some child", LOG_WARNING);
+				$this->error='ErrorRecordHasChildren';
+				$this->errors[]=$this->error;
+				$this->db->rollback();
+				return 0;
+			}
+		}
 
 		if (! $error) {
 			if (! $notrigger) {

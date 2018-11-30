@@ -103,25 +103,6 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
-
-if ($action == 'confirm_collect')
-{
-	dol_include_once('/emailcollector/class/emailcollector.class.php');
-
-	$res = $object->doCollect();
-
-	if ($res == 0)
-	{
-		setEventMessages($object->output, null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($object->error, null, 'errors');
-	}
-
-	$action = '';
-}
-
 if (GETPOST('addfilter','alpha'))
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
@@ -160,9 +141,11 @@ if (GETPOST('addoperation','alpha'))
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype','az09');
-	$emailcollectoroperation->actionparam = GETPOST('actionparam', 'alpha');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
+	$emailcollectoroperation->position = 50;
+
 	$result = $emailcollectoroperation->create($user);
 
 	if ($result > 0)
@@ -189,6 +172,25 @@ if ($action == 'deleteoperation')
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
+
+if ($action == 'confirm_collect')
+{
+	dol_include_once('/emailcollector/class/emailcollector.class.php');
+
+	$res = $object->doCollectOneCollector();
+
+	if ($res > 0)
+	{
+		setEventMessages($object->output, null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($object->error, null, 'errors');
+	}
+
+	$action = '';
+}
+
 
 
 
@@ -373,7 +375,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	*/
 	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	$morehtml = $langs->trans("NbOfEmailsInInbox").' : ';
+
+	$sourcedir = $object->source_directory;
+	$targetdir = ($object->target_directory ? $object->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
+
+	$connectstringserver = $object->getConnectStringIMAP();
+	$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+	$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+
+	$connection = imap_open($connectstringsource, $object->user, $object->password);
+	if (! $connection)
+	{
+		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+	}
+	else
+	{
+		//$morehtmlstatus .= imap_num_msg($connection).'</div><div class="statusref">';
+		$morehtml .= imap_num_msg($connection);
+	}
+
+	imap_close($connection);
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -404,7 +428,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add filter
 	print '<tr class="oddeven">';
 	print '<td>';
-	$arrayoftypes=array('from'=>'MailFrom', 'to'=>'MailTo', 'cc'=>'Cc', 'bcc'=>'Bcc', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead');
+	$arrayoftypes=array('from'=>'MailFrom', 'to'=>'MailTo', 'cc'=>'Cc', 'bcc'=>'Bcc', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead', 'withtrackingid'=>'WithDolTrackingID', 'withouttrackingid'=>'WithoutDolTrackingID');
 	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="rulevalue">';
@@ -435,28 +459,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div><br>';
 
 	// Operations
-	print '<table class="border centpercent">';
+	print '<table id="tablelines" class="noborder noshadow">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td>';
+	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td><td></td>';
 	print '</tr>';
 	// Add operation
 	print '<tr class="oddeven">';
 	print '<td>';
-	$arrayoftypes=array('recordevent'=>'RecordEvent');
+	$arrayoftypes=array('loadthirdparty'=>'LoadThirdPartyFromName', 'loadandcreatethirdparty'=>'LoadThirdPartyFromNameOrCreate', 'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 0, 0, 0, '', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	print '</td>';
+	print '<td></td>';
 	print '<td align="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations
+	$nboflines = count($object->actions);
+	$table_element_line = 'emailcollector_emailcollectoraction';
+	$fk_element='position';
+	$i=0;
 	foreach($object->actions as $ruleaction)
 	{
 		$ruleactionobj=new EmailcollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
-		print '<tr class="oddeven">';
+		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
 		print $langs->trans($arrayoftypes[$ruleaction['type']]);
 		print '</td>';
@@ -465,16 +494,30 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		//print $ruleactionobj->getLibStatut(3);
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
+		print '<td class="center linecolmove tdlineupdown">';
+		if ($i > 0)
+		{
+			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$ruleaction['id'].'">'.img_up('default', 0, 'imgupforline').'</a>';
+		}
+		if ($i < count($object->actions)-1) {
+			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$ruleaction['id'].'">'.img_down('default', 0, 'imgdownforline').'</a>';
+		}
+		print '</td>';
 		print '</tr>';
+		$i++;
 	}
 
 	print '</tr>';
 	print '</table>';
 
+	if (! empty($conf->use_javascript_ajax)) {
+		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+	}
+
 	print '</form>';
 
 	print '</div>';
-	print '</div>';
+	print '</div>';	// End <div class="fichecenter">
 
 
 	print '<div class="clearboth"></div><br>';

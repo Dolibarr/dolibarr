@@ -107,7 +107,7 @@ class modWebsite extends DolibarrModules
         $r=0;
         $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'top',			                // This is a Left menu entry
-						        'titre'=>'Websites',
+						        'titre'=>'WebSites',
                                 'mainmenu'=>'website',
 						        'url'=>'/website/index.php',
 						        'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -167,7 +167,7 @@ class modWebsite extends DolibarrModules
 	    		if ($result < 0)
 	    		{
 	    			$langs->load("errors");
-	    			$this->error=$langs->trans('ErrorFailToCopyDirectory',$src,$dest);
+	    			$this->error=$langs->trans('ErrorFailToCopyDir',$src,$dest);
 	    			return 0;
 	    		}
 	    	}

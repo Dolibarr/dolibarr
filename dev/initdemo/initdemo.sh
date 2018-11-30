@@ -6,7 +6,7 @@
 # WARNING: This script erase all data of database
 # with data into dump file
 #
-# Regis Houssin       - regis.houssin@capnetworks.com
+# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # Usage: initdemo.sh

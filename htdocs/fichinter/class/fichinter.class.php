@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
@@ -315,7 +315,6 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
-		global $conf;
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
 	 	}
