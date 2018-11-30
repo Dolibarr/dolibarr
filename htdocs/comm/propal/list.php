@@ -11,7 +11,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2018 Ferran Marcet	 <fmarcet@2byte.es>
- * Copyright (C) 2017      Charlene Benke	 <charlie@patas-monkey.com>
+ * Copyright (C) 2017-2018 Charlene Benke	 <charlie@patas-monkey.com>
  * Copyright (C) 2018	   Nicolas ZABOURI	 <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,9 +174,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
-
-$object = new Propal($db);	// To be passed as parameter of executeHooks that need
-
 
 /*
  * Actions

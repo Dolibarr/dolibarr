@@ -822,22 +822,22 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit)
 		{
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
 			print $formother->selectColor($color,'THEME_ELDY_USE_HOVER','formcolor',1).' ';
 		}
 		else
 		{
-			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='edf4fb';
+			if ($conf->global->THEME_ELDY_USE_HOVER == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_HOVER,array()),'');
 			if ($color)
 			{
-				if ($color != 'edf4fb') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
 			else print $langs->trans("None");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>edf4fb</strong>) ';
+		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
@@ -866,22 +866,22 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		//print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		if ($edit)
 		{
-			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='ffefbb';
+			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED,array()),'');
 			print $formother->selectColor($color,'THEME_ELDY_USE_CHECKED','formcolor',1).' ';
 		}
 		else
 		{
-			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='ffefbb';
+			if ($conf->global->THEME_ELDY_USE_CHECKED == '1') $color='e6edf0';
 			else $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_USE_CHECKED,array()),'');
 			if ($color)
 			{
-				if ($color != 'ffefbb') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
 			else print $langs->trans("None");
 		}
-		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>ffefbb</strong>) ';
+		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';
