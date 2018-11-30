@@ -305,7 +305,7 @@ ModuleFamilyTechnic=Multi-modules tools
 ModuleFamilyExperimental=Experimental modules
 ModuleFamilyFinancial=Financial Modules (Accounting/Treasury)
 ModuleFamilyECM=Electronic Content Management (ECM)
-ModuleFamilyPortal=Web sites and other frontal application
+ModuleFamilyPortal=Websites and other frontal application
 ModuleFamilyInterface=Interfaces with external systems
 MenuHandlers=Menu handlers
 MenuAdmin=Menu editor
@@ -1843,6 +1843,7 @@ LoadThirdPartyFromName=Load thirdparty from name (load only)
 LoadThirdPartyFromNameOrCreate=Load thirdparty from name (create if not found)
 WithDolTrackingID=Dolibarr Tracking ID found
 WithoutDolTrackingID=Dolibarr Tracking ID not found
+FormatZip=Zip
 ##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

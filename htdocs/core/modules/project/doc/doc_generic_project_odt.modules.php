@@ -796,7 +796,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 								if (!empty($row['thm'])) {
 									$row['amountht']=($row['task_duration'] / 3600) * $row['thm'];
 									$defaultvat = get_default_tva($mysoc, $mysoc);
-									$row['amountttc']=price2num($row['amountht'] * (1 + ($defaultvat / 100)),'MT');;
+									$row['amountttc']=price2num($row['amountht'] * (1 + ($defaultvat / 100)),'MT');
 								} else {
 									$row['amountht']=0;
 									$row['amountttc']=0;

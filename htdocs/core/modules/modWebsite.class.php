@@ -167,7 +167,7 @@ class modWebsite extends DolibarrModules
 	    		if ($result < 0)
 	    		{
 	    			$langs->load("errors");
-	    			$this->error=$langs->trans('ErrorFailToCopyDirectory',$src,$dest);
+	    			$this->error=$langs->trans('ErrorFailToCopyDir',$src,$dest);
 	    			return 0;
 	    		}
 	    	}
