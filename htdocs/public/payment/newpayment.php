@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2018	    Juanjo Menent			<jmenent@2byte.e>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -928,7 +929,7 @@ if ($source == 'invoice')
 
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
-		$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
+		$amount=price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed()));
 		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
 		$amount=price2num($amount);
 	}
