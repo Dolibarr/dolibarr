@@ -1315,9 +1315,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
     if (! empty($conf->agenda->enabled))
     {
         // Recherche histo sur actioncomm
-	    // @since PR #9972, add DISTINCT.
-        $sql = "SELECT DISTINCT a.id, a.label,";
-        $sql.= " a.datep as dp,";
+ 	if (is_object($objcon) && $objcon->id) {
+		$sql = "SELECT DISTINCT a.id, a.label,";
+	}
+	else
+	{
+		$sql = "SELECT a.id, a.label,";
+	}
+	$sql.= " a.datep as dp,";
         $sql.= " a.datep2 as dp2,";
         $sql.= " a.note, a.percent,";
         $sql.= " a.fk_element, a.elementtype,";
