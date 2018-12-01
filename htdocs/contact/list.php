@@ -322,6 +322,7 @@ if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip",$search_zip);
 if (strlen($search_town))   		$sql.= natural_search("p.town",$search_town);
+
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
 if ($search_import_key)             $sql.= natural_search("p.import_key",$search_import_key);
 if ($type == "o")        // filtre sur type
