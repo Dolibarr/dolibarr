@@ -940,8 +940,8 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_lastname = $obj->lastname;
-		$this->old_firstname = $obj->firstname;
+		//$this->old_lastname = $obj->lastname;
+		//$this->old_firstname = $obj->firstname;
 
 		$this->db->begin();
 

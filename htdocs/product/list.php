@@ -543,7 +543,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Duration
-	if (! empty($arrayfields['p.duration']['checked']))
+	if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
 	{
 		print '<td class="liste_titre">';
 		print '&nbsp;';
@@ -643,7 +643,7 @@ if ($resql)
 	if (! empty($arrayfields['p.label']['checked']))  print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"],"p.label","",$param,"",$sortfield,$sortorder);
 	if (! empty($arrayfields['p.fk_product_type']['checked']))  print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"],"p.fk_product_type","",$param,"",$sortfield,$sortorder);
 	if (! empty($arrayfields['p.barcode']['checked']))  print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"],"p.barcode","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,'align="center"',$sortfield,$sortorder);
+	if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.numbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.numbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
@@ -759,7 +759,7 @@ if ($resql)
 		}
 
 		// Duration
-		if (! empty($arrayfields['p.duration']['checked']))
+		if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
 		{
 			print '<td align="center">';
 

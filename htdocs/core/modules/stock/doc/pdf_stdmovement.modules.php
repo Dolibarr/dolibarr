@@ -150,7 +150,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		// Define position of columns
 		$this->wref = 15;
 		$this->posxidref = $this->marge_gauche;
-		$this->posxdatemouv = $this->marge_gauche+8;;
+		$this->posxdatemouv = $this->marge_gauche+8;
 		$this->posxdesc=37;
 		$this->posxlabel=50;
 		$this->posxtva=80;

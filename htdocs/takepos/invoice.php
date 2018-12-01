@@ -239,7 +239,7 @@ function Print(id){
 function TakeposPrinting(id){
 	var receipt;
 	$.get("receipt.php?facid="+id, function(data, status){
-        receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');;
+        receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
 		$.ajax({
 			type: "POST",
 			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
