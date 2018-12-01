@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015		Charles-Fr BENKE  	 <charles.fr@benke.fr>
+ * Copyright (C) 2015-2018 Charlene BENKE  	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -346,7 +346,7 @@ class pdf_paiement
 	 */
 	function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		// Do not add the BACKGROUND as this is a report
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
