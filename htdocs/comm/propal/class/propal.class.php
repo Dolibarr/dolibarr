@@ -2432,7 +2432,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function cloture($user, $statut, $note, $notrigger=0)
+	function cloture($user, $statut, $note="", $notrigger=0)
 	{
 		global $langs,$conf;
 
