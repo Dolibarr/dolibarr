@@ -151,7 +151,7 @@ if ($action=="updatereduction"){
 	$invoice->fetch($placeid);
 }
 
-if ($action=="order"){
+if ($action=="order" and $placeid!=0){
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$headerorder='<html><br><b>'.$langs->trans('Place').' '.$place.'<br><table width="65%"><thead><tr><th align="left">'.$langs->trans("Label").'</th><th align="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
 	$footerorder='</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
@@ -281,7 +281,7 @@ print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbs
 //}
 if ($action=="valid"){
 	print '<p style="font-size:120%;" align="center"><b>'.$invoice->facnumber." ".$langs->trans('BillShortStatusValidated').'</b></p>';
-	if ($conf->global->TAKEBOX) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 }
 if ($action=="search"){

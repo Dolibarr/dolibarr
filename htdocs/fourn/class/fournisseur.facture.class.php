@@ -2022,7 +2022,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
 	 *
 	 *	@param      int		$socid		Id societe
-	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@return    	array|int			Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+     *                                  <0 if error
      */
 	function list_replacable_supplier_invoices($socid=0)
 	{
@@ -2050,9 +2051,11 @@ class FactureFournisseur extends CommonInvoice
 		{
 			while ($obj=$this->db->fetch_object($resql))
 			{
-				$return[$obj->rowid]=array(	'id' => $obj->rowid,
-				'ref' => $obj->ref,
-				'status' => $obj->fk_statut);
+				$return[$obj->rowid]=array(
+                    'id' => $obj->rowid,
+				    'ref' => $obj->ref,
+				    'status' => $obj->fk_statut
+                );
 			}
 			//print_r($return);
 			return $return;
@@ -2071,7 +2074,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
 	 *
 	 *	@param		int		$socid		Id societe
-	 *	@return    	array				Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 *	@return    	array|int			Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+     *                                  <0 if error
 	 */
 	function list_qualified_avoir_supplier_invoices($socid=0)
 	{
