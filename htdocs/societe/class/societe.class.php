@@ -12,8 +12,10 @@
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2017       Rui Strecht		    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018	    Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018	    Charlene Benke	    <charlie@patas-monkey.com>
+ 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1794,6 +1796,36 @@ class Societe extends CommonObject
 			}
 		}
 		else return 0;
+	}
+
+		/**
+	 *  Return list of bank account for third party
+	 *
+	 *  @return array 	Array of Bank account
+	 */
+	function bank_account_array()
+	{
+		$bankaccount = array();
+
+		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql.= " WHERE entity IN (".getEntity('bank_account').")";
+		$sql.=" AND socid=".$this->id;
+		$sql.= " ORDER BY label";
+		dol_syslog(get_class($this)."::bank_account_array", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($result);
+					$bankaccount[$obj->rowid] = dolGetFirstLastname($obj->label,$obj->bank);
+					$i++;
+				}
+			}
+		}
+		return $bankaccount;
 	}
 
 	/**
