@@ -2807,6 +2807,19 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($fuser->rights->{$reg[1]}->{$lire} || $fuser->rights->{$reg[1]}->{$read} || ($fuser->rights->{$reg[1]}->{$download})) $accessallowed=1;
 			$original_file=$conf->{$reg[1]}->dir_output.'/'.$fuser->id.'/'.$original_file;
 		}
+		else if (preg_match('/^massfilesarea_([a-z]+)$/i', $modulepart, $reg))
+		{
+			if (empty($conf->{$reg[1]}->dir_output))	// modulepart not supported
+			{
+				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				exit;
+			}
+			if ($fuser->rights->{$reg[1]}->{$lire} || preg_match('/^specimen/i', $original_file))
+			{
+				$accessallowed=1;
+			}
+			$original_file=$conf->{$reg[1]}->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+		}
 		else
 		{
 			if (empty($conf->$modulepart->dir_output))	// modulepart not supported
