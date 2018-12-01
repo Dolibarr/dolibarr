@@ -373,7 +373,13 @@ if ($object->id > 0)
 			print "</td>";
 			print '</tr>';
 		else {
-			print '</td><td></tr></table></td><td>'.$langs->trans("NoBankAccountFound");
+			print '</td><td>';
+			print '</tr></table>';
+			print '</td><td>';
+			print $langs->trans("NoBankAccountFound");
+			print "</td>";
+			print '</tr>';
+
 		}
 	}
 
