@@ -107,7 +107,7 @@ for f in ${TFile[@]}; do
 
             REPLACE=${LINE}
             [[ -z ${BRACKET_END} ]] && REPLACE="${LINE}\n${FIRST_INDENT}{\n${FIRST_INDENT}${INDENT}" || REPLACE="${LINE}\n${FIRST_INDENT}${INDENT}"
-            [[ -n ${STATIC} ]] && REPLACE="${REPLACE}self::" || REPLACE="${REPLACE}\$this->"
+            [[ -n ${STATIC} ]] && REPLACE="${REPLACE}return self::" || REPLACE="${REPLACE}return \$this->"
             REPLACE="${REPLACE}${CAMEL_CASE}(${PARAMS_STR});\n${FIRST_INDENT}}\n\n"
             REPLACE="${REPLACE}${FIRST_INDENT}${COMMENT_ORIGIN}\n${FIRST_INDENT}"
             [[ -n ${STATIC} ]] && REPLACE="${REPLACE}${STATIC} "
