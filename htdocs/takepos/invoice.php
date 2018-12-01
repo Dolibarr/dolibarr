@@ -57,6 +57,7 @@ else{
 if ($action == 'valid' && $user->rights->facture->creer){
 	if ($pay=="cash") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
 	else if ($pay=="card") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+	else if ($pay=="cheque") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 	$now=dol_now();
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
@@ -69,6 +70,7 @@ if ($action == 'valid' && $user->rights->facture->creer){
 	$payment->amounts[$invoice->id]=$invoice->total_ttc;
 	if ($pay=="cash") $payment->paiementid=4;
 	else if ($pay=="card") $payment->paiementid=6;
+	else if ($pay=="cheque") $payment->paiementid=7;
 	$payment->num_paiement=$invoice->facnumber;
 	$payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');

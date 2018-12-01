@@ -1017,7 +1017,6 @@ abstract class CommonDocGenerator
         global $hookmanager;
 
         $parameters=array(
-            'object' => $object,
             'curY' => &$curY,
             'columnText' => $columnText,
             'colKey' => $colKey
