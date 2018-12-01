@@ -6114,13 +6114,13 @@ abstract class CommonObject
 		{
 			$value_arr=explode(',',$value);
 			$value='';
-			if (is_array($value_arr))
+			if (is_array($value_arr) && count($value_arr)>0)
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
 					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
 				}
+				$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 			}
-			$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 		elseif ($type == 'chkbxlst')
 		{
