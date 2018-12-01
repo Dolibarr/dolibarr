@@ -329,45 +329,20 @@ if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
-	else if ($search_year > 0 && ! empty($search_day))
-	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-	else
-	$sql.= " AND date_format(p.datep, '%m') = '".$db->escape($search_month)."'";
-}
-else if ($search_year > 0)
-{
-	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
-}
-if ($search_month_end > 0)
-{
-	if ($search_yearfin > 0 && empty($search_dayfin))
-		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_get_first_day($search_yearfin,$search_month_end,false))."' AND '".$db->idate(dol_get_last_day($search_yearfin,$search_month_end,false))."'";
-	else if ($search_yearfin > 0 && ! empty($search_dayfin))
-		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_end, $search_dayfin, $search_yearfin))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_end, $search_dayfin, $search_yearfin))."'";
-	else
-		$sql.= " AND date_format(p.fin_validite, '%m') = '".$db->escape($search_month_end)."'";
-}
-else if ($search_yearfin > 0)
-{
-	$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_get_first_day($search_yearfin,1,false))."' AND '".$db->idate(dol_get_last_day($search_yearfin,12,false))."'";
-}
-if ($search_monthdelivery > 0)
-{
-	if ($search_yeardelivery > 0 && empty($search_daydelivery))
-		$sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_yeardelivery,$search_monthdelivery,false))."' AND '".$db->idate(dol_get_last_day($search_yeardelivery,$search_monthdelivery,false))."'";
-	else if ($search_yeardelivery > 0 && ! empty($search_daydelivery))
-		$sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_monthdelivery, $search_daydelivery, $search_yeardelivery))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_monthdelivery, $search_daydelivery, $search_yeardelivery))."'";
-	else
-		$sql.= " AND date_format(p.date_livraison, '%m') = '".$db->escape($search_monthdelivery)."'";
-}
-else if ($search_yeardelivery > 0)
-{
-	$sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_get_first_day($search_yeardelivery,1,false))."' AND '".$db->idate(dol_get_last_day($search_yeardelivery,12,false))."'";
-}
+
+$sql.= dol_sql_datefilter(
+				"p.datep", 
+				$search_day, $search_month, $search_year
+);
+$sql.= dol_sql_datefilter(
+				"p.fin_validite", 
+				$search_dayfin, $search_month_end, $search_yearfin
+);
+$sql.= dol_sql_datefilter(
+				"p.date_livraison", 
+				$search_daydelivery, $search_monthdelivery, $search_yeardelivery
+);
+
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
 if ($search_user > 0)
 {
