@@ -38,6 +38,6 @@ Floors=Etages
 Floor=Etage
 AddTable=Ajouter une table
 Place=Marché
-TakeboxNecesary=Application 'TakeBOX' requise
+TakeposConnectorNecesary=Application 'TakePOS Connector' requise
 OrderPrinters=Commande imprimantes
 SearchProduct=Rechercher un produit

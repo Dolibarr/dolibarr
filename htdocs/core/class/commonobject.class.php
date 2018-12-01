@@ -6291,12 +6291,11 @@ abstract class CommonObject
 				// Load language if required
 				if (! empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
 
+				$colspan='3';
 				if (is_array($params) && count($params)>0) {
 					if (array_key_exists('colspan',$params)) {
 						$colspan=$params['colspan'];
 					}
-				}else {
-					$colspan='3';
 				}
 
 				switch($mode) {
