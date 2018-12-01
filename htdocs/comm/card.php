@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Charlene Benke              <charlie@patas-monkey.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -361,20 +362,19 @@ if ($object->id > 0)
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentBankAccount');
-		print '<td>';
-		if (($action != 'editbankaccount') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editbankaccount')
-		{
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_account,'fk_account',1);
+		if (count($object->bank_account_array())> 0) {
+			if (($action != 'editbankaccount') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editbankaccount')
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_account,'fk_account',1);
+			else
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_account,'none');
+			print "</td>";
+			print '</tr>';
+		else {
+			print '</td><td></tr></table></td><td>'.$langs->trans("NoBankAccountFound");
 		}
-		else
-		{
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_account,'none');
-		}
-		print "</td>";
-		print '</tr>';
 	}
 
 	// Relative discounts (Discounts-Drawbacks-Rebates)
