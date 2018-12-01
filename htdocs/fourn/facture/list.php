@@ -427,17 +427,17 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
-	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
 	{
 		$obj = $db->fetch_object($resql);
 		$id = $obj->facid;
-		
+
 		header("Location: ".DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$id);
 		exit;
 	}
-	
+
 	llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
-	
+
 	if ($socid)
 	{
 		$soc = new Societe($db);

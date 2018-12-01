@@ -605,10 +605,10 @@ if ($resql)
 	}
 
 	$num = $db->num_rows($resql);
-	
+
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
-	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE))
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
 	{
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
@@ -617,7 +617,7 @@ if ($resql)
 	}
 
 	llxHeader('',$title,$help_url);
-	
+
 	$param='';
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;

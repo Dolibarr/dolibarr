@@ -321,7 +321,7 @@ class MyObject extends CommonObject
 	 * @param  string      $sortfield    Sort field
 	 * @param  int         $limit        limit
 	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array
+	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
 	 * @param  string      $filtermode   Filter mode (AND or OR)
 	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
@@ -335,7 +335,7 @@ class MyObject extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid';
-		// TODO Gett all fields
+		// TODO Get all fields
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 		$sql .= ' WHERE t.entity = '.$conf->entity;
 		// Manage filter
@@ -344,7 +344,14 @@ class MyObject extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key=='t.rowid') {
 					$sqlwhere[] = $key . '='. $value;
-				} else {
+				}
+				elseif (strpos($key,'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key=='customsql') {
+					$sqlwhere[] = $value;
+				}
+				else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
 			}

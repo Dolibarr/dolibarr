@@ -642,7 +642,7 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 	dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
     llxFooter();
-    $db->close();;
+    $db->close();
 	exit;
 }
 
@@ -1423,7 +1423,150 @@ if ($source == 'membersubscription')
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
+// Payment on donation
+if ($source == 'donation')
+{
+	$found=true;
+	$langs->load("don");
 
+	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+
+	$don=new Don($db);
+	$result=$don->fetch($ref);
+	if ($result <= 0)
+	{
+		$mesg=$don->error;
+		$error++;
+	}
+	else
+	{
+		$don->fetch_thirdparty();
+		$object = $don;
+	}
+
+	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
+	{
+		$amount=$subscription->total_ttc;
+		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+		$amount=price2num($amount);
+	}
+
+	$fulltag='DON='.$don->ref.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
+	$fulltag=dol_string_unaccent($fulltag);
+
+	// Creditor
+
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Debitor
+
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
+	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
+	else print $don->getFullName($langs);
+	print '</b>';
+
+	// Object
+
+	$text='<b>'.$langs->trans("PaymentDonation").'</b>';
+	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($don->ref).'">';
+	print '</td></tr>'."\n";
+
+	// Amount
+
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
+	if (empty($amount))
+	{
+		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ' ('.$langs->trans("ToComplete");
+		if (! empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
+		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ')';
+	}
+	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	$valtoshow='';
+	if (empty($amount) || ! is_numeric($amount))
+	{
+		$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
+		// force default subscription amount to value defined into constant...
+		if (empty($valtoshow))
+		{
+			if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
+			}
+			else {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
+			}
+		}
+	}
+	if (empty($amount) || ! is_numeric($amount))
+	{
+		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
+		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
+	}
+	else {
+		$valtoshow=$amount;
+		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+		print '<b>'.price($valtoshow).'</b>';
+		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
+		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+	}
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
+	print '</td></tr>'."\n";
+
+	// Tag
+
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+	print '</td></tr>'."\n";
+
+	// Shipping address
+	$shipToName=$don->getFullName($langs);
+	$shipToStreet=$don->address;
+	$shipToCity=$don->town;
+	$shipToState=$don->state_code;
+	$shipToCountryCode=$don->country_code;
+	$shipToZip=$don->zip;
+	$shipToStreet2='';
+	$phoneNum=$don->phone;
+	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
+	{
+		print '<!-- Shipping address information -->';
+		print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+		print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+		print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+		print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+		print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+		print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+	}
+	else
+	{
+		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+	}
+	if (is_object($don->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$don->thirdparty->id.'">'."\n";
+	print '<input type="hidden" name="email" value="'.$don->email.'">'."\n";
+	$labeldesc = $langs->trans("PaymentSubscription");
+	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
+}
 
 
 if (! $found && ! $mesg) $mesg=$langs->trans("ErrorBadParameters");

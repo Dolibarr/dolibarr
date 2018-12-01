@@ -29,7 +29,7 @@ $mesg=array();
 
 $extrasize=GETPOST('size','int');
 $type=GETPOST('type','alpha');
-$param=GETPOST('param','alpha');;
+$param=GETPOST('param','alpha');
 
 if ($type=='double' && strpos($extrasize,',')===false) $extrasize='24,8';
 if ($type=='date')     $extrasize='';

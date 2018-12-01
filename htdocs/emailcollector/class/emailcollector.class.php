@@ -1417,7 +1417,7 @@ class EmailCollector extends CommonObject
 						$modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
 
 						// Search template files
-						$file=''; $classname=''; $filefound=0;
+						$file=''; $classname=''; $filefound=0; $reldir='';
 						$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 						foreach($dirmodels as $reldir)
 						{
