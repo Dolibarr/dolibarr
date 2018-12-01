@@ -288,7 +288,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 
 function dol_sql_datefilter($datefield, $day_date, $month_date, $year_date) {
 	global $db;
-	$sqldate=""
+	$sqldate="";
 	if ($month_date > 0) {
 		if ($year_date > 0 && empty($day_date)) {
 			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, false));
