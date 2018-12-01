@@ -452,7 +452,7 @@ class pdf_strato extends ModelePDFContract
 				else
 				{
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
-					$this->_tab_signature($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs);
+					$this->tabSignature($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs);
 					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
 				
@@ -545,7 +545,16 @@ class pdf_strato extends ModelePDFContract
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+3);	// Rect prend une longueur en 3eme param et 4eme param
 	}
 
-	function _tab_signature(&$pdf, $tab_top, $tab_height, $outputlangs) {
+    /**
+     * Show footer signature of page
+     * @param   PDF         $pdf            Object PDF
+     * @param   int         $tab_top        tab height position
+     * @param   int         $tab_height     tab height
+     * @param   Translate   $outputlang     langage
+     * @return void
+     */
+	private function tabSignature(&$pdf, $tab_top, $tab_height, $outputlangs)
+    {
 		$pdf->SetDrawColor(128,128,128);
 		$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite)/2);
 		$posy = $tab_top + $tab_height + 3 + 3;
