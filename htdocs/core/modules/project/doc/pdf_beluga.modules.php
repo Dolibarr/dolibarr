@@ -191,7 +191,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				// Complete object by loading several other informations
 				$task = new Task($this->db);
-				$tasksarray = array(); 
+				$tasksarray = array();
 				$tasksarray = $task->getTasksArray(0, 0, $object->id);
 
 				// Special case when used with object = specimen, we may return all lines

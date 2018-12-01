@@ -37,5 +37,5 @@ Floors=Salones
 Floor=Salón
 AddTable=Añadir mesa
 Place=Puesto
-TakeboxNecesary=Aplicación 'TakeBOX' requerida
+TakeposConnectorNecesary=TakePOS Connector requerido
 OrderPrinters=Impresoras de pedido
