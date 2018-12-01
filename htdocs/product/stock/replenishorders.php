@@ -57,7 +57,7 @@ $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (!$sortorder) $sortorder = 'DESC';
 if (!$sortfield) $sortfield = 'cf.date_creation';
-$page = GETPOST("page");
+$page = GETPOST('page','int') ? GETPOST('page','int') : 0;
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
 
