@@ -862,9 +862,10 @@ class Paiement extends CommonObject
 	/**
 	 *    Validate payment
 	 *
-	 *    @return     int     <0 if KO, >0 if OK
+	 *	  @param	User	$user		User making validation
+	 *    @return   int     			<0 if KO, >0 if OK
 	 */
-	function valide()
+	function valide(User $user=null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
 
@@ -885,9 +886,10 @@ class Paiement extends CommonObject
 	/**
 	 *    Reject payment
 	 *
-	 *    @return     int     <0 if KO, >0 if OK
+	 *	  @param	User	$user		User making reject
+	 *    @return   int     			<0 if KO, >0 if OK
 	 */
-	function reject()
+	function reject(User $user=null)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.$this->id;
 

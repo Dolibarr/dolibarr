@@ -550,7 +550,7 @@ foreach ($accounts as $key=>$type)
     // Balance
     if (! empty($arrayfields['balance']['checked']))
     {
-		print '<td align="right">';
+		print '<td align="right" class="nowraponall">';
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

@@ -2656,7 +2656,7 @@ class Adherent extends CommonObject
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
 		}
-		
+
 		$now = dol_now();
 		$nbok = 0;
 		$nbko = 0;
@@ -2760,9 +2760,9 @@ class Adherent extends CommonObject
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
 									$actionmsg = dol_concatdesc($actionmsg, $message);
 								}
-								
+
 								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-								
+
 	    						// Insert record of emails sent
 	    						$actioncomm = new ActionComm($this->db);
 
@@ -2787,10 +2787,10 @@ class Adherent extends CommonObject
 	    						$actioncomm->email_tobcc = $sendtobcc;
 	    						$actioncomm->email_subject = $subject;
 	    						$actioncomm->errors_to   = '';
-	    						
+
 	    						$actioncomm->fk_element  = $adherent->id;
 	    						$actioncomm->elementtype = $adherent->element;
-	    						
+
 	    						$actioncomm->extraparams = $extraparams;
 
 	    						$actioncomm->create($user);

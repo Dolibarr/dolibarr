@@ -47,6 +47,21 @@ button.calcbutton2 {
 	height:24%;
 }
 
+button.calcbutton3 {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	font-size:120%;
+	overflow: visible; /* removes extra width in IE */
+	width:12%;
+	height:24%;
+
+}
+
 button.actionbutton {
 	display: inline-block;
 	position: relative;
@@ -110,5 +125,5 @@ div.description{
 p.description_content{
 	padding:10px;
 	margin:0px;
-	
+
 }

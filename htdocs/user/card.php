@@ -1417,7 +1417,7 @@ else
 			}
 			if (preg_match('/dolibarr/',$dolibarr_main_authentication))
 			{
-				if ($object->pass) $valuetoshow.= preg_replace('/./i','*',$object->pass);
+				if ($object->pass) $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').preg_replace('/./i','*',$object->pass);
 				else
 				{
 					if ($user->admin) $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;

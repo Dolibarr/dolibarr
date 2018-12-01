@@ -1427,15 +1427,6 @@ else
             print '</tr>';
         }
 
-		// Assign a sale representative
-		print '<tr>';
-		print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
-		print '<td colspan="3" class="maxwidthonsmartphone">';
-		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
-		print $form->multiselectarray('commercial', $userlist, (count(GETPOST('commercial', 'array')) > 0?GETPOST('commercial', 'array'):(empty($user->rights->societe->client->voir)?array($user->id):array())), null, null, null, null, "90%");
-		print '</td></tr>';
-
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
 		{
@@ -1453,7 +1444,7 @@ else
 
 			// Customer
 			//if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
-			print '<tr class="visibleifcustomer"><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
+			print '<tr class="visibleifcustomer"><td class="toptd">' . fieldLabel('CustomersProspectsCategoriesShort', 'custcats') . '</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
 			print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
 			print "</td></tr>";
@@ -1486,6 +1477,15 @@ else
         {
         	print $object->showOptionals($extrafields,'edit');
         }
+
+        // Assign a sale representative
+        print '<tr>';
+        print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
+        $userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+        // Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
+        print $form->multiselectarray('commercial', $userlist, (count(GETPOST('commercial', 'array')) > 0?GETPOST('commercial', 'array'):(empty($user->rights->societe->client->voir)?array($user->id):array())), null, null, null, null, "90%");
+        print '</td></tr>';
 
         // Ajout du logo
         print '<tr class="hideonsmartphone">';
@@ -2048,16 +2048,6 @@ else
 	        print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
 	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
-			// Assign a Name
-            print '<tr>';
-            print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
-            print '<td colspan="3" class="maxwidthonsmartphone">';
-			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-			$arrayselected = GETPOST('commercial', 'array');
-			if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
-            print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
-            print '</td></tr>';
-
             // Default language
             if (! empty($conf->global->MAIN_MULTILANGS))
             {
@@ -2065,6 +2055,16 @@ else
                 print $formadmin->select_language($object->default_lang,'default_lang',0,0,1);
                 print '</td>';
                 print '</tr>';
+            }
+
+            // Incoterms
+            if (!empty($conf->incoterm->enabled))
+            {
+            	print '<tr>';
+            	print '<td>'.fieldLabel('IncotermLabel','incoterm_id').'</td>';
+            	print '<td colspan="3" class="maxwidthonsmartphone">';
+            	print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
+            	print '</td></tr>';
             }
 
 			// Categories
@@ -2124,16 +2124,6 @@ else
                 print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
             }
 
-			// Incoterms
-			if (!empty($conf->incoterm->enabled))
-			{
-				print '<tr>';
-				print '<td>'.fieldLabel('IncotermLabel','incoterm_id').'</td>';
-	            print '<td colspan="3" class="maxwidthonsmartphone">';
-	            print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
-				print '</td></tr>';
-			}
-
             // Logo
             print '<tr class="hideonsmartphone">';
             print '<td>'.fieldLabel('Logo','photoinput').'</td>';
@@ -2151,6 +2141,16 @@ else
             }
             print '</td>';
             print '</tr>';
+
+            // Assign sale representative
+            print '<tr>';
+            print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
+            print '<td colspan="3" class="maxwidthonsmartphone">';
+            $userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+            $arrayselected = GETPOST('commercial', 'array');
+            if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
+            print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
+            print '</td></tr>';
 
             print '</table>';
             print '</div>';
@@ -2402,7 +2402,7 @@ else
 			}
         }
 
-        // VAT Code
+        // Sale tax code (VAT code)
         print '<tr>';
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
         if ($object->tva_intra)
@@ -2411,7 +2411,7 @@ else
             $s.=$object->tva_intra;
             $s.='<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
-            if (empty($conf->global->MAIN_DISABLEVATCHECK))
+            if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
             {
                 $s.=' &nbsp; ';
 
@@ -2497,28 +2497,28 @@ else
             print '</td></tr>';
         }
 
-		// Incoterms
-		if (!empty($conf->incoterm->enabled))
-		{
-			print '<tr><td>';
-            print '<table width="100%" class="nobordernopadding"><tr><td>';
-            print $langs->trans('IncotermLabel');
-            print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
-            else print '&nbsp;';
-            print '</td></tr></table>';
-            print '</td>';
-            print '<td colspan="3">';
-			if ($action != 'editincoterm')
-			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
-			}
-			else
-			{
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
-			}
-            print '</td></tr>';
-		}
+        // Incoterms
+        if (!empty($conf->incoterm->enabled))
+        {
+        	print '<tr><td>';
+        	print '<table width="100%" class="nobordernopadding"><tr><td>';
+        	print $langs->trans('IncotermLabel');
+        	print '<td><td align="right">';
+        	if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('',1).'</a>';
+        	else print '&nbsp;';
+        	print '</td></tr></table>';
+        	print '</td>';
+        	print '<td colspan="3">';
+        	if ($action != 'editincoterm')
+        	{
+        		print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+        	}
+        	else
+        	{
+        		print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
+        	}
+        	print '</td></tr>';
+        }
 
 		// Multicurrency
 		if (! empty($conf->multicurrency->enabled))

@@ -141,9 +141,11 @@ if (GETPOST('addoperation','alpha'))
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype','az09');
-	$emailcollectoroperation->actionparam = GETPOST('actionparam', 'alpha');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
+	$emailcollectoroperation->position = 50;
+
 	$result = $emailcollectoroperation->create($user);
 
 	if ($result > 0)
@@ -457,9 +459,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div><br>';
 
 	// Operations
-	print '<table class="border centpercent">';
+	print '<table id="tablelines" class="noborder noshadow">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td>';
+	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td><td></td>';
 	print '</tr>';
 	// Add operation
 	print '<tr class="oddeven">';
@@ -470,15 +472,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	print '</td>';
+	print '<td></td>';
 	print '<td align="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations
+	$nboflines = count($object->actions);
+	$table_element_line = 'emailcollector_emailcollectoraction';
+	$fk_element='position';
+	$i=0;
 	foreach($object->actions as $ruleaction)
 	{
 		$ruleactionobj=new EmailcollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
-		print '<tr class="oddeven">';
+		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
 		print $langs->trans($arrayoftypes[$ruleaction['type']]);
 		print '</td>';
@@ -487,11 +494,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		//print $ruleactionobj->getLibStatut(3);
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
+		print '<td class="center linecolmove tdlineupdown">';
+		if ($i > 0)
+		{
+			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$ruleaction['id'].'">'.img_up('default', 0, 'imgupforline').'</a>';
+		}
+		if ($i < count($object->actions)-1) {
+			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$ruleaction['id'].'">'.img_down('default', 0, 'imgdownforline').'</a>';
+		}
+		print '</td>';
 		print '</tr>';
+		$i++;
 	}
 
 	print '</tr>';
 	print '</table>';
+
+	if (! empty($conf->use_javascript_ajax)) {
+		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+	}
 
 	print '</form>';
 

@@ -103,7 +103,6 @@ ListProductServiceByPopularity=Liste des produits / services par popularité
 Finished=Produit fabriqué
 CloneProduct=Clone produit ou service
 ConfirmCloneProduct=Êtes-vous sûr de vouloir cloner un produit ou un service <b>%s</b>?
-CloneContentProduct=Cloner toutes les informations principales du produit / service
 CloneCompositionProduct=Produit / service emballé par clone
 CloneCombinationsProduct=Variantes de produit de clonage
 NewRefForClone=Réf. De nouveau produit / service

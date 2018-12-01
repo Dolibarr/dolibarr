@@ -67,7 +67,7 @@ CloseService=Fermer service
 BoardRunningServices=Services actifs et expirés en contrat
 ServiceStatus=Statut du service
 DraftContracts=Contrats brouillons
-CloseRefusedBecauseOneServiceActive=Fermeture du contrat impossible car il y a au moins un service actif
+CloseRefusedBecauseOneServiceActive=Le contrat ne peut pas être fermé car il y a au moins un service ouvert dessus
 ActivateAllContracts=Activer tous les services
 CloseAllContracts=Clôturer tous les services
 DeleteContractLine=Supprimer ligne de contrat
@@ -89,6 +89,7 @@ CloneContract=Cloner le contrat
 ConfirmCloneContract=Etes vous sûr de vouloir cloner le contrat <b>%s</b> ?
 LowerDateEndPlannedShort=Date de fin de service la plus basse parmi les services actifs
 SendContractRef=Informations contrat __REF__
+OtherContracts=Autres contrats
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat
