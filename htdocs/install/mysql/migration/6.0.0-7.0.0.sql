@@ -728,3 +728,5 @@ UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTem
 
 -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN tracking varchar(255) NULL;
 -- VPGSQL8.2 ALTER TABLE llx_c_shipment_mode ALTER COLUMN tracking DROP NOT NULL;
+
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;

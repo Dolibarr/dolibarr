@@ -880,7 +880,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, image, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
 			$line.= " VALUES(";
 			$line.= $objectpageold->newid."__+MAX_llx_website_page__, ";
 			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."__+MAX_llx_website_page__" : "null").", ";
@@ -889,6 +889,7 @@ class Website extends CommonObject
 			$line.= "'".$this->db->escape($objectpageold->aliasalt)."', ";
 			$line.= "'".$this->db->escape($objectpageold->title)."', ";
 			$line.= "'".$this->db->escape($objectpageold->description)."', ";
+			$line.= "'".$this->db->escape($objectpageold->image)."', ";
 			$line.= "'".$this->db->escape($objectpageold->keywords)."', ";
 			$line.= "'".$this->db->escape($objectpageold->status)."', ";
 			$line.= "'".$this->db->idate($objectpageold->date_creation)."', ";

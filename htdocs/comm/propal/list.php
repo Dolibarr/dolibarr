@@ -466,7 +466,7 @@ if ($resql)
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-	if ($user->rights->propal->cloturer) $arrayofmassactions['closed']=$langs->trans("Closed");
+	if ($user->rights->propal->cloturer) $arrayofmassactions['closed']=$langs->trans("Close");
 	if (in_array($massaction, array('presend','predelete','closed'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 

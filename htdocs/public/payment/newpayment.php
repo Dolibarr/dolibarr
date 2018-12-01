@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2018	    Juanjo Menent			<jmenent@2byte.e>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -938,7 +939,7 @@ if ($source == 'invoice')
 
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
-		$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
+		$amount=price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed()));
 		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
 		$amount=price2num($amount);
 	}
@@ -1464,7 +1465,7 @@ if ($source == 'donation')
 
 	// Debitor
 
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
 	else print $don->getFullName($langs);
