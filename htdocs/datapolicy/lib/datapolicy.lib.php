@@ -30,6 +30,7 @@ function datapolicyAdminPrepareHead()
 {
 	global $langs, $conf;
 
+        $object = "";
 	$langs->load("datapolicy@datapolicy");
 
 	$h = 0;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,7 +189,7 @@ class Events // extends CommonObject
 		global $conf, $langs;
 
 		// Clean parameters
-		$this->id=trim($this->id);
+		$this->id=$this->id;
 		$this->type=trim($this->type);
 		$this->description=trim($this->description);
 

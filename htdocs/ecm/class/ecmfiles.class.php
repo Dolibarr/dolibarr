@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2018       Nicolas ZABOURI     <info@inovae-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,8 +99,9 @@ class EcmFiles extends CommonObject
 	public $acl;
 	public $src_object_type;
 	public $src_object_id;
-
-
+        public $errors;
+        public $id;
+        
 	/**
 	 * Constructor
 	 *
@@ -165,10 +166,10 @@ class EcmFiles extends CommonObject
 			 $this->extraparams = trim($this->extraparams);
 		}
 		if (isset($this->fk_user_c)) {
-			 $this->fk_user_c = trim($this->fk_user_c);
+			 $this->fk_user_c = $this->fk_user_c;
 		}
 		if (isset($this->fk_user_m)) {
-			 $this->fk_user_m = trim($this->fk_user_m);
+			 $this->fk_user_m = $this->fk_user_m;
 		}
 		if (isset($this->acl)) {
 			 $this->acl = trim($this->acl);
@@ -556,7 +557,7 @@ class EcmFiles extends CommonObject
 			 $this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = $this->entity;
 		}
 		if (isset($this->filename)) {
 			 $this->filename = trim($this->filename);
@@ -583,7 +584,7 @@ class EcmFiles extends CommonObject
 			 $this->extraparams = trim($this->extraparams);
 		}
 		if (isset($this->fk_user_m)) {
-			 $this->fk_user_m = trim($this->fk_user_m);
+			 $this->fk_user_m = $this->fk_user_m;
 		}
 		if (isset($this->acl)) {
 			 $this->acl = trim($this->acl);

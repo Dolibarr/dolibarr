@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2018      Nicolas ZABOURI      <infoà@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,13 +116,13 @@ class PaymentSalary extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		$this->fk_user=trim($this->fk_user);
+		$this->fk_user=$this->fk_user;
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_author=trim($this->fk_user_author);
-		$this->fk_user_modif=trim($this->fk_user_modif);
+		$this->fk_bank=$this->fk_bank;
+		$this->fk_user_author=$this->fk_user_author;
+		$this->fk_user_modif=$this->fk_user_modif;
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0)
@@ -334,9 +335,9 @@ class PaymentSalary extends CommonObject
 		$this->amount=price2num(trim($this->amount));
 		$this->label=trim($this->label);
 		$this->note=trim($this->note);
-		$this->fk_bank=trim($this->fk_bank);
-		$this->fk_user_author=trim($this->fk_user_author);
-		$this->fk_user_modif=trim($this->fk_user_modif);
+		$this->fk_bank=$this->fk_bank;
+		$this->fk_user_author=$this->fk_user_author;
+		$this->fk_user_modif=$this->fk_user_modif;
 
 		// Check parameters
 		if (! $this->label)
