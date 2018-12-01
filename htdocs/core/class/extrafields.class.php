@@ -1927,7 +1927,10 @@ class ExtraFields
 			// Get extra fields
 			foreach ($extralabels as $key => $value)
 			{
-				$key_type = $this->attributes[$object->table_element]['type'][$key];
+				$key_type=$this->attribute_type[$key];
+				if (! empty($object->table_element)) {
+					$key_type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
+				}
 
 				if (in_array($key_type,array('date','datetime')))
 				{
