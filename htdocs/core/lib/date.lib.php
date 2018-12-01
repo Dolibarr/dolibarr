@@ -286,7 +286,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
  * @return     string	$sqldate		sql part of date
  */
 
-function dol_sql_datefilter($datefield, $day_date, $month_date, $year_date) {
+function dolSqlDatefilter($datefield, $day_date, $month_date, $year_date) {
 	global $db;
 	$sqldate="";
 	if ($month_date > 0) {
