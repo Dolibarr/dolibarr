@@ -265,7 +265,7 @@ if ($action != 'export_csv')
 		$description = $object->get_compte_desc($line->numero_compte); // Search description of the account
 		$root_account_description = $object->get_compte_racine($line->numero_compte);
 		if (empty($description)) {
-			$link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
+			$link = '<a href="../admin/card.php?action=create&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
 		}
 		print '<tr class="oddeven">';
 

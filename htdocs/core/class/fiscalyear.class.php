@@ -21,13 +21,18 @@
  *		\brief      File of class to manage fiscal years
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 
 /**
  * Class to manage fiscal year
  */
 class Fiscalyear extends CommonObject
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -82,8 +87,10 @@ class Fiscalyear extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	function __construct(DoliDB $db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
@@ -353,5 +360,57 @@ class Fiscalyear extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 *  Return the number of entries by fiscal year
+	 *
+	 *	@param	int		$year		Year to scan
+	 *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 *	@return	array				Array of values
+	 */
+	function getAccountancyEntriesByFiscalYear($datestart, $dateend)
+	{
+		global $conf;
+
+		$sql = "SELECT count(DISTINCT piece_num) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
+		$sql.= " WHERE doc_date >= '".$datestart."' and doc_date <= '".$dateend."'";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+		}
+		else dol_print_error($this->db);
+
+		return $nb;
+	}
+
+	/**
+	 *  Return the number of movements by fiscal year
+	 *
+	 *	@param	string	$year		Year to scan
+	 *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 *	@return	array				Array of values
+	 */
+	function getAccountancyMovementsByFiscalYear($datestart, $dateend)
+	{
+		global $conf;
+
+		$sql = "SELECT count(rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
+		$sql.= " WHERE doc_date >= '".$datestart."' AND doc_date <= '".$dateend."'";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+		}
+		else dol_print_error($this->db);
+
+		return $nb;
 	}
 }
