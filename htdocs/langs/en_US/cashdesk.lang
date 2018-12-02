@@ -39,6 +39,6 @@ Floors=Floors
 Floor=Floor
 AddTable=Add table
 Place=Place
-TakeboxNecesary='TakeBOX' application required
+TakeposConnectorNecesary='TakePOS Connector' required
 OrderPrinters=Order printers
 SearchProduct=Search product

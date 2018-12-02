@@ -1868,6 +1868,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
 {
 	if (empty($hookmanager)) global $hookmanager;
+	global $conf;
 
 	$reshook=0;
     $result='';

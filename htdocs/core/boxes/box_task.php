@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+/* Copyright (C) 2012-2018 Charlene BENKE 	<charlie@patas-monkey.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +82,9 @@ class box_task extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalDuree=0;
+		$totalplannedtot=0;
+		$totaldurationtot=0;
+		
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		$taskstatic=new Task($db);
 
