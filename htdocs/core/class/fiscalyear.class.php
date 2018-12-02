@@ -365,9 +365,9 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of entries by fiscal year
 	 *
-	 *	@param	int		$year		Year to scan
-	 *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-	 *	@return	array				Array of values
+	 *	@param	int		$datestart	Date start to scan
+	 *	@param	int		$dateend	Date end to scan
+	 *	@return	string				Number of entries
 	 */
 	function getAccountancyEntriesByFiscalYear($datestart, $dateend)
 	{
@@ -391,9 +391,9 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of movements by fiscal year
 	 *
-	 *	@param	string	$year		Year to scan
-	 *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
-	 *	@return	array				Array of values
+	 *	@param	int		$datestart	Date start to scan
+	 *	@param	int		$dateend	Date end to scan
+	 *	@return	string				Number of movements
 	 */
 	function getAccountancyMovementsByFiscalYear($datestart, $dateend)
 	{
