@@ -446,7 +446,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','9.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-        	//migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
+        	migrate_user_photospath();
         }
     }
 
@@ -4826,7 +4826,76 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
     }
 }
 
+/**
+ * Migrate file from old path to new one for users
+ *
+ * @return	void
+ */
+function migrate_user_photospath()
+{
+	global $conf, $db, $langs;
+	
+	print '<tr><td colspan="4">';
 
+	print '<b>'.$langs->trans('MigrationUserPhotoPath')."</b><br>\n";
+	
+	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+	$fuser = new User($db);
+
+	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user";	// Get list of all users
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		while ($obj = $db->fetch_object($resql))
+		{
+			$fuser->fetch($obj->uid);
+			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
+			$entity = (!empty($fuser->entity)) ? $fuser->entity : 1;
+			$dir = $conf->user->multidir_output[$entity];
+			$origin = $dir .'/'. get_exdir($fuser->id,2,0,0,$fuser,'user');
+			$destin = $dir.'/'.$fuser->id;
+		
+			$error = 0;
+		
+			$origin_osencoded=dol_osencode($origin);
+			$destin_osencoded=dol_osencode($destin);
+			dol_mkdir($destin);
+			//echo '<hr>'.$origin.' -> '.$destin;
+			if (dol_is_dir($origin))
+			{
+				$handle=opendir($origin_osencoded);
+		        if (is_resource($handle))
+		        {
+		        	while (($file = readdir($handle)) !== false)
+		    		{
+		     			if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file))
+		    			{
+		    				$thumbs = opendir($origin_osencoded.'/'.$file);
+		    				if (is_resource($thumbs))
+		        			{
+			     				dol_mkdir($destin.'/'.$file);
+			     				while (($thumb = readdir($thumbs)) !== false)
+				    			{
+				    				dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
+				    			}
+		//		    			dol_delete_dir($origin.'/'.$file);
+		        			}
+		    			}
+		    			else
+		    			{
+		    				if (dol_is_file($origin.'/'.$file) )
+		    				{
+		    					dol_move($origin.'/'.$file, $destin.'/'.$file);
+		    				}
+		    			}
+		    		}
+		        }
+			}
+		}
+	}
+
+	print '</td></tr>';
+}
 
 
 /* A faire egalement: Modif statut paye et fk_facture des factures payes completement

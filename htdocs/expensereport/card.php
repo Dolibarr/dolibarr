@@ -289,7 +289,7 @@ if (empty($reshook))
         if (! $error)
         {
             // Actions on extra fields
-           	$result = $object->insertExtraFields('FICHINTER_MODIFY');
+           	$result = $object->insertExtraFields('EXPENSEREPORT_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');

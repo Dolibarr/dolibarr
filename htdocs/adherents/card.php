@@ -1286,8 +1286,11 @@ else
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_MEMBER);
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			$arrayselected = array();
+			if (is_array($cats)) {
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
 			}
 			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
