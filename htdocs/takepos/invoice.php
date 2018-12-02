@@ -40,7 +40,7 @@ $idline = GETPOST('idline');
 $desc = GETPOST('desc','alpha');
 $pay = GETPOST('pay');
 
-$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$place.")'";
+$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
 $resql = $db->query($sql);
 $row = $db->fetch_array ($resql);
 $placeid=$row[0];
@@ -71,7 +71,7 @@ if ($action == 'valid' && $user->rights->facture->creer){
 	if ($pay=="cash") $payment->paiementid=4;
 	else if ($pay=="card") $payment->paiementid=6;
 	else if ($pay=="cheque") $payment->paiementid=7;
-	$payment->num_paiement=$invoice->facnumber;
+	$payment->num_paiement=$invoice->ref;
 	$payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 	$invoice->set_paid($user);
@@ -89,7 +89,7 @@ if (($action=="addline" || $action=="freezone") and $placeid==0)
 		$invoice->pos_source = (string) (empty($place)?'0':$place);
 
 		$placeid=$invoice->create($user);
-		$sql="UPDATE ".MAIN_DB_PREFIX."facture set facnumber='(PROV-POS-".$place.")' where rowid=".$placeid;
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
 		$db->query($sql);
 	}
 }
@@ -280,7 +280,7 @@ print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbs
     print '</p>';
 //}
 if ($action=="valid"){
-	print '<p style="font-size:120%;" align="center"><b>'.$invoice->facnumber." ".$langs->trans('BillShortStatusValidated').'</b></p>';
+	print '<p style="font-size:120%;" align="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 }

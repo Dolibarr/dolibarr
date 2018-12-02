@@ -507,7 +507,7 @@ class FormProjets
 				$sql = "SELECT t.rowid, t.label as ref";
 				break;
 			case "facture":
-				$sql = "SELECT t.rowid, t.facnumber as ref";
+				$sql = "SELECT t.rowid, t.ref as ref";
 				break;
 			case "facture_fourn":
 				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";

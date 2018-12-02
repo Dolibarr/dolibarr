@@ -32,7 +32,7 @@ top_httphead('text/html');
 $facid=GETPOST('facid','int');
 $place=GETPOST('place','int');
 if ($place>0){
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where facnumber='(PROV-POS-".$place.")'";
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
     $row = $db->fetch_array ($resql);
     $facid=$row[0];

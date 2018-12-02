@@ -144,7 +144,7 @@ if ($prev_id > 0 || $ref)
 
 // List of invoices
 $sql = "SELECT pf.rowid,";
-$sql.= " f.rowid as facid, f.facnumber as ref, f.total_ttc,";
+$sql.= " f.rowid as facid, f.ref as ref, f.total_ttc,";
 $sql.= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
