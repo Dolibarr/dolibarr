@@ -253,7 +253,7 @@ if ($action == 'create') {
 	//$object = new Managementfichinter($db);   // Source invoice
 
 	if ($object->fetch($id, $ref) > 0) {
-		print '<form action="fiche-rec.php" method="post">';
+		print '<form action="card-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
@@ -384,7 +384,7 @@ if ($action == 'create') {
 		$sql = 'SELECT l.*';
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet as l";
 		$sql.= " WHERE l.fk_fichinter= ".$object->id;
-		$sql.= " AND l.fk_product is null ";
+		//$sql.= " AND l.fk_product is null ";
 		$sql.= " ORDER BY l.rang";
 
 		$result = $db->query($sql);
