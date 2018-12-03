@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class Fiscalyear extends CommonObject
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -65,9 +60,9 @@ class Fiscalyear extends CommonObject
 	public $rowid;
 
 	/**
-     * @var string fiscal year label
-     */
-    public $label;
+	 * @var string fiscal year label
+	 */
+	public $label;
 
 	public $date_start;
 	public $date_end;
@@ -170,10 +165,10 @@ class Fiscalyear extends CommonObject
 
 		// Check parameters
 		if (empty($this->date_start) && empty($this->date_end))
-        {
-            $this->error='ErrorBadParameter';
-            return -1;
-        }
+		{
+			$this->error='ErrorBadParameter';
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -274,7 +269,7 @@ class Fiscalyear extends CommonObject
 		return $this->LibStatut($this->statut,$mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Give a label from a status
 	 *
@@ -284,7 +279,7 @@ class Fiscalyear extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
