@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 
 
 /**
@@ -1033,7 +1032,6 @@ class FactureRec extends CommonInvoice
 		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
 		$parameters = array(
-			'entity' => $conf->entity,
 			'restrictioninvoiceid' => $restrictioninvoiceid,
 			'forcevalidation' => $forcevalidation,
 			);
@@ -1083,7 +1081,7 @@ class FactureRec extends CommonInvoice
 					$invoiceidgenerated = $facture->create($user);
 					if ($invoiceidgenerated <= 0)
 					{
-						$this->errors[] = $facture->errors;
+						$this->errors = $facture->errors;
 						$this->error = $facture->error;
 						$error++;
 					}
@@ -1092,7 +1090,7 @@ class FactureRec extends CommonInvoice
 						$result = $facture->validate($user);
 						if ($result <= 0)
 						{
-							$this->errors[] = $facture->errors;
+							$this->errors = $facture->errors;
 							$this->error = $facture->error;
 							$error++;
 						}
@@ -1104,7 +1102,7 @@ class FactureRec extends CommonInvoice
 						$result = $facture->generateDocument($facturerec->modelpdf, $langs);
 						if ($result <= 0)
 						{
-							$this->errors[] = $facture->errors;
+							$this->errors = $facture->errors;
 							$this->error = $facture->error;
 							$error++;
 						}
