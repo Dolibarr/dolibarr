@@ -263,7 +263,7 @@ if ($upgrade) {
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
 			  [ "versionto", $ver ],
-			  [ "installlock", "1" ],
+			  [ "installlock", "444" ],
 			 );
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
@@ -307,7 +307,7 @@ else {
 			  [ "login", "admin" ],
 			  [ "pass", $dompass ],
 			  [ "pass_verif", $dompass ],
-			  [ "installlock", "1" ],
+			  [ "installlock", "444" ],
 	 		 );
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);

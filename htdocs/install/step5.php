@@ -38,7 +38,6 @@ $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty(
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[3])?'auto':$argv[3]);
 $langs->setDefaultLang($setuplang);
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'':$argv[4]);
-$installlock=GETPOST('installlock','int')?GETPOST('installlock','int'):(empty($argv[5])?'':$argv[5]);
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
@@ -58,6 +57,7 @@ $langs->loadLangs(array("admin", "install"));
 $login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
 $pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);
 $pass_verif = GETPOST('pass_verif', 'alpha')?GETPOST('pass_verif', 'alpha'):(empty($argv[7])?'':$argv[7]);
+$force_install_lockinstall = (int) (! empty($force_install_lockinstall)?$force_install_lockinstall:(GETPOST('installlock','aZ09')?GETPOST('installlock','aZ09'):(empty($argv[8])?'':$argv[8])));
 
 $success=0;
 
@@ -363,7 +363,7 @@ if ($action == "set" && $success)
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall) || ! empty($installlock) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Install is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
@@ -413,7 +413,7 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall) || ! empty($installlock) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Upgrade is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
