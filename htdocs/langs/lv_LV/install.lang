@@ -202,8 +202,8 @@ MigrationUserRightsEntity=Atjauniniet llx_user_rights objekta lauka vērtību
 MigrationUserGroupRightsEntity=Atjauniniet llx_usergroup_rights objekta lauka vērtību
 MigrationReloadModule=Reload module %s
 MigrationResetBlockedLog=Atjaunot moduli BlockedLog par v7 algoritmu
-ShowNotAvailableOptions=Parādīt nepieejamās opcijas
-HideNotAvailableOptions=Slēpt nepieejamās opcijas
+ShowNotAvailableOptions=Parādīt nepieejamās iespējas
+HideNotAvailableOptions=Slēpt nepieejamās iespējas
 ErrorFoundDuringMigration=Migrēšanas laikā tika ziņots par kļūdu (-ēm), tāpēc nākamais solis nav pieejams. Lai ignorētu kļūdas, varat <a href="%s"> noklikšķināt šeit </a>, bet lietojumprogramma vai dažas funkcijas var nedarboties pareizi, līdz kļūdas nav atrisinātas.
 YouTryInstallDisabledByDirLock=Pieteikums mēģināja pašupjaunināt, bet instalēšanas / jaunināšanas lapas tika atspējotas drošībai (direktorija nosaukums tika pārdēvēts ar .lock sufiksu). <br>
 YouTryInstallDisabledByFileLock=Lietojumprogramma mēģināja pašatjaunināties, bet instalēšanas/atjaunināšanas lapas tika bloķētas drošībai (ar bloķēšanas failu <strong>install.lock</strong> Dolibarr dokumentu direktorijā). <br>

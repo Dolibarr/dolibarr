@@ -144,6 +144,8 @@ if (GETPOST('addoperation','alpha'))
 	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
+	$emailcollectoroperation->position = 50;
+
 	$result = $emailcollectoroperation->create($user);
 
 	if ($result > 0)

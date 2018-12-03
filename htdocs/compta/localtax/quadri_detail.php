@@ -589,7 +589,7 @@ else
 
 						// Localtax
 						print '<td class="nowrap" align="right">';
-						$temp_vat=($local==1?$fields['localtax1']:$fields['localtax2'])*$ratiopaymentinvoice;;
+						$temp_vat=($local==1?$fields['localtax1']:$fields['localtax2'])*$ratiopaymentinvoice;
 						print price(price2num($temp_vat,'MT'),1);
 						//print price($fields['vat']);
 						print '</td>';

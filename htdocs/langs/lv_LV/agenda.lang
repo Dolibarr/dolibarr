@@ -43,7 +43,7 @@ CONTRACT_DELETEInDolibarr=Līgums %s svītrots
 PropalClosedSignedInDolibarr=Piedāvājumi %s parakstīti
 PropalClosedRefusedInDolibarr=Piedāvājums %s atteikts
 PropalValidatedInDolibarr=Priekšlikums %s apstiprināts
-PropalClassifiedBilledInDolibarr=Proposal %s classified billed
+PropalClassifiedBilledInDolibarr=Priekšlikums %s klasificēts samaksāts
 InvoiceValidatedInDolibarr=Rēķins %s apstiprināts
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Rēķins %s doties atpakaļ uz melnrakstu
@@ -101,7 +101,7 @@ AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user
 AgendaUrlOptionsNotAdmin=<b>logina =! %s</b>, lai ierobežotu izvadi darbībām, kas nav lietotāja īpašumā <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b>, lai ierobežotu izlaidi darbībām, kas saistītas ar projektu <b> __ PROJECT_ID __ </ b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b>, lai izslēgtu automātiskus notikumus.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b>, lai izslēgtu automātiskus notikumus.
 AgendaShowBirthdayEvents=Rādīt kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts

@@ -55,6 +55,16 @@ class EmailCollector extends CommonObject
 	 */
 	public $picto = 'generic';
 
+	/**
+	 * @var int    Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_emailcollector';
+
+	/**
+	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 */
+	protected $childtables=array('emailcollector_emailcollectorfilter', 'emailcollector_emailcollectoraction');
+
 
 	/**
 	 *  'type' if the field format.
@@ -86,7 +96,7 @@ class EmailCollector extends CommonObject
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1),
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
-		'user'          => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myacount@gmail.com'),
+		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myacount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>1, 'comment'=>"IMAP password"),
 		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
 		//'filter'		=> array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
@@ -151,7 +161,7 @@ class EmailCollector extends CommonObject
 
 
 	public $host;
-	public $user;
+	public $login;
 	public $password;
 	public $source_directory;
     public $target_directory;
@@ -382,7 +392,7 @@ class EmailCollector extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $notrigger);
+		return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
@@ -697,7 +707,7 @@ class EmailCollector extends CommonObject
 
 			$this->error.='EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
 			if (! empty($emailcollector->errors)) $this->error.=join('<br>', $emailcollector->errors);
-			$this->output.='EmailCollector ID '.$emailcollector->id.': '.$emailcollector->output.'<br>';
+			$this->output.='EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
 		}
 
 		return $nberror;
@@ -749,14 +759,14 @@ class EmailCollector extends CommonObject
 				$regforregex=array();
 				if (preg_match('/^REGEX:([a-zA-Z0-9]+):(.*):([^:])$/', $valueforproperty, $regforregex))
 				{
-					$sourcefield=$regforregex[0];
-					$regexstring=$regforregex[1];
-					//$transofrmationstring=$regforregex[2];
+					$sourcefield=$regforregex[1];
+					$regexstring=$regforregex[2];
+					//$transofrmationstring=$regforregex[3];
 				}
 				elseif (preg_match('/^REGEX:([a-zA-Z0-9]+):(.*)$/', $valueforproperty, $regforregex))
 				{
-					$sourcefield=$regforregex[0];
-					$regexstring=$regforregex[1];
+					$sourcefield=$regforregex[1];
+					$regexstring=$regforregex[2];
 				}
 
 				if (! empty($sourcefield) && ! empty($regexstring))
@@ -768,7 +778,7 @@ class EmailCollector extends CommonObject
 					if (preg_match('/'.preg_quote($regexstring, '/').'/', $sourcestring, $regforval))
 					{
 						// Overwrite param $tmpproperty
-						$object->$tmpproperty = $regforval[0];
+						$object->$tmpproperty = $regforval[1];
 					}
 					else
 					{
@@ -777,7 +787,7 @@ class EmailCollector extends CommonObject
 				}
 				elseif (preg_match('/^VALUE:(.*)$/', $valueforproperty, $reg))
 				{
-					$object->$tmpproperty = $reg[0];
+					$object->$tmpproperty = $reg[1];
 				}
 				else
 				{
@@ -806,7 +816,7 @@ class EmailCollector extends CommonObject
 
 		dol_syslog("EmailCollector::doCollectOneCollector start", LOG_DEBUG);
 
-		$langs->loadLangs(array("project", "companies", "errors"));
+		$langs->loadLangs(array("project", "companies", "mails", "errors"));
 
 		$error = 0;
 		$this->output = '';
@@ -819,7 +829,7 @@ class EmailCollector extends CommonObject
 			$this->error=$langs->trans('ErrorFieldRequired', 'EMailHost');
 			return -1;
 		}
-		if (empty($this->user))
+		if (empty($this->login))
 		{
 			$this->error=$langs->trans('ErrorFieldRequired', 'Login');
 			return -1;
@@ -845,7 +855,7 @@ class EmailCollector extends CommonObject
 		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $this->user, $this->password);
+		$connection = imap_open($connectstringsource, $this->login, $this->password);
 		if (! $connection)
 		{
 			$this->error = 'Failed to open IMAP connection '.$connectstringsource;
@@ -942,20 +952,126 @@ class EmailCollector extends CommonObject
 				//$message = imap_body($connection, $imapemail, 0);
 				$overview = imap_fetch_overview($connection, $imapemail, 0);
 				$structure = imap_fetchstructure($connection, $imapemail, 0);
+
 				$partplain = $parthtml = -1;
 				// Loop to get part html and plain
-				foreach($structure->parts as $key => $part)
+				/*
+				0 multipart/mixed
+				1 multipart/alternative
+				 1.1 text/plain
+				 1.2 text/html
+				2 message/rfc822
+				 2 multipart/mixed
+				  2.1 multipart/alternative
+				   2.1.1 text/plain
+				   2.1.2 text/html
+				  2.2 message/rfc822
+				  2.2 multipart/alternative
+				   2.2.1 text/plain
+				   2.2.2 text/html
+				*/
+				/**
+				 * create_part_array
+				 *
+				 * @param 	Object $structure	Structure
+				 * @param 	string $prefix		prefix
+				 * @return 	array				Array with number and object
+				 */
+				function createPartArray($structure, $prefix="")
 				{
-					if ($part->subtype == 'HTML') $parthtml=$key;
-					if ($part->subtype == 'PLAIN') $partplain=$key;
+					//print_r($structure);
+					if (count($structure->parts) > 0) {    // There some sub parts
+						foreach ($structure->parts as $count => $part) {
+							add_part_to_array($part, $prefix.($count+1), $part_array);
+						}
+					}else{    // Email does not have a seperate mime attachment for text
+						$part_array[] = array('part_number' => $prefix.'1', 'part_object' => $obj);
+					}
+					return $part_array;
 				}
 
-				$messagetext = imap_fetchbody($connection, $imapemail, ($parthtml >= 0 ? $parthtml : ($partplain >= 0 ? $partplain : 0)));
+				/**
+				 * Sub function for createPartArray(). Only called by createPartArray() and itself.
+				 *
+				 * @param 	Object		$obj			Structure
+				 * @param 	string		$partno			Part no
+				 * @param 	array		$part_array		array
+				 * @return	void
+				 */
+				function addPartToArray($obj, $partno, &$part_array)
+				{
+					$part_array[] = array('part_number' => $partno, 'part_object' => $obj);
+					if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
+						//print_r($obj);
+						if (array_key_exists('parts',$obj)) {    // Check to see if the email has parts
+							foreach ($obj->parts as $count => $part) {
+								// Iterate here again to compensate for the broken way that imap_fetchbody() handles attachments
+								if (count($part->parts) > 0) {
+									foreach ($part->parts as $count2 => $part2) {
+										addPartToArray($part2, $partno.".".($count2+1), $part_array);
+									}
+								}else{    // Attached email does not have a seperate mime attachment for text
+									$part_array[] = array('part_number' => $partno.'.'.($count+1), 'part_object' => $obj);
+								}
+							}
+						}else{    // Not sure if this is possible
+							$part_array[] = array('part_number' => $partno.'.1', 'part_object' => $obj);
+						}
+					}else{    // If there are more sub-parts, expand them out.
+						if (array_key_exists('parts',$obj)) {
+							foreach ($obj->parts as $count => $p) {
+								addPartToArray($p, $partno.".".($count+1), $part_array);
+							}
+						}
+					}
+				}
+
+				$result = createPartArray($structure, '');
+				//var_dump($result);exit;
+				foreach($result as $part)
+				{
+					if ($part['part_object']->subtype == 'HTML')  $parthtml=$part['part_number'];
+					if ($part['part_object']->subtype == 'PLAIN') $partplain=$part['part_number'];
+				}
+
+				/* OLD CODE to get parthtml and partplain
+				if (count($structure->parts) > 0) {    // There some sub parts
+					foreach($structure->parts as $key => $part)
+					{
+						if ($part->subtype == 'HTML') $parthtml=($key+1);									// For example: $parthtml = 1 or 2
+						if ($part->subtype == 'PLAIN') $partplain=($key+1);
+						if ($part->subtype == 'ALTERNATIVE')
+						{
+							if (count($part->parts) > 0)
+							{
+								foreach($part->parts as $key2 => $part2)
+								{
+									if ($part2->subtype == 'HTML') $parthtml=($key+1).'.'.($key2+1);		// For example: $parthtml = 1.1 or 1.2
+									if ($part2->subtype == 'PLAIN') $partplain=($key+1).'.'.($key2+1);
+								}
+							}
+							else
+							{
+								$partplain=($key+1).'.1';
+							}
+						}
+					}
+				}
+				else
+				{
+					$partplain=1;
+				}*/
+
+				//var_dump($structure);
+				//var_dump($parthtml);var_dump($partplain);
+
+				$messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 0)), FT_PEEK);
 
 				//var_dump($overview);
 				//var_dump($header);
 				//var_dump($message);
-				//var_dump($messagetext);
+				//var_dump($structure->parts[0]->parts);
+				//var_dump($messagetext);exit;
 				$fromstring=$overview[0]->from;
 				$sender=$overview[0]->sender;
 				$to=$overview[0]->to;
@@ -969,8 +1085,8 @@ class EmailCollector extends CommonObject
 				$reg=array();
 				if (preg_match('/^(.*)<(.*)>$/', $fromstring, $reg))
 				{
-					$from=$reg[1];
-					$fromtext=$reg[0];
+					$from=$reg[2];
+					$fromtext=$reg[1];
 				}
 				else
 				{
@@ -987,7 +1103,7 @@ class EmailCollector extends CommonObject
 				$reg=array();
 				if (! empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host,'/').'/', $headers['References'], $reg))
 				{
-					$trackid = $reg[0].$reg[1];
+					$trackid = $reg[1].$reg[2];
 
 					$objectid = 0;
 					$objectemail = null;
@@ -1129,10 +1245,11 @@ class EmailCollector extends CommonObject
 								$sourcefield='';
 								$regexstring='';
 								$regforregex=array();
+
 								if (preg_match('/^REGEX:([a-zA-Z0-9]+):(.*)$/', $valueforproperty, $regforregex))
 								{
-									$sourcefield=$regforregex[0];
-									$regexstring=$regforregex[1];
+									$sourcefield=$regforregex[1];
+									$regexstring=$regforregex[2];
 								}
 
 								if (! empty($sourcefield) && ! empty($regexstring))
@@ -1141,19 +1258,20 @@ class EmailCollector extends CommonObject
 									elseif (strtolower($sourcefield) == 'subject') $sourcestring=$subject;
 
 									$regforval=array();
-									if (preg_match('/'.preg_quote($regexstring, '/').'/', $sourcestring, $regforval))
+									if (preg_match('/'.$regexstring.'/', $sourcestring, $regforval))	// Do not use preg_quote here, string is already a regex syntax, for example string is 'Name:\s([^\s]*)'
 									{
 										// Overwrite param $tmpproperty
-										$nametouseforthirdparty = $regforval[0];
+										$nametouseforthirdparty = $regforval[1];
 									}
 									else
 									{
 										// Nothing can be done for this param
 									}
+									//var_dump($sourcestring); var_dump($regexstring);var_dump($nametouseforthirdparty);exit;
 								}
 								elseif (preg_match('/^VALUE:(.*)$/', $valueforproperty, $reg))
 								{
-									$nametouseforthirdparty = $reg[0];
+									$nametouseforthirdparty = $reg[1];
 								}
 								else
 								{
@@ -1178,8 +1296,12 @@ class EmailCollector extends CommonObject
 								{
 									if ($operation['type'] == 'loadandcreatethirdparty')
 									{
+										dol_syslog("Third party with name ".$nametouseforthirdparty." was not found. We try to create it.");
+
 										// Create thirdparty
 										$thirdpartystatic->name = $nametouseforthirdparty;
+										if ($fromtext != $nametouseforthirdparty) $thirdpartystatic->name_alias = $fromtext;
+										$thirdpartystatic->email = $from;
 
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject);
@@ -1199,6 +1321,10 @@ class EmailCollector extends CommonObject
 											}
 										}
 									}
+									else
+									{
+										dol_syslog("Third party with name ".$nametouseforthirdparty." was not found");
+									}
 								}
 							}
 						}
@@ -1213,7 +1339,7 @@ class EmailCollector extends CommonObject
 
 						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$actioncomm->code        = 'AC_'.$actioncode;
-						$actioncomm->label       = $langs->trans("EmailReceived").' - '.$langs->trans("From").' '.$from;
+						$actioncomm->label       = $langs->trans("ActionAC_EMAIL_IN").' - '.$langs->trans("MailFrom").' '.$from;
 						$actioncomm->note        = $messagetext;
 						$actioncomm->fk_project  = $projectstatic->id;
 						$actioncomm->datep       = $date;
@@ -1233,11 +1359,13 @@ class EmailCollector extends CommonObject
 						$actioncomm->email_subject = $subject;
 						$actioncomm->errors_to   = '';
 
-						$actioncomm->fk_element  = $fk_element_id;
-						$actioncomm->elementtype = $fk_element_type;
+						if (! in_array($fk_element_type, array('societe','contact','project','user')))
+						{
+							$actioncomm->fk_element  = $fk_element_id;
+							$actioncomm->elementtype = $fk_element_type;
+						}
 
 						//$actioncomm->extraparams = $extraparams;
-
 
 						// Overwrite values with values extracted from source email
 						$errorforthisaction = $this->overwritePropertiesOfObject($actioncommn, $operation['actionparam'], $messagetext, $subject);
@@ -1263,7 +1391,7 @@ class EmailCollector extends CommonObject
 						$projecttocreate = new Project($this->db);
 						if ($thirdpartystatic->id > 0)
 						{
-							$projecttocreate->fk_soc = $thirdpartystatic->id;
+							$projecttocreate->socid = $thirdpartystatic->id;
 							if ($thirdpartyfoundby) $note_private .= ' - Third party found from '.$thirdpartyfoundby;
 						}
 						if ($contactstatic->id > 0)
@@ -1277,9 +1405,10 @@ class EmailCollector extends CommonObject
 
 						$projecttocreate->title = $subject;
 						$projecttocreate->date_start = $now;
+						$projecttocreate->date_end = '';
 						$projecttocreate->opp_status = $id_opp_status;
 						$projecttocreate->opp_percent = $percent_opp_status;
-						$projecttocreate->description = ($note_private?$note_private."\n":'').$messagetext;
+						$projecttocreate->description = ($note_private?$note_private."\n":'').dol_string_nohtmltag($messagetext, 2);
 						$projecttocreate->note_private = $note_private;
 						$projecttocreate->entity = $conf->entity;
 
@@ -1288,7 +1417,7 @@ class EmailCollector extends CommonObject
 						$modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
 
 						// Search template files
-						$file=''; $classname=''; $filefound=0;
+						$file=''; $classname=''; $filefound=0; $reldir='';
 						$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 						foreach($dirmodels as $reldir)
 						{
@@ -1404,6 +1533,7 @@ class EmailCollector extends CommonObject
 
 		$this->datelastresult = $now;
 		$this->lastresult = $output;
+
 		if (! empty($this->errors)) $this->lastresult.= " - ".join(" - ", $this->errors);
 		$this->codelastresult = ($error ? 'KO' : 'OK');
 		$this->update($user);

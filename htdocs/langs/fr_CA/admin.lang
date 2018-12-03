@@ -14,7 +14,6 @@ FileCheckDolibarr=Vérifier l'intégrité des fichiers d'application
 AvailableOnlyOnPackagedVersions=Le fichier local pour la vérification de l'intégrité n'est disponible que lorsque l'application est installée à partir d'un paquet officiel
 XmlNotFound=Xml Integrity Fichier de l'application introuvable
 ConfirmPurgeSessions=Voulez-vous vraiment purger toutes les sessions? Cela déconnectera tous les utilisateurs (sauf vous).
-WebUserGroup=Utilisateur/groupe du serveur Web
 ClientCharset=Encodage Client
 SetupArea=Paramétrage
 UploadNewTemplate=Télécharger un nouveau modèle (s)
