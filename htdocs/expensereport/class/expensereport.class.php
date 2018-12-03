@@ -1678,29 +1678,30 @@ class ExpenseReport extends CommonObject
 
         dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
-		if (empty($qty)) $qty = 0;
-		if (empty($fk_c_type_fees) || $fk_c_type_fees < 0) $fk_c_type_fees = 0;
-		if (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) $fk_c_exp_tax_cat = 0;
-		if (empty($vatrate) || $vatrate < 0) $vatrate = 0;
-		if (empty($date)) $date = '';
-		if (empty($fk_project)) $fk_project = 0;
-
-		if (preg_match('/\((.*)\)/', $vatrate, $reg))
-		{
-			$vat_src_code = $reg[1];
-			$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
-		}
-
-		$qty = price2num($qty);
-		$vatrate = price2num($vatrate);
-		$up = price2num($up);
-
 		if ($this->fk_statut == self::STATUS_DRAFT)
-        {
+		{
+			if (empty($qty)) $qty = 0;
+			if (empty($fk_c_type_fees) || $fk_c_type_fees < 0) $fk_c_type_fees = 0;
+			if (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) $fk_c_exp_tax_cat = 0;
+			if (empty($vatrate) || $vatrate < 0) $vatrate = 0;
+			if (empty($date)) $date = '';
+			if (empty($fk_project)) $fk_project = 0;
+
+			$qty = price2num($qty);
+			if (!preg_match('/\((.*)\)/', $vatrate)) {
+				$vatrate = price2num($vatrate);               // $txtva can have format '5.0(XXX)' or '5'
+			}
+			$up = price2num($up);
+
 			$this->db->begin();
 
 			$this->line = new ExpenseReportLine($this->db);
 
+			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+			}
 			$vatrate = preg_replace('/\*/','',$vatrate);
 
 			$seller = '';  // seller is unknown
