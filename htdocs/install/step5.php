@@ -38,6 +38,7 @@ $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty(
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[3])?'auto':$argv[3]);
 $langs->setDefaultLang($setuplang);
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'':$argv[4]);
+$installlock=GETPOST('installlock','int')?GETPOST('installlock','int'):(empty($argv[5])?'':$argv[5]);
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
@@ -362,7 +363,7 @@ if ($action == "set" && $success)
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
+        if (! empty($force_install_lockinstall) || ! empty($installlock) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Install is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
@@ -412,7 +413,7 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
+        if (! empty($force_install_lockinstall) || ! empty($installlock) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Upgrade is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
