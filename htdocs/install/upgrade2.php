@@ -4834,11 +4834,11 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 function migrate_user_photospath()
 {
 	global $conf, $db, $langs;
-	
+
 	print '<tr><td colspan="4">';
 
 	print '<b>'.$langs->trans('MigrationUserPhotoPath')."</b><br>\n";
-	
+
 	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	$fuser = new User($db);
 
@@ -4851,12 +4851,16 @@ function migrate_user_photospath()
 			$fuser->fetch($obj->uid);
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
 			$entity = (!empty($fuser->entity)) ? $fuser->entity : 1;
-			$dir = $conf->user->multidir_output[$entity];
+			if ($entity > 1) {
+				$dir = DOL_DATA_ROOT . '/' . $entity . '/users';
+			} else {
+				$dir = $conf->user->multidir_output[$entity];	// $conf->user->multidir_output[] for each entity is construct by the multicompany module
+			}
 			$origin = $dir .'/'. get_exdir($fuser->id,2,0,0,$fuser,'user');
 			$destin = $dir.'/'.$fuser->id;
-		
+
 			$error = 0;
-		
+
 			$origin_osencoded=dol_osencode($origin);
 			$destin_osencoded=dol_osencode($destin);
 			dol_mkdir($destin);
