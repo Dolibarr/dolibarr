@@ -257,7 +257,7 @@ print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
 print $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/',$menu_handler)?'':'_menu'),'menu_handler',array_merge($dirstandard,$dirsmartphone));
-print ' &nbsp; <input type="submit" class="butAction" value="'.$langs->trans("Refresh").'">';
+print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 
 print '<br>';

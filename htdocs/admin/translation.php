@@ -313,7 +313,7 @@ if ($mode == 'overwrite')
     	print '<td align="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
-    print '<input type="submit" class="butAction"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
+    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
     print "</td>\n";
     print '</tr>';
 
@@ -362,10 +362,10 @@ if ($mode == 'overwrite')
 
     		print '<td align="center">';
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int')) {
-    			print '<input type="hidden" class="butAction" name="rowid" value="'.$obj->rowid.'">';
-    			print '<input type="submit" class="butAction" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+    			print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';
+    			print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
     			print ' &nbsp; ';
-    			print '<input type="submit" class="butAction" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+    			print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
     		}
     		else
     		{

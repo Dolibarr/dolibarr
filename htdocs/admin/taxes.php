@@ -259,7 +259,7 @@ print "<br>\n";
 
 
 print '<div class="center">';
-print '<input type="submit" class="butAction" value="' . $langs->trans("Modify") . '" name="button">';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="button">';
 print '</div>';
 
 print '</form>';

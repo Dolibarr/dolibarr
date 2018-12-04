@@ -489,7 +489,7 @@ print '</td>';
 print '</tr>';
 
 if (!$conf->use_javascript_ajax) {
-    print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="butAction" value="' . $langs->trans("Save") . '"></td>';
+    print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
     print '</tr>';
 }
 
@@ -635,7 +635,7 @@ print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTextHelpMessageHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
-print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="butAction" value="' . $langs->trans("Save") . '"></td>';
+print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
 print '</tr>';
 
 print '</table><br>';

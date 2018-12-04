@@ -106,7 +106,7 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<div class="center"><br><input type="submit" class="butAction" value="'.$langs->trans("Modify").'"></div>';
+print '<div class="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form><br><br>';
 
@@ -121,7 +121,7 @@ if (! empty($conf->global->CLICKTODIAL_URL))
 	print '<form action="'.$_SERVER["PHP_SELF"].'">';
 	print $langs->trans("LinkToTestClickToDial",$user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
-	print '<input type="submit" class="butAction" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
+	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
 	print '</form>';
 
 	$setupcomplete=1;

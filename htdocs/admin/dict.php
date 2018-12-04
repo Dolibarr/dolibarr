@@ -1172,7 +1172,7 @@ if ($id)
         print '<td colspan="3" align="center">';
         if ($action != 'edit')
         {
-        	print '<input type="submit" class="butAction" name="actionadd" value="'.$langs->trans("Add").'">';
+        	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
         }
         print '</td>';
         print "</tr>";
@@ -1377,8 +1377,8 @@ if ($id)
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     if (! is_null($withentity))
                     	print '<input type="hidden" name="entity" value="'.$withentity.'">';
-                    print '<input type="submit" class="butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                    print '<input type="submit" class="butAction" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+                    print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                    print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                 }
                 else

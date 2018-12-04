@@ -268,7 +268,7 @@ else
     print $doleditor->Create();
 }
 print '</td><td align="right">';
-print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</table>';
 print "<br>";

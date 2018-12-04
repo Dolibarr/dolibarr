@@ -382,7 +382,7 @@ print '</table>'."\n";
 print '</div>';
 
 print '<div class="right">';
-print '<input type="submit" class="butAction"'.(count($boxtoadd)?'':' disabled').' value="'.$langs->trans("Activate").'">';
+print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled').' value="'.$langs->trans("Activate").'">';
 print '</div>'."\n";
 print '</form>';
 print "\n".'<!-- End Boxes Available -->'."\n";
@@ -483,7 +483,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIV
 
 print '</table>';
 
-print '<div class="center"><input type="submit" class="butAction" value="'.$langs->trans("Save").'" name="Button"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></div>';
 
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";
