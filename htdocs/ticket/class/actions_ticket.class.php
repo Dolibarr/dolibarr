@@ -1189,8 +1189,8 @@ class ActionsTicket
     	print '</tr>';
     	print '</table>';
     	if ($user->rights->ticket->manage && $action == 'edit_message_init') {
-    		print ' <input type="submit" class="butAction" value="' . $langs->trans('Modify') . '">';
-    		print ' <input type="submit" class="butAction" name="cancel" value="' . $langs->trans('Cancel') . '">';
+    		print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+    		print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
     		print '</form>';
     	}
     }
@@ -1502,7 +1502,7 @@ class ActionsTicket
                	else
                		$urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=set_status&new_status=' . $status;
 
-                print '<a class="butAction" href="' . $urlforbutton . '">';
+                print '<a class="button" href="' . $urlforbutton . '">';
                 print img_picto($langs->trans($object->statuts_short[$status]), 'statut' . $status . '.png@ticket') . ' ' . $langs->trans($object->statuts_short[$status]);
                 print '</a>';
                 print '</div>';

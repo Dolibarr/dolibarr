@@ -1282,9 +1282,9 @@ if ($action == 'create')
 	dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="butAction" value="' . $langs->trans("CreateDraft") . '">';
+	print '<input type="submit" class="button" value="' . $langs->trans("CreateDraft") . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="butAction" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print "</form>";
@@ -1492,7 +1492,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		print $form->selectDate($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
-		print '<input type="submit" class="butAction" value="' . $langs->trans('Modify') . '">';
+		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {
 		print dol_print_date($object->date_livraison, 'daytext');
@@ -1749,8 +1749,8 @@ if ($action == 'create')
 		$form_close .= $object->note;
 		$form_close .= '</textarea></td></tr>';
 		$form_close .= '<tr><td align="center" colspan="2">';
-		$form_close .= '<input type="submit" class="butAction" name="validate" value="' . $langs->trans('Save') . '">';
-		$form_close .= ' &nbsp; <input type="submit" class="butAction" name="cancel" value="' . $langs->trans('Cancel') . '">';
+		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Save') . '">';
+		$form_close .= ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
 		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';
 		$form_close .= '</td>';
 		$form_close .= '</tr></table></form>';
