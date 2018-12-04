@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=SOAP клиента се повреди с греш�
 ErrorGlobalVariableUpdater5=Няма избрана глобална променлива
 ErrorFieldMustBeANumeric=Поле <b>%s</b> трябва да бъде числена стойност
 ErrorMandatoryParametersNotProvided=Задължителен параметър(и) не е даден
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on anothe
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=Description is mandatory for lines with free product
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=Парола е зададено за този член. Обаче, няма създаден потребителски акаунт. Следователно тази парола е записана, но не може да бъде използвана за влизане в Dolibarr. Може да бъде използвана от външен модул/интерфейс, но ако нямате нужда да определите нито потребителско име нито парола за член, можете да деактивирате тази опция. Ако имате нужда да управлявате потребителско име, но нямата нужда от парола, можете да оставите това поле празно, за да избегнете това предупреждение. Забележка: Имейл също може да бъде използван като потребителско име ако члена с свързан към потребител.
 WarningMandatorySetupNotComplete=Задължителни параметри на настройката все още не са определени

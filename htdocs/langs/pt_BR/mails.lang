@@ -31,7 +31,6 @@ CloneEMailing=Clonar e-mailing
 ConfirmCloneEMailing=Você tem certeza que deseja clonar esta lista de e-mails?
 CloneContent=Clonar mensagem
 CloneReceivers=Clonar recebidores
-DateLastSend=Data do último envio
 DateSending=Data envio
 YourMailUnsubcribeOK=O e-mail <b>%s</b> foi removido com sucesso da lista
 ActivateCheckReadKey=Chave usada para criptografar URL usado para "confirmação de leitura" e recurso "Unsubcribe"

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Nb av dokument i katalogen
+ECMNbOfDocs=No. of documents in directory
 ECMSection=Directory
 ECMSectionManual=Manuell katalog
 ECMSectionAuto=Automatisk katalog
@@ -34,6 +34,8 @@ ECMDocsByProjects=Handlingar som är kopplade till projekt
 ECMDocsByUsers=Dokument länkade till användare
 ECMDocsByInterventions=Dokument länkade till ärenden
 ECMDocsByExpenseReports=Dokument länkade till utgiftsrapporter
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
 ECMNoDirectoryYet=Ingen katalog skapas
 ShowECMSection=Visa katalog
 DeleteSection=Ta bort katalog
@@ -46,6 +48,5 @@ ECMSelectASection=Välj en mapp i trädet...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Resync" button first to synchronize disk and database to get content of this directory.
 ReSyncListOfDir=Uppdatera lista med mappar
 HashOfFileContent=Hash av filinnehåll
-FileNotYetIndexedInDatabase=Filen är inte indexerad i databasen (försök ladda upp igen)
-FileSharedViaALink=Fil delad via länk
 NoDirectoriesFound=Inga mappar funna
+FileNotYetIndexedInDatabase=Filen är inte indexerad i databasen (försök ladda upp igen)
