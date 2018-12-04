@@ -78,7 +78,7 @@ class AccountancyCategory // extends CommonObject
 	public $range_account;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int Sens of the account:  0: credit - debit, 1: debit - credit
 	 */
 	public $sens;
 
@@ -717,13 +717,13 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int[array	$cpt 				Accounting account or array of accounting account
+	 * @param int|array	$cpt 				Accounting account or array of accounting account
 	 * @param string 	$date_start			Date start
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit, 1: debit - credit
 	 * @param string	$thirdparty_code	Thirdparty code
-	 * @param string 	$month 				Specifig month - Can be empty
-	 * @param string 	$year 				Specifig year - Can be empty
+	 * @param int       $month 				Specifig month - Can be empty
+	 * @param int       $year 				Specifig year - Can be empty
 	 * @return integer 						<0 if KO, >= 0 if OK
 	 */
 	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code='nofilter', $month=0, $year=0)

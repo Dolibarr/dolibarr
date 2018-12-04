@@ -186,7 +186,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
-			echo " - qualified\n";
+			echo " - qualified";
 
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 
@@ -214,6 +214,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				$nbofjobslaunchedok++;
 			}
 
+			echo " - result of run_jobs = ".$result;
+
 			// we re-program the next execution and stores the last execution time for this job
 			$result=$cronjob->reprogram_jobs($userlogin, $now);
 			if ($result<0)
@@ -223,6 +225,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
 			}
+
+			echo " - reprogrammed\n";
 		}
 		else
 		{

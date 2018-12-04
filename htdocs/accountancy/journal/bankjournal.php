@@ -1142,7 +1142,7 @@ $db->close();
  *
  * @param 	string 	$val			Array of val
  * @param 	string	$typerecord		Type of record ('payment', 'payment_supplier', 'payment_expensereport', 'payment_vat', ...)
- * @return string|unknown
+ * @return 	string					A string label to describe a record into llx_bank_url
  */
 function getSourceDocRef($val, $typerecord)
 {
@@ -1250,7 +1250,8 @@ function getSourceDocRef($val, $typerecord)
 	{
 		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
+		if ($resultmid)
+		{
 			while ($objmid = $db->fetch_object($resultmid))
 			{
 				$ref.=' '.$objmid->ref;
@@ -1259,6 +1260,6 @@ function getSourceDocRef($val, $typerecord)
 		else dol_print_error($db);
 	}
 
-	$ref = dol_trunc($langs->trans("BankId").' '.$val['fk_bank'].' - '.$ref, 295);	// 295 + 3 ... i< < than max size of 300
+	$ref = dol_trunc($langs->trans("BankId").' '.$val['fk_bank'].' - '.$ref, 295);	// 295 + 3 dots (...) is < than max size of 300
 	return $ref;
 }

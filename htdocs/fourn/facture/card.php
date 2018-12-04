@@ -2717,7 +2717,7 @@ else
 
 					$paymentstatic->id=$objp->rowid;
 					$paymentstatic->datepaye=$db->jdate($objp->dp);
-					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);;
+					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);
 					$paymentstatic->num_paiement=$objp->num_paiement;
 					$paymentstatic->payment_code=$objp->payment_code;
 

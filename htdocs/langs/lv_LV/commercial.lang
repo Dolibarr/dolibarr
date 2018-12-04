@@ -52,6 +52,7 @@ ActionAC_TEL=Tālruņa zvans
 ActionAC_FAX=Nosūtīt pa faksu
 ActionAC_PROP=Nosūtīt priekšlikumu pa pastu
 ActionAC_EMAIL=Sūtīt pa e-pastu
+ActionAC_EMAIL_IN=E-pasta saņemšana
 ActionAC_RDV=Sanāksmes
 ActionAC_INT=Intervention on site
 ActionAC_FAC=Nosūti klienta rēķinu pa pastu

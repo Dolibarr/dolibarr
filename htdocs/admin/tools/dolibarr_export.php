@@ -517,12 +517,18 @@ print '<br>';
 <input type="hidden" name="export_type" value="server" />
 
 <fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>
-<div class="fichehalfleft">
 
 <?php
 print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
 
+?>
+
+<div id="backupfilesleft" class="fichehalfleft">
+
+<?php
+
+print load_fiche_titre($title?$title:$langs->trans("BackupDumpWizard"));
 ?>
 
 <label for="zipfilename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label><br>
@@ -536,6 +542,7 @@ $file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'
 echo $file;
 ?>" /> <br>
 <br>
+
 
 <?php
 // Show compression choices

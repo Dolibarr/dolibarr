@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=SOAP klient se nezdařilo s chybou ‚%s‘
 ErrorGlobalVariableUpdater5=Žádné globální proměnná vybraná
 ErrorFieldMustBeANumeric=Pole <b> %s </ b> musí být číselná hodnota
 ErrorMandatoryParametersNotProvided=Povinné parametr (y) není k dispozici
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definice Array Menu V modulu popisovač (špatná hodnota za klíčový fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on anothe
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=Description is mandatory for lines with free product
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=Heslo bylo nastaveno pro tohoto člena. Nicméně, žádný uživatelský účet byl vytvořen. Takže toto heslo uloženo, ale nemůže být použit pro přihlášení do Dolibarr. Může být použit externí modulu / rozhraní, ale pokud nepotřebujete definovat libovolné přihlašovací jméno ani heslo pro členem, můžete možnost vypnout „Správa přihlášení pro každého člena“ z nastavení člen modulu. Pokud potřebujete ke správě přihlášení, ale nepotřebují žádné heslo, můžete mít toto pole prázdné, aby se zabránilo toto upozornění. Poznámka: E-mail může být také použit jako přihlášení v případě, že člen je připojen k uživateli.
 WarningMandatorySetupNotComplete=Povinné parametry jsou dosud stanoveny

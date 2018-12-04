@@ -4,7 +4,6 @@ MarkRate=Relação margem-preço de venda
 DisplayMarginRates=Exibir relações margem-preço de compra
 DisplayMarkRates=Exibir relações margem-preço de venda
 InputPrice=Preço de entrada
-margin=Gestão de margens de lucro
 margesSetup=Configuração das margens de lucro
 ProductMargins=Margens de produtos
 CustomerMargins=Margems de clientes

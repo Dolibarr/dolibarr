@@ -1278,7 +1278,7 @@ $db->close();
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $nonew=0)
 {
     global $user, $conf, $langs;
-    global $action, $filter, $filtert, $status, $actioncode;	// Filters used into search form
+    global $action, $filter, $filtert, $status, $actioncode, $usergroup;	// Filters used into search form
     global $theme_datacolor;
     global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 
@@ -1637,6 +1637,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action='.$action.'&maxprint=0&month='.$monthshown.'&year='.$year;
                     print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
                     print ($filtert?'&filtert='.$filtert:'');
+                    print ($usergroup?'&usergroup='.$usergroup:'');
                     print ($actioncode!=''?'&actioncode='.$actioncode:'');
                     print '">'.img_picto("all","1downarrow_selected.png").' ...';
                     print ' +'.(count($eventarray[$daykey])-$maxprint);
