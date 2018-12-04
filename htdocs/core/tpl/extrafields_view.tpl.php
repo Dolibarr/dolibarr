@@ -156,7 +156,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
 
 
-				print '<input type="submit" class="butAction" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
+				print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
 
 				print '</form>';
 			}

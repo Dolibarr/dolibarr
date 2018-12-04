@@ -34,7 +34,7 @@ function accounting_prepare_head(AccountingAccount $object)
 	global $langs, $conf;
 
 	$h = 0;
-	$head = [];
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
@@ -163,7 +163,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     if(! empty($varlink)) $varlink = '?'.$varlink;
 
     $h=0;
-	$head = [];
+	$head = array();
     $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
     $head[$h][1] = $langs->trans("Journalization");
     $head[$h][2] = 'journal';
@@ -226,7 +226,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     dol_fiche_end();
 
-    print '<div class="center"><input type="submit" class="butAction" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+    print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
     print '</form>';
 

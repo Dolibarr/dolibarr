@@ -53,7 +53,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
     }
 
     $h=0;
-    $head = [];
+    $head = array();
 	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
@@ -118,7 +118,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="butAction" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
 	print '</form>';
 	print '<br>';

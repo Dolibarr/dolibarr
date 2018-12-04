@@ -38,7 +38,7 @@ $width = 70;
 $height = 25;
 
 $mode = GETPOST("mode", 'alpha');
-if (! in_array($mode, ['customer', 'supplier'])) {
+if (! in_array($mode, array('customer', 'supplier'))) {
     $mode = 'customer';
 }
 if ($mode == 'customer' && ! $user->rights->commande->lire) accessforbidden();
@@ -212,7 +212,7 @@ $px3->element('ordersaverage')
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears = [];
+$arrayyears = array();
 foreach($data as $val) {
     if (! empty($val['year'])) {
         $arrayyears[$val['year']]=$val['year'];
@@ -221,7 +221,7 @@ foreach($data as $val) {
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
-$head = [];
+$head = array();
 $head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';

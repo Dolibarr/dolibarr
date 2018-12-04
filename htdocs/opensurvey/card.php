@@ -348,9 +348,9 @@ dol_fiche_end();
 if ($action == 'edit')
 {
 	print '<div class="center">';
-	print '<input type="submit" class="butAction" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+	print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 	print ' &nbsp; ';
-	print '<input type="submit" class="butAction" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+	print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 	print '</div>';
 }
 
@@ -423,7 +423,7 @@ if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll") . '<br>';
 	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
 	print $langs->trans("Name") .': <input type="text" size="50" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
-	print '<input type="submit" class="butAction" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
+	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide=="yes") {
 		print "<font color=#FF0000>" . $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")) . "</font>";
 	}
