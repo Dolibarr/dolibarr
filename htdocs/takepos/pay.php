@@ -109,7 +109,7 @@ $langs->loadLangs(array("main", "bills", "cashdesk"));
 <button type="button" class="calcbutton" onclick="addreceived(0.10);">0.10</button>
 <button type="button" class="calcbutton" onclick="addreceived(0.20);">0.20</button>
 <button type="button" class="calcbutton" onclick="addreceived(0.50);">0.50</button>
-<button type="button" class="calcbutton2" onclick="Validate('cheque');"><?php echo $langs->trans("Cheque"); ?></button>
+<button type="button" <?php if ($placeid==0) echo "disabled";?> class="calcbutton2" onclick="Validate('cheque');"><?php echo $langs->trans("Cheque"); ?></button>
 <button type="button" class="calcbutton" onclick="addreceived(0.01);">0.01</button>
 <button type="button" class="calcbutton" onclick="addreceived(0.02);">0.02</button>
 <button type="button" class="calcbutton" onclick="addreceived(0.05);">0.05</button>
