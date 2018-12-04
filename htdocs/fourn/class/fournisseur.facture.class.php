@@ -1522,6 +1522,15 @@ class FactureFournisseur extends CommonInvoice
 			if (empty($txlocaltax1)) $txlocaltax1=0;
 			if (empty($txlocaltax2)) $txlocaltax2=0;
 
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			$pu=price2num($pu);
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva);               // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
+			}
+
 	        $this->db->begin();
 
 	        if ($fk_product > 0)
@@ -1587,8 +1596,8 @@ class FactureFournisseur extends CommonInvoice
 	        	$product_type = $type;
 	        }
 
-	        if (!preg_match('/\((.*)\)/', $txtva)) {
-	        	$txtva = price2num($txtva);               // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
+	        if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+	        	$pu = 0;
 	        }
 
 	        $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
@@ -1601,16 +1610,10 @@ class FactureFournisseur extends CommonInvoice
 	        	$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
 	        }
 
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			$pu=price2num($pu);
-			$txtva = price2num($txtva);
-			$txlocaltax1=price2num($txlocaltax1);
-			$txlocaltax2=price2num($txlocaltax2);
-
-	        if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
-	            $pu = 0;
-	        }
+	        // Calcul du total TTC et de la TVA pour la ligne a partir de
+	        // qty, pu, remise_percent et txtva
+	        // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+	        // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
 	        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 	        $total_ht  = $tabprice[0];

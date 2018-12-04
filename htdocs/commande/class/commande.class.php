@@ -1289,7 +1289,7 @@ class Commande extends CommonOrder
 			$pu_ttc=price2num($pu_ttc);
 			$pa_ht=price2num($pa_ht);
 			if (!preg_match('/\((.*)\)/', $txtva)) {
-				$txtva = price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
+				$txtva = price2num($txtva);               // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);

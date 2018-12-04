@@ -1357,16 +1357,6 @@ class Contrat extends CommonObject
 		{
 			$this->db->begin();
 
-			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-
-			// Clean vat code
-			$vat_src_code='';
-			if (preg_match('/\((.*)\)/', $txtva, $reg))
-			{
-				$vat_src_code = $reg[1];
-				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
-			}
-
 			// Clean parameters
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
@@ -1398,6 +1388,16 @@ class Contrat extends CommonObject
 			// Check parameters
 			if (empty($remise_percent)) $remise_percent=0;
 
+			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
+			
+			// Clean vat code
+			$vat_src_code='';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+			}
+			
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker

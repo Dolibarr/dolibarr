@@ -1670,7 +1670,7 @@ class ExpenseReport extends CommonObject
 	 */
 	function addline($qty=0, $up=0, $fk_c_type_fees=0, $vatrate=0, $date='', $comments='', $fk_project=0, $fk_c_exp_tax_cat=0, $type=0)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$mysoc;
 
         dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -1693,6 +1693,9 @@ class ExpenseReport extends CommonObject
 
 			$this->line = new ExpenseReportLine($this->db);
 
+			$localtaxes_type=getLocalTaxesFromRate($vatrate,0,$mysoc,$this->thirdparty);
+
+			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -1701,7 +1704,8 @@ class ExpenseReport extends CommonObject
 			$vatrate = preg_replace('/\*/','',$vatrate);
 
 			$seller = '';  // seller is unknown
-			$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
+
+			$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
 			$this->line->value_unit = $up;
 			$this->line->vatrate = price2num($vatrate);
