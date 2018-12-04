@@ -3,7 +3,7 @@ PayBoxSetup=PayBox mát skipulag
 PayBoxDesc=Þessi eining síður bjóða upp á til að heimila greiðslu á <a href="http://www.paybox.com" target="_blank">Paybox</a> við viðskiptavini. Þetta má nota til a frjáls greiðslu eða til greiðslu á tilteknum Dolibarr mótmæla (Reikningar, röð, ...)
 FollowingUrlAreAvailableToMakePayments=Eftirfarandi vefslóðir eru að bjóða upp síðu til viðskiptavina til að framkvæma greiðslu á Dolibarr mótmæla
 PaymentForm=Greiðsla mynd
-WelcomeOnPaymentPage=Velkomin á netinu greiðsluþjónustu okkar
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Þessi skjár leyfa þér að gera á netinu greiðslu til %s.
 ThisIsInformationOnPayment=Þetta eru upplýsingar um greiðslu að gera
 ToComplete=Til að ljúka
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL að bjóða upp á %s inni greiðslu n
 ToOfferALinkForOnlinePaymentOnContractLine=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir samning línu
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir ókeypis upphæð
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL að bjóða upp á %s inni greiðslu notandi tengi fyrir aðild áskrift
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Þú getur einnig bætt við url stika <b>& tag = <i>gildi</i></b> til allir af þessir URL (einungis fyrir frjáls greiðslu) til að bæta tag þína eigin greiðslu athugasemd.
-SetupPayBoxToHavePaymentCreatedAutomatically=Skipulag PayBox með url <b>%s</b> að hafa greiðslu búinn til sjálfkrafa þegar staðfest með því að paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Þessi síða staðfestir að greiðsla hefur verið skráð. Þakka þér.
-YourPaymentHasNotBeenRecorded=Þú greiðsla hefur ekki verið skráð og viðskipti hefur verið aflýst. Þakka þér.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Skráningin breytur
 UsageParameter=Notkun breytur
 InformationToFindParameters=Hjálp til að finna %s upplýsingar reiknings þíns

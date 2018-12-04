@@ -262,6 +262,6 @@ WEBSITE_PAGEURL=URL de la page
 WEBSITE_TITLE=Titre
 WEBSITE_DESCRIPTION=Description
 WEBSITE_IMAGE=Image
-WEBSITE_IMAGEDesc=Chemin relatif du média image. Vous pouvez garder ce champ vide car il est rarement utilisé (cela peut être utilisé par du contenu dynamique pour afficher un aperçu de page de type "blog_post").
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a preview of a list of blog posts).
 WEBSITE_KEYWORDS=Mots clés
 LinesToImport=Lignes à importer
