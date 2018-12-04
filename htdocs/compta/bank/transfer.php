@@ -262,7 +262,7 @@ print '<td style="display:none" class="multicurrency"><input name="amountto" cla
 
 print "</table>";
 
-print '<br><div class="center"><input type="submit" class="butAction" value="'.$langs->trans("Add").'"></div>';
+print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></div>';
 
 print "</form>";
 

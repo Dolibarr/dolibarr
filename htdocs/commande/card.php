@@ -1781,9 +1781,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	// Button "Create Draft"
 	print '<div class="center">';
-	print '<input type="submit" class="butAction" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
+	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="butAction" name="cancel" value="' . $langs->trans("Cancel") . '" onclick="javascript:history.go(-1)">';
+	print '<input type="button" class="button" name="cancel" value="' . $langs->trans("Cancel") . '" onclick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -2087,7 +2087,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print $form->selectDate($object->date, 'order_', '', '', '', "setdate");
-			print '<input type="submit" class="butAction" value="' . $langs->trans('Modify') . '">';
+			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
 			print $object->date ? dol_print_date($object->date, 'day') : '&nbsp;';
@@ -2112,7 +2112,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->date_livraison ? $object->date_livraison : - 1, 'liv_', '', '', '', "setdate_livraison");
-			print '<input type="submit" class="butAction" value="' . $langs->trans('Modify') . '">';
+			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
 			print $object->date_livraison ? dol_print_date($object->date_livraison, 'daytext') : '&nbsp;';

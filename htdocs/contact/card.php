@@ -748,16 +748,16 @@ else
             print dol_fiche_end();
 
             print '<div class="center">';
-            print '<input type="submit" class="butAction" name="add" value="'.$langs->trans("Add").'">';
+            print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
             if (! empty($backtopage))
             {
                 print ' &nbsp; &nbsp; ';
-                print '<input type="submit" class="butAction" name="cancel" value="'.$langs->trans("Cancel").'">';
+                print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             }
             else
             {
                 print ' &nbsp; &nbsp; ';
-                print '<input type="button" class="butAction" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+                print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
             }
             print '</div>';
 
@@ -1065,9 +1065,9 @@ else
             print dol_fiche_end();
 
             print '<div class="center">';
-            print '<input type="submit" class="butAction" name="save" value="'.$langs->trans("Save").'">';
+            print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
             print ' &nbsp; &nbsp; ';
-            print '<input type="submit" class="butAction" name="cancel" value="'.$langs->trans("Cancel").'">';
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
             print "</form>";

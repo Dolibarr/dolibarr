@@ -118,7 +118,7 @@ else
     if (! GETPOST('xmlremote')) print ' <span class="warning">('.$langs->trans("FeatureAvailableOnlyOnStable").')</span>';
     print '<br>';
 }
-print '<br><div class="center"><input type="submit" name="check" class="butAction" value="'.$langs->trans("Check").'"></div>';
+print '<br><div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
 print '</form>';
 print '<br>';
 print '<br>';

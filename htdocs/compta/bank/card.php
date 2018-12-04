@@ -41,7 +41,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/acco
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(["banks","bills","categories","companies","compta"]);
+$langs->loadLangs(array("banks","bills","categories","companies","compta"));
 
 $action = GETPOST('action','aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -60,7 +60,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(['bankcard', 'globalcard']);
+$hookmanager->initHooks(array('bankcard', 'globalcard'));
 
 /*
  * Actions
@@ -533,9 +533,9 @@ if ($action == 'create')
 	dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="butAction" value="' . $langs->trans("CreateAccount") . '">';
+	print '<input type="submit" class="button" value="' . $langs->trans("CreateAccount") . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="butAction" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -1018,9 +1018,9 @@ else
 		dol_fiche_end();
 
 		print '<div class="center">';
-		print '<input value="'.$langs->trans("Modify").'" type="submit" class="butAction">';
+		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="butAction">';
+		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
 		print '</div>';
 
 		print '</form>';
