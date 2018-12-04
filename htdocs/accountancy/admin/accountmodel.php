@@ -579,7 +579,7 @@ if ($id)
 		}
 
 		print '<td colspan="3" align="right">';
-		print '<input type="submit" class="butAction" name="actionadd" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
@@ -707,8 +707,8 @@ if ($id)
 
 					if (empty($reshook)) fieldListAccountModel($fieldlist,$obj,$tabname[$id],'edit');
 
-					print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="butAction" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				}
 				else
 				{

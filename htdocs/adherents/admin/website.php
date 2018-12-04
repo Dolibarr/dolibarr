@@ -212,7 +212,7 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	print '</table>';
 
 	print '<center>';
-	print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</center>';
 }
 

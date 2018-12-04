@@ -110,7 +110,7 @@ print '<table class="border" width="100%">';
 print '<tr><td class="titlefield">' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
 $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
-print '<input class="butAction" type="submit" value="' . $langs->trans("Select") . '">';
+print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
 // Select the accounts
@@ -140,7 +140,7 @@ if (! empty($cat_id))
 		print '</select><br>';
 		print ajax_combobox('cpt_bk');
 		*/
-		print '<input class="butAction" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
+		print '<input class="button" type="submit" id="" class="action-delete" value="' . $langs->trans("Add") . '"> ';
 	}
 	print '</td></tr>';
 }

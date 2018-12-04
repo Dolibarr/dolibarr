@@ -307,7 +307,7 @@ if ($result)
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	print "</table>\n";
 
-	print '<div align="center"><input type="submit" class="butAction" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
+	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 
 	print "<br>\n";
 

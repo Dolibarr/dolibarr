@@ -532,7 +532,7 @@ if ($id)
         }
 
         print '<td colspan="4" align="right">';
-       	print '<input type="submit" class="butAction" name="actionadd" value="'.$langs->trans("Add").'">';
+       	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
         print '</td>';
         print "</tr>";
 
@@ -673,9 +673,9 @@ if ($id)
                     print '<td align="center">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-                    print '<input type="submit" class="butAction" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                    print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
-                    print '<input type="submit" class="butAction" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+                    print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                     print '<td></td>';
                 }

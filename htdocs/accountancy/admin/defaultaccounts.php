@@ -186,7 +186,7 @@ foreach ($list_account as $key) {
 print "</table>\n";
 
 
-print '<div class="center"><input type="submit" class="butAction" value="' . $langs->trans('Modify') . '" name="button"></div>';
+print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
 
 print '</form>';
 
