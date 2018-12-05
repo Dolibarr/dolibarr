@@ -27,5 +27,6 @@
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
 
+ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
 ALTER TABLE llx_facture CHANGE facnumber ref VARCHAR(30) NOT NULL;
-ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber, ADD UNIQUE idx_facture_uk_ref (ref, entity);
+ALTER TABLE llx_facture ADD UNIQUE idx_facture_uk_ref (ref, entity);
