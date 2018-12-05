@@ -86,7 +86,9 @@ class ExtraFields
 
 	// New array to store extrafields definition
 	var $attributes;
-
+	// New string  to store element type used by getOptionalsFromPost
+	var $elementtype;
+	
 	var $error;
 	var $errno;
 
@@ -750,8 +752,10 @@ class ExtraFields
 	function fetch_name_optionals_label($elementtype,$forceload=false)
 	{
 		global $conf;
-
+		
 		if (empty($elementtype)) return array();
+		// save for later use
+		$this->elementtype = $elementtype;
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -1919,7 +1923,7 @@ class ExtraFields
 	{
 		global $_POST;
 
-		if (is_array($this->attributes[$object->table_element]['label'])) $extralabels=$this->attributes[$object->table_element]['label'];
+		if (is_array($this->attributes[$this->elementtype]['label'])) $extralabels=$this->attributes[$this->elementtype]['label'];
 
 		$array_options = array();
 		if (is_array($extralabels))
@@ -1927,7 +1931,7 @@ class ExtraFields
 			// Get extra fields
 			foreach ($extralabels as $key => $value)
 			{
-				$key_type = $this->attributes[$object->table_element]['type'][$key];
+				$key_type = $this->attributes[$this->elementtype]['type'][$key];
 
 				if (in_array($key_type,array('date','datetime')))
 				{
