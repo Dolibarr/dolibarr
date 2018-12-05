@@ -299,7 +299,7 @@ class FormMail extends Form
 				{
 					$model_id=$this->param["models_id"];
 				}
-				$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));		// we set -1 if model_id empty
+				$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);		// If $model_id is empty, preselect the first one
 			}
 			//var_dump($this->param["models"]);
 			//var_dump($model_id);
