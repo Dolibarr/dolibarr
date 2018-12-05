@@ -4894,8 +4894,11 @@ class Form
 			$disabled=false; $title='';
 			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0")
 			{
-				$title=' title="'.$langs->trans('VATIsNotUsed').'"';
-				$disabled=true;
+				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses
+				if (empty ($conf->global->OVERRIDE_VAT_FOR_EXPENSE_REPORT))	{
+					$title=' title="'.$langs->trans('VATIsNotUsed').'"';
+					$disabled=true;
+				}
 			}
 
 			if (! $options_only) $return.= '<select class="flat minwidth75imp" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$title.'>';
