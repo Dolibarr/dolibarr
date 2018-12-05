@@ -2405,12 +2405,11 @@ class ExpenseReport extends CommonObject
 
 	/**
 	 * 	Return amount of payments already done
-	 * 
+	 *
 	 *  @return		int						Amount of payment already done, <0 if KO
 	 */
 	public function getSumPayments()
 	{
-		//TODO move to expensereport class
 		$table='payment_expensereport';
 		$field='fk_expensereport';
 

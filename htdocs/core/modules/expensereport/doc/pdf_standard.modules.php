@@ -970,8 +970,8 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->SetXY($tab3_posx+35, $tab3_top+1);
 		$pdf->MultiCell(30, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
 		if (! empty($conf->banque->enabled)) {
-			$pdf->SetXY($tab3_posx+65, $tab3_top+1); 
-			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0); 
+			$pdf->SetXY($tab3_posx+65, $tab3_top+1);
+			$pdf->MultiCell(25, 3, $outputlangs->transnoentities("BankAccount"), 0, 'L', 0);
 		}
 		$pdf->line($tab3_posx, $tab3_top+$tab3_height, $tab3_posx+$tab3_width+2, $tab3_top+$tab3_height); // Bottom border line of table title
 
