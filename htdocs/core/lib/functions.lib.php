@@ -2675,7 +2675,7 @@ function dol_print_ip($ip,$mode=0)
  */
 function getUserRemoteIP()
 {
-	$ip = $_SERVER['HTTP_X_FORWARDED_FOR']?$_SERVER['HTTP_X_FORWARDED_FOR']:(($_SERVER['HTTP_CLIENT_IP']?$_SERVER['HTTP_CLIENT_IP']:$_SERVER['REMOTE_ADDR']));
+	$ip = empty($_SERVER['HTTP_X_FORWARDED_FOR'])? (empty($_SERVER['HTTP_CLIENT_IP'])?(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']):$_SERVER['HTTP_CLIENT_IP']) : $_SERVER['HTTP_X_FORWARDED_FOR'];
 	return $ip;
 }
 
@@ -4816,7 +4816,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	{
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
-		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "x.x (yy)"
 		{
 			$vatratecleaned = $reg[1];
 			$vatratecode = $reg[2];
@@ -6954,7 +6954,6 @@ function getLanguageCodeFromCountryCode($countrycode)
 		'sv-FI',
 		'sv-SE',
 		'sw-KE',
-		'syr-SY',
 		'ta-IN',
 		'te-IN',
 		'th-TH',

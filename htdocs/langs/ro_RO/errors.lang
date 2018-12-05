@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=Client SOAP esuat cu eroarea '%s'
 ErrorGlobalVariableUpdater5=Nicio varialbila globala selectata
 ErrorFieldMustBeANumeric=Campul <b>%s</b> trebuie sa fie  o valoare numerica
 ErrorMandatoryParametersNotProvided= Parametrii obligatorii nu au fost furnizați 
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definire greșită pentru Menu Array in descriptorul modulului (valoare greșită pentru cheia fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on anothe
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=Description is mandatory for lines with free product
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

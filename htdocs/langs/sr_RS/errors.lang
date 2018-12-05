@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=Greška u SOAP klijentu "%s"
 ErrorGlobalVariableUpdater5=Nema selektovane globalne promenljive
 ErrorFieldMustBeANumeric=Polje <b>%s</b> mora biti numeričko
 ErrorMandatoryParametersNotProvided=Obavezni parametar(i) nije dat
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Pogrešna definicija Menu Array u Module Descriptoru (pogrešna vrednost za fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on anothe
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=Description is mandatory for lines with free product
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=Lozinka je podešena za ovog člana, ali korisnik nije kreiran. To znači da je lozinka sačuvana, ali se član ne može ulogovati na Dolibarr. Informaciju može koristiti neka eksterna komponenta, ali ako nemate potrebe da definišete korisnika/lozinku za članove, možete deaktivirati opciju "Upravljanje lozinkama za svakog člana" u podešavanjima modula Članovi. Ukoliko morate da kreirate login, ali Vam nije potrebna lozinka, ostavite ovo polje prazno da se ovo upozorenje ne bi prikazivalo. Napomena: email može biti korišćen kao login ako je član povezan sa korisnikom.
 WarningMandatorySetupNotComplete=Obavezna podešavanja još nisu obavljena.

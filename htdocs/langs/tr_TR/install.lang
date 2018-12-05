@@ -200,6 +200,7 @@ MigrationRemiseEntity=value of llx_societe_remise varlık alanını güncelle
 MigrationRemiseExceptEntity=llx_societe_remise_except varlık alanını güncelle
 MigrationUserRightsEntity=Update entity field value of llx_user_rights
 MigrationUserGroupRightsEntity=Update entity field value of llx_usergroup_rights
+MigrationUserPhotoPath=Migration of photo paths for users
 MigrationReloadModule=Modülü yeniden yükle %s
 MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Show unavailable options

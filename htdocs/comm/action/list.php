@@ -234,7 +234,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
-$sql.= " s.nom as societe, s.rowid as socid, s.client,";
+$sql.= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
 $sql.= " a.id, a.label, a.datep as dp, a.datep2 as dp2,";
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
@@ -605,11 +605,13 @@ if ($resql)
 		// Third party
 		if (! empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax100">';
-			if ($obj->socid)
+			if ($obj->socid > 0)
 			{
 				$societestatic->id=$obj->socid;
 				$societestatic->client=$obj->client;
 				$societestatic->name=$obj->societe;
+				$societestatic->email=$obj->socemail;
+
 				print $societestatic->getNomUrl(1,'',28);
 			}
 			else print '&nbsp;';

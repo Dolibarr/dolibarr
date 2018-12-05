@@ -159,7 +159,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         label varchar(255),
         description text,
         host varchar(255),
-        user varchar(128),
+        login varchar(128),
         password varchar(128),
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
@@ -222,6 +222,6 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD CONSTRAINT fk_emailcolle
 ALTER TABLE llx_emailcollector_emailcollectorfilter ADD UNIQUE INDEX uk_emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue);
 ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcollector_emailcollectoraction (fk_emailcollector, type);
 
-
-
+ALTER TABLE llx_societe_rib ADD COLUMN   comment        varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN   ipaddress      varchar(68);
 
