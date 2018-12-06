@@ -3,7 +3,7 @@ PayBoxSetup=PayBox模塊設置
 PayBoxDesc=該模塊提供的網頁，以便在付款<a href="http://www.paybox.com" target="_blank">Paybox</a>客戶。這可以用來為一個自由付款或就某一Dolibarr對象（發票，訂貨，付款...）
 FollowingUrlAreAvailableToMakePayments=以下網址可提供給客戶的網頁上，能夠作出Dolibarr支付對象
 PaymentForm=付款方式
-WelcomeOnPaymentPage=歡迎您來到我們的在線支付服務
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=這個屏幕允許你進行網上支付%s。
 ThisIsInformationOnPayment=這是在做付款信息
 ToComplete=要完成
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=網址提供發票一%s在線支付的用�
 ToOfferALinkForOnlinePaymentOnContractLine=網址提供了一個合同線%s在線支付的用戶界面
 ToOfferALinkForOnlinePaymentOnFreeAmount=網址提供一個免費的網上支付金額%s用戶界面
 ToOfferALinkForOnlinePaymentOnMemberSubscription=網址為會員提供訂閱%s在線支付的用戶界面
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=您還可以添加<b>標簽=</b> url參數<b>及<i>價值</i></b>的任何網址（只需要支付免費）添加自己的註釋標記付款。
-SetupPayBoxToHavePaymentCreatedAutomatically=設置您的<b>%s</b> PayBox與網址有paybox付款時自動創建的驗證。
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=本頁面確認您的付款已記錄。謝謝。
-YourPaymentHasNotBeenRecorded=您的付款並沒有被記錄和交易已取消。謝謝。
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=帳戶參數
 UsageParameter=使用參數
 InformationToFindParameters=幫助，找到你的%s帳戶信息

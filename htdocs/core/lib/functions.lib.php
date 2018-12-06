@@ -4816,7 +4816,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 	{
 		$vatratecleaned = $vatrate;
 		$vatratecode = '';
-		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "xx (yy)"
+		if (preg_match('/^(.*)\s*\((.*)\)$/', $vatrate, $reg))      // If vat is "x.x (yy)"
 		{
 			$vatratecleaned = $reg[1];
 			$vatratecode = $reg[2];

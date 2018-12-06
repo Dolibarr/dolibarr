@@ -837,7 +837,7 @@ Calendar=Calendrier
 GroupBy=Grouper par...
 ViewFlatList=Voir vue liste
 RemoveString=Supprimer la chaine '%s'
-SomeTranslationAreUncomplete=Certaines des langues proposées peuvent ne pas être traduites partiellement ou contenir des erreurs. Aidez-nous à corriger votre langue en vous inscrivant à l'adresse <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/. < / a> ajouter vos améliorations.
+SomeTranslationAreUncomplete=Certaines des langues proposées peuvent n'être traduites que partiellement ou contenir des erreurs. Aidez-nous à corriger votre langue en vous inscrivant à l'adresse <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/</a> pour ajouter vos améliorations.
 DirectDownloadLink=Lien de téléchargement direct (public/externe)
 DirectDownloadInternalLink=Lien de téléchargement direct (requiert d'être logué et autorisé)
 Download=Téléchargement
@@ -848,9 +848,9 @@ ModuleBuilder=Générateur de Module
 SetMultiCurrencyCode=Choisir la devise
 BulkActions=Actions de masse
 ClickToShowHelp=Cliquez pour montrer l'info-bulle d'aide
-WebSite=Site web
+WebSite=Website
 WebSites=Sites web
-WebSiteAccounts=Comptes de site web
+WebSiteAccounts=Website accounts
 ExpenseReport=Note de frais
 ExpenseReports=Notes de frais
 HR=HR

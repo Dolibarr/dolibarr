@@ -1067,6 +1067,10 @@ class Website extends CommonObject
 			}
 		}
 
+		// Regenerate index page to point to new index page
+		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
+		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php');
+
 		if ($error)
 		{
 			$this->db->rollback();

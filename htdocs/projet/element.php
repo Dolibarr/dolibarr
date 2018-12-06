@@ -218,7 +218,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Bill time
-if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 {
 	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
 	print yn($object->bill_time);

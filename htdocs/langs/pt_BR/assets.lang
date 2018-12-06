@@ -1,0 +1,59 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Ativos
+NewAsset = Novo Ativo
+AccountancyCodeAsset = Código contábil (ativo)
+AccountancyCodeDepreciationAsset = Código contábil (conta de ativo de depreciação)
+AccountancyCodeDepreciationExpense = Código contábil (conta de despesas de depreciação)
+NewAssetType=Novo tipo de ativo
+AssetsTypeSetup=Configuração do tipo de ativos
+AssetTypeModified=Tipo de ativo modificado
+AssetType=Tipo de ativo
+AssetsLines=Ativos
+DeleteType=Excluir
+DeleteAnAssetType=Excluir um tipo de recurso
+ConfirmDeleteAssetType=Tem certeza de que deseja excluir este tipo de recurso?
+ShowTypeCard=Ver tipo '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Ativos
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Descrição dos Ativos
+
+#
+# Admin page
+#
+AssetsSetup = Configuração de Ativos
+Settings = Configurações
+AssetsSetupPage = Página de configuração de ativos
+ExtraFieldsAssetsType = Atributos Complementares (Tipo de Ativos)
+AssetsType=Tipo de ativo
+AssetsTypeId=Id Tipo de ativo
+AssetsTypeLabel=Rótulo do tipo de ativo
+AssetsTypes=Tipos de ativos
+
+#
+# Menu
+#
+MenuAssets = Ativos
+MenuNewAsset = Novo Ativo
+MenuTypeAssets = Digitar ativos
+MenuListAssets = Lista
+MenuNewTypeAssets = Novo tipo
+MenuListTypeAssets = Lista

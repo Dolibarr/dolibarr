@@ -25,7 +25,6 @@ NewCompanyToDolibarr=Terceiro %s criados
 ContractValidatedInDolibarr=Contrato %s validado
 PropalClosedSignedInDolibarr=Proposta %s assinada
 PropalClosedRefusedInDolibarr=Proposta %s declinada
-PropalValidatedInDolibarr=Orçamento %s validado
 PropalClassifiedBilledInDolibarr=Proposta %s classificada faturada
 InvoiceValidatedInDolibarr=Fatura %s validada
 InvoiceValidatedInDolibarrFromPos=Fatura %s validada no POS
