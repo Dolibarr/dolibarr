@@ -182,10 +182,71 @@ if ($action=="order" and $placeid!=0){
 			$db->query($sql);
 			$order_receipt_printer2.='<tr>'.$line->product_label.'<td align="right">'.$line->qty.'</td></tr>';
 		}
+
     }
 	$invoice->fetch($placeid);
 }
 
+//temporary ticket feature
+
+if ($action=="temp" and $placeid!=0){
+	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+
+// issues with special characters with jPosBoxprinting ->javascript, StringCleanCharts() temporarily fix them until to find a more elegant solution.
+
+      function StringCleanCharts($text) {
+          $utf8 = array(
+              '/[áàâãªä]/u'   =>   'a',
+              '/[ÁÀÂÃÄ]/u'    =>   'A',
+              '/[ÍÌÎÏ]/u'     =>   'I',
+              '/[íìîï]/u'     =>   'i',
+              '/[éèêë]/u'     =>   'e',
+              '/[ÉÈÊË]/u'     =>   'E',
+              '/[óòôõºö]/u'   =>   'o',
+              '/[ÓÒÔÕÖ]/u'    =>   'O',
+              '/[úùûü]/u'     =>   'u',
+              '/[ÚÙÛÜ]/u'     =>   'U',
+              '/ç/'           =>   'c',
+              '/Ç/'           =>   'C',
+              '/ñ/'           =>   'n',
+              '/Ñ/'           =>   'N',
+              '/–/'           =>   '-', // UTF-8 hyphen to "normal" hyphen
+              '/[’‘‹›‚\']/u'    =>   ' ', // Literally a single quote
+              '/[“”«»„]/u'    =>   ' ', // Double quote
+              '/ /'           =>   ' ', // nonbreaking space (equiv. to 0x160)
+
+          );
+          return preg_replace(array_keys($utf8), array_values($utf8), $text);
+      }
+
+	$mysocname=StringCleanCharts($mysoc->name);
+	$mysocaddress=StringCleanCharts($mysoc->address);
+	$mysoctown=StringCleanCharts($mysoc->town);
+	$mysoczip=StringCleanCharts($mysoc->zip);
+	$mysocphone=StringCleanCharts($mysoc->phone);
+	$mysocurl=StringCleanCharts($mysoc->url);
+	$header_soc='<html><center><font size="4"><b>'.$mysocname.'</b><br>'.$mysocaddress.'<br>'.$mysoczip.' '.$mysoctown.'</font></center><br>'.$langs->trans("Phone").': '.$mysocphone.'<br>'.$mysocurl;
+	$header_ticket='<br><br>'.$langs->trans("Temporary ticket").'<br>'.$langs->trans("date").':<br>'.dol_print_date(dol_now(), 'dayhour').'<br>'.$langs->trans('Place').' '.$place.'<br><br><br><div width="100%" style="border-top-style: double;"></div>';
+	$body_ticket='<table width="100%"><thead><tr><th align="left">'.$langs->trans("Label").'</th><th align="left">'.$langs->trans("Qty").'</th><th align="left">'.$langs->trans("Price").'</th><th align="left">'.$langs->trans("TotalTTC").'</th></tr></thead>';
+	$footer_ticket='<br><br>'.$langs->trans("Cashier").': '.$user->firstname.'<br><center>'.$langs->trans("Thanks for your coming !").'</center></html>';
+	$ticket_printer1="";
+	$catsprinter1 = explode(';',$conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
+	foreach ($invoice->lines as $line){
+		if ($line->special_code=="3") continue;
+		$c = new Categorie($db);
+		$existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
+		$result = array_intersect($catsprinter1, $existing);
+		$count=count($result);
+		if ($count>0){
+			$sql="UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='3' where rowid=$line->rowid";
+			$db->query($sql);
+			$ticket_printer1.='<tbody><tr><td align="left">'.$line->product_label.'</td><td align="left">'.$line->qty.'</td><td align="left">'.$line->total_ttc/$line->qty.'</td><td align="left">'.$line->total_ttc.'</td></tr></tbody>';
+			$ticket_total='</table><div width="100%" style="border-top-style: double;"></div><table align="right"><tr><th>'.$langs->trans("TotalHT").': '.price($invoice->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</th></tr><tr><th>'.$langs->trans("TotalVAT").': '.price($invoice->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</th></tr><tr><th>'.$langs->trans("TotalTTC").': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</th></tr></tbody></table>';
+		}
+    }
+
+	$invoice->fetch($placeid);
+}
 ?>
 <style>
 .selected {
@@ -224,6 +285,32 @@ if ($action=="order" and $order_receipt_printer2!=""){
 	});
 <?php
 }
+if ($action=="search"){
+	?>
+	$('#search').focus();
+	<?php
+}
+?>
+});
+
+$(document).ready(function(){
+    $('table tbody tr').click(function(){
+		$('table tbody tr').removeClass("selected");
+        $(this).addClass("selected");
+		if (selectedline==this.id) return; // If is already selected
+        else selectedline=this.id;
+        selectedtext=$('#'+selectedline).find("td:first").html();
+    });
+<?php if ($action=="temp" and $ticket_printer1!=""){
+	?>
+	$.ajax({
+		type: "POST",
+		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
+		data: '<?php  print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
+	});
+<?php
+}
+
 if ($action=="search"){
 	?>
 	$('#search').focus();

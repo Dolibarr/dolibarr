@@ -292,6 +292,15 @@ function TakeposPrintingOrder(){
 	});
 }
 
+function TakeposPrintingTemp(){
+	$("#poslines").load("invoice.php?action=temp&place="+place, function() {
+		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+	});
+}
+
+
+
+
 function OpenDrawer(){
 	$.ajax({
 			type: "POST",
@@ -347,14 +356,26 @@ $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
                    'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+
+
+							//BAR RESTAURANT specified menu
+
 if($conf->global->TAKEPOS_BAR_RESTAURANT){
 	$menus[$r++]=array('title'=>$langs->trans("Floors"),
 					'action'=>'Floors();');
-	if ($conf->global->TAKEPOS_ORDER_PRINTERS){
+		if ($conf->global->TAKEPOS_ORDER_PRINTERS){
 		$menus[$r++]=array('title'=>$langs->trans("Order"),
-						'action'=>'TakeposPrintingOrder();');
-	}
+						'action'=>'TakeposPrintingOrder();');}
+
+						//add temp ticket button
+					if ($conf->global->TAKEPOS_ORDER_PRINTERS){
+						$menus[$r++]=array('title'=>$langs->trans("Temporary ticket"),
+										'action'=>'TakeposPrintingTemp();');}
+
 }
+
+
+
 if ($conf->global->TAKEPOSCONNECTOR){
 	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
 					'action'=>'OpenDrawer();');
@@ -410,6 +431,3 @@ while ($count<32)
 llxFooter();
 
 $db->close();
-
-
-
