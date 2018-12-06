@@ -618,9 +618,9 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<td>';
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
-
+var_dump($conf->global->PROJECT_USE_TASKS);
 	// Bill time
-	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{
 		print '<tr><td>'.$langs->trans("BillTime").'</td>';
 		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time','alpha')!=''?' checked="checked"':'').'"></td>';
@@ -855,7 +855,7 @@ elseif ($object->id > 0)
 		print '</td></tr>';
 
 		// Bill time
-		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<tr><td>'.$langs->trans("BillTime").'</td>';
 			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time','alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
@@ -985,7 +985,7 @@ elseif ($object->id > 0)
 		print '</td></tr>';
 
 		// Bill time
-		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<tr><td>'.$langs->trans("BillTime").'</td>';
 			print '<td>'.yn($object->bill_time).'</td>';
