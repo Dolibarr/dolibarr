@@ -515,7 +515,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		// Planned workload
 		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-		print convertSecondToTime($object->planned_workload,'allhourmin');
+		if ($object->planned_workload)
+		{
+			print convertSecondToTime($object->planned_workload,'allhourmin');
+		}
 		print '</td></tr>';
 
 		print '</table>';
@@ -528,7 +531,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		// Progress declared
 		print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td>';
-		print $object->progress.' %';
+		print $object->progress != '' ? $object->progress.' %' : '';
 		print '</td></tr>';
 
 		// Progress calculated
@@ -960,7 +963,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$totalarray=array();
 		foreach ($tasks as $task_time)
 		{
-
 			print '<tr class="oddeven">';
 
 			$date1=$db->jdate($task_time->task_date);
