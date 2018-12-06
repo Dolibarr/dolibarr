@@ -400,7 +400,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             print '</td></tr>';
 
             // Bill time
-            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
             {
 	            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
 	            print yn($projectstatic->bill_time);
@@ -661,7 +661,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("AmountInvoiced"), 'checked'=>1, 'enabled'=>(empty($conf->global->PROJECT_BILL_TIME_SPENT)?0:1));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("AmountInvoiced"), 'checked'=>1, 'enabled'=>((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -678,7 +678,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " pt.ref, pt.label,";
-		$sql .= " u.lastname, u.firstname, u.login, u.photo,";
+		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, il.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
@@ -1037,6 +1037,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				$userstatic->lastname	= $task_time->lastname;
     				$userstatic->firstname 	= $task_time->firstname;
     				$userstatic->photo      = $task_time->photo;
+    				$userstatic->statut     = $task_time->user_status;
     				print $userstatic->getNomUrl(-1);
     			}
     			print '</td>';
