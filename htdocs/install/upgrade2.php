@@ -4848,16 +4848,20 @@ function migrate_user_photospath()
 	{
 		while ($obj = $db->fetch_object($resql))
 		{
+			print '.';
+
 			$fuser->fetch($obj->uid);
 			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
-			$entity = (!empty($fuser->entity)) ? $fuser->entity : 1;
+			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
 			if ($entity > 1) {
 				$dir = DOL_DATA_ROOT . '/' . $entity . '/users';
 			} else {
 				$dir = $conf->user->multidir_output[$entity];	// $conf->user->multidir_output[] for each entity is construct by the multicompany module
 			}
+			if ($dir)
+			{
 			$origin = $dir .'/'. get_exdir($fuser->id,2,0,0,$fuser,'user');
-			$destin = $dir.'/'.$fuser->id;
+			$destin = $dir .'/'. $fuser->id;
 
 			$error = 0;
 
@@ -4894,6 +4898,7 @@ function migrate_user_photospath()
 		    			}
 		    		}
 		        }
+			}
 			}
 		}
 	}
