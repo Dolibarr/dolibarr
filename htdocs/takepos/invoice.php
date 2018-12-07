@@ -182,7 +182,6 @@ if ($action=="order" and $placeid!=0){
 			$db->query($sql);
 			$order_receipt_printer2.='<tr>'.$line->product_label.'<td align="right">'.$line->qty.'</td></tr>';
 		}
-
     }
 	$invoice->fetch($placeid);
 }
@@ -195,30 +194,10 @@ if ($action=="temp" and $placeid!=0){
 // issues with special characters with jPosBoxprinting ->javascript, StringCleanCharts() temporarily fix them until to find a more elegant solution.
 
       function StringCleanCharts($text) {
-          $utf8 = array(
-              '/[áàâãªä]/u'   =>   'a',
-              '/[ÁÀÂÃÄ]/u'    =>   'A',
-              '/[ÍÌÎÏ]/u'     =>   'I',
-              '/[íìîï]/u'     =>   'i',
-              '/[éèêë]/u'     =>   'e',
-              '/[ÉÈÊË]/u'     =>   'E',
-              '/[óòôõºö]/u'   =>   'o',
-              '/[ÓÒÔÕÖ]/u'    =>   'O',
-              '/[úùûü]/u'     =>   'u',
-              '/[ÚÙÛÜ]/u'     =>   'U',
-              '/ç/'           =>   'c',
-              '/Ç/'           =>   'C',
-              '/ñ/'           =>   'n',
-              '/Ñ/'           =>   'N',
-              '/–/'           =>   '-', // UTF-8 hyphen to "normal" hyphen
-              '/[’‘‹›‚\']/u'    =>   ' ', // Literally a single quote
-              '/[“”«»„]/u'    =>   ' ', // Double quote
-              '/ /'           =>   ' ', // nonbreaking space (equiv. to 0x160)
-
-          );
-          return preg_replace(array_keys($utf8), array_values($utf8), $text);
+          $utf8 = array('/[áàâãªä]/u'=>'a','/[ÁÀÂÃÄ]/u'=>'A','/[ÍÌÎÏ]/u'=>'I','/[íìîï]/u'=>'i','/[éèêë]/u'=>'e','/[ÉÈÊË]/u'=>'E','/[óòôõºö]/u'=>'o','/[ÓÒÔÕÖ]/u'=>'O','/[úùûü]/u'=>'u','/[ÚÙÛÜ]/u'=>'U','/ç/'=>'c','/Ç/' =>'C','/ñ/'=>'n','/Ñ/'=>'N','/–/'=>'-','/[’‘‹›‚\']/u'=>' ','/[“”«»„]/u'=>' ','/ /'=>' ',);
+        return preg_replace(array_keys($utf8), array_values($utf8), $text);
       }
-
+	
 	$mysocname=StringCleanCharts($mysoc->name);
 	$mysocaddress=StringCleanCharts($mysoc->address);
 	$mysoctown=StringCleanCharts($mysoc->town);
