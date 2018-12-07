@@ -4259,9 +4259,20 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 		}
 		print '</li>';
 	}
+	// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+	// accesskey is for Mac:               CTRL + key for all browsers
+		$stringforfirstkey = 'CTL +';
+			if ($conf->browser->name == 'chrome')
+		{
+			$stringforfirstkey = 'ALT +';
+		}
+			if ($conf->browser->name == 'firefox')
+		{
+			$stringforfirstkey = 'ALT + SHIFT +';
+		}
 	if ($page > 0)
 	{
-		print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+		print '<li class="pagination"><a class="paginationprevious classfortooltip" accesskey="p" title="'.$stringforfirstkey.' p" href="'.$file.'?page='.($page-1).$options.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 	}
 	if ($betweenarrows)
 	{
@@ -4269,7 +4280,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	}
 	if ($nextpage > 0)
 	{
-		print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+		print '<li class="pagination"><a class="paginationnext classfortooltip" accesskey="n" title="'.$stringforfirstkey.' n" href="'.$file.'?page='.($page+1).$options.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 	}
 	if ($afterarrows)
 	{
