@@ -319,31 +319,43 @@ if ($type)         $param.="&search_type=".urlencode($type);
 if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month') $param.='&action='.urlencode($action);
 $param.="&maxprint=".urlencode($maxprint);
 
+// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+            // accesskey is for Mac:               CTRL + key for all browsers
+            $stringforfirstkey = 'CTL +';
+            if ($conf->browser->name == 'chrome')
+            {
+                $stringforfirstkey = 'ALT +';
+            }
+            if ($conf->browser->name == 'firefox')
+            {
+                $stringforfirstkey = 'ALT + SHIFT +';
+            }
+
 // Show navigation bar
 if (empty($action) || $action=='show_month')
 {
-    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
+    $nav ="<a accesskey=\"p\" title=\".$stringforfirstkey. p\" class=\"classfortooltip\" href=\"?year=".$prev_year."&amp;month=".$prev_month.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%b %Y");
     $nav.=" </span>\n";
-    $nav.=" &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
+    $nav.=" &nbsp; <a accesskey=\"n\" title=\".$stringforfirstkey. n\" class=\"classfortooltip\" href=\"?year=".$next_year."&amp;month=".$next_month.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
     $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth.$param."\">".$langs->trans("Today")."</a>)";
     $picto='calendar';
 }
 if ($action=='show_week')
 {
-    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp;\n";
+    $nav ="<a accesskey=\"p\" title=\".$stringforfirstkey. p\" class=\"classfortooltip\" href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\" title=\"".dol_escape_htmltag($langs->trans("Previous"))."\"></i></a> &nbsp;\n";
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
     $nav.=" </span>\n";
-    $nav.=" &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
+    $nav.=" &nbsp; <a accesskey=\"n\" title=\".$stringforfirstkey. n\" class=\"classfortooltip\" href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\" title=\"".dol_escape_htmltag($langs->trans("Next"))."\"></i></a>\n";
     $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
     $picto='calendarweek';
 }
 if ($action=='show_day')
 {
-    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
+    $nav ="<a accesskey=\"p\" title=\".$stringforfirstkey. p\" class=\"classfortooltip\" href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\"><i class=\"fa fa-chevron-left\"></i></a> &nbsp;\n";
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"daytextshort");
     $nav.=" </span>\n";
-    $nav.=" &nbsp; <a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
+    $nav.=" &nbsp; <a accesskey=\"n\" title=\".$stringforfirstkey. n\" class=\"classfortooltip\" href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\"><i class=\"fa fa-chevron-right\"></i></a>\n";
     $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
     $picto='calendarday';
 }
