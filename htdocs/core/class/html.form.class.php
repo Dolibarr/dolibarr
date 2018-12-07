@@ -6684,11 +6684,11 @@ class Form
 			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 			// accesskey is for Mac:               CTRL + key for all browsers
 			$stringforfirstkey = 'CTL +';
-			if ($conf->browser->name == 'chrome') 
+			if ($conf->browser->name == 'chrome')
 			{
 				$stringforfirstkey = 'ALT +';
 			}
-			if ($conf->browser->name == 'firefox') 
+			if ($conf->browser->name == 'firefox')
 			{
 				$stringforfirstkey = 'ALT + SHIFT +';
 			}
