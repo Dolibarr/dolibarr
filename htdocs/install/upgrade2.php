@@ -4860,7 +4860,8 @@ function migrate_user_photospath()
 			}
 			if ($dir)
 			{
-				$origin = $dir .'/'. get_exdir($fuser->id,2,0,0,$fuser,'user');
+				//print "Process user id ".$fuser->id."<br>\n";
+				$origin = $dir .'/'. get_exdir($fuser->id,2,0,1,$fuser,'user');	// Use old behaviour to get x/y path
 				$destin = $dir .'/'. $fuser->id;
 
 				$origin_osencoded=dol_osencode($origin);
@@ -4888,8 +4889,10 @@ function migrate_user_photospath()
 					    				{
 					    					if ($thumb == '.' || $thumb == '..') continue;
 
+					    					//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
 					    					print '.';
-					    					dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0, 0, 0);
+					    					dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+					    					//var_dump('aaa');exit;
 					    				}
 					    			}
 									// dol_delete_dir($origin.'/'.$file);
@@ -4899,8 +4902,10 @@ function migrate_user_photospath()
 			    			{
 			    				if (! dol_is_file($destin.'/'.$file))
 			    				{
+			    					//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 			    					print '.';
-			    					dol_move($origin.'/'.$file, $destin.'/'.$file, 0, 0, 0, 1);
+			    					dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
+			    					//var_dump('eee');exit;
 			    				}
 			    			}
 			    		}
