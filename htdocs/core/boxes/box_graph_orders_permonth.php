@@ -82,7 +82,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				'sublink'=>'',
 				'subtext'=>$langs->trans("Filter"),
 				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
+				'subclass'=>'linkobject boxfilter classfortooltip',
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 

@@ -183,13 +183,13 @@ class box_produits extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'align="right" width="18" class="classfortooltip"',
                         'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
 					    'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'align="right" width="18" class="classfortooltip"',
                         'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,1).'</span>',
 					    'asis' => 1
                     );

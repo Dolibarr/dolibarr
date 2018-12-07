@@ -109,6 +109,7 @@ class box_external_rss extends ModeleBoxes
             $this->info_box_head = array(
                 'text' => $title,
                 'sublink' => $link,
+                'subclass' => 'classfortooltip',
                 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")),
                 'subpicto'=>'help',
 		'target'=>'_blank',
