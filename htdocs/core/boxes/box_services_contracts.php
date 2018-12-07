@@ -208,7 +208,7 @@ class box_services_contracts extends ModeleBoxes
 					$this->info_box_contents[$i][] = array('td' => '',
                     'text' => dol_print_date($datem,'day'));
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"',
+					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18" class="classfortooltip"',
                     'text' => $contratlignestatic->LibStatut($objp->statut,3)
 					);
 

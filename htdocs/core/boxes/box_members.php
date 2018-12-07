@@ -141,7 +141,7 @@ class box_members extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'align="right" width="18" class="classfortooltip"',
                         'text' => $memberstatic->LibStatut($objp->status,$objp->subscription,$db->jdate($objp->date_end_subscription),3),
                     );
 

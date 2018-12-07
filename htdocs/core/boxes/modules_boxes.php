@@ -266,8 +266,8 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
                     $out.= '<td class="nocellnopadd boxclose right nowraponall">';
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="opacitymedium boxhandle hideonsmartphone cursormove"');
-                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="opacitymedium boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
+                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="classfortooltip opacitymedium boxhandle hideonsmartphone cursormove"');
+                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="classfortooltip opacitymedium boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
                     //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
                     if (! empty($head['graph'])) $label.=' <span class="opacitymedium fa fa-bar-chart"></span>';

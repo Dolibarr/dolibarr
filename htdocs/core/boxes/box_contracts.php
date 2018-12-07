@@ -151,7 +151,7 @@ class box_contracts extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowrap right" class="classfortooltip"',
                         'text' => $contractstatic->getLibStatut(7),
                         'asis'=>1,
                     );

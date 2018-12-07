@@ -164,7 +164,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$fac->fetch($objp->facid);
 					$alreadypaid=$fac->getSommePaiement();
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'align="right" width="18" class="classfortooltip"',
                         'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type),
                     );
 

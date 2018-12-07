@@ -75,6 +75,7 @@ class box_bookmarks extends ModeleBoxes
 		$this->info_box_head = array(
             'text' => $langs->trans("BoxMyLastBookmarks",$max),
             'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
+            'subclass' => 'classfortooltip',
         );
         if ($user->rights->bookmark->creer) {
 			$this->info_box_head['subpicto']='object_bookmark';

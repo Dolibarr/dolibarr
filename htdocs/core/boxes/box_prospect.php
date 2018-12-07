@@ -139,7 +139,7 @@ class box_prospect extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'align="right" width="18" class="classfortooltip"',
                         'text' => $thirdpartystatic->LibStatut($objp->status,3),
                     );
 

@@ -147,7 +147,7 @@ class box_contacts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'align="right" class="nowrap" width="18"',
+						'td' => 'align="right" class="nowrap" width="18" class="classfortooltip"',
 						'text' => $contactstatic->getLibStatut(3),
 						'asis'=>1,
 					);

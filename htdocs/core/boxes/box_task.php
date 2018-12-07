@@ -112,7 +112,7 @@ class box_task extends ModeleBoxes
                 {
                     $objp = $db->fetch_object($result);
                     $this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="classfortooltip"',
                         'text' =>$langs->trans("Task")." ".$taskstatic->LibStatut($objp->fk_statut,0),
                     );
 
@@ -127,7 +127,7 @@ class box_task extends ModeleBoxes
 					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => ConvertSecondToTime($objp->durationtot,'all',25200,5));
 					$totaldurationtot += $objp->durationtot;
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut,3));
+					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18" class="classfortooltip"', 'text' => $taskstatic->LibStatut($objp->fk_statut,3));
 
 					$i++;
 				}

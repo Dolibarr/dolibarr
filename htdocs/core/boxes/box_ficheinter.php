@@ -130,7 +130,7 @@ class box_ficheinter extends ModeleBoxes
 					$this->info_box_contents[$i][] = array('td' => 'class="right"',
 					'text' => dol_print_date($datec,'day'));
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right" class="nowrap"',
+					$this->info_box_contents[$i][] = array('td' => 'align="right" class="nowrap" class="classfortooltip"',
 					'text' => $ficheinterstatic->getLibStatut(6),
 					'asis'=>1
 					);

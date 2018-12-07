@@ -165,7 +165,7 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'align="right" width="18" class="classfortooltip"',
                         'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3),
                     );
 
