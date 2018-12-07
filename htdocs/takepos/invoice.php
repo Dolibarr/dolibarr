@@ -183,8 +183,8 @@ if ($action == "updatereduction") {
 if ($action == "order" and $placeid != 0) {
     include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
-    $headerorder = '<html><br /><b>' . $langs->trans('Place') . ' ' . $place . '<br /><table width="65%"><thead><tr><th align="left">' . $langs->trans("Label") . '</th><th align="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
-    $footerorder = '</tbody></table>' . dol_print_date(dol_now(), 'dayhour') . '<br /></html>';
+    $headerorder = '<html><br><b>' . $langs->trans('Place') . ' ' . $place . '<br><table width="65%"><thead><tr><th align="left">' . $langs->trans("Label") . '</th><th align="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
+    $footerorder = '</tbody></table>' . dol_print_date(dol_now(), 'dayhour') . '<br></html>';
     $order_receipt_printer1 = "";
     $order_receipt_printer2 = "";
     $catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
@@ -260,10 +260,10 @@ if ($action == "temp" and $placeid != 0) {
     $mysoczip = stringCleanCharts($mysoc->zip);
     $mysocphone = stringCleanCharts($mysoc->phone);
     $mysocurl = stringCleanCharts($mysoc->url);
-    $header_soc = '<html><center><font size="4"><b>' . $mysocname . '</b><br />' . $mysocaddress . '<br />' . $mysoczip . ' ' . $mysoctown . '</font></center><br />' . $langs->trans("Phone") . ': ' . $mysocphone . '<br />' . $mysocurl;
-    $header_ticket = '<br /><br />' . $langs->trans("Temporary ticket") . '<br />' . $langs->trans("date") . ':<br />' . dol_print_date(dol_now(), 'dayhour') . '<br />' . $langs->trans('Place') . ' ' . $place . '<br /><br /><br /><div width="100%" style="border-top-style: double;"></div>';
+    $header_soc = '<html><center><font size="4"><b>' . $mysocname . '</b><br>' . $mysocaddress . '<br>' . $mysoczip . ' ' . $mysoctown . '</font></center><br>' . $langs->trans("Phone") . ': ' . $mysocphone . '<br>' . $mysocurl;
+    $header_ticket = '<br><br>' . $langs->trans("Temporary ticket") . '<br>' . $langs->trans("date") . ':<br>' . dol_print_date(dol_now(), 'dayhour') . '<br>' . $langs->trans('Place') . ' ' . $place . '<br><br><br><div width="100%" style="border-top-style: double;"></div>';
     $body_ticket = '<table width="100%"><thead><tr><th align="left">' . $langs->trans("Label") . '</th><th align="left">' . $langs->trans("Qty") . '</th><th align="left">' . $langs->trans("Price") . '</th><th align="left">' . $langs->trans("TotalTTC") . '</th></tr></thead>';
-    $footer_ticket = '<br /><br />' . $langs->trans("Cashier") . ': ' . $user->firstname . '<br /><center>' . $langs->trans("Thanks for your coming !") . '</center></html>';
+    $footer_ticket = '<br><br>' . $langs->trans("Cashier") . ': ' . $user->firstname . '<br><center>' . $langs->trans("Thanks for your coming !") . '</center></html>';
     $ticket_printer1 = "";
     $catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
     foreach($invoice->lines as $line)
