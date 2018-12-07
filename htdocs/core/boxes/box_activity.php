@@ -165,7 +165,7 @@ class box_activity extends ModeleBoxes
         			);
 
         			$this->info_box_contents[$line][2] = array(
-        			'td' => 'class="right" class="classfortooltip"',
+        			'td' => 'class="right classfortooltip"',
         			'text' => $data[$j]->nb,
         			'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
         			'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
@@ -248,7 +248,7 @@ class box_activity extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][2] = array(
-                        'td' => 'class="right" class="classfortooltip"',
+                        'td' => 'class="right classfortooltip"',
                         'text' => $data[$j]->nb,
                         'tooltip' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut,0,0),
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
@@ -333,14 +333,14 @@ class box_activity extends ModeleBoxes
         			);
 
         			$this->info_box_contents[$line][2] = array(
-        			'td' => 'class="right" class="classfortooltip"',
+        			'td' => 'class="right classfortooltip"',
         			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1,$data[$j]->fk_statut,0),
         			'text' => $data[$j]->nb,
         			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
         			);
 
         			$this->info_box_contents[$line][3] = array(
-        			'td' => 'class="right" class="classfortooltip"',
+        			'td' => 'class="right classfortooltip"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency)
         			);
 
@@ -415,14 +415,14 @@ class box_activity extends ModeleBoxes
         			);
 
         			$this->info_box_contents[$line][2] = array(
-        			'td' => 'class="right" class="classfortooltip"',
+        			'td' => 'class="right classfortooltip"',
         			'text' => $data[$j]->nb,
         			'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(0,$data[$j]->fk_statut,0),
         			'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
         			);
         			$totalnb += $data[$j]->nb;
         			$this->info_box_contents[$line][3] = array(
-        			'td' => 'class="right" class="classfortooltip"',
+        			'td' => 'class="right classfortooltip"',
         			'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
         			);
         			$this->info_box_contents[$line][4] = array(
