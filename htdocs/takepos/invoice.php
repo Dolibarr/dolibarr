@@ -249,7 +249,7 @@ function TakeposPrinting(id){
 }
 </script>
 <?php
-print '<div class="div-table-responsive-no-min">';
+print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
