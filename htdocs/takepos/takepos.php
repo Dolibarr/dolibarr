@@ -298,9 +298,6 @@ function TakeposPrintingTemp(){
 	});
 }
 
-
-
-
 function OpenDrawer(){
 	$.ajax({
 			type: "POST",
@@ -373,8 +370,6 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 										'action'=>'TakeposPrintingTemp();');}
 
 }
-
-
 
 if ($conf->global->TAKEPOSCONNECTOR){
 	$menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"),
