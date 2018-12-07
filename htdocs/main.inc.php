@@ -1472,8 +1472,20 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
 			{
 				$logouthtmltext.=$langs->trans("Logout").'<br>';
+				// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+				// accesskey is for Mac:               CTRL + key for all browsers
+				$stringforfirstkey = 'CTL +';
+				if ($conf->browser->name == 'chrome') 
+				{
+					$stringforfirstkey = 'ALT +';
+				}
+				if ($conf->browser->name == 'firefox') 
+				{
+					$stringforfirstkey = 'ALT + SHIFT +';
+				}
+				$logouthtmltext.=$stringforfirstkey.' l<br>';
 
-				$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+				$logouttext .='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
 				//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 				$logouttext .='<span class="fa fa-sign-out atoplogin"></span>';
 				$logouttext .='</a>';
