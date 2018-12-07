@@ -384,20 +384,27 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringserver = '';
 	$connectstringsource = '';
 	$connectstringtarget = '';
-	
+
 	if (function_exists('imap_open'))
 	{
 		$connectstringserver = $object->getConnectStringIMAP();
 		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $object->user, $object->password);
+		if ($object->user > 0 && $object->password > 0)
+		{
+			$connection = imap_open($connectstringsource, $object->user, $object->password);
+		}
+		else
+		{
+			setEventMessages($langs->trans('LoginAndPasswordCannotBeNull'), null, 'errors');
+		}
 	}
 	else
 	{
 		$morehtml .= 'IMAP functions not available on your PHP';
 	}
-	
+
 	if (! $connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
@@ -412,7 +419,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		imap_close($connection);
 	}
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
 	print '<div class="fichecenter">';
