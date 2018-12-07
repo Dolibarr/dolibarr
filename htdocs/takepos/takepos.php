@@ -368,7 +368,6 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 					if ($conf->global->TAKEPOS_ORDER_PRINTERS){
 						$menus[$r++]=array('title'=>$langs->trans("Temporary ticket"),
 										'action'=>'TakeposPrintingTemp();');}
-
 }
 
 if ($conf->global->TAKEPOSCONNECTOR){
