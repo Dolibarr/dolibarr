@@ -568,3 +568,4 @@ ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
 UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
 ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 
+DROP TABLE llx_ticket_logs;
