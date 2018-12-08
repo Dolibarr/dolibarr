@@ -218,7 +218,9 @@ UPDATE llx_societe_rib set type = 'ban' where type = '' OR type IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY COLUMN type varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN type SET NOT NULL;
    
-   
+
+ALTER TABLE llx_ticket_msg DROP FOREIGN KEY fk_ticket_msg_fk_track_id;
+
 -- Module ticket
 CREATE TABLE llx_ticket
 (
