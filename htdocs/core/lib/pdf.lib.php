@@ -728,7 +728,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
-		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN))    // Note that some countries still need bank number, BIC/IBAN not enought for them
+		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN))    // Note that some countries still need bank number, BIC/IBAN not enougth for them
 		{
 		    // Note:
 		    // bank = code_banque (FR), sort code (GB, IR. Example: 12-34-56)
