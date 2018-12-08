@@ -267,17 +267,6 @@ CREATE TABLE llx_ticket_msg
 
 ALTER TABLE llx_ticket_msg ADD CONSTRAINT fk_ticket_msg_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
-CREATE TABLE llx_ticket_logs
-(
-	rowid       integer AUTO_INCREMENT PRIMARY KEY,
-	entity		integer DEFAULT 1,
-	fk_track_id   varchar(128),
-	fk_user_create	integer,
-	datec datetime,
-	message	text
-)ENGINE=innodb;
-
-ALTER TABLE llx_ticket_logs ADD CONSTRAINT fk_ticket_logs_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
 CREATE TABLE llx_ticket_extrafields
 (
