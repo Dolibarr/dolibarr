@@ -37,7 +37,7 @@ NEW: add option PROPOSAL_AUTO_ADD_AUTHOR_AS_CONTACT
 NEW: Add option to display thirdparty adress in combolist
 NEW: Add option to swap sender/recipient address on PDF
 NEW: Add option to display thirdparty adress in combolist
-NEW: Add project on pament of salaries
+NEW: Add project on payment of salaries
 NEW: Add SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME and
 NEW: Add somes hooks in bank planned entries
 NEW: Add supplier ref in item reception page
