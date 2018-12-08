@@ -796,7 +796,7 @@ if ($id > 0 || ! empty($ref)) {
 			while ( $i < $num ) {
 				$objp = $db->fetch_object($resql);
 
-				print "<tr " . $bc[$var] . ">";
+				print '<tr ' . $bc[$var] . ' data-batch="' . dol_escape_htmltag($objp->batch) . '" data-productid="' . $objp->fk_product . '" >';
 				print '<td>';
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
@@ -804,8 +804,8 @@ if ($id > 0 || ! empty($ref)) {
 
 				if (! empty($conf->productbatch->enabled)) {
 					print '<td class="dispatch_batch_number">' . $objp->batch . '</td>';
-					print '<td class="dispatch_dluo">' . dol_print_date($db->jdate($objp->eatby), 'day') . '</td>';
-					print '<td class="dispatch_dlc">' . dol_print_date($db->jdate($objp->sellby), 'day') . '</td>';
+					print '<td class="dispatch_dluo" data-eatby="' . $db->jdate($objp->eatby) . '" >' . dol_print_date($db->jdate($objp->eatby), 'day') . '</td>';
+					print '<td class="dispatch_dlc" data-sellby="' . $db->jdate($objp->sellby) . '" >' . dol_print_date($db->jdate($objp->sellby), 'day') . '</td>';
 				}
 
 				// Qty
@@ -824,8 +824,8 @@ if ($id > 0 || ! empty($ref)) {
 
 				// Status
 				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
-					print '<td align="right">';
-					$supplierorderdispatch->status = (empty($objp->status) ? 0 : $objp->status);
+				    $supplierorderdispatch->status = (empty($objp->status) ? 0 : $objp->status);
+				    print '<td align="right" data-status="'.$supplierorderdispatch->status.'" >';
 					// print $supplierorderdispatch->status;
 					print $supplierorderdispatch->getLibStatut(5);
 					print '</td>';
