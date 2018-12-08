@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2011-2016 Jean-François Ferry    <hello@librethic.io>
- * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) - 2013-2016 Jean-François FERRY    <hello@librethic.io>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,145 +12,144 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- *       \file       htdocs/ticket/contact.php
- *       \ingroup    ticket
- *       \brief      Contacts of tickets
+ *		\file       htdocs/ticket/agenda.php
+ *    	\ingroup	ticket
+ *    	\brief		Page with events on ticket
  */
 
 require '../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ticket.lib.php';
-
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'ticket'));
+$langs->loadLangs(array('companies', 'other', 'ticket'));
 
 // Get parameters
-$socid = GETPOST("socid", 'int');
-$action = GETPOST("action", 'alpha');
-$track_id = GETPOST("track_id", 'alpha');
-$id = GETPOST("id", 'int');
-$ref = GETPOST('ref', 'alpha');
+$id       = GETPOST('id', 'int');
+$ref      = GETPOST('ref', 'alpha');
+$track_id = GETPOST('track_id', 'alpha', 3);
+$socid    = GETPOST('socid', 'int');
+$action   = GETPOST('action', 'aZ09');
 
-$type = GETPOST('type', 'alpha');
-$source = GETPOST('source', 'alpha');
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield","alpha");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+$page = is_numeric($page) ? $page : 0;
+$page = $page == -1 ? 0 : $page;
+if (! $sortfield) $sortfield="a.datep,a.id";
+if (! $sortorder) $sortorder="DESC";
+$offset = $limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
-$ligne = GETPOST('ligne', 'int');
-$lineid = GETPOST('lineid', 'int');
-
-
-
-
-// Protection if external user
-if ($user->societe_id > 0) {
-    $socid = $user->societe_id;
-    accessforbidden();
+if (GETPOST('actioncode','array'))
+{
+	$actioncode=GETPOST('actioncode','array',3);
+	if (! count($actioncode)) $actioncode='0';
 }
-
-// Store current page url
-$url_page_current = dol_buildpath('/ticket/contact.php', 1);
+else
+{
+	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+}
+$search_agenda_label=GETPOST('search_agenda_label');
 
 $object = new Ticket($db);
+$object->fetch($id, $ref, $track_id);
+
+$extrafields = new ExtraFields($db);
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+if (!$action) {
+	$action = 'view';
+}
+
+
+// Security check
+$id = GETPOST("id",'int');
+$socid=0;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+$result=restrictedArea($user,'ticket',$id,'');
+
+if (!$user->rights->ticket->read) {
+	accessforbidden();
+}
+// restrict access for externals users
+if ($user->societe_id > 0 && ($object->fk_soc != $user->societe_id))
+{
+	accessforbidden('', 0);
+}
+// or for unauthorized internals users
+if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+	accessforbidden('', 0);
+}
+
+
 
 /*
- * Ajout d'un nouveau contact
+ * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->ticket->write) {
-    $result = $object->fetch($id, '', $track_id);
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
-        $contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-        $result = $object->add_contact($contactid, $type, $source);
-    }
-
-    if ($result >= 0) {
-        Header("Location: " . $url_page_current . "?id=" . $object->id);
-        exit;
-    } else {
-        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-            $langs->load("errors");
-            setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-        } else {
-            setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+{
+	$actioncode='';
+	$search_agenda_label='';
 }
 
-// bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->ticket->write) {
-    if ($object->fetch($id, '', $track_id)) {
-        $result = $object->swapContactStatus($ligne);
-    } else {
-        dol_print_error($db, $object->error);
-    }
-}
 
-// Efface un contact
-if ($action == 'deletecontact' && $user->rights->ticket->write) {
-    if ($object->fetch($id, '', $track_id)) {
-        $result = $object->delete_contact($lineid);
-
-        if ($result >= 0) {
-            Header("Location: " . $url_page_current . "?id=" . $object->id);
-            exit;
-        }
-    }
-}
 
 /*
  * View
  */
-$help_url = 'FR:DocumentationModuleTicket';
-llxHeader('', $langs->trans("TicketContacts"), $help_url);
 
 $form = new Form($db);
-$formcompany = new FormCompany($db);
-$contactstatic = new Contact($db);
-$userstatic = new User($db);
+$userstat = new User($db);
+$formticket = new FormTicket($db);
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+$title=$langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Info");
+$help_url = 'FR:DocumentationModuleTicket';
+llxHeader('', $title, $help_url);
 
-if ($id > 0 || !empty($track_id) || !empty($ref)) {
-	if ($object->fetch($id, $ref, $track_id) > 0)
-    {
-        if ($socid > 0) {
+	if ($socid > 0) {
             $object->fetch_thirdparty();
             $head = societe_prepare_head($object->thirdparty);
+
             dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+
             dol_banner_tab($object->thirdparty, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+
             dol_fiche_end();
-        }
+    }
 
         if (!$user->societe_id && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
             $object->next_prev_filter = "te.fk_user_assign = '" . $user->id . "'";
         } elseif ($user->societe_id > 0) {
             $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
         }
-
         $head = ticket_prepare_head($object);
 
-        dol_fiche_head($head, 'contact', $langs->trans("Ticket"), 0, 'ticket');
+        dol_fiche_head($head, 'tabTicketLogs', $langs->trans("Ticket"), 0, 'ticket');
 
         $morehtmlref ='<div class="refidno">';
         $morehtmlref.= $object->subject;
         // Author
         if ($object->fk_user_create > 0) {
-        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
+        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  ';
 
         	$langs->load("users");
         	$fuser = new User($db);
@@ -183,7 +180,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
         if (! empty($conf->projet->enabled))
         {
         	$langs->load("projects");
-        	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        	$morehtmlref.='<br>'.$langs->trans('Project');
         	if ($user->rights->ticket->write)
         	{
         		if ($action != 'classify')
@@ -215,25 +212,26 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
         $linkback = '<a href="' . dol_buildpath('/ticket/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
 
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1, '');
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
         dol_fiche_end();
 
-        //print '<br>';
+    print '<br>';
 
-        $permission = $user->rights->ticket->write;
 
-        // Contacts lines (modules that overwrite templates must declare this into descriptor)
-        $dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-        foreach ($dirtpls as $reldir) {
-            $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-            if ($res) {
-            	break;
-            }
-        }
-    } else {
-        print "ErrorRecordNotFound";
-    }
+if (!empty($object->id))
+{
+	print '<br>';
+	$param='&id='.$object->id;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+
+	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+
+	// List of all actions
+	$filters=array();
+	$filters['search_agenda_label']=$search_agenda_label;
+	show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page
