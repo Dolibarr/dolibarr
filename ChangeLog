@@ -36,10 +36,8 @@ NEW: Add option PDF_DISABLE_MYCOMPANY_LOGO to disable logo on PDF
 NEW: add option PROPOSAL_AUTO_ADD_AUTHOR_AS_CONTACT
 NEW: Add option to display thirdparty adress in combolist
 NEW: Add option to swap sender/recipient address on PDF
-NEW: Add option to display thirdparty adress in combolist
 NEW: Add project on payment of salaries
 NEW: Add SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME and
-NEW: Add somes hooks in bank planned entries
 NEW: Add supplier ref in item reception page
 NEW: Advanced permission to ignore price min
 NEW: Allow to enter a timespent with a numeric value
@@ -85,6 +83,7 @@ NEW: Withdraw request massaction can include already partially paid invoices
 For developers:
 NEW: Add lib for multiselect with checkboxes
 NEW: Add function isValidMXRecord
+NEW: Add somes hooks in bank planned entries
 NEW: Add hook changeRoundingMode in update_price
 NEW: Add hook formconfirm to contractcard
 NEW: Add hook for virtual stock
