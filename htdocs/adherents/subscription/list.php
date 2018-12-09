@@ -159,7 +159,7 @@ if ($search_ref)
 }
 if ($search_lastname) $sql.= natural_search(array('d.lastname','d.societe'), $search_lastname);
 if ($search_firstname) $sql.= natural_search(array('d.firstname'), $search_firstname);
-if ($search_login) $sql.= natural_search('c.subscription', $search_login);
+if ($search_login) $sql.= natural_search('d.login', $search_login);
 if ($search_note)  $sql.= natural_search('c.note', $search_note);
 if ($search_account > 0) $sql.= " AND b.fk_account = ".urldecode($search_account);
 if ($search_amount) $sql.= natural_search('c.subscription', $search_amount, 1);
@@ -234,7 +234,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+//if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
