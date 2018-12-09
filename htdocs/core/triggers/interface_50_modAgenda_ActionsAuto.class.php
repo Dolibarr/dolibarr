@@ -799,7 +799,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
         }
         // Set societeforaction.
-        if ($object->socid > 0)    $societeforaction->fetch($object->socid);
+        if ($object->socid > 0)			$societeforaction->fetch($object->socid);
+        elseif ($object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
 
         $projectid = isset($object->fk_project)?$object->fk_project:0;
         if ($object->element == 'project') $projectid = $object->id;
@@ -811,6 +812,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	$elementid = $object->fk_adherent;
         	$elementtype = 'member';
         }
+        //var_dump($societeforaction);var_dump($contactforaction);exit;
 
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';

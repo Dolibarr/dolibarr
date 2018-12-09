@@ -397,7 +397,7 @@ print '<br><br>';
  */
 //if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 //{
-print load_fiche_titre($langs->trans("BankAccountReleveModule"), '', '');
+print load_fiche_titre($langs->trans("Other"), '', '');
 
 
 print "<table class=\"noborder\" width=\"100%\">\n";

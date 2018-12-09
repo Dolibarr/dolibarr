@@ -39,7 +39,6 @@ SubscriptionLate=Atraso
 SubscriptionNotReceived=filiação não recibida
 ListOfSubscriptions=Lista de Filiações
 SendCardByMail=Enviar ficha por E-mail
-AddMember=Criar membro
 NoTypeDefinedGoToSetup=nenhum tipo de membro definido. ir a configuração -> Tipos de Membros
 DeleteType=Excluir
 Physical=Físico

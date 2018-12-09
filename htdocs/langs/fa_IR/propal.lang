@@ -33,7 +33,7 @@ PropalStatusSigned=امضا (نیازهای حسابداری و مدیریت)
 PropalStatusNotSigned=امضا نشده (بسته شده)
 PropalStatusBilled=ثبت شده در صورتحساب یا لیست
 PropalStatusDraftShort=پیش نویس
-PropalStatusValidatedShort=اعتبار
+PropalStatusValidatedShort=Validated (open)
 PropalStatusClosedShort=بسته
 PropalStatusSignedShort=امضاء شده
 PropalStatusNotSignedShort=امضا نشده
@@ -53,9 +53,9 @@ ErrorPropalNotFound=Propal٪ s را یافت نشد
 AddToDraftProposals=اضافه کردن به پیش نویس پیشنهاد
 NoDraftProposals=بدون پیش نویس پیشنهادات
 CopyPropalFrom=ایجاد طرح های تجاری با کپی کردن طرح های موجود
-CreateEmptyPropal=ایجاد خالی طرح تجاری vierge و یا از لیست محصولات / خدمات
+CreateEmptyPropal=Create empty commercial proposal or from list of products/services
 DefaultProposalDurationValidity=پیش فرض طول مدت اعتبار پیشنهاد های تجاری (در روز)
-UseCustomerContactAsPropalRecipientIfExist=اگر به جای آدرس شخص ثالث به عنوان آدرس دریافت کننده پیشنهاد تعریف شده استفاده از آدرس ارتباط با مشتری
+UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
 ClonePropal=پیشنهاد تجاری کلون
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
@@ -78,6 +78,7 @@ TypeContact_propal_external_CUSTOMER=تماس با مشتری را در پی ب�
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=یک مدل پیشنهاد کامل (logo. ..)
+DocModelCyanDescription=یک مدل پیشنهاد کامل (logo. ..)
 DefaultModelPropalCreate=ایجاد مدل پیش فرض
 DefaultModelPropalToBill=قالب پیش فرض هنگام بستن یک طرح کسب و کار (به صورتحساب می شود)
 DefaultModelPropalClosed=قالب پیش فرض هنگام بستن یک طرح کسب و کار (unbilled)

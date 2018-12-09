@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=العميل SOAP فشلت مع الخطأ '٪ ق'
 ErrorGlobalVariableUpdater5=لا متغير عمومي مختارة
 ErrorFieldMustBeANumeric=يجب أن يكون <b>حقل٪ الصورة</b> قيمة رقمية
 ErrorMandatoryParametersNotProvided=معيار إلزامي (ق) لم تقدم
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=سيئة تعريف القائمة صفيف في الوحدة واصف (القيمة سيئة لfk_menu مفتاح)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on anothe
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=Description is mandatory for lines with free product
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
 WarningMandatorySetupNotComplete=لا يتم تعريف معلمات الإعداد إلزامية حتى الآن
