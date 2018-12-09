@@ -899,11 +899,6 @@ class Ticket extends CommonObject
         }
 
         if (!$error) {
-        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_logs";
-        	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
-        	$resql = $this->db->query($sql);
-        }
-        if (!$error) {
         	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_msg";
         	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
         	$resql = $this->db->query($sql);
@@ -1487,14 +1482,16 @@ class Ticket extends CommonObject
      *         1- create entry into database for message storage
      *         2- if trigger, send an email to ticket contacts
      *
-     *   @param  User   $user    User that create
-     *   @param  string $message Log message
-     *  @param  int    $noemail 0=send email after, 1=disable emails
-     *   @return int                 <0 if KO, >0 if OK
+     *   @param  User   $user    	User that create
+     *   @param  string $message 	Log message
+     *   @param  int    $noemail 	0=send email after, 1=disable emails
+     *   @return int             	<0 if KO, >0 if OK
      */
     public function createTicketLog(User $user, $message, $noemail = 0)
     {
         global $conf, $langs;
+
+        $error = 0;
 
         $this->db->begin();
 
@@ -1507,37 +1504,23 @@ class Ticket extends CommonObject
             return -1;
         }
 
-        // Insert request
-        $sql = "INSERT INTO " . MAIN_DB_PREFIX . "ticket_logs(";
-        $sql .= "entity,";
-        $sql .= "datec,";
-        $sql .= "fk_track_id,";
-        $sql .= "fk_user_create,";
-        $sql .= "message";
-        $sql .= ") VALUES (";
-        $sql .= " " . $conf->entity . ",";
-        $sql .= " '" . $this->db->idate(dol_now()) . "',";
-        $sql .= " '" . $this->db->escape($this->track_id) . "',";
-        $sql .= " " . ($user->id > 0 ? $user->id : 'NULL') . ",";
-        $sql .= " '" . $this->db->escape($message) . "'";
-        $sql .= ")";
+        // TODO Should call the trigger TICKET_MODIFY with $this->context with all data to record event
+        // so the event is stored by the agenda/event trigger
 
-        dol_syslog(get_class($this) . "::create_ticket_log sql=" . $sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql) {
-            if ($conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL && !$noemail) {
-                $this->sendLogByEmail($user, $message);
-            }
+        if (!$error) {
+        	$this->db->commit();
 
-            if (!$error) {
-                $this->db->commit();
-                return 1;
-            }
-        } else {
-            $this->db->rollback();
-            $this->error = "Error " . $this->db->lasterror();
-            dol_syslog(get_class($this) . "::create_ticket_log " . $this->error, LOG_ERR);
-            return -1;
+        	if ($conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL && !$noemail) {
+        		$this->sendLogByEmail($user, $message);
+        	}
+
+        	return 1;
+        }
+        else
+        {
+        	$this->db->rollback();
+
+        	return -1;
         }
     }
 
@@ -1647,6 +1630,8 @@ class Ticket extends CommonObject
         }
         // Cache deja charge
 
+        // TODO Read the table llx_actioncomm
+        /*
         $sql = "SELECT rowid, fk_user_create, datec, message";
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticket_logs";
         $sql .= " WHERE fk_track_id ='" . $this->db->escape($this->track_id) . "'";
@@ -1669,7 +1654,9 @@ class Ticket extends CommonObject
             $this->error = "Error " . $this->db->lasterror();
             dol_syslog(get_class($this) . "::loadCacheLogsTicket " . $this->error, LOG_ERR);
             return -1;
-        }
+        }*/
+
+        return 0;
     }
 
     /**
