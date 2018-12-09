@@ -186,7 +186,7 @@ class EcmFiles extends CommonObject
 			$ref=$this->ref;
 		}
 		else {
-			include_once DOL_DOCUMENT_ROOT.'/lib/security.lib.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
 		}
 
