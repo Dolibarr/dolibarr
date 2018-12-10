@@ -60,7 +60,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
 
 $massaction = GETPOST('massaction');
-$toselect = (array)GETPOST('toselect');
+$toselect = GETPOST('toselect', 'array');
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
