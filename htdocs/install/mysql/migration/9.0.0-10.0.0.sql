@@ -36,3 +36,17 @@
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CREATE','Ticket created','Executed when a ticket is created','ticket',161);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_MODIFY','Ticket modified','Executed when a ticket is modified','ticket',163);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',164);
+
+create table llx_mailing_unsubscribe
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,	         -- multi company id
+  email				varchar(255),
+  unsubscribegroup	varchar(128) DEFAULT '',
+  ip				varchar(128),
+  date_creat		datetime,                            -- creation date
+  tms               timestamp
+)ENGINE=innodb;
+
+ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
+
