@@ -57,7 +57,7 @@ else
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$countryCode=substr($vatNumber,0,2);
 	$vatNumber=substr($vatNumber,2);
-	
+
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
 	print '<br>';
@@ -176,4 +176,4 @@ if ($messagetoshow)
 
 // End of page
 llxFooter();
-$db->close();;
+$db->close();

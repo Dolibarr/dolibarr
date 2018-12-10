@@ -276,6 +276,7 @@ TicketNotificationLogMessage=Log message
 TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
 TicketNotificationNumberEmailSent=Notification email sent : %s
 
+ActionsOnTicket=Events on ticket
 
 #
 # Boxes

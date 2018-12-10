@@ -1,6 +1,6 @@
 # Language file - Source file is en_US - cashdesk
 CashDeskMenu=POS Kasse
-CashDesk=Kasse
+CashDesk=Verkaufsstelle
 CashDeskBankCash=Bankkonto (Bargeld)
 CashDeskBankCB=Bankkonto (Kartenzahlung)
 CashDeskBankCheque=Bankkonto(Scheckzahlung)
@@ -30,5 +30,15 @@ ShowCompany=Zeige Unternehmen
 ShowStock=Zeige Lager
 DeleteArticle=Klicken, um diesen Artikel zu entfernen
 FilterRefOrLabelOrBC=Suche (Art-Nr./Name)
-UserNeedPermissionToEditStockToUsePos=Sie bitten, ab dem Rechnungserstellung zu verringern, so dass Benutzer, die POS verwenden müssen, um die Erlaubnis, Lager zu bearbeiten.
+UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that uses POS needs to have permission to edit stock.
 DolibarrReceiptPrinter=Dolibarr Quittungsdrucker
+PointOfSale=Kassen
+PointOfSaleShort=POS
+CloseBill=Close Bill
+Floors=Floors
+Floor=Etage
+AddTable=Tisch hinzufügen
+Place=Platz
+TakeposConnectorNecesary='TakePOS Connector' required
+OrderPrinters=Bondrucker
+SearchProduct=Produkt suchen

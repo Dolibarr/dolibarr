@@ -97,7 +97,7 @@ class modCashDesk extends DolibarrModules
 		// This is to declare the Top Menu entry:
 		$this->menu[$r]=array(	    'fk_menu'=>0,			// Put 0 if this is a top menu
 									'type'=>'top',			// This is a Top menu entry
-									'titre'=>'CashDeskMenu',
+									'titre'=>'PointOfSaleShort',
 									'mainmenu'=>'cashdesk',
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

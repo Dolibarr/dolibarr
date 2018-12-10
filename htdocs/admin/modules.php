@@ -701,7 +701,10 @@ if ($mode == 'common')
         	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
         		if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) print $langs->trans("Used");
-        		else print $langs->trans("Required");
+        		else {
+        			print img_picto($langs->trans("Required"),'switch_on');
+        			print $langs->trans("Required");
+        		}
         		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
         	}
         	else
