@@ -22,7 +22,8 @@
  *     \brief      	Page that build two frames: One for menu, the other for the target page to show
  *					Usage:
  *					  mydomain.com/externalsite/frames.php to show URL set into setup
- *					  mydomain.com/externalsite/frames.php?keyforcontent to show content defined into conf->global->$keyforcontent
+ *					  mydomain.com/externalsite/frames.php?keyforcontent=EXTERNAL_SITE_CONTENT_abc to show html text defined into $conf->global->EXTERNAL_SITE_CONTENT_abc
+ *					  mydomain.com/externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into $conf->global->EXTERNAL_SITE_URL_abc
  */
 
 require '../main.inc.php';
@@ -56,10 +57,11 @@ if (! empty($keyforcontent))
 
 	print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight']-90).'px">';
 
-	if (! preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent))
+	if (! preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent)
+		 && ! preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
 	{
 		$langs->load("errors");
-		print $langs->trans("Variablekeyforcontentmustbenamed", 'EXTERNAL_SITE_CONTENT_');
+		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);
 	}
 	else if (empty($conf->global->$keyforcontent))
 	{
@@ -68,7 +70,44 @@ if (! empty($keyforcontent))
 	}
 	else
 	{
-		print $conf->global->$keyforcontent;
+		if (preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent))
+		{
+			print $conf->global->$keyforcontent;
+		}
+		elseif (preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
+		{
+			print "
+			<html>
+			<head>
+			<title>Dolibarr frame for external web site</title>
+			</head>
+
+			<frameset ".(empty($conf->global->MAIN_MENU_INVERT)?"rows":"cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
+			    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
+			  ";
+					print '<frame name="main" src="';
+					print $conf->global->$keyforcontent;
+					print '">';
+					print "
+			    <noframes>
+			    <body>
+
+			    </body>
+			    </noframes>
+			</frameset>
+
+			<noframes>
+			<body>
+				<br><div class=\"center\">
+				Sorry, your browser is too old or not correctly configured to view this area.<br>
+				Your browser must support frames.<br>
+				</div>
+			</body>
+			</noframes>
+
+			</html>
+			";
+		}
 	}
 
 	print '<div>';
