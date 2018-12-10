@@ -31,7 +31,7 @@ class MenuManager
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	var $type_user;									// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // To store default target to use onto links
 	var $name="eldy";
@@ -109,6 +109,7 @@ class MenuManager
         $menuArbo = new Menubase($this->db,'eldy');
         $menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
         $this->tabMenu=$tabMenu;
+        //var_dump($tabMenu);
 
         //if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
     }
@@ -116,7 +117,7 @@ class MenuManager
 
     /**
      *  Show menu.
-     *  Module defined in sql tables are stored into this->tabMenu BEFORE this is called.
+     *  Module defined in sql tables were stored into $this->tabMenu BEFORE this is called.
      *
      *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
      *  @param	array	$moredata		An array with more data to output
@@ -125,6 +126,8 @@ class MenuManager
     function showmenu($mode, $moredata=null)
     {
     	global $conf, $langs, $user;
+
+    	//var_dump($this->tabMenu);
 
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 

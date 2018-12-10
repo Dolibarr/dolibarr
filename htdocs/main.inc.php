@@ -510,7 +510,7 @@ if (! defined('NOLOGIN'))
 					$error++;
 				}
 				// End Call of triggers
-				
+
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -626,13 +626,13 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-			
+
 				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
-				
+
 				$user->trigger_mesg=$user->error;
 			}
 
@@ -644,7 +644,7 @@ if (! defined('NOLOGIN'))
 				$error++;
 			}
 			// End call triggers
-			
+
 			// Hooks on failed login
 			$action='';
 			$hookmanager->initHooks(array('login'));
@@ -689,7 +689,7 @@ if (! defined('NOLOGIN'))
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
-				
+
 				$user->trigger_mesg=$user->error;
 			}
 
@@ -701,7 +701,7 @@ if (! defined('NOLOGIN'))
 				$error++;
 			}
 			// End call triggers
-			
+
 			// Hooks on failed login
 			$action='';
 			$hookmanager->initHooks(array('login'));
@@ -799,7 +799,7 @@ if (! defined('NOLOGIN'))
 			$error++;
 		}
 		// End call triggers
-		
+
 		// Hooks on successfull login
 		$action='';
 		$hookmanager->initHooks(array('login'));
@@ -1074,7 +1074,7 @@ if (! function_exists("llxHeader"))
 
 		if (empty($conf->dol_hide_leftmenu))
 		{
-			left_menu('', $help_url, '', '', 1, $title, 1);
+			left_menu('', $help_url, '', '', 1, $title, 1);		// $menumanager is retreived with a global $menumanager inside this function
 		}
 
 		// main area
