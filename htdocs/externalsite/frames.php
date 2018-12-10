@@ -76,7 +76,7 @@ if (! empty($keyforcontent))
 		}
 		elseif (preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
 		{
-			print "
+			/*print "
 			<html>
 			<head>
 			<title>Dolibarr frame for external web site</title>
@@ -106,7 +106,8 @@ if (! empty($keyforcontent))
 			</noframes>
 
 			</html>
-			";
+			";*/
+			print '<iframe src="'.$conf->global->$keyforcontent.'"></iframe>';
 		}
 	}
 
