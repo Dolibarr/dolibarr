@@ -500,6 +500,17 @@ if (! defined('NOLOGIN'))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
 
+				// Call trigger for the "security events" log
+				$user->trigger_mesg='ErrorBadValueForCode - login='.GETPOST("username","alpha",2);
+				// Call of triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++;
+				}
+				// End Call of triggers
+				
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -568,6 +579,17 @@ if (! defined('NOLOGIN'))
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
 				if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
+				// Call trigger for the "security events" log
+				$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
+				// Call of triggers
+				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
+				if ($result < 0) {
+					$error++;
+				}
+				// End Call of triggers
+
 				// Hooks on failed login
 				$action='';
 				$hookmanager->initHooks(array('login'));
@@ -604,12 +626,25 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+			
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
+				
+				$user->trigger_mesg=$user->error;
 			}
 
+			// Call triggers for the "security events" log
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+			
 			// Hooks on failed login
 			$action='';
 			$hookmanager->initHooks(array('login'));
@@ -648,12 +683,25 @@ if (! defined('NOLOGIN'))
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+
+				$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
 			}
 			if ($resultFetchUser < 0)
 			{
 				$_SESSION["dol_loginmesg"]=$user->error;
+				
+				$user->trigger_mesg=$user->error;
 			}
 
+			// Call triggers for the "security events" log
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+			
 			// Hooks on failed login
 			$action='';
 			$hookmanager->initHooks(array('login'));
@@ -741,6 +789,17 @@ if (! defined('NOLOGIN'))
 
 		$loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
+		// Call triggers for the "security events" log
+		$user->trigger_mesg = $loginfo;
+		// Call triggers
+		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
+		if ($result < 0) {
+			$error++;
+		}
+		// End call triggers
+		
 		// Hooks on successfull login
 		$action='';
 		$hookmanager->initHooks(array('login'));
@@ -752,7 +811,7 @@ if (! defined('NOLOGIN'))
 		{
 			$db->rollback();
 			session_destroy();
-			dol_print_error($db,'Error in some hooks afterLogin');
+			dol_print_error($db,'Error in some triggers USER_LOGIN or in some hooks afterLogin');
 			exit;
 		}
 		else
