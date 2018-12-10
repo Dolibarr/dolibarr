@@ -235,3 +235,4 @@ WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security pur
 WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translation key for this language
 WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=Warning, the date of line is not in the range of the expense report
+WarningProjectClosed=Project is closed. You must re-open it before.
