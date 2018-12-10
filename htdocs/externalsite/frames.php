@@ -61,12 +61,12 @@ if (! empty($keyforcontent))
 		 && ! preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
 	{
 		$langs->load("errors");
-		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);
+		print $langs->trans("ErrorBadSyntaxForParamKeyForContent", 'EXTERNAL_SITE_CONTENT_', 'EXTERNAL_SITE_URL_');
 	}
 	else if (empty($conf->global->$keyforcontent))
 	{
 		$langs->load("errors");
-		print $langs->trans("ErrorNoContentDefinedIntoVar", $keyforcontent);
+		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);
 	}
 	else
 	{
