@@ -21,9 +21,9 @@
  *     \ingroup    	externalsite
  *     \brief      	Page that build two frames: One for menu, the other for the target page to show
  *					Usage:
- *					  mydomain.com/externalsite/frames.php to show URL set into setup
- *					  mydomain.com/externalsite/frames.php?keyforcontent=EXTERNAL_SITE_CONTENT_abc to show html text defined into $conf->global->EXTERNAL_SITE_CONTENT_abc
- *					  mydomain.com/externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into $conf->global->EXTERNAL_SITE_URL_abc
+ *					  /externalsite/frames.php to show URL set into setup
+ *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_CONTENT_abc to show html text defined into $conf->global->EXTERNAL_SITE_CONTENT_abc
+ *					  /externalsite/frames.php?keyforcontent=EXTERNAL_SITE_URL_abc to show URL defined into $conf->global->EXTERNAL_SITE_URL_abc
  */
 
 require '../main.inc.php';

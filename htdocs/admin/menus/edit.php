@@ -288,10 +288,13 @@ if ($action == 'create')
     		{
 				jQuery("#menuId").prop("disabled", true);
 	    		jQuery("#menuId").val(\'\');
+				jQuery("#propertymainmenu").removeAttr("disabled");
+	    		jQuery("#propertymainmenu").val(\'\');
 			}
-    		else
+    		if (jQuery("#topleft").val() == \'left\')
     		{
 				jQuery("#menuId").removeAttr("disabled");
+				jQuery("#propertymainmenu").prop("disabled", true);
     		}
     	}
     	init_topleft();
@@ -365,14 +368,7 @@ if ($action == 'create')
 
     // Mainmenu code
     print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-    /*if ($parent_rowid)
-    {
-    	print '<td>'.$parent_rowid.'<input type="hidden" name="propertyleftmenu" value="'.$parent_rowid.'"></td>';
-    }
-    else
-    {*/
-    	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):'').'"></td>';
-    //}
+   	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):'').'"></td>';
     print '<td>';
     print $langs->trans("Example").': mytopmenukey';
     print '</td></tr>';
@@ -468,18 +464,21 @@ elseif ($action == 'edit')
     print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
     // Mainmenu code
-    print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-    /*if ($parent_rowid)
-     {
-     print '<td>'.$parent_rowid.'<input type="hidden" name="propertyleftmenu" value="'.$parent_rowid.'"></td>';
-     }
-     else
-     {*/
-    print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):$menu->mainmenu).'"></td>';
-    //}
-    print '<td>';
-    print $langs->trans("Example").': mytopmenukey';
-    print '</td></tr>';
+    if ($menu->type == 'top')
+    {
+	    print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
+	    /*if ($parent_rowid)
+	     {
+	     print '<td>'.$parent_rowid.'<input type="hidden" name="propertyleftmenu" value="'.$parent_rowid.'"></td>';
+	     }
+	     else
+	     {*/
+	    print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha')?GETPOST("propertymainmenu", 'alpha'):$menu->mainmenu).'"></td>';
+	    //}
+	    print '<td>';
+	    print $langs->trans("Example").': mytopmenukey';
+	    print '</td></tr>';
+    }
 
     // MenuId Parent
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent');
