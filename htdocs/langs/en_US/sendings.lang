@@ -69,4 +69,4 @@ SumOfProductWeights=Sum of product weights
 
 # warehouse details
 DetailWarehouseNumber= Warehouse details
-DetailWarehouseFormat= W:%s (Qty : %d)
+DetailWarehouseFormat= W:%s (Qty: %d)
