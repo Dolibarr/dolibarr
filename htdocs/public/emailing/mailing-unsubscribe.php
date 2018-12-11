@@ -100,19 +100,21 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
 
-	// Update status communication of thirdparty prospect (old data)
+	/*
+	// Update status communication of thirdparty prospect (old usage)
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
 
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
 
-    // Update status communication of contact prospect (old data)
+    // Update status communication of contact prospect (old usage)
 	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
 
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
+	*/
 
-	// Update status communication of contact prospect (old data)
+	// Update status communication of email (new usage)
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$obj->entity.", '".$obj->email."')";
 
 	$resql=$db->query($sql);

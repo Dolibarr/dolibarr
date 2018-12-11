@@ -194,7 +194,6 @@ if (empty($reshook))
         $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
         $object->fax			= GETPOST("fax",'alpha');
         $object->jabberid		= GETPOST("jabberid",'alpha');
-		$object->no_email		= GETPOST("no_email",'int');
         $object->priv			= GETPOST("priv",'int');
         $object->note_public	= GETPOST("note_public",'none');
         $object->note_private	= GETPOST("note_private",'none');
@@ -367,7 +366,6 @@ if (empty($reshook))
             $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
             $object->fax			= GETPOST("fax",'alpha');
             $object->jabberid		= GETPOST("jabberid",'alpha');
-			$object->no_email		= GETPOST("no_email",'int');
             $object->priv			= GETPOST("priv",'int');
             $object->note_public	= GETPOST("note_public",'none');
        		$object->note_private	= GETPOST("note_private",'none');
@@ -651,8 +649,21 @@ else
 	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" value="'.dol_escape_htmltag(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(GETPOST("no_email",'alpha')?GETPOST("no_email",'alpha'):$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			      {
@@ -925,8 +936,21 @@ else
             print '<tr>';
             if (! empty($conf->mailing->enabled))
             {
+            	$noemail = '';
+            	if (empty($noemail) && ! empty($object->email))
+            	{
+            		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+            		//print $sql;
+            		$resql=$db->query($sql);
+            		if ($resql)
+            		{
+            			$obj=$db->fetch_object($resql);
+            			$noemail = $obj->nb;
+            		}
+            	}
+
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-	            print '<td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOSTISSET("no_email")?GETPOST("no_email",'alpha'):$noemail), 1).'</td>';
             }
             else
 			{
@@ -1160,10 +1184,23 @@ else
             print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
         }
 
-        // Unsubscribe
+        // Unsubscribe opt-out
         if (!empty($conf->mailing->enabled))
         {
-        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
+        	//print 'eee'.$object->email;
+        	$noemail = $object->no_email;
+        	if (empty($noemail) && ! empty($object->email))
+        	{
+        		$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$db->escape($object->email)."'";
+        		//print $sql;
+        		$resql=$db->query($sql);
+        		if ($resql)
+        		{
+        			$obj=$db->fetch_object($resql);
+        			$noemail = $obj->nb;
+        		}
+        	}
+        	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($noemail).'</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
