@@ -228,3 +228,4 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD UNIQUE INDEX uk_emailcol
 ALTER TABLE llx_societe_rib ADD COLUMN   comment        varchar(255);
 ALTER TABLE llx_societe_rib ADD COLUMN   ipaddress      varchar(68);
 
+DROP TABLE llx_ticket_logs;
