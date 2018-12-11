@@ -1643,6 +1643,8 @@ class Ticket extends CommonObject
         }
         // Cache deja charge
 
+        // TODO Read the table llx_actioncomm
+        /*
         $sql = "SELECT rowid, fk_user_create, datec, message";
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticket_logs";
         $sql .= " WHERE fk_track_id ='" . $this->db->escape($this->track_id) . "'";
@@ -1665,7 +1667,9 @@ class Ticket extends CommonObject
             $this->error = "Error " . $this->db->lasterror();
             dol_syslog(get_class($this) . "::loadCacheLogsTicket " . $this->error, LOG_ERR);
             return -1;
-        }
+        }*/
+        
+        return 0;
     }
 
     /**
