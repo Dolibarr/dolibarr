@@ -589,7 +589,6 @@ class Menubase
 
             $a = 0;
             $b = 0;
-            $oldrowid=0;
             while ($a < $numa)
             {
                 //$objm = $this->db->fetch_object($resql);
