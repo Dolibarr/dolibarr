@@ -126,11 +126,6 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['jabberid']; ?>"></td>
-</tr>
-
-<tr>
 	<td><?php echo $langs->trans("ContactVisibility"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_visibility']; ?></td>
 </tr>

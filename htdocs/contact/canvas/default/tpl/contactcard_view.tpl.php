@@ -111,11 +111,6 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['jabberid']; ?></td>
-</tr>
-
-<tr>
 	<td><?php echo $langs->trans("ContactVisibility"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['visibility']; ?></td>
 </tr>

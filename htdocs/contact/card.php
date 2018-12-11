@@ -660,12 +660,14 @@ else
             }
             print '</tr>';
 
-            // Instant message and no email
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-            print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
-
             if (! empty($conf->socialnetworks->enabled))
             {
+            	// Jabber
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="skype">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
@@ -919,9 +921,8 @@ else
             }
             print '</tr>';
 
-            // Jabberid
-            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-	        print '<td><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+            // Unsubscribe
+            print '<tr>';
             if (! empty($conf->mailing->enabled))
             {
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
@@ -935,6 +936,12 @@ else
 
             if (! empty($conf->socialnetworks->enabled))
             {
+            	// Jabber ID
+            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            	{
+            		print '<tr><td><label for="jabberid">'.fieldLabel('Jabber','jabberid').'</label></td>';
+            		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            	}
             	// Skype
             	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
             	{
@@ -1153,8 +1160,7 @@ else
             print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
         }
 
-        // Instant message and no email
-        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td></tr>';
+        // Unsubscribe
         if (!empty($conf->mailing->enabled))
         {
         	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
