@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banco
-MenuBankCash=Bank | Cash
+MenuBankCash=Bancos | Cajas
 MenuVariousPayment=Pagos varios
 MenuNewVariousPayment=Nuevo pago varios
 BankName=Nombre del banco
