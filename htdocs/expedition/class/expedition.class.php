@@ -163,6 +163,7 @@ class Expedition extends CommonObject
 	 * Closed status
 	 */
 	const STATUS_CLOSED = 2;
+	const STATUS_SHIPPED = 3;
 
 
 
@@ -185,6 +186,7 @@ class Expedition extends CommonObject
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
 		$this->statuts[2]  = 'StatusSendingProcessed';
+		$this->statuts[3]  = 'StatusSendingShipped';
 
 		// List of short language codes for status
 		$this->statutshorts = array();
@@ -192,6 +194,7 @@ class Expedition extends CommonObject
 		$this->statutshorts[0]  = 'StatusSendingDraftShort';
 		$this->statutshorts[1]  = 'StatusSendingValidatedShort';
 		$this->statutshorts[2]  = 'StatusSendingProcessedShort';
+		$this->statutshorts[3]  = 'StatusSendingShippedShort';
 
 		/* Status "billed" or not is managed by another field than status
 		if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
@@ -639,6 +642,60 @@ class Expedition extends CommonObject
 		}
 	}
 
+	/**
+	 *	Classify the shipping as shipped
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function ship()
+	{
+		global $conf,$langs,$user;
+
+		$error=0;
+
+		$this->db->begin();
+
+		$now=dol_now();
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut=3";
+		$sql.= ", date_shipped = '".$this->db->idate($now)."'";
+		$sql.= ", fk_user_shipped = ".$user->id;
+		$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 2";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->statut=3;
+			
+			if (! $error)
+			{
+    				// Call trigger
+    				$result=$this->call_trigger('SHIPPING_MODIFY',$user);
+    				if ($result < 0)
+				{
+    					$error++;
+    				}
+   			}
+
+		} 
+		else
+		{
+			$error++;
+			$this->errors[]=$this->db->lasterror();
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+	
 	/**
 	 *  Validate object and update stock if option enabled
 	 *
@@ -1664,32 +1721,37 @@ class Expedition extends CommonObject
 		if ($mode==0)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return $langs->trans($this->statuts[$statut]);
+      elseif ($statut==1) return $langs->trans($this->statuts[$statut]);
 			elseif ($statut==2) return $langs->trans($this->statuts[$statut]);
+			elseif ($statut==3) return $langs->trans($this->statuts[$statut]);
 		}
 		elseif ($mode==1)
 		{
 			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
-			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]);
+      elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]);
 			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]);
+			elseif ($statut==3) return $langs->trans($this->statutshorts[$statut]);
 		}
 		elseif ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+      elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
 			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut9');
 		}
 		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+      elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut9').' '.$langs->trans($this->statuts[$statut]);
 		}
 		elseif ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+      elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
 			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			elseif ($statut==3) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut9');
 		}
 	}
 

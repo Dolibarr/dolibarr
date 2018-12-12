@@ -37,9 +37,11 @@ create table llx_expedition
   fk_user_modif         integer,						-- author of last change
   date_valid            datetime,						-- date de validation
   fk_user_valid         integer,						-- valideur
-  date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
+  date_shipped          datetime DEFAULT NULL,						-- date du statut shipped
+  fk_user_shipped       integer,						-- id auteur défini statut shipped
+  date_delivery			    datetime  DEFAULT NULL,		-- date planned of delivery
   date_expedition       datetime,						-- not used (deprecated)
-  fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)
+  fk_address  			    integer		DEFAULT NULL, 		-- delivery address (deprecated)
   fk_shipping_method    integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option
