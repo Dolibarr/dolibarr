@@ -28,12 +28,18 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("members");
+$langs->load(array("members","companies"));
 
-$filter=$_GET["filter"];
-$statut=isset($_GET["statut"])?$_GET["statut"]:1;
+$action=GETPOST('action','aZ09');
+$massaction=GETPOST('massaction','alpha');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
+$filter=GETPOST("filter","alpha");
+$statut=(GETPOSTISSET("statut")?GETPOST("statut","alpha"):1);
 $search_ref=GETPOST('search_ref','alpha');
 $search_lastname=GETPOST('search_lastname','alpha');
+$search_firstname=GETPOST('search_firstname','alpha');
 $search_login=GETPOST('search_login','alpha');
 $search_note=GETPOST('search_note','alpha');
 $search_account=GETPOST('search_account','int');
@@ -67,6 +73,20 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 $fieldstosearchall = array(
 );
 $arrayfields=array(
+	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
+	'd.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
+	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
+	't.libelle'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+	'd.bank'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1, 'enabled'=>(! empty($conf->banque->enabled))),
+	/*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
+	 'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
+	'd.datedebut'=>array('label'=>$langs->trans("DateSubscription"), 'checked'=>1, 'position'=>100),
+	'd.datefin'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>101),
+	'd.amount'=>array('label'=>$langs->trans("Amount"), 'checked'=>1, 'position'=>102),
+	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+//	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
 );
 
 // Security check
@@ -74,7 +94,7 @@ $result=restrictedArea($user,'adherent','','','cotisation');
 
 
 /*
- *	Actions
+ * Actions
  */
 
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
@@ -111,15 +131,16 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
+$subscription=new Subscription($db);
+$adherent=new Adherent($db);
+$accountstatic=new Account($db);
 
-llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
+$now=dol_now();
 
 // List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo,";
 $sql.= " c.rowid as crowid, c.subscription,";
-$sql.= " c.dateadh,";
-$sql.= " c.datef,";
+$sql.= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql.= " c.fk_bank as bank, c.note,";
 $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
@@ -136,253 +157,444 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql.= " AND (c.rowid = ".$db->escape($search_ref).")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
-if ($search_lastname) $sql.= natural_search(array('d.firstname','d.lastname','d.societe'), $search_lastname);
-if ($search_login) $sql.= natural_search('c.subscription', $search_login);
+if ($search_lastname) $sql.= natural_search(array('d.lastname','d.societe'), $search_lastname);
+if ($search_firstname) $sql.= natural_search(array('d.firstname'), $search_firstname);
+if ($search_login) $sql.= natural_search('d.login', $search_login);
 if ($search_note)  $sql.= natural_search('c.note', $search_note);
-if ($search_account > 0) $sql.= " AND b.fk_account = ".$search_account;
+if ($search_account > 0) $sql.= " AND b.fk_account = ".urldecode($search_account);
 if ($search_amount) $sql.= natural_search('c.subscription', $search_amount, 1);
+
+// Add where from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= $db->order($sortfield,$sortorder);
 
+// Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
+    $resql = $db->query($sql);
+    if ($resql) $nbtotalofrecords = $db->num_rows($resql);
+    else dol_print_error($db);
     if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
     {
     	$page = 0;
     	$offset = 0;
     }
 }
-
+// Add limit
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result)
+if (! $result)
 {
-    $num = $db->num_rows($result);
+	dol_print_error($db);
+	exit;
+}
 
-	$arrayofselected=is_array($toselect)?$toselect:array();
+$num = $db->num_rows($result);
 
-	$i = 0;
+$arrayofselected=is_array($toselect)?$toselect:array();
 
-    $title=$langs->trans("ListOfSubscriptions");
-    if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+{
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	header("Location: ".DOL_URL_ROOT.'/adherents/subscription/card.php?id='.$id);
+	exit;
+}
 
-    $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    if ($statut != '')    $param.="&statut=".$statut;
-    if ($date_select)     $param.="&date_select=".$date_select;
-    if ($search_lastname) $param.="&search_lastname=".$search_lastname;
-	if ($search_login)    $param.="&search_login=".$search_login;
-	if ($search_acount)   $param.="&search_account=".$search_account;
-	if ($search_amount)   $param.="&search_amount=".$search_amount;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-	// List of mass actions available
-	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
-	    //'builddoc'=>$langs->trans("PDFMerge"),
-	);
-	if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+$i = 0;
 
-	$newcardbutton='';
-	if ($user->rights->adherent->cotisation->creer)
-	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1"><span class="valignmiddle">'.$langs->trans('NewSubscription').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+$title=$langs->trans("ListOfSubscriptions");
+if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
 
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-    print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
-    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if ($statut != '')    $param.="&statut=".urlencode($statut);
+if ($date_select)     $param.="&date_select=".urlencode($date_select);
+if ($search_lastname) $param.="&search_lastname=".urlencode($search_lastname);
+if ($search_login)    $param.="&search_login=".urlencode($search_login);
+if ($search_acount)   $param.="&search_account=".urlencode($search_account);
+if ($search_amount)   $param.="&search_amount=".urlencode($search_amount);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+// List of mass actions available
+$arrayofmassactions =  array(
+	//'presend'=>$langs->trans("SendByMail"),
+	//'builddoc'=>$langs->trans("PDFMerge"),
+);
+//if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-	$topicmail="Information";
-	$modelmail="subscription";
-	$objecttmp=new Subscription($db);
-	$trackid='sub'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+$newcardbutton='';
+if ($user->rights->adherent->cotisation->creer)
+{
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1"><span class="valignmiddle">'.$langs->trans('NewSubscription').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
 
-	if ($sall)
-	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
-	}
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    $moreforfilter = '';
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
-    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+$topicmail="Information";
+$modelmail="subscription";
+$objecttmp=new Subscription($db);
+$trackid='sub'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+if ($sall)
+{
+	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+}
 
-	// Line for filters fields
-	print '<tr class="liste_titre_filter">';
+$moreforfilter = '';
 
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+
+// Line for filters fields
+print '<tr class="liste_titre_filter">';
+
+// Line numbering
+if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
+{
+	print '<td class="liste_titre">&nbsp;</td>';
+}
+
+// Ref
+if (! empty($arrayfields['d.ref']['checked']))
+{
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="4"></td>';
+}
 
+if (! empty($arrayfields['d.lastname']['checked']))
+{
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="7"></td>';
+}
 
+if (! empty($arrayfields['d.firstname']['checked']))
+{
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'" size="12"></td>';
+}
+
+if (! empty($arrayfields['d.login']['checked']))
+{
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
+}
 
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_note" value="'.dol_escape_htmltag($search_note).'" size="7"></td>';
+if (! empty($arrayfields['t.libelle']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '';
+	print '</td>';
+}
 
-    if (! empty($conf->banque->enabled))
-    {
-		print '<td class="liste_titre">';
-		print $form->select_comptes($search_account, 'search_account', 0, '', 1);
-		print '</td>';
-    }
+if (! empty($arrayfields['d.bank']['checked']))
+{
+	print '<td class="liste_titre">';
+	print $form->select_comptes($search_account, 'search_account', 0, '', 1);
+	print '</td>';
+}
 
+if (! empty($arrayfields['d.date_debut']['checked']))
+{
 	print '<td class="liste_titre">&nbsp;</td>';
+}
 
+if (! empty($arrayfields['d.date_fin']['checked']))
+{
 	print '<td class="liste_titre">&nbsp;</td>';
+}
 
+if (! empty($arrayfields['d.amount']['checked']))
+{
 	print '<td align="right" class="liste_titre">';
 	print '<input class="flat" type="text" name="search_amount" value="'.dol_escape_htmltag($search_amount).'" size="4">';
 	print '</td>';
-
-    // Action column
-    print '<td class="liste_titre" align="right">';
-    $searchpicto=$form->showFilterButtons();
-    print $searchpicto;
-    print '</td>';
-
-	print "</tr>\n";
-
-
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"c.note",$param,"",'align="left"',$sortfield,$sortorder);
-	if (! empty($conf->banque->enabled))
-	{
-	    print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"b.fk_account",$pram,"","",$sortfield,$sortorder);
-	}
-	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"c.subscription",$param,"",'align="right"',$sortfield,$sortorder);
-	//print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
-	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
-
-
-    // Static objects
-    $subscription=new Subscription($db);
-    $adherent=new Adherent($db);
-    $accountstatic=new Account($db);
-
-    $total=0;
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
-        $total+=$obj->subscription;
-
-        $subscription->ref=$obj->crowid;
-        $subscription->id=$obj->crowid;
-
-        $adherent->lastname=$obj->lastname;
-        $adherent->firstname=$obj->firstname;
-        $adherent->ref=$obj->rowid;
-        $adherent->id=$obj->rowid;
-        $adherent->statut=$obj->statut;
-        $adherent->login=$obj->login;
-        $adherent->photo=$obj->photo;
-
-
-
-        print '<tr class="oddeven">';
-
-        // Ref
-        print '<td>'.$subscription->getNomUrl(1).'</td>';
-
-        // Lastname
-        print '<td>'.$adherent->getNomUrl(-1).'</td>';
-
-        // Login
-        print '<td>'.$adherent->login.'</td>';
-
-        // Libelle
-        print '<td>';
-        print dol_trunc($obj->note,32);
-        print '</td>';
-
-		// Banque
-		if (! empty($conf->banque->enabled))
-		{
-			if ($obj->fk_account > 0)
-			{
-				$accountstatic->id=$obj->fk_account;
-				$accountstatic->fetch($obj->fk_account);
-				//$accountstatic->label=$obj->label;
-				print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-			}
-			else
-			{
-				print "<td>";
-				print "</td>\n";
-			}
-		}
-
-        // Date start
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh),'day')."</td>\n";
-
-        // Date end
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datef),'day')."</td>\n";
-
-        // Price
-        print '<td align="right">'.price($obj->subscription).'</td>';
-
-        print '<td></td>';
-
-        print "</tr>";
-
-        $i++;
-    }
-
-    // Total
-
-    print '<tr class="liste_total">';
-    print "<td>".$langs->trans("Total")."</td>\n";
-    print "<td align=\"right\">&nbsp;</td>\n";
-    print "<td align=\"right\">&nbsp;</td>\n";
-    print "<td align=\"right\">&nbsp;</td>\n";
-    if (! empty($conf->banque->enabled))
-    {
-        print '<td>&nbsp;</td>';
-    }
-   	print '<td>&nbsp;</td>';
-   	print '<td>&nbsp;</td>';
-   	print '<td align="right">'.price($total)."</td>\n";
-   	print '<td></td>';
-    print "</tr>\n";
-
-    print "</table>";
-    print '</div>';
-	print '</form>';
 }
-else
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+// Date creation
+if (! empty($arrayfields['d.datec']['checked']))
 {
-    dol_print_error($db);
+	print '<td class="liste_titre">';
+	print '</td>';
 }
+// Date modification
+if (! empty($arrayfields['d.tms']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+
+// Action column
+print '<td class="liste_titre" align="right">';
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
+print '</td>';
+
+print "</tr>\n";
+
+
+print '<tr class="liste_titre">';
+if (! empty($arrayfields['d.ref']['checked']))
+{
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid",$param,"","",$sortfield,$sortorder);
+}
+if (! empty($arrayfields['d.lastname']['checked']))
+{
+	print_liste_field_titre("LastName",$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
+}
+if (! empty($arrayfields['d.firstname']['checked']))
+{
+	print_liste_field_titre("FirstName",$_SERVER["PHP_SELF"],"d.firstname",$param,"","",$sortfield,$sortorder);
+}
+if (! empty($arrayfields['d.login']['checked']))
+{
+	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+}
+if (! empty($arrayfields['t.libelle']['checked']))
+{
+	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"c.note",$param,"",'align="left"',$sortfield,$sortorder);
+}
+if (! empty($arrayfields['d.bank']['checked']))
+{
+	print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"b.fk_account",$pram,"","",$sortfield,$sortorder);
+}
+if (! empty($arrayfields['d.date_debut']['checked']))
+{
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
+}
+if (! empty($arrayfields['d.date_fin']['checked']))
+{
+	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
+}
+if (! empty($arrayfields['d.amount']['checked']))
+{
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"c.subscription",$param,"",'align="right"',$sortfield,$sortorder);
+}
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+// Hook fields
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+print "</tr>\n";
+
+
+$total=0;
+$totalarray=array();
+while ($i < min($num, $limit))
+{
+	$obj = $db->fetch_object($result);
+	$total+=$obj->subscription;
+
+	$subscription->ref=$obj->crowid;
+	$subscription->id=$obj->crowid;
+
+	$adherent->lastname=$obj->lastname;
+	$adherent->firstname=$obj->firstname;
+	$adherent->ref=$obj->rowid;
+	$adherent->id=$obj->rowid;
+	$adherent->statut=$obj->statut;
+	$adherent->login=$obj->login;
+	$adherent->photo=$obj->photo;
+
+
+	print '<tr class="oddeven">';
+
+	// Ref
+	if (! empty($arrayfields['d.ref']['checked']))
+	{
+		print '<td>'.$subscription->getNomUrl(1).'</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Lastname
+	if (! empty($arrayfields['d.lastname']['checked']))
+	{
+		$adherent->firstname = '';
+		print '<td>'.$adherent->getNomUrl(-1).'</td>';
+		$adherent->firstname = $obj->firstname;
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Firstname
+	if (! empty($arrayfields['d.firstname']['checked']))
+	{
+		print '<td>'.$adherent->firstname.'</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Login
+	if (! empty($arrayfields['d.login']['checked']))
+	{
+		print '<td>'.$adherent->login.'</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Label
+	if (! empty($arrayfields['t.libelle']['checked']))
+	{
+		print '<td>';
+		print dol_trunc($obj->note,128);
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Banque
+	if (! empty($arrayfields['d.bank']['checked']))
+	{
+		print "<td>";
+		if ($obj->fk_account > 0)
+		{
+			$accountstatic->id=$obj->fk_account;
+			$accountstatic->fetch($obj->fk_account);
+			//$accountstatic->label=$obj->label;
+			print $accountstatic->getNomUrl(1);
+		}
+		print "</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Date start
+	if (! empty($arrayfields['d.date_start']['checked']))
+	{
+		print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh),'day')."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Date end
+	if (! empty($arrayfields['d.date_end']['checked']))
+	{
+		print '<td align="center">'.dol_print_date($db->jdate($obj->datef),'day')."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Price
+	if (! empty($arrayfields['d.amount']['checked']))
+	{
+		print '<td align="right">'.price($obj->subscription).'</td>';
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='d.amount';
+		$totalarray['val']['d.amount'] += $obj->subscription;
+	}
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+	// Fields from hook
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	// Date creation
+	if (! empty($arrayfields['d.datec']['checked']))
+	{
+		print '<td align="center" class="nowrap">';
+		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Date modification
+	if (! empty($arrayfields['d.tms']['checked']))
+	{
+		print '<td align="center" class="nowrap">';
+		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Action column
+	print '<td align="center">';
+	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	{
+		$selected=0;
+		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	}
+	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
+
+	print "</tr>\n";
+	$i++;
+}
+
+// Show total line
+if (isset($totalarray['pos']))
+{
+	print '<tr class="liste_total">';
+	$i=0;
+	while ($i < $totalarray['nbfield'])
+	{
+		$i++;
+		if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+		else
+		{
+			if ($i == 1)
+			{
+				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+			}
+			else print '<td></td>';
+		}
+	}
+	print '</tr>';
+}
+
+// If no record found
+if ($num == 0)
+{
+	$colspan=1;
+	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+}
+
+$db->free($resql);
+
+$parameters=array('sql' => $sql);
+$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+print "</table>";
+print '</div>';
+print '</form>';
+
 
 // End of page
 llxFooter();

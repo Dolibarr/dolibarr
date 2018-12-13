@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=El client SOAP ha fallat amb l'error '%s'
 ErrorGlobalVariableUpdater5=Sense variable global seleccionada
 ErrorFieldMustBeANumeric=El camp <b>%s</b> ha de ser un valor numèric
 ErrorMandatoryParametersNotProvided=Paràmetre/s obligatori/s no definits
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definició incorrecta del menú Array en el descriptor del mòdul (valor incorrecte per a la clau fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=El codi de barres de producte %s ja existeix en
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Tingueu en compte també que no és possible tenir un producte virtual amb auto increment/decrement de subproductes quan almenys un subproducte (o subproducte de subproductes) necessita un número de sèrie/lot.
 ErrorDescRequiredForFreeProductLines=La descripció és obligatòria per a línies amb producte de lliure edició
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits

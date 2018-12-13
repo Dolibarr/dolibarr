@@ -16,9 +16,6 @@ Efficiency=Efektivitāte
 TypeHelpOnly=Tikai palīdzība
 TypeHelpDev=Palīdzība + uzlabošana
 TypeHelpDevForm=Palīdzība + attīstība + apmācība
-ToGetHelpGoOnSparkAngels1=Daži uzņēmumi var nodrošināt ātru (dažreiz tūlītēju) un efektīvāku tiešsaistes atbalstu, izmantojot tālvadības pulti ar datoru. Šāda palīdzība ir atrodama <b> %s </b> tīmekļa vietnē:
-ToGetHelpGoOnSparkAngels3=Jūs varat arī doties uz visu pieejamo Dolibarr trenažieru sarakstu, lai noklikšķinātu uz pogas
-ToGetHelpGoOnSparkAngels2=Dažreiz, veicot meklēšanu, uzņēmums nav pieejams, tāpēc mainiet filtru, lai meklētu "visu pieejamību". Jūs varēsiet nosūtīt vairāk pieprasījumu.
 BackToHelpCenter=Pretējā gadījumā <a href="%s"> atveriet palīdzības centra sākumlapu </a>.
 LinkToGoldMember=Jūs varat piezvanīt uz vienu no Dolibarr izvēlētām instruktoru valodām (%s), noklikšķinot uz tās logrīka (statuss un maksimālā cena tiek automātiski atjaunināta):
 PossibleLanguages=Atbalstītās valodas

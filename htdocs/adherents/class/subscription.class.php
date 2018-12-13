@@ -337,11 +337,14 @@ class Subscription extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *  @param	int  	$notooltip		1=Disable tooltip
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param	int  	$notooltip					1=Disable tooltip
+	 *	@param	string	$option						Page for link ('', 'nolink', ...)
+	 *  @param  string  $morecss        			Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $notooltip=0)
+	function getNomUrl($withpicto=0, $notooltip=0, $option='', $morecss='', $save_lastsearch_value=-1)
 	{
 		global $langs;
 
@@ -350,8 +353,18 @@ class Subscription extends CommonObject
 		$langs->load("members");
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+        $url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
+		$linkend = '</a>';
 
 		$picto='payment';
 

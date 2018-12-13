@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
 ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
-ErrorOppStatusRequiredIfAmount=Jūs iestatāt paredzēto summu šim svinam / svinam. Tāpēc jums ir jāievada arī tā statuss
+ErrorOppStatusRequiredIfAmount=Jūs iestatāt aplēsto summu šim svinam. Tāpēc jums ir jāievada arī tā statuss
 ErrorFailedToLoadModuleDescriptorForXXX=Neizdevās ielādēt moduļa deskriptoru klasi %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
 ErrorSavingChanges=Saglabājot izmaiņas, radās kļūda
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=Produkta svītrkoda %s jau pastāv citā produk
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Ņemiet vērā arī, ka virtuālā produkta izmantošana, lai automātiski palielinātu vai samazinātu subproduktus, nav iespējama, ja vismaz vienam produktam (vai blakusproduktam) ir nepieciešams sērijas / partijas numurs.
 ErrorDescRequiredForFreeProductLines=Apraksts ir obligāts līnijām ar bezmaksas produktu
 ErrorAPageWithThisNameOrAliasAlreadyExists=Lapā / konteinerā <strong> %s </strong>ir tāds pats nosaukums vai alternatīvs aizstājvārds, kuru izmantojat
-
+ErrorDuringChartLoad=Ielādējot konta diagrammu, radās kļūda. Ja daži konti nav ielādēti, jūs varat tos ievadīt manuāli.
 # Warnings
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
 WarningMandatorySetupNotComplete=Obligātie uzstādīšanas parametri vēl nav definētas

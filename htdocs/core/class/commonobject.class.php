@@ -620,14 +620,10 @@ abstract class CommonObject
 		{
 			if ($this->skype) $out.=dol_print_socialnetworks($this->skype,$this->id,$object->id,'skype');
 			$outdone++;
-		}
-		if (! empty($conf->socialnetworks->enabled))
-		{
+			if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid,$this->id,$object->id,'jabber');
+			$outdone++;
 			if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter,$this->id,$object->id,'twitter');
 			$outdone++;
-		}
-		if (! empty($conf->socialnetworks->enabled))
-		{
 			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook,$this->id,$object->id,'facebook');
 			$outdone++;
 		}

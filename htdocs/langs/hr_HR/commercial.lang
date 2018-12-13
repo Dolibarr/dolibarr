@@ -52,6 +52,7 @@ ActionAC_TEL=Telefonski poziv
 ActionAC_FAX=Pošalji faks
 ActionAC_PROP=Pošalji ponudu poštom
 ActionAC_EMAIL=Pošalji e-poštu
+ActionAC_EMAIL_IN=Reception of Email
 ActionAC_RDV=Sastanci
 ActionAC_INT=Intervencija na lokaciji
 ActionAC_FAC=Pošalji račun kupca poštom

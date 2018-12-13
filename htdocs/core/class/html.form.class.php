@@ -18,7 +18,8 @@
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -993,7 +994,7 @@ class Form
 
 		$this->load_cache_types_fees();
 
-		print '<select class="flat" name="'.$htmlname.'">';
+		print '<select id="select_'.$htmlname.'" class="flat" name="'.$htmlname.'">';
 		if ($showempty)
 		{
 			print '<option value="-1"';
@@ -1310,7 +1311,7 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			print '<select class="flat maxwidthonsmartphone" name="'.$htmlname.'">';
+			print '<select id="select_'.$htmlname.'" class="flat maxwidthonsmartphone" name="'.$htmlname.'">';
 			$num = $this->db->num_rows($resql);
 
 			$qualifiedlines=$num;
@@ -2788,7 +2789,7 @@ class Form
 		{
 			$num = $this->db->num_rows($result);
 
-			$form = '<select class="flat" name="'.$htmlname.'">';
+			$form = '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 
 			if (! $num)
 			{
@@ -2889,7 +2890,7 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
+			print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 			if ($showempty) print '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -3119,7 +3120,7 @@ class Form
 
 		$this->loadCacheInputReason();
 
-		print '<select class="flat" name="'.$htmlname.'">';
+		print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		if ($addempty) print '<option value="0"'.(empty($selected)?' selected':'').'>&nbsp;</option>';
 		foreach($this->cache_demand_reason as $id => $arraydemandreason)
 		{
@@ -3316,7 +3317,7 @@ class Form
 
 		$return='';
 
-		$return.= '<select class="flat" name="'.$htmlname.'">';
+		$return.= '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		$options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")
@@ -5398,7 +5399,7 @@ class Form
 
 		if ($typehour=='select' )
 		{
-			$retstring.='<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled':'').'>';
+			$retstring.='<select class="flat" id="select_'.$prefix.'hour" name="'.$prefix.'hour"'.($disabled?' disabled':'').'>';
 			for ($hour = 0; $hour < 25; $hour++)	// For a duration, we allow 24 hours
 			{
 				$retstring.='<option value="'.$hour.'"';
@@ -5425,7 +5426,7 @@ class Form
 
 		if ($typehour=='select' || $typehour=='textselect')
 		{
-			$retstring.='<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled':'').'>';
+			$retstring.='<select class="flat" id="select_'.$prefix.'min" name="'.$prefix.'min"'.($disabled?' disabled':'').'>';
 			for ($min = 0; $min <= 55; $min=$min+5)
 			{
 				$retstring.='<option value="'.$min.'"';
@@ -6605,7 +6606,7 @@ class Form
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
+			print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 			if ($useempty)
 			{
 				print '<option value="-1">&nbsp;</option>';
@@ -6861,10 +6862,10 @@ class Form
 			$dir=$conf->user->dir_output;
 			if (! empty($object->photo))
 			{
-				if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_mini');
-				else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'user').getImageFileNameForSize($object->photo, '_small');
-				else $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
-				$originalfile=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
+				if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_mini');
+				else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'user').$object->id.'/'.getImageFileNameForSize($object->photo, '_small');
+				else $file=get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
+				$originalfile=get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/'.$object->photo;
 			}
 			if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
 			$email=$object->email;
@@ -7170,7 +7171,7 @@ class Form
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
 			if ($useempty) $out.= '<option value="0">&nbsp;</option>';
 
 			while ($obj = $db->fetch_object($resql))
@@ -7257,7 +7258,7 @@ class Form
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
 			if ($useempty) $out.= '<option value="0"></option>';
 
 			while ($obj = $db->fetch_object($resql))
@@ -7294,7 +7295,7 @@ class Form
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
 			if ($useempty) $out.= '<option value="0"></option>';
 			if ($allchoice) $out.= '<option value="-1">'.$langs->trans('AllExpenseReport').'</option>';
 
