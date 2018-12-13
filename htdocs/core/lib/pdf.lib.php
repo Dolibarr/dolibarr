@@ -1347,6 +1347,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		if (! empty($libelleproduitservice) && ! empty($ref_prodserv)) $ref_prodserv .= " - ";
 	}
 
+	if(!empty($ref_prodserv) && !empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){ $ref_prodserv = '<b>'.$ref_prodserv.'</b>'; }
 	$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
@@ -1382,7 +1383,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
+		if(!empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){
+		    $libelleproduitservice.= '<b style="color:#333666;" ><em>'."__N__</b> ".$period.'</em>';
+		}else{
 		$libelleproduitservice.="__N__".$period;
+		}
 		//print $libelleproduitservice;
 	}
 
