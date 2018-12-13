@@ -342,6 +342,9 @@ script:
   php upgrade.php 8.0.0 9.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade800900.log
   php upgrade2.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-2.log
   php step5.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-3.log
+  php upgrade.php 9.0.0 10.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
+  php upgrade2.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
+  php step5.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
   cd -
   set +e
   echo
