@@ -2590,55 +2590,47 @@ class Facture extends CommonInvoice
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline id=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-
-		// Clean parameters
-		if (empty($remise_percent)) $remise_percent=0;
-		if (empty($qty)) $qty=0;
-		if (empty($info_bits)) $info_bits=0;
-		if (empty($rang)) $rang=0;
-		if (empty($ventil)) $ventil=0;
-		if (empty($txtva)) $txtva=0;
-		if (empty($txlocaltax1)) $txlocaltax1=0;
-		if (empty($txlocaltax2)) $txlocaltax2=0;
-		if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
-		if (empty($fk_prev_id)) $fk_prev_id = 'null';
-		if (! isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') $situation_percent = 100;
-
-		$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-
-		// Clean vat code
-		$vat_src_code='';
-		if (preg_match('/\((.*)\)/', $txtva, $reg))
-		{
-		    $vat_src_code = $reg[1];
-		    $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
-		}
-
-		$remise_percent=price2num($remise_percent);
-		$qty=price2num($qty);
-		$pu_ht=price2num($pu_ht);
-        $pu_ht_devise=price2num($pu_ht_devise);
-		$pu_ttc=price2num($pu_ttc);
-		$pa_ht=price2num($pa_ht);
-		$txtva=price2num($txtva);
-		$txlocaltax1=price2num($txlocaltax1);
-		$txlocaltax2=price2num($txlocaltax2);
-
-		if ($price_base_type=='HT')
-		{
-			$pu=$pu_ht;
-		}
-		else
-		{
-			$pu=$pu_ttc;
-		}
-
-		// Check parameters
-		if ($type < 0) return -1;
-
 		if (! empty($this->brouillon))
 		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+			// Clean parameters
+			if (empty($remise_percent)) $remise_percent=0;
+			if (empty($qty)) $qty=0;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($rang)) $rang=0;
+			if (empty($ventil)) $ventil=0;
+			if (empty($txtva)) $txtva=0;
+			if (empty($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txlocaltax2)) $txlocaltax2=0;
+			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
+			if (empty($fk_prev_id)) $fk_prev_id = 'null';
+			if (! isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '') $situation_percent = 100;
+
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			$pu_ht=price2num($pu_ht);
+			$pu_ht_devise=price2num($pu_ht_devise);
+			$pu_ttc=price2num($pu_ttc);
+			$pa_ht=price2num($pa_ht);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
+			}
+			$txlocaltax1=price2num($txlocaltax1);
+			$txlocaltax2=price2num($txlocaltax2);
+
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
+
+			// Check parameters
+			if ($type < 0) return -1;
+
 			$this->db->begin();
 
 			$product_type=$type;
@@ -2654,6 +2646,16 @@ class Facture extends CommonInvoice
 					$this->db->rollback();
 					return -3;
 				}
+			}
+
+			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+
+			// Clean vat code
+			$vat_src_code='';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
 			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de

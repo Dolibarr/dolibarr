@@ -602,6 +602,7 @@ class PaiementFourn extends Paiement
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->facid = 1;
+		$this->socid = 1;
 		$this->datepaye = $nownotime;
 	}
 
