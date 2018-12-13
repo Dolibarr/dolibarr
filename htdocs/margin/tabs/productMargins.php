@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
-            $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
+            $sql.= " f.rowid as facid, f.ref, f.total as total_ht,";
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
             $sql.= " sum(d.total_ht) as selling_price,";							// may be negative or positive
@@ -151,7 +151,7 @@ if ($id > 0 || ! empty($ref))
             if (! empty($socid)) $sql.= " AND f.fk_soc = $socid";
             $sql .= " AND d.buy_price_ht IS NOT NULL";
             if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
-            $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.type";
+            $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
             $sql.= $db->order($sortfield,$sortorder);
             // TODO: calculate total to display then restore pagination
@@ -169,7 +169,7 @@ if ($id > 0 || ! empty($ref))
                 print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
-                print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$object->id,'',$sortfield,$sortorder);
+                print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.ref","","&amp;id=".$object->id,'',$sortfield,$sortorder);
                 print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$object->id,'',$sortfield,$sortorder);
                 print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$object->id,'',$sortfield,$sortorder);
                 print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$object->id,'align="center"',$sortfield,$sortorder);
@@ -199,7 +199,7 @@ if ($id > 0 || ! empty($ref))
                         print '<tr class="oddeven">';
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
-                        $invoicestatic->ref=$objp->facnumber;
+                        $invoicestatic->ref=$objp->ref;
                         print $invoicestatic->getNomUrl(1);
                         print "</td>\n";
                         print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';

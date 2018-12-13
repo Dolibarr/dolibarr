@@ -2778,7 +2778,7 @@ class Propal extends CommonObject
 
 		if (count($linkedInvoices) > 0)
 		{
-			$sql= "SELECT rowid as facid, facnumber, total, datef as df, fk_user_author, fk_statut, paye";
+			$sql= "SELECT rowid as facid, ref, total, datef as df, fk_user_author, fk_statut, paye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 			$sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
