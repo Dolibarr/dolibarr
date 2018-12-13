@@ -103,7 +103,8 @@ class Categories extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -266,7 +267,8 @@ class Categories extends DolibarrApi
      * @param   Categorie  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 

@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@ $id=$argv[1];
 if (isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
 else $login = '';
 
-require_once ($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
-require_once (DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
+require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 
 
 // Global variables
@@ -64,7 +64,6 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1')
 {
-
 }
 
 $user = new User($db);
@@ -329,7 +328,6 @@ if ($resql)
 								if (!empty($conf->global->MAILING_DELAY)) {
 									sleep($conf->global->MAILING_DELAY);
 								}
-
 							}
 						}
 						else

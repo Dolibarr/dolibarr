@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  *
@@ -65,27 +65,27 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 
 if ($action == 'update' && empty($_POST["cancel"]))
 {
-	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",     GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO",     GETPOST("MAIN_MAIL_FORCE_SENDTO"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT",     GETPOST("MAIN_MAIL_ENABLED_USER_DEST_SELECT"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS", GETPOST("MAIN_DISABLE_ALL_MAILS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO", GETPOST("MAIN_MAIL_FORCE_SENDTO"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOST("MAIN_MAIL_ENABLED_USER_DEST_SELECT"), 'chaine', 0, '', $conf->entity);
 	// Send mode parameters
-	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",         GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",        GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",      GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",         GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",         GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",        GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS",   GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", GETPOST("MAIN_MAIL_SENDMODE"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT", GETPOST("MAIN_MAIL_SMTP_PORT"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", GETPOST("MAIN_MAIL_SMTP_SERVER"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID", GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW", GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", GETPOST("MAIN_MAIL_EMAIL_TLS"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS"), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_ENABLED",     GETPOST("MAIN_MAIL_EMAIL_DKIM_ENABLED"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_DOMAIN",      GETPOST("MAIN_MAIL_EMAIL_DKIM_DOMAIN"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_SELECTOR",    GETPOST("MAIN_MAIL_EMAIL_DKIM_SELECTOR"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY", GETPOST("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_ENABLED", GETPOST("MAIN_MAIL_EMAIL_DKIM_ENABLED"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_DOMAIN", GETPOST("MAIN_MAIL_EMAIL_DKIM_DOMAIN"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_SELECTOR", GETPOST("MAIN_MAIL_EMAIL_DKIM_SELECTOR"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY", GETPOST("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY"), 'chaine', 0, '', $conf->entity);
 	// Content parameters
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",       GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		  GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",      GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE', GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM", GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO", GETPOST("MAIN_MAIL_ERRORS_TO"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO", GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE', GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'), 'chaine', 0, '', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -366,7 +366,7 @@ if ($action == 'edit')
 	{
 
 		$mainstmpid=(! empty($conf->global->MAIN_MAIL_SMTPS_ID)?$conf->global->MAIN_MAIL_SMTPS_ID:'');
-		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
+		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
@@ -386,7 +386,7 @@ if ($action == 'edit')
 	{
 
 		$mainsmtppw=(! empty($conf->global->MAIN_MAIL_SMTPS_PW)?$conf->global->MAIN_MAIL_SMTPS_PW:'');
-		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
+		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
@@ -854,7 +854,6 @@ else
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

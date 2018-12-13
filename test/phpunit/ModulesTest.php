@@ -59,6 +59,8 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -136,7 +138,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		'Salaries','Service','Skype','Societe','Stock','Stripe','SupplierProposal','Syslog','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow');
 		foreach($modulelist as $modlabel)
 		{
-    		require_once(DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php');
+    		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
             $class='mod'.$modlabel;
     		$mod=new $class($db);
             $result=$mod->remove();
@@ -152,5 +154,4 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 
         return 0;
     }
-
 }

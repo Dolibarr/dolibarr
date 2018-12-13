@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  *	\brief      List activities of tasks (per week entry)
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -128,6 +129,9 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_project_ref = '';
 	$search_thirdparty = '';
 	$search_declared_progress = '';
+
+	// We redefine $usertoprocess
+	$usertoprocess=$user;
 }
 if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
 {
@@ -334,7 +338,7 @@ if ($id)
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
 
-if ($search_project_ref) $morewherefilter.=natural_search("p.ref", $search_project_ref);
+if ($search_project_ref) $morewherefilter.=natural_search(array("p.ref", "p.title"), $search_project_ref);
 if ($search_task_ref)    $morewherefilter.=natural_search("t.ref", $search_task_ref);
 if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
 if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
@@ -369,7 +373,7 @@ $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav.='<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&month=".$nowmonth."&day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
+$nav.='<br>'.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 0).' ';
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 
 $picto='calendarweek';
@@ -414,7 +418,7 @@ print '<div class="colorback float valignmiddle">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 print '<div class="taskiddiv inline-block">';
-$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1, 0, 0, '', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth150onsmartphone');
@@ -593,8 +597,7 @@ if ($conf->use_javascript_ajax)
 
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
-
+$restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
 if (count($tasksarray) > 0)
 {
 	//var_dump($tasksarray);				// contains only selected tasks
@@ -749,7 +752,6 @@ if ($conf->use_javascript_ajax)
 	print '</script>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

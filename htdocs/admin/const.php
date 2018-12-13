@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,11 +37,11 @@ $rowid=GETPOST('rowid','int');
 $entity=GETPOST('entity','int');
 $action=GETPOST('action','alpha');
 $update=GETPOST('update','alpha');
-$delete=GETPOST('delete');	// Do not use alpha here
+$delete=GETPOST('delete','none');	// Do not use alpha here
 $debug=GETPOST('debug','int');
 $consts=GETPOST('const','array');
 $constname=GETPOST('constname','alpha');
-$constvalue=GETPOST('constvalue');
+$constvalue=GETPOST('constvalue','none');	// We shoul dbe able to send everything here
 $constnote=GETPOST('constnote','alpha');
 
 
@@ -248,7 +248,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		
+
 
 		print "\n";
 
@@ -314,7 +314,6 @@ if ($conf->use_javascript_ajax)
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

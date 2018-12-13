@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  */
 
 /**
- *     	\file       htdocs/adherents/admin/public.php
+ *     	\file       htdocs/adherents/admin/website.php
  *		\ingroup    member
  *		\brief      File of main public page for member module
  *		\author	    Laurent Destailleur
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("members");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members"));
 
 $action=GETPOST('action', 'alpha');
 
@@ -55,14 +55,12 @@ if ($action == 'update')
 	$amount=GETPOST('MEMBER_NEWFORM_AMOUNT');
 	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$email=GETPOST('MEMBER_PAYONLINE_SENDEMAIL');
-        $forcetype=GETPOST('MEMBER_NEWFORM_FORCETYPE');
+	$forcetype=GETPOST('MEMBER_NEWFORM_FORCETYPE');
 
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$editamount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$payonline,'chaine',0,'',$conf->entity);
-    $res=dolibarr_set_const($db, "MEMBER_PAYONLINE_SENDEMAIL",$email,'chaine',0,'',$conf->entity);
     if ($forcetype < 0) $res=dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE",$conf->entity);
     else                $res=dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE",$forcetype,'chaine',0,'',$conf->entity);
 
@@ -211,13 +209,6 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),0);
 	print "</td></tr>\n";
 
-	// Jump to an online payment page
-	print '<tr class="oddeven" id="tremail"><td>';
-	print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
-	print '</td><td align="right">';
-	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';
-	print "</td></tr>\n";
-
 	print '</table>';
 
 	print '<center>';
@@ -250,7 +241,6 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

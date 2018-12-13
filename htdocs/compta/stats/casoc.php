@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,27 +168,43 @@ $form=new Form($db);
 $thirdparty_static=new Societe($db);
 $formother = new FormOther($db);
 
+// TODO Report from bookkeeping not yet available, so we switch on report on business events
+if ($modecompta=="BOOKKEEPING") $modecompta="CREANCES-DETTES";
+if ($modecompta=="BOOKKEEPINGCOLLECTED") $modecompta="RECETTES-DEPENSES";
+
 // Show report header
 if ($modecompta=="CREANCES-DETTES")
 {
-	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$name=$langs->trans("Turnover").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-} else {
-	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+}
+else if ($modecompta=="RECETTES-DEPENSES")
+{
+	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+else if ($modecompta=="BOOKKEEPING")
+{
+
+
+}
+else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+{
+
+
+}
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 else $periodlink = '';
 
@@ -230,8 +247,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	    $sql.=" AND cs.fk_soc is null";
 	}
 	else if ($selected_cat) {	// Into a specific category
-	    $sql.= " AND (c.rowid = ".$selected_cat;
-	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
+	    $sql.= " AND (c.rowid = ".$db->escape($selected_cat);
+	    if ($subcat) $sql.=" OR c.fk_parent = " . $db->escape($selected_cat);
 	    $sql.= ")";
 		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
@@ -270,10 +287,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 }
-if(!empty($search_societe))  $sql.= ' AND s.nom LIKE "%'.$search_societe.'%"';
-if(!empty($search_zip))  $sql.= ' AND s.zip LIKE "%'.$search_zip.'%"';
-if(!empty($search_town))  $sql.= ' AND s.town LIKE "%'.$search_town.'%"';
-if($search_country > 0)  $sql.= ' AND s.fk_pays = '.$search_country.'';
+if (!empty($search_societe))  $sql.= natural_search('s.nom', $search_societe);
+if (!empty($search_zip))      $sql.= natural_search('s.zip', $search_zip);
+if (!empty($search_town))     $sql.= natural_search('s.town', $search_town);
+if ($search_country > 0)      $sql.= ' AND s.fk_pays = '.$search_country.'';
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
@@ -296,7 +313,6 @@ if ($result) {
 	        $catotal_ht+=$obj->amount;
 	        $catotal+=$obj->amount_ttc;
 	        $i++;
-
 	}
 } else {
 	dol_print_error($db);
@@ -630,6 +646,6 @@ print "</div>";
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

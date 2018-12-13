@@ -103,8 +103,13 @@ function ticket_prepare_head($object)
 
 
     // History
-    $head[$h][0] = DOL_URL_ROOT.'/ticket/history.php?track_id=' . $object->track_id;
+    $head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
     $head[$h][1] = $langs->trans('Events');
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+    	$head[$h][1].= '/';
+    	$head[$h][1].= $langs->trans("Agenda");
+    }
     $head[$h][2] = 'tabTicketLogs';
     $h++;
 
@@ -150,40 +155,23 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
     print '<body id="mainbody" class="publicnewticketform" style="margin-top: 10px;">';
 
-    if (! empty($conf->global->TICKETS_SHOW_COMPANY_LOGO)) {
+    if (! empty($conf->global->TICKET_SHOW_COMPANY_LOGO)) {
     	// Print logo
     	$urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
 
     	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
-    		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode('thumbs/' . $mysoc->logo_small);
+    		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/thumbs/'.$mysoc->logo_small);
     	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
-    		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode($mysoc->logo);
+    		$urllogo = DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file=' . urlencode('logos/'.$mysoc->logo);
     		$width = 128;
     	} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.png')) {
     		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
     	}
     	print '<center>';
-    	print '<a href="' . ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
-    	print '<strong>' . ($conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
+    	print '<a href="' . ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
+    	print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
     	print '</center><br>';
     }
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';
-}
-
-/**
- * Show footer for new member
- *
- * @return void
- */
-function llxFooterTicket()
-{
-    print '</div>';
-
-    printCommonFooter('public');
-
-    dol_htmloutput_events();
-
-    print "</body>\n";
-    print "</html>\n";
 }

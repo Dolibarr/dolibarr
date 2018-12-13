@@ -163,6 +163,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			return array();
 		}
 	}
+	if ($pu === '') $pu=0;
 	// pu_devise calculation from pu
 	if (empty($pu_devise) && !empty($multicurrency_tx)) {
 		if (is_numeric($pu) && is_numeric($multicurrency_tx)) $pu_devise = $pu * $multicurrency_tx;

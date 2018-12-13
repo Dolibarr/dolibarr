@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry	   <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2017 Laurent Destailleur <eldy@destailleur.fr>
  *
@@ -71,7 +71,7 @@ elseif ($module == 'shipping')    		 { $permission=$user->rights->expedition->cr
 elseif ($module == 'product')    		 { $permission=$user->rights->produit->creer;}
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200::1:12:95%';	// Rem: This var is for all notes, not only thirdparties note.
+if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200::1:12:95%';	// Rem: This var is for all notes, not only thirdparties note.
 else $typeofdata='textarea:12:95%';
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";

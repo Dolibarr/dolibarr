@@ -4,6 +4,7 @@ Interventions=Intervensjoner
 InterventionCard=Intervensjonskort
 NewIntervention=Ny intervensjon
 AddIntervention=Opprett intervensjon
+ChangeIntoRepeatableIntervention=Bytt til repeterbar intervensjon
 ListOfInterventions=Oversikt over intervensjoner
 ActionsOnFicheInter=Handlinger ved intervensjon
 LastInterventions=Siste %s intervensjoner
@@ -51,7 +52,7 @@ UseDurationOnFichinter=Skjuler varighet-feltet for intervensjonsposter
 UseDateWithoutHourOnFichinter=Skjuler timer- og minutt-feltene for intervensjonsposter
 InterventionStatistics=Statistikk over intervensjoner
 NbOfinterventions=Antall intervensjonskort
-NumberOfInterventionsByMonth=Antall intervensjonskort etter måned (validasjonsdato)
+NumberOfInterventionsByMonth=Antall intervensjonskort etter måned (dato for validering)
 AmountOfInteventionNotIncludedByDefault=Beløp fra intervensjoner er ikke inkludert som standard i overskudd (i de fleste tilfeller er tidsplaner brukt til å regne tid brukt). Legg til alternativ PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT til 1 i hjem-oppsett-andre for å inkludere dem.
 ##### Exports #####
 InterId=Intervensjons-ID

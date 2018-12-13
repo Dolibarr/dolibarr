@@ -36,15 +36,19 @@ AlreadyInGeneralLedger=Allerede journalført i hovedbøker
 NotYetInGeneralLedger=Ikke ennå journalisert i ledgers
 GroupIsEmptyCheckSetup=Gruppen er tom, sjekk oppsettet for den personlige regnskapsgruppen
 DetailByAccount=Vis detaljer etter konto
-AccountWithNonZeroValues=Kontoer med ingen nullverdier
+AccountWithNonZeroValues=Kontoer med ikke-nullverdier
 ListOfAccounts=Liste over kontoer
+CountriesInEEC=Land i EEC
+CountriesNotInEEC=Land ikke i EEC
+CountriesInEECExceptMe=Land i EEC unntatt %s
+CountriesExceptMe=Alle land unntatt %s
 
 MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
-MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
+MainAccountForSuppliersNotDefined=Hovedregnskapskonto for leverandører som ikke er definert i oppsettet
 MainAccountForUsersNotDefined=Hoved regnskapskonto for brukere som ikke er definert i oppsettet
 MainAccountForVatPaymentNotDefined=Hoved regnskapskonto for MVA-betaling ikke definert i oppsettet
 
-AccountancyArea=Accounting area
+AccountancyArea=Regnskapsområde
 AccountancyAreaDescIntro=Bruk av regnskapsmodulen er gjort i flere skritt:
 AccountancyAreaDescActionOnce=Følgende tiltak blir vanligvis utført en gang, eller en gang i året ...
 AccountancyAreaDescActionOnceBis=De neste skrittene bør gjøres for å spare tid i fremtiden ved å foreslå deg riktig standardregnskapskonto når du foretar journalføringen (skriv inn post i journaler og hovedbok)
@@ -55,9 +59,10 @@ AccountancyAreaDescChartModel=TRINN %s: Lag en kontomodell fra menyen %s
 AccountancyAreaDescChart=TRINN %s: Opprett eller kontroller innhold i din kontoplan fra meny %s
 
 AccountancyAreaDescVat=TRINN %s: Definer regnskapskonto for hver MVA-sats. Bruk menyoppføringen %s.
+AccountancyAreaDescDefault=TRINN %s: Definer standard regnskapskontoer. For dette, bruk menyoppføringen %s.
 AccountancyAreaDescExpenseReport=TRINN %s: Definer standard regnskapskontoer for hver type kostnadsrapport. Bruk menyoppføringen %s.
 AccountancyAreaDescSal=TRINN %s: Definer standard regnskapskonto for betaling av lønn. Bruk menyoppføring %s.
-AccountancyAreaDescContrib=TRINN %s: Definer standard regnskapskonto for spesialutgifter (diverse avgifter). Bruk menyoppføringen %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=TRINN %s: Definer standard regnskapskonto for donasjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescMisc=TRINN %s: Definer obligatorisk standardkonto og standard regnskapskontoer for diverse transaksjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescLoan=TRINN %s: Definer standard regnskapskonto for lån. Bruk menyoppføringen %s.
@@ -90,7 +95,7 @@ MenuProductsAccounts=Varekontoer
 ProductsBinding=Varekontoer
 Ventilation=Binding til kontoer
 CustomersVentilation=Binding av kundefakturaer
-SuppliersVentilation=Vendor invoice binding
+SuppliersVentilation=Leverandørfaktura-bindinger
 ExpenseReportsVentilation=Utgiftsrapport-binding
 CreateMvts=Opprett ny transaksjon
 UpdateMvts=Endre en transaksjon
@@ -131,13 +136,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Lengden på de generelle regnskapskontoene (Hvis du s
 ACCOUNTING_LENGTH_AACCOUNT=Lengden på tredjeparts regnskapskontoer (Hvis du angir verdien til 6 her, vil kontoen '401' vises som '401000' på skjermen)
 ACCOUNTING_MANAGE_ZERO=Tillat å administrere forskjellig antall nuller på slutten av en regnskapskonto. Nødvendig for enkelte land (som Sveits). Hvis du holder den av (standard), kan du angi de 2 følgende parametrene for å be om å legge til virtuell null.
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkteregistrering av transaksjoner på bankkonto
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktiver eksportutkast i journal
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diverseprotokoll
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Utgiftsjournal
 ACCOUNTING_SOCIAL_JOURNAL=Sosialjournal
-ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
+ACCOUNTING_HAS_NEW_JOURNAL=Har ny journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Regnskapskonto for overførsel
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskapskonto for vent
@@ -154,6 +160,7 @@ Docref=Referanse
 LabelAccount=Kontoetikett
 LabelOperation=Etikettoperasjon
 Sens=som betyr
+LetteringCode=Brevkode
 Codejournal=Journal
 NumPiece=Del nummer
 TransactionNumShort=Transaksjonsnummer
@@ -187,38 +194,39 @@ ListeMvts=Liste over bevegelser
 ErrorDebitCredit=Debet og kredit kan ikke ha en verdi samtidig
 AddCompteFromBK=Legg til regnskapskontoer til gruppen
 ReportThirdParty=List tredjepartskonto
-DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
+DescThirdPartyReport=Liste over tredjeparts kunder og leverandører og deres regnskapsregnskap
 ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
-PaymentsNotLinkedToProduct=Payment not linked to any product / service
+PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
 
 Pcgtype=Kontogruppe
 Pcgsubtype=Konto-undergruppe
-PcgtypeDesc=Gruppe og undergruppe av konto brukes som forhåndsdefinerte "filter"- og "grupperings" -kriterier for enkelte regnskapsrapporter. For eksempel brukes "Inntekt" eller "Utgift som grupper for regnskapskontoer for produkter for å bygge utgifts-/inntektsrapporten.
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
 
 DescVentilCustomer=Liste over kunde-fakturalinjer (bundet eller ikke) til en vare-regnskapskonto
-DescVentilMore=I de fleste tilfeller, hvis du bruker forhåndsdefinerte varer eller tjenester, og du setter kontonummeret på vare/tjeneste-kortet, vil programmet være i stand til å gjøre alle bindinger mellom fakturalinjer og regnskapskonto i din kontoplan, bare med et enkelt klikk på knappen <strong>"%s"</strong>. Hvis kontoen ikke ble satt på vare-/tjenestekortet eller hvis du fortsatt har noen linjer ikke bundet til noen konto, må du foreta en manuell binding fra menyen "<strong>%s</strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Liste over kunde-fakturalinjer og deres vare-regnskapskontoer
 DescVentilTodoCustomer=Bind fakturalinjer som ikke allerede er bundet, til en vare-regnskapskonto
 ChangeAccount=Endre regnskapskonto for valgte vare-/tjenestelinjer til følgende konto:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
+DescVentilSupplier=Liste over leverandør-fakturalinjer som er bundet eller ikke ennå bundet til en vareregnskapskonto
+DescVentilDoneSupplier=Liste over leverandør-fakturalinjer av og deres regnskapskonto
 DescVentilTodoExpenseReport=Bind utgiftsrapport-linjer til en gebyr-regnskapskonto
 DescVentilExpenseReport=Liste over utgiftsrapport-linjer bundet (eller ikke) til en gebyr-regnskapskonto
-DescVentilExpenseReportMore=Hvis du setter opp regnskapskonto med type utgiftsrapport-linjer, vil programmet være i stand til å gjøre alle bindinger mellom utgiftsrapport-linjer og regnskapskontoer med et klikk på knappen <strong>"%s"</strong>. Hvis du fortsatt har noen linjer som ikke er bundet til en konto, må du foreta en manuell binding fra menyen "<strong>%s</strong>".
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Liste over utgiftsrapport-linjer og tilhørende gebyr-regnskapskonto
 
 ValidateHistory=Bind automatisk
 AutomaticBindingDone=Automatisk binding utført
 
 ErrorAccountancyCodeIsAlreadyUse=Feil, du kan ikke slette denne regnskapskontoen fordi den er i bruk
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+MvtNotCorrectlyBalanced=Bevegelse er ikke riktig balansert. Debet = %s | Kreditt = %s
+Balancing=Balancing
 FicheVentilation=Binding-kort
 GeneralLedgerIsWritten=Transaksjoner blir skrevet inn i hovedboken
 GeneralLedgerSomeRecordWasNotRecorded=Noen av transaksjonene kunne ikke journalføres. Hvis det ikke er noen annen feilmelding, er dette trolig fordi de allerede var journalført.
@@ -230,14 +238,14 @@ NotYetAccounted=Ikke regnskapsført i hovedboken enda
 
 ## Admin
 ApplyMassCategories=Masseinnlegging av kategorier
-AddAccountFromBookKeepingWithNoCategories=Tilgjengelig konto er ennå ikke i en personlig gruppe
+AddAccountFromBookKeepingWithNoCategories=Available account not yet in a personalized group
 CategoryDeleted=Kategori for regnskapskontoen er blitt slettet
 AccountingJournals=Regnskapsjournaler
 AccountingJournal=Regnskapsjournal
 NewAccountingJournal=Ny regnskapsjourna
 ShowAccoutingJournal=Vis regnskapsjournal
 Nature=Natur
-AccountingJournalType1=Miscellaneous operations
+AccountingJournalType1=Diverse operasjoner
 AccountingJournalType2=Salg
 AccountingJournalType3=Innkjøp
 AccountingJournalType4=Bank
@@ -260,7 +268,8 @@ Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
 Modelcsv_ebp=Eksporter mot EBP
 Modelcsv_cogilog=Eksport mot Cogilog
 Modelcsv_agiris=Export mot Agiris
-Modelcsv_configurable=Eksport konfigurerbar
+Modelcsv_configurable=Export CSV Configurable
+Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
 ChartofaccountsId=Kontoplan ID
 
 ## Tools - Init accounting account on product / service
@@ -290,15 +299,15 @@ ErrorNoAccountingCategoryForThisCountry=Ingen regnskapskonto-gruppe tilgjengelig
 ErrorInvoiceContainsLinesNotYetBounded=Du prøver å journalføre noen linjer i fakturaen <strong> %s </strong>, men noen andre linjer er ennå ikke bundet til en regnskapskonto. Journalføring av alle fakturalinjer for denne fakturaen blir avvist.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Noen linjer på fakturaen er ikke bundet til en regnskapskonto.
 ExportNotSupported=Eksportformatet som er satt  opp støttes ikke på denne siden
-BookeppingLineAlreayExists=Linjene eksisterer allerede i bokføringen
+BookeppingLineAlreayExists=Lines already existing into bookkeeping
 NoJournalDefined=Ingen journal definert
 Binded=Bundne linjer
 ToBind=Linjer som skal bindes
-UseMenuToSetBindindManualy=Autodeteksjon ikke mulig, bruk menyen <a href="%s"> %s </a> for å gjøre bindingen manuelt
+UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 
 ## Import
-ImportAccountingEntries=Accounting entries
+ImportAccountingEntries=Regnskapsposter
 
-WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
-ExpenseReportJournal=Expense Report Journal
-InventoryJournal=Inventory Journal
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+ExpenseReportJournal=Utgiftsrapport-journal
+InventoryJournal=Inventar-journal

@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -37,7 +37,7 @@ $contactid = GETPOST('contactid', 'int');
 $msg_id = GETPOST('msg_id', 'int');
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
-$action = GETPOST('action', 'alpha', 3);
+$action = GETPOST('action', 'aZ09');
 
 // Protection if external user
 if (!$user->rights->ticket->read || !$user->rights->ticket->write) {

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - suppliers
-Suppliers=Vendors
+Suppliers=供應商
 SuppliersInvoice=Vendor invoice
 ShowSupplierInvoice=Show Vendor Invoice
-NewSupplier=New vendor
+NewSupplier=新供應商
 History=歷史紀錄
 ListOfSuppliers=List of vendors
 ShowSupplier=Show vendor
@@ -19,7 +19,7 @@ ReferenceSupplierIsAlreadyAssociatedWithAProduct=該參考供應商已經與一�
 NoRecordedSuppliers=No vendor recorded
 SupplierPayment=Vendor payment
 SuppliersArea=Vendor area
-RefSupplierShort=Ref. vendor
+RefSupplierShort=參考供應商
 Availability=可用性
 ExportDataset_fournisseur_1=Vendor invoices list and invoice lines
 ExportDataset_fournisseur_2=Vendor invoices and payments

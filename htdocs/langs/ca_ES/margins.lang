@@ -28,7 +28,7 @@ UseDiscountAsService=Com un servei
 UseDiscountOnTotal=Sobre el total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descompte global es pren en compte com un producte, servei o només en el total a l'hora de calcular els marges.
 MARGIN_TYPE=Preu de cost suggerit per defecte pel càlcul de marge
-MargeType1=Margin on Best vendor price
+MargeType1=Marge en el millor preu de proveïdor
 MargeType2=Marge en Preu mitjà ponderat (PMP)
 MargeType3=Marge en preu de cost
 MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined

@@ -72,6 +72,8 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 	 */
 	function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -294,5 +296,4 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$result=restrictedArea($user,'societe');
 		$this->assertEquals(1,$result);
     }
-
 }

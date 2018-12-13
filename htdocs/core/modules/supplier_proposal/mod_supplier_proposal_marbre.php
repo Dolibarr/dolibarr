@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_proposal/modules_supplie
  */
 class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='RQ';               // RQ = Request for quotation
-	var $error='';
-	var $nom = "Marbre";
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='RQ';               // RQ = Request for quotation
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Marbre';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Marbre';
 
 
     /**
@@ -149,5 +169,4 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	{
 		return $this->getNextValue($objsoc,$objforref);
 	}
-
 }

@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  *	\brief      Prelevement creation page
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -45,7 +46,10 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
 $format = GETPOST('format','aZ09');
-
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$page = GETPOST("page",'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 
 /*
  * Actions
@@ -150,14 +154,13 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
-        print $form->select_date();
+        print $form->selectDate();
         if ($mysoc->isInEEC()) {
             print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
             print '<input class="butAction" type="submit" value="' . $langs->trans("CreateForSepa") . '"/>';
         } else {
             print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">' . $langs->trans("CreateAll") . "</a>\n";
 		}
-
 		}
 		else
 		{
@@ -196,13 +199,33 @@ $sql.= " AND pfd.traite = 0";
 $sql.= " AND pfd.fk_facture = f.rowid";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit+1,$offset);
+
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print load_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
+    $param='';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if($socid) $param .= '&socid='.urlencode($socid);
+    if($option) $param .= "&option=".urlencode($option);
+
+    if(! empty($page) && $num <= $nbtotalofrecords) $page = 0;
+
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"),$page,$_SERVER['PHP_SELF'],$param,'','','',$num,$nbtotalofrecords,'title_accountancy.png',0,'','', $limit);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -219,7 +242,7 @@ if ($resql)
 		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 		$bac = new CompanyBankAccount($db);
 
-		while ($i < $num && $i < 20)
+		while ($i < $num && $i < $limit)
 		{
 			$obj = $db->fetch_object($resql);
 
@@ -260,6 +283,7 @@ if ($resql)
 	}
 	else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	print "</table>";
+	print "</form>";
 	print "<br>\n";
 }
 else
@@ -324,5 +348,6 @@ else
 }
 */
 
+// End of page
 llxFooter();
 $db->close();

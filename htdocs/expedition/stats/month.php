@@ -27,6 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+$year = GETPOST('year', 'int');
+
 
 /*
  * View
@@ -39,10 +41,10 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
-print load_fiche_titre($langs->trans("StatisticsOfSendings").' '.$_GET["year"], $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfSendings").' '.$year, $mesg);
 
 $stats = new ExpeditionStats($db);
-$data = $stats->getNbExpeditionByMonth($_GET["year"]);
+$data = $stats->getNbExpeditionByMonth($year);
 
 dol_mkdir($conf->expedition->dir_temp);
 
@@ -71,6 +73,6 @@ print $px->show();
 print '</td></tr>';
 print '</table>';
 
+// End of page
 llxFooter();
-
 $db->close();

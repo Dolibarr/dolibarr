@@ -149,7 +149,7 @@ if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
 
 
-if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="UTF-8";
+if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="utf-8";
 if (empty($conf->db->character_set))  				$conf->db->character_set='utf8';
 if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
 if (empty($conf->db->dolibarr_main_db_encryption)) 	$conf->db->dolibarr_main_db_encryption=0;
@@ -172,12 +172,17 @@ if (! empty($dolibarr_main_document_root_alt))
 // Security check (old method, when directory is renamed /install.lock)
 if (preg_match('/install\.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
-    print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
+	if (! is_object($langs))
+	{
+		$langs = new Translate('..', $conf);
+		$langs->setDefaultLang('auto');
+	}
+	$langs->load("install");
+	print $langs->trans("YouTryInstallDisabledByDirLock");
     if (! empty($dolibarr_main_url_root))
     {
-        print 'Click on following link. ';
-        print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-        print 'Click here to go to Dolibarr';
+        print 'Click on following link, <a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+        print $langs->trans("ClickHereToGoToApp");
         print '</a>';
     }
     exit;
@@ -191,13 +196,18 @@ if (constant('DOL_DATA_ROOT') === null) {
 }
 if (@file_exists($lockfile))
 {
-    print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr documents directory).<br>';
+	if (! is_object($langs))
+	{
+		$langs = new Translate('..', $conf);
+		$langs->setDefaultLang('auto');
+	}
+	$langs->load("install");
+	print $langs->trans("YouTryInstallDisabledByFileLock");
     if (! empty($dolibarr_main_url_root))
     {
-        print 'Click on following link. ';
-        print 'If you always reach this page, you must remove install.lock file manually.<br>';
+        print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
         print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-        print 'Click here to go to Dolibarr';
+        print $langs->trans("ClickHereToGoToApp");
         print '</a>';
     }
     else
@@ -370,6 +380,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
     global $langs;
     $langs->load("main");
     $langs->load("admin");
+	$langs->load("install");
 
     $jquerytheme='base';
 
@@ -555,7 +566,7 @@ function detect_dolibarr_main_url_root()
 		$dolibarr_main_url_root = $_SERVER["SERVER_URL"] . $_SERVER["DOCUMENT_URI"];
 	} // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
 	else {
-		$proto = 'http';
+        $proto = ( (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') || $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
 		if (!empty($_SERVER["HTTP_HOST"])) {
 			$serverport = $_SERVER["HTTP_HOST"];
 		} else {

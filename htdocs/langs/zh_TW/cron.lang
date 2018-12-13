@@ -6,7 +6,7 @@ Permission23102 = 建立/更新預定工作
 Permission23103 = 刪除預定工作
 Permission23104 = 執行預定工作
 # Admin
-CronSetup= Scheduled job management setup
+CronSetup=Scheduled job management setup
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Security key for URL to launch cron jobs

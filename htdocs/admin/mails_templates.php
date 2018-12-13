@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
@@ -11,6 +11,7 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,10 +320,11 @@ if (empty($reshook))
                 if ($i) $sql.=",";
                 $sql.= $field."=";
 
-//                print $keycode.' - '.$_POST[$keycode].'<br>';
-                if ($_POST[$keycode] == '' || ($keycode != 'langcode' && $keycode != 'private' && empty($_POST[$keycode]))) $sql.="null";  // lang must be '' if not defined so the unique key that include lang will work
-                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="''";													   // lang must be '' if not defined so the unique key that include lang will work
-                elseif ($keycode == 'private') $sql.=((int) $_POST[$keycode]);													  		   // private must be 0 or 1
+                //print $keycode.' - '.$_POST[$keycode].'<br>';
+                if ($_POST[$keycode] == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && empty($_POST[$keycode]))) $sql.="null";  // lang must be '' if not defined so the unique key that include lang will work
+                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="''";	// lang must be '' if not defined so the unique key that include lang will work
+                elseif ($keycode == 'private') $sql.=((int) $_POST[$keycode]);	        // private must be 0 or 1
+                elseif ($keycode == 'position')	$sql.=((int) $_POST[$keycode]);
                 else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
@@ -420,7 +422,7 @@ if ($action == 'delete')
 //var_dump($elementList);
 
 
-$sql="SELECT rowid as rowid, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, active";
+$sql="SELECT rowid as rowid, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, enabled, active";
 $sql.=" FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql.=" WHERE entity IN (".getEntity('email_template').")";
 if (! $user->admin)
@@ -446,8 +448,6 @@ $sql.=$db->plimit($listlimit+1,$offset);
 $fieldlist=explode(',',$tabfield[$id]);
 
 // Form to add a new line
-$alabelisused=0;
-
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from','alpha')).'">';
@@ -459,38 +459,37 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 foreach ($fieldlist as $field => $value)
 {
-        // Determine le nom du champ par rapport aux noms possibles
-        // dans les dictionnaires de donnees
-        $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
-        $valuetoshow=$langs->trans($valuetoshow);   // try to translate
-        $align="left";
-        if ($fieldlist[$field]=='fk_user')         { $valuetoshow=$langs->trans("Owner");}
-        if ($fieldlist[$field]=='lang')            { $valuetoshow=(empty($conf->global->MAIN_MULTILANGS) ? '&nbsp;' : $langs->trans("Language")); }
-        if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
-        if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-        if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Code"); }
-        if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
-    	if ($fieldlist[$field]=='private')         { $align='center'; }
-    	if ($fieldlist[$field]=='position')        { $align='center'; }
+	// Determine le nom du champ par rapport aux noms possibles
+	// dans les dictionnaires de donnees
+	$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+	$valuetoshow=$langs->trans($valuetoshow);   // try to translate
+	$align="left";
+	if ($fieldlist[$field]=='fk_user')         { $valuetoshow=$langs->trans("Owner");}
+	if ($fieldlist[$field]=='lang')            { $valuetoshow=(empty($conf->global->MAIN_MULTILANGS) ? '&nbsp;' : $langs->trans("Language")); }
+	if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
+	if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+	if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Code"); }
+	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
+	if ($fieldlist[$field]=='private')         { $align='center'; }
+	if ($fieldlist[$field]=='position')        { $align='center'; }
 
-    	if ($fieldlist[$field]=='topic')           { $valuetoshow=''; }
-    	if ($fieldlist[$field]=='joinfiles')       { $valuetoshow=''; }
-    	if ($fieldlist[$field]=='content')         { $valuetoshow=''; }
-    	if ($fieldlist[$field]=='content_lines')   { $valuetoshow=''; }
+	if ($fieldlist[$field]=='topic')           { $valuetoshow=''; }
+	if ($fieldlist[$field]=='joinfiles')       { $valuetoshow=''; }
+	if ($fieldlist[$field]=='content')         { $valuetoshow=''; }
+	if ($fieldlist[$field]=='content_lines')   { $valuetoshow=''; }
 
-        if ($valuetoshow != '')
-        {
-            print '<td align="'.$align.'">';
-        	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-        	else if (! empty($tabhelp[$id][$value]))
-        	{
-        	    if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
-        	    else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
-        	}
-        	else print $valuetoshow;
-            print '</td>';
-         }
-         if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
+	if ($valuetoshow != '')
+	{
+		print '<td align="'.$align.'">';
+		if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
+		else if (! empty($tabhelp[$id][$value]))
+		{
+			if (in_array($value, array('topic'))) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value);   // Tooltip on click
+			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2);                             // Tooltip on hover
+		}
+		else print $valuetoshow;
+		print '</td>';
+	}
 }
 print '<td>';
 print '<input type="hidden" name="id" value="' . $id . '">';
@@ -533,6 +532,7 @@ print '<td align="right">';
 print '</td>';
 print "</tr>";
 
+// Show fields for topic, join files and body
 $fieldsforcontent = array('topic', 'joinfiles', 'content');
 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) { $fieldsforcontent = array('content','content_lines'); }
 foreach ($fieldsforcontent as $tmpfieldlist)
@@ -556,7 +556,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 		print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
 	}
 	else if ($tmpfieldlist == 'joinfiles') {
-		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
+		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1') . '">';
 	}
 	else
 	{
@@ -629,11 +629,11 @@ if ($resql)
     $filterfound=0;
     foreach ($fieldlist as $field => $value)
     {
-        if ($value == 'label') print '<td class="liste_titre"><input type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+        if ($value == 'label') print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth100" value="'.dol_escape_htmltag($search_label).'"></td>';
         elseif ($value == 'lang')
         {
         	print '<td class="liste_titre">';
-        	print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth150');
+        	print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth100');
         	print '</td>';
         }
         elseif ($value == 'fk_user')
@@ -642,13 +642,13 @@ if ($resql)
         	$restrictid=array();
         	if (! $user->admin) $restrictid=array($user->id);
         	//var_dump($restrictid);
-        	print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, 'hierarchyme', null, 0, 0, 1, '', 0, '', 'maxwidth200');
+        	print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, 'hierarchyme', null, 0, 0, 1, '', 0, '', 'maxwidth100');
         	print '</td>';
         }
         elseif ($value == 'topic') print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
         elseif ($value == 'type_template')
         {
-        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200 maxwidth100onsmartphone').'</td>';
+        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 maxwidth100onsmartphone').'</td>';
         }
         elseif (! in_array($value, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
     }
@@ -670,6 +670,7 @@ if ($resql)
         $align="left";
         $sortable=1;
         $valuetoshow='';
+        $forcenowrap=1;
         /*
         $tmparray=getLabelOfField($fieldlist[$field]);
         $showfield=$tmp['showfield'];
@@ -687,7 +688,7 @@ if ($resql)
 		if ($fieldlist[$field]=='private')         { $align='center'; }
 		if ($fieldlist[$field]=='position')        { $align='center'; }
 
-		if ($fieldlist[$field]=='joinfiles')       { $valuetoshow=$langs->trans("FilesAttachedToEmail"); $align='center'; }
+		if ($fieldlist[$field]=='joinfiles')       { $valuetoshow=$langs->trans("FilesAttachedToEmail"); $align='center'; $forcenowrap=0; }
 		if ($fieldlist[$field]=='content')         { $valuetoshow=$langs->trans("Content"); $showfield=0;}
 		if ($fieldlist[$field]=='content_lines')   { $valuetoshow=$langs->trans("ContentLines"); $showfield=0; }
 
@@ -696,8 +697,8 @@ if ($resql)
         {
             if (! empty($tabhelp[$id][$value]))
             {
-                if (in_array($value, array('topic'))) $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltip'.$value);   // Tooltip on click
-                else $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, '', 1);	// Tooltip on hover
+            	if (in_array($value, array('topic'))) $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltip'.$value, $forcenowrap);   // Tooltip on click
+                else $valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, '', $forcenowrap);	// Tooltip on hover
             }
             print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
         }
@@ -786,8 +787,12 @@ if ($resql)
             		$i++;
             		continue;		// It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
             	}
-				// TODO Test on 'enabled'
-
+				// Test on 'enabled'
+				if (! dol_eval($obj->enabled, 1))
+				{
+					$i++;
+					continue;		// Email template not qualified
+				}
 
             	print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
@@ -925,6 +930,7 @@ print '</form>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();
 
@@ -989,7 +995,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print '<td>';
 			if (! empty($conf->global->MAIN_MULTILANGS))
 			{
-				$selectedlang = $langs->defaultlang;
+				$selectedlang = GETPOSTISSET('langcode')?GETPOST('langcode', 'aZ09'):$langs->defaultlang;
 				if ($context == 'edit') $selectedlang = $obj->{$fieldlist[$field]};
 				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth150');
 			}
@@ -1017,17 +1023,18 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}
 			else
 			{
-				print $form->selectarray('type_template', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200');
+				print $form->selectarray('type_template', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150 maxwidth100onsmartphone');
 			}
 			print '</td>';
 		}
-		elseif ($context == 'add' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
+		elseif ($context == 'add'  && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
 		elseif ($context == 'edit' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
 		elseif ($context == 'hide' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
 		else
 		{
 			$size=''; $class=''; $classtd='';
 			if ($fieldlist[$field]=='code') $class='maxwidth100';
+			if ($fieldlist[$field]=='label') $class='maxwidth100';
 			if ($fieldlist[$field]=='private') { $class='maxwidth50'; $classtd='center'; }
 			if ($fieldlist[$field]=='position') { $class='maxwidth50'; $classtd='center'; }
 			if ($fieldlist[$field]=='libelle') $class='quatrevingtpercent';

@@ -33,7 +33,7 @@ class SupplierInvoices extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'socid'
+        'socid',
     );
 
     /**
@@ -96,7 +96,8 @@ class SupplierInvoices extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -152,8 +153,7 @@ class SupplierInvoices extends DolibarrApi
         }
 
         $result = $db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
@@ -170,10 +170,10 @@ class SupplierInvoices extends DolibarrApi
         else {
             throw new RestException(503, 'Error when retrieve supplier invoice list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if ( ! count($obj_ret)) {
             throw new RestException(404, 'No supplier invoice found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -332,7 +332,8 @@ class SupplierInvoices extends DolibarrApi
      * @param   Object  $object    Object to clean
      * @return  array              Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 

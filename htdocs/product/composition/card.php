@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -342,6 +342,7 @@ if ($id > 0 || ! empty($ref))
 
 			$class='pair';
 
+			$totalsell=0;
 			if (count($prods_arbo))
 			{
 				foreach($prods_arbo as $value)
@@ -369,11 +370,16 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '</td>';
 
-					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) - $product_fourn->fourn_remise), 'MT');
+						// For avoid a non-numeric value
+						$fourn_unitprice = (!empty($product_fourn->fourn_unitprice)?$product_fourn->fourn_unitprice:0);
+						$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent)?$product_fourn->fourn_remise_percent:0);
+						$fourn_remise = (!empty($product_fourn->fourn_remise)?$product_fourn->fourn_remise:0);
+
+						$totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
 						$total+=$totalline;
 
 						print '<td align="right">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice,'','',0,0,-1,$conf->currency));
 						print '</td>';
 
 						// Best selling price
@@ -382,10 +388,15 @@ if ($id > 0 || ! empty($ref))
 						{
 							$pricesell='Variable';
 						}
-						$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
-						$totalsell+=$totallinesell;
+						else
+						{
+							$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
+							$totalsell+=$totallinesell;
+						}
 						print '<td align="right" colspan="2">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($pricesell,'','',0,0,-1,$conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : ''));
+						if (is_numeric($pricesell)) print price($pricesell,'','',0,0,-1,$conf->currency);
+						else print $langs->trans($pricesell);
 						print '</td>';
 
 						// Stock
@@ -396,7 +407,6 @@ if ($id > 0 || ! empty($ref))
 						{
 							print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
 							print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
-
 						}
 						else{
 							print '<td>'.$nb_of_subproduct.'</td>';
@@ -540,7 +550,6 @@ if ($id > 0 || ! empty($ref))
 			{
 				$num = $db->num_rows($resql);
 				$i=0;
-				$var=true;
 
 				if($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
 
@@ -624,7 +633,6 @@ if ($id > 0 || ! empty($ref))
 					}
 					$i++;
 				}
-
 			}
 			else
 			{
@@ -644,11 +652,9 @@ if ($id > 0 || ! empty($ref))
 
 			print '</form>';
 		}
-
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

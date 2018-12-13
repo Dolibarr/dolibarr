@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,13 @@
  *
  * cd htdocs/install
  * php upgrade.php 3.4.0 3.5.0 [dirmodule|ignoredbversion]
- * php upgrade2.php 3.4.0 3.5.0
+ * php upgrade2.php 3.4.0 3.5.0 [MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE]
  *
- * Option 'dirmodule' allows to provide a path for an external module, so we migrate from command line a script from a module.
- * Option 'ignoredbversion' allows to run migration even if database is a bugged database version.
+ * And for final step:
+ * php step5.php 3.4.0 3.5.0
+ *
+ * Option 'dirmodule' allows to provide a path for an external module, so we migrate from command line using a script from a module.
+ * Option 'ignoredbversion' allows to run migration even if database version does not match start version of migration
  * Return code is 0 if OK, >0 if error
  */
 
@@ -63,10 +66,7 @@ $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'',3):(empty($argv
 $dirmodule=((GETPOST("dirmodule",'alpha',3) && GETPOST("dirmodule",'alpha',3) != 'ignoredbversion'))?GETPOST("dirmodule",'alpha',3):((empty($argv[3]) || $argv[3] == 'ignoredbversion')?'':$argv[3]);
 $ignoredbversion=(GETPOST('ignoredbversion','alpha',3)=='ignoredbversion')?GETPOST('ignoredbversion','alpha',3):((empty($argv[3]) || $argv[3] != 'ignoredbversion')?'':$argv[3]);
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
-$langs->load("errors");
+$langs->loadLangs(array("admin", "install", "other", "errors"));
 
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
@@ -84,7 +84,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 if (! $versionfrom && ! $versionto)
 {
 	print 'Error: Parameter versionfrom or versionto missing.'."\n";
-	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install)'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
@@ -297,7 +297,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             		{
             			if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
             			{
-            				print '<tr><td colspan="2"><font  class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
+            				print '<tr><td colspan="2"><span class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
             			}
             		}
             	}

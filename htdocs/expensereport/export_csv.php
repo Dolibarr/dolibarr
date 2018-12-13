@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,6 @@ if($num < 1) {
    $insert.= ")";
 
    $req = $db->query($insert);
-
 }
 
 
@@ -114,7 +114,7 @@ if (isset($_POST['action']))
 {
 	if($_POST['action'] == 'export')
 	{
-		$select_date = $_POST['annee'].'-'.$_POST['mois'];
+		$dateselected = $_POST['annee'].'-'.$_POST['mois'];
 
 		//var_dump($conf->expensereport->dir_output.'/export/');
 		if (!file_exists($conf->expensereport->dir_output.'/export/'))
@@ -122,7 +122,7 @@ if (isset($_POST['action']))
 			dol_mkdir($conf->expensereport->dir_output.'/export/');
 		}
 
-		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$select_date.'.csv';
+		$dir = $conf->expensereport->dir_output.'/export/expensereport-'.$dateselected.'.csv';
 		$outputlangs = $langs;
 		$outputlangs->charset_output = 'UTF-8';
 
@@ -175,7 +175,6 @@ if (isset($_POST['action']))
 						$ligne.= "--->, {$objet2->rowid}, {$objet2->libelle}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
 					}
 				}
-
 			}
 
 			$ligne = $outputlangs->convToOutputCharset($ligne);
@@ -183,18 +182,16 @@ if (isset($_POST['action']))
 			fwrite($open,$ligne);
 			fclose($open);
 
-			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$select_date.'.csv" target="_blank">Télécharger le fichier expensereport-'.$select_date.'.csv</a>';
-
+			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
 		} else {
 
 			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
-
 		}
 	}
 }
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

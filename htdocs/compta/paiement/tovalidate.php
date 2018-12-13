@@ -139,5 +139,6 @@ if ($resql)
     print "</table>";
 }
 
+// End of page
 llxFooter();
 $db->close();

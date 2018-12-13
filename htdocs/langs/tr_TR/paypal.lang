@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=Yalnızca PayPal
 ONLINE_PAYMENT_CSS_URL=Online ödeme sayfasındaki CSS stil sayfasının isteğe bağlı URL'si
 ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Posta yoluyla bir belge gönderdiğinizde, Paypal ödeme url'sini ekleyin
-PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.<br><br>%s<br><br>
 YouAreCurrentlyInSandboxMode=Şu anda %s "sandbox" modundasınız
 NewOnlinePaymentReceived=Yeni online ödeme alındı
 NewOnlinePaymentFailed=Yeni online ödeme denendi ancak başarısız oldu

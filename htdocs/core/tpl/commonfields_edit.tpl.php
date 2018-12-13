@@ -40,7 +40,7 @@ foreach($object->fields as $key => $val)
 	// Discard if extrafield is a hidden field on form
 	if (abs($val['visible']) != 1) continue;
 
-	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
+	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
 
 	print '<tr><td';
 	print ' class="titlefieldcreate';

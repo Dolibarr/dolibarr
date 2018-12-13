@@ -42,7 +42,7 @@ ErrorBadDateFormat='%s' قيمة له خاطئ تنسيق التاريخ
 ErrorWrongDate=تاريخ غير صحيح!
 ErrorFailedToWriteInDir=لم يكتب في دليل ٪ ق
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق= ٪ مع البريد الإلكتروني)
-ErrorUserCannotBeDelete=User cannot be deleted. May be it is associated to Dolibarr entities.
+ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
 ErrorFieldsRequired=تتطلب بعض المجالات لم تملأ.
 ErrorSubjectIsRequired=The email topic is required
 ErrorFailedToCreateDir=فشل إنشاء دليل. تأكد من أن خادم الويب المستخدم أذونات لكتابة وثائق Dolibarr في الدليل. إذا تم تمكين المعلم <b>safe_mode</b> على هذا PHP ، تحقق من أن ملفات Dolibarr php تملك لخدمة الويب المستخدم (أو مجموعة).
@@ -65,21 +65,22 @@ ErrorNoValueForSelectType=يرجى ملء قيمة لقائمة مختارة
 ErrorNoValueForCheckBoxType=يرجى ملء قيمة لقائمة مربع
 ErrorNoValueForRadioType=يرجى ملء قيمة لقائمة الراديو
 ErrorBadFormatValueList=قيمة القائمة لا يمكن أن يكون أكثر من واحد <u>فاصلة:٪ الصورة،</u> ولكن تحتاج إلى واحد على الأقل: مفتاح، قيمة
-ErrorFieldCanNotContainSpecialCharacters=ميدان <b>٪ ق</b> يجب ألا يحتوي على أحرف خاصة.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=يجب أن لا يحتوي <b>الحقل%s</b> أحرف خاصة، ولا الحروف الكبيرة وليس يمكن أن تحتوي على أرقام فقط.
+ErrorFieldCanNotContainSpecialCharacters=The field <b>%s</b> must not contains special characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
+ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=أي وحدة المحاسبة وتفعيل
 ErrorExportDuplicateProfil=هذا الاسم الشخصي موجود مسبقا لهذه المجموعة التصدير.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
 ErrorLDAPMakeManualTest=ألف. ldif الملف قد ولدت في الدليل ٪ s. انها محاولة لتحميل يدويا من سطر في الحصول على مزيد من المعلومات عن الأخطاء.
-ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع "المركز الخاص لم تبدأ" اذا الحقل "الذي قام به" كما شغلها.
+ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "status not started" if field "done by" is also filled.
 ErrorRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
 ErrorPleaseTypeBankTransactionReportName=Please enter the bank statement name where the entry has to be reported (Format YYYYMM or YYYYMMDD)
-ErrorRecordHasChildren=Failed to delete record since it has some childs.
+ErrorRecordHasChildren=Failed to delete record since it has some child records.
 ErrorRecordHasAtLeastOneChildOfType=Object has at least one child of type %s
-ErrorRecordIsUsedCantDelete=لا يمكن حذف السجلات. وبالفعل استخدامه أو نشره على كائن آخر.
+ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into another object.
 ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لجعل هذا العمل الميزة. لتمكين / تعطيل جافا سكريبت ، انتقل إلى القائمة الرئيسية -> الإعداد -> العرض.
 ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
-ErrorContactEMail=وقع خطأ فني. من فضلك، اتصل بمسؤول إلى البريد الإلكتروني بعد <b>%s</b> EN توفير <b>%s</b> رمز الخطأ في رسالتك، أو حتى أفضل من خلال إضافة نسخة شاشة من هذه الصفحة.
+ErrorContactEMail=A technical error occured. Please, contact administrator to following email <b>%s</b> and provide the error code <b>%s</b> in your message, or add a screen copy of this page.
 ErrorWrongValueForField=قيمة خاطئة لعدد <b>%s</b> الحقل (قيمة <b>'%s'</b> لا يتطابق <b>%s</b> حكم [رجإكس])
 ErrorFieldValueNotIn=قيمة خاطئة عن رقم <b>الحقل%s</b> (القيمة <b>'٪ ق'</b> ليست قيمة متوفرة في <b>حقل٪ الصورة</b> من <b>الجدول%s)</b>
 ErrorFieldRefNotIn=قيمة خاطئة <b>ل%s</b> عدد حقل <b>('%s</b> &quot;قيمة ليست المرجع <b>%s</b> موجود)
@@ -88,6 +89,7 @@ ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروس�
 ErrorSpecialCharNotAllowedForField=غير مسموح الأحرف الخاصة لحقل "%s"
 ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
 ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this supplier
+ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created beacuse of too low quantity
 ErrorModuleSetupNotComplete=Setup of module looks to be uncomplete. Go on Home - Setup - Modules to complete.
 ErrorBadMask=خطأ في قناع
 ErrorBadMaskFailedToLocatePosOfSequence=خطأ، من دون قناع رقم التسلسل
@@ -95,7 +97,7 @@ ErrorBadMaskBadRazMonth=خطأ، قيمة إعادة سيئة
 ErrorMaxNumberReachForThisMask=عدد ماكس متناول هذا القناع
 ErrorCounterMustHaveMoreThan3Digits=يجب أن يكون العداد أكثر من 3 أرقام
 ErrorSelectAtLeastOne=خطأ. حدد واحد على الأقل دخول.
-ErrorDeleteNotPossibleLineIsConsolidated=حذف غير ممكن لأنه مرتبط سجل إلى transation البنك الذي يتم التصالح
+ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transaction that is conciliated
 ErrorProdIdAlreadyExist=يتم تعيين ثلث آخر إلى %s
 ErrorFailedToSendPassword=لم ترسل كلمة السر
 ErrorFailedToLoadRSSFile=فشل في الحصول على آر إس إس. محاولة إضافة MAIN_SIMPLEXMLLOAD_DEBUG ثابت إذا رسائل الخطأ لا توفر ما يكفي من المعلومات.
@@ -115,6 +117,7 @@ ErrorLoginDoesNotExists=لا يستطيع المستخدم الدخول مع <b>
 ErrorLoginHasNoEmail=هذا المستخدم ليس لديه عنوان البريد الإلكتروني. إحباط عملية.
 ErrorBadValueForCode=سيئة قيمة لرمز الحماية. حاول مرة أخرى مع القيمة الجديدة ...
 ErrorBothFieldCantBeNegative=ويمكن لحقول %s و%s لا تكون سلبية
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> can't be negative on such type of invoice. If you want to add a discount line, just create the discount first with link %s on screen and apply it to invoice. You can also ask your admin to set option FACTURE_ENABLE_NEGATIVE_LINES to 1 to restore old behaviour.
 ErrorQtyForCustomerInvoiceCantBeNegative=كمية لخط في فواتير العملاء لا يمكن أن يكون سلبيا
 ErrorWebServerUserHasNotPermission=<b>%s</b> تستخدم حساب مستخدم لتنفيذ خادم الويب لا يوجد لديه إذن لذلك
 ErrorNoActivatedBarcode=لا يوجد نوع الباركود تفعيلها
@@ -138,7 +141,7 @@ ErrorBadFormat=شكل سيئة!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any third party. Link member to an existing third party or create a new third party before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=خطأ، وهناك بعض الولادات ترتبط هذه الشحنة. رفض الحذف.
 ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank entry that was reconciled
-ErrorCantDeletePaymentSharedWithPayedInvoice=لا يمكنك حذف دفع تتقاسمها فاتورة واحدة على الأقل مع وضع سيولي
+ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Paid
 ErrorPriceExpression1=لا يمكن تعيين إلى ثابت '٪ ق'
 ErrorPriceExpression2=لا يمكن إعادة تعريف المدمج في وظيفة '٪ ق'
 ErrorPriceExpression3=متغير غير معرف '٪ s' في تعريف الدالة
@@ -147,7 +150,7 @@ ErrorPriceExpression5=غير متوقع '٪ ق'
 ErrorPriceExpression6=عدد خاطئ من الوسائط (٪ ق معين،٪ المتوقعة الصورة)
 ErrorPriceExpression8=مشغل غير متوقع '٪ ق'
 ErrorPriceExpression9=حدث خطأ غير متوقع
-ErrorPriceExpression10=Iperator '٪ ق' يفتقر المعامل
+ErrorPriceExpression10=Operator '%s' lacks operand
 ErrorPriceExpression11=تتوقع '٪ ق'
 ErrorPriceExpression14=القسمة على صفر
 ErrorPriceExpression17=غير معرف متغير '٪ ق'
@@ -171,10 +174,10 @@ ErrorGlobalVariableUpdater4=العميل SOAP فشلت مع الخطأ '٪ ق'
 ErrorGlobalVariableUpdater5=لا متغير عمومي مختارة
 ErrorFieldMustBeANumeric=يجب أن يكون <b>حقل٪ الصورة</b> قيمة رقمية
 ErrorMandatoryParametersNotProvided=معيار إلزامي (ق) لم تقدم
-ErrorOppStatusRequiredIfAmount=قمت بتعيين المبلغ المقدر لهذه الفرصة / الرصاص. لذلك يجب عليك أيضا إدخال مكانتها
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=سيئة تعريف القائمة صفيف في الوحدة واصف (القيمة سيئة لfk_menu مفتاح)
-ErrorSavingChanges=وقد ocurred لخطأ عند حفظ التغييرات
+ErrorSavingChanges=An error has occurred when saving the changes
 ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=File must have format %s
 ErrorSupplierCountryIsNotDefined=Country for this vendor is not defined. Correct this first.
@@ -208,7 +211,8 @@ ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was mod
 ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=Description is mandatory for lines with free product
-
+ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
 WarningMandatorySetupNotComplete=لا يتم تعريف معلمات الإعداد إلزامية حتى الآن
@@ -217,9 +221,9 @@ WarningBookmarkAlreadyExists=المرجعية هذا الكتاب أو هذا ا
 WarningPassIsEmpty=تحذير كلمة سر قاعدة بيانات فارغة. هذه هي ثغرة أمنية. يجب عليك أن تضيف كلمة السر الخاصة بك لقاعدة البيانات وتغيير conf.php ليعكس هذا الملف.
 WarningConfFileMustBeReadOnly=انذار ، ملف (التكوين <b>htdocs / أسيوط / conf.php)</b> الخاص يمكن أن تكون الكتابة بواسطة خادم الويب. هذه هي ثغرة أمنية خطيرة. أذونات تعديل على ملف ليكون في وضع القراءة فقط لمستخدم نظام التشغيل المستخدمة من قبل ملقم ويب. إذا كنت تستخدم ويندوز وشكل نسبة الدهون لمدة القرص الخاص بك ، فإنك يجب أن نعرف أن هذا النظام لا يسمح ملف لإضافة الأذونات على الملف ، بحيث لا تكون آمنة تماما.
 WarningsOnXLines=تحذيرات عن مصدر خطوط <b>%s</b>
-WarningNoDocumentModelActivated=لا يوجد نموذج لجيل وثيقة ، قد تم تنشيط. سيكون نموذج المختار افتراضيا حتى يمكنك التحقق من إعداد وحدة الخاص.
+WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be chosen by default until you check your module setup.
 WarningLockFileDoesNotExists=تحذير، بمجرد الانتهاء من الإعداد، يجب عليك تعطيل تثبيت / الهجرة أدوات بإضافة <b>install.lock</b> الملف إلى <b>الدليل٪ الصورة.</b> في عداد المفقودين هذا الملف هو ثغرة أمنية.
-WarningUntilDirRemoved=كل التحذيرات الأمنية (مرئية من قبل المستخدمين مشرف فقط) وسوف تبقى نشطة طالما أن الضعف الحالي (أو لم يضف هذا MAIN_REMOVE_INSTALL_WARNING مستمر في الإعداد&gt; الإعداد الأخرى).
+WarningUntilDirRemoved=All security warnings (visible by admin users only) will remain active as long as the vulnerability is present (or that constant MAIN_REMOVE_INSTALL_WARNING is added in Setup->Other Setup).
 WarningCloseAlways=تحذير، ويتم إغلاق حتى إذا قدر يختلف بين عناصر المصدر والهدف. تمكين هذه الميزة بحذر.
 WarningUsingThisBoxSlowDown=تحذير، وذلك باستخدام هذا الإطار تبطئ على محمل الجد كل الصفحات التي تظهر مربع.
 WarningClickToDialUserSetupNotComplete=إعداد المعلومات ClickToDial لالمستخدم الخاص بك ليست كاملة (انظر التبويب ClickToDial على بطاقة المستخدم الخاص بك).
@@ -229,5 +233,5 @@ WarningTooManyDataPleaseUseMoreFilters=عدد كبير جدا من البيان�
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.
 WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translation key for this language
-WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the bulk actions on lists
+WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=Warning, the date of line is not in the range of the expense report

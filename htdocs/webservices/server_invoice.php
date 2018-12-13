@@ -23,7 +23,7 @@
 
 if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
-require_once '../master.inc.php';
+require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
@@ -635,7 +635,6 @@ function createInvoice($authentication,$invoice)
             $errorlabel=$new_invoice->error;
             dol_syslog("Function: createInvoice error while creating".$errorlabel);
         }
-
     }
 
     if ($error)
@@ -707,7 +706,6 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
 						$error++;
 						dol_syslog("Webservice server_invoice:: invoice creation from order failed", LOG_ERR);
 					}
-
 				}
 			}
 			else

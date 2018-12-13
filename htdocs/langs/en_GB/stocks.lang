@@ -3,7 +3,6 @@ StocksArea=Warehouse area
 MassStockTransferShort=Bulk stock transfer
 QtyDispatchedShort=Quantity dispatched
 QtyToDispatchShort=Quantity to be dispatched
-ReStockOnValidateOrder=Increase real stocks on suppliers orders Accepted
 OrderStatusNotReadyToDispatch=Order Status does not allow dispatching of products in stock warehouses.
 NoPredefinedProductToDispatch=No predefined products for this object. So no dispatching of stock is required.
 IdWarehouse=Warehouse ID

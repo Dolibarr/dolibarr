@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/geturl.lib.php';
 
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other"));
 
 $action=GETPOST('action','alpha');
 
@@ -76,7 +76,7 @@ print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
 if (function_exists('curl_init'))
 {
     $conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
-    
+
     if ($action == 'getlastversion')
     {
         if ($sfurl)
@@ -95,7 +95,7 @@ if (function_exists('curl_init'))
                 }
                 $i++;
             }
-            
+
             // Show version
         	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
         }
@@ -142,7 +142,6 @@ print '<hr>';
 
 print $langs->trans("GoModuleSetupArea", DOL_URL_ROOT.'/admin/modules.php?mode=deploy', $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Modules"));
 
-
+// End of page
 llxFooter();
-
 $db->close();

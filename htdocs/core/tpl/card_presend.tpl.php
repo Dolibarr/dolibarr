@@ -74,6 +74,7 @@ if ($action == 'presend')
 	{
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
+		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array('commercial','bills','orders','contracts','members','propal','products','supplier_proposal','interventions'));
 	}
 
@@ -168,7 +169,6 @@ if ($action == 'presend')
 			$formmail->withtouser = $listeuser;
 			$formmail->withtoccuser = $listeuser;
 		}
-
 	}
 
 	$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
@@ -192,6 +192,21 @@ if ($action == 'presend')
 		'mode' => 'formemail'
 	);
 	complete_substitutions_array($substitutionarray, $outputlangs, $object, $parameters);
+
+	// Find the good contact adress
+	$custcontact = '';
+	$contactarr = array();
+	$contactarr = $object->liste_contact(- 1, 'external');
+
+	if (is_array($contactarr) && count($contactarr) > 0) {
+		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        $contactstatic = new Contact($db);
+
+		foreach ($contactarr as $contact) {
+            $contactstatic->fetch($contact['id']);
+            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($langs, 1);
+		}
+	}
 
 	// Tableau des substitutions
 	$formmail->substit = $substitutionarray;

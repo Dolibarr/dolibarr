@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
@@ -152,7 +152,6 @@ if (! empty($conf->product->enabled))
 	$statProducts.= '<tr class="oddeven">';
 	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][3]).'</td>';
 	$statProducts.= "</tr>";
-
 }
 if (! empty($conf->service->enabled))
 {
@@ -168,7 +167,6 @@ if (! empty($conf->service->enabled))
 	$statServices.= '<tr class="oddeven">';
 	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[1][3]).'</td>';
 	$statServices.= "</tr>";
-
 }
 $total=0;
 if ($type == '0')
@@ -302,10 +300,12 @@ if ($result)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
-		$colnb=5;
+		$colnb=4;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
-		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th></tr>';
+		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '</tr>';
 
 		while ($i < $num)
 		{
@@ -395,8 +395,8 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();
 
 
@@ -455,8 +455,6 @@ function activitytrim($product_type)
 		}
 		$i = 0;
 
-		$var=true;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -464,7 +462,6 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
-
 					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
 					print '<td align=right>'.price($trim2).'</td>';
@@ -498,7 +495,6 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
-
 			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
 			print '<td align=right>'.price($trim2).'</td>';

@@ -5,7 +5,6 @@ ConfirmDeleteGroup=Weet u zeker dat u groep <b>%s</b> wilt verwijderen?
 ConfirmEnableUser=Weet u zeker dat u gebruiker <b>%s</b> wilt activeren?
 ConfirmReinitPassword=Weet u zeker dat u voor gebruiker <b>%s</b> een nieuw wachtwoord wilt genereren?
 ConfirmSendNewPassword=Weet u zeker dat u een nieuw wachtwoord wilt genereren en verzenden voor gebruiker <b>%s</b>?
-LastGroupsCreated=Laatste %s gemaakte groepen
 LastUsersCreated=Laatste %s gemaakte gebruikers
 CreateDolibarrThirdParty=Maak Derden
 ConfirmCreateContact=Weet u zeker dat u een Dolibarr account wilt maken voor deze contactpersoon?

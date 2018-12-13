@@ -34,7 +34,7 @@ class Contacts extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
-		'lastname'
+		'lastname',
 	);
 
 	/**
@@ -101,8 +101,9 @@ class Contacts extends DolibarrApi
 	 * @return array                        Array of contact objects
      *
 	 * @throws RestException
-	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+     */
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -122,6 +123,7 @@ class Contacts extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX . "socpeople_extrafields as te ON te.fk_object = t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			// We need this table joined to the select in order to filter by sale
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
@@ -194,7 +196,8 @@ class Contacts extends DolibarrApi
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
 	 */
-	function post($request_data = null) {
+    function post($request_data = null)
+    {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -219,7 +222,8 @@ class Contacts extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -254,7 +258,8 @@ class Contacts extends DolibarrApi
 	 * @param   int     $id Contact ID
 	 * @return  integer
 	 */
-	function delete($id) {
+    function delete($id)
+    {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer)
 		{
 			throw new RestException(401, 'No permission to delete contacts');
@@ -282,7 +287,8 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url	POST {id}/createUser
 	 */
-	function createUser($id, $request_data = null) {
+    function createUser($id, $request_data = null)
+    {
 	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 	    //throw new RestException(401);
 	    //}
@@ -364,7 +370,8 @@ class Contacts extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
     	$object = parent::_cleanObjectDatas($object);
 
@@ -388,7 +395,8 @@ class Contacts extends DolibarrApi
 	 * @return  array
 	 * @throws RestException
 	 */
-	function _validate($data) {
+    function _validate($data)
+    {
 		$contact = array();
 		foreach (Contacts::$FIELDS as $field)
 		{

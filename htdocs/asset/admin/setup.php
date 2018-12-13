@@ -58,7 +58,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 
-$head = AssetsAdminPrepareHead();
+$head = asset_admin_prepare_head();
 
 dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 
@@ -107,9 +107,8 @@ else
 	print '</div>';
 }
 
-
-// Page end
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

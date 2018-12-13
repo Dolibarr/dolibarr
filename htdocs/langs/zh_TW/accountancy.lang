@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=步驟%s:從%s選單建立會計項目表模組
 AccountancyAreaDescChart=步驟%s: 從選單中建立或檢查會計項目表的內容%s。
 
 AccountancyAreaDescVat=步驟%s: 定義每一項營業稅率的預設會計項目。可使用選單輸入%s。
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=步驟%s: 定義每一費用報表類型的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescSal=步驟%s: 定義薪資付款的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescContrib=步驟%s: 定義特定費用(雜項稅捐)的預設會計項目。可使用選單輸入%s。
@@ -131,6 +132,7 @@ ACCOUNTING_LENGTH_GACCOUNT=會計項目的長度(如果設定為 6，會計項�
 ACCOUNTING_LENGTH_AACCOUNT=合作方會計項目長度(如果設定為 6，會計項目為 401，則會變成 401000)
 ACCOUNTING_MANAGE_ZERO=允許管理會計項目尾數的不同零值。某些國家有此需求(如瑞士)。若為off(預設)，則您可設定2個接下來的參數，要求程式增加虛擬零值。
 BANK_DISABLE_DIRECT_INPUT=不啟用在銀行帳戶中直接記錄交易
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=銷貨簿
 ACCOUNTING_PURCHASE_JOURNAL=進貨簿
@@ -286,7 +288,7 @@ Formula=公式
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=某些必要的設定步驟沒有完成，請完成它們
-ErrorNoAccountingCategoryForThisCountry=此國家 %s 沒有會計項目大類可用(查閱首頁-設定-各式目錄)
+ErrorNoAccountingCategoryForThisCountry=此國家 %s 沒有會計項目大類可用(查閱首頁-設定-各式分類)
 ErrorInvoiceContainsLinesNotYetBounded=您試著記錄發票某行<strong>%s</strong>，但其他行數尚未完成關聯到會計項目。拒絕本張發票全部行數的記錄。
 ErrorInvoiceContainsLinesNotYetBoundedShort=發票中某些行數未關聯到會計項目。
 ExportNotSupported=已設定匯出格式不支援匯出到此頁

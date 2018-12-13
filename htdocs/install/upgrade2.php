@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -18,13 +18,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * Upgrade scripts can be ran from command line with syntax:
+ * Upgrade2 scripts can be ran from command line with syntax:
  *
  * cd htdocs/install
- * php upgrade.php 3.4.0 3.5.0
- * php upgrade2.php 3.4.0 3.5.0 [MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE]
+ * php upgrade.php 3.4.0 3.5.0 [dirmodule|ignoredbversion]
+ * php upgrade2.php 3.4.0 3.5.0 [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE]
+ *
+ * And for final step:
+ * php step5.php 3.4.0 3.5.0
  *
  * Return code is 0 if OK, >0 if error
+ *
+ * Note: To just enable a module from command line, use this syntax:
+ * php upgrade2.php 0.0.0 0.0.0 [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE]
  */
 
 /**
@@ -67,17 +73,14 @@ $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
 $enablemodules=GETPOST("enablemodules",'alpha',3)?GETPOST("enablemodules",'alpha',3):(empty($argv[3])?'':$argv[3]);
 
-$langs->load('admin');
-$langs->load('install');
-$langs->load("bills");
-$langs->load("suppliers");
+$langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
 if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
 if ($dolibarr_main_db_type == 'mssql')  $choix=3;
 
 
-dolibarr_install_syslog("--- upgrade2: entering upgrade2.php page");
+dolibarr_install_syslog("--- upgrade2: entering upgrade2.php page ".$versionfrom." ".$versionto." ".$enablemodules);
 if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
 
 
@@ -89,14 +92,14 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto || preg_match('/version/', $versionto)))
 {
 	print 'Error: Parameter versionfrom or versionto missing or having a bad format.'."\n";
-	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install)'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
 	$path=dirname(__FILE__).'/';
 	if (substr($sapi_type, 0, 3) == 'cli')
 	{
-		print 'Syntax from command line: '.$script_file." x.y.z a.b.c\n";
+		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
 	}
 	exit;
 }
@@ -191,6 +194,32 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
         $versiontoarray=explode('.',$versionto);
         $versionranarray=explode('.',DOL_VERSION);
+
+
+        // Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN birth date';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemployment date';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemploymentend date';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_range integer';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_c_exp_tax_cat integer';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN langs varchar(24)';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fieldcomputed text';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fielddefault varchar(255)';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX."extrafields ADD COLUMN enabled varchar(255) DEFAULT '1'";
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN help text';
+        $db->query($sql, 1);
+        $sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL';
+        $db->query($sql, 1);
+
 
         $afterversionarray=explode('.','2.0.0');
         $beforeversionarray=explode('.','2.7.9');
@@ -412,6 +441,13 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
         }
 
+        // Scripts for 9.0
+        $afterversionarray=explode('.','8.0.9');
+        $beforeversionarray=explode('.','9.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	migrate_user_photospath();
+        }
     }
 
 	// Code executed only if migration is LAST ONE. Must always be done.
@@ -515,12 +551,12 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     dolCopyDir($srcroot, $destroot, 0, 0);
 
 
-    // Actions for all versions (no database change, delete files and directories)
+    // Actions for all versions (no database change but delete some files and directories)
     migrate_delete_old_files($db, $langs, $conf);
     migrate_delete_old_dir($db, $langs, $conf);
-    // Actions for all versions (no database change, create directories)
+    // Actions for all versions (no database change but create some directories)
     dol_mkdir(DOL_DATA_ROOT.'/bank');
-    // Actions for all versions (no database change, rename directories)
+    // Actions for all versions (no database change but rename some directories)
     migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
 
     print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
@@ -2259,7 +2295,6 @@ function migrate_detail_livraison($db,$langs,$conf)
                     print ". ";
                     $i++;
                 }
-
             }
 
             if ($error == 0)
@@ -2347,7 +2382,6 @@ function migrate_stocks($db,$langs,$conf)
                 print ". ";
                 $i++;
             }
-
         }
 
         if ($error == 0)
@@ -2602,7 +2636,6 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 //print ". ";
                 $i++;
             }
-
         }
         else print $langs->trans('AlreadyDone')."<br>\n";
 
@@ -2668,7 +2701,6 @@ function migrate_restore_missing_links($db,$langs,$conf)
                 //print ". ";
                 $i++;
             }
-
         }
         else
         {
@@ -2890,9 +2922,9 @@ function migrate_project_task_actors($db,$langs,$conf)
  * @param	Conf		$conf			Object conf
  * @param	string		$table			Table name
  * @param	int			$fk_source		Id of element source
- * @param	type		$sourcetype		Type of element source
+ * @param	string		$sourcetype		Type of element source
  * @param	int			$fk_target		Id of element target
- * @param	type		$targettype		Type of element target
+ * @param	string		$targettype		Type of element target
  * @return	void
  */
 function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcetype,$fk_target,$targettype)
@@ -4393,49 +4425,50 @@ function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
  */
 function migrate_delete_old_files($db,$langs,$conf)
 {
-    $result=true;
+	$result=true;
 
-    dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
+	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
-    // List of files to delete
-    $filetodeletearray=array(
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
-    DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
-    DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
+	// List of files to delete
+	$filetodeletearray=array(
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_demo.class.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/barre_left/default.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/barre_top/default.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modComptabiliteExpert.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modCommercial.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modProduit.class.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/modSkype.class.php',
+		DOL_DOCUMENT_ROOT.'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_Ecotax.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modCommande_fraisport.class.php',
+		DOL_DOCUMENT_ROOT.'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
+		DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
 
-    DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
-    DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
-    DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
-    DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
-    DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
-    DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
-
+		DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
+		DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
+		DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
+		DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
+		DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
+		DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php',
+		DOL_DOCUMENT_ROOT.'/support/online.php'
     );
 
     foreach ($filetodeletearray as $filetodelete)
@@ -4444,7 +4477,7 @@ function migrate_delete_old_files($db,$langs,$conf)
         $result=1;
         if (file_exists($filetodelete))
         {
-            $result=dol_delete_file($filetodelete);
+            $result=dol_delete_file($filetodelete,0,0,0,null,true);
             if (! $result)
             {
                 $langs->load("errors");
@@ -4510,11 +4543,11 @@ function migrate_delete_old_dir($db,$langs,$conf)
  * @param   int         $force          1=Reload module even if not already loaded
  * @return	void
  */
-function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
+function migrate_reload_modules($db, $langs, $conf, $listofmodule=array(), $force=0)
 {
 	if (count($listofmodule) == 0) return;
 
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force);
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".join(',', array_keys($listofmodule)));
 
 	foreach($listofmodule as $moduletoreload => $reloadmode)	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
 	{
@@ -4697,8 +4730,15 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
 			if (! empty($reg[1]))
 			{
-				$moduletoreloadshort = ucfirst(strtolower($reg[1]));
-				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort);
+				if (strtoupper($moduletoreload) == $moduletoreload)	// If key is un uppercase
+				{
+					$moduletoreloadshort = ucfirst(strtolower($reg[1]));
+				}
+				else												// If key is a mix of up and low case
+				{
+					$moduletoreloadshort = $reg[1];
+				}
+				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode);
 				$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
 				if ($res) {
 					$classname = 'mod'.$moduletoreloadshort;
@@ -4706,10 +4746,27 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 					//$mod->remove('noboxes');
 					$mod->init($reloadmode);
 				}
+				else
+				{
+					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
+
+					$res=@dol_include_once(strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
+					if ($res) {
+						$classname = 'mod'.$moduletoreloadshort;
+						$mod=new $classname($db);
+						//$mod->remove('noboxes');
+						$mod->init($reloadmode);
+					}
+					else
+					{
+						dolibarr_install_syslog('Failed to include '.strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
+					}
+				}
 			}
 			else
 			{
-				print "Error, can't find module name";
+				dolibarr_install_syslog("Error, can't find module with name ".$moduletoreload, LOG_WARNING);
+				print "Error, can't find module with name ".$moduletoreload;
 			}
 		}
 
@@ -4769,7 +4826,99 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
     }
 }
 
+/**
+ * Migrate file from old path to new one for users
+ *
+ * @return	void
+ */
+function migrate_user_photospath()
+{
+	global $conf, $db, $langs, $user;
 
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationUserPhotoPath')."</b><br>\n";
+
+	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+	$fuser = new User($db);
+
+	if (! is_object($user)) $user = $fuser;	// To avoid error during migration
+
+	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user";	// Get list of all users
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		while ($obj = $db->fetch_object($resql))
+		{
+			$fuser->fetch($obj->uid);
+			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
+			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
+			if ($entity > 1) {
+				$dir = DOL_DATA_ROOT . '/' . $entity . '/users';
+			} else {
+				$dir = $conf->user->multidir_output[$entity];	// $conf->user->multidir_output[] for each entity is construct by the multicompany module
+			}
+
+			if ($dir)
+			{
+				//print "Process user id ".$fuser->id."<br>\n";
+				$origin = $dir .'/'. get_exdir($fuser->id,2,0,1,$fuser,'user');	// Use old behaviour to get x/y path
+				$destin = $dir .'/'. $fuser->id;
+
+				$origin_osencoded=dol_osencode($origin);
+
+				dol_mkdir($destin);
+
+				//echo '<hr>'.$origin.' -> '.$destin;
+				if (dol_is_dir($origin))
+				{
+					$handle=opendir($origin_osencoded);
+			        if (is_resource($handle))
+			        {
+			        	while (($file = readdir($handle)) !== false)
+			    		{
+			    			if ($file == '.' || $file == '..') continue;
+
+			     			if (dol_is_dir($origin.'/'.$file))	// it is a dir (like 'thumbs')
+			    			{
+			    				$thumbs = opendir($origin_osencoded.'/'.$file);
+			    				if (is_resource($thumbs))
+			        			{
+				     				dol_mkdir($destin.'/'.$file);
+				     				while (($thumb = readdir($thumbs)) !== false)
+					    			{
+					    				if (! dol_is_file($destin.'/'.$file.'/'.$thumb))
+					    				{
+					    					if ($thumb == '.' || $thumb == '..') continue;
+
+					    					//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
+					    					print '.';
+					    					dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+					    					//var_dump('aaa');exit;
+					    				}
+					    			}
+									// dol_delete_dir($origin.'/'.$file);
+			        			}
+			    			}
+			    			else								// it is a file
+			    			{
+			    				if (! dol_is_file($destin.'/'.$file))
+			    				{
+			    					//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
+			    					print '.';
+			    					dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
+			    					//var_dump('eee');exit;
+			    				}
+			    			}
+			    		}
+			        }
+				}
+			}
+		}
+	}
+
+	print '</td></tr>';
+}
 
 
 /* A faire egalement: Modif statut paye et fk_facture des factures payes completement

@@ -27,29 +27,29 @@ This page is a sample of page using Dolibarr HTML widget methods. It is designed
 <?php
 $form=new Form($db);
 
-// Test1: form->select_date using tzuser date
+// Test1: form->selectDate using tzuser date
 print "Test 1a: We must have here current date and hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
 $offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 $offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
 print " (dol_tz=".$offsettz." dol_dst=".$dol_dst.")<br>\n";
-$form->select_date(dol_now(), 'test1a', 1, 1, 0);
+print $form->selectDate(dol_now(), 'test1a', 1, 1, 0);
 
 print '<br><br>'."\n";
 
 print "Test 1b: We must have here current date with hours to 00:00.<br>";
-$form->select_date('', 'test1b', 1, 1, 0);
+print $form->selectDate('', 'test1b', 1, 1, 0);
 
 print '<br><br>'."\n";
 
-// Test2: form->select_date using tzuser date
+// Test2: form->selectDate using tzuser date
 print "Test 2: We must have here 1970-01-01 00:00:00 selected (fields can be empty)<br>\n";
-$form->select_date(dol_get_first_day(1970,1,false), 'test2', 1, 1, 1);
+print $form->selectDate(dol_get_first_day(1970,1,false), 'test2', 1, 1, 1);
 
 print '<br><br>'."\n";
 
-// Test3: form->select_date for 1970-01-01 00:00:00
+// Test3: form->selectDate for 1970-01-01 00:00:00
 print "Test 3: We must have here 1970-01-01 00:00:00 selected (fields are mandatory)<br>\n";
-$form->select_date(dol_get_first_day(1970,1,false), 'test3', 1, 1, 0);
+print $form->selectDate(dol_get_first_day(1970,1,false), 'test3', 1, 1, 0);
 
 print '<br><br>'."\n";
 
@@ -94,6 +94,6 @@ $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
 $arrayselected=array(1,3);
 print $form->multiselectarray('testmulti', $array, $arrayselected, '', 0, '', 0, 250);
 
-
+// End of page
 llxFooter();
 $db->close();

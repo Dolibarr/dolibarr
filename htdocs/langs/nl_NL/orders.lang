@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - orders
 OrdersArea=Klantenorders overzicht
-SuppliersOrdersArea=Purchase orders area
+SuppliersOrdersArea=Inkooporders gebied
 OrderCard=Opdrachtenkaart
 OrderId=Ordernr
 Order=Order
@@ -78,7 +78,7 @@ NoOrder=Geen order
 NoSupplierOrder=No purchase order
 LastOrders=Laatste %s klantbestellingen
 LastCustomerOrders=Laatste %s klantbestellingen
-LastSupplierOrders=Latest %s purchase orders
+LastSupplierOrders=Laatste %s leverancier bestellingen
 LastModifiedOrders=Laatste %s aangepaste orders
 AllOrders=Alle opdrachten
 NbOfOrders=Aantal opdrachten

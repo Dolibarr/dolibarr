@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  *	\brief      List activities of tasks (per day entry)
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -117,6 +118,9 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_project_ref = '';
 	$search_thirdparty = '';
 	$search_declared_progress = '';
+
+	// We redefine $usertoprocess
+	$usertoprocess=$user;
 }
 if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
 {
@@ -331,7 +335,7 @@ if ($id)
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
 
-if ($search_project_ref) $morewherefilter.=natural_search("p.ref", $search_project_ref);
+if ($search_project_ref) $morewherefilter.=natural_search(array("p.ref", "p.title"), $search_project_ref);
 if ($search_task_ref)    $morewherefilter.=natural_search("t.ref", $search_task_ref);
 if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
 if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
@@ -344,7 +348,7 @@ if ($morewherefilter)	// Get all task without any filter, so we can show total o
 }
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
-//var_dump($tasksarray);
+//var_dump($usertoprocess);
 //var_dump($projectsrole);
 //var_dump($taskrole);
 
@@ -366,7 +370,7 @@ $nav.=dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"%A").' ';
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"day")." </span>\n";
 $nav.='<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
+$nav.='<br>'.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 0).' ';
 $nav.=' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
 
 $picto='calendarweek';
@@ -412,7 +416,7 @@ print '<div class="colorback float valignmiddle">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 print '<div class="taskiddiv inline-block">';
-$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1, 0, 0, '', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth150onsmartphone');
@@ -501,7 +505,7 @@ print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").($user
 print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
+$restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
 
 // Get if user is available or not for each day
 $isavailable=array();
@@ -516,7 +520,7 @@ if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 }
 
 $statusofholidaytocheck = '3';
-$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholiday);	// $daytoparse is a date with hours = 0
+$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck);	// $daytoparse is a date with hours = 0
 $isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
 $tmparray = dol_getdate($daytoparse,true);	// detail of current day
@@ -540,7 +544,7 @@ print '<td class="center">'.$langs->trans("Note").'</td>';
 print '<td class="center"></td>';
 print "</tr>\n";
 
-$colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);;
+$colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
 
 if ($conf->use_javascript_ajax)
 {
@@ -710,6 +714,6 @@ if ($conf->use_javascript_ajax)
 	print '</script>';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

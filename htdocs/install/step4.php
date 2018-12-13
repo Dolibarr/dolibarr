@@ -35,8 +35,7 @@ global $langs;
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[1])?'auto':$argv[1]);
 $langs->setDefaultLang($setuplang);
 
-$langs->load("admin");
-$langs->load("install");
+$langs->loadLangs(array("admin", "install"));
 
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
@@ -47,7 +46,7 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
-dolibarr_install_syslog("--- step4: entering step4.php page");
+dolibarr_install_syslog("- step4: entering step4.php page");
 
 $error=0;
 $ok = 0;
@@ -74,18 +73,18 @@ print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg
 print $langs->trans("LastStepDesc").'<br><br>';
 
 
-print '<table cellspacing="0" cellpadding="2" width="100%">';
+print '<table cellspacing="0" cellpadding="2">';
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 if ($db->ok)
 {
-    print '<tr><td>'.$langs->trans("Login").' :</td><td>';
-	print '<input name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
-    print '<tr><td>'.$langs->trans("Password").' :</td><td>';
-    print '<input type="password" name="pass"></td></tr>';
-    print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
-    print '<input type="password" name="pass_verif"></td></tr>';
+    print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
+	print '<input id="login" name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
+    print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
+    print '<input type="password" id="pass" name="pass"></td></tr>';
+    print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordAgain").' :</label></td><td>';
+    print '<input type="password" id="pass_verif" name="pass_verif"></td></tr>';
     print '</table>';
 
     if (isset($_GET["error"]) && $_GET["error"] == 1)
@@ -110,15 +109,13 @@ if ($db->ok)
         print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
         $error=0;	// We show button
     }
-
 }
-
 
 $ret=0;
 if ($error && isset($argv[1])) $ret=1;
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("--- step4: end");
+dolibarr_install_syslog("- step4: end");
 
 pFooter($error,$setuplang);
 

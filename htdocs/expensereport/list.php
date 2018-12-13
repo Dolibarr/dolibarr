@@ -2,7 +2,7 @@
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
  *
@@ -26,7 +26,7 @@
  *		\brief      list of expense reports
  */
 
-require "../main.inc.php";
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -90,7 +90,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('expensereport');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 
 // List of fields to search into when doing a "search in all"
@@ -309,8 +309,7 @@ if ($search_status != '' && $search_status >= 0) $sql.=" AND d.fk_statut IN (".$
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-	$childids = $user->getAllChildIds();
-	$childids[]=$user->id;
+	$childids = $user->getAllChildIds(1);
 	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
 // Add where from extra fields
@@ -447,12 +446,15 @@ if ($resql)
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$user_id.'" class="butAction">'.$langs->trans("Modify").'</a>';
 			}
 
-			$canedit=(($user->id == $user_id && $user->rights->expensereport->creer) || ($user->id != $user_id));
+			$childids = $user->getAllChildIds(1);
+
+			$canedit=((in_array($user_id, $childids) && $user->rights->expensereport->creer)
+				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
 			// Boutons d'actions
 			if ($canedit)
 			{
-				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=request&id='.$user_id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
 			}
 
 			print '</div>';
@@ -488,7 +490,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
 	$moreforfilter='';
@@ -536,7 +538,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_debut']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
+    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
     	$formother->select_year($year_start,'year_start',1, $min_year, $max_year);
     	print '</td>';
 	}
@@ -544,7 +546,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_fin']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
     	$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
     	print '</td>';
     }
@@ -859,7 +861,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

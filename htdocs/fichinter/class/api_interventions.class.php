@@ -35,7 +35,7 @@ class Interventions extends DolibarrApi
     static $FIELDS = array(
       'socid',
       'fk_project',
-      'description'
+      'description',
     );
 
     /**
@@ -44,7 +44,7 @@ class Interventions extends DolibarrApi
     static $FIELDSLINE = array(
       'description',
       'date',
-      'duree'
+      'duree',
     );
 
     /**
@@ -106,7 +106,8 @@ class Interventions extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -217,7 +218,8 @@ class Interventions extends DolibarrApi
      * @return int
      */
     /* TODO
-    function getLines($id) {
+    function getLines($id)
+    {
     	if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
     		throw new RestException(401);
     	}
@@ -315,7 +317,6 @@ class Interventions extends DolibarrApi
 		    	'message' => 'Intervention deleted'
 	    	)
     	);
-
     }
 
     /**
@@ -424,7 +425,8 @@ class Interventions extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
     	$object = parent::_cleanObjectDatas($object);
 
@@ -453,6 +455,4 @@ class Interventions extends DolibarrApi
         }
         return $fichinter;
     }
-
-
 }

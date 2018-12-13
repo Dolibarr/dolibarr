@@ -1,5 +1,5 @@
 
-This file describe changes made on external library after beeing included
+This file describes changes made on external libraries after being included
 in Dolibarr root.
 
 
@@ -48,6 +48,23 @@ into
 	// initialize subsetchars
 	$subsetchars = array_fill(0, 256, true);
 
+* Replace the continue into switch with a break:
+
+case 're': {
+	// justify block
+	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
+		$this->lispacer = '';
+		continue;
+	}
+
+into 
+case 're': {
+	// justify block
+	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
+		$this->lispacer = '';
+		break;
+	}
+
 * Optionnaly, removed all fonts except 
     dejavusans* (used by greek, arab, persan, romanian, turkish), 
     freemono* (russian), 
@@ -61,16 +78,23 @@ In htdocs/includes/tcpdf/tcpdf.php
 +       protected $default_monospaced_font = 'freemono';
 
 
+		
 
 TCPDI:
 ------
 Add fpdf_tpl.php 1.2
 Add tcpdi.php
+
 Add tcpdi_parser.php and replace:
 require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
 with:
 require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
 
+
+* Fix by replacing
+	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
+with
+	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
 
 
 

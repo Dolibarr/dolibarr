@@ -38,11 +38,11 @@ $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accountingaccountlist';   // To manage different context of search
 
-$search_account = GETPOST("search_account");
-$search_label = GETPOST("search_label");
-$search_accountparent = GETPOST("search_accountparent");
-$search_pcgtype = GETPOST("search_pcgtype");
-$search_pcgsubtype = GETPOST("search_pcgsubtype");
+$search_account = GETPOST('search_account','alpha');
+$search_label = GETPOST('search_label','alpha');
+$search_accountparent = GETPOST('search_accountparent','alpha');
+$search_pcgtype = GETPOST('search_pcgtype','alpha');
+$search_pcgsubtype = GETPOST('search_pcgsubtype','alpha');
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
@@ -63,9 +63,9 @@ if (! $sortorder) $sortorder = "ASC";
 $arrayfields=array(
     'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
     'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>0),
+	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
     'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
-    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
+    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0, 'help'=>'PcgtypeDesc'),
 	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
 
@@ -121,14 +121,35 @@ if (empty($reshook))
 			if ($country_code)
 			{
 				$sqlfile = DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_accounting_account_'.strtolower($country_code).'.sql';
-				$result = run_sql($sqlfile, 1, 0, 1);
+
+				$offsetforchartofaccount = 0;
+				// Get the comment line '-- ADD CCCNNNNN to rowid...' to find CCCNNNNN (CCC is country num, NNNNN is id of accounting account)
+				// and pass CCCNNNNN + (num of company * 100 000 000) as offset to the run_sql as a new parameter to say to update sql on the fly to add offset to rowid and account_parent value.
+				// This is to be sure there is no conflict for each chart of account, whatever is country, whatever is company when multicompany is used.
+				$tmp = file_get_contents($sqlfile);
+				if (preg_match('/-- ADD (\d+) to rowid/ims', $tmp, $reg))
+				{
+					$offsetforchartofaccount += $reg[1];
+				}
+				$offsetforchartofaccount+=($conf->entity  * 100000000);
+
+				$result = run_sql($sqlfile, 1, $conf->entity, 1, '', 'default', 32768, 0, $offsetforchartofaccount);
+
+				if ($result > 0)
+				{
+					setEventMessages($langs->trans("ChartLoaded"), null);
+				}
+				else
+				{
+					setEventMessages($langs->trans("ErrorDuringChartLoad"), null, 'warnings');
+				}
 			}
 
             if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
                 $error++;
             }
         } else {
-            $error ++;
+            $error++;
         }
     }
 
@@ -406,5 +427,6 @@ if ($resql)
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

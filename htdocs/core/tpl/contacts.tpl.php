@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
  *
@@ -128,7 +128,7 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid', 0, '', '', 0, 'minwidth100imp'); ?>
+			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 0, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
@@ -199,12 +199,12 @@ if ($permission) {
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->fetch($tab[$i]['id']);
-				echo $userstatic->getNomUrl(-1);
+				echo $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1);
+				echo $contactstatic->getNomUrl(1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			}
 			?>
 		</div>

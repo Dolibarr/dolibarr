@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,23 +41,78 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_muscadet extends ModelePDFSuppliersOrders
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
+	/**
+     * @var string model name
+     */
+    public $name;
 
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
 
-	var $emetteur;	// Objet societe qui emet
+    /**
+     * @var string document type
+     */
+    public $type;
+
+    /**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+
+	/**
+	 * Issuer
+	 * @var Company object that emits
+	 */
+	public $emetteur;
 
 
 	/**
@@ -66,9 +122,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
-		// Translations
+		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
@@ -141,6 +197,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to build pdf onto disk
      *
@@ -154,18 +211,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
      */
 	function write_file($object,$outputlangs='',$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
+        // phpcs:enable
 		global $user,$langs,$conf,$hookmanager,$mysoc,$nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("orders");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
 
 		$nblignes = count($object->lines);
 
@@ -237,7 +291,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
-
 			}
 
 			if (file_exists($dir))
@@ -335,7 +388,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
-						$tab_top = $nexY+6+$height_incoterms;
+						$tab_top = $nexY+6;
 					}
 				}
 
@@ -495,7 +548,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if ($object->lines[$i]->remise_percent)
 					{
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent."%", 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT line
@@ -649,6 +702,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Show payments table
 	 *
@@ -660,10 +714,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-
+        // phpcs:enable
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -675,6 +730,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
+        // phpcs:enable
 	    global $conf;
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -727,10 +783,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		return $posy;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *	Show total to pay
+	 *  Show total to pay
 	 *
-	 *	@param	PDF			$pdf           Object PDF
+	 *  @param	PDF			$pdf           Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -739,6 +796,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
+        // phpcs:enable
 		global $conf,$mysoc;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -763,7 +821,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (! empty($object->remise)?$object->remise:0)), 0, 'R', 1);
 
@@ -1064,13 +1122,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $langs,$conf,$mysoc;
+		global $langs, $conf, $mysoc;
 
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("orders");
-		$outputlangs->load("companies");
-		$outputlangs->load("sendings");
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1316,6 +1371,4 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
-

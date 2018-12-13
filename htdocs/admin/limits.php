@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,11 +66,11 @@ if ($action == 'update')
 
     if (! $error)
     {
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",   $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT",    $_POST["MAIN_MAX_DECIMALS_TOT"],'chaine',0,'',$conf->entity);
-        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN",  $_POST["MAIN_MAX_DECIMALS_SHOWN"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT", $_POST["MAIN_MAX_DECIMALS_UNIT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT", $_POST["MAIN_MAX_DECIMALS_TOT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN", $_POST["MAIN_MAX_DECIMALS_SHOWN"],'chaine',0,'',$conf->entity);
 
-        dolibarr_set_const($db, "MAIN_ROUNDING_RULE_TOT",   $_POST["MAIN_ROUNDING_RULE_TOT"],'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_ROUNDING_RULE_TOT", $_POST["MAIN_ROUNDING_RULE_TOT"],'chaine',0,'',$conf->entity);
 
         header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
         exit;
@@ -253,7 +253,6 @@ else
 	    print " x ".$langs->trans("Quantity").": ".$qty;
 	    print " - ".$langs->trans("VAT").": ".$vat.'%';
 	    print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
-
 	}
 
 	// Important: can debug rounding, to simulate the rounded total
@@ -306,7 +305,6 @@ else
 	*/
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

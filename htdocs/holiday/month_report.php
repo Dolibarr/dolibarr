@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      François Legastelois <flegastelois@teclib.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  *      \brief      Monthly report of leave requests.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -81,7 +82,7 @@ print '</form>';
 
 $sql = "SELECT cp.rowid, cp.fk_user, cp.date_debut, cp.date_fin, ct.label, cp.description, cp.halfday";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
-$sql .= " LEFT JOIN llx_user u ON cp.fk_user = u.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
 $sql .= " AND cp.statut = 3";		// Approved
@@ -120,7 +121,7 @@ print '</tr>';
 
 if ($num == 0)
 {
-   print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+   print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 }
 else
 {
@@ -189,11 +190,10 @@ else
          print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
       print '</tr>';
    }
-
 }
 print '</table>';
 print '</div>';
 
-// Fin de page
-$db->close();
+// End of page
 llxFooter();
+$db->close();

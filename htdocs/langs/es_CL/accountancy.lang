@@ -102,7 +102,6 @@ BANK_DISABLE_DIRECT_INPUT=Deshabilitar la grabación directa de transacciones en
 ACCOUNTING_SELL_JOURNAL=Libro de ventas
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario misceláneo
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diario del informe de gastos
-ACCOUNTING_HAS_NEW_JOURNAL=Tiene un nuevo diario
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta contable de transferencia
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta de contabilidad de espera
 DONATION_ACCOUNTINGACCOUNT=Cuenta de contabilidad para registrar donaciones

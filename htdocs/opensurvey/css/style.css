@@ -1,6 +1,6 @@
 /* Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -104,10 +104,10 @@ borghesi@unistra.fr
 Ce logiciel est régi par la licence CeCILL-B soumise au droit français et
 respectant les principes de diffusion des logiciels libres. Vous pouvez
 utiliser, modifier et/ou redistribuer ce programme sous les conditions
-de la licence CeCILL-B telle que diffusée par le CEA, le CNRS et l'INRIA 
+de la licence CeCILL-B telle que diffusée par le CEA, le CNRS et l'INRIA
 sur le site "http://www.cecill.info".
 
-Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
+Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
 pris connaissance de la licence CeCILL-B, et que vous en avez accepté les
 termes. Vous pouvez trouver une copie de la licence dans le fichier LICENCE.
 
@@ -120,10 +120,10 @@ Creation : Feb 2008
 borghesi@unistra.fr
 
 This software is governed by the CeCILL-B license under French law and
-abiding by the rules of distribution of free software. You can  use, 
+abiding by the rules of distribution of free software. You can  use,
 modify and/ or redistribute the software under the terms of the CeCILL-B
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+"http://www.cecill.info".
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL-B license and that you accept its terms. You can
@@ -133,12 +133,12 @@ find a copy of this license in the file LICENSE.
 */
 
 /*
-Le fichier style.css est le fichier de style de studs. Il se trouve à la racine 
+Le fichier style.css est le fichier de style de studs. Il se trouve à la racine
 du répertoire studs. Il contient toutes les mises en forme des fichiers PHP
 de Studs.
 */
 /*bandeau de titre*/
-div.bandeau{ 
+div.bandeau{
 	line-height:35px;
 	text-align:center;
 	background-color: #0b419b;
@@ -146,7 +146,7 @@ div.bandeau{
 	vertical-align:middle;
 	font-size:35px;
 	font-family:arial, sans-serif;
-	padding:8px; 
+	padding:8px;
 	height:35px;
 	position:static;
 	top:6px;
@@ -154,30 +154,30 @@ div.bandeau{
 	right:6px;
 
 }
-div.logo{ 
+div.logo{
 	height:64px;
 	float:right;
 	top:8px;
 	right:8px;
 	margin-left: 0;
-	margin-right:0; 
+	margin-right:0;
 	margin-bottom:auto;
 }
 /*Sous bandeau avec bouton de navigation*/
-div.bandeautitre{ 
+div.bandeautitre{
 	height:17px;
 	font-size:14px;
 	font-weight:bold;
 	text-align:center;
 	vertical-align:middle;
 	font-family:arial, sans-serif;
- 	padding:3px; 
+ 	padding:3px;
 	position:static;
 	top:57px;
 	left:6px;
 	right:6px;
-} 
-div.sousbandeau{ 
+}
+div.sousbandeau{
 	height:17px;
 	background-color: #DDDDDD;
 	font-size:11px;
@@ -191,15 +191,15 @@ div.sousbandeau{
 	right:6px;
 }
 /*bandeau de pied*/
-div.surbandeaupied{ 
+div.surbandeaupied{
 	background-color: #0077DD;
 	position:absolute;
 	bottom:30px;
 	left:6px;
-	right:6px; 
+	right:6px;
 	height:6px;
 }
-div.bandeaupied{ 
+div.bandeaupied{
 	text-align:center;
 	background-color: #0b419b;
 	color:white;
@@ -209,29 +209,29 @@ div.bandeaupied{
 	position:fixed;
 	bottom:6px;
 	left:6px;
-	right:6px; 
+	right:6px;
 	margin:2px;
 }
-div.surbandeaupiedmobile{ 
+div.surbandeaupiedmobile{
 	background-color: #0077DD;
-	position:static; 
+	position:static;
 	bottom:32px;
 	left:6px;
-	right:6px; 
+	right:6px;
 	height:6px;
 }
-div.bandeaupiedmobile{ 
+div.bandeaupiedmobile{
 	text-align:center;
 	background-color: #0b419b;
 	color:white;
 	font-size:11px;
 	font-family:arial, sans-serif;
-	padding:6px; 
-	position:static; 
+	padding:6px;
+	position:static;
 }
 /*les boutons se trouvant dans le sousbandeau*/
 div.sousbandeau a, div.sousbandeau span.sousbandeaulangue a {
- 	background-color: #0b419b; 
+ 	background-color: #0b419b;
 	height:16px;
 	padding: 2px 6px 2px 6px;
 	vertical-align:middle;
@@ -249,7 +249,7 @@ span.sousbandeaulangue {
 	float:right;
 }
 /*corps de la page index.php*/
-div.corps{ 
+div.corps{
 	font-size:12px;
 	font-family:arial, sans-serif;
 	position:static;
@@ -257,10 +257,10 @@ div.corps{
 }
 div.corps  table{
 	font-family:arial, sans-serif;
-	font-size:12px;	
+	font-size:12px;
 	font-weight:bold;
 }
-div.corpscentre{ 
+div.corpscentre{
 	font-size:12px;
 	font-family:arial, sans-serif;
 	text-align:center;
@@ -285,7 +285,7 @@ div.jourschoisis {
 div.bodydate {
 	padding:10px;
 	font-family:arial, sans-serif;
-	font-size:12px;	
+	font-size:12px;
 	text-align:center;
 	position:static;
 	top:330px;
@@ -294,7 +294,7 @@ div.bodydate {
 }
 div.bodydate table{
 	font-family:arial, sans-serif;
-	font-size:12px;	
+	font-size:12px;
 	font-weight:bold;
 }
 /*cadre de commentaires*/
@@ -302,7 +302,7 @@ div.presentationdate {
 	width:100%;
 	font-family:arial, sans-serif;
 	text-align:center;
-	font-size:12px;	
+	font-size:12px;
 	border-top:1px solid;
 	border-bottom:1px solid;
 	border-left: none;
@@ -321,14 +321,14 @@ div.presentationdatefin {
     border: 1px solid;
     margin-top: 10px;
 	margin-left: 30%;
-    margin-right: 30%; 
+    margin-right: 30%;
 	position:static;
 }
 /*cadre principal de studs.php*/
 div.cadre {
-	padding:10px; 
+	padding:10px;
 	font-family:arial, sans-serif;
-	font-size:12px;	
+	font-size:12px;
 	position:static;
 	top:235px;
 	text-align:center;
@@ -350,54 +350,54 @@ div.cadre td {
 }
 /*case de tableau OK dans affichage de sondage*/
 div.cadre td.ok {
-	background-color: #66FF99; 
-	font-size:12px;	
+	background-color: #66FF99;
+	font-size:12px;
 	text-align:center;
 }
 /*Case de tableau NON dans affichage de sondage*/
 div.cadre td.non {
-	background-color: #FF7777; 
+	background-color: #FF7777;
 	min-width: 60px;
 }
 /*Case de tableau VIDE dans affichage de sondage*/
 div.cadre td.vide {
-	background-color: #DDDDDD; 
+	background-color: #DDDDDD;
 	text-align:center;
 }
 /*Case de tableau contenant les noms dans affichage de sondage*/
 div.cadre td.nom {
-	background-color: #DDDDDD; 
-	font-size:12px;	 
+	background-color: #DDDDDD;
+	font-size:12px;
 	text-align:center;
 }
 div.cadre td.casevide {
-	background-color: white; 
+	background-color: white;
 	text-align:center;
 }
 /*les cases contenant les sommes de chaque colonne dans l'affichage de calendrier*/
 div.cadre td.somme {
 	font-weight:  bold;
-	font-size:14px; 
+	font-size:14px;
 }
 
 /*Case de tableau SUJET dans affichage de sondage*/
 div.cadre td.sujet, div.cadre td.jour, div.cadre td.heure {
 	border: 2px;
-	background-color: #DDDDDD; 
+	background-color: #DDDDDD;
 	font-size:14px;
 	padding:1px 5px;
 }
 
 div.cadre td.annee {
 	border: 2px;
-	background-color: #969696; 
+	background-color: #969696;
 	font-weight: bold;
 	font-size:14px;
 	padding:1px 5px;
 }
 div.cadre td.mois {
 	border: 2px;
-	background-color: #C0C0C0; 
+	background-color: #C0C0C0;
 	font-weight: bold;
 	font-size:14px;
 	padding:1px 5px;
@@ -421,7 +421,7 @@ div.calendrier td.joursemaine {
 	font-family:arial, sans-serif;
 	font-size:14px;
 	border: 2px;
-	background-color: white; 
+	background-color: white;
 }
 div.calendrier td.jourwe {
 	width:65px;
@@ -429,7 +429,7 @@ div.calendrier td.jourwe {
 	font-family:arial, sans-serif;
 	font-size:14px;
 	border: 2px;
-	background-color: #C0C0C0; 
+	background-color: #C0C0C0;
 }
 /*jour avant le premier jour du mois dans calendrier*/
 div.calendrier td.avant {
@@ -438,21 +438,21 @@ div.calendrier td.avant {
 	border: 2px;
 	font-family:arial, sans-serif;
 	font-size:13px;
-	background-color: #DDDDDD; 
+	background-color: #DDDDDD;
 }
 /*jour libre dans calendrier*/
 div.calendrier td.libre {
 	width:65px;
 	text-align: center;
 	border: 2px;
-	background-color: #66FF99; 
+	background-color: #66FF99;
 }
 /*jour deja selectionné dans calendrier*/
 div.calendrier td.choisi {
 	width:65px;
 	text-align: center;
 	border: 2px;
-	background-color: #0077DD; 
+	background-color: #0077DD;
 }
 /* Le paragraphe de fin */
 p.affichageresultats{

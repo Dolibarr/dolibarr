@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -10,6 +10,7 @@
  * Copyright (C) 2015 	   Abbes Bahfir         <bafbes@gmail.com>
  * Copyright (C) 2015-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +45,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
-$langs->load("bills");
-$langs->load("companies");
-$langs->load('products');
-$langs->load('projects');
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'bills', 'companies', 'projects'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -71,7 +70,6 @@ $mode=GETPOST("mode");
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_label = GETPOST("search_label","alpha");
-$search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
 $search_product_category=GETPOST('search_product_category','int');
@@ -79,7 +77,7 @@ $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','al
 $search_refsupplier=GETPOST('search_refsupplier','alpha');
 $search_type=GETPOST('search_type','int');
 $search_project=GETPOST('search_project','alpha');
-$search_societe=GETPOST('search_societe','alpha');
+$search_company=GETPOST('search_company','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_vat=GETPOST('search_montant_vat','alpha');
 $search_montant_localtax1=GETPOST('search_montant_localtax1','alpha');
@@ -101,6 +99,8 @@ $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
 $toselect = GETPOST('toselect', 'array');
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $option = GETPOST('option');
 if ($option == 'late') {
@@ -112,7 +112,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
-if ($page == -1 || $page == null) { $page = 0 ; }
+if ($page == -1 || $page == null || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0 ; }
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -130,7 +130,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('facture_fourn');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -205,7 +205,6 @@ if (empty($reshook))
 		$search_type="";
 		$search_label="";
 		$search_project='';
-		$search_societe="";
 		$search_company="";
 		$search_amount_no_tax="";
 		$search_amount_all_tax="";
@@ -257,7 +256,7 @@ $facturestatic=new FactureFournisseur($db);
 $formcompany=new FormCompany($db);
 $thirdparty=new Societe($db);
 
-llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
+// llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
 $sql = "SELECT";
 if ($search_all || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -317,13 +316,12 @@ if ($search_type != '' && $search_type >= 0)
 	//if ($search_type == '5') $sql.=" AND f.type = 5";  // situation
 }
 if ($search_project) $sql .= natural_search('p.ref', $search_project);
-if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
 if ($search_state) $sql.= natural_search("state.nom",$search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
-if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql.= natural_search('f.total_ht', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql.= natural_search('f.total_tva', $search_montant_vat, 1);
 if ($search_montant_localtax1 != '') $sql.= natural_search('f.localtax1', $search_montant_localtax1, 1);
@@ -429,11 +427,22 @@ if ($resql)
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
+	if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+	{
+		$obj = $db->fetch_object($resql);
+		$id = $obj->facid;
+
+		header("Location: ".DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$id);
+		exit;
+	}
+
+	llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
+
 	if ($socid)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		if (empty($search_societe)) $search_societe = $soc->name;
+		if (empty($search_company)) $search_company = $soc->name;
 	}
 
 	$param='&socid='.$socid;
@@ -515,7 +524,7 @@ if ($resql)
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->select_date('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', '', '', '', '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -547,7 +556,7 @@ if ($resql)
 	if ($search_all)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
 	}
 
  	// If the user can view prospects other than his'
@@ -667,7 +676,7 @@ if ($resql)
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'"></td>';
+		print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'"></td>';
 	}
 	// Town
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
@@ -822,8 +831,6 @@ if ($resql)
 	if ($num > 0)
 	{
 		$i=0;
-
-		$var=true;
 		$totalarray=array();
 		while ($i < min($num,$limit))
 		{
@@ -1136,7 +1143,6 @@ if ($resql)
 			   else print '<td></td>';
 			}
 			print '</tr>';
-
 		}
 	}
 
@@ -1171,7 +1177,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,7 +224,7 @@ $calcmode.= '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/adm
 
 //if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
 $builddate=dol_now();
 
@@ -587,5 +588,6 @@ pt($db, $sql, $langs->trans("Month"));
 
 print '</div></div>';
 
+// End of page
 llxFooter();
 $db->close();

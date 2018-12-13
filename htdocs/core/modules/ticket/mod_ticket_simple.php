@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012    Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010        Laurent Destailleur    <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012   Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2010        Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,37 @@
  *    \brief      File with class to manage the numbering module Simple for ticket references
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/modules_ticket.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
 
 /**
  *     Class to manage the numbering module Simple for ticket references
  */
 class mod_ticket_simple extends ModeleNumRefTicket
 {
-    public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+    /**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+
     public $prefix = 'TS';
+
+    /**
+     * @var string Error code (or message)
+     */
     public $error = '';
-    public $nom = "Simple";
-    public $name = "Simple";
+
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Simple';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Simple';
 
     /**
      *  Return description of numbering module
@@ -140,5 +159,4 @@ class mod_ticket_simple extends ModeleNumRefTicket
         dol_syslog("mod_ticket_simple::getNextValue return " . $this->prefix . $yymm . "-" . $num);
         return $this->prefix . $yymm . "-" . $num;
     }
-
 }

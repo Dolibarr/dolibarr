@@ -29,7 +29,8 @@
  * @param Opensurveysondage $object Current viewing poll
  * @return array Tabs for the opensurvey section
  */
-function opensurvey_prepare_head(Opensurveysondage $object) {
+function opensurvey_prepare_head(Opensurveysondage $object)
+{
 
 	global $langs, $conf;
 
@@ -70,13 +71,15 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
  */
 function llxHeaderSurvey($title, $head="", $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
+	global $conf, $mysoc;
+
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 	print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
 	// Print logo
 	if ($mysoc->logo) {
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=thumbs/'.urlencode($mysoc->logo_small);
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
 		}
 	}
 

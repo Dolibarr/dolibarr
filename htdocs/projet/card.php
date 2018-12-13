@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ if ($id > 0 || ! empty($ref))
 	$ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$id=$object->id;
 	}
 }
@@ -332,7 +333,6 @@ if (empty($reshook))
 			if (GETPOST('socid','int') > 0) $object->fetch_thirdparty(GETPOST('socid','int'));
 			else unset($object->thirdparty);
 		}
-
 	}
 
 	// Build doc
@@ -471,6 +471,17 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
 llxHeader("",$title,$help_url);
 
+$titleboth=$langs->trans("LeadsOrProjects");
+$titlenew = $langs->trans("NewLeadOrProject");	// Leads and opportunities by default
+if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
+{
+	$titleboth=$langs->trans("Projects");
+	$titlenew = $langs->trans("NewProject");
+}
+if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+	$titleboth=$langs->trans("Leads");
+	$titlenew = $langs->trans("NewLead");
+}
 
 if ($action == 'create' && $user->rights->projet->creer)
 {
@@ -481,7 +492,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-	print load_fiche_titre($langs->trans("NewProject"), '', 'title_project');
+	print load_fiche_titre($titlenew, '', 'title_project');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -568,12 +579,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
+	print $form->selectDate(($date_start?$date_start:''), 'projectstart', 0, 0, 0, '', 1, 0);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
+	print $form->selectDate(($date_end?$date_end:-1), 'projectend', 0, 0, 0, '', 1, 0);
 	print '</td></tr>';
 
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -607,9 +618,9 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<td>';
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
-
+var_dump($conf->global->PROJECT_USE_TASKS);
 	// Bill time
-	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{
 		print '<tr><td>'.$langs->trans("BillTime").'</td>';
 		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time','alpha')!=''?' checked="checked"':'').'"></td>';
@@ -753,7 +764,7 @@ elseif ($object->id > 0)
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
+		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
 
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
@@ -821,7 +832,7 @@ elseif ($object->id > 0)
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
+		print $form->selectDate($object->date_start?$object->date_start:-1, 'projectstart', 0, 0, 0, '', 1, 0);
 		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" name="reportdate" value="yes" ';
 		if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -829,7 +840,7 @@ elseif ($object->id > 0)
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print $form->select_date($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
+		print $form->selectDate($object->date_end?$object->date_end:-1, 'projectend', 0, 0, 0, '', 1, 0);
 		print '</td></tr>';
 
 		// Budget
@@ -844,7 +855,7 @@ elseif ($object->id > 0)
 		print '</td></tr>';
 
 		// Bill time
-		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<tr><td>'.$langs->trans("BillTime").'</td>';
 			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time','alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
@@ -974,7 +985,7 @@ elseif ($object->id > 0)
 		print '</td></tr>';
 
 		// Bill time
-		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<tr><td>'.$langs->trans("BillTime").'</td>';
 			print '<td>'.yn($object->bill_time).'</td>';
@@ -1288,6 +1299,6 @@ else
 	print $langs->trans("RecordNotFound");
 }
 
+// End of page
 llxFooter();
-
 $db->close();

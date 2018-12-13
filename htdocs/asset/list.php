@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       list.php
+ *   	\file       htdocs/asset/list.php
  *		\ingroup    asset
  *		\brief      List page for asset
  */
@@ -62,7 +62,7 @@ $diroutputmassaction=$conf->asset->dir_output . '/temp/massgeneration/'.$user->i
 $hookmanager->initHooks(array('assetlist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('asset');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
@@ -317,7 +317,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';

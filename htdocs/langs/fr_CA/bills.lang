@@ -14,7 +14,6 @@ LabelPaymentMode=Mode de règlement (étiquette)
 CreateCreditNote=Créer avoir
 DoPayment=Entrez le paiement
 DoPaymentBack=Saisissez le remboursement
-ConvertExcessReceivedToReduc=Convertir l'excédent reçu en réduction future
 StatusOfGeneratedInvoices=État des factures générées
 BillShortStatusPaidBackOrConverted=Remboursement ou conversion
 NoQualifiedRecurringInvoiceTemplateFound=Aucune facture de modèle récurrent qualifié pour la génération.

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2016   Philippe Grand  <philippe.grand@atoo-net.com>
- * Copyright (C) 2014   Marcos García   <marcosgdf@gmail.com>
+/* Copyright (C) 2010       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2016  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
  */
 abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
@@ -44,19 +48,19 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength=0)
 	{
+        // phpcs:enable
 		global $conf;
 
-		$type='invoice_supplier';
-		$liste=array();
+		$type = 'invoice_supplier';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
-
 }
 
 /**
@@ -64,7 +68,10 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
  */
 abstract class ModeleNumRefSuppliersInvoices
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**  Return if a model can be used or not
 	 *

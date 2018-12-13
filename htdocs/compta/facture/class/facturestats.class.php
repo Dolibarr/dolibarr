@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,11 @@ class FactureStats extends Stats
     var $socid;
     var $userid;
 
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
+	
     var $from;
     var $field;
     var $where;
@@ -84,8 +88,8 @@ class FactureStats extends Stats
 			$this->where.=" AND f.fk_soc = ".$this->socid;
 		}
         if ($this->userid > 0) $this->where.=' AND f.fk_user_author = '.$this->userid;
-		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $this->where.= " AND f.type IN (0,1,2)";
-		else $this->where.= " AND f.type IN (0,1,2,3)";
+		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $this->where.= " AND f.type IN (0,1,2,5)";
+		else $this->where.= " AND f.type IN (0,1,2,3,5)";
 	}
 
 
@@ -220,7 +224,5 @@ class FactureStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-
-
 }
 

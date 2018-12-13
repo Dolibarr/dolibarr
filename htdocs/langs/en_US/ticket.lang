@@ -138,9 +138,9 @@ TicketStatByStatus=Tickets by status
 #
 # Ticket card
 #
-Ticket=Incident ticket
+Ticket=Ticket
 TicketCard=Ticket card
-CreateTicket=Create new ticket
+CreateTicket=Create ticket
 EditTicket=Edit ticket
 TicketsManagement=Tickets Management
 CreatedBy=Created by
@@ -189,16 +189,17 @@ TicketGoIntoContactTab=Please go into "Contacts" tab to select them
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
 TicketMessageMailIntroLabelAdmin=Introduction to the message when sending email
-TicketMessageMailIntroText=<p> Hello </ p> A new response was sent on a ticket that you contact. Here is the message: </ p>
+TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
 TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of the response to a ticket.
 TicketMessageMailSignature=Signature
 TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
-TicketMessageMailSignatureText=<p>Cordialement,</p><p>--</p>
+TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
 TicketMessageMailSignatureLabelAdmin=Signature of response email
 TicketMessageMailSignatureHelpAdmin=This text will be inserted after the response message.
 TicketMessageHelp=Only this text will be saved in the message list on ticket card.
 TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
-TicketTimeToRead=Time elapsed before ticket read
+TimeElapsedSince=Time elapsed since
+TicketTimeToRead=Time elapsed before read
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents linked to ticket
 ConfirmReOpenTicket=Confirm reopen this ticket ?
@@ -219,6 +220,7 @@ TicketChangeStatus=Change status
 TicketConfirmChangeStatus=Confirm the status change : %s ?
 TicketLogStatusChanged=Status changed : %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
+Unread=Unread
 
 #
 # Logs
@@ -274,6 +276,7 @@ TicketNotificationLogMessage=Log message
 TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
 TicketNotificationNumberEmailSent=Notification email sent : %s
 
+ActionsOnTicket=Events on ticket
 
 #
 # Boxes

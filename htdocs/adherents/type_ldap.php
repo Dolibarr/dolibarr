@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("members");
-$langs->load("admin");
-$langs->load("ldap");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","members","ldap"));
 
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action','alpha');
@@ -187,5 +186,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

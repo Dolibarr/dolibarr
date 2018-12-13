@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
-SupplierProposal=Vendor commercial proposals
-supplier_proposalDESC=Manage price requests to vendors
+SupplierProposal=Angebote des Verkäufers
+supplier_proposalDESC=Preisanfrage an Lieferanten verwalten
 SupplierProposalNew=neue Preisanfrage
 CommRequest=Preisanfrage
 CommRequests=Preisanfragen
 SearchRequest=Anfrage suchen
 DraftRequests=Anfrage erstellen
-SupplierProposalsDraft=Draft vendor proposals
+SupplierProposalsDraft=Entwürfe von Lieferantenangebote
 LastModifiedRequests=Letzte %s geänderte Preisanfragen
 RequestsOpened=offene Preisanfragen
 SupplierProposalArea=Vendor proposals area

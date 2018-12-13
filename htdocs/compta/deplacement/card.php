@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  */
 
 /**
- *  \file       	htdocs/compta/deplacement/card.php
- *  \brief      	Page to show a trip card
+ *  \file       htdocs/compta/deplacement/card.php
+ *  \brief      Page to show a trip card
  */
 
 require '../../main.inc.php';
@@ -263,7 +264,7 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-    print $form->select_date($datec?$datec:-1,'','','','','add',1,1,1);
+    print $form->selectDate($datec?$datec:-1, '', '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
     // Km
@@ -360,7 +361,7 @@ else if ($id)
 
             // Date
             print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-            print $form->select_date($object->date,'',0,0,0,'update',1,0,1);
+            print $form->selectDate($object->date, '', 0, 0, 0, 'update', 1, 0);
             print '</td></tr>';
 
             // Km
@@ -420,7 +421,6 @@ else if ($id)
             if ($action == 'delete')
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
-
             }
 
             $soc = new Societe($db);
@@ -577,7 +577,6 @@ else if ($id)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -93,7 +93,8 @@ class StockMovements extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -153,15 +154,15 @@ class StockMovements extends DolibarrApi
 		return $obj_ret;
     }
 
-/*
-    * @param   int     $product_id         Id product id {@min 1}
-    * @param   int     $warehouse_id       Id warehouse {@min 1}
-    * @param   float   $qty                Qty to add (Use negative value for a stock decrease) {@min 0} {@message qty must be higher than 0}
-    * @param   string  $lot                Lot
-    * @param   string  $movementcode       Movement code {@example INV123}
-    * @param   string  $movementlabel      Movement label {@example Inventory number 123}
-    * @param   string  $price              To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0).
-    */
+    /*
+     * @param   int     $product_id         Id product id {@min 1}
+     * @param   int     $warehouse_id       Id warehouse {@min 1}
+     * @param   float   $qty                Qty to add (Use negative value for a stock decrease) {@min 0} {@message qty must be higher than 0}
+     * @param   string  $lot                Lot
+     * @param   string  $movementcode       Movement code {@example INV123}
+     * @param   string  $movementlabel      Movement label {@example Inventory number 123}
+     * @param   string  $price              To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0).
+     */
 
 
     /**
@@ -279,7 +280,8 @@ class StockMovements extends DolibarrApi
      * @param   MouvementStock  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 

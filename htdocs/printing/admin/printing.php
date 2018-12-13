@@ -109,12 +109,12 @@ if ($action == 'setvalue' && $user->admin)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("PrintingSetup"));
+llxHeader('', $langs->trans("PrintingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("PrintingSetup"),$linkback,'title_setup');
 
-$head=printingadmin_prepare_head($mode);
+$head = printingAdminPrepareHead($mode);
 
 if ($mode == 'setup' && $user->admin)
 {
@@ -127,7 +127,6 @@ if ($mode == 'setup' && $user->admin)
     print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th>'.$langs->trans("Value").'</th>';
@@ -135,8 +134,7 @@ if ($mode == 'setup' && $user->admin)
     print "</tr>\n";
     $submit_enabled=0;
 
-    if (! empty($driver))
-    {
+    if (! empty($driver)) {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
         $classname = 'printing_'.$driver;
         $langs->load($driver);
@@ -146,7 +144,6 @@ if ($mode == 'setup' && $user->admin)
         $submit_enabled=0;
         foreach ($printer->conf as $key)
         {
-
             switch ($key['type']) {
                 case "text":
                 case "password":
@@ -248,7 +245,6 @@ if ($mode == 'config' && $user->admin)
 
     print '<table class="noborder" width="100%">'."\n";
 
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Description").'</th>';
     print '<th class="center">'.$langs->trans("Active").'</th>';
@@ -307,7 +303,7 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        if (count($printer->getlist_available_printers())) {
+        if (count($printer->getlistAvailablePrinters())) {
             if ($printer->listAvailablePrinters()==0) {
                 print $printer->resprint;
             } else {
@@ -317,7 +313,6 @@ if ($mode == 'test' && $user->admin)
         else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
-
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');
     }
@@ -333,7 +328,6 @@ if ($mode == 'userconf' && $user->admin)
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">';
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("User").'</th>';
     print '<th>'.$langs->trans("PrintModule").'</th>';
@@ -362,9 +356,8 @@ if ($mode == 'userconf' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-
 }
 
+// End of page
 llxFooter();
-
 $db->close();

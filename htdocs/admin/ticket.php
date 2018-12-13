@@ -54,10 +54,13 @@ if ($action == 'updateMask') {
         $error++;
     }
 
-    if (!$error) {
-        setEventMessage($langs->trans("SetupSaved"));
-    } else {
-        setEventMessage($langs->trans("Error"), 'errors');
+    if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 } elseif ($action == 'setmod') {
     // TODO Verifier si module numerotation choisi peut etre active
@@ -67,92 +70,92 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setvar') {
     include_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 
-    $notification_email = GETPOST('TICKETS_NOTIFICATION_EMAIL_FROM', 'alpha');
+    $notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
     if (!empty($notification_email)) {
-        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_FROM', '', 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
     // altairis : differentiate notification email FROM and TO
-    $notification_email_to = GETPOST('TICKETS_NOTIFICATION_EMAIL_TO', 'alpha');
+    $notification_email_to = GETPOST('TICKET_NOTIFICATION_EMAIL_TO', 'alpha');
     if (!empty($notification_email_to)) {
-        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
-    $mail_new_ticket = GETPOST('TICKETS_MESSAGE_MAIL_NEW', 'alpha');
+    $mail_new_ticket = GETPOST('TICKET_MESSAGE_MAIL_NEW', 'alpha');
     if (!empty($mail_new_ticket)) {
-        $res = dolibarr_set_const($db, 'TICKETS_MESSAGE_MAIL_NEW', $mail_new_ticket, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $mail_new_ticket, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_MESSAGE_MAIL_NEW', $langs->trans('TicketMessageMailNewText'), 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $langs->trans('TicketMessageMailNewText'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
-    $mail_intro = GETPOST('TICKETS_MESSAGE_MAIL_INTRO', 'alpha');
+    $mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'alpha');
     if (!empty($mail_intro)) {
-        $res = dolibarr_set_const($db, 'TICKETS_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'), 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
-    $mail_signature = GETPOST('TICKETS_MESSAGE_MAIL_SIGNATURE', 'alpha');
+    $mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'alpha');
     if (!empty($mail_signature)) {
-        $res = dolibarr_set_const($db, 'TICKETS_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
-    $url_interface = GETPOST('TICKETS_URL_PUBLIC_INTERFACE', 'alpha');
+    $url_interface = GETPOST('TICKET_URL_PUBLIC_INTERFACE', 'alpha');
     if (!empty($mail_signature)) {
-        $res = dolibarr_set_const($db, 'TICKETS_URL_PUBLIC_INTERFACE', $url_interface, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', $url_interface, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
-    $topic_interface = GETPOST('TICKETS_PUBLIC_INTERFACE_TOPIC', 'alpha');
+    $topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'alpha');
     if (!empty($mail_signature)) {
-        $res = dolibarr_set_const($db, 'TICKETS_PUBLIC_INTERFACE_TOPIC', $topic_interface, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', $topic_interface, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_PUBLIC_INTERFACE_TOPIC', '', 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
-    $text_home = GETPOST('TICKETS_PUBLIC_TEXT_HOME', 'alpha');
+    $text_home = GETPOST('TICKET_PUBLIC_TEXT_HOME', 'alpha');
     if (!empty($mail_signature)) {
-        $res = dolibarr_set_const($db, 'TICKETS_PUBLIC_TEXT_HOME', $text_home, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $text_home, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_PUBLIC_TEXT_HOME', $langs->trans('TicketPublicInterfaceTextHome'), 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $langs->trans('TicketPublicInterfaceTextHome'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
     }
 
-    $text_help = GETPOST('TICKETS_PUBLIC_TEXT_HELP_MESSAGE', 'alpha');
+    $text_help = GETPOST('TICKET_PUBLIC_TEXT_HELP_MESSAGE', 'alpha');
     if (!empty($text_help)) {
-        $res = dolibarr_set_const($db, 'TICKETS_PUBLIC_TEXT_HELP_MESSAGE', $text_help, 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $text_help, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_PUBLIC_TEXT_HELP_MESSAGE', $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'), 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
@@ -160,34 +163,34 @@ if ($action == 'updateMask') {
 }
 
 if ($action == 'setvarother') {
-    $param_enable_public_interface = GETPOST('TICKETS_ENABLE_PUBLIC_INTERFACE', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_ENABLE_PUBLIC_INTERFACE', $param_enable_public_interface, 'chaine', 0, '', $conf->entity);
+    $param_enable_public_interface = GETPOST('TICKET_ENABLE_PUBLIC_INTERFACE', 'alpha');
+    $res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', $param_enable_public_interface, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
 
-    $param_must_exists = GETPOST('TICKETS_EMAIL_MUST_EXISTS', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
+    $param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
+    $res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
 
-    $param_disable_email = GETPOST('TICKETS_DISABLE_ALL_MAILS', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_DISABLE_ALL_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
+    $param_disable_email = GETPOST('TICKET_DISABLE_ALL_MAILS', 'alpha');
+    $res = dolibarr_set_const($db, 'TICKET_DISABLE_ALL_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
 
-    $param_activate_log_by_email = GETPOST('TICKETS_ACTIVATE_LOG_BY_EMAIL', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_ACTIVATE_LOG_BY_EMAIL', $param_activate_log_by_email, 'chaine', 0, '', $conf->entity);
+    $param_activate_log_by_email = GETPOST('TICKET_ACTIVATE_LOG_BY_EMAIL', 'alpha');
+    $res = dolibarr_set_const($db, 'TICKET_ACTIVATE_LOG_BY_EMAIL', $param_activate_log_by_email, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
 
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
-    	$param_show_module_logo = GETPOST('TICKETS_SHOW_MODULE_LOGO', 'alpha');
-    	$res = dolibarr_set_const($db, 'TICKETS_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
+    	$param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
+    	$res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
     	if (!$res > 0) {
         	$error++;
     	}
@@ -195,21 +198,21 @@ if ($action == 'setvarother') {
 
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
-    	$param_notification_also_main_addressemail = GETPOST('TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
-	    $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
+    	$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
+	    $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 	    if (!$res > 0) {
 	        $error++;
 	    }
     }
 
-    $param_limit_view = GETPOST('TICKETS_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
+    $param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
+    $res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
 
-    $param_auto_assign = GETPOST('TICKETS_AUTO_ASSIGN_USER_CREATE', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+    $param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
+    $res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
         $error++;
     }
@@ -358,10 +361,10 @@ print '<table class="noborder" width="100%">';
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsActivatePublicInterface") . '</td>';
 print '<td align="left">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_ENABLE_PUBLIC_INTERFACE');
+    print ajax_constantonoff('TICKET_ENABLE_PUBLIC_INTERFACE');
 } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_ENABLE_PUBLIC_INTERFACE", $arrval, $conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE);
+    print $form->selectarray("TICKET_ENABLE_PUBLIC_INTERFACE", $arrval, $conf->global->TICKET_ENABLE_PUBLIC_INTERFACE);
 }
 print '</td>';
 print '<td align="center">';
@@ -373,10 +376,10 @@ print '</tr>';
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailMustExist") . '</td>';
 print '<td align="left">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_EMAIL_MUST_EXISTS');
+    print ajax_constantonoff('TICKET_EMAIL_MUST_EXISTS');
 } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_EMAIL_MUST_EXISTS", $arrval, $conf->global->TICKETS_EMAIL_MUST_EXISTS);
+    print $form->selectarray("TICKET_EMAIL_MUST_EXISTS", $arrval, $conf->global->TICKET_EMAIL_MUST_EXISTS);
 }
 print '</td>';
 print '<td align="center">';
@@ -390,10 +393,10 @@ print '</tr>';
 	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowModuleLogo") . '</td>';
 	print '<td align="left">';
 	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('TICKETS_SHOW_MODULE_LOGO');
+	    print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
 	} else {
 	    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	    print $form->selectarray("TICKETS_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKETS_SHOW_MODULE_LOGO);
+	    print $form->selectarray("TICKET_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKET_SHOW_MODULE_LOGO);
 	}
 	print '</td>';
 	print '<td align="center">';
@@ -406,10 +409,10 @@ print '</tr>';
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
 print '<td align="left">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKETS_SHOW_COMPANY_LOGO');
+	print ajax_constantonoff('TICKET_SHOW_COMPANY_LOGO');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("TICKETS_SHOW_COMPANY_LOGO", $arrval, $conf->global->TICKETS_SHOW_COMPANY_LOGO);
+	print $form->selectarray("TICKET_SHOW_COMPANY_LOGO", $arrval, $conf->global->TICKET_SHOW_COMPANY_LOGO);
 }
 print '</td>';
 print '<td align="center">';
@@ -426,10 +429,10 @@ print '<table class="noborder" width="100%">';
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsDisableEmail") . '</td>';
 print '<td align="left">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_DISABLE_ALL_MAILS');
+    print ajax_constantonoff('TICKET_DISABLE_ALL_MAILS');
 } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_DISABLE_ALL_MAILS", $arrval, $conf->global->TICKETS_DISABLE_ALL_MAILS);
+    print $form->selectarray("TICKET_DISABLE_ALL_MAILS", $arrval, $conf->global->TICKET_DISABLE_ALL_MAILS);
 }
 print '</td>';
 print '<td align="center">';
@@ -441,10 +444,10 @@ print '</tr>';
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsLogEnableEmail") . '</td>';
 print '<td align="left">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_ACTIVATE_LOG_BY_EMAIL');
+    print ajax_constantonoff('TICKET_ACTIVATE_LOG_BY_EMAIL');
 } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_ACTIVATE_LOG_BY_EMAIL", $arrval, $conf->global->TICKETS_ACTIVATE_LOG_BY_EMAIL);
+    print $form->selectarray("TICKET_ACTIVATE_LOG_BY_EMAIL", $arrval, $conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL);
 }
 print '</td>';
 print '<td align="center">';
@@ -458,10 +461,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
 	print '<td align="left">';
 	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS');
+	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
 	} else {
 	    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	    print $form->selectarray("TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS);
+	    print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
 	}
 	print '</td>';
 	print '<td align="center">';
@@ -474,10 +477,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsLimitViewAssignedOnly") . '</td>';
 print '<td align="left">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_LIMIT_VIEW_ASSIGNED_ONLY');
+    print ajax_constantonoff('TICKET_LIMIT_VIEW_ASSIGNED_ONLY');
 } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_LIMIT_VIEW_ASSIGNED_ONLY", $arrval, $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY);
+    print $form->selectarray("TICKET_LIMIT_VIEW_ASSIGNED_ONLY", $arrval, $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY);
 }
 print '</td>';
 print '<td align="center">';
@@ -494,10 +497,10 @@ if (!$conf->use_javascript_ajax) {
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsAutoAssignTicket") . '</td>';
 print '<td align="left">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_AUTO_ASSIGN_USER_CREATE');
+    print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
 } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKETS_AUTO_ASSIGN_USER_CREATE);
+    print $form->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
 }
 print '</td>';
 print '<td align="center">';
@@ -533,7 +536,7 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 // Email d'envoi des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationFrom") . '</td>';
 print '<td align="left">';
-print '<input type="text" name="TICKETS_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
+print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
@@ -542,18 +545,18 @@ print '</tr>';
 // Email de réception des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationTo") . '</td>';
 print '<td align="left">';
-print '<input type="text"   name="TICKETS_NOTIFICATION_EMAIL_TO" value="' . (!empty($conf->global->TICKETS_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKETS_NOTIFICATION_EMAIL_TO : $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM) . '" size="20" ></td>';
+print '<input type="text"   name="TICKET_NOTIFICATION_EMAIL_TO" value="' . (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : $conf->global->TICKET_NOTIFICATION_EMAIL_FROM) . '" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 // Texte de création d'un ticket
-$mail_mesg_new = $conf->global->TICKETS_MESSAGE_MAIL_NEW ? $conf->global->TICKETS_MESSAGE_MAIL_NEW : $langs->trans('TicketNewEmailBody');
+$mail_mesg_new = $conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->trans('TicketNewEmailBody');
 print '<tr><td>' . $langs->trans("TicketNewEmailBodyLabel") . '</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKETS_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
 print '<td align="center">';
@@ -561,11 +564,11 @@ print $form->textwithpicto('', $langs->trans("TicketNewEmailBodyHelp"), 1, 'help
 print '</td></tr>';
 
 // Texte d'introduction
-$mail_intro = $conf->global->TICKETS_MESSAGE_MAIL_INTRO ? $conf->global->TICKETS_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
+$mail_intro = $conf->global->TICKET_MESSAGE_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
 print '<tr><td>' . $langs->trans("TicketMessageMailIntroLabelAdmin") . '</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKETS_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
 print '<td align="center">';
@@ -573,11 +576,11 @@ print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"),
 print '</td></tr>';
 
 // Texte de signature
-$mail_signature = $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE : $langs->trans('TicketMessageMailSignatureText');
+$mail_signature = $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->trans('TicketMessageMailSignatureText');
 print '<tr><td>' . $langs->trans("TicketMessageMailSignatureLabelAdmin") . '</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKETS_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
 print '<td align="center">';
@@ -589,31 +592,31 @@ print '<td colspan="3">' . $langs->trans("PublicInterface") . '</td>';
 print "</tr>\n";
 
 // Url public interface
-$url_interface = $conf->global->TICKETS_URL_PUBLIC_INTERFACE;
+$url_interface = $conf->global->TICKET_URL_PUBLIC_INTERFACE;
 print '<tr><td>' . $langs->trans("TicketUrlPublicInterfaceLabelAdmin") . '</label>';
 print '</td><td>';
-print '<input type="text" name="TICKETS_URL_PUBLIC_INTERFACE" value="' . $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '" size="40" ></td>';
+print '<input type="text" name="TICKET_URL_PUBLIC_INTERFACE" value="' . $conf->global->TICKET_URL_PUBLIC_INTERFACE . '" size="40" ></td>';
 print '</td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
 // Interface topic
-$url_interface = $conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC;
+$url_interface = $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC;
 print '<tr><td>' . $langs->trans("TicketPublicInterfaceTopicLabelAdmin") . '</label>';
 print '</td><td>';
-print '<input type="text"   name="TICKETS_PUBLIC_INTERFACE_TOPIC" value="' . $conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC . '" size="40" ></td>';
+print '<input type="text"   name="TICKET_PUBLIC_INTERFACE_TOPIC" value="' . $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC . '" size="40" ></td>';
 print '</td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTopicHelp"), 1, 'help');
 print '</td></tr>';
 
 // Texte d'accueil homepage
-$public_text_home = $conf->global->TICKETS_PUBLIC_TEXT_HOME ? $conf->global->TICKETS_PUBLIC_TEXT_HOME : $langs->trans('TicketPublicInterfaceTextHome');
+$public_text_home = $conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans('TicketPublicInterfaceTextHome');
 print '<tr><td>' . $langs->trans("TicketPublicInterfaceTextHomeLabelAdmin") . '</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKETS_PUBLIC_TEXT_HOME', $public_text_home, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HOME', $public_text_home, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
 print '<td align="center">';
@@ -621,11 +624,11 @@ print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTextHomeHelpA
 print '</td></tr>';
 
 // Texte d'aide à la saisie du message
-$public_text_help_message = $conf->global->TICKETS_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKETS_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe');
+$public_text_help_message = $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe');
 print '<tr><td>' . $langs->trans("TicketPublicInterfaceTextHelpMessageLabelAdmin") . '</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKETS_PUBLIC_TEXT_HELP_MESSAGE', $public_text_help_message, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HELP_MESSAGE', $public_text_help_message, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
 print '<td align="center">';
@@ -638,6 +641,6 @@ print '</tr>';
 print '</table><br>';
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

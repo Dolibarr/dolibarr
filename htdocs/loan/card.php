@@ -238,7 +238,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
@@ -264,7 +264,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'" autofocus="autofocus"></td></tr>';
 
 	// Bank account
 	if (! empty($conf->banque->enabled))
@@ -286,13 +286,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
+	print $form->selectDate($datestart?$datestart:-1,'start','','','','add',1,1);
 	print '</td></tr>';
 
 	// Date End
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
+	print $form->selectDate($dateend?$dateend:-1,'end','','','','add',1,1);
 	print '</td></tr>';
 
 	// Number of terms
@@ -340,19 +340,19 @@ if ($action == 'create')
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_capital')?GETPOST('accountancy_account_capital'):$conf->global->LOAN_ACCOUNTING_ACCOUNT_CAPITAL, 'accountancy_account_capital', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_insurance
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account($object->accountancy_account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_insurance')?GETPOST('accountancy_account_insurance'):$conf->global->LOAN_ACCOUNTING_ACCOUNT_INSURANCE, 'accountancy_account_insurance', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_interest
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account($object->accountancy_account_interest, 'accountancy_account_interest', 1, '', 0, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_interest')?GETPOST('accountancy_account_interest'):$conf->global->LOAN_ACCOUNTING_ACCOUNT_INTEREST, 'accountancy_account_interest', 1, '', 1, 1);
 		print '</td></tr>';
 	}
 	else // For external software
@@ -434,7 +434,7 @@ if ($id > 0)
 
 		// Loan card
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='<div class="refidno">';
 		// Ref loan
@@ -501,7 +501,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
+			print $form->selectDate($object->datestart, 'start', 0, 0, 0, 'update', 1, 0);
 		}
 		else
 		{
@@ -514,7 +514,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
+			print $form->selectDate($object->dateend, 'end', 0, 0, 0, 'update', 1, 0);
 		}
 		else
 		{
@@ -805,6 +805,6 @@ if ($id > 0)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

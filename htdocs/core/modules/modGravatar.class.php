@@ -49,6 +49,8 @@ class modGravatar extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "interface";
+		// Module position in the family on 2 digits ('01', '10', '20', ...)
+		$this->module_position = '75';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -71,9 +73,11 @@ class modGravatar extends DolibarrModules
 		$this->config_page_url = array();
 
 		// Dependencies
-		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(4, 3); // Minimum version of PHP required by module
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2, 7); // Minimum version of Dolibarr required by module
 		$this->langfiles = array();
 

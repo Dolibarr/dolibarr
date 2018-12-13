@@ -29,7 +29,6 @@ PricingRule=Preisregel für Verkaufspreise
 PriceExpressionEditorHelp2=Sie können auf die ExtraFields mit Variablen wie <b>#extrafield_myextrafieldkey# </b> und globale Variablen mit <b>#global_mycode#</b> zugreifen
 PriceMode=Preisfindungs-Methode
 ComposedProductIncDecStock=Erhöhen/verringern Lagerbestand  bei verknüpften Produkten
-MinCustomerPrice=Mindespreis für Kunden
 AddUpdater=Aktualisierung hinzufügen
 VariableToUpdate=Zu aktualisierende Variablen
 NbOfQtyInProposals=Menge in Angebot

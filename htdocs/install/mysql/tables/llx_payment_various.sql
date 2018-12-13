@@ -19,7 +19,8 @@
 create table llx_payment_various
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  num_payment           varchar(50),				-- ref
+  ref                   varchar(30) NOT NULL,       -- payment reference number
+  num_payment           varchar(50),				-- num cheque or other
   label                 varchar(255),
   tms                   timestamp,
   datec                 datetime,                   -- Create date

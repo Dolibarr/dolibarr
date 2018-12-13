@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,13 @@ $hookmanager->initHooks(array('productstatscontract'));
 
 $mesg = '';
 
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
@@ -101,7 +103,7 @@ if ($id > 0 || ! empty($ref))
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-        show_stats_for_company($product,$socid);
+        $nboflines = show_stats_for_company($product,$socid);
 
 		print "</table>";
 
@@ -132,7 +134,20 @@ if ($id > 0 || ! empty($ref))
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
 		$sql.= " GROUP BY c.rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
 		$sql.= $db->order($sortfield, $sortorder);
-		$sql.= $db->plimit($conf->liste_limit +1, $offset);
+
+		//Calcul total qty and amount for global if full scan list
+		$total_ht=0;
+		$total_qty=0;
+
+		// Count total nb of records
+		$totalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$result = $db->query($sql);
+			$totalofrecords = $db->num_rows($result);
+		}
+
+		$sql .= $db->plimit($limit + 1, $offset);
 
 		$result = $db->query($sql);
 		if ($result)
@@ -144,6 +159,7 @@ if ($id > 0 || ! empty($ref))
                 $option .= '&amp;search_month=' . $search_month;
             if (! empty($search_year))
                 $option .= '&amp;search_year=' . $search_year;
+            if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
 
             print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
             if (! empty($sortfield))
@@ -155,7 +171,7 @@ if ($id > 0 || ! empty($ref))
                 $option .= '&amp;page=' . $page;
             }
 
-			print_barre_liste($langs->trans("Contrats"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
+            print_barre_liste($langs->trans("Contrats"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$product->id, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit);
 
 			$i = 0;
             print '<div class="div-table-responsive">';
@@ -176,7 +192,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($num > 0)
 			{
-				while ($i < $num && $i < $conf->liste_limit)
+				while ($i < min($num, $limit))
 				{
 					$objp = $db->fetch_object($result);
 
@@ -220,6 +236,6 @@ else
 	dol_print_error();
 }
 
-
+// End of page
 llxFooter();
 $db->close();

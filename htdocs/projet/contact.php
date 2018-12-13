@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@ $mine   = GETPOST('mode')=='mine' ? 1 : 0;
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 // Security check
 $socid=0;
@@ -140,6 +141,7 @@ $userstatic=new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
+	if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
 	$userWrite  = $object->restrictedProjectArea($user,'write');
@@ -238,6 +240,14 @@ if ($id > 0 || ! empty($ref))
     print nl2br($object->description);
     print '</td></tr>';
 
+    // Bill time
+    if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+    	print yn($object->bill_time);
+    	print '</td></tr>';
+    }
+
     // Categories
     if ($conf->categorie->enabled) {
         print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -266,6 +276,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

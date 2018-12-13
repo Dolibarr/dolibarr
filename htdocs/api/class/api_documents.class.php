@@ -103,7 +103,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'encoding'=>'base64' );
 	}
 
 
@@ -224,9 +224,8 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content=file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'MIME base64 (base64_encode php function, http://php.net/manual/en/function.base64-encode.php)' );
+		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'base64' );
 	}
-
 
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
@@ -355,6 +354,22 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->facture->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'invoice');
+		}
+		else if ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->agenda->myactions->read && !DolibarrApiAccess::$user->rights->agenda->allactions->read) {
+				throw new RestException(401);
+			}
+
+			$object = new ActionComm($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Event not found');
+			}
+
+			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		}
 		else
 		{

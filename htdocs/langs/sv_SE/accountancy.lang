@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from m
 AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
 
 AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.
@@ -131,6 +132,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zero at the end of an accounting account. Needed by some countries (like switzerland). If keep to off (default), you can set the 2 following parameters to ask application to add virtual zero.
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Sell ​​tidskrift
 ACCOUNTING_PURCHASE_JOURNAL=Bara tidskrift

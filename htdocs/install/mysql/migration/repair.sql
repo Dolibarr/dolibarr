@@ -392,6 +392,11 @@ drop table tmp_bank_url_expense_user;
 
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
 -- VMYSQL4.1 update llx_expensereport set date_debut = date_create where DATE(STR_TO_DATE(date_debut, '%Y-%m-%d')) IS NULL;

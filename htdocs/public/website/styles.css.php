@@ -33,13 +33,17 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -81,7 +85,7 @@ if (empty($pageid))
     $objectpage=new WebsitePage($db);
     $array=$objectpage->fetchAll($object->id);
 
-    if (count($array) > 0)
+    if (is_array($array) && count($array) > 0)
     {
         $firstrep=reset($array);
         $pageid=$firstrep->id;
@@ -145,4 +149,3 @@ require_once $original_file_osencoded;
 
 
 if (is_object($db)) $db->close();
-

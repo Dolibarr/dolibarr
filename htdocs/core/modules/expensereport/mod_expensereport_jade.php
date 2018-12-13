@@ -28,10 +28,30 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expenserepo
  */
 class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='ER';
-	var $error='';
-	var $nom='Jade';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	public $prefix='ER';
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Jade';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Jade';
 
 
     /**

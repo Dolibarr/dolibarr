@@ -2,12 +2,13 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -220,7 +221,6 @@ if (empty($reshook))
 				//$newstatus=3;  // Submited
 				// TODO If there is at least one reception, we can set to Received->Received partially
 				$newstatus=4;  // Received partially
-
 			}
 			else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 			else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
@@ -351,7 +351,7 @@ if (empty($reshook))
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
 				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -399,7 +399,11 @@ if (empty($reshook))
 			{
 				$label = $productsupplier->label;
 
-				$desc = $productsupplier->description;
+				// if we use supplier description of the products
+				if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				    $desc = $productsupplier->desc_supplier;
+				} else $desc = $productsupplier->description;
+
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 				$type = $productsupplier->type;
@@ -695,7 +699,6 @@ if (empty($reshook))
 			dol_print_error($db,$object->error);
 			exit;
 			}
-
 	}
 
 	// Remove a product line
@@ -1438,7 +1441,6 @@ if ($action=='create')
 
 		// Object source contacts list
 		$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
-
 	}
 	else
 	{
@@ -1538,7 +1540,7 @@ if ($action=='create')
 	print '<td>';
 	$usehourmin=0;
 	if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin=1;
-	$form->select_date($datelivraison?$datelivraison:-1,'liv_',$usehourmin,$usehourmin,'',"set");
+	print $form->selectDate($datelivraison?$datelivraison:-1, 'liv_', $usehourmin, $usehourmin, '', "set");
 	print '</td></tr>';
 
 	// Bank Account
@@ -1695,7 +1697,6 @@ elseif (! empty($object->id))
 	if ($action	== 'delete')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
-
 	}
 
 	// Clone confirmation
@@ -1707,7 +1708,6 @@ elseif (! empty($object->id))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
-
 	}
 
 	// Confirmation de la validation
@@ -1761,11 +1761,13 @@ elseif (! empty($object->id))
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct=new FormProduct($db);
+			$forcecombo=0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 			$formquestion=array(
-					//'text' => $langs->trans("ConfirmClone"),
-					//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
-					//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
+				//'text' => $langs->trans("ConfirmClone"),
+				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse','int'), 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 			);
 		}
 		$text=$langs->trans("ConfirmApproveThisOrder",$object->ref);
@@ -1784,14 +1786,12 @@ elseif (! empty($object->id))
 	if ($action	== 'refuse')
 	{
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
-
 	}
 
 	// Confirmation de l'annulation
 	if ($action	== 'cancel')
 	{
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
-
 	}
 
 	// Confirmation de l'envoi de la commande
@@ -1799,7 +1799,6 @@ elseif (! empty($object->id))
 	{
 		$date_com = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
-
 	}
 
 	// Confirmation to delete line
@@ -1830,6 +1829,7 @@ elseif (! empty($object->id))
 	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -2038,7 +2038,7 @@ elseif (! empty($object->id))
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		$usehourmin=0;
 		if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin=1;
-		$form->select_date($object->date_livraison?$object->date_livraison:-1,'liv_',$usehourmin,$usehourmin,'',"setdate_livraison");
+		print $form->selectDate($object->date_livraison?$object->date_livraison:-1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
@@ -2114,7 +2114,7 @@ elseif (! empty($object->id))
 
 	// Total
 	$alert = '';
-	if($object->total_ht < $object->thirdparty->supplier_order_min_amount) {
+	if (! empty($conf->global->ORDER_MANAGE_MIN_AMOUNT) && $object->total_ht < $object->thirdparty->supplier_order_min_amount) {
 		$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->supplier_order_min_amount));
 	}
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
@@ -2441,7 +2441,6 @@ elseif (! empty($object->id))
 				{
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
-
 			}
 
 			print "</div>";
@@ -2462,7 +2461,7 @@ elseif (! empty($object->id))
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 			$date_com = dol_mktime(GETPOST('rehour','int'), GETPOST('remin','int'), GETPOST('resec','int'), GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 			if (empty($date_com)) $date_com=dol_now();
-			print $form->select_date($date_com,'',1,1,'',"commande",1,1,1);
+			print $form->selectDate($date_com, '', 1, 1, '', "commande", 1, 1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
@@ -2518,7 +2517,7 @@ elseif (! empty($object->id))
 				//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 				print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
 				$datepreselected = dol_now();
-				print $form->select_date($datepreselected,'',1,1,'',"commande",1,1,1);
+				print $form->selectDate($datepreselected, '', 1, 1, '', "commande", 1, 1);
 				print "</td></tr>\n";
 
 				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
@@ -2716,7 +2715,6 @@ elseif (! empty($object->id))
 							}
 						}
 					}
-
 				}
 				elseif ($user_status_code == "PERMISSION_DENIED")
 				{
@@ -2774,5 +2772,4 @@ elseif (! empty($object->id))
 
 // End of page
 llxFooter();
-
 $db->close();

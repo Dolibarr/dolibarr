@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=Kun PayPal
 ONLINE_PAYMENT_CSS_URL=Valgfri URL til CSS-stilark på online betalingsside
 ThisIsTransactionId=Transaksjons-ID: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Legg til url av Paypal-betaling når du sender et dokument i posten
-PredefinedMailContentLink=Du kan klikke på linken under for å utføre betalingen din hvis den ikke allerede er gjort.<br><br>%s<br><br>
 YouAreCurrentlyInSandboxMode=Du er for øyeblikket i %s "sandbox" -modus
 NewOnlinePaymentReceived=Ny online betaling mottatt
 NewOnlinePaymentFailed=Ny online betaling forsøkt, men mislyktes

@@ -28,18 +28,40 @@
  */
 class AdvanceTargetingMailing extends CommonObject
 {
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	var $db; //!< To store db handler
-	var $error; //!< To return error code (or message)
-	var $errors = array(); //!< To return several error codes (or messages)
-	var $element='advtargetemailing';			//!< Id that identify managed objects
-	var $table_element='advtargetemailing';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-	var $id;
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='advtargetemailing';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='advtargetemailing';
+
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
 	var $name;
 	var $entity;
-	var $fk_mailing;
+	var $fk_element;
+	var $type_element;
 	var $filtervalue;
 	var $fk_user_author;
 	var $datec='';
@@ -53,9 +75,9 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 	/**
-	 * Constructor
+	 *  Constructor
 	 *
-	 * 	@param	DoliDb		$db		Database handler
+	 *  @param  DoliDb		$db		Database handler
 	 */
 	function __construct($db)
 	{
@@ -92,7 +114,9 @@ class AdvanceTargetingMailing extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_mailing)) $this->fk_mailing=trim($this->fk_mailing);
+		if (isset($this->fk_element)) $this->fk_element=trim($this->fk_element);
+		if (isset($this->type_element)) $this->type_element=trim($this->type_element);
+
 		if (isset($this->name)) $this->name=trim($this->name);
 		if (isset($this->filtervalue)) $this->filtervalue=trim($this->filtervalue);
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
@@ -108,7 +132,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql.= "name,";
 		$sql.= "entity,";
-		$sql.= "fk_mailing,";
+		$sql.= "fk_element,";
+		$sql.= "type_element,";
 		$sql.= "filtervalue,";
 		$sql.= "fk_user_author,";
 		$sql.= "datec,";
@@ -119,7 +144,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql.= " ".(! isset($this->name)?'NULL':"'".$this->db->escape($this->name)."'").",";
 		$sql.= " ".$conf->entity.",";
-		$sql.= " ".(! isset($this->fk_mailing)?'NULL':"'".$this->db->escape($this->fk_mailing)."'").",";
+		$sql.= " ".(! isset($this->fk_element)?'NULL':"'".$this->db->escape($this->fk_element)."'").",";
+		$sql.= " ".(! isset($this->type_element)?'NULL':"'".$this->db->escape($this->type_element)."'").",";
 		$sql.= " ".(! isset($this->filtervalue)?'NULL':"'".$this->db->escape($this->filtervalue)."'").",";
 		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->idate(dol_now())."',";
@@ -184,7 +210,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql.= " t.name,";
 		$sql.= " t.entity,";
-		$sql.= " t.fk_mailing,";
+		$sql.= " t.fk_element,";
+		$sql.= " t.type_element,";
 		$sql.= " t.filtervalue,";
 		$sql.= " t.fk_user_author,";
 		$sql.= " t.datec,";
@@ -206,13 +233,13 @@ class AdvanceTargetingMailing extends CommonObject
 
 				$this->name = $obj->name;
 				$this->entity = $obj->entity;
-				$this->fk_mailing = $obj->fk_mailing;
+				$this->fk_element = $obj->fk_element;
+				$this->type_element = $obj->type_element;
 				$this->filtervalue = $obj->filtervalue;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->tms = $this->db->jdate($obj->tms);
-
 			}
 			$this->db->free($resql);
 
@@ -226,6 +253,7 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Load object in memory from the database
 	 *
@@ -234,13 +262,15 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	function fetch_by_mailing($id=0)
 	{
+        // phpcs:enable
 		global $langs;
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 
 		$sql.= " t.name,";
 		$sql.= " t.entity,";
-		$sql.= " t.fk_mailing,";
+		$sql.= " t.fk_element,";
+		$sql.= " t.type_element,";
 		$sql.= " t.filtervalue,";
 		$sql.= " t.fk_user_author,";
 		$sql.= " t.datec,";
@@ -249,9 +279,9 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql.= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
 		if (!empty($id)) {
-			$sql.= " WHERE t.fk_mailing = ".$id;
+			$sql.= " WHERE t.fk_element = ".$id." AND type_element='mailing'";
 		}else {
-			$sql.= " WHERE t.fk_mailing = ".$this->fk_mailing;
+			$sql.= " WHERE t.fk_element = ".$this->fk_element."  AND type_element='mailing'";
 		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -266,13 +296,80 @@ class AdvanceTargetingMailing extends CommonObject
 
 				$this->name = $obj->name;
 				$this->entity = $obj->entity;
-				$this->fk_mailing = $obj->fk_mailing;
+				$this->fk_element = $obj->fk_element;
+				$this->type_element = $obj->type_element;
 				$this->filtervalue = $obj->filtervalue;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->tms = $this->db->jdate($obj->tms);
+			}
+			$this->db->free($resql);
 
+			return 1;
+		}
+		else
+		{
+			$this->error="Error ".$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+
+
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
+	 *  Load object in memory from the database
+	 *
+	 *  @param	int		$id    			Id object
+	 *  @param	string	$type_element	Type target
+	 *  @return int          			<0 if KO, >0 if OK
+	 */
+	function fetch_by_element($id=0, $type_element='mailing')
+	{
+        // phpcs:enable
+		global $langs;
+		$sql = "SELECT";
+		$sql.= " t.rowid,";
+
+		$sql.= " t.name,";
+		$sql.= " t.entity,";
+		$sql.= " t.fk_element,";
+		$sql.= " t.type_element,";
+		$sql.= " t.filtervalue,";
+		$sql.= " t.fk_user_author,";
+		$sql.= " t.datec,";
+		$sql.= " t.fk_user_mod,";
+		$sql.= " t.tms";
+
+		$sql.= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
+		if (!empty($id)) {
+			$sql.= " WHERE t.fk_element = ".$id." AND type_element='$type_element'";
+		}else {
+			$sql.= " WHERE t.fk_element = ".$this->fk_element."  AND type_element='$type_element'";
+		}
+
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id    = $obj->rowid;
+
+				$this->name = $obj->name;
+				$this->entity = $obj->entity;
+				$this->fk_element = $obj->fk_element;
+				$this->type_element = $obj->type_element;
+				$this->filtervalue = $obj->filtervalue;
+				$this->fk_user_author = $obj->fk_user_author;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->fk_user_mod = $obj->fk_user_mod;
+				$this->tms = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($resql);
 
@@ -299,7 +396,8 @@ class AdvanceTargetingMailing extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_mailing)) $this->fk_mailing=trim($this->fk_mailing);
+		if (isset($this->fk_element)) $this->fk_element=trim($this->fk_element);
+		if (isset($this->type_element)) $this->type_element=trim($this->type_element);
 		if (isset($this->name)) $this->name=trim($this->name);
 		if (isset($this->filtervalue)) $this->filtervalue=trim($this->filtervalue);
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
@@ -315,14 +413,14 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql.= " name=".(isset($this->name)?"'".$this->db->escape($this->name)."'":"''").",";
 		$sql.= " entity=".$conf->entity.",";
-		$sql.= " fk_mailing=".(isset($this->fk_mailing)?$this->fk_mailing:"null").",";
+		$sql.= " fk_element=".(isset($this->fk_element)?$this->fk_element:"null").",";
+		$sql.= " type_element=".(isset($this->type_element)?"'".$this->db->escape($this->type_element)."'":"null").",";
 		$sql.= " filtervalue=".(isset($this->filtervalue)?"'".$this->db->escape($this->filtervalue)."'":"null").",";
 		$sql.= " fk_user_mod=".$user->id;
 
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
-
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
@@ -432,7 +530,7 @@ class AdvanceTargetingMailing extends CommonObject
 		global $langs,$conf;
 
 		if (!empty($arrayquery)) {
-			$result=$this->fetch_by_mailing($this->fk_mailing);
+			$result=$this->fetch_by_mailing($this->fk_element);
 			$this->filtervalue=json_encode($arrayquery);
 			if ($result<0) {
 				return -1;
@@ -447,6 +545,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
@@ -455,6 +554,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	function query_thirdparty($arrayquery)
 	{
+        // phpcs:enable
 		global $langs,$conf;
 
 		$sql = "SELECT";
@@ -545,30 +645,26 @@ class AdvanceTargetingMailing extends CommonObject
 						if (!empty($arrayquery['options_'.$key.'_max'])) {
 							$sqlwhere[]= " (te.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
 						}
-					} else if (($extrafields->attribute_type[$key] == 'date') ||
+					} elseif (($extrafields->attribute_type[$key] == 'date') ||
 						($extrafields->attribute_type[$key] == 'datetime')) {
 						if (!empty($arrayquery['options_'.$key.'_end_dt'])){
 							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
 						}
-					}else if ($extrafields->attribute_type[$key] == 'boolean') {
+					} elseif ($extrafields->attribute_type[$key] == 'boolean') {
 						if ($arrayquery['options_'.$key]!=''){
 							$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key].")";
 						}
-					}else{
+					} else {
 						if (is_array($arrayquery['options_'.$key])) {
 							$sqlwhere[]= " (te.".$key." IN ('".implode("','",$arrayquery['options_'.$key])."'))";
 						} elseif (!empty($arrayquery['options_'.$key])) {
 							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
 						}
 					}
-
 				}
-
-
 			}
 
 			if (count($sqlwhere)>0)	$sql.= " WHERE ".implode(" AND ",$sqlwhere);
-
 		}
 
 
@@ -600,6 +696,7 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
@@ -609,6 +706,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
+        // phpcs:enable
 		global $langs,$conf;
 
 		$sql = "SELECT";
@@ -647,7 +745,16 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[]= " (t.civility IN ('".$this->db->escape(implode("','",$arrayquery['contact_civility']))."'))";
 			}
 			if ($arrayquery['contact_no_email']!='') {
-				$sqlwhere[]= " (t.no_email='".$this->db->escape($arrayquery['contact_no_email'])."')";
+				$tmpwhere = '';
+				if (! empty($arrayquery['contact_no_email']))
+				{
+					$tmpwhere.= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+				}
+				else
+				{
+					$tmpwhere.= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+				}
+				$sqlwhere[]= $tmpwhere;
 			}
 			if ($arrayquery['contact_update_st_dt']!='') {
 				$sqlwhere[]= " (t.tms >= '".$this->db->idate($arrayquery['contact_update_st_dt'])."' AND t.tms <= '".$this->db->idate($arrayquery['contact_update_end_dt'])."')";
@@ -698,7 +805,6 @@ class AdvanceTargetingMailing extends CommonObject
 							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
 						}
 					}
-
 				}
 
 				if (! empty($withThirdpartyFilter)) {
@@ -840,7 +946,8 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  									For exemple  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
 	 * 	@return		string		Sql to use for the where condition
 	 */
-	public function transformToSQL($column_to_test,$criteria) {
+    public function transformToSQL($column_to_test,$criteria)
+    {
 		$return_sql_criteria = '(';
 
 		//This is a multiple value test
@@ -863,7 +970,6 @@ class AdvanceTargetingMailing extends CommonObject
 			if (count($return_sql_not_like)>0) {
 				$return_sql_criteria .= ' AND (' . implode (' AND ', $return_sql_not_like).')';
 			}
-
 		}else {
 			$return_sql_criteria .= $column_to_test . ' LIKE \''.$this->db->escape($criteria).'\'';
 		}
@@ -872,6 +978,4 @@ class AdvanceTargetingMailing extends CommonObject
 
 		return $return_sql_criteria;
 	}
-
-
 }

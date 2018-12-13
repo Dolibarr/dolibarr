@@ -2,7 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -212,6 +212,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

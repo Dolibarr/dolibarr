@@ -29,6 +29,9 @@ include_once DOL_DOCUMENT_ROOT . '/compta/salaries/class/paymentsalary.class.php
  */
 class SalariesStats extends Stats
 {
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element;
 
 	var $socid;

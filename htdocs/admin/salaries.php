@@ -75,7 +75,7 @@ if ($action == 'update')
 llxHeader('',$langs->trans('SalariesSetup'));
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('SalariesSetup'),$linkback,'title_setup');
@@ -127,5 +127,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

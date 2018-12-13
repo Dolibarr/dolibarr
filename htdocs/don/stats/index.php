@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,9 +47,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load("sendings");
-$langs->load("other");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","other","sendings"));
 
 
 /*
@@ -260,6 +259,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="border" width="100%">';
 print '<tr height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
@@ -294,6 +294,7 @@ foreach ($data as $val)
 }
 
 print '</table>';
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';

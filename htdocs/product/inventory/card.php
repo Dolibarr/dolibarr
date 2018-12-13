@@ -53,7 +53,7 @@ $diroutputmassaction=$conf->stock->dir_output . '/temp/massgeneration/'.$user->i
 $hookmanager->initHooks(array('inventorycard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('inventory');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('inventory','','search_');
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));
@@ -224,26 +224,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
-	{
-	    $formquestion=array();
-	    /*
-	        $formquestion = array(
-	            // 'text' => $langs->trans("ConfirmClone"),
-	            // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-	            // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-	            // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
-	    }*/
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
-	if (! $formconfirm) {
-	    $parameters = array('lineid' => $lineid);
-	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-	    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-	}
+	// Call Hook formConfirm
+	$parameters = array('lineid' => $lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;
@@ -422,7 +407,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	*/
 }
-
 
 // End of page
 llxFooter();

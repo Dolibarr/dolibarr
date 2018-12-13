@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  *	\brief      List all task of a project
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -42,7 +42,7 @@ $toselect = GETPOST('toselect', 'array');
 
 $id=GETPOST('id','int');
 
-$search_all=GETPOST('search_all', 'alphanohtml');
+$search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_categ=GETPOST("search_categ",'alpha');
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus']))
@@ -79,7 +79,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('projet_task');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Security check
 $socid=0;
@@ -336,10 +336,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
-//print $sql;
 
 dol_syslog("list allowed project", LOG_DEBUG);
-//print $sql;
+
 $resql = $db->query($sql);
 if (! $resql)
 {
@@ -437,7 +436,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $morehtmlfilter = '';
@@ -841,5 +840,6 @@ print '</div>';
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

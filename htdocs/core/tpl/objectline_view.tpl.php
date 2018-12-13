@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
@@ -66,7 +66,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
-<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; echo $domData; ?> >
+<tr  id="row-<?php echo $line->id?>" class="drag drop oddeven" <?php echo $domData; ?> >
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
@@ -260,13 +260,13 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<?php if ($line->special_code == 3)	{ ?>
 	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+	<td align="right" class="linecolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>
         <?php if ($outputalsopricetotalwithtax) { ?>
-        <td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
+        <td align="right" class="linecolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
         <?php } ?>
 
 
@@ -292,7 +292,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	</td>
 
 	<?php
-	if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
+	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
 	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
@@ -306,7 +306,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo ((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
+    <td align="center"<?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
@@ -321,7 +321,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 //Line extrafield
 if (!empty($extrafieldsline))
 {
-	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcdd[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		Patrick Raguin      	<patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2017	Juanjo Menent       	<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -261,8 +261,9 @@ function pdf_getHeightForLogo($logo, $url = false)
 /**
  * Function to try to calculate height of a HTML Content
  *
- * @param TCPDF     $pdf            PDF initialized object
- * @param string    $htmlcontent    HTML Contect
+ * @param 	TCPDF     $pdf				PDF initialized object
+ * @param 	string    $htmlcontent		HTML Contect
+ * @return 	int							Height
  * @see getStringHeight
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
@@ -392,6 +393,48 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     			// Web
     			if ($sourcecompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($sourcecompany->url);
     		}
+    		// Intra VAT
+    		if (! empty($conf->global->MAIN_TVAINTRA_IN_SOURCE_ADDRESS))
+    		{
+    			if ($sourcecompany->tva_intra) $stringaddress.=($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($sourcecompany->tva_intra);
+    		}
+    		// Professionnal Ids
+    		if (! empty($conf->global->MAIN_PROFID1_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof1))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId1",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof1);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID2_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof2))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId2",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof2);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID3_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof3))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId3",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof3);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID4_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof4))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId4",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof4);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID5_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof5))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId5",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof5);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID6_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof6))
+    		{
+    			$tmp=$outputlangs->transcountrynoentities("ProfId6",$sourcecompany->country_code);
+    			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof6);
+    		}
     	}
 
     	if ($mode == 'target' || preg_match('/targetwithdetails/',$mode))
@@ -402,9 +445,18 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
     			if (!empty($targetcontact->address)) {
     				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact));
-    			}else {
-    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
-    			}
+    			} else {
+    				$companytouseforaddress = $targetcompany;
+
+					// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
+					if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id)
+					{
+						$targetcontact->fetch_thirdparty();
+						$companytouseforaddress = $targetcontact->thirdparty;
+					}
+
+					$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress));
+				}
     			// Country
     			if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
     				$stringaddress.= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
@@ -676,7 +728,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
-		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN))    // Note that some countries still need bank number, BIC/IBAN not enought for them
+		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN))    // Note that some countries still need bank number, BIC/IBAN not enougth for them
 		{
 		    // Note:
 		    // bank = code_banque (FR), sort code (GB, IR. Example: 12-34-56)
@@ -705,7 +757,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 					$content = $account->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					// Key
-					$tmplength = 13;
+					$tmplength = 15;
 					$content = $account->cle_rib;
 				}elseif ($val == 'IBAN' || $val == 'BIC') {
 					// Key
@@ -1152,8 +1204,16 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$note=(! empty($object->lines[$i]->note)?$object->lines[$i]->note:'');
 	$dbatch=(! empty($object->lines[$i]->detail_batch)?$object->lines[$i]->detail_batch:false);
 
-	if ($issupplierline) $prodser = new ProductFournisseur($db);
-	else $prodser = new Product($db);
+	if ($issupplierline)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$prodser = new ProductFournisseur($db);
+	}
+	else
+	{
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$prodser = new Product($db);
+	}
 
 	if ($idprod)
 	{
@@ -1231,7 +1291,17 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice.=$desc;
+				if (empty($hidedesc))
+				{
+					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST))
+					{
+						$libelleproduitservice=$desc."\n".$libelleproduitservice;
+					}
+					else
+					{
+						$libelleproduitservice.=$desc;
+					}
+				}
 			}
 			else
 			{
@@ -1277,6 +1347,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		if (! empty($libelleproduitservice) && ! empty($ref_prodserv)) $ref_prodserv .= " - ";
 	}
 
+	if(!empty($ref_prodserv) && !empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){ $ref_prodserv = '<b>'.$ref_prodserv.'</b>'; }
 	$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
@@ -1312,7 +1383,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
+		if(!empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){
+		    $libelleproduitservice.= '<b style="color:#333666;" ><em>'."__N__</b> ".$period.'</em>';
+		}else{
 		$libelleproduitservice.="__N__".$period;
+		}
 		//print $libelleproduitservice;
 	}
 
@@ -1325,7 +1400,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			if ($detail->eatby) $dte[]=$outputlangs->transnoentitiesnoconv('printEatby',dol_print_date($detail->eatby, $format, false, $outputlangs));
 			if ($detail->sellby) $dte[]=$outputlangs->transnoentitiesnoconv('printSellby',dol_print_date($detail->sellby, $format, false, $outputlangs));
 			if ($detail->batch) $dte[]=$outputlangs->transnoentitiesnoconv('printBatch',$detail->batch);
-			$dte[]=$outputlangs->transnoentitiesnoconv('printQty',$detail->dluo_qty);
+			$dte[]=$outputlangs->transnoentitiesnoconv('printQty',$detail->qty);
 			$libelleproduitservice.= "__N__  ".implode(" - ", $dte);
 		}
 	}
@@ -1444,7 +1519,7 @@ function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
+function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails=0)
 {
 	global $conf, $hookmanager, $mysoc;
 
@@ -1798,6 +1873,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
 {
 	if (empty($hookmanager)) global $hookmanager;
+	global $conf;
 
 	$reshook=0;
     $result='';
@@ -1875,13 +1951,13 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         	{
         		$prev_progress = 0;
         		$progress = 1;
-        		if (method_exists($object, 'get_prev_progress'))
+        		if (method_exists($object->lines[$i], 'get_prev_progress'))
         		{
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
         		}
 				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
-			}
+        	}
         	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
 	}
@@ -2035,8 +2111,8 @@ function pdf_getLinkedObjects($object,$outputlangs)
 		}
 		else if ($objecttype == 'shipping')
 		{
-			$outputlangs->load('orders');
-			$outputlangs->load('sendings');
+			$outputlangs->loadLangs(array("orders", "sendings"));
+
 			foreach($objects as $x => $elementobject)
 			{
 			    $order=null;
@@ -2110,4 +2186,3 @@ function pdf_getSizeForImage($realpath)
 	}
 	return array('width'=>$width,'height'=>$height);
 }
-

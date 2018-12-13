@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - suppliers
-Suppliers=Vendors
+Suppliers=Leverandører
 SuppliersInvoice=Vendor invoice
 ShowSupplierInvoice=Show Vendor Invoice
-NewSupplier=New vendor
+NewSupplier=Ny sælger
 History=Historie
-ListOfSuppliers=List of vendors
+ListOfSuppliers=Liste over leverandører
 ShowSupplier=Show vendor
 OrderDate=Bestil dato
 BuyingPriceMin=Bedste købspris
