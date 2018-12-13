@@ -878,7 +878,7 @@ class Form
 	 *	@param  string	$htmlname       Name of field in html form
 	 * 	@param	int		$showempty		Add an empty field
 	 * 	@param	int		$hidetext		Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
-	 * 	@param	integer	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
+	 * 	@param	integer	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
 	 *  @return	void
 	 */
 	function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
@@ -887,7 +887,7 @@ class Form
 		global $db,$langs,$user,$conf;
 
 		// If product & services are enabled or both disabled.
-		if ($forceall > 0 || (empty($forceall) && ! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+		if ($forceall == 1 || (empty($forceall) && ! empty($conf->product->enabled) && ! empty($conf->service->enabled))
 		|| (empty($forceall) && empty($conf->product->enabled) && empty($conf->service->enabled)) )
 		{
 			if (empty($hidetext)) print $langs->trans("Type").': ';
@@ -910,12 +910,12 @@ class Form
 			print '</select>';
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
-		if (empty($forceall) && empty($conf->product->enabled) && ! empty($conf->service->enabled))
+		if ((empty($forceall) && empty($conf->product->enabled) && ! empty($conf->service->enabled)) || $forceall == 3)
 		{
 			print $langs->trans("Service");
 			print '<input type="hidden" name="'.$htmlname.'" value="1">';
 		}
-		if (empty($forceall) && ! empty($conf->product->enabled) && empty($conf->service->enabled))
+		if ((empty($forceall) && ! empty($conf->product->enabled) && empty($conf->service->enabled)) || $forceall == 2)
 		{
 			print $langs->trans("Product");
 			print '<input type="hidden" name="'.$htmlname.'" value="0">';
