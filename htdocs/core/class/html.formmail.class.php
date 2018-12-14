@@ -1058,8 +1058,8 @@ class FormMail extends Form
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
 		if ($this->witherrorstoreadonly) {
-			$out = '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out = '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= $errorstomail;
 			$out.= "</td></tr>\n";
 		} else {
