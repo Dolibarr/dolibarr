@@ -331,8 +331,8 @@ if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_mont
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
 
-$sql.= dol_sql_datefilter( "f.datef", $day, $month, $year);
-$sql.= dol_sql_datefilter( "f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
+$sql.= dolSqlDateFilter( "f.datef", $day, $month, $year);
+$sql.= dolSqlDateFilter( "f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
 
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 if ($search_label) $sql .= natural_search('f.libelle', $search_label);

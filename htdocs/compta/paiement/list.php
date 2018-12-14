@@ -164,7 +164,7 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    $sql.= dol_sql_datefilter("p.datep", $day, $month, $year);
+    $sql.= dolSqlDateFilter("p.datep", $day, $month, $year);
 
     if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;

@@ -452,11 +452,11 @@ if ($search_status != '-1' && $search_status != '')
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
 
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"f.datef", 
 				$search_day, $search_month, $search_year
 );
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"f.date_lim_reglement", 
 				$search_day_lim, $search_month_lim, $search_year_lim
 );

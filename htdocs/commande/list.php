@@ -304,12 +304,12 @@ if ($viewstatut <> '')
 	}
 }
 
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"c.date_commande", 
 				$search_orderday, $search_ordermonth, $search_orderyear
 );
 
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"c.date_livraison", 
 				$search_deliveryday, $search_deliverymonth, $search_deliveryyear
 );

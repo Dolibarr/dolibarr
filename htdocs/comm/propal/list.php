@@ -330,15 +330,15 @@ if ($viewstatut != '' && $viewstatut != '-1')
 	$sql.= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
 
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"p.datep", 
 				$search_day, $search_month, $search_year
 );
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"p.fin_validite", 
 				$search_dayfin, $search_month_end, $search_yearfin
 );
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"p.date_livraison", 
 				$search_daydelivery, $search_monthdelivery, $search_yeardelivery
 );

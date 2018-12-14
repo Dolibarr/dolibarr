@@ -107,7 +107,7 @@ if ($search_company)
 }
 // if ($search_amount)		$sql.=" AND d.km='".$db->escape(price2num(trim($search_amount)))."'";
 
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"d.dated", $day, $month, $year
 );
 

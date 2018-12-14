@@ -276,13 +276,13 @@ if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
 if (!empty($search_ref)) $sql.= natural_search('d.ref', $search_ref);
 // Date Start
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"d.date_debut", 
 				$day_start, $month_start, $year_start
 );
 
 // Date End
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"d.date_fin", 
 				$day_end, $month_end, $year_end
 );

@@ -151,7 +151,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
  * @return     int						Time into seconds
  * @see convertSecondToTime
  */
-function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
+function convertTime2Seconds($iHours=0, $iMinutes=0, $iSeconds=0)
 {
 	$iResult=($iHours*3600)+($iMinutes*60)+$iSeconds;
 	return $iResult;
@@ -276,16 +276,16 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 
 
 /**
- * générate standard filter date
+ * Generate a SQL string to make a filter into a range (for second of date until last second of date)
  *
- * @param      string	$datefield		fields where apply sql date filter
- * @param      int		$day_date		day date
- * @param      int		$month_date		month date
- * @param      int		$year_date		year date
- * @return     string	$sqldate		sql part of date
+ * @param      string	$datefield		Name of SQL field where apply sql date filter
+ * @param      int		$day_date		Day date
+ * @param      int		$month_date		Month date
+ * @param      int		$year_date		Year date
+ * @return     string	$sqldate		String with SQL filter
  */
-
-function dolSqlDatefilter($datefield, $day_date, $month_date, $year_date) {
+function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
+{
 	global $db;
 	$sqldate="";
 	if ($month_date > 0) {

@@ -191,19 +191,19 @@ if(!empty($search_ref))
 }
 
 // Start date
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"cp.date_debut", 
 				$search_day_start, $search_month_start, $search_year_start
 );
 
 // End date
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"cp.date_fin", 
 				$search_day_end, $search_month_end, $search_year_end
 );
 
 // Create date
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"cp.date_create", 
 				$search_day_create, $search_month_create, $search_year_create
 );

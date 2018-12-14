@@ -528,11 +528,11 @@ if (GETPOST('statut', 'intcomma') !== '')
 if ($search_status != '' && $search_status >= 0)
 	$sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
 
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"cf.date_commande", 
 				$search_orderday, $search_ordermonth, $search_orderyear
 );
-$sql.= dol_sql_datefilter(
+$sql.= dolSqlDateFilter(
 				"cf.date_livraison", 
 				$search_deliveryday, $search_deliverymonth, $search_deliveryyear
 );
