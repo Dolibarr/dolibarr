@@ -96,7 +96,7 @@ $facturefournisseur_static = new FactureFournisseur($db);
 $formaccounting = new FormAccounting($db);
 
 if (! empty($id)) {
-	$sql = "SELECT f.ref as facnumber, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
+	$sql = "SELECT f.ref as ref, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label";
 	$sql .= ", aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as l";
@@ -129,7 +129,7 @@ if (! empty($id)) {
 
 			// ref invoice
 			print '<tr><td>' . $langs->trans("BillsSuppliers") . '</td>';
-			$facturefournisseur_static->ref = $objp->facnumber;
+			$facturefournisseur_static->ref = $objp->ref;
 			$facturefournisseur_static->id = $objp->facid;
 			print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
 			print '</tr>';

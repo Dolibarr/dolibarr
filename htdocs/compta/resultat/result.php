@@ -78,7 +78,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	{
 		// We define date_start and date_end
 		$year_end=$year_start + ($nbofyear - 1);
-		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		$month_start=GETPOST("month",'int')?GETPOST("month",'int'):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
 		$date_startmonth = $month_start;
 		if (! GETPOST('month'))
 		{
@@ -108,8 +108,10 @@ if (($date_start < dol_time_plus_duree($date_end, -1, 'y')) || ($date_start > $d
 // $date_start and $date_end are defined. We force $start_year and $nbofyear
 $tmps=dol_getdate($date_start);
 $start_year = $tmps['year'];
+$start_month = $tmps['mon'];
 $tmpe=dol_getdate($date_end);
 $year_end = $tmpe['year'];
+$month_end = $tmpe['mon'];
 $nbofyear = ($year_end - $start_year) + 1;
 
 $date_start_previous = dol_time_plus_duree($date_start, -1, 'y');
@@ -231,13 +233,13 @@ print '<th class="liste_titre" align="right">'.$langs->trans("SelectedPeriod").'
 foreach($months as $k => $v){
 	if (($k+1) >= $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans($v).'</th>';
+		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s",($k+1))).'</th>';
 	}
 }
 foreach($months as $k => $v){
 	if (($k+1) < $date_startmonth)
 	{
-		print '<th class="liste_titre width50" align="right" >'.$langs->trans($v).'</th>';
+		print '<th class="liste_titre width50" align="right" >'.$langs->trans('MonthShort'.sprintf("%02s",($k+1))).'</th>';
 	}
 }
 print	'</tr>';
@@ -374,13 +376,14 @@ elseif ($modecompta=="BOOKKEEPING")
 				}
 			}
 
-
 			print "</tr>\n";
 
 			//var_dump($sommes);
 		}
 		else			// normal category
 		{
+			$code = $cat['code'];	// Category code we process
+
 			$totCat = array();
 			$totCat['NP'] = 0;
 			$totCat['N'] = 0;
@@ -390,8 +393,72 @@ elseif ($modecompta=="BOOKKEEPING")
 				$totCat['M'][$k] = 0;
 			}
 
-			// Set $cpts of with array of accounts in the category/group
+			// Set $cpts with array of accounts in the category/group
 			$cpts = $AccCat->getCptsCat($cat['rowid']);
+
+			$arrayofaccountforfilter=array();
+			foreach($cpts as $i => $cpt)	// Loop on each account.
+			{
+				$arrayofaccountforfilter[]=$cpt['account_number'];
+			}
+
+			// N-1
+			if (! empty($arrayofaccountforfilter))
+			{
+				$return = $AccCat->getSumDebitCredit($arrayofaccountforfilter, $date_start_previous, $date_end_previous, $cpt['dc']?$cpt['dc']:0);
+
+				if ($return < 0) {
+					setEventMessages(null, $AccCat->errors, 'errors');
+					$resultNP=0;
+				} else {
+					foreach($cpts as $i => $cpt)	// Loop on each account.
+					{
+						$resultNP = empty($AccCat->sdcperaccount[$cpt['account_number']])?0:$AccCat->sdcperaccount[$cpt['account_number']];
+
+						$totCat['NP'] += $resultNP;
+						$sommes[$code]['NP'] += $resultNP;
+						$totPerAccount[$cpt['account_number']]['NP'] = $resultNP;
+					}
+				}
+			}
+
+			// Set value into column N and month M ($totCat)
+			// This make 12 calls for each accountancy account (12 monthes M)
+			foreach($cpts as $i => $cpt)	// Loop on each account.
+			{
+				// We make 1 loop for each account because we may want detail per account.
+				// @TODO Optimize to ask a 'group by' account and a filter with account in (..., ...) in request
+
+				// Each month
+				$resultN = 0;
+				foreach($months as $k => $v)
+				{
+					$monthtoprocess = $k+1;			// ($k+1) is month 1, 2, ..., 12
+					$yeartoprocess = $start_year;
+					if (($k+1) < $start_month) $yeartoprocess++;
+
+					//var_dump($monthtoprocess.'_'.$yeartoprocess);
+					$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']?$cpt['dc']:0, 'nofilter', $monthtoprocess, $yeartoprocess);
+					if ($return < 0) {
+						setEventMessages(null, $AccCat->errors, 'errors');
+						$resultM=0;
+					} else {
+						$resultM=$AccCat->sdc;
+					}
+					$totCat['M'][$k] += $resultM;
+					$sommes[$code]['M'][$k] += $resultM;
+					$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
+
+					$resultN += $resultM;
+				}
+
+				$totCat['N'] += $resultN;
+				$sommes[$code]['N'] += $resultN;
+				$totPerAccount[$cpt['account_number']]['N'] = $resultN;
+			}
+
+
+			// Now output columns for row $code ('VTE', 'MAR', ...)
 
 			print "<tr>";
 
@@ -426,54 +493,6 @@ elseif ($modecompta=="BOOKKEEPING")
 			}
 			print '</td>';
 
-			$code = $cat['code'];
-
-			// Set value into column NPrevious, N and each month M ($totCat)
-			// This make 14 calls for each detail of account (NP, N and month m)
-			foreach($cpts as $i => $cpt)
-			{
-				// N-1
-				$return = $AccCat->getResult($cpt['account_number'], 0, $date_start_previous, $date_end_previous, $cpt['dc']);
-
-				if ($return < 0) {
-					setEventMessages(null, $AccCat->errors, 'errors');
-					$resultNP=0;
-				} else {
-					$resultNP=$AccCat->sdc;
-				}
-
-				//N
-				$return = $AccCat->getResult($cpt['account_number'], 0, $date_start, $date_end, $cpt['dc']);
-				if ($return < 0) {
-					setEventMessages(null, $AccCat->errors, 'errors');
-					$resultN=0;
-				} else {
-					$resultN=$AccCat->sdc;
-				}
-
-				$totCat['NP'] += $resultNP;
-				$totCat['N'] += $resultN;
-				$sommes[$code]['NP'] += $resultNP;
-				$sommes[$code]['N'] += $resultN;
-				$totPerAccount[$cpt['account_number']]['NP'] = $resultNP;
-				$totPerAccount[$cpt['account_number']]['N'] = $resultN;
-
-				foreach($months as $k => $v)
-				{
-					$return = $AccCat->getResult($cpt['account_number'], $k+1, $date_start, $date_end, $cpt['dc']);
-					if ($return < 0) {
-						setEventMessages(null, $AccCat->errors, 'errors');
-						$resultM=0;
-					} else {
-						$resultM=$AccCat->sdc;
-					}
-					$totCat['M'][$k] += $resultM;
-					$sommes[$code]['M'][$k] += $resultM;
-					$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
-				}
-			}
-
-			// Now output columns for row $code ('VTE', 'MAR', ...)
 			print '<td align="right">' . price($totCat['NP'])  . '</td>';
 			print '<td align="right">' . price($totCat['N']) . '</td>';
 
@@ -487,8 +506,7 @@ elseif ($modecompta=="BOOKKEEPING")
 
 			print "</tr>\n";
 
-			// Loop on detail of all accounts
-			// This make 14 calls for each detail of account (NP, N and month m)
+			// Loop on detail of all accounts to output the detail
 			if ($showaccountdetail != 'no')
 			{
 				foreach($cpts as $i => $cpt)
@@ -525,7 +543,6 @@ elseif ($modecompta=="BOOKKEEPING")
 								print '<td align="right">' . price($resultM) . '</td>';
 							}
 						}
-
 						print "</tr>\n";
 					}
 				}

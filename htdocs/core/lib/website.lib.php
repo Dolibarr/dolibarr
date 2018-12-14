@@ -35,6 +35,8 @@
  */
 function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 {
+	$nbrep = 0;
+
 	// Replace php code. Note $content may come from database and does not contains body tags.
 	$replacewith='...php...';
 	if ($removephppart) $replacewith='';
@@ -59,7 +61,12 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	//$replacewith='<span class="phptag">...php...</span>';
 	$replacewith='<span class="phptag">...php...</span>';
 	if ($removephppart) $replacewith='';
-	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+	//$content = preg_replace('/<\?php((?!\?toremove>).)*\?toremove>\n*/ims', $replacewith, $content);
+	/*if ($content === null) {
+		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
+	}*/
+	$content = dolStripPhpCode($content, $replacewith);
+	//var_dump($content);
 
 	// Replace relative link / with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
@@ -85,6 +92,45 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 	return $content;
+}
+
+
+/**
+ * Remove PHP code part from a string.
+ *
+ * @param 	string	$str			String to clean
+ * @param	string	$replacewith	String to use as replacement
+ * @return 	string					Result string without php code
+ */
+function dolStripPhpCode($str, $replacewith='')
+{
+	$newstr = '';
+
+	//split on each opening tag
+	$parts = explode('<?php',$str);
+	if (!empty($parts))
+	{
+		$i=0;
+		foreach($parts as $part)
+		{
+			if ($i == 0) 	// The first part is never php code
+			{
+				$i++;
+				$newstr .= $part;
+				continue;
+			}
+			//split on closing tag
+			$partlings = explode('?>', $part);
+			if (!empty($partlings))
+			{
+				//remove content before closing tag
+				if (count($partlings) > 1) $partlings[0] = '';
+				//append to out string
+				$newstr .= $replacewith.implode('',$partlings);
+			}
+		}
+	}
+	return $newstr;
 }
 
 

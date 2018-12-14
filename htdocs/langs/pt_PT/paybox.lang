@@ -3,7 +3,7 @@ PayBoxSetup=Configurar módulo PayBox
 PayBoxDesc=Este módulo oferece uma página para permitir o pagamento de clientes no <a href="http://www.paybox.com" target="_blank">Paybox</a>. Isto pode ser utilizado para pagamento livre ou para um pagamento em particular de um objeto Dolibarr (fatura, ordem, ...)
 FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponiveis para permitir a um cliente efectuar um pagamento
 PaymentForm=Forma de pagamento
-WelcomeOnPaymentPage=Bem-vindo aos nossos serviços de pagamento online
+WelcomeOnPaymentPage=Bem-vindo ao nosso serviço de pagamento online
 ThisScreenAllowsYouToPay=Esta tela permite que você faça o seu pagamento online destinado a %s.
 ThisIsInformationOnPayment=Aqui estão as informações de pagamento para fazer
 ToComplete=A completar
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL que fornece pagamento on-line interfac
 ToOfferALinkForOnlinePaymentOnContractLine=URL que fornece linha de pagamento  interface% com base na quantidade de uma linha de contrato
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL que fornece pagamento on-line %s interface baseada numa quantidade livre
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma interface on-line %s pagamento de uma subscrição de membro
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Você também pode adicionar o parâmetro url <b>&tag=<i>value</i></b>  para o endereço (exigida apenas para o pagamento livre) para ver o seu código próprio, observação do pagamento.
-SetupPayBoxToHavePaymentCreatedAutomatically=Configure o seu url PayBox <b>%s</b> para que o pagamento seja criado automaticamente ao confirmar.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Esta página confirma que o pagamento tenha sido gravada. Obrigado.
-YourPaymentHasNotBeenRecorded=Você o pagamento não tenha sido gravada e transação foi cancelada. Obrigado.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Conta parâmetros
 UsageParameter=Parâmetros de uso
 InformationToFindParameters=Ajuda para encontrar informações de sua conta %s

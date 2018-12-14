@@ -68,8 +68,10 @@ class CMailFile
 	var $smtps;			// Contains SMTPs object (if this method is used)
 	var $phpmailer;		// Contains PHPMailer object (if this method is used)
 
-	//CSS
-	var $css;
+	/**
+	 * @var string CSS
+	 */
+	public $css;
 	//! Defined css style for body background
 	var $styleCSS;
 	//! Defined background directly in body tag
@@ -944,7 +946,7 @@ class CMailFile
 	/**
 	 * Build a css style (mode = all) into this->styleCSS and this->bodyCSS
 	 *
-	 * @return css
+	 * @return string
 	 */
 	function buildCSS()
 	{
@@ -1232,7 +1234,7 @@ class CMailFile
 		{
 			foreach ($images_list as $img)
 			{
-				dol_syslog("CMailFile::write_images: i=$i");
+				dol_syslog("CMailFile::write_images: ".$img["name"]);
 
 				$out.= "--" . $this->related_boundary . $this->eol; // always related for an inline image
 				$out.= "Content-Type: " . $img["content_type"] . "; name=\"".$img["name"]."\"".$this->eol;

@@ -96,7 +96,7 @@ class EmailCollector extends CommonObject
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1),
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
-		'user'          => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myacount@gmail.com'),
+		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myacount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>1, 'comment'=>"IMAP password"),
 		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
 		//'filter'		=> array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
@@ -161,7 +161,7 @@ class EmailCollector extends CommonObject
 
 
 	public $host;
-	public $user;
+	public $login;
 	public $password;
 	public $source_directory;
     public $target_directory;
@@ -829,7 +829,7 @@ class EmailCollector extends CommonObject
 			$this->error=$langs->trans('ErrorFieldRequired', 'EMailHost');
 			return -1;
 		}
-		if (empty($this->user))
+		if (empty($this->login))
 		{
 			$this->error=$langs->trans('ErrorFieldRequired', 'Login');
 			return -1;
@@ -855,7 +855,7 @@ class EmailCollector extends CommonObject
 		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $this->user, $this->password);
+		$connection = imap_open($connectstringsource, $this->login, $this->password);
 		if (! $connection)
 		{
 			$this->error = 'Failed to open IMAP connection '.$connectstringsource;
@@ -1417,7 +1417,7 @@ class EmailCollector extends CommonObject
 						$modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
 
 						// Search template files
-						$file=''; $classname=''; $filefound=0;
+						$file=''; $classname=''; $filefound=0; $reldir='';
 						$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 						foreach($dirmodels as $reldir)
 						{

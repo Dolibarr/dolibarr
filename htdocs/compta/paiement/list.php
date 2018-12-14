@@ -75,6 +75,8 @@ if (! $sortfield) $sortfield="p.rowid";
 $hookmanager->initHooks(array('paymentlist'));
 $extrafields = new ExtraFields($db);
 
+$arrayfields=array();
+
 
 /*
  * Actions
@@ -118,7 +120,7 @@ if (GETPOST("orphelins"))
 	$sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE p.entity IN (" . getEntity('facture').")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice').")";
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -131,7 +133,7 @@ else
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
-    $sql.= " s.rowid as socid, s.nom as name";
+    $sql.= " s.rowid as socid, s.nom as name, s.email";
 	// Add fields for extrafields
 	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 	// Add fields from hooks
@@ -149,7 +151,7 @@ else
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE p.entity IN (" . getEntity('facture') . ")";
+    $sql.= " WHERE p.entity IN (" . getEntity('invoice') . ")";
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
@@ -209,8 +211,8 @@ if ($resql)
     $i = 0;
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
     $param.=(GETPOST("orphelins")?"&orphelins=1":"");
     $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
     $param.=($search_company?"&search_company=".urlencode($search_company):"");
@@ -296,11 +298,12 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
 
+        $paymentstatic->id=$objp->rowid;
+        $paymentstatic->ref=$objp->ref;
+
         print '<tr class="oddeven">';
 
         print '<td>';
-        $paymentstatic->id=$objp->rowid;
-        $paymentstatic->ref=$objp->ref;
         print $paymentstatic->getNomUrl(1);
         print '</td>';
 
@@ -311,10 +314,12 @@ if ($resql)
 
         // Thirdparty
         print '<td>';
-        if ($objp->socid)
+        if ($objp->socid > 0)
         {
             $companystatic->id=$objp->socid;
             $companystatic->name=$objp->name;
+            $companystatic->email=$objp->email;
+
             print $companystatic->getNomUrl(1,'',24);
         }
         else print '&nbsp;';

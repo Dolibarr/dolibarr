@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=SOAP klienten feilet med meldingen '%s'
 ErrorGlobalVariableUpdater5=Ingen global variabel valgt
 ErrorFieldMustBeANumeric=Feltet <b>%s</b> må være en numerisk verdi
 ErrorMandatoryParametersNotProvided=Obligatorisk(e) parametre ikke angitt
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Kunne ikke laste moduldeskriptorklassen for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=Vare-strekkoden %s finnes allerede i en annen p
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Vær også oppmerksom på at bruk av virtuelle varer som har automatisk økning/reduksjon av undervarer, ikke er mulig når minst en undervare (eller undervare av undervarer) trenger et serienummer/lotnummer.
 ErrorDescRequiredForFreeProductLines=Beskrivelse er obligatorisk for linjer med gratis vare
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.
 WarningMandatorySetupNotComplete=Obligatoriske parametre er enda ikke satt opp

@@ -123,7 +123,6 @@ class Contact extends CommonObject
 
 	public $birthday;
 	public $default_lang;
-	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	public $ref_facturation;       // Reference number of invoice for which it is contact
 	public $ref_contrat;           // Nb de reference contrat pour lequel il est contact
@@ -372,7 +371,6 @@ class Contact extends CommonObject
 		$sql .= ", statut = ".$this->db->escape($this->statut);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
-		$sql .= ", no_email=".($this->no_email?"'".$this->db->escape($this->no_email)."'":"0");
 		$sql .= ", entity = " . $this->db->escape($this->entity);
 		$sql .= " WHERE rowid=".$this->db->escape($id);
 
@@ -709,7 +707,7 @@ class Contact extends CommonObject
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook,";
         $sql.= " c.photo,";
-		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
+		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql.= " c.import_key,";
 		$sql.= " c.datec as date_creation, c.tms as date_modification,";
 		$sql.= " co.label as country, co.code as country_code,";
@@ -790,7 +788,6 @@ class Contact extends CommonObject
 				$this->note_private		= $obj->note_private;
 				$this->note_public		= $obj->note_public;
 				$this->default_lang		= $obj->default_lang;
-				$this->no_email			= $obj->no_email;
 				$this->user_id			= $obj->user_id;
 				$this->user_login		= $obj->user_login;
 				$this->canvas			= $obj->canvas;
@@ -940,8 +937,8 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_lastname = $obj->lastname;
-		$this->old_firstname = $obj->firstname;
+		//$this->old_lastname = $obj->lastname;
+		//$this->old_firstname = $obj->firstname;
 
 		$this->db->begin();
 

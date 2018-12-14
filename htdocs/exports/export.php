@@ -623,11 +623,11 @@ if ($step == 2 && $datatoexport)
         }
    		if (! empty($objexport->array_export_examplevalues[0][$code]))
 		{
-		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
+		    $htmltext.='<b>'.$langs->trans("SourceExample").':</b> '.$objexport->array_export_examplevalues[0][$code].'<br>';
 		}
     	if (! empty($objexport->array_export_TypeFields[0][$code]))
 		{
-		    $htmltext.=$langs->trans("Type").': <b>'.$objexport->array_export_TypeFields[0][$code].'</b><br>';
+		    $htmltext.='<b>'.$langs->trans("Type").':</b> '.$objexport->array_export_TypeFields[0][$code].'<br>';
 		}
 
 		if (isset($array_selected[$code]) && $array_selected[$code])
@@ -678,7 +678,7 @@ if ($step == 2 && $datatoexport)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("SelectAtLeastOneField")).'">'.$langs->trans("NextStep").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("SelectAtLeastOneField")).'">'.$langs->trans("NextStep").'</a>';
 	}
 
     print '</div>';

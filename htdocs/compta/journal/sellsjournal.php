@@ -100,7 +100,7 @@ report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client,";
 $sql.= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
 $sql.= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell,";
@@ -180,7 +180,7 @@ if ($result)
 
     	//la ligne facture
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
-   		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+   		$tabfac[$obj->rowid]["ref"] = $obj->ref;
    		$tabfac[$obj->rowid]["type"] = $obj->type;
    		if (! isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc]=0;
    		if (! isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod]=0;

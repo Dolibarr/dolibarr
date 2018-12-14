@@ -82,7 +82,7 @@ $form=new Form($db);
 llxHeader('',$langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut, p.datec";
-$sql.= " ,f.rowid as facid, f.facnumber, f.total_ttc";
+$sql.= " ,f.rowid as facid, f.ref, f.total_ttc";
 $sql.= " , s.rowid as socid, s.nom as name, s.code_client";
 $sql.= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -155,7 +155,7 @@ if ($result)
     print '<tr class="liste_titre">';
     print_liste_field_titre("Line",$_SERVER["PHP_SELF"]);
     print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref");
-    print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"f.facnumber",'',$urladd);
+    print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"f.ref",'',$urladd);
     print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom");
     print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client",'','','align="center"');
     print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"p.datec","","",'align="center"');
@@ -185,7 +185,7 @@ if ($result)
 
         print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
         print img_object($langs->trans("ShowBill"),"bill");
-          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
+          print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
         print '</a></td>';
 
         print '<td><a href="card.php?id='.$obj->rowid.'">'.$obj->name."</a></td>\n";

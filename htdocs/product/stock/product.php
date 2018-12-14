@@ -767,12 +767,12 @@ if (empty($reshook))
 			}
 			else
 			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">' . $langs->trans("CorrectStock") . '</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">' . $langs->trans("CorrectStock") . '</a>';
 			}
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("CorrectStock") . '</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("CorrectStock") . '</a>';
 		}
 
 		//if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
@@ -783,12 +783,12 @@ if (empty($reshook))
 			}
 			else
 			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">' . $langs->trans("TransferStock") . '</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">' . $langs->trans("TransferStock") . '</a>';
 			}
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("CorrectStock") . '</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("CorrectStock") . '</a>';
 		}
 
 		print '</div>';
@@ -868,7 +868,7 @@ if (! $variants) {
 			print '<td align="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price * $obj->reel, 'MT'), 1) . '</td>';
 			else print $langs->trans("Variable");
-			print '</tr>';;
+			print '</tr>';
 			$total += $obj->reel;
 			if (price2num($object->pmp)) $totalwithpmp += $obj->reel;
 			$totalvalue = $totalvalue + ($object->pmp * $obj->reel);
