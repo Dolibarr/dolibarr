@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ function dol_hash($chain, $type='0')
  *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function.
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
  *
- * 	@param 		string		$chain		String to hash
+ * 	@param 		string		$chain		String to hash (not hashed string)
  * 	@param 		string		$hash		hash to compare
  * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one

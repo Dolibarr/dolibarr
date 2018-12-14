@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville     <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012-2017 Juanjo Menent			<jmenent@2byte.es>
@@ -307,7 +307,7 @@ if ($action == 'create' && !$error) {
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
-	print '<input name="facnumber" type="hidden" value="provisoire">';
+	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="' . $ref_client . '">';
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
 	print '<input type="hidden" name="origin" value="' . GETPOST('origin') . '">';

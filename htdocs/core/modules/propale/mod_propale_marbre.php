@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,15 +128,12 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		global $db,$conf;
 
-		// Use object entity ID
-		$entity = ((isset($propal->entity) && is_numeric($propal->entity)) ? $propal->entity : $conf->entity);
-
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$entity;
+		$sql.= " AND entity IN (".getEntity('proposalnumber', 1, $propal).")";
 
 		$resql=$db->query($sql);
 		if ($resql)

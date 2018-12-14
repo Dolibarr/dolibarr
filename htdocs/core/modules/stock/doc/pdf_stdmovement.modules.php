@@ -150,7 +150,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		// Define position of columns
 		$this->wref = 15;
 		$this->posxidref = $this->marge_gauche;
-		$this->posxdatemouv = $this->marge_gauche+8;;
+		$this->posxdatemouv = $this->marge_gauche+8;
 		$this->posxdesc=37;
 		$this->posxlabel=50;
 		$this->posxtva=80;
@@ -247,7 +247,7 @@ class pdf_stdmovement extends ModelePDFMovement
 
 		// fetch optionals attributes and labels
 		$extralabels = $extrafields->fetch_name_optionals_label('movement');
-		$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+		$search_array_options=$extrafields->getOptionalsFromPost('movement','','search_');
 
 		$productlot=new ProductLot($db);
 		$productstatic=new Product($db);

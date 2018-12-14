@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
 -- Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
 -- Copyright (C) 2004       Guillaume Delecourt     <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
 -- Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
 -- Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
@@ -105,6 +105,9 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_VALIDATE','Project validation','Executed when a project is validated','project',141);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_DELETE','Project deleted','Executed when a project is deleted','project',143);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CREATE','Ticket created','Executed when a ticket is created','ticket',161);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_MODIFY','Ticket modified','Executed when a ticket is modified','ticket',163);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_DELETE','Ticket deleted','Executed when a ticket is deleted','ticket',164);
 -- actions not enabled by default (no constant created for that) when we enable module agenda 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PRODUCT_MODIFY','Product or service modified','Executed when a product or sevice is modified','product',41);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_MODIFY','Member modified','Executed when a member is modified','member',23);

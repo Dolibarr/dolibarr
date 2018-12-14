@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
@@ -130,7 +130,7 @@ if ($id > 0 || ! empty($ref))
 
     $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

@@ -20,6 +20,7 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment user inte
 ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user interface for a contract line
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
@@ -28,7 +29,7 @@ AccountParameter=Account parameters
 UsageParameter=Usage parameters
 InformationToFindParameters=Help to find your %s account information
 PAYBOX_CGI_URL_V2=Url of Paybox CGI module for payment
-VendorName=Name of vendor
+VendorName=Name of supplier
 CSSUrlForPaymentForm=CSS style sheet url for payment form
 NewPayboxPaymentReceived=New Paybox payment received
 NewPayboxPaymentFailed=New Paybox payment tried but failed

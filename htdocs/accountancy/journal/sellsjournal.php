@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
@@ -97,7 +97,7 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 
 $idpays = $mysoc->country_id;
 
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -195,7 +195,7 @@ if ($result) {
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
-		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+		$tabfac[$obj->rowid]["ref"] = $obj->ref;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->label_compte;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code;		// close_code = 'replaced' for replacement invoices (not used in most european countries)
@@ -547,6 +547,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
+	$type_export = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Client($db);

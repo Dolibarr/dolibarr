@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015	   Marcos García			   <marcosgdf@gmail.com
@@ -136,7 +136,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
   $sqls = array();
 
 	// Customer invoices
-	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
+	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.ref as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
 	$sql.= " s.rowid as socid, s.nom as name, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";

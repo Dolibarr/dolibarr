@@ -617,7 +617,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-				// retrieve contact information for use in project as contact_xxx tags
+				// retrieve contact information for use in object as contact_xxx tags
 				$array_project_contact = array();
 				if ($usecontact && is_object($contactobject)) $array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
@@ -796,7 +796,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 								if (!empty($row['thm'])) {
 									$row['amountht']=($row['task_duration'] / 3600) * $row['thm'];
 									$defaultvat = get_default_tva($mysoc, $mysoc);
-									$row['amountttc']=price2num($row['amountht'] * (1 + ($defaultvat / 100)),'MT');;
+									$row['amountttc']=price2num($row['amountht'] * (1 + ($defaultvat / 100)),'MT');
 								} else {
 									$row['amountht']=0;
 									$row['amountttc']=0;

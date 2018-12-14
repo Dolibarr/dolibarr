@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2018 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ $diroutputmassaction=$conf->holiday->dir_output . '/temp/massgeneration/'.$user-
 $hookmanager->initHooks(array('holidaylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('holiday');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="cp.rowid";

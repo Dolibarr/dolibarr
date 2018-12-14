@@ -22,7 +22,8 @@ class NoRFCWarningsValidation extends RFCValidation
             return false;
         }
 
-        if (empty($this->getWarnings())) {
+        $ret = $this->getWarnings();
+        if (empty($ret)) {
             return true;
         }
 

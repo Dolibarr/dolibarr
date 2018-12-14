@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -907,7 +907,7 @@ else
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(isset($_POST["member_login"])?GETPOST("member_login", 'alpha', 2):$object->login).'"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(isset($_POST["member_login"])?GETPOST("member_login", 'alpha', 2):$object->login).'" autofocus="autofocus"></td></tr>';
 		}
 
 		// Password
@@ -1286,8 +1286,11 @@ else
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_MEMBER);
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			$arrayselected = array();
+			if (is_array($cats)) {
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
 			}
 			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";

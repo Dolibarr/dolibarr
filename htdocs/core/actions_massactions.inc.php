@@ -217,7 +217,7 @@ if (! $error && $massaction == 'confirm_presend')
 					$resaction.='<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction',$objectobj->ref).'</div><br>';
 					continue;
 				}
-				if ($objectclass == 'Facture' && $objectobj->statut != Facture::STATUS_VALIDATED)
+				if ($objectclass == 'Facture' && $objectobj->statut == Facture::STATUS_DRAFT)
 				{
 					$langs->load("errors");
 					$nbignored++;

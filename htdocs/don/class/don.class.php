@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
@@ -653,7 +653,7 @@ class Don extends CommonObject
         }
         else if (! empty($ref))
         {
-        	$sql.= " AND ref='".$this->db->escape($ref)."'";
+        	$sql.= " AND d.ref='".$this->db->escape($ref)."'";
         }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -711,8 +711,20 @@ class Don extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-    /**
+	/**
+	 *	Validate a intervention
+     *
+     *	@param		User		$user		User that validate
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
+     *	@return		int						<0 if KO, >0 if OK
+     */
+	function setValid($user, $notrigger=0)
+	{
+		return $this->valid_promesse($this->id, $user->id, $notrigger);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	/**
      *    Validate a promise of donation
      *
      *    @param	int		$id   		id of donation
@@ -720,9 +732,9 @@ class Don extends CommonObject
      *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function valid_promesse($id, $userid, $notrigger=0)
-    {
-        // phpcs:enable
+	function valid_promesse($id, $userid, $notrigger=0)
+	{
+		// phpcs:enable
 		global $langs, $user;
 
 		$error=0;

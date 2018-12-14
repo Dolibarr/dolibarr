@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *

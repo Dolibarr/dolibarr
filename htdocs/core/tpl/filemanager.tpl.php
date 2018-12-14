@@ -143,6 +143,8 @@ if ($action == 'delete_section')
 
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
+	$langs->load("ecm");
+
 	print '<table width="100%" class="liste noborderbottom">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";

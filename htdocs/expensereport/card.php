@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -289,7 +289,7 @@ if (empty($reshook))
         if (! $error)
         {
             // Actions on extra fields
-           	$result = $object->insertExtraFields('FICHINTER_MODIFY');
+           	$result = $object->insertExtraFields('EXPENSEREPORT_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1390,7 +1390,7 @@ if ($action == 'create')
     	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
     	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;   // Can force default approver
     	if (GETPOST('fk_user_validator', 'int') > 0) $defaultselectuser=GETPOST('fk_user_validator', 'int');
-    	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", 0, $include_users);
+    	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE))?0:1), $include_users);
     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	}
 	print '</td>';
@@ -1925,7 +1925,7 @@ else
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->fk_typepayment;
+				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->payment_type;
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 						if (! empty($conf->banque->enabled))
 						{

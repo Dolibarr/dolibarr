@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin  <regis.houssin@capnetworks.com>
- * Copyright (C) 2015		Charlie Benke  <charlie@patas-monkey.com>
- * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012	Regis Houssin   <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2018	Charlene Benke  <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,10 +191,11 @@ class pdf_beluga extends ModelePDFProjects
 
 				// Complete object by loading several other informations
 				$task = new Task($this->db);
-				$tasksarray = $task->getTasksArray(0,0,$object->id);
+				$tasksarray = array();
+				$tasksarray = $task->getTasksArray(0, 0, $object->id);
 
-				if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
-				{
+				// Special case when used with object = specimen, we may return all lines
+				if (! $object->id > 0) {
 					$tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
 				}
 

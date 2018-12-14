@@ -54,11 +54,14 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 {
 	$db->begin();
 
+	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".$payment->fk_bank;
+	$db->query($sql);
+	
 	$result = $payment->delete($user);
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/loan/index.php");
+		header("Location: ".DOL_URL_ROOT."/loan/list.php");
 		exit;
 	}
 	else

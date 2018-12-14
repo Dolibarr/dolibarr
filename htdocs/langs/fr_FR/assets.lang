@@ -1,0 +1,59 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Immobilisations
+NewAsset = Nouvelle immobilisation
+AccountancyCodeAsset = Code comptable (immobilisation)
+AccountancyCodeDepreciationAsset = Code comptable (compte d'amortissement)
+AccountancyCodeDepreciationExpense = Code comptable (compte de charges d'amortissement)
+NewAssetType=Nouveau type d'immobilisation
+AssetsTypeSetup=Configuration du type d'actifs
+AssetTypeModified=Type d'actif modifié
+AssetType=Type d'immobilisations
+AssetsLines=Immobilisations
+DeleteType=Supprimer
+DeleteAnAssetType=Supprimer un type d'actif
+ConfirmDeleteAssetType=Êtes-vous sûr de vouloir supprimer ce type d'actif?
+ShowTypeCard=Voir type '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Immobilisations
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Module pour suivre vos immobilisations
+
+#
+# Admin page
+#
+AssetsSetup = Configuration du module immobilisations
+Settings = Paramètres
+AssetsSetupPage = Page de configuration des actifs
+ExtraFieldsAssetsType = Attributs supplémentaires (type d'immobilisation)
+AssetsType=Type d'immobilisations
+AssetsTypeId=Id du type d'immobilisations
+AssetsTypeLabel=Libellé du type d'immobilisations
+AssetsTypes=Types d'immobilisations
+
+#
+# Menu
+#
+MenuAssets = Immobilisations
+MenuNewAsset = Nouvelle immobilisation
+MenuTypeAssets = Type d'immobilisations
+MenuListAssets = Liste
+MenuNewTypeAssets = Nouveau type
+MenuListTypeAssets = Liste

@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
@@ -429,6 +429,7 @@ $userstatic = new User($db);
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
+	$type_export = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// Model Cegid Expert Export

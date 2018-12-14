@@ -29,6 +29,8 @@ $_GET['theme']="md"; // Force theme. MD theme provides better look and feel to T
 
 require '../main.inc.php';	// Load $user and permissions
 
+$langs->loadLangs(array("bills","orders","commercial","cashdesk"));
+
 $floor=GETPOST('floor','alpha');
 if ($floor=="") $floor=1;
 $id = GETPOST('id','int');

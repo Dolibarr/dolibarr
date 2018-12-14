@@ -3,7 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
- * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
@@ -1471,7 +1471,7 @@ class Account extends CommonObject
 	{
 		$country_code=$this->getCountryCode();
 
-		if (in_array($country_code,array('CH','FR','ES','GA','IT','NC'))) return 1; // France, Spain, Gabon, ...
+		if (in_array($country_code,array('FR','ES','GA','IT','NC'))) return 1; // France, Spain, Gabon, ... - Not valid for CH
 		if (in_array($country_code,array('AU','BE','CA','DE','DK','GR','GB','ID','IE','IR','KR','NL','NZ','UK','US'))) return 2;      // Australia, England...
 		return 0;
 	}

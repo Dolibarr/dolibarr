@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
@@ -44,7 +44,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","companies","resource","holiday","compta","accountancy","hrm"));
 
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=31;
 $rowid=GETPOST('rowid','alpha');

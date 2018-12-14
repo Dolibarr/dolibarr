@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -241,7 +241,7 @@ if ($id > 0 || ! empty($ref))
     print '</td></tr>';
 
     // Bill time
-    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
     {
     	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
     	print yn($object->bill_time);

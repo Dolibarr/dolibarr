@@ -288,7 +288,8 @@ script:
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
   set -e
-  parallel-lint --exclude htdocs/includes --blame .
+  #parallel-lint --exclude htdocs/includes --blame .
+  parallel-lint --exclude htdocs/includes/sabre --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer/tests --exclude htdocs/includes/jakub-onderka/php-parallel-lint/tests --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/php-token-stream/tests --exclude htdocs/includes/composer/autoload_static.php --blame .
   set +e
   echo
 
@@ -341,6 +342,9 @@ script:
   php upgrade.php 8.0.0 9.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade800900.log
   php upgrade2.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-2.log
   php step5.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-3.log
+  php upgrade.php 9.0.0 10.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade9001000.log
+  php upgrade2.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-2.log
+  php step5.php 9.0.0 10.0.0 > $TRAVIS_BUILD_DIR/upgrade9001000-3.log
   cd -
   set +e
   echo

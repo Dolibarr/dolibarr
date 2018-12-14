@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2009-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -1941,24 +1941,36 @@ class ExtraFields
 	/**
 	 * return array_options array of data of extrafields value of object sent by a search form
 	 *
-	 * @param  array   $extralabels    $array of extrafields (@deprecated)
-	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @return array|int               array_options set or 0 if no value
+	 * @param  array|string		$extrafieldsobjectkey  	array of extrafields (old usage) or value of object->table_element (new usage)
+	 * @param  string			$keyprefix      		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string			$keysuffix      		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @return array|int								array_options set or 0 if no value
 	 */
-	function getOptionalsFromPost($extralabels,$keyprefix='',$keysuffix='')
+	function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix='', $keysuffix='')
 	{
 		global $_POST;
 
-		if (is_array($this->attributes[$object->table_element]['label'])) $extralabels=$this->attributes[$object->table_element]['label'];
+		if (is_string($extrafieldsobjectkey) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
+		{
+			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
+		}
+		else
+		{
+			$extralabels = $extrafieldsobjectkey;
+		}
 
-		$array_options = array();
 		if (is_array($extralabels))
 		{
+			$array_options = array();
+
 			// Get extra fields
 			foreach ($extralabels as $key => $value)
 			{
-				$key_type = $this->attributes[$object->table_element]['type'][$key];
+				$key_type = '';
+				if (is_string($extrafieldsobjectkey))
+				{
+					$key_type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
+				}
 
 				if (in_array($key_type,array('date','datetime')))
 				{
@@ -1987,8 +1999,7 @@ class ExtraFields
 
 			return $array_options;
 		}
-		else {
-			return 0;
-		}
+
+		return 0;
 	}
 }

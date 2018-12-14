@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
@@ -764,7 +764,7 @@ class User extends CommonObject
 		// Recuperation des droits utilisateurs + recuperation des droits groupes
 
 		// D'abord les droits utilisateurs
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
@@ -818,7 +818,7 @@ class User extends CommonObject
 		}
 
 		// Maintenant les droits groupes
-		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
@@ -2283,7 +2283,7 @@ class User extends CommonObject
 			$label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
 			$label.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 			$label.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
-			if ($conf->browser->layout == 'phone') $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");;
+			if ($conf->browser->layout == 'phone') $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
 		if ($infologin < 0) $label='';
@@ -3179,14 +3179,15 @@ class User extends CommonObject
 	/**
 	 *	Load all objects into $this->users
 	 *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 *  @return int							<0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND')
 	{
 		global $conf;
 
@@ -3194,18 +3195,26 @@ class User extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
 		$sql.= " WHERE 1";
 
-		//Manage filter
+		// Manage filter
+		$sqlwhere = array();
 		if (!empty($filter)){
 			foreach($filter as $key => $value) {
-				if (strpos($key,'date')) {
-					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+				if ($key=='t.rowid') {
+					$sqlwhere[] = $key . '='. $value;
+				}
+				elseif (strpos($key,'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				}
 				elseif ($key=='customsql') {
-					$sql.= ' AND '.$value;
-				} else {
-					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
 			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 		$sql.= $this->db->order($sortfield,$sortorder);
 		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);

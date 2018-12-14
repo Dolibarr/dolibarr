@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  *
@@ -45,7 +45,7 @@ $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','alpha');
 
-$fieldid = (! empty($ref)?'facnumber':'rowid');
+$fieldid = (! empty($ref)?'ref':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
@@ -208,7 +208,7 @@ if ($object->id > 0)
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '');
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';

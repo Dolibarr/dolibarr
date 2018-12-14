@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2009-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
@@ -560,10 +560,9 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
-        $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
+        $sql.= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND s.status=1"; // only enabled company selected
@@ -603,6 +602,8 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_tva_npr					= $record["info_bits"];
                 $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
 				$prodfourn->supplier_reputation    = $record["supplier_reputation"];
+				$prodfourn->date_creation          = $this->db->jdate($record['datec']);
+				$prodfourn->date_modification      = $this->db->jdate($record['tms']);
 
                 $prodfourn->fourn_multicurrency_price       = $record["multicurrency_price"];
                 $prodfourn->fourn_multicurrency_unitprice   = $record["multicurrency_unitprice"];

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -1017,7 +1017,6 @@ abstract class CommonDocGenerator
         global $hookmanager;
 
         $parameters=array(
-            'object' => $object,
             'curY' => &$curY,
             'columnText' => $columnText,
             'colKey' => $colKey
@@ -1029,7 +1028,7 @@ abstract class CommonDocGenerator
             if(empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey),$curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->MultiCell( $this->getColumnContentWidth($colKey),2, $columnText,'',$colDef['content']['align']);
+            $pdf->writeHTMLCell( $this->getColumnContentWidth($colKey),2,$this->getColumnContentXStart($colKey),$curY, $columnText,'',$colDef['content']['align']);
         }
     }
 
