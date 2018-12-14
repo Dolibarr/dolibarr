@@ -74,7 +74,7 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " WHERE p.entity IN (".getEntity('facture').")";
+$sql.= " WHERE p.entity IN (".getEntity('invoice').")";
 if ($search_ref) $sql.=natural_search("p.ref", $search_ref);
 if ($search_amount) $sql.=natural_search("p.amount", $search_amount, 1);
 

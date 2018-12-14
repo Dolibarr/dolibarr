@@ -739,7 +739,7 @@ if (empty($reshook))
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 				$sql.= ' WHERE pf.fk_facture = '.$object->id;
 				$sql.= ' AND pf.fk_paiement = p.rowid';
-				$sql.= ' AND p.entity IN (' . getEntity('facture').')';
+				$sql.= ' AND p.entity IN (' . getEntity('invoice').')';
 
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
@@ -4281,7 +4281,7 @@ else if ($id > 0 || ! empty($ref))
 	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND pf.fk_paiement = p.rowid';
-	$sql .= ' AND p.entity IN (' . getEntity('facture').')';
+	$sql .= ' AND p.entity IN (' . getEntity('invoice').')';
 	$sql .= ' ORDER BY p.datep, p.tms';
 
 	$result = $db->query($sql);
