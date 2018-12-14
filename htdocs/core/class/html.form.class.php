@@ -6683,14 +6683,18 @@ class Form
 
 			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 			// accesskey is for Mac:               CTRL + key for all browsers
-			$stringforfirstkey = 'CTL +';
+			$stringforfirstkey = $langs->trans("KeyboardShortcut");
 			if ($conf->browser->name == 'chrome')
 			{
-				$stringforfirstkey = 'ALT +';
+				$stringforfirstkey .= ' ALT +';
 			}
 			if ($conf->browser->name == 'firefox')
 			{
-				$stringforfirstkey = 'ALT + SHIFT +';
+				$stringforfirstkey .= ' ALT + SHIFT +';
+			}
+			else
+			{
+				$stringforfirstkey .= ' CTL +';
 			}
 			
 			$previous_ref = $object->ref_previous?'<a accesskey="p" title="'.$stringforfirstkey.' p" class="classfortooltip" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
