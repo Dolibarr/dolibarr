@@ -2017,12 +2017,15 @@ class Form
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
 		
-		//Product category
-		$sql.= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
-					FROM ".MAIN_DB_PREFIX."categorie_product
-					WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid 
-					LIMIT 1
+		if (! empty($conf->global->PRODUCT_SORT_BY_CATEGORY))
+		{
+			//Product category
+			$sql.= ", (SELECT ".MAIN_DB_PREFIX."categorie_product.fk_categorie
+						FROM ".MAIN_DB_PREFIX."categorie_product
+						WHERE ".MAIN_DB_PREFIX."categorie_product.fk_product=p.rowid 
+						LIMIT 1
 				) AS categorie_product_id ";
+		}
 		
 		//Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
