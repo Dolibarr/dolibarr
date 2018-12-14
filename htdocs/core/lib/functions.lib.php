@@ -3010,7 +3010,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note','switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
-				'skype','twitter','facebook'
+				'jabber','skype','twitter','facebook'
 			)
 		)) {
 			$fakey = $pictowithoutext;
@@ -3093,9 +3093,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
-			} elseif ($pictowithoutext == 'play') {
+			}
+			elseif ($pictowithoutext == 'play') {
 				$fakey = 'fa-play';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'jabber') {
+				$fakey = 'fa-comment-o';
 			}
 			else {
 				$fakey = 'fa-'.$pictowithoutext;

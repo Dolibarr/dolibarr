@@ -1048,7 +1048,20 @@ if ($resql)
 		if (! empty($arrayfields['m.type_mouvement']['checked']))
         {
             // Type of movement
-        	print '<td align="center">'.$objp->type_mouvement.'</td>';
+        		switch($objp->type_mouvement){
+                case "0":
+                    print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
+                    break;
+                case "1":
+                    print '<td align="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
+                    break;
+                case "2":
+                    print '<td align="center">'.$langs->trans('StockDecrease').'</td>';
+                    break;
+                case "3":
+                    print '<td align="center">'.$langs->trans('StockIncrease').'</td>';
+                    break;
+            }
         }
         if (! empty($arrayfields['origin']['checked']))
         {

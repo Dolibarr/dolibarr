@@ -188,7 +188,7 @@ print '<br>';
  * Invoices waiting for withdraw
  */
 
-$sql = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
+$sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
 $sql.= " pfd.date_demande, pfd.amount";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
@@ -249,7 +249,7 @@ if ($resql)
 			print '<tr class="oddeven">';
 			print '<td>';
 			$invoicestatic->id=$obj->rowid;
-			$invoicestatic->ref=$obj->facnumber;
+			$invoicestatic->ref=$obj->ref;
 			print $invoicestatic->getNomUrl(1,'withdraw');
 			print '</td>';
 			// Thirdparty

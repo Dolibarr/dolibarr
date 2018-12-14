@@ -52,9 +52,44 @@ function project_prepare_head($object)
 	$head[$h][2] = 'contact';
 	$h++;
 
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		// Then tab for sub level of projet, i mean tasks
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Tasks");
+
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		$taskstatic=new Task($db);
+		$nbTasks=count($taskstatic->getTasksArray(0, 0, $object->id, 0, 0));
+		if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
+		$head[$h][2] = 'tasks';
+		$h++;
+
+		$nbTimeSpent=0;
+		$sql = "SELECT t.rowid";
+		//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+		//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
+		$sql .= " WHERE t.fk_task = pt.rowid";
+		$sql .= " AND pt.fk_projet =".$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbTimeSpent=1;
+		}
+		else dol_print_error($db);
+
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$object->id;
+		$head[$h][1] = $langs->trans("TimeSpent");
+		if ($nbTimeSpent > 0) $head[$h][1].= ' <span class="badge">...</span>';
+		$head[$h][2] = 'timespent';
+		$h++;
+	}
+
 	if (! empty($conf->fournisseur->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)
-	|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
-	|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
+		|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
+		|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ProjectOverview");
@@ -91,41 +126,6 @@ function project_prepare_head($object)
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'document';
 	$h++;
-
-	if (empty($conf->global->PROJECT_HIDE_TASKS))
-	{
-		// Then tab for sub level of projet, i mean tasks
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Tasks");
-
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-		$taskstatic=new Task($db);
-		$nbTasks=count($taskstatic->getTasksArray(0, 0, $object->id, 0, 0));
-		if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
-		$head[$h][2] = 'tasks';
-		$h++;
-
-		$nbTimeSpent=0;
-		$sql = "SELECT t.rowid";
-		//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
-		//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
-		$sql .= " WHERE t.fk_task = pt.rowid";
-		$sql .= " AND pt.fk_projet =".$object->id;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $nbTimeSpent=1;
-		}
-		else dol_print_error($db);
-
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$object->id;
-		$head[$h][1] = $langs->trans("TimeSpent");
-		if ($nbTimeSpent > 0) $head[$h][1].= ' <span class="badge">...</span>';
-		$head[$h][2] = 'timespent';
-		$h++;
-	}
 
 	// Manage discussion
 	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
@@ -1205,7 +1205,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				{
 					continue;
 				}
-				
+
 				// Break on a new project
 				if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
 				{

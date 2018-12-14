@@ -24,6 +24,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -32,6 +33,8 @@ $langs->loadLangs(array("bills","loan"));
 $chid=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
+$line_id = GETPOST('line_id', 'int');
+$last=GETPOST('last');
 
 // Security check
 $socid=0;
@@ -42,6 +45,37 @@ if ($user->societe_id > 0)
 
 $loan = new Loan($db);
 $loan->fetch($chid);
+
+if($last)
+{
+    $ls = new LoanSchedule($db);
+    // grab all loanschedule
+    $res = $ls->fetchAll($chid);
+    if ($res > 0)
+    {
+        foreach ($ls->lines as $l)
+        {
+            // get the last unpaid loanschedule
+            if (empty($l->fk_bank))
+            {
+                $line_id = $l->id;
+                break;
+            }
+        }
+    }
+    
+}
+
+if (!empty($line_id))
+{
+    $line = new LoanSchedule($db);
+    $res = $line->fetch($line_id);
+    if ($res > 0){
+        $amount_capital = price($line->amount_capital);
+        $amount_insurance = price($line->amount_insurance);
+        $amount_interest = price($line->amount_interest);
+    }
+}
 
 /*
  * Actions
@@ -121,6 +155,12 @@ if ($action == 'add_payment')
                     setEventMessages($payment->error, $payment->errors, 'errors');
                     $error++;
                 }
+                elseif(isset($line))
+                {
+                    $line->fk_bank = $payment->fk_bank;
+                    $line->update($user);
+                }
+                
             }
 
     	    if (! $error)
@@ -161,6 +201,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
+	print '<input type="hidden" name="line_id" value="'.$line_id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
     dol_fiche_head();
@@ -264,7 +305,7 @@ if ($action == 'create')
 	print '<td align="right">';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital">';
+	    print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital" value="'.$amount_capital.'">';
 	}
 	else
 	{
@@ -273,7 +314,7 @@ if ($action == 'create')
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance">';
+		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance" value="'.$amount_insurance.'">';
 	}
 	else
 	{
@@ -282,7 +323,7 @@ if ($action == 'create')
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest">';
+		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest" value="'.$amount_interest.'">';
 	}
 	else
 	{

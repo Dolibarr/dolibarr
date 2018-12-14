@@ -525,7 +525,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
          * List of unpaid invoices
          */
 
-        $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
+        $sql = 'SELECT f.rowid as facid, f.ref, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
         $sql.= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
@@ -550,7 +550,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         }
 
         // Sort invoices by date and serial number: the older one comes first
-        $sql.=' ORDER BY f.datef ASC, f.facnumber ASC';
+        $sql.=' ORDER BY f.datef ASC, f.ref ASC';
 
         $resql = $db->query($sql);
         if ($resql)
@@ -844,7 +844,7 @@ if (! GETPOST('action','aZ09'))
     if (! $sortorder) $sortorder='DESC';
     if (! $sortfield) $sortfield='p.datep';
 
-    $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
+    $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.ref';
     $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
@@ -867,7 +867,7 @@ if (! GETPOST('action','aZ09'))
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre('Invoice',$_SERVER["PHP_SELF"],'facnumber','','','',$sortfield,$sortorder);
+        print_liste_field_titre('Invoice',$_SERVER["PHP_SELF"],'ref','','','',$sortfield,$sortorder);
         print_liste_field_titre('Date',$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
         print_liste_field_titre('Type',$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
         print_liste_field_titre('Amount',$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
@@ -879,7 +879,7 @@ if (! GETPOST('action','aZ09'))
             $objp = $db->fetch_object($resql);
 
             print '<tr class="oddeven">';
-            print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
+            print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$objp->facid.'">'.$objp->ref."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
             print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
             print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';

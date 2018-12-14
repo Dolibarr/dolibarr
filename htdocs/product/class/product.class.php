@@ -310,6 +310,7 @@ class Product extends CommonObject
 
     public $oldcopy;
 
+    public $fk_default_warehouse;
     /**
      * @var int ID
      */

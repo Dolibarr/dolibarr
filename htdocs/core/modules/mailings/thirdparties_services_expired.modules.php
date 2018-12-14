@@ -82,25 +82,25 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *  This is the main function that returns the array of emails
      *
      *  @param	int		$mailing_id    	Id of mailing. No need to use it.
-     *  @param  array	$filtersarray   If you used the formFilter function. Empty otherwise.
      *  @return int           			<0 if error, number of emails added if ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    function add_to_target($mailing_id)
     {
         // phpcs:enable
-        $target = array();
-
-        // ----- Your code start here -----
+        $key=GETPOST('filter','int');
 
         $cibles = array();
         $j = 0;
 
         $product='';
-        foreach($filtersarray as $key)
+        if ($key == '0')
         {
-            if ($key == '0') return "Error: You must choose a filter";
-            $product=$this->arrayofproducts[$key];
+        	$this->error = "Error: You must choose a filter";
+        	$this->errors[] = $this->error;
+        	return $this->error;
         }
+
+        $product=$this->arrayofproducts[$key];
 
         $now=dol_now();
 
