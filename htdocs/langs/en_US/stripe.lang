@@ -61,4 +61,4 @@ ConfirmDeleteCard=Are you sure you want to delete this Credit or Debit card?
 CreateCustomerOnStripe=Create customer on Stripe
 CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
-StripeUserAccountForActions=User account to use for some emails notification of Stripe events (Stripe payouts)
+StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
