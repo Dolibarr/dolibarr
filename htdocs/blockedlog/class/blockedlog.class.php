@@ -413,7 +413,7 @@ class BlockedLog
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
-				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
+				'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
 				))) continue;									// Discard if not into a dedicated list
 				if ($key == 'lines')
 				{
@@ -444,7 +444,7 @@ class BlockedLog
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
-				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+				'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 				))) continue;									// Discard if not into a dedicated list
 				if (!is_object($value)) $this->object_data->{$key} = $value;
 			}
@@ -557,7 +557,7 @@ class BlockedLog
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 						if (! in_array($key, array(
-						'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+						'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 						))) continue;									// Discard if not into a dedicated list
 						if (!is_object($value))
 						{

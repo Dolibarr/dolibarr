@@ -2463,7 +2463,7 @@ else if ($id || $ref)
 				}
 				else
 				{
-					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
 
@@ -2488,7 +2488,7 @@ else if ($id || $ref)
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 				}
-				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendMail').'</a>';
+				else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
 			}
 
 			// Create bill

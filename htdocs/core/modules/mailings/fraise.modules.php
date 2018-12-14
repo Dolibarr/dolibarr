@@ -225,17 +225,11 @@ class mailing_fraise extends MailingTargets
      *  Ajoute destinataires dans table des cibles
      *
      *  @param    int        $mailing_id        Id of emailing
-     *  @param  array    $filtersarray   Param to filter sql request. Deprecated. Should use $_POST instead.
      *  @return int                       < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id,$filtersarray=array())
+    function add_to_target($mailing_id)
     {
         // phpcs:enable
-	    // Deprecation warning
-	    if ($filtersarray) {
-		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
-	    }
-
     	global $langs,$_POST;
 
     	// Load translation files required by the page

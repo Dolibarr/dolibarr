@@ -620,14 +620,10 @@ abstract class CommonObject
 		{
 			if ($this->skype) $out.=dol_print_socialnetworks($this->skype,$this->id,$object->id,'skype');
 			$outdone++;
-		}
-		if (! empty($conf->socialnetworks->enabled))
-		{
+			if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid,$this->id,$object->id,'jabber');
+			$outdone++;
 			if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter,$this->id,$object->id,'twitter');
 			$outdone++;
-		}
-		if (! empty($conf->socialnetworks->enabled))
-		{
 			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook,$this->id,$object->id,'facebook');
 			$outdone++;
 		}
@@ -5818,6 +5814,14 @@ abstract class CommonObject
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 			$showempty=(($required && $default != '')?0:1);
 			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
+			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+			{
+            			list($class,$classfile)=explode(':',$param_list[0]);
+            			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php',1);
+            			else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.$class.'_card.php',1);
+            			$out.='<a class="butActionNew" href="'.$url_path.'?action=create&backtopage='.$_SERVER['PHP_SELF'].'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+            			// TODO Add Javascript code to add input fields contents to new elements urls
+			}
 		}
 		elseif ($type == 'password')
 		{

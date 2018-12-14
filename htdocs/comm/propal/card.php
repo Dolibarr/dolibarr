@@ -10,8 +10,8 @@
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2016       Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -695,6 +695,88 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
+	}
+	
+	// add lines from objectlinked
+	elseif($action == 'import_lines_from_object'
+	    && $user->rights->propal->creer
+	    && $object->statut == Propal::STATUS_DRAFT
+	    )
+	{
+	    $fromElement = GETPOST('fromelement');
+	    $fromElementid = GETPOST('fromelementid');
+	    $importLines = GETPOST('line_checkbox');
+	    
+	    if(!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+	    {
+	        if($fromElement == 'commande')
+	        {
+	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'OrderLine';
+	        }
+	        elseif($fromElement == 'propal')
+	        {
+	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'PropaleLigne';
+	        }
+	        $nextRang = count($object->lines) + 1;
+	        $importCount = 0;
+	        $error = 0;
+	        foreach($importLines as $lineId)
+	        {
+	            $lineId = intval($lineId);
+	            $originLine = new $lineClassName($db);
+	            if(intval($fromElementid) > 0 && $originLine->fetch( $lineId ) > 0)
+	            {
+	                $originLine->fetch_optionals($lineId);
+	                $desc = $originLine->desc;
+	                $pu_ht = $originLine->subprice;
+	                $qty = $originLine->qty;
+	                $txtva = $originLine->tva_tx;
+	                $txlocaltax1 = $originLine->localtax1_tx;
+	                $txlocaltax2 = $originLine->localtax2_tx;
+	                $fk_product = $originLine->fk_product;
+	                $remise_percent = $originLine->remise_percent;
+	                $date_start = $originLine->date_start;
+	                $date_end = $originLine->date_end;
+	                $ventil = 0;
+	                $info_bits = $originLine->info_bits;
+	                $fk_remise_except = $originLine->fk_remise_except;
+	                $price_base_type='HT';
+	                $pu_ttc=0;
+	                $type = $originLine->product_type;
+	                $rang=$nextRang++;
+	                $special_code = $originLine->special_code;
+	                $origin = $originLine->element;
+	                $origin_id = $originLine->id;
+	                $fk_parent_line=0;
+	                $fk_fournprice=$originLine->fk_fournprice;
+	                $pa_ht = $originLine->pa_ht;
+	                $label = $originLine->label;
+	                $array_options = $originLine->array_options;
+	                $situation_percent = 100;
+	                $fk_prev_id = '';
+	                $fk_unit = $originLine->fk_unit;
+	                $pu_ht_devise = $originLine->multicurrency_subprice;
+	                
+	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label,$date_start, $date_end,$array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise, $fk_remise_except);
+	                
+	                if($res > 0){
+	                    $importCount++;
+	                }else{
+	                    $error++;
+	                }
+	            }
+	            else{
+	                $error++;
+	            }
+	        }
+	        
+	        if($error)
+	        {
+	            setEventMessages($langs->trans('ErrorsOnXLines',$error), null, 'errors');
+	        }
+	    }
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -1627,7 +1709,7 @@ if ($action == 'create')
 	if (! empty($conf->multicurrency->enabled))
 	{
 		print '<tr>';
-		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0);
 		print '</td></tr>';
@@ -2118,7 +2200,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Currency','multicurrency_code');
+		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon) && $usercancreate)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2135,7 +2217,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('CurrencyRate','multicurrency_tx');
+		print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $usercancreate)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2243,17 +2325,17 @@ if ($action == 'create')
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
 		// Multicurrency Amount HT
-		print '<tr><td class="titlefieldmiddle">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+		print '<tr><td class="titlefieldmiddle">' . $form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0) . '</td>';
 		print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
-		print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+		print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0) . '</td>';
 		print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
-		print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+		print '<tr><td>' . $form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0) . '</td>';
 		print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
 	}
@@ -2381,7 +2463,7 @@ if ($action == 'create')
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
 					}
 					else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('Validate') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('Validate') . '</a></div>';
 				}
 				// Create event
 				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
@@ -2404,7 +2486,7 @@ if ($action == 'create')
 					if ($usercansend) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Create an order
@@ -2488,7 +2570,13 @@ if ($action == 'create')
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		
+		$compatibleImportElementsList = false;
+		if($user->rights->propal->creer && $object->statut == Propal::STATUS_DRAFT)
+		{
+		    $compatibleImportElementsList = array('commande','propal'); // import from linked elements
+		}
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 		// Show online signature link
 		$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok

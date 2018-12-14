@@ -258,7 +258,7 @@ else
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}*/
 
 	if (count($listofmethods) && ! empty($conf->global->MAIN_SMS_SENDMODE))
@@ -267,7 +267,7 @@ else
 	}
 	else
 	{
-       print '<a class="butActionRefused" href="#">'.$langs->trans("DoTestSend").'</a>';
+       print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';
 

@@ -380,11 +380,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sourcedir = $object->source_directory;
 	$targetdir = ($object->target_directory ? $object->target_directory : '');			// Can be '[Gmail]/Trash' or 'mytag'
 
-	$connectstringserver = $object->getConnectStringIMAP();
-	$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-	$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+	$connection = null;
+	$connectstringserver = '';
+	$connectstringsource = '';
+	$connectstringtarget = '';
+	
+	if (function_exists('imap_open'))
+	{
+		$connectstringserver = $object->getConnectStringIMAP();
+		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-	$connection = imap_open($connectstringsource, $object->user, $object->password);
+		$connection = imap_open($connectstringsource, $object->user, $object->password);
+	}
+	else
+	{
+		$morehtml .= 'IMAP functions not available on your PHP';
+	}
+	
 	if (! $connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
@@ -395,8 +408,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtml .= imap_num_msg($connection);
 	}
 
-	imap_close($connection);
-
+	if ($connection)
+	{
+		imap_close($connection);
+	}
+	
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
 	print '<div class="fichecenter">';

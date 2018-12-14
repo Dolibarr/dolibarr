@@ -135,6 +135,7 @@ if (empty($reshook))
 				$object->note_private 			= GETPOST('note_private','none');
 				$object->note_public 			= GETPOST('note_public','none');
 				$object->fk_project 			= GETPOST('projectid','int');
+				$object->insurance_amount       = GETPOST('insurance_amount', 'int');
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -148,7 +149,7 @@ if (empty($reshook))
 				if ($id <= 0)
 				{
 					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
+					setEventMessages($object->db->lastqueryerror, $object->errors, 'errors');
 					$action = 'create';
 				}
 			}
@@ -301,6 +302,9 @@ if ($action == 'create')
 	// Rate
 	print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
 
+	// insurance amount
+	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="' . dol_escape_htmltag(GETPOST("insurance_amount")) . '" placeholder="'.$langs->trans('Amount').'"></td></tr>';
+	
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -494,6 +498,18 @@ if ($id > 0)
 		else
 		{
 			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+		}
+		
+		// Insurance
+		if ($action == 'edit')
+		{
+		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
+		    print '<input name="insurance_amount" size="10" value="' . $object->insurance_amount . '"></td></tr>';
+		    print '</td></tr>';
+		}
+		else
+		{
+		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 		}
 
 		// Date start
@@ -771,7 +787,7 @@ if ($id > 0)
 				// Edit
 				if ($object->paid == 0 && $user->rights->loan->write)
 				{
-					print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
+					// print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
 
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 				}
@@ -779,7 +795,7 @@ if ($id > 0)
 				// Emit payment
 				if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a>';
 				}
 
 				// Classify 'paid'

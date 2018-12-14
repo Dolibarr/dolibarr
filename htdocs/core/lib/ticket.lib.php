@@ -103,7 +103,7 @@ function ticket_prepare_head($object)
 
 
     // History
-    $head[$h][0] = DOL_URL_ROOT.'/ticket/history.php?track_id=' . $object->track_id;
+    $head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
     $head[$h][1] = $langs->trans('Events');
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {

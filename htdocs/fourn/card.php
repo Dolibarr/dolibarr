@@ -780,7 +780,7 @@ if ($object->id > 0)
 	{
 	    if ($object->status != 1)
         {
-            print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
+            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
         }
 
 		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
@@ -792,7 +792,7 @@ if ($object->id > 0)
 	      }
 	      else
 	      {
-	        print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierProposal").'</a>';
+	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierProposal").'</a>';
 	      }
 		}
 
@@ -805,7 +805,7 @@ if ($object->id > 0)
 	      }
 	      else
 	      {
-	        print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
+	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
 	      }
 		}
 
@@ -818,7 +818,7 @@ if ($object->id > 0)
 	      }
 	      else
 	      {
-	        print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
+	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
 	      }
 		}
 
@@ -832,10 +832,10 @@ if ($object->id > 0)
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 			}
-			else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 		}
 
     	// Add action

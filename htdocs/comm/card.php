@@ -1136,7 +1136,7 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-        $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount';
+        $sql = 'SELECT f.rowid as facid, f.ref, f.type, f.amount';
         $sql.= ', f.total as total_ht';
         $sql.= ', f.tva as total_tva';
         $sql.= ', f.total_ttc';
@@ -1147,7 +1147,7 @@ if ($object->id > 0)
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.amount, f.total, f.tva, f.total_ttc,';
+		$sql.= ' GROUP BY f.rowid, f.ref, f.type, f.amount, f.total, f.tva, f.total_ttc,';
 		$sql.= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid';
 		$sql.= " ORDER BY f.datef DESC, f.datec DESC";
@@ -1176,7 +1176,7 @@ if ($object->id > 0)
 				$objp = $db->fetch_object($resql);
 
 				$facturestatic->id = $objp->facid;
-				$facturestatic->ref = $objp->facnumber;
+				$facturestatic->ref = $objp->ref;
 				$facturestatic->type = $objp->type;
 				$facturestatic->total_ht = $objp->total_ht;
 				$facturestatic->total_tva = $objp->total_tva;
@@ -1242,7 +1242,7 @@ if ($object->id > 0)
     {
         if ($object->status != 1)
         {
-            print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
+            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
         }
 
     	if (! empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status==1)
@@ -1282,7 +1282,7 @@ if ($object->id > 0)
     		{
     			if (empty($user->rights->facture->creer))
     			{
-    			    print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    			    print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     			}
     			else
     			{
@@ -1294,13 +1294,13 @@ if ($object->id > 0)
     				    if ($object->client != 0 && $object->client != 2)
     				    {
     					   if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-    					   else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+    					   else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
     				    }
-    				    else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    				    else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     				}
 
     				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
-    				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    				else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     			}
     		}
     	}

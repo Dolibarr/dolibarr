@@ -94,7 +94,7 @@ $facture_static = new Facture($db);
 $formaccounting = new FormAccounting($db);
 
 if (! empty($id)) {
-	$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price,";
+	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
 	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, p.accountancy_code_sell as code_sell,";
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as l";
@@ -128,7 +128,7 @@ if (! empty($id)) {
 
 			// Ref facture
 			print '<tr><td>' . $langs->trans("Invoice") . '</td>';
-			$facture_static->ref = $objp->facnumber;
+			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 			print '</tr>';

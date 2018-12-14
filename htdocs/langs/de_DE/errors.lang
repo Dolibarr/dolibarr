@@ -174,7 +174,7 @@ ErrorGlobalVariableUpdater4=SOAP Client fehlgeschlagen mit Fehler '%s'
 ErrorGlobalVariableUpdater5=Keine globale Variable ausgewählt
 ErrorFieldMustBeANumeric=Feld <b>%s</b> muss ein numerischer Wert sein
 ErrorMandatoryParametersNotProvided=Erforderliche(r) Parameter wird nicht angeboten
-ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter its status
 ErrorFailedToLoadModuleDescriptorForXXX=Moduldeskriptor für Klasse %s konnte nicht geladen werden
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Falsche Definition von Menü Array in  Module Descriptor (falscher Wert für den Key  fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
@@ -212,7 +212,7 @@ ErrorProductBarCodeAlreadyExists=Der Produktbarcode %sexistiert schon bei einer 
 ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Das verwenden von virtuellen Produkten welche den Lagerbestand von Unterprodukten verändern ist nicht möglich, wenn ein Unterprodukt (Oder Unter-Unterprodukt) eine Seriennummer oder Chargennummer benötigt.
 ErrorDescRequiredForFreeProductLines=Beschreibung ist erforderlich für freie Produkte
 ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong> has the same name or alternative alias that the one your try to use
-
+ErrorDuringChartLoad=Error when loading chart of account. If few accounts were not loaded, you can still enter them manually.
 # Warnings
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert

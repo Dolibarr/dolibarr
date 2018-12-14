@@ -88,7 +88,7 @@ $filesarray=array();
 $result=false;
 if(($action=="searchfiles"||$action=="dl" ) && $date_start && $date_stop){
     $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
-    $sql="SELECT rowid as id, facnumber as ref,paye as paid,total_ttc,fk_soc,datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
+    $sql="SELECT rowid as id, ref as ref,paye as paid,total_ttc,fk_soc,datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
     $sql.=" WHERE datef between ".$wheretail;
     $sql.=" UNION ALL";
     $sql.=" SELECT rowid as id,ref, paye as paid, total_ttc, fk_soc,datef as date, 'InvoiceSupplier' as item  FROM ".MAIN_DB_PREFIX."facture_fourn";

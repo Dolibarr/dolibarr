@@ -410,7 +410,7 @@ if ($action != 'edit')
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
 */
 	print '</div>';
