@@ -6746,7 +6746,7 @@ class Form
 			{
 				$stringforfirstkey .= ' ALT +';
 			}
-			if ($conf->browser->name == 'firefox')
+			elseif ($conf->browser->name == 'firefox')
 			{
 				$stringforfirstkey .= ' ALT + SHIFT +';
 			}
@@ -6754,7 +6754,7 @@ class Form
 			{
 				$stringforfirstkey .= ' CTL +';
 			}
-			
+
 			$previous_ref = $object->ref_previous?'<a accesskey="p" title="'.$stringforfirstkey.' p" class="classfortooltip" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
 			$next_ref     = $object->ref_next?'<a accesskey="n" title="'.$stringforfirstkey.' n" class="classfortooltip" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 		}
