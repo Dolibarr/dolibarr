@@ -35,6 +35,8 @@
 
 -- For 10.0
 
+ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
+
 ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
 ALTER TABLE llx_facture CHANGE facnumber ref VARCHAR(30) NOT NULL;
 ALTER TABLE llx_facture ADD UNIQUE INDEX uk_facture_ref (ref, entity);
